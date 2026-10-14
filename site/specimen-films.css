@@ -1,0 +1,85 @@
+/* Specimen films: detail player, card previews, film library, header band film, home reel. */
+
+/* ---------- shared ---------- */
+.sfTag,.sfKicker,.sfCode{font:500 10.5px/1.2 "JetBrains Mono",ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase}
+.sfCtl{display:inline-flex;align-items:center;gap:8px;min-height:36px;padding:6px 14px;border-radius:999px;border:1px solid currentColor;background:transparent;color:inherit;font:600 13px "Manrope",system-ui,sans-serif;cursor:pointer}
+.sfCtl svg,.sfBadge svg,.sfFilmBack svg,.sfReelPlay svg{width:10px;height:10px}
+.sfCtl:focus-visible,.sfStrip button:focus-visible,.sfLibCard:focus-visible,.sfHeaderCap:focus-visible,.sfReelIndex button:focus-visible{outline:2px solid #0369a1;outline-offset:3px}
+
+/* ---------- 1. detail view ---------- */
+.sfDetailFilm{position:relative;margin:0;border-radius:14px;overflow:hidden;background:#02040b;aspect-ratio:1168/784;max-width:100%}
+.sfDetailFilm video{display:block;width:100%;height:100%;object-fit:cover}
+.sfDetailFilm figcaption{position:absolute;left:12px;right:12px;bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:10px;color:#eef2f8}
+.sfDetailFilm .sfTag{padding:6px 10px;border-radius:999px;background:rgba(2,4,11,.62);backdrop-filter:blur(8px)}
+.sfDetailFilm .sfCtl{background:rgba(2,4,11,.62);backdrop-filter:blur(8px);border-color:rgba(238,242,248,.45)}
+.sfStrip{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:12px}
+.sfStrip .sfTag{color:var(--text-dim,#4a5466);margin-right:4px}
+.sfStrip button{padding:0;border:2px solid transparent;border-radius:10px;overflow:hidden;background:none;cursor:pointer;width:84px;aspect-ratio:3/2;transition:border-color .2s,transform .2s}
+.sfStrip button img{display:block;width:100%;height:100%;object-fit:cover}
+.sfStrip button[aria-pressed="true"]{border-color:var(--plate,#be123c)}
+.sfStrip button:hover{transform:translateY(-2px)}
+.sfStrip .sfFilmBack{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:#0d1220;color:#eef2f8;font:600 12px "Manrope",sans-serif;width:auto;min-width:64px;padding:0 12px;aspect-ratio:auto;min-height:56px}
+.sfVariants{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:10px}
+.sfVariants img{width:100%;aspect-ratio:1168/784;object-fit:cover;border-radius:12px;display:block}
+
+/* ---------- 2. catalogue cards ---------- */
+.cataloguecard .cardmedia{position:relative}
+.sfBadge{position:absolute;left:10px;top:10px;z-index:2;display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border-radius:999px;background:rgba(2,4,11,.7);color:#eef2f8;font:600 10.5px "JetBrains Mono",monospace;letter-spacing:.12em;text-transform:uppercase;pointer-events:none}
+.sfCardFilm{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .35s;pointer-events:none;z-index:1}
+.sfCardFilm.on{opacity:1}
+
+/* ---------- 3. film library ---------- */
+.sfLibrary{margin:8px 0 56px;display:grid;gap:22px}
+.sfLibHead{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:16px 48px;align-items:end}
+.sfLibHead h2{margin:6px 0 0;font:300 clamp(32px,3.6vw,52px)/1 "Cormorant Garamond",Georgia,serif;letter-spacing:-.02em;text-wrap:balance}
+.sfLibHead p{margin:0;color:var(--text-dim,#4a5466);max-width:46ch}
+.sfKicker{color:var(--text-dim,#4a5466);margin:0}
+.sfLibGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.sfLibCard{position:relative;display:block;padding:0;border:0;border-radius:16px;overflow:hidden;background:#02040b;cursor:pointer;aspect-ratio:1168/784;color:#eef2f8;text-align:left;box-shadow:0 18px 40px -26px rgba(2,4,11,.55);transition:transform .35s cubic-bezier(.2,.7,.1,1),box-shadow .35s}
+.sfLibCard:hover{transform:translateY(-3px);box-shadow:0 26px 50px -24px rgba(2,4,11,.6)}
+.sfLibLead{grid-column:span 2;grid-row:span 2}
+.sfLibCard:nth-last-child(-n+2):not(.sfLibLead){grid-column:span 2;aspect-ratio:auto;min-height:220px}
+.sfLibMedia,.sfLibMedia img,.sfLibMedia video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.sfLibMedia video{opacity:0;transition:opacity .4s}.sfLibMedia video.on{opacity:1}
+.sfLibCap{position:absolute;left:0;right:0;bottom:0;display:grid;gap:4px;padding:28px 14px 12px;background:linear-gradient(transparent,rgba(2,4,11,.82))}
+.sfLibCap b{font:400 clamp(18px,1.5vw,24px)/1.1 "Cormorant Garamond",Georgia,serif}
+.sfLibLead .sfLibCap b{font-size:clamp(26px,2.6vw,40px)}
+.sfLibCap .sfCode{color:#fda4af}
+@media(max-width:1000px){.sfLibGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.sfLibHead{grid-template-columns:1fr}}
+@media(max-width:560px){.sfLibGrid{grid-template-columns:1fr}.sfLibLead,.sfLibCard:nth-last-child(-n+2):not(.sfLibLead){grid-column:auto;grid-row:auto;aspect-ratio:1168/784;min-height:0}}
+
+/* ---------- 4. header band film ---------- */
+body:not(.cinemaMode)>header{isolation:isolate}
+.sfHeaderFilm{position:absolute;inset:0;z-index:-1;overflow:hidden;pointer-events:none;-webkit-mask-image:linear-gradient(90deg,transparent 8%,#000 55%);mask-image:linear-gradient(90deg,transparent 8%,#000 55%)}
+.sfHeaderFilm video,.sfHeaderFilm img{width:100%;height:100%;object-fit:cover;opacity:.34;filter:saturate(.9)}
+.sfHeaderFilm:empty{display:none}
+.sfHeaderCap{position:absolute;right:max(16px,env(safe-area-inset-right,0px));bottom:12px;display:inline-flex;gap:8px;align-items:center;padding:4px 10px;border:1px solid rgba(238,242,248,.22);border-radius:999px;background:rgba(2,4,11,.45);color:rgba(238,242,248,.8);font:500 10.5px "JetBrains Mono",monospace;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;backdrop-filter:blur(6px)}
+.sfHeaderCap span{color:var(--plate,#fda4af)}
+.sfHeaderCap:hover{color:#fff;border-color:rgba(238,242,248,.5)}
+body.cinemaMode .sfHeaderFilm,body.cinemaMode .sfHeaderCap{display:none}
+@media(max-width:900px){.sfHeaderCap{display:none}}
+
+/* ---------- 5. home specimen reel ---------- */
+.sfReel{position:relative;min-height:min(92vh,880px);display:grid;grid-template-rows:1fr auto;color:var(--ink,#eef2f8);overflow:hidden;background:var(--void,#02040b);border-top:1px solid var(--rule,rgba(238,242,248,.1))}
+.sfReelStage{position:absolute;inset:0}
+.sfReelLayer{position:absolute;inset:0;opacity:0;transition:opacity 1.1s ease}
+.sfReelLayer.on{opacity:1}
+.sfReelLayer video{width:100%;height:100%;object-fit:cover;display:block}
+.sfReelShade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(2,4,11,.9) 0%,rgba(2,4,11,.62) 40%,rgba(2,4,11,0) 72%),linear-gradient(0deg,rgba(2,4,11,.92) 0%,rgba(2,4,11,0) 38%)}
+.sfReelCopy{position:relative;align-self:center;max-width:720px;display:grid;gap:14px;padding-block:clamp(72px,9vw,120px) 24px}
+.sfReelCopy h2{margin:0;display:grid;gap:10px}
+.sfReelNo{font:500 12px var(--f-mono,"JetBrains Mono",monospace);letter-spacing:.18em;text-transform:uppercase;color:var(--rose,#fda4af)}
+.sfReelName{font:300 clamp(44px,6vw,88px)/.98 var(--f-display,"Cormorant Garamond",serif);letter-spacing:-.02em;text-wrap:balance}
+.sfReelDesc{margin:0;max-width:44ch;font-size:clamp(15px,1.15vw,17px);line-height:1.6;color:var(--ink-dim,#a8b3c7);min-height:3.2em}
+.sfReelCopy .vmaActions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.sfReelPlay{display:inline-flex;align-items:center;gap:8px}
+.sfReelIndex{position:relative;list-style:none;margin:0;padding-block:18px 28px;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(150px,1fr);gap:12px;overflow-x:auto;scrollbar-width:none}
+.sfReelIndex::-webkit-scrollbar{display:none}
+.sfReelIndex button{all:unset;box-sizing:border-box;display:grid;gap:6px;width:100%;cursor:pointer;padding:4px 0;color:var(--ink-dim,#a8b3c7);transition:color .25s}
+.sfReelIndex button[aria-current="true"],.sfReelIndex button:hover{color:var(--ink,#eef2f8)}
+.sfReelBar{display:block;height:2px;background:rgba(238,242,248,.18);overflow:hidden;border-radius:2px}
+.sfReelBar i{display:block;height:100%;background:var(--rose,#fda4af);transform:scaleX(0);transform-origin:left}
+.sfReelPlate{font:500 10px var(--f-mono,"JetBrains Mono",monospace);letter-spacing:.16em;text-transform:uppercase;opacity:.75}
+.sfReelTitle{font:400 17px/1.15 var(--f-display,"Cormorant Garamond",serif)}
+@media(max-width:760px){.sfReel{min-height:auto}.sfReelShade{background:linear-gradient(0deg,rgba(2,4,11,.94) 18%,rgba(2,4,11,.35) 70%,rgba(2,4,11,.1))}.sfReelCopy{padding-top:46vh}.sfReelIndex{grid-auto-columns:150px}}
+@media(prefers-reduced-motion:reduce){.sfReelLayer,.sfLibCard,.sfCardFilm,.sfLibMedia video{transition:none}}

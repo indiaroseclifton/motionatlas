@@ -404,7 +404,7 @@ if(!gl){c.hidden=true;document.querySelector('.fallback').hidden=false;}else{
   js:`addEventListener('scroll',()=>requestAnimationFrame(()=>{document.querySelectorAll('.blobs').forEach(b=>b.style.filter='blur('+(70*FX.i)+'px) saturate(140%) hue-rotate('+(scrollY*.08)+'deg)');}),{passive:true});`},
 
  {id:'L27',name:'Data reveal',isNew:true,tags:['Reveal','Data'],perf:['transform, text','Low'],about:'Numbers count up and bars grow as they enter, with tabular figures so nothing jitters. The final values are in the HTML for screen readers and no-JS.',
-  html:`<section class="wrap dr"><p class="kicker">Atlas in numbers</p><h1>A library that grows.</h1><div class="stats">${[[230,'specimens'],[60,'motion studies'],[32,'design systems'],[201,'extracted assets']].map(([n,l])=>`<div class="st"><b data-to="${n}">${n}</b><span>${l}</span></div>`).join('')}</div><figure class="chart" aria-label="Entries per collection"><svg viewBox="0 0 600 260" role="img" aria-label="Bar chart: Animation art 40, UX/UI 40, Art styles 36, Systems 32, Interface motion 20, Effects 18">${[['Anim. art',40],['UX/UI',40],['Art',36],['Systems',32],['Motion UI',20],['Effects',18]].map(([l,v],i)=>`<g transform="translate(${20+i*96},0)"><rect class="bar" x="0" y="${220-v*5}" width="64" height="${v*5}" rx="6"/><text x="32" y="${212-v*5}" text-anchor="middle" class="v">${v}</text><text x="32" y="246" text-anchor="middle" class="l">${l}</text></g>`).join('')}</svg></figure></section>${END('Counted.')}`,
+  html:`<section class="wrap dr"><p class="kicker">Atlas in numbers</p><h1>A library that grows.</h1><div class="stats">${[[264,'specimens'],[60,'motion studies'],[32,'design systems'],[201,'extracted assets']].map(([n,l])=>`<div class="st"><b data-to="${n}">${n}</b><span>${l}</span></div>`).join('')}</div><figure class="chart" aria-label="Entries per collection"><svg viewBox="0 0 600 260" role="img" aria-label="Bar chart: Animation art 40, UX/UI 40, Art styles 36, Systems 32, Interface motion 20, Effects 18">${[['Anim. art',40],['UX/UI',40],['Art',36],['Systems',32],['Motion UI',20],['Effects',18]].map(([l,v],i)=>`<g transform="translate(${20+i*96},0)"><rect class="bar" x="0" y="${220-v*5}" width="64" height="${v*5}" rx="6"/><text x="32" y="${212-v*5}" text-anchor="middle" class="v">${v}</text><text x="32" y="246" text-anchor="middle" class="l">${l}</text></g>`).join('')}</svg></figure></section>${END('Counted.')}`,
   css:`.dr{padding:16vh 6vw;display:grid;gap:30px}.dr h1{font-size:clamp(46px,6vw,88px)}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
 .st{background:#fff;border:1px solid #d9dee6;border-radius:16px;padding:22px}
@@ -470,7 +470,78 @@ ic.addEventListener('pointerup',()=>drag=null);
 ic.addEventListener('wheel',e=>{e.preventDefault();z=FX.clamp(z*(e.deltaY<0?1.08:.93),.4,2.2);draw();},{passive:false});
 ic.addEventListener('keydown',e=>{const s=60;if(e.key==='ArrowLeft')ox+=s;else if(e.key==='ArrowRight')ox-=s;else if(e.key==='ArrowUp')oy+=s;else if(e.key==='ArrowDown')oy-=s;else if(e.key==='+'||e.key==='=')z=Math.min(2.2,z*1.2);else if(e.key==='-')z=Math.max(.4,z/1.2);else return;e.preventDefault();draw();});
 document.querySelectorAll('[data-z]').forEach(b=>b.onclick=()=>{z=FX.clamp(z*+b.dataset.z,.4,2.2);draw();});document.querySelector('[data-reset]').onclick=()=>{ox=oy=0;z=1;draw();};
-draw();const IMGS='${IMG}';`}
+draw();const IMGS='${IMG}';`},
+
+ {id:'L31',name:'Film reel hero',isNew:true,tags:['Media','Reveal'],perf:['opacity (two video layers)','Medium'],about:'A full-screen hero that crossfades between short films, with a plate index and progress bars like the atlas home page. Only two videos exist at a time; reduced motion shows posters and waits for a click.',
+  html:`<section class="reel"><div class="stage"><div class="layer"></div><div class="layer"></div><div class="shade"></div></div><div class="copy wrap"><p class="kicker" id="rNo"></p><h1 id="rTitle"></h1><p class="lede" id="rDesc"></p><button class="pp" type="button" id="rPlay"></button></div><ol class="idx wrap" aria-label="Films"></ol></section>${END('Plates that move.')}`,
+  css:`.reel{position:relative;min-height:100vh;display:grid;grid-template-rows:1fr auto;background:#02040b;color:#eef2f8;overflow:hidden}
+.stage,.layer,.shade{position:absolute;inset:0}.layer{opacity:0;transition:opacity calc(var(--fx-duration)*1.2) var(--fx-ease)}.layer.on{opacity:1}
+.layer video{width:100%;height:100%;object-fit:cover}
+.shade{background:linear-gradient(90deg,rgba(2,4,11,calc(.9*var(--fx-intensity))) 0%,rgba(2,4,11,.35) 45%,transparent 75%),linear-gradient(0deg,rgba(2,4,11,.9),transparent 40%)}
+.copy{position:relative;align-self:center;display:grid;gap:16px;max-width:760px;margin:0;padding-top:14vh}
+.copy .kicker{color:#fda4af}.copy h1{font-size:clamp(52px,8vw,120px);color:#eef2f8}.copy .lede{color:#a8b3c7}
+.pp{justify-self:start;font:600 14px "Manrope",sans-serif;color:#eef2f8;background:none;border:1px solid rgba(238,242,248,.4);border-radius:999px;padding:10px 18px;cursor:pointer}
+.idx{position:relative;list-style:none;margin:0;padding:20px 6vw 30px;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(140px,1fr);gap:12px;overflow-x:auto;max-width:none}
+.idx button{all:unset;display:grid;gap:6px;width:100%;cursor:pointer;color:#a8b3c7}.idx button[aria-current="true"]{color:#eef2f8}
+.idx button:focus-visible{outline:2px solid #fda4af;outline-offset:4px}
+.bar{height:2px;background:rgba(238,242,248,.2)}.bar i{display:block;height:100%;background:#fda4af;transform:scaleX(0);transform-origin:left}
+.idx small{font:500 10px "JetBrains Mono",monospace;letter-spacing:.14em;text-transform:uppercase}.idx b{font:400 18px "Cormorant Garamond",serif}`,
+  js:`const FILM='assets/films/';
+const list=[['ferrofluid','Ferrofluid','Glossy peaks rise in rings and sink back into a calm pool.'],['suminagashi','Suminagashi','Floating ink drawn into slow marbled tendrils.'],['soap-film','Soap film','Interference colours swirl, then the film bursts.'],['bioluminescent-trails','Bioluminescence','Rivers of light drift through the dark.']];
+const L=[...document.querySelectorAll('.layer')],idx=document.querySelector('.idx'),btn=document.getElementById('rPlay');
+idx.innerHTML=list.map((f,i)=>'<li><button type="button" data-i="'+i+'"><span class="bar"><i></i></span><small>Plate '+(i+1)+'</small><b>'+f[1]+'</b></button></li>').join('');
+const B=[...idx.querySelectorAll('button')],SHOW=FX.d*8;let cur=-1,front=0,t0=0,paused=FX.R;
+function show(i){cur=(i+list.length)%list.length;const f=list[cur];front=1-front;const a=L[front],b=L[1-front];
+ a.innerHTML='<video muted loop playsinline poster="'+FILM+f[0]+'.jpg" src="'+FILM+f[0]+'.mp4"></video>';if(!paused)a.firstChild.play().catch(()=>{});
+ a.classList.add('on');b.classList.remove('on');setTimeout(()=>{if(!b.classList.contains('on'))b.innerHTML='';},FX.d*1.4);
+ document.getElementById('rNo').textContent='Plate '+(cur+1)+' of '+list.length;document.getElementById('rTitle').textContent=f[1];document.getElementById('rDesc').textContent=f[2];
+ B.forEach((x,k)=>{x.setAttribute('aria-current',String(k===cur));x.querySelector('i').style.transform=k<cur?'scaleX(1)':'scaleX(0)';});t0=performance.now();}
+function label(){btn.textContent=paused?'Play the reel':'Pause the reel';}
+(function loop(now){if(!paused&&cur>=0){const p=Math.min(1,(now-t0)/SHOW);B[cur].querySelector('i').style.transform='scaleX('+p+')';if(p>=1)show(cur+1);}requestAnimationFrame(loop);})(0);
+B.forEach(b=>b.onclick=()=>{show(+b.dataset.i);if(paused)L[front].firstChild.play().catch(()=>{});});
+btn.onclick=()=>{paused=!paused;label();const v=L[front].firstChild;if(paused)v.pause();else{v.play().catch(()=>{});t0=performance.now();}};
+show(0);label();`},
+
+ {id:'L32',name:'Scroll-scrubbed film',isNew:true,tags:['Scroll','Media'],perf:['video.currentTime (keyframe-dense encode)','Medium'],about:'The page scroll drives the film: scroll down and the pen draws, scroll up and it rewinds. Captions arrive at set points. The film is encoded with a keyframe every few frames so seeking stays smooth.',
+  html:`<section class="wrap" style="padding:14vh 6vw 8vh"><p class="kicker">Specimen A80</p><h1 style="font-size:clamp(48px,7vw,104px)">Scroll to draw.</h1></section><section class="scrub"><div class="pin"><video muted playsinline preload="auto" poster="assets/films/lissajous-drawing.jpg" src="assets/films/lissajous-scrub.mp4"></video><div class="caps"><p data-at="0.08">Two pendulums swing at right angles.</p><p data-at="0.38">Their ratio sets the figure.</p><p data-at="0.68">Damping draws the curve inward.</p></div><div class="meter"><i></i></div></div></section>${END('The drawing is yours to scrub.')}`,
+  css:`.scrub{height:calc(320vh * var(--fx-intensity))}
+.pin{position:sticky;top:0;height:100vh;overflow:hidden;background:#0d1220}
+.pin video{width:100%;height:100%;object-fit:cover}
+.caps{position:absolute;left:0;bottom:0;display:grid;gap:10px;width:min(100%,560px);padding:18vh 6vw 12vh;background:radial-gradient(120% 100% at 0% 100%,rgba(13,18,32,.82),rgba(13,18,32,0) 70%)}
+.caps p{font:400 clamp(26px,3vw,42px)/1.05 "Cormorant Garamond",serif;color:#fff;text-shadow:0 2px 20px rgba(0,0,0,.6);opacity:0;transform:translateY(16px);transition:opacity var(--fx-duration) var(--fx-ease),transform var(--fx-duration) var(--fx-ease)}
+.caps p.on{opacity:1;transform:none}
+.meter{position:absolute;left:6vw;right:6vw;bottom:6vh;height:2px;background:rgba(255,255,255,.25)}.meter i{display:block;height:100%;background:#fde68a;transform-origin:left;transform:scaleX(0)}`,
+  js:`const sec=document.querySelector('.scrub'),v=sec.querySelector('video'),caps=[...sec.querySelectorAll('.caps p')],bar=sec.querySelector('.meter i');let target=0,cur=0;
+function frame(){const p=FX.progress(sec);target=p;cur+=(target-cur)*(FX.R?1:.18);bar.style.transform='scaleX('+cur+')';caps.forEach(c=>c.classList.toggle('on',cur>=+c.dataset.at));
+ if(v.duration&&Math.abs(v.currentTime-cur*v.duration)>.03)v.currentTime=cur*(v.duration-.05);requestAnimationFrame(frame);}
+v.addEventListener('loadedmetadata',()=>{v.pause();});requestAnimationFrame(frame);`},
+
+ {id:'L33',name:'Film in type',isNew:true,tags:['Type','Media','Scroll'],perf:['transform, mix-blend-mode','Medium'],about:'A film plays inside giant letters. Scroll and the letters grow until you fall through them into the full film. Built with a white layer in screen blend mode, so the letters stay real, selectable text.',
+  html:`<section class="ft"><div class="pin"><video muted loop playsinline autoplay poster="assets/films/soap-film.jpg" src="assets/films/soap-film.mp4"></video><div class="mask"><h1>FILM</h1></div><p class="hint kicker">Scroll</p></div></section>${END('Through the letters.')}`,
+  css:`.ft{height:260vh}.pin{position:sticky;top:0;height:100vh;overflow:hidden;background:#000}
+.pin video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.mask{position:absolute;inset:0;background:#fff;mix-blend-mode:screen;display:grid;place-items:center}
+.mask h1{font:800 clamp(120px,30vw,420px)/.8 "Manrope",sans-serif;letter-spacing:-.06em;color:#000;transform-origin:50% 52%;will-change:transform}
+.hint{position:absolute;left:50%;bottom:6vh;transform:translateX(-50%)}`,
+  js:`const s=document.querySelector('.ft'),h=s.querySelector('h1'),m=s.querySelector('.mask'),hint=s.querySelector('.hint');
+function f(){const p=FX.R?0:FX.progress(s);const k=1+Math.pow(p,1.6)*6*FX.i;h.style.transform='scale('+k+')';m.style.opacity=String(FX.clamp(1-(p-.4)/.35,0,1));hint.style.opacity=String(1-p*4);requestAnimationFrame(f);}f();
+if(FX.R)s.querySelector('video').pause();`},
+
+ {id:'L34',name:'Hover film cards',isNew:true,tags:['Pointer','Media'],perf:['opacity, transform; video created on demand','Low'],about:'Cards show a still until you hover or focus them, then the film fades in and plays. Videos are only created when needed and pause as soon as you leave. On touch, a tap toggles the film.',
+  html:`<section class="wrap" style="padding:12vh 6vw"><p class="kicker">Film library</p><h1 style="font-size:clamp(46px,6vw,88px);margin:12px 0 30px">Hover to watch.</h1><div class="fc">${[['embroidery','Embroidery'],['ferrofluid','Ferrofluid'],['hydraulic-erosion','Erosion'],['pixel-sorting','Pixel sorting'],['sand-drawing','Sand drawing'],['game-of-life','Game of Life']].map(([s,t])=>`<button class="card" type="button" data-s="${s}"><img src="assets/films/${s}.jpg" alt=""><b>${t}</b></button>`).join('')}</div></section>${END('Stills until you ask.')}`,
+  css:`.fc{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{all:unset;position:relative;cursor:pointer;border-radius:16px;overflow:hidden;aspect-ratio:3/2;background:#0d1220;transition:transform var(--fx-duration) var(--fx-ease)}
+.card img,.card video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.card video{opacity:0;transition:opacity calc(var(--fx-duration)*.5) ease}.card.on video{opacity:1}
+.card.on{transform:scale(calc(1 + .03*var(--fx-intensity)))}
+.card b{position:absolute;left:16px;bottom:12px;font:400 26px "Cormorant Garamond",serif;color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.6)}
+.card:focus-visible{outline:3px solid #0369a1;outline-offset:4px}
+@media(max-width:720px){.fc{grid-template-columns:1fr 1fr}}`,
+  js:`const fine=matchMedia('(hover:hover)').matches;
+document.querySelectorAll('.card').forEach(c=>{const on=()=>{if(FX.R)return;let v=c.querySelector('video');if(!v){v=document.createElement('video');v.muted=true;v.loop=true;v.playsInline=true;v.src='assets/films/'+c.dataset.s+'.mp4';c.prepend(v);c.querySelector('img').after(v);}c.classList.add('on');v.play().catch(()=>{});};
+ const off=()=>{c.classList.remove('on');c.querySelector('video')?.pause();};
+ if(fine){c.addEventListener('pointerenter',on);c.addEventListener('pointerleave',off);}else c.addEventListener('click',()=>c.classList.contains('on')?off():on());
+ c.addEventListener('focus',on);c.addEventListener('blur',off);});`},
  ];
 
  // A few scripts declare their image path last; move that declaration to the top so it exists before use.
@@ -485,14 +556,14 @@ draw();const IMGS='${IMG}';`}
 
  /* ---------- Lab UI ---------- */
  const S={filter:'All',device:'desktop',intensity:1,duration:900,ease:'expressive',reduce:matchMedia('(prefers-reduced-motion: reduce)').matches,codeTab:'full'};
- const THUMB={L01:'castle',L02:'lake',L03:'amber',L04:'nebula',L05:'scope',L06:'riso',L07:'contours',L08:'mercury',L09:'thermal',L10:'smoke',L11:'synthwave',L12:'coast',L13:'origami',L14:'pointface',L15:'fieldlines',L16:'constellation',L17:'bird',L18:'garden',L19:'voronoi',L20:'cathedral',L21:'exploded',L22:'mandelbulb',L23:'film/f30',L24:'tree',L25:'fluid',L26:'audio',L27:'cells',L28:'wave',L29:'riso',L30:'fox'};
+ const THUMB={L01:'castle',L02:'lake',L03:'amber',L04:'nebula',L05:'scope',L06:'riso',L07:'contours',L08:'mercury',L09:'thermal',L10:'smoke',L11:'synthwave',L12:'coast',L13:'origami',L14:'pointface',L15:'fieldlines',L16:'constellation',L17:'bird',L18:'garden',L19:'voronoi',L20:'cathedral',L21:'exploded',L22:'mandelbulb',L23:'film/f30',L24:'tree',L25:'fluid',L26:'audio',L27:'cells',L28:'wave',L29:'riso',L30:'fox',L31:'film-reel',L32:'film-scrub',L33:'film-type',L34:'film-cards'};
  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  let root,dlg,frame,timer;
  function build(){
   const page=document.getElementById('effects');if(!page||document.getElementById('effectsLab'))return;
   root=document.createElement('section');root.id='effectsLab';root.className='fxl';
   const tags=['All','New','Scroll','Pointer','Reveal','Type','Media','Canvas','WebGL','Navigation'];
-  root.innerHTML=`<div class="fxl-head"><div><p class="fxl-kicker">Effects lab · 30 effects · 12 new</p><h2>Scroll them for real.</h2></div><p>Every effect opens full screen in a working page. Tune intensity, duration and easing, check it on a phone, then copy the code: the code is exactly what the preview runs.</p></div>
+  root.innerHTML=`<div class="fxl-head"><div><p class="fxl-kicker">Effects lab · 34 effects · 16 new</p><h2>Scroll them for real.</h2></div><p>Every effect opens full screen in a working page. Tune intensity, duration and easing, check it on a phone, then copy the code: the code is exactly what the preview runs.</p></div>
   <div class="fxl-filters" role="group" aria-label="Filter effects">${tags.map(t=>`<button type="button" data-tag="${t}" aria-pressed="${t==='All'}">${t}</button>`).join('')}</div>
   <div class="fxl-grid" id="fxlGrid"></div>`;
   const anchor=page.querySelector('h1')?.closest('.aeHasBand')?page.querySelector('.aeRelated')||page.querySelector('.intro'):page.querySelector('.intro');
