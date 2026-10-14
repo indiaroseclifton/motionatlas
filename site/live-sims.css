@@ -1,0 +1,15 @@
+/* Live simulations in the animation studio */
+.simcanvas{position:absolute;inset:0;width:100%;height:100%;display:block;background:#03050c;touch-action:none;cursor:crosshair}
+.simcanvas[hidden]{display:none}
+.motionstage.simLive #studyCanvas{visibility:hidden}
+.simPanel{display:grid;gap:12px;padding:16px 18px;margin:10px 0 4px;border:1px solid var(--hair,#d9dee6);border-radius:16px;background:var(--panel,#fff)}
+.simPanel[hidden]{display:none}
+.simKicker{margin:0;font:500 10.5px "JetBrains Mono",ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim,#4a5466)}
+.simGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:12px 20px}
+.simGrid label{display:grid;grid-template-columns:1fr auto;gap:4px 10px;align-items:center;font-size:13px;color:var(--text,#0d1220)}
+.simGrid label span{grid-column:1}.simGrid output{grid-column:2;grid-row:1;font:500 12px "JetBrains Mono",monospace;color:var(--text-dim,#4a5466)}
+.simGrid input{grid-column:1/-1;width:100%;accent-color:#be123c;min-height:24px}
+.simActions{display:flex;flex-wrap:wrap;gap:8px}
+.simToggle{display:flex!important;align-items:center;gap:10px;align-self:end;min-height:40px}
+.simToggle input{width:20px!important;height:20px;min-height:0;grid-column:auto}
+.simSelect select{grid-column:1/-1;min-height:36px;border-radius:8px;border:1px solid var(--hair,#d9dee6);padding:4px 8px;font:inherit;background:var(--panel,#fff)}

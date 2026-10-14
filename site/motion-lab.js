@@ -160,7 +160,7 @@
   if(live){if(progId!==id){prog=compile(id);progId=id;}if(!raf)raf=requestAnimationFrame(frame);
    const type=$('#studyType');if(type)type.textContent='Real-time shader study';const hint=$('#motionHint');if(hint)hint.textContent=`${SH[id][0]} rendered live on the GPU with a fragment shader. Play, scrub and speed control it; reduced motion holds a still frame. Toggle “Show reference image” to compare with the original artwork.`;}
  }
- function record(){const btn=$('#recordClip');const src=!cv.hidden?cv:document.getElementById('studyCanvas');
+ function record(){const btn=$('#recordClip');const sim=document.getElementById('simCanvas');const src=sim&&!sim.hidden?sim:!cv.hidden?cv:document.getElementById('studyCanvas');
   if(!src.captureStream||typeof MediaRecorder==='undefined'){btn.textContent='Recording not supported here';return;}
   const type=['video/webm;codecs=vp9','video/webm'].find(t=>MediaRecorder.isTypeSupported(t));const rec=new MediaRecorder(src.captureStream(30),type?{mimeType:type,videoBitsPerSecond:6e6}:{});const chunks=[];
   rec.ondataavailable=e=>e.data.size&&chunks.push(e.data);rec.onstop=()=>{const url=URL.createObjectURL(new Blob(chunks,{type:'video/webm'}));const a=document.createElement('a');a.href=url;a.download=(window.activeMotionId||'study')+'-atlas.webm';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000);btn.textContent='Record clip';btn.disabled=false;};

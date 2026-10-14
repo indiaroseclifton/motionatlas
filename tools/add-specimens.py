@@ -392,6 +392,39 @@ def prompts(title, test, alternate, motion, checks, cues):
     }
 
 
+# New visual styles drawn from the cyanotype and botanical plates (themes live in site/atlas-themes.js)
+STYLES = [
+ ('S21', 'Cyanotype', 'blueprint', 'Low', 'Css + Svg', 'Tool', 'Precise',
+  'Prussian-blue technical drawing: white linework, dimension lines, parts tables and a faint grid on chemically uneven paper.',
+  'Engineering and maker brands, product specs, documentation sites and heritage science stories.',
+  'Lines draw in like a plotter, dimensions extend from their ends, and labels type in once the line lands.',
+  'Two-colour palette, condensed engineering capitals with a monospace body, hairline borders and a 24px grid backdrop.',
+  'Drawing everything at once, or using so many dimension lines that the product disappears.',
+  'Design a product specification page styled as a cyanotype blueprint: an elevation drawing with dimensions, a parts list table and a request-a-quote button.',
+  'Design a documentation landing page with a blueprint hero that draws itself and a numbered parts index.',
+  'Text stays readable on blue, the grid is subtle, and the call to action is the brightest element.',
+  'Prussian blue ground; white hairlines; dimension arrows; parts table; condensed capitals; paper mottling.', 'L32'),
+ ('S22', 'Botanical plate', 'botanical', 'Medium', 'Css + Svg', 'Editorial', 'Calm',
+  'Antique natural-history plate: engraved linework with soft hand-coloured washes, numbered figures, Latin captions and a ruled border on cream.',
+  'Natural products, apothecary and beauty brands, gardens, museums and slow editorial.',
+  'Engraving draws first, then colour washes in figure by figure; captions fade in after each figure.',
+  'Cream paper, ink-brown text, one plant colour as the accent, an old-style serif for titles and a book serif for body.',
+  'Modern flat colour, sans-serif labels or too many figures competing for attention.',
+  'Design a product page for a botanical skincare range styled as an antique plate: a central plant illustration, numbered ingredient figures with Latin names and an add-to-bag button.',
+  'Design a garden tour landing page as a natural-history plate with figure captions as navigation.',
+  'The plate feels archival, figures are clearly numbered, and the price and button stay obvious.',
+  'Cream paper; engraved lines; violet and sage washes; numbered figures; italic Latin captions; ruled border.', 'L36'),
+]
+
+
+def style_prompts(title, test, alternate, motion, build, avoid, checks, cues):
+    p = prompts(title, test, alternate, motion, checks, cues)
+    p['Working interface'] = (f'Build a working, responsive web interface in the {title} style. Brief: {test} Use semantic '
+                              'HTML, visible focus states, real labels and WCAG 2.2 AA contrast. Motion: '
+                              f'{motion} Respect prefers-reduced-motion. Build notes: {build} Avoid: {avoid} Check: {checks}')
+    return p
+
+
 def img(code, n):
     return {'url': f'{R}{code.lower()}-{n}.webp', 'index': 0, 'columns': 1, 'rows': 1}
 
@@ -418,8 +451,30 @@ def main(path):
         e['gallery'] = [img(i, k)['url'] for k in range(first, n + 1)]
         if not e['gallery']:
             del e['gallery']
+    for e in cat:
+        e.pop('film', None)
     for i, slug in FILMS.items():
         by_id[i]['film'] = {'src': f'{F}{slug}.mp4', 'poster': f'{F}{slug}.jpg', 'seconds': 14}
+    # films added later with tools/add-film.sh are named by entry code, e.g. assets/films/a41.mp4
+    import os
+    films_dir = os.path.join(os.path.dirname(os.path.abspath(path)), 'assets', 'films')
+    for e in cat:
+        name = e['id'].lower()
+        if e['id'][0] == 'A' and os.path.exists(os.path.join(films_dir, name + '.mp4')):
+            e['film'] = {'src': f'{F}{name}.mp4', 'poster': f'{F}{name}.jpg', 'seconds': 14}
+    for (i, title, kind, effort, medium, purpose, mood, desc, use, motion, build, avoid, test, alt, checks, cues, fx) in STYLES:
+        e = {
+            'id': i, 'title': title, 'kind': kind, 'desc': desc, 'use': use, 'motion': motion, 'build': build,
+            'avoid': avoid, 'tags': effort.upper() + ' / ' + medium.upper(), 'test': test, 'alternate': alt,
+            'checks': checks, 'cues': cues, 'group': 'Styles', 'effort': effort, 'medium': medium,
+            'purpose': purpose, 'mood': mood, 'isNew': True, 'pairs': {'theme': i, 'effect': fx},
+            'prompts': style_prompts(title, test, alt, motion, build, avoid, checks, cues),
+        }
+        if i in by_id:
+            by_id[i].update(e)
+        else:
+            cat.append(e)
+            by_id[i] = e
     # keep A entries in id order
     a = sorted([e for e in cat if e['id'][0] == 'A'], key=lambda e: int(e['id'][1:]))
     it = iter(a)

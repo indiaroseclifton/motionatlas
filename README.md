@@ -74,7 +74,7 @@ that carries the film across the site.
   compact drawing next to the label instead.
 - **Pairs well with**: three or four related sections under each intro, so every page leads on.
 - **Search the atlas**: button in the header, or ⌘K / Ctrl+K / `/` anywhere. Searches all 18 pages
-  and all 264 catalogue entries; arrow keys move, Enter opens (entries open in their detail view
+  and all 266 catalogue entries; arrow keys move, Enter opens (entries open in their detail view
   or design-system hub), Esc closes.
 - **Motion**: page title, intro and links rise in on each page; catalogue cards and other grids
   ease in as they scroll into view (including ones added by "Show more" or filters); a
@@ -92,7 +92,7 @@ that carries the film across the site.
    light/dark, density, label and icon controls, a state matrix, and code export for HTML,
    CSS, React and tokens, plus accessibility and usage notes. Links look like
    `#ux?component=C30&theme=S16`.
-3. **Landing effects lab** (`#effects`): 34 effects (L01–L34, 16 new). Each runs live in a
+3. **Landing effects lab** (`#effects`): 37 effects (L01–L37, 19 new). Each runs live in a
    sandboxed frame you can switch between desktop, tablet and phone, with controls for
    intensity, duration and easing, a reduced-motion check, and "Get the code" (full page,
    HTML, CSS or JS). Links look like `#effects?fx=L25`.
@@ -106,7 +106,7 @@ that carries the film across the site.
 5. **Eight new styles** (S13–S20): liquid glass, aurora mesh, claymorphism, editorial
    maximalism, anti-design, solarpunk, terminal and zine/riso. Each has a native catalogue
    tile, a studio-dashboard treatment in the detail view and Compare, and links to its
-   component-lab skin and its paired effect. The catalogue then had 230 entries (264 after the specimen films below).
+   component-lab skin and its paired effect. The catalogue then had 230 entries (266 after the additions below).
 6. **New features:**
    - **Find a direction**: a five-question finder in the header that recommends a style,
      type, motion and effect, then lets you copy the brief.
@@ -150,6 +150,47 @@ Your package of 11 films, 68 renders and a style list is merged in with
 - Reduced motion and Save-Data get posters only, and nothing plays until clicked. Every film is
   muted and pauses when it is off screen or the tab is hidden.
 
+### Live simulations, new styles, hero templates, sharing and SEO
+
+- **Live simulations** (`live-sims.js` + `live-sims.css`). Five entries run as real, adjustable
+  simulations in the animation studio, each with its own sliders and "Show reference image":
+  - **A84 Lorenz attractor:** RK4, with σ, ρ and β sliders; drag to turn the view.
+  - **A76 Double pendulum:** RK4, with a "chaos twin" released 0.001° away that visibly diverges.
+  - **A78 Reaction-diffusion:** Gray-Scott, with feed and kill rates and four pattern presets;
+    draw on the stage to seed.
+  - **A88 Metaballs:** an inverse-square field; the pointer adds a blob.
+  - **A49 Ferrofluid:** a stylised spike lattice; the pointer steers the magnet.
+
+  They follow Play/Pause, Speed and Reduced motion, and "Record clip" records them.
+- **Two new visual styles from your plates: S21 Cyanotype and S22 Botanical plate.** Both have
+  full themes (light and dark) in the component lab, native catalogue tiles, the shared
+  dashboard mock-up, finder scoring and paired effects. Styles go from 20 to 22, and the
+  catalogue from 264 to 266 entries.
+- **Hero templates L35–L37** in the effects lab, built on your films:
+  - **L35 Split-screen film hero:** hover a side and it opens up.
+  - **L36 Scroll story with film:** chapters scroll past a pinned film that changes with each one.
+  - **L37 Looping film with type:** letter-by-letter type and a keyword band over a dimmed loop.
+- **Film prompts** for the 25 new entries that still have no film are in
+  `docs/film-prompts.md`, matched to your existing films. To add a finished clip, run
+  `tools/add-film.sh A41 path/to/A41.mp4`. It encodes the loop and poster and adds the film to
+  the entry, its catalogue card and the film library.
+- **Sharing** (`atlas-share.js` + `atlas-share.css`):
+  - Every entry now has a link (`atlas#browse?entry=A53`), and the address bar updates while
+    an entry is open.
+  - "Share this direction" in any entry makes a 1200 × 630 card image to share, save, or copy
+    the link from.
+  - Page titles and descriptions follow the section and the open entry.
+- **Email sign-up** on the home page ("Get the next plates"). It is **not connected yet**: set
+  `ATLAS_SIGNUP.endpoint` at the top of `atlas-share.js` to a form endpoint that accepts a POST
+  with an `email` field, such as a Formspree form (`https://formspree.io/f/yourid`) or Buttondown
+  (`https://buttondown.com/api/emails/embed-subscribe/yourname`). Until then the form says
+  sign-ups open soon and sends nothing.
+- **SEO.** `atlas.html` has a new title and description, plus a canonical link, Open Graph and
+  Twitter cards with `assets/og-atlas.jpg`, structured data (JSON-LD), a favicon and a
+  `<noscript>` summary. `robots.txt` and `sitemap.xml` sit next to `atlas.html`. The atlas is
+  a single page whose sections live after the `#`, so search engines see one page; the
+  sitemap lists that one URL.
+
 ### What to upload
 
 Upload the contents of `site/` except `site/original/` (backups of the live files). The files
@@ -166,7 +207,9 @@ that are new or changed against the live site are:
   - `new-styles.js`, `new-styles.css`
   - `atlas-features.js`, `atlas-features.css`
   - `specimen-films.js`, `specimen-films.css`
+  - `live-sims.js`, `live-sims.css`, `atlas-share.js`, `atlas-share.css`
 - **Service worker:** `sw.js`, at the site root next to `atlas.html`
+- **SEO files:** `robots.txt` and `sitemap.xml`, at the site root, plus `assets/og-atlas.jpg` and `assets/favicon.svg`
 - **Assets:**
   - `assets/atlas-hero-1080.mp4`, `assets/atlas-hero-720.mp4`, `assets/atlas-hero.webm`,
     `assets/atlas-hero-poster.jpg`
@@ -186,5 +229,5 @@ axe WCAG 2 A/AA scan finds no violations on home, catalogue, systems, motion, ef
 type, projects, inspiration, vases, compare or art. Every theme's button text meets 4.5:1
 contrast in both modes.
 
-`sw.js` is now on cache `atlas-v2`. Raise it again (`atlas-v3`) on each later deploy so
+`sw.js` is now on cache `atlas-v3`. Raise it again (`atlas-v4`) on each later deploy so
 returning visitors pick up the new files at once.

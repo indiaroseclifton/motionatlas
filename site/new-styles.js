@@ -2,13 +2,13 @@
 /* New styles S13-S20: native style tiles (no raster image), built from the same theme tokens as
    the component lab, plus links to the component lab skin and the paired landing effect. */
 (()=>{
- const NEW=/^S(1[3-9]|20)$/;
+ const NEW=/^S(1[3-9]|2[0-2])$/;
  const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  function vars(id,mode='light'){const t=AtlasThemes.byId[id];if(!t)return'';AtlasThemes.loadFonts(t);return Object.entries(AtlasThemes.vars(t,mode,'comfortable')).map(([k,v])=>`${k}:${String(v).replace(/"/g,"'")}`).join(';');}
  function tile(e,interactive){
   const t=AtlasThemes.byId[e.id];if(!t)return '';
-  const c=t.light;const fx=e.pairs?.effect;
-  return `<div class="styleTile cl-root" data-style-tile="${e.id}" style="${vars(e.id)}">
+  const mode=e.id==='S21'?'dark':'light';const c=t[mode];const fx=e.pairs?.effect;
+  return `<div class="styleTile cl-root" data-style-tile="${e.id}" style="${vars(e.id,mode)}">
    <div class="stHead"><span class="stCode">${e.id} · New style</span><span class="stAa" aria-hidden="true">Aa</span></div>
    <h4 class="stTitle">${esc(e.title)}</h4>
    <div class="stSwatches" aria-label="Palette">${[c.bg,c.surface,c.text,c.accent,c.success,c.danger].map(v=>`<i style="background:${v}" title="${v}"></i>`).join('')}</div>

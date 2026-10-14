@@ -75,7 +75,7 @@ window.HomeAtlas={
 </section>
 
 <section class="vmaInner vmaSection" style="--c:var(--ice)">
- <div class="vmaSectionHead"><div><p class="vmaLabel vmaLabelC">Specimens &middot; 264 entries</p><h2>The whole system.<br><em>And every little part.</em></h2></div><p>Find controls, graphics, typography and icon assets from our original concepts. Inspect the source, download a specimen or try an editable component.</p></div>
+ <div class="vmaSectionHead"><div><p class="vmaLabel vmaLabelC">Specimens &middot; 266 entries</p><h2>The whole system.<br><em>And every little part.</em></h2></div><p>Find controls, graphics, typography and icon assets from our original concepts. Inspect the source, download a specimen or try an editable component.</p></div>
  <div class="vmaPlates2">${plate('D24','09b1d06eba49.jpg',100,100,'Golden Hour','Player / tactile controls')}${plate('D25','d1bd34fc70f4.jpg',0,0,'Clearspace','Glass / translucent layers')}</div>
  <div class="vmaLinks"><a href="#assets">Extracted assets &rarr;</a><a href="#icons">Icon families &rarr;</a><a href="#typography">Fonts &amp; pairings &rarr;</a><a href="#references">Official sources &amp; downloads &rarr;</a></div>
 </section>

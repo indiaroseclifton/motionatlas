@@ -404,7 +404,7 @@ if(!gl){c.hidden=true;document.querySelector('.fallback').hidden=false;}else{
   js:`addEventListener('scroll',()=>requestAnimationFrame(()=>{document.querySelectorAll('.blobs').forEach(b=>b.style.filter='blur('+(70*FX.i)+'px) saturate(140%) hue-rotate('+(scrollY*.08)+'deg)');}),{passive:true});`},
 
  {id:'L27',name:'Data reveal',isNew:true,tags:['Reveal','Data'],perf:['transform, text','Low'],about:'Numbers count up and bars grow as they enter, with tabular figures so nothing jitters. The final values are in the HTML for screen readers and no-JS.',
-  html:`<section class="wrap dr"><p class="kicker">Atlas in numbers</p><h1>A library that grows.</h1><div class="stats">${[[264,'specimens'],[60,'motion studies'],[32,'design systems'],[201,'extracted assets']].map(([n,l])=>`<div class="st"><b data-to="${n}">${n}</b><span>${l}</span></div>`).join('')}</div><figure class="chart" aria-label="Entries per collection"><svg viewBox="0 0 600 260" role="img" aria-label="Bar chart: Animation art 40, UX/UI 40, Art styles 36, Systems 32, Interface motion 20, Effects 18">${[['Anim. art',40],['UX/UI',40],['Art',36],['Systems',32],['Motion UI',20],['Effects',18]].map(([l,v],i)=>`<g transform="translate(${20+i*96},0)"><rect class="bar" x="0" y="${220-v*5}" width="64" height="${v*5}" rx="6"/><text x="32" y="${212-v*5}" text-anchor="middle" class="v">${v}</text><text x="32" y="246" text-anchor="middle" class="l">${l}</text></g>`).join('')}</svg></figure></section>${END('Counted.')}`,
+  html:`<section class="wrap dr"><p class="kicker">Atlas in numbers</p><h1>A library that grows.</h1><div class="stats">${[[266,'specimens'],[60,'motion studies'],[32,'design systems'],[201,'extracted assets']].map(([n,l])=>`<div class="st"><b data-to="${n}">${n}</b><span>${l}</span></div>`).join('')}</div><figure class="chart" aria-label="Entries per collection"><svg viewBox="0 0 600 260" role="img" aria-label="Bar chart: Animation art 40, UX/UI 40, Art styles 36, Systems 32, Interface motion 20, Effects 18">${[['Anim. art',40],['UX/UI',40],['Art',36],['Systems',32],['Motion UI',20],['Effects',18]].map(([l,v],i)=>`<g transform="translate(${20+i*96},0)"><rect class="bar" x="0" y="${220-v*5}" width="64" height="${v*5}" rx="6"/><text x="32" y="${212-v*5}" text-anchor="middle" class="v">${v}</text><text x="32" y="246" text-anchor="middle" class="l">${l}</text></g>`).join('')}</svg></figure></section>${END('Counted.')}`,
   css:`.dr{padding:16vh 6vw;display:grid;gap:30px}.dr h1{font-size:clamp(46px,6vw,88px)}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
 .st{background:#fff;border:1px solid #d9dee6;border-radius:16px;padding:22px}
@@ -542,6 +542,52 @@ document.querySelectorAll('.card').forEach(c=>{const on=()=>{if(FX.R)return;let 
  const off=()=>{c.classList.remove('on');c.querySelector('video')?.pause();};
  if(fine){c.addEventListener('pointerenter',on);c.addEventListener('pointerleave',off);}else c.addEventListener('click',()=>c.classList.contains('on')?off():on());
  c.addEventListener('focus',on);c.addEventListener('blur',off);});`},
+
+ {id:'L35',name:'Split-screen film hero',isNew:true,tags:['Media','Pointer'],perf:['flex-basis on two panels','Low'],about:'Two films share the hero. Hover, focus or tap a side and it opens up while the other recedes; the headline spans both. On phones the halves stack.',
+  html:`<section class="split" aria-label="Choose a material"><a class="side" href="#ink" data-s="suminagashi"><video muted loop playsinline autoplay poster="assets/films/suminagashi.jpg" src="assets/films/suminagashi.mp4"></video><span class="cap"><small class="kicker">A53</small><b>Ink</b><em>Marbled on water</em></span></a><a class="side" href="#iron" data-s="ferrofluid"><video muted loop playsinline autoplay poster="assets/films/ferrofluid.jpg" src="assets/films/ferrofluid.mp4"></video><span class="cap"><small class="kicker">A49</small><b>Iron</b><em>Raised by a magnet</em></span></a><h1 class="mid">Two ways<br>to move.</h1></section>${END('Pick a side.')}`,
+  css:`.split{position:relative;display:flex;height:100vh;background:#02040b;overflow:hidden}
+.side{position:relative;flex:1 1 0;min-width:0;overflow:hidden;color:#fff;text-decoration:none;transition:flex-grow var(--fx-duration) var(--fx-ease),filter var(--fx-duration) var(--fx-ease)}
+.side video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.side::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(2,4,11,.75),rgba(2,4,11,0) 50%)}
+.split:hover .side,.split:focus-within .side{filter:saturate(.6) brightness(.7)}
+.split .side:hover,.split .side:focus-visible,.side.on{flex-grow:calc(1 + 1.4*var(--fx-intensity));filter:none}
+.side:focus-visible{outline:3px solid #fde68a;outline-offset:-6px}
+.cap{position:absolute;left:6vw;bottom:8vh;z-index:1;display:grid;gap:6px}.side:nth-child(2) .cap{left:auto;right:6vw;text-align:right}
+.cap .kicker{color:#fde68a}.cap b{font:300 clamp(48px,7vw,110px)/.9 "Cormorant Garamond",serif}.cap em{font:400 15px "Manrope",sans-serif;font-style:normal;color:#d6dde8}
+.mid{position:absolute;left:50%;top:12vh;transform:translateX(-50%);z-index:2;color:#fff;text-align:center;font-size:clamp(40px,5vw,76px);pointer-events:none;text-shadow:0 4px 30px rgba(0,0,0,.6)}
+@media(max-width:720px){.split{flex-direction:column}.side:nth-child(2) .cap{right:auto;left:6vw;text-align:left}.mid{top:auto;bottom:50%;transform:translate(-50%,50%);width:100%}}`,
+  js:`const sides=[...document.querySelectorAll('.side')];
+sides.forEach(s=>{s.addEventListener('click',e=>{if(!matchMedia('(hover:hover)').matches&&!s.classList.contains('on')){e.preventDefault();sides.forEach(x=>x.classList.toggle('on',x===s));}else e.preventDefault();});});
+if(FX.R)document.querySelectorAll('video').forEach(v=>{v.removeAttribute('autoplay');v.pause();});`},
+
+ {id:'L36',name:'Scroll story with film',isNew:true,tags:['Scroll','Media'],perf:['opacity crossfade; one video playing','Medium'],about:'A pinned film sits behind the page while chapters of text scroll past. Each chapter brings in its own film with a crossfade, and dots show where you are. Only the visible film plays.',
+  html:`<section class="story"><div class="stage">${[['harmonograph-plate','Plate'],['lissajous-drawing','Pen'],['embroidery','Thread'],['sand-drawing','Sand']].map(([s],i)=>`<video muted loop playsinline preload="${i?'none':'auto'}" poster="assets/films/${s}.jpg" data-src="assets/films/${s}.mp4"></video>`).join('')}<div class="veil"></div><ol class="dots" aria-hidden="true"><li></li><li></li><li></li><li></li></ol></div><div class="chapters">${[['I','The plan','Every line starts as a diagram: two pendulums, a ratio, a pen.'],['II','The pen','The machine draws what the maths describes, one pass at a time.'],['III','The thread','By hand, the same patience: one stitch after another.'],['IV','The sand','And a line can be drawn to be erased, then drawn again.']].map(([n,t,d])=>`<article class="ch"><p class="kicker">Chapter ${n}</p><h2>${t}</h2><p class="lede">${d}</p></article>`).join('')}</div></section>${END('How lines are made.')}`,
+  css:`.story{position:relative;background:#02040b}
+.stage{position:sticky;top:0;height:100vh;overflow:hidden}
+.stage video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity var(--fx-duration) var(--fx-ease)}.stage video.on{opacity:1}
+.veil{position:absolute;inset:0;background:linear-gradient(90deg,rgba(2,4,11,calc(.85*var(--fx-intensity))),rgba(2,4,11,.15) 60%)}
+.dots{position:absolute;right:4vw;top:50%;transform:translateY(-50%);list-style:none;margin:0;padding:0;display:grid;gap:10px}.dots li{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.35);transition:background .3s,transform .3s}.dots li.on{background:#fde68a;transform:scale(1.5)}
+.chapters{position:relative;margin-top:-100vh}
+.ch{min-height:100vh;display:grid;align-content:center;gap:14px;padding:0 6vw;max-width:620px;color:#eef2f8}
+.ch h2{font-size:clamp(46px,6vw,92px)}.ch .lede{color:#c8d1df}.ch .kicker{color:#fde68a}
+.ch{opacity:.25;transition:opacity calc(var(--fx-duration)*.6) ease}.ch.on{opacity:1}`,
+  js:`const vids=[...document.querySelectorAll('.stage video')],dots=[...document.querySelectorAll('.dots li')],chs=[...document.querySelectorAll('.ch')];let cur=-1;
+function go(i){if(i===cur)return;cur=i;vids.forEach((v,k)=>{const on=k===i;if(on&&!v.src)v.src=v.dataset.src;v.classList.toggle('on',on);if(on&&!FX.R)v.play().catch(()=>{});else v.pause();});dots.forEach((d,k)=>d.classList.toggle('on',k===i));chs.forEach((c,k)=>c.classList.toggle('on',k===i));}
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)go(chs.indexOf(e.target));}),{threshold:.55});chs.forEach(c=>io.observe(c));go(0);`},
+
+ {id:'L37',name:'Looping film with type',isNew:true,tags:['Type','Media'],perf:['transform on letters; one looping video','Low'],about:'A quiet looping film fills the hero while the headline assembles letter by letter and a keyword band drifts along the bottom. The film is dimmed so the type always reads.',
+  html:`<section class="loop"><video muted loop playsinline autoplay poster="assets/films/bioluminescent-trails.jpg" src="assets/films/bioluminescent-trails.mp4"></video><div class="shade"></div><div class="wrap inner"><p class="kicker">Specimen A67 · bioluminescence</p><h1 class="kin" aria-label="Light finds its way.">Light finds its way.</h1><p class="lede">A looping film, dimmed beneath type that assembles as the page loads.</p><div class="cta"><a href="#start" class="btn">Start exploring</a><a href="#films" class="btn ghost">Watch the films</a></div></div><div class="band" aria-hidden="true"><div>${'Ferrofluid · Suminagashi · Harmonograph · Soap film · Erosion · Embroidery · Lissajous · '.repeat(4)}</div></div></section>${END('Type over motion.')}`,
+  css:`.loop{position:relative;min-height:100vh;display:grid;align-content:center;color:#fff;overflow:hidden;background:#02040b}
+.loop video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.loop .shade{position:absolute;inset:0;background:radial-gradient(90% 80% at 30% 50%,rgba(2,4,11,calc(.75*var(--fx-intensity))),rgba(2,4,11,.35))}
+.inner{position:relative;display:grid;gap:18px;margin:0;padding-top:6vh}.inner .kicker{color:#67e8f9}.inner .lede{color:#cbd5e1}
+.kin{font-size:clamp(56px,9vw,150px)}.kin span{display:inline-block;opacity:0;transform:translateY(.4em) rotate(4deg);animation:up var(--fx-duration) var(--fx-ease) forwards}.kin span.sp{width:.25em}
+@keyframes up{to{opacity:1;transform:none}}
+.cta{display:flex;flex-wrap:wrap;gap:10px}.btn{font:600 15px "Manrope",sans-serif;color:#02040b;background:#fff;padding:14px 22px;border-radius:999px;text-decoration:none}.btn.ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.5)}.btn:focus-visible{outline:3px solid #67e8f9;outline-offset:3px}
+.band{position:absolute;left:0;right:0;bottom:4vh;overflow:hidden;white-space:nowrap;font:400 clamp(22px,2.6vw,36px) "Cormorant Garamond",serif;color:rgba(255,255,255,.55)}
+.band div{display:inline-block;animation:slide calc(var(--fx-duration)*40) linear infinite}@keyframes slide{to{transform:translateX(-50%)}}`,
+  js:`const h=document.querySelector('.kin');const text=h.textContent;h.textContent='';[...text].forEach((c,i)=>{const s=document.createElement('span');s.setAttribute('aria-hidden','true');if(c===' ')s.className='sp';s.textContent=c;s.style.animationDelay=(i*FX.d*.04)+'ms';h.append(s);});
+if(FX.R){document.querySelector('video').removeAttribute('autoplay');document.querySelector('video').pause();}`},
  ];
 
  // A few scripts declare their image path last; move that declaration to the top so it exists before use.
@@ -556,14 +602,14 @@ document.querySelectorAll('.card').forEach(c=>{const on=()=>{if(FX.R)return;let 
 
  /* ---------- Lab UI ---------- */
  const S={filter:'All',device:'desktop',intensity:1,duration:900,ease:'expressive',reduce:matchMedia('(prefers-reduced-motion: reduce)').matches,codeTab:'full'};
- const THUMB={L01:'castle',L02:'lake',L03:'amber',L04:'nebula',L05:'scope',L06:'riso',L07:'contours',L08:'mercury',L09:'thermal',L10:'smoke',L11:'synthwave',L12:'coast',L13:'origami',L14:'pointface',L15:'fieldlines',L16:'constellation',L17:'bird',L18:'garden',L19:'voronoi',L20:'cathedral',L21:'exploded',L22:'mandelbulb',L23:'film/f30',L24:'tree',L25:'fluid',L26:'audio',L27:'cells',L28:'wave',L29:'riso',L30:'fox',L31:'film-reel',L32:'film-scrub',L33:'film-type',L34:'film-cards'};
+ const THUMB={L01:'castle',L02:'lake',L03:'amber',L04:'nebula',L05:'scope',L06:'riso',L07:'contours',L08:'mercury',L09:'thermal',L10:'smoke',L11:'synthwave',L12:'coast',L13:'origami',L14:'pointface',L15:'fieldlines',L16:'constellation',L17:'bird',L18:'garden',L19:'voronoi',L20:'cathedral',L21:'exploded',L22:'mandelbulb',L23:'film/f30',L24:'tree',L25:'fluid',L26:'audio',L27:'cells',L28:'wave',L29:'riso',L30:'fox',L31:'film-reel',L32:'film-scrub',L33:'film-type',L34:'film-cards',L35:'film-split',L36:'film-story',L37:'film-loop'};
  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  let root,dlg,frame,timer;
  function build(){
   const page=document.getElementById('effects');if(!page||document.getElementById('effectsLab'))return;
   root=document.createElement('section');root.id='effectsLab';root.className='fxl';
   const tags=['All','New','Scroll','Pointer','Reveal','Type','Media','Canvas','WebGL','Navigation'];
-  root.innerHTML=`<div class="fxl-head"><div><p class="fxl-kicker">Effects lab · 34 effects · 16 new</p><h2>Scroll them for real.</h2></div><p>Every effect opens full screen in a working page. Tune intensity, duration and easing, check it on a phone, then copy the code: the code is exactly what the preview runs.</p></div>
+  root.innerHTML=`<div class="fxl-head"><div><p class="fxl-kicker">Effects lab · 37 effects · 19 new</p><h2>Scroll them for real.</h2></div><p>Every effect opens full screen in a working page. Tune intensity, duration and easing, check it on a phone, then copy the code: the code is exactly what the preview runs.</p></div>
   <div class="fxl-filters" role="group" aria-label="Filter effects">${tags.map(t=>`<button type="button" data-tag="${t}" aria-pressed="${t==='All'}">${t}</button>`).join('')}</div>
   <div class="fxl-grid" id="fxlGrid"></div>`;
   const anchor=page.querySelector('h1')?.closest('.aeHasBand')?page.querySelector('.aeRelated')||page.querySelector('.intro'):page.querySelector('.intro');

@@ -35,7 +35,7 @@ const AtlasPreviews={
  M19:`<div class="pv-exploded"><span>Label</span><span>Surface</span><span>Border</span><span>Shadow</span></div>`,
  M20:`<div class="pv-breathe"><span></span></div><div class="pv-measure">Slow cycle / pause at any time</div>`
  };
- if(!templates[e.id]){if(window.NewStyles&&/^S(1[3-9]|20)$/.test(e.id))return NewStyles.tile(e,false);if(/^S(1[3-9]|20)$/.test(e.id))return `<div class="styleTile" data-pending-style="${e.id}"></div>`;throw Error('Missing specimen preview: '+e.id);}
+ if(!templates[e.id]){if(window.NewStyles&&/^S(1[3-9]|2[0-2])$/.test(e.id))return NewStyles.tile(e,false);if(/^S(1[3-9]|2[0-2])$/.test(e.id))return `<div class="styleTile" data-pending-style="${e.id}"></div>`;throw Error('Missing specimen preview: '+e.id);}
  return `<div class="specimen-preview" data-preview="${e.id}" role="img" aria-label="${esc(e.title)} component example"><div class="pv-stage">${templates[e.id]}</div><span class="pv-caption">${e.id[0]==='M'?'Motion specimen / open to play':'Component specimen'}</span></div>`;
  }
 };
