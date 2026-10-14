@@ -191,13 +191,43 @@ Your package of 11 films, 68 renders and a style list is merged in with
   a single page whose sections live after the `#`, so search engines see one page; the
   sitemap lists that one URL.
 
+### Explore by feel, guided tours and four more live simulations
+
+- **Explore by feel** (`atlas-explore.js` + `atlas-explore.css`). The catalogue has a row of
+  feel chips with live counts: Liquid & metal, Pen & line, Generative, Print & paper,
+  Light & glow, Handmade, Glass & soft, Digital & retro.
+  - "Has film" and "Live study" toggles combine with any feel.
+  - Search understands feel words ("liquid", "pen", "print", "glow", "handmade") and
+    matches whole words, so "pen" no longer finds "open".
+  - Filters are shareable links, such as `#browse?feel=liquid&film=1`.
+  - Every entry's detail view shows its feels as links.
+  - Feels come from keyword rules plus hand-picked overrides in `OVERRIDE` at the top of the file.
+- **Guided tours** (`atlas-tours.js` + `atlas-tours.css`; new page `#tours`, linked in the header
+  and from a teaser row on the home page). There are six tours: Liquid & metal, Lines & machines,
+  Print & paper, Living systems, Light & glow and By hand.
+  - Each tour has nine stops that mix specimen films, live simulations, visual styles and
+    landing effects, with a line on why each stop is there.
+  - Stop buttons open the entry, play the live study, open the effect or try a style in the
+    component lab.
+  - A tour can be shared as a link (`#tours?t=lines`) or saved as a 1200 × 630 tour card, ready
+    to post.
+  - Edit the `TOURS` list at the top of the file to change or add tours.
+- **Four more live simulations**, nine in total:
+  - **A81 Flocking (boids):** separation, alignment and cohesion; attract with the pointer, or
+    hold to scatter.
+  - **A32 Flow field:** curl-noise particles; click to drop a vortex.
+  - **A56 Harmonograph:** damped pendulums drawing on paper, with ratio presets, detune, phase
+    and damping.
+  - **A26 Cellular automata:** Life, HighLife, Day & Night, Seeds, Maze and Coral; draw to add
+    cells.
+
 ### What to upload
 
 Upload the contents of `site/` except `site/original/` (backups of the live files). The files
 that are new or changed against the live site are:
 
 - **Pages and data:** `atlas.html`, `catalogue.json`
-- **Changed scripts and styles:** `app.js`, `app.css`, `home.js`, `home.css`, `extracted.js`,
+- **Changed scripts and styles:** `app.js`, `app.css`, `home.js`, `home.css`, `kits.js`, `extracted.js`,
   `extracted.css`, `previews.js`
 - **New scripts and styles:**
   - `atlas-theme.css`, `atlas-enhance.css`, `atlas-enhance.js`
@@ -208,6 +238,7 @@ that are new or changed against the live site are:
   - `atlas-features.js`, `atlas-features.css`
   - `specimen-films.js`, `specimen-films.css`
   - `live-sims.js`, `live-sims.css`, `atlas-share.js`, `atlas-share.css`
+  - `atlas-explore.js`, `atlas-explore.css`, `atlas-tours.js`, `atlas-tours.css`
 - **Service worker:** `sw.js`, at the site root next to `atlas.html`
 - **SEO files:** `robots.txt` and `sitemap.xml`, at the site root, plus `assets/og-atlas.jpg` and `assets/favicon.svg`
 - **Assets:**
@@ -229,5 +260,5 @@ axe WCAG 2 A/AA scan finds no violations on home, catalogue, systems, motion, ef
 type, projects, inspiration, vases, compare or art. Every theme's button text meets 4.5:1
 contrast in both modes.
 
-`sw.js` is now on cache `atlas-v3`. Raise it again (`atlas-v4`) on each later deploy so
+`sw.js` is now on cache `atlas-v4`. Raise it again (`atlas-v5`) on each later deploy so
 returning visitors pick up the new files at once.

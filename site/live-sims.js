@@ -99,7 +99,74 @@
    label(ctx,['FERROFLUID / ROSENSWEIG SPIKES',`field ${P.field.toFixed(2)}  reach ${P.reach.toFixed(2)}`,'move the pointer to steer the magnet']);},
   pointer(s,u,v){s.mag=u==null?null:[u,v];}};
 
- const SIMS={A84:lorenz,A76:pend,A78:rd,A88:meta,A49:ferro};
+ /* ---------- A81 Boids (flocking) ---------- */
+ const boids={name:'Flocking (boids)',note:'Every point follows three local rules: keep a little distance, match its neighbours\' heading and drift toward their centre. The swarm\'s shapes emerge from those rules alone. Move the pointer to attract the flock; hold to scatter it.',
+  params:[{k:'n',l:'Agents',min:100,max:1400,step:50,v:700},{k:'sep',l:'Separation',min:0,max:3,step:.05,v:1.4},{k:'ali',l:'Alignment',min:0,max:3,step:.05,v:1},{k:'coh',l:'Cohesion',min:0,max:3,step:.05,v:.9},{k:'speed',l:'Speed',min:.5,max:3,step:.05,v:1.4},{k:'trail',l:'Trail length',min:0,max:.95,step:.01,v:.82}],
+  init(s,P,w,h){s.w=w;s.h=h;s.b=[];for(let i=0;i<1400;i++){const a=Math.random()*TAU;s.b.push({x:Math.random()*w,y:Math.random()*h,vx:Math.cos(a),vy:Math.sin(a)});}s.ptr=null;s.down=false;s.clear=true;},
+  step(s,P,dt){const n=P.n|0,R=38,R2=R*R,cell=R,cols=Math.ceil(s.w/cell)+1,grid=new Map(),B=s.b;const sc=Math.min(s.w,s.h)/700;
+   for(let i=0;i<n;i++){const b=B[i],k=((b.x/cell)|0)+((b.y/cell)|0)*cols;(grid.get(k)||grid.set(k,[]).get(k)).push(i);}
+   const max=P.speed*2.2*Math.max(.6,sc),k=Math.min(3,dt*60);
+   for(let i=0;i<n;i++){const b=B[i],cx=(b.x/cell)|0,cy=(b.y/cell)|0;let sx=0,sy=0,ax=0,ay=0,mx=0,my=0,c=0;
+    for(let gy=cy-1;gy<=cy+1;gy++)for(let gx=cx-1;gx<=cx+1;gx++){const L=grid.get(gx+gy*cols);if(!L)continue;for(const j of L){if(j===i)continue;const o=B[j],dx=o.x-b.x,dy=o.y-b.y,d2=dx*dx+dy*dy;if(d2>R2||d2===0)continue;c++;ax+=o.vx;ay+=o.vy;mx+=dx;my+=dy;if(d2<R2*.25){sx-=dx/d2;sy-=dy/d2;}}}
+    if(c){b.vx+=(ax/c-b.vx)*.05*P.ali+mx/c*.0008*P.coh+sx*1.6*P.sep;b.vy+=(ay/c-b.vy)*.05*P.ali+my/c*.0008*P.coh+sy*1.6*P.sep;}
+    if(s.ptr){const dx=s.ptr[0]*s.w-b.x,dy=s.ptr[1]*s.h-b.y,d=Math.hypot(dx,dy)+1;const f=s.down?-1.2:.25;b.vx+=dx/d*f*.06;b.vy+=dy/d*f*.06;}
+    const v=Math.hypot(b.vx,b.vy)||1;if(v>max){b.vx*=max/v;b.vy*=max/v;}else if(v<max*.4){b.vx*=1.05;b.vy*=1.05;}
+    b.x=(b.x+b.vx*k+s.w)%s.w;b.y=(b.y+b.vy*k+s.h)%s.h;}},
+  draw(ctx,w,h,s,P){if(s.w!==w||s.h!==h){s.w=w;s.h=h;s.clear=true;}
+   if(s.clear){ctx.fillStyle='#02040b';ctx.fillRect(0,0,w,h);s.clear=false;}else{ctx.fillStyle=`rgba(2,4,11,${1-P.trail})`;ctx.fillRect(0,0,w,h);}
+   ctx.globalCompositeOperation='lighter';const n=P.n|0,r=Math.max(1.2,Math.min(w,h)/420);
+   for(let i=0;i<n;i++){const b=s.b[i];ctx.fillStyle=i%7?'rgba(56,189,248,.75)':'rgba(165,243,252,.95)';ctx.beginPath();ctx.arc(b.x,b.y,r,0,TAU);ctx.fill();}
+   ctx.globalCompositeOperation='source-over';ctx.fillStyle='#02040b';ctx.fillRect(10,10,330,56);label(ctx,['FLOCKING / BOIDS',`${n} agents  sep ${P.sep.toFixed(2)}  ali ${P.ali.toFixed(2)}  coh ${P.coh.toFixed(2)}`,'move to attract, hold to scatter']);},
+  pointer(s,u,v){s.ptr=u==null?null:[u,v];},paint(s){s.down=true;clearTimeout(s.t);s.t=setTimeout(()=>{s.down=false;},350);}};
+
+ /* ---------- A32 Flow field ---------- */
+ const flow={name:'Flow field',note:'Thousands of particles follow a smooth vector field built from layered waves, leaving luminous trails like wind or current made visible. The field slowly evolves. Click to drop a vortex.',
+  params:[{k:'n',l:'Particles',min:500,max:8000,step:250,v:3500},{k:'scale',l:'Field scale',min:.3,max:3,step:.05,v:1},{k:'speed',l:'Speed',min:.2,max:3,step:.05,v:1.1},{k:'evolve',l:'Field evolution',min:0,max:2,step:.05,v:.5},{k:'trail',l:'Trail length',min:.5,max:.99,step:.01,v:.93}],
+  init(s,P,w,h){s.w=w;s.h=h;s.t=0;s.p=new Float32Array(16000);for(let i=0;i<8000;i++){s.p[i*2]=Math.random()*w;s.p[i*2+1]=Math.random()*h;}s.vort=[];s.clear=true;},
+  psi(s,P,x,y){const u=x/s.w*6*P.scale,v=y/s.h*4*P.scale,t=s.t*P.evolve;return Math.sin(u*1.1+t*.7)*Math.cos(v*1.3-t*.5)+.6*Math.sin((u+v)*1.7+t)+.4*Math.cos(u*2.3-v*1.9+t*.9);},
+  field(s,P,x,y){const e=2,a=this.psi(s,P,x,y+e)-this.psi(s,P,x,y-e),b=this.psi(s,P,x+e,y)-this.psi(s,P,x-e,y);let fx=a/(2*e),fy=-b/(2*e);const m=Math.hypot(fx,fy)||1e-6,k=Math.min(1,m*90)/m;fx*=k*1.2;fy*=k*1.2;
+   for(const q of s.vort){const dx=x-q[0],dy=y-q[1],d2=dx*dx+dy*dy+400,f=q[2]*6000/d2;fx+=-dy/Math.sqrt(d2)*f;fy+=dx/Math.sqrt(d2)*f;}return [fx,fy];},
+  step(s,P,dt){s.t+=dt;const n=P.n|0,k=Math.min(3,dt*60)*P.speed*Math.max(.7,Math.min(s.w,s.h)/600);s.prev=s.prev||new Float32Array(16000);s.prev.set(s.p);
+   for(let i=0;i<n;i++){let x=s.p[i*2],y=s.p[i*2+1];const f=this.field(s,P,x,y);x+=f[0]*k;y+=f[1]*k;if(x<0||x>s.w||y<0||y>s.h||Math.random()<.003){x=Math.random()*s.w;y=Math.random()*s.h;s.prev[i*2]=x;s.prev[i*2+1]=y;}s.p[i*2]=x;s.p[i*2+1]=y;}
+   s.vort.forEach(q=>q[2]*=.995);s.vort=s.vort.filter(q=>Math.abs(q[2])>.05);},
+  draw(ctx,w,h,s,P){if(s.w!==w||s.h!==h){s.w=w;s.h=h;s.clear=true;}
+   if(s.clear){ctx.fillStyle='#03050c';ctx.fillRect(0,0,w,h);s.clear=false;}else{ctx.fillStyle=`rgba(3,5,12,${1-P.trail})`;ctx.fillRect(0,0,w,h);}
+   if(!s.prev)return;ctx.globalCompositeOperation='lighter';ctx.lineWidth=Math.max(1.2,Math.min(w,h)/560);const n=P.n|0;
+   for(let band=0;band<4;band++){ctx.strokeStyle=['rgba(56,189,248,.55)','rgba(125,211,252,.5)','rgba(251,146,60,.55)','rgba(253,186,116,.5)'][band];ctx.beginPath();
+    for(let i=band;i<n;i+=4){const x=s.p[i*2],y=s.p[i*2+1],px=s.prev[i*2],py=s.prev[i*2+1];if(Math.abs(x-px)>40||Math.abs(y-py)>40)continue;if((x/w<.5)!==(band<2))continue;ctx.moveTo(px,py);ctx.lineTo(x,y);}ctx.stroke();}
+   ctx.globalCompositeOperation='source-over';ctx.fillStyle='#03050c';ctx.fillRect(10,10,320,56);label(ctx,['FLOW FIELD',`${n} particles  scale ${P.scale.toFixed(2)}`,'click to drop a vortex']);},
+  paint(s,u,v){if(s.lastV&&performance.now()-s.lastV<250)return;s.lastV=performance.now();s.vort.push([u*s.w,v*s.h,Math.random()<.5?-1:1]);}};
+
+ /* ---------- A56 Harmonograph ---------- */
+ const harmo={name:'Harmonograph',note:'Two damped pendulums at right angles drive a pen: x and y are sums of decaying sine waves. A whole-number frequency ratio gives a closed figure; the small detune makes it precess, and damping draws it slowly to the centre. When the swing dies away, the paper is changed.',
+  params:[{k:'ratio',l:'Frequency ratio',type:'select',opts:[[1,'1 : 1  ellipse'],[2,'2 : 1  figure-eight'],[3,'3 : 2  bow'],[4,'4 : 3  knot'],[5,'5 : 4  rosette'],[6,'3 : 1  clover']],v:3},{k:'detune',l:'Detune',min:0,max:.03,step:.0005,v:.006},{k:'phase',l:'Phase (°)',min:0,max:180,step:1,v:90},{k:'damp',l:'Damping',min:.002,max:.05,step:.001,v:.012},{k:'pen',l:'Pen speed',min:.2,max:4,step:.05,v:1.4}],
+  R:{1:[1,1],2:[2,1],3:[3,2],4:[4,3],5:[5,4],6:[3,1]},
+  init(s,P,w,h){s.t=0;s.off=document.createElement('canvas');s.off.width=w;s.off.height=h;const o=s.off.getContext('2d');o.fillStyle='#f3ead6';o.fillRect(0,0,w,h);s.last=null;s.sig=JSON.stringify([P.ratio,P.detune,P.phase,P.damp]);},
+  pos(s,P,t,w,h){const [a,b]=this.R[P.ratio]||[3,2],A=Math.min(w,h)*.4,e=Math.exp(-P.damp*t),ph=P.phase*Math.PI/180;
+   const x=A*(Math.sin(a*t+ph)*.75+Math.sin(a*1.0*t*(1+P.detune)+.3)*.25)*e,y=A*(Math.sin(b*t)*.75+Math.sin(b*t*(1-P.detune)+1.1)*.25)*e;return [w/2+x*1.1,h/2+y];},
+  step(s,P,dt){const sig=JSON.stringify([P.ratio,P.detune,P.phase,P.damp]);if(sig!==s.sig){this.init(s,P,s.off.width,s.off.height);}
+   const o=s.off.getContext('2d'),w=s.off.width,h=s.off.height,steps=Math.ceil(dt*P.pen*240);o.strokeStyle='rgba(43,42,34,.55)';o.lineWidth=Math.max(.7,Math.min(w,h)/900);o.beginPath();
+   for(let i=0;i<steps;i++){s.t+=.012;const p=this.pos(s,P,s.t,w,h);if(s.last){o.moveTo(s.last[0],s.last[1]);o.lineTo(p[0],p[1]);}s.last=p;}o.stroke();
+   if(Math.exp(-P.damp*s.t)<.04)this.init(s,P,w,h);},
+  draw(ctx,w,h,s,P){if(s.off.width!==w||s.off.height!==h){this.init(s,P,w,h);}ctx.drawImage(s.off,0,0);
+   if(s.last){ctx.fillStyle='#8a5a2b';ctx.beginPath();ctx.arc(s.last[0],s.last[1],Math.max(3,w/300),0,TAU);ctx.fill();}
+   ctx.save();ctx.font='500 11px "JetBrains Mono",monospace';ctx.fillStyle='rgba(43,42,34,.7)';const r=(this.R[P.ratio]||[3,2]).join(' : ');[`HARMONOGRAPH  ratio ${r}`,`detune ${P.detune.toFixed(4)}  damping ${P.damp.toFixed(3)}`,`amplitude ${(Math.exp(-P.damp*s.t)*100).toFixed(0)}%`].forEach((t,i)=>ctx.fillText(t,16,24+i*16));ctx.restore();}};
+
+ /* ---------- A26 Cellular automata ---------- */
+ const life={name:'Cellular automata',note:'Each cell lives or dies by counting its eight neighbours. The rule string says how many neighbours give birth (B) and how many let a cell survive (S). Conway\'s Life is B3/S23. Draw on the grid to add cells; dead cells fade so you can see movement.',
+  params:[{k:'rule',l:'Rule',type:'select',opts:[[1,"Conway's Life  B3/S23"],[2,'HighLife  B36/S23'],[3,'Day & Night  B3678/S34678'],[4,'Seeds  B2/S'],[5,'Maze  B3/S12345'],[6,'Coral  B3/S45678']],v:1},{k:'density',l:'Starting density',min:.05,max:.6,step:.01,v:.28},{k:'gps',l:'Generations per second',min:1,max:40,step:1,v:14},{k:'size',l:'Cell size',min:3,max:14,step:1,v:6}],
+  RULES:{1:[[3],[2,3]],2:[[3,6],[2,3]],3:[[3,6,7,8],[3,4,6,7,8]],4:[[2],[]],5:[[3],[1,2,3,4,5]],6:[[3],[4,5,6,7,8]]},
+  init(s,P,w,h){const c=P.size|0;s.cs=c;s.W=Math.max(10,Math.floor(w/c));s.H=Math.max(10,Math.floor(h/c));s.g=new Uint8Array(s.W*s.H);s.age=new Float32Array(s.W*s.H);for(let i=0;i<s.g.length;i++)s.g[i]=Math.random()<P.density?1:0;s.acc=0;s.gen=0;s.sig=[P.rule,P.density,P.size].join();},
+  step(s,P,dt){const sig=[P.rule,P.density,P.size].join();if(sig!==s.sig)this.init(s,P,s.W*s.cs,s.H*s.cs);s.acc+=dt*P.gps;let n=0;while(s.acc>=1&&n<4){s.acc-=1;n++;this.gen(s,P);}for(let i=0;i<s.age.length;i++)if(!s.g[i]&&s.age[i]>0)s.age[i]=Math.max(0,s.age[i]-dt*1.6);},
+  gen(s,P){const {W,H,g}=s,[B,S]=this.RULES[P.rule]||this.RULES[1],next=new Uint8Array(W*H);
+   for(let y=0;y<H;y++){const ym=((y-1+H)%H)*W,y0=y*W,yp=((y+1)%H)*W;for(let x=0;x<W;x++){const xm=(x-1+W)%W,xp=(x+1)%W;const c=g[ym+xm]+g[ym+x]+g[ym+xp]+g[y0+xm]+g[y0+xp]+g[yp+xm]+g[yp+x]+g[yp+xp];const i=y0+x;next[i]=g[i]?(S.includes(c)?1:0):(B.includes(c)?1:0);if(next[i])s.age[i]=1;}}
+   s.g=next;s.gen++;},
+  draw(ctx,w,h,s,P){ctx.fillStyle='#03070d';ctx.fillRect(0,0,w,h);const c=s.cs,{W,H}=s,ox=(w-W*c)/2,oy=(h-H*c)/2;
+   for(let y=0;y<H;y++)for(let x=0;x<W;x++){const i=y*W+x;if(s.g[i]){ctx.fillStyle='#5eead4';ctx.fillRect(ox+x*c,oy+y*c,c-1,c-1);}else if(s.age[i]>0){ctx.fillStyle=`rgba(45,212,191,${s.age[i]*.28})`;ctx.fillRect(ox+x*c,oy+y*c,c-1,c-1);}}
+   const name=(this.params[0].opts.find(o=>o[0]===P.rule)||[])[1]||'';ctx.fillStyle='rgba(3,7,13,.8)';ctx.fillRect(10,10,330,56);label(ctx,['CELLULAR AUTOMATA',name.replace(/\s+/g,' '),`generation ${s.gen}  ·  draw to add cells`]);},
+  paint(s,u,v){const x=u*s.W|0,y=v*s.H|0;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){if(Math.random()<.6){const X=(x+dx+s.W)%s.W,Y=(y+dy+s.H)%s.H;s.g[Y*s.W+X]=1;s.age[Y*s.W+X]=1;}}}};
+
+ const SIMS={A84:lorenz,A76:pend,A78:rd,A88:meta,A49:ferro,A81:boids,A32:flow,A56:harmo,A26:life};
  function label(ctx,lines){ctx.save();ctx.font='500 11px "JetBrains Mono",ui-monospace,monospace';ctx.fillStyle='rgba(238,242,248,.72)';lines.forEach((t,i)=>ctx.fillText(t,16,24+i*16));ctx.restore();}
 
  /* ---------- wiring ---------- */
@@ -122,12 +189,12 @@
   const se=SE();if(se?.reduced){for(let i=0;i<240;i++)cur.step(state,P,1/60);}paintOnce();}
  function syncSliders(){panel?.querySelectorAll('input[data-k]').forEach(i=>{i.value=P[i.dataset.k];const o=i.parentElement.querySelector('output');if(o)o.textContent=fmt(P[i.dataset.k],i.step);});}
  const fmt=(v,step)=>{const d=String(step).includes('.')?String(step).split('.')[1].length:0;return Number(v).toFixed(d);};
- function buildPanel(id,sim){panel.innerHTML=`<p class="simKicker">Live simulation · ${id}</p><div class="simGrid">${sim.params.map(p=>p.type==='toggle'?`<label class="simToggle"><input type="checkbox" data-t="${p.k}" ${P[p.k]?'checked':''}><span>${p.l}</span></label>`:p.type==='select'?`<label class="simSelect"><span>${p.l}</span><select data-s="${p.k}">${p.opts.map(([v,t])=>`<option value="${v}" ${v===P[p.k]?'selected':''}>${t}</option>`).join('')}</select></label>`:`<label><span>${p.l}</span><input type="range" data-k="${p.k}" min="${p.min}" max="${p.max}" step="${p.step}" value="${P[p.k]}"><output>${fmt(P[p.k],p.step)}</output></label>`).join('')}</div><div class="simActions"><button type="button" class="secondary" data-sim="reset">Reset simulation</button><button type="button" class="secondary" data-sim="ref" aria-pressed="false">Show reference image</button></div>`;
+ function buildPanel(id,sim){panel.innerHTML=`<p class="simKicker">Live simulation · ${id}</p><div class="simGrid">${sim.params.map(p=>p.type==='toggle'?`<label class="simToggle"><input type="checkbox" data-t="${p.k}" ${P[p.k]?'checked':''}><span>${p.l}</span></label>`:p.type==='select'?`<label class="simSelect"><span>${p.l}</span><select data-s="${p.k}">${p.opts.map(([v,t])=>`<option value="${v}" ${v===P[p.k]?'selected':''}>${t}</option>`).join('')}</select></label>`:`<label><span>${p.l}</span><input type="range" data-k="${p.k}" min="${p.min}" max="${p.max}" step="${p.step}" value="${P[p.k]}"><output>${fmt(P[p.k],p.step)}</output></label>`).join('')}</div><div class="simActions"><button type="button" class="secondary" data-sim="reset">Reset simulation</button><button type="button" class="secondary" data-sim="ref" aria-pressed="false">${/^A(0\d|[1-3]\d|40)$/.test(id)?'Show original study':'Show reference image'}</button></div>`;
   panel.querySelectorAll('input[data-k]').forEach(inp=>inp.oninput=()=>{P[inp.dataset.k]=Number(inp.value);inp.parentElement.querySelector('output').textContent=fmt(inp.value,inp.step);if(['a1','a2','ratio','mass','twin'].includes(inp.dataset.k)&&cur===pend)reset();if(!running())paintOnce();});
   panel.querySelectorAll('[data-t]').forEach(c=>c.onchange=()=>{P[c.dataset.t]=c.checked?1:0;if(cur===pend)reset();kick();});
   panel.querySelectorAll('[data-s]').forEach(c=>c.onchange=()=>{P[c.dataset.s]=Number(c.value);if(!running()){cur.step(state,{...P,iters:0},0);paintOnce();}});
   panel.querySelector('[data-sim="reset"]').onclick=()=>{reset();kick();};
-  const ref=panel.querySelector('[data-sim="ref"]');ref.onclick=()=>{showRef=!showRef;ref.setAttribute('aria-pressed',String(showRef));ref.textContent=showRef?'Show live simulation':'Show reference image';cv.hidden=showRef;document.getElementById('motionStage').classList.toggle('simLive',!showRef);if(!showRef){paintOnce();kick();}};}
+  const ref=panel.querySelector('[data-sim="ref"]');ref.onclick=()=>{showRef=!showRef;ref.setAttribute('aria-pressed',String(showRef));ref.textContent=showRef?'Show live simulation':(/^A(0\d|[1-3]\d|40)$/.test(window.activeMotionId||'')?'Show original study':'Show reference image');cv.hidden=showRef;document.getElementById('motionStage').classList.toggle('simLive',!showRef);if(!showRef){paintOnce();kick();}};}
  function activate(id){if(!ensure())return;const sim=SIMS[id];document.getElementById('motionStage').classList.toggle('simLive',!!sim);
   if(!sim){cancelAnimationFrame(raf);raf=0;cur=null;cv.hidden=true;panel.hidden=true;return;}
   cancelAnimationFrame(raf);raf=0;cur=sim;showRef=false;P={};sim.params.forEach(p=>P[p.k]=p.v);cv.hidden=false;panel.hidden=false;buildPanel(id,sim);cv.setAttribute('aria-label',sim.name+' live simulation');
