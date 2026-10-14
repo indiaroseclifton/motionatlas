@@ -4,7 +4,7 @@
   "outputDirectory": "site",
   "cleanUrls": true,
   "rewrites": [
-    { "source": "/", "destination": "/atlas.html" }
+    { "source": "/", "destination": "/atlas" }
   ],
   "headers": [
     { "source": "/sw.js", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] },
