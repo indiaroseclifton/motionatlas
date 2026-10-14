@@ -615,6 +615,7 @@ if(FX.R){document.querySelector('video').removeAttribute('autoplay');document.qu
   const anchor=page.querySelector('h1')?.closest('.aeHasBand')?page.querySelector('.aeRelated')||page.querySelector('.intro'):page.querySelector('.intro');
   (anchor||page.firstElementChild).insertAdjacentElement('afterend',root);
   const legacy=document.createElement('h2');legacy.className='fxl-legacy';legacy.textContent='Original effect studies';root.insertAdjacentElement('afterend',legacy);
+  tidyLegacy(page);
   root.querySelectorAll('[data-tag]').forEach(b=>b.onclick=()=>{S.filter=b.dataset.tag;root.querySelectorAll('[data-tag]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));grid();});
   if(!dlg){
   dlg=document.createElement('dialog');dlg.className='fxl-dialog';dlg.setAttribute('aria-label','Effect preview');
@@ -649,9 +650,21 @@ if(FX.R){document.querySelector('video').removeAttribute('autoplay');document.qu
  }
  function grid(){
   const list=E.filter(e=>S.filter==='All'||(S.filter==='New'?e.isNew:e.tags.includes(S.filter)));
-  root.querySelector('#fxlGrid').innerHTML=list.map(e=>`<button type="button" class="fxl-card" data-fx="${e.id}"><span class="fxl-thumb"><img src="${IMG}${THUMB[e.id]}.webp" alt="" loading="lazy"><span class="fxl-glyph g-${e.tags[0].toLowerCase()}" aria-hidden="true"></span>${e.isNew?'<span class="fxl-new">New</span>':''}</span><span class="fxl-meta"><span class="fxl-kicker">${e.id} · ${e.tags.join(' · ')}</span><b>${e.name}</b><span class="fxl-cost c-${e.perf[1].toLowerCase().replace(' ','')}">${e.perf[1]} cost</span></span></button>`).join('');
+  root.querySelector('#fxlGrid').innerHTML=list.map(e=>`<button type="button" class="fxl-card" data-fx="${e.id}"><span class="fxl-thumb"><img src="${CLIPS}${e.id}.webp" alt="" loading="lazy"><video muted loop playsinline preload="none" aria-hidden="true" data-src="${CLIPS}${e.id}.mp4"></video><span class="fxl-glyph g-${e.tags[0].toLowerCase()}" aria-hidden="true"></span>${e.isNew?'<span class="fxl-new">New</span>':''}</span><span class="fxl-meta"><span class="fxl-kicker">${e.id} · ${e.tags.join(' · ')}</span><b>${e.name}</b><span class="fxl-cost c-${e.perf[1].toLowerCase().replace(' ','')}">${e.perf[1]} cost</span></span></button>`).join('');
   root.querySelectorAll('[data-fx]').forEach(b=>b.onclick=()=>open(b.dataset.fx));
+  playVisible();
  }
+ // Each card shows a short recording of the real effect; clips play only while their card is on screen.
+ const CLIPS='assets/fx/clips/';let clipIO=null;
+ function playVisible(){if(clipIO)clipIO.disconnect();if(matchMedia('(prefers-reduced-motion: reduce)').matches||navigator.connection?.saveData)return;
+  clipIO=new IntersectionObserver(es=>es.forEach(x=>{const v=x.target;if(x.isIntersecting){if(!v.src)v.src=v.dataset.src;v.classList.add('on');const pr=v.play();if(pr)pr.catch(()=>{});}else{v.pause();}}),{threshold:.6});
+  root.querySelectorAll('.fxl-thumb video').forEach(v=>clipIO.observe(v));}
+ function tidyLegacy(page){const head=page.querySelector('.fxl-legacy');if(!head||page.querySelector('.fxl-legacyWrap'))return;
+  const wrap=document.createElement('details');wrap.className='fxl-legacyWrap';
+  wrap.innerHTML='<summary><span class="fxl-kicker">Earlier studies · 18</span><b>The original effect studies</b><span>Scrubbable demos with written guides and downloadable starter files.</span></summary>';
+  let n=head.nextElementSibling;const move=[];while(n){if(!n.matches('script,dialog,.aeTop'))move.push(n);n=n.nextElementSibling;}
+  head.replaceWith(wrap);move.forEach(m=>wrap.append(m));
+  const intro=page.querySelector('.intro');if(intro&&/eighteen/i.test(intro.textContent))intro.textContent='Thirty-seven landing-page effects running for real. Open one full screen, tune its timing, check it on a phone and copy the exact code it runs.';}
  let cur=null;
  function open(id){cur=E.find(e=>e.id===id);if(!cur)return;
   dlg.querySelector('#fxlCode').textContent=cur.id+(cur.isNew?' · New':'');dlg.querySelector('#fxlName').textContent=cur.name;

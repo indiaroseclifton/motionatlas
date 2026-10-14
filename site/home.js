@@ -32,12 +32,11 @@ window.HomeAtlas={
  <div class="vmaInner vmaCopy">
   <p class="vmaEyebrow vmaRise vmaD1" id="vmaEyebrow">Plate I &middot; Harmonics</p>
   <h1 class="vmaRise vmaD2" id="homeTitle"><span class="vmaLn">Visual <span class="vmaAmp">&amp;</span></span><span class="vmaLn"><em>Motion</em> Atlas</span></h1>
-  <p class="vmaLede vmaRise vmaD3">A field guide to how images move. Every plate traces one idea from its equation to its living form, the way <strong>140 spinning harmonics</strong> draw a planet, then grow it a garden.</p>
+  <p class="vmaLede vmaRise vmaD3">A field guide to how images move: visual styles, live motion studies, films and landing effects, each with the brief and the code to make it.</p>
   <div class="vmaActions vmaRise vmaD4">
    <a class="vmaBtn vmaBtnPrimary" href="#browse">Open the atlas <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5"/></svg></a>
    <button class="vmaBtn vmaBtnGhost" type="button" id="vmaCinemaBtn" aria-pressed="false"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="1.5" y="3.5" width="13" height="9" rx="1.5" stroke="currentColor"/><path d="M6.5 6v4l3.5-2z" fill="currentColor"/></svg><span>Watch the film</span></button>
   </div>
-  <p class="vmaFormula vmaRise vmaD5" aria-label="Fourier series used to draw the film"><var>f(t) = &Sigma; c<sub>k</sub> e<sup>ik&omega;t</sup></var><span>&middot; the rule behind every line in this film</span></p>
  </div>
  <footer class="vmaInner vmaFoot vmaRise vmaD6" id="plates">
   <div class="vmaMeta">

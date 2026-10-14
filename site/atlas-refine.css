@@ -1,0 +1,43 @@
+/* Calmer home hero and a header that fits on one line */
+header .finderBtn,header .aeSearchBtn{white-space:nowrap}
+/* Your studio menu in the main nav */
+header .studioGroup{position:relative}
+header .studioGroup>summary{list-style:none;cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
+header .studioGroup>summary::-webkit-details-marker{display:none}
+header .studioGroup>summary::after{content:"";width:6px;height:6px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:translateY(-2px) rotate(45deg);opacity:.7}
+header .studioGroup[open]>summary::after{transform:translateY(1px) rotate(-135deg)}
+header .studioGroup>div{right:auto;left:-12px;top:calc(100% + 12px);width:200px;background:#0b1120!important;border:1px solid rgba(190,210,240,.18);border-radius:12px;box-shadow:0 18px 40px rgba(0,0,0,.45);padding:8px}
+header .studioGroup>div a{display:block;padding:10px 12px;border-radius:8px;color:#c9d3e3!important;font:500 13.5px "Manrope",system-ui,sans-serif;text-decoration:none;white-space:nowrap}
+header .studioGroup>div a:hover,header .studioGroup>div a.active{background:rgba(190,210,240,.08);color:#fff!important}
+header .studioGroup>div a::after{display:none!important}
+body.cinemaMode>header .studioGroup>summary{color:var(--ink-dim);font:500 13.5px var(--f-body);letter-spacing:.02em}
+body.cinemaMode>header .studioGroup>summary:hover{color:var(--ink)}
+body:not(.cinemaMode)>header .studioGroup>summary{color:var(--hd-dim,#a8b3c7);font:500 13.5px var(--f-body,"Manrope",sans-serif)}
+body:not(.cinemaMode)>header .studioGroup>summary:hover{color:var(--hd-ink,#eef2f8)}
+header .studioGroup summary:focus-visible{outline:2px solid #fde68a;outline-offset:4px;border-radius:4px}
+/* narrow screens: the main nav scrolls sideways, so studio links sit inline */
+@media(max-width:900px){header .studioGroup>summary{display:none}header .studioGroup>div{position:static;display:flex;gap:20px;width:auto;padding:0;background:none!important;border:0;box-shadow:none}header .studioGroup>div a{padding:0;color:inherit!important}}
+/* catalogue link no longer styled as a pill on the home header */
+body.cinemaMode>header nav[aria-label=Main] a[href="#browse"]{border:0;padding:0;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;min-height:0}
+
+/* hero: fewer competing elements */
+.vmaFormula{display:none}
+.vmaMetaLeft{display:none}
+.vmaMeta{justify-content:flex-end;margin-bottom:-4px}
+.vmaDesc{display:none}
+.vmaPlateBtn{padding-top:14px!important;padding-bottom:4px!important}
+.vmaLede{max-width:34em}
+/* keep the film's drawing away from the copy */
+.vmaFilm::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(2,4,11,.94) 0%,rgba(2,4,11,.82) 30%,rgba(2,4,11,.35) 56%,rgba(2,4,11,0) 76%);pointer-events:none}
+@media(min-width:1000px){.vmaFilm video,.vmaFilm img{transform:translateX(17%) scale(1.06);transform-origin:center}}
+@media(max-width:999px){.vmaFilm::after{background:linear-gradient(0deg,rgba(2,4,11,.92) 0%,rgba(2,4,11,.6) 45%,rgba(2,4,11,.25) 100%)}}
+.vmaFilm{overflow:hidden}
+.vmaFoot{width:100%;justify-self:stretch;align-self:end}
+body.cinemaMode>header nav[aria-label=Main] a[href="#browse"]{color:var(--ink-dim)}
+body.cinemaMode>header nav[aria-label=Main] a[href="#browse"]:hover{color:var(--ink)}
+@media(max-width:1360px){
+ body.cinemaMode>header nav[aria-label=Main],body:not(.cinemaMode)>header nav[aria-label=Main]{gap:18px}
+ header .aeSearchBtn>span:not([aria-hidden]){position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+ header .aeSearchBtn{padding:8px 10px}
+}
+.vmaFoot{grid-template-columns:minmax(0,1fr)}

@@ -25,7 +25,7 @@
  const isLive=id=>window.AtlasExplore?.isLive?.({id})||(window.LiveSims?.ids||[]).includes(id);
  const IMG='assets/fx/';const THUMB_FX={L16:'constellation',L21:'exploded',L25:'fluid',L26:'nebula',L32:'film-scrub',L33:'film-type',L34:'film-cards',L37:'film-loop'};
  function stopInfo(id){
-  if(id[0]==='L'){const f=fx(id);return {id,title:f?.name||id,type:'Landing effect',desc:f?.about||'',poster:IMG+(THUMB_FX[id]||'nebula')+'.webp',action:[['Open the effect',`#effects?fx=${id}`]]};}
+  if(id[0]==='L'){const f=fx(id);return {id,title:f?.name||id,type:'Landing effect',desc:f?.about||'',poster:'assets/fx/clips/'+id+'.webp',action:[['Open the effect',`#effects?fx=${id}`]]};}
   const e=findE(id);if(!e)return null;
   const acts=[['Open the entry',`entry:${id}`]];
   if(isLive(id))acts.unshift(['Play the live study',`study:${id}`]);

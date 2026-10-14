@@ -77,3 +77,18 @@
 }
 @media(max-width:600px){.fxl-stage{padding:0}.fxl-device,.fxl-device[data-device]{border:0;border-radius:0;width:100%;height:100%}.fxl-seg{display:none}}
 @media(prefers-reduced-motion:reduce){.fxl-glyph::after{animation:none!important}.fxl-card,.fxl-thumb img{transition:none}}
+/* real effect clips on cards */
+.fxl-thumb video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .5s ease}
+.fxl-thumb video.on{opacity:1}
+.fxl-thumb{aspect-ratio:16/10}
+/* earlier studies, collapsed */
+.fxl-legacyWrap{margin:48px 0 24px;border:1px solid var(--hair,#d9dee6);border-radius:18px;background:var(--panel,#fff)}
+.fxl-legacyWrap>summary{list-style:none;cursor:pointer;display:grid;gap:4px;padding:20px 24px;position:relative}
+.fxl-legacyWrap>summary::-webkit-details-marker{display:none}
+.fxl-legacyWrap>summary::after{content:"+";position:absolute;right:24px;top:50%;transform:translateY(-50%);font:300 30px "Cormorant Garamond",serif;color:var(--text-dim,#4a5466)}
+.fxl-legacyWrap[open]>summary::after{content:"−"}
+.fxl-legacyWrap>summary b{font:400 clamp(24px,2.2vw,32px)/1.1 "Cormorant Garamond",Georgia,serif}
+.fxl-legacyWrap>summary>span:last-child{font-size:14px;color:var(--text-dim,#4a5466)}
+.fxl-legacyWrap>summary:focus-visible{outline:2px solid #0369a1;outline-offset:3px}
+.fxl-legacyWrap[open]{padding-bottom:24px}
+.fxl-legacyWrap[open]>*:not(summary){margin-left:24px;margin-right:24px}
