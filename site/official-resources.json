@@ -1,0 +1,1743 @@
+{
+  "schema": "atlas-official-resources-v1",
+  "checked": "2026-10-13",
+  "systems": [
+    {
+      "id": "apple",
+      "name": "Apple / Human Interface Guidelines",
+      "company": "Apple",
+      "summary": "Platform UI, materials, typography, symbols, interaction and editorial guidance.",
+      "url": "https://developer.apple.com/design/human-interface-guidelines",
+      "color": "#f5f5f7",
+      "topics": [
+        "Liquid Glass",
+        "Platform UI",
+        "SF Symbols"
+      ],
+      "resources": [
+        {
+          "title": "Accessibility",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/accessibility",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": ""
+        },
+        {
+          "title": "App icons",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/app-icons",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": ""
+        },
+        {
+          "title": "Branding",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/branding",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": ""
+        },
+        {
+          "title": "Color",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/color",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": "",
+          "study": "E02"
+        },
+        {
+          "title": "Dark Mode",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/dark-mode",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": ""
+        },
+        {
+          "title": "Icons",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/icons",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": "",
+          "study": "E04"
+        },
+        {
+          "title": "Images",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/images",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": ""
+        },
+        {
+          "title": "Immersive experiences",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/immersive-experiences",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": ""
+        },
+        {
+          "title": "Inclusion",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/inclusion",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": ""
+        },
+        {
+          "title": "Layout",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/layout",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": ""
+        },
+        {
+          "title": "Materials",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/materials",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": "",
+          "study": "S05"
+        },
+        {
+          "title": "Motion",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/motion",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": "",
+          "study": "M03"
+        },
+        {
+          "title": "Privacy",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/privacy",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": ""
+        },
+        {
+          "title": "Right to left",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/right-to-left",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": ""
+        },
+        {
+          "title": "SF Symbols",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/sf-symbols",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": ""
+        },
+        {
+          "title": "Spatial layout",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/spatial-layout",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": ""
+        },
+        {
+          "title": "Typography",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/typography",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": "",
+          "study": "E01"
+        },
+        {
+          "title": "Writing",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/writing",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": ""
+        },
+        {
+          "title": "Charting data",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/charting-data",
+          "kind": "Guide",
+          "category": "UX patterns",
+          "note": ""
+        },
+        {
+          "title": "Collaboration and sharing",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/collaboration-and-sharing",
+          "kind": "Guide",
+          "category": "UX patterns",
+          "note": ""
+        },
+        {
+          "title": "Drag and drop",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/drag-and-drop",
+          "kind": "Guide",
+          "category": "UX patterns",
+          "note": ""
+        },
+        {
+          "title": "Entering data",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/entering-data",
+          "kind": "Guide",
+          "category": "UX patterns",
+          "note": ""
+        },
+        {
+          "title": "Feedback",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/feedback",
+          "kind": "Guide",
+          "category": "UX patterns",
+          "note": ""
+        },
+        {
+          "title": "File management",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/file-management",
+          "kind": "Guide",
+          "category": "UX patterns",
+          "note": ""
+        },
+        {
+          "title": "Going full screen",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/going-full-screen",
+          "kind": "Guide",
+          "category": "UX patterns",
+          "note": ""
+        },
+        {
+          "title": "Launching",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/launching",
+          "kind": "Guide",
+          "category": "UX patterns",
+          "note": ""
+        },
+        {
+          "title": "Live-viewing apps",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/live-viewing-apps",
+          "kind": "Guide",
+          "category": "UX patterns",
+          "note": ""
+        },
+        {
+          "title": "Loading",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/loading",
+          "kind": "Guide",
+          "category": "UX patterns",
+          "note": ""
+        },
+        {
+          "title": "Managing accounts",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/managing-accounts",
+          "kind": "Guide",
+          "category": "UX patterns",
+          "note": ""
+        },
+        {
+          "title": "Managing notifications",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/managing-notifications",
+          "kind": "Guide",
+          "category": "UX patterns",
+          "note": ""
+        },
+        {
+          "title": "Modality",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/modality",
+          "kind": "Guide",
+          "category": "UX patterns",
+          "note": ""
+        },
+        {
+          "title": "Multitasking",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/multitasking",
+          "kind": "Guide",
+          "category": "UX patterns",
+          "note": ""
+        },
+        {
+          "title": "Offering help",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/offering-help",
+          "kind": "Guide",
+          "category": "UX patterns",
+          "note": ""
+        },
+        {
+          "title": "Onboarding",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/onboarding",
+          "kind": "Guide",
+          "category": "UX patterns",
+          "note": ""
+        },
+        {
+          "title": "Playing audio",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/playing-audio",
+          "kind": "Guide",
+          "category": "UX patterns",
+          "note": ""
+        },
+        {
+          "title": "Playing haptics",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/playing-haptics",
+          "kind": "Guide",
+          "category": "UX patterns",
+          "note": ""
+        },
+        {
+          "title": "Playing video",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/playing-video",
+          "kind": "Guide",
+          "category": "UX patterns",
+          "note": ""
+        },
+        {
+          "title": "Printing",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/printing",
+          "kind": "Guide",
+          "category": "UX patterns",
+          "note": ""
+        },
+        {
+          "title": "Ratings and reviews",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/ratings-and-reviews",
+          "kind": "Guide",
+          "category": "UX patterns",
+          "note": ""
+        },
+        {
+          "title": "Searching",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/searching",
+          "kind": "Guide",
+          "category": "UX patterns",
+          "note": ""
+        },
+        {
+          "title": "Settings",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/settings",
+          "kind": "Guide",
+          "category": "UX patterns",
+          "note": ""
+        },
+        {
+          "title": "Undo and redo",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/undo-and-redo",
+          "kind": "Guide",
+          "category": "UX patterns",
+          "note": ""
+        },
+        {
+          "title": "Workouts",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/workouts",
+          "kind": "Guide",
+          "category": "UX patterns",
+          "note": ""
+        },
+        {
+          "title": "Action button",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/action-button",
+          "kind": "Guide",
+          "category": "Input & interaction",
+          "note": ""
+        },
+        {
+          "title": "Apple Pencil and Scribble",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/apple-pencil-and-scribble",
+          "kind": "Guide",
+          "category": "Input & interaction",
+          "note": ""
+        },
+        {
+          "title": "Camera Control",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/camera-control",
+          "kind": "Guide",
+          "category": "Input & interaction",
+          "note": ""
+        },
+        {
+          "title": "Digital Crown",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/digital-crown",
+          "kind": "Guide",
+          "category": "Input & interaction",
+          "note": ""
+        },
+        {
+          "title": "Eyes",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/eyes",
+          "kind": "Guide",
+          "category": "Input & interaction",
+          "note": ""
+        },
+        {
+          "title": "Focus and selection",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/focus-and-selection",
+          "kind": "Guide",
+          "category": "Input & interaction",
+          "note": ""
+        },
+        {
+          "title": "Game controls",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/game-controls",
+          "kind": "Guide",
+          "category": "Input & interaction",
+          "note": ""
+        },
+        {
+          "title": "Gestures",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/gestures",
+          "kind": "Guide",
+          "category": "Input & interaction",
+          "note": ""
+        },
+        {
+          "title": "Gyroscope and accelerometer",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/gyro-and-accelerometer",
+          "kind": "Guide",
+          "category": "Input & interaction",
+          "note": ""
+        },
+        {
+          "title": "Keyboards",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/keyboards",
+          "kind": "Guide",
+          "category": "Input & interaction",
+          "note": ""
+        },
+        {
+          "title": "Nearby interactions",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/nearby-interactions",
+          "kind": "Guide",
+          "category": "Input & interaction",
+          "note": ""
+        },
+        {
+          "title": "Pointing devices",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/pointing-devices",
+          "kind": "Guide",
+          "category": "Input & interaction",
+          "note": ""
+        },
+        {
+          "title": "Remotes",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/remotes",
+          "kind": "Guide",
+          "category": "Input & interaction",
+          "note": ""
+        },
+        {
+          "title": "AirPlay",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/airplay",
+          "kind": "Guide",
+          "category": "Platform technologies",
+          "note": ""
+        },
+        {
+          "title": "Always On",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/always-on",
+          "kind": "Guide",
+          "category": "Platform technologies",
+          "note": ""
+        },
+        {
+          "title": "App Clips",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/app-clips",
+          "kind": "Guide",
+          "category": "Platform technologies",
+          "note": ""
+        },
+        {
+          "title": "Apple In-App Purchase",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/apple-in-app-purchase",
+          "kind": "Guide",
+          "category": "Platform technologies",
+          "note": ""
+        },
+        {
+          "title": "Apple Pay",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/apple-pay",
+          "kind": "Guide",
+          "category": "Platform technologies",
+          "note": ""
+        },
+        {
+          "title": "Augmented reality",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/augmented-reality",
+          "kind": "Guide",
+          "category": "Platform technologies",
+          "note": ""
+        },
+        {
+          "title": "CareKit",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/carekit",
+          "kind": "Guide",
+          "category": "Platform technologies",
+          "note": ""
+        },
+        {
+          "title": "CarPlay",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/carplay",
+          "kind": "Guide",
+          "category": "Platform technologies",
+          "note": ""
+        },
+        {
+          "title": "Game Center",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/game-center",
+          "kind": "Guide",
+          "category": "Platform technologies",
+          "note": ""
+        },
+        {
+          "title": "Generative AI",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/generative-ai",
+          "kind": "Guide",
+          "category": "Platform technologies",
+          "note": ""
+        },
+        {
+          "title": "HealthKit",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/healthkit",
+          "kind": "Guide",
+          "category": "Platform technologies",
+          "note": ""
+        },
+        {
+          "title": "HomeKit",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/homekit",
+          "kind": "Guide",
+          "category": "Platform technologies",
+          "note": ""
+        },
+        {
+          "title": "iCloud",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/icloud",
+          "kind": "Guide",
+          "category": "Platform technologies",
+          "note": ""
+        },
+        {
+          "title": "ID Verifier",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/id-verifier",
+          "kind": "Guide",
+          "category": "Platform technologies",
+          "note": ""
+        },
+        {
+          "title": "iMessage apps and stickers",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/imessage-apps-and-stickers",
+          "kind": "Guide",
+          "category": "Platform technologies",
+          "note": ""
+        },
+        {
+          "title": "Live Photos",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/live-photos",
+          "kind": "Guide",
+          "category": "Platform technologies",
+          "note": ""
+        },
+        {
+          "title": "Mac Catalyst",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/mac-catalyst",
+          "kind": "Guide",
+          "category": "Platform technologies",
+          "note": ""
+        },
+        {
+          "title": "Machine learning",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/machine-learning",
+          "kind": "Guide",
+          "category": "Platform technologies",
+          "note": ""
+        },
+        {
+          "title": "Maps",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/maps",
+          "kind": "Guide",
+          "category": "Platform technologies",
+          "note": ""
+        },
+        {
+          "title": "NFC",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/nfc",
+          "kind": "Guide",
+          "category": "Platform technologies",
+          "note": ""
+        },
+        {
+          "title": "Photo editing",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/photo-editing",
+          "kind": "Guide",
+          "category": "Platform technologies",
+          "note": ""
+        },
+        {
+          "title": "ResearchKit",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/researchkit",
+          "kind": "Guide",
+          "category": "Platform technologies",
+          "note": ""
+        },
+        {
+          "title": "SharePlay",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/shareplay",
+          "kind": "Guide",
+          "category": "Platform technologies",
+          "note": ""
+        },
+        {
+          "title": "ShazamKit",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/shazamkit",
+          "kind": "Guide",
+          "category": "Platform technologies",
+          "note": ""
+        },
+        {
+          "title": "Sign in with Apple",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/sign-in-with-apple",
+          "kind": "Guide",
+          "category": "Platform technologies",
+          "note": ""
+        },
+        {
+          "title": "Siri",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/siri",
+          "kind": "Guide",
+          "category": "Platform technologies",
+          "note": ""
+        },
+        {
+          "title": "Tap to Pay on iPhone",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/tap-to-pay-on-iphone",
+          "kind": "Guide",
+          "category": "Platform technologies",
+          "note": ""
+        },
+        {
+          "title": "VoiceOver",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/voiceover",
+          "kind": "Guide",
+          "category": "Platform technologies",
+          "note": ""
+        },
+        {
+          "title": "Wallet",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/wallet",
+          "kind": "Guide",
+          "category": "Platform technologies",
+          "note": ""
+        },
+        {
+          "title": "Charts",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/charts",
+          "kind": "Guide",
+          "category": "Components / content",
+          "note": ""
+        },
+        {
+          "title": "Image views",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/image-views",
+          "kind": "Guide",
+          "category": "Components / content",
+          "note": ""
+        },
+        {
+          "title": "Text views",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/text-views",
+          "kind": "Guide",
+          "category": "Components / content",
+          "note": "",
+          "study": "C04"
+        },
+        {
+          "title": "Web views",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/web-views",
+          "kind": "Guide",
+          "category": "Components / content",
+          "note": ""
+        },
+        {
+          "title": "Boxes",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/boxes",
+          "kind": "Guide",
+          "category": "Components / layout and organization",
+          "note": ""
+        },
+        {
+          "title": "Collections",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/collections",
+          "kind": "Guide",
+          "category": "Components / layout and organization",
+          "note": ""
+        },
+        {
+          "title": "Column views",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/column-views",
+          "kind": "Guide",
+          "category": "Components / layout and organization",
+          "note": ""
+        },
+        {
+          "title": "Disclosure controls",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/disclosure-controls",
+          "kind": "Guide",
+          "category": "Components / layout and organization",
+          "note": ""
+        },
+        {
+          "title": "Labels",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/labels",
+          "kind": "Guide",
+          "category": "Components / layout and organization",
+          "note": ""
+        },
+        {
+          "title": "Lists and tables",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/lists-and-tables",
+          "kind": "Guide",
+          "category": "Components / layout and organization",
+          "note": "",
+          "study": "C31"
+        },
+        {
+          "title": "Lockups",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/lockups",
+          "kind": "Guide",
+          "category": "Components / layout and organization",
+          "note": ""
+        },
+        {
+          "title": "Outline views",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/outline-views",
+          "kind": "Guide",
+          "category": "Components / layout and organization",
+          "note": ""
+        },
+        {
+          "title": "Split views",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/split-views",
+          "kind": "Guide",
+          "category": "Components / layout and organization",
+          "note": ""
+        },
+        {
+          "title": "Tab views",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/tab-views",
+          "kind": "Guide",
+          "category": "Components / layout and organization",
+          "note": ""
+        },
+        {
+          "title": "Activity views",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/activity-views",
+          "kind": "Guide",
+          "category": "Components / menus and actions",
+          "note": ""
+        },
+        {
+          "title": "Buttons",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/buttons",
+          "kind": "Guide",
+          "category": "Components / menus and actions",
+          "note": "",
+          "study": "C01"
+        },
+        {
+          "title": "Context menus",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/context-menus",
+          "kind": "Guide",
+          "category": "Components / menus and actions",
+          "note": ""
+        },
+        {
+          "title": "Dock menus",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/dock-menus",
+          "kind": "Guide",
+          "category": "Components / menus and actions",
+          "note": ""
+        },
+        {
+          "title": "Edit menus",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/edit-menus",
+          "kind": "Guide",
+          "category": "Components / menus and actions",
+          "note": ""
+        },
+        {
+          "title": "Home Screen quick actions",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/home-screen-quick-actions",
+          "kind": "Guide",
+          "category": "Components / menus and actions",
+          "note": ""
+        },
+        {
+          "title": "Menus",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/menus",
+          "kind": "Guide",
+          "category": "Components / menus and actions",
+          "note": ""
+        },
+        {
+          "title": "Ornaments",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/ornaments",
+          "kind": "Guide",
+          "category": "Components / menus and actions",
+          "note": ""
+        },
+        {
+          "title": "Pop-up buttons",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/pop-up-buttons",
+          "kind": "Guide",
+          "category": "Components / menus and actions",
+          "note": "",
+          "study": "C05"
+        },
+        {
+          "title": "Pull-down buttons",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/pull-down-buttons",
+          "kind": "Guide",
+          "category": "Components / menus and actions",
+          "note": "",
+          "study": "C05"
+        },
+        {
+          "title": "The menu bar",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/the-menu-bar",
+          "kind": "Guide",
+          "category": "Components / menus and actions",
+          "note": ""
+        },
+        {
+          "title": "Toolbars",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/toolbars",
+          "kind": "Guide",
+          "category": "Components / menus and actions",
+          "note": "",
+          "study": "E10"
+        },
+        {
+          "title": "Path controls",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/path-controls",
+          "kind": "Guide",
+          "category": "Components / navigation and search",
+          "note": ""
+        },
+        {
+          "title": "Search fields",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/search-fields",
+          "kind": "Guide",
+          "category": "Components / navigation and search",
+          "note": "",
+          "study": "C15"
+        },
+        {
+          "title": "Sidebars",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/sidebars",
+          "kind": "Guide",
+          "category": "Components / navigation and search",
+          "note": "",
+          "study": "C18"
+        },
+        {
+          "title": "Tab bars",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/tab-bars",
+          "kind": "Guide",
+          "category": "Components / navigation and search",
+          "note": "",
+          "study": "C19"
+        },
+        {
+          "title": "Token fields",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/token-fields",
+          "kind": "Guide",
+          "category": "Components / navigation and search",
+          "note": ""
+        },
+        {
+          "title": "Action sheets",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/action-sheets",
+          "kind": "Guide",
+          "category": "Components / presentation",
+          "note": ""
+        },
+        {
+          "title": "Alerts",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/alerts",
+          "kind": "Guide",
+          "category": "Components / presentation",
+          "note": "",
+          "study": "C23"
+        },
+        {
+          "title": "Page controls",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/page-controls",
+          "kind": "Guide",
+          "category": "Components / presentation",
+          "note": ""
+        },
+        {
+          "title": "Panels",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/panels",
+          "kind": "Guide",
+          "category": "Components / presentation",
+          "note": ""
+        },
+        {
+          "title": "Popovers",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/popovers",
+          "kind": "Guide",
+          "category": "Components / presentation",
+          "note": "",
+          "study": "C21"
+        },
+        {
+          "title": "Scroll views",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/scroll-views",
+          "kind": "Guide",
+          "category": "Components / presentation",
+          "note": ""
+        },
+        {
+          "title": "Sheets",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/sheets",
+          "kind": "Guide",
+          "category": "Components / presentation",
+          "note": "",
+          "study": "C24"
+        },
+        {
+          "title": "Windows",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/windows",
+          "kind": "Guide",
+          "category": "Components / presentation",
+          "note": ""
+        },
+        {
+          "title": "Color wells",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/color-wells",
+          "kind": "Guide",
+          "category": "Components / selection and input",
+          "note": ""
+        },
+        {
+          "title": "Combo boxes",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/combo-boxes",
+          "kind": "Guide",
+          "category": "Components / selection and input",
+          "note": ""
+        },
+        {
+          "title": "Digit entry views",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/digit-entry-views",
+          "kind": "Guide",
+          "category": "Components / selection and input",
+          "note": ""
+        },
+        {
+          "title": "Image wells",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/image-wells",
+          "kind": "Guide",
+          "category": "Components / selection and input",
+          "note": ""
+        },
+        {
+          "title": "Pickers",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/pickers",
+          "kind": "Guide",
+          "category": "Components / selection and input",
+          "note": "",
+          "study": "C05"
+        },
+        {
+          "title": "Segmented controls",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/segmented-controls",
+          "kind": "Guide",
+          "category": "Components / selection and input",
+          "note": ""
+        },
+        {
+          "title": "Sliders",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/sliders",
+          "kind": "Guide",
+          "category": "Components / selection and input",
+          "note": "",
+          "study": "C10"
+        },
+        {
+          "title": "Steppers",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/steppers",
+          "kind": "Guide",
+          "category": "Components / selection and input",
+          "note": ""
+        },
+        {
+          "title": "Text fields",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/text-fields",
+          "kind": "Guide",
+          "category": "Components / selection and input",
+          "note": "",
+          "study": "C03"
+        },
+        {
+          "title": "Toggles",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/toggles",
+          "kind": "Guide",
+          "category": "Components / selection and input",
+          "note": ""
+        },
+        {
+          "title": "Virtual keyboards",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/virtual-keyboards",
+          "kind": "Guide",
+          "category": "Components / selection and input",
+          "note": ""
+        },
+        {
+          "title": "Activity rings",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/activity-rings",
+          "kind": "Guide",
+          "category": "Components / status",
+          "note": ""
+        },
+        {
+          "title": "Gauges",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/gauges",
+          "kind": "Guide",
+          "category": "Components / status",
+          "note": ""
+        },
+        {
+          "title": "Progress indicators",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/progress-indicators",
+          "kind": "Guide",
+          "category": "Components / status",
+          "note": "",
+          "study": "C35"
+        },
+        {
+          "title": "Rating indicators",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/rating-indicators",
+          "kind": "Guide",
+          "category": "Components / status",
+          "note": ""
+        },
+        {
+          "title": "App Shortcuts",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/app-shortcuts",
+          "kind": "Guide",
+          "category": "Components / system experiences",
+          "note": ""
+        },
+        {
+          "title": "Complications",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/complications",
+          "kind": "Guide",
+          "category": "Components / system experiences",
+          "note": ""
+        },
+        {
+          "title": "Controls",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/controls",
+          "kind": "Guide",
+          "category": "Components / system experiences",
+          "note": ""
+        },
+        {
+          "title": "Live Activities",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/live-activities",
+          "kind": "Guide",
+          "category": "Components / system experiences",
+          "note": ""
+        },
+        {
+          "title": "Notifications",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/notifications",
+          "kind": "Guide",
+          "category": "Components / system experiences",
+          "note": ""
+        },
+        {
+          "title": "Snippets",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/snippets",
+          "kind": "Guide",
+          "category": "Components / system experiences",
+          "note": ""
+        },
+        {
+          "title": "Status bars",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/status-bars",
+          "kind": "Guide",
+          "category": "Components / system experiences",
+          "note": ""
+        },
+        {
+          "title": "Top Shelf",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/top-shelf",
+          "kind": "Guide",
+          "category": "Components / system experiences",
+          "note": ""
+        },
+        {
+          "title": "Watch faces",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/watch-faces",
+          "kind": "Guide",
+          "category": "Components / system experiences",
+          "note": ""
+        },
+        {
+          "title": "Widgets",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/widgets",
+          "kind": "Guide",
+          "category": "Components / system experiences",
+          "note": ""
+        },
+        {
+          "title": "Apple Style Guide PDF",
+          "url": "https://help.apple.com/pdf/applestyleguide/en_US/apple-style-guide.pdf",
+          "kind": "PDF",
+          "category": "Writing & brand",
+          "note": "Official editorial guide, June 2026. 244 pages. Writing, terminology and inclusive language; separate from the UI guidelines."
+        },
+        {
+          "title": "Apple Style Guide online",
+          "url": "https://support.apple.com/guide/applestyleguide/welcome/web",
+          "kind": "Guide",
+          "category": "Writing & brand",
+          "note": "Searchable editorial guidance."
+        },
+        {
+          "title": "Apple Design Resources",
+          "url": "https://developer.apple.com/design/resources/",
+          "kind": "Design kit",
+          "category": "Design kits & assets",
+          "note": "Official iOS, iPadOS, macOS, watchOS, tvOS and visionOS kits, icon templates and device bezels."
+        },
+        {
+          "title": "SF Symbols",
+          "url": "https://developer.apple.com/sf-symbols/",
+          "kind": "Icons",
+          "category": "Design kits & assets",
+          "note": "Official symbol app and resources. Review Apple’s usage terms for platform and symbol restrictions."
+        },
+        {
+          "title": "SF Pro, SF Compact, SF Mono & New York",
+          "url": "https://developer.apple.com/fonts/",
+          "kind": "Fonts",
+          "category": "Design kits & assets",
+          "note": "Apple’s font downloads and associated license terms."
+        },
+        {
+          "title": "Icon Composer",
+          "url": "https://developer.apple.com/icon-composer/",
+          "kind": "Tool",
+          "category": "Design kits & assets",
+          "note": "Official tool for composing platform app icons."
+        },
+        {
+          "title": "App Store marketing & identity",
+          "url": "https://developer.apple.com/app-store/marketing/guidelines/",
+          "kind": "Brand guide",
+          "category": "Writing & brand",
+          "note": "Badges, product imagery, messaging and identity requirements for promoting an app."
+        },
+        {
+          "title": "Human Interface Guidelines",
+          "url": "https://developer.apple.com/design/human-interface-guidelines",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": "The live UI design reference. The current resource is web documentation, not the editorial PDF."
+        },
+        {
+          "title": "Apple Identity Guidelines / channel affiliates & certified individuals",
+          "url": "https://training.apple.com/content/dam/appletraining/us/en/2022/documents/Apple_ID_Guidelines_Channel_180919.pdf",
+          "kind": "PDF",
+          "category": "Writing & brand",
+          "note": "Official July 2019 identity booklet, 65 pages. Channel-specific brand signatures, typography, imagery and usage; not a general license to use Apple branding."
+        }
+      ],
+      "kind": "Design system",
+      "preset": "D01",
+      "checked": "2026-10-13",
+      "previewLabel": "Official Apple design-kit preview",
+      "preview": "assets/apple-ui-kit-official.webp",
+      "previewSource": "https://developer.apple.com/design/resources/",
+      "pdfNote": "Apple’s PDF Style Guide covers editorial writing. Use the HIG and platform kits for UI design."
+    },
+    {
+      "id": "material",
+      "name": "Material Design",
+      "company": "Google",
+      "summary": "A public design language with foundations, components, tokens and design kits.",
+      "url": "https://m3.material.io/",
+      "color": "#ece6f6",
+      "topics": [
+        "Expressive",
+        "Tokens",
+        "Adaptive UI"
+      ],
+      "resources": [
+        {
+          "title": "Material 3 overview",
+          "url": "https://m3.material.io/",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": ""
+        },
+        {
+          "title": "Foundations & tokens",
+          "url": "https://m3.material.io/foundations/",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": ""
+        },
+        {
+          "title": "Design kit and getting started",
+          "url": "https://m3.material.io/get-started",
+          "kind": "Design kit",
+          "category": "Design kits & assets",
+          "note": ""
+        },
+        {
+          "title": "Component specifications",
+          "url": "https://m3.material.io/components/app-bars/",
+          "kind": "Guide",
+          "category": "Components",
+          "note": ""
+        },
+        {
+          "title": "Android implementation",
+          "url": "https://m3.material.io/develop/android/mdc-android",
+          "kind": "Code",
+          "category": "Code & implementation",
+          "note": ""
+        }
+      ],
+      "kind": "Design system",
+      "preset": "D02",
+      "checked": "2026-10-13",
+      "previewLabel": "Official publisher preview",
+      "preview": "assets/official-material.webp",
+      "previewSource": "https://m3.material.io/",
+      "previewAssetURL": "https://m3.material.io/static/assets/m3-social.jpg"
+    },
+    {
+      "id": "carbon",
+      "name": "Carbon Design System",
+      "company": "IBM",
+      "summary": "Enterprise components, data patterns, typography and implementation resources.",
+      "url": "https://www.carbondesignsystem.com/",
+      "color": "#e8f0fd",
+      "topics": [
+        "Data density",
+        "IBM Plex",
+        "2× grid"
+      ],
+      "resources": [
+        {
+          "title": "Carbon overview",
+          "url": "https://www.carbondesignsystem.com/",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": ""
+        },
+        {
+          "title": "Design resources",
+          "url": "https://www.carbondesignsystem.com/getting-started/designing/design-resources",
+          "kind": "Design kit",
+          "category": "Design kits & assets",
+          "note": "Kit access depends on the listed Figma setup and permissions."
+        },
+        {
+          "title": "Data-table guidelines",
+          "url": "https://www.carbondesignsystem.com/building-blocks/core/components/data-table/guidelines",
+          "kind": "Guide",
+          "category": "Components",
+          "note": ""
+        },
+        {
+          "title": "Carbon source",
+          "url": "https://github.com/carbon-design-system/carbon",
+          "kind": "Code",
+          "category": "Code & implementation",
+          "note": ""
+        },
+        {
+          "title": "IBM Plex fonts",
+          "url": "https://github.com/IBM/plex",
+          "kind": "Fonts",
+          "category": "Design kits & assets",
+          "note": ""
+        },
+        {
+          "title": "IBM Logo and Brand Guidelines for Third Parties",
+          "url": "https://www.ibm.com/design/language/files/IBM_Logo_3rdParties_300822.pdf",
+          "kind": "PDF",
+          "category": "Writing & brand",
+          "note": "Official 2022 document, 17 pages. Brand-mark usage; separate from Carbon UI components."
+        }
+      ],
+      "kind": "Design system",
+      "preset": "D03",
+      "checked": "2026-10-13",
+      "previewLabel": "Atlas visual index"
+    },
+    {
+      "id": "fluent",
+      "name": "Fluent 2",
+      "company": "Microsoft",
+      "summary": "Cross-platform UI kits, foundations, icons and web component libraries.",
+      "url": "https://fluent2.microsoft.design/",
+      "color": "#e8eef7",
+      "topics": [
+        "Windows & web",
+        "Figma kits",
+        "Iconography"
+      ],
+      "resources": [
+        {
+          "title": "Fluent overview",
+          "url": "https://fluent2.microsoft.design/",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": ""
+        },
+        {
+          "title": "Start designing / UI kits",
+          "url": "https://fluent2.microsoft.design/get-started/design",
+          "kind": "Design kit",
+          "category": "Design kits & assets",
+          "note": ""
+        },
+        {
+          "title": "Iconography",
+          "url": "https://fluent2.microsoft.design/iconography/",
+          "kind": "Icons",
+          "category": "Design kits & assets",
+          "note": ""
+        },
+        {
+          "title": "Fluent UI source",
+          "url": "https://github.com/microsoft/fluentui",
+          "kind": "Code",
+          "category": "Code & implementation",
+          "note": ""
+        }
+      ],
+      "kind": "Design system",
+      "preset": "D04",
+      "checked": "2026-10-13",
+      "previewLabel": "Official publisher preview",
+      "preview": "assets/official-fluent.svg",
+      "previewSource": "https://fluent2.microsoft.design/",
+      "previewAssetURL": "https://fluent2websitecdn.azureedge.net/cdn/web_react_asset-1.BlnKyea0.svg"
+    },
+    {
+      "id": "atlassian",
+      "name": "Atlassian Design System",
+      "company": "Atlassian",
+      "summary": "Product foundations, reusable components, motion utilities and teamwork patterns.",
+      "url": "https://atlassian.design/design-system",
+      "color": "#e9f2ff",
+      "topics": [
+        "Teamwork",
+        "Motion tokens",
+        "Rovo patterns"
+      ],
+      "resources": [
+        {
+          "title": "Design system",
+          "url": "https://atlassian.design/design-system",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": ""
+        },
+        {
+          "title": "Components",
+          "url": "https://atlassian.design/components/",
+          "kind": "Guide",
+          "category": "Components",
+          "note": ""
+        },
+        {
+          "title": "Motion",
+          "url": "https://atlassian.design/foundations/motion",
+          "kind": "Guide",
+          "category": "Motion",
+          "note": ""
+        },
+        {
+          "title": "Applying motion",
+          "url": "https://atlassian.design/foundations/motion/applying-motion",
+          "kind": "Guide",
+          "category": "Motion",
+          "note": ""
+        },
+        {
+          "title": "Design tokens",
+          "url": "https://atlassian.design/components/tokens",
+          "kind": "Tokens",
+          "category": "Code & implementation",
+          "note": ""
+        },
+        {
+          "title": "Rovo UI patterns",
+          "url": "https://atlassian.design/rovo-ui",
+          "kind": "Guide",
+          "category": "UX patterns",
+          "note": ""
+        }
+      ],
+      "kind": "Design system",
+      "preset": null,
+      "checked": "2026-10-13",
+      "previewLabel": "Official publisher preview",
+      "preview": "assets/official-atlassian.webp",
+      "previewSource": "https://atlassian.design/design-system",
+      "previewAssetURL": "https://atlassian.design/assets/700bfde52eb7/static/2-typography-light-0bb2592596a7a2b008c272c4e45facb4.png"
+    },
+    {
+      "id": "polaris",
+      "name": "Polaris",
+      "company": "Shopify",
+      "summary": "Official UI framework and surface-specific components for Shopify apps.",
+      "url": "https://shopify.dev/docs/api/polaris",
+      "color": "#e4f1e7",
+      "topics": [
+        "Commerce",
+        "Web components",
+        "App surfaces"
+      ],
+      "resources": [
+        {
+          "title": "Polaris references",
+          "url": "https://shopify.dev/docs/api/polaris",
+          "kind": "Guide",
+          "category": "Components",
+          "note": ""
+        },
+        {
+          "title": "App Home / iframe",
+          "url": "https://shopify.dev/docs/api/app-home",
+          "kind": "Code",
+          "category": "Code & implementation",
+          "note": ""
+        }
+      ],
+      "kind": "Design system",
+      "preset": null,
+      "checked": "2026-10-13",
+      "previewLabel": "Atlas visual index"
+    },
+    {
+      "id": "lightning",
+      "name": "Lightning Design System",
+      "company": "Salesforce",
+      "summary": "Salesforce UI specifications, styling concepts and form patterns.",
+      "url": "https://www.lightningdesignsystem.com/",
+      "color": "#e3f1fb",
+      "topics": [
+        "Business apps",
+        "Form patterns",
+        "Styling hooks"
+      ],
+      "resources": [
+        {
+          "title": "Lightning Design System",
+          "url": "https://www.lightningdesignsystem.com/",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": ""
+        },
+        {
+          "title": "Form element",
+          "url": "https://www.lightningdesignsystem.com/2e1ef8501/p/96252b-form-element/b/1964e0",
+          "kind": "Guide",
+          "category": "Components",
+          "note": ""
+        },
+        {
+          "title": "Spacing and sizing",
+          "url": "https://www.lightningdesignsystem.com/2e1ef8501/p/03d6b0",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": ""
+        },
+        {
+          "title": "Glossary and styling API",
+          "url": "https://www.lightningdesignsystem.com/2e1ef8501/p/81aa72-glossary",
+          "kind": "Guide",
+          "category": "Code & implementation",
+          "note": ""
+        }
+      ],
+      "kind": "Design system",
+      "preset": null,
+      "checked": "2026-10-13",
+      "previewLabel": "Atlas visual index"
+    },
+    {
+      "id": "spectrum",
+      "name": "Spectrum",
+      "company": "Adobe",
+      "summary": "Design foundations and component playgrounds for creative-product interfaces.",
+      "url": "https://spectrum.adobe.com/",
+      "color": "#efe7fb",
+      "topics": [
+        "Creative tools",
+        "Playgrounds",
+        "Foundations"
+      ],
+      "resources": [
+        {
+          "title": "Start with Spectrum",
+          "url": "https://spectrum.adobe.com/",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": ""
+        },
+        {
+          "title": "React Spectrum accordion playground",
+          "url": "https://spectrum.adobe.com/web/rsp/components/accordion",
+          "kind": "Code",
+          "category": "Components",
+          "note": ""
+        }
+      ],
+      "kind": "Design system",
+      "preset": null,
+      "checked": "2026-10-13",
+      "previewLabel": "Official publisher preview",
+      "preview": "assets/official-spectrum.webp",
+      "previewSource": "https://spectrum.adobe.com/",
+      "previewAssetURL": "https://spectrum.adobe.com/media_1270372ba73a31b64cb998d3c4a0a3d44e565196f.png"
+    },
+    {
+      "id": "govuk",
+      "name": "GOV.UK Design System",
+      "company": "Government Digital Service",
+      "summary": "Research-informed service patterns, accessible forms and practical guidance.",
+      "url": "https://design-system.service.gov.uk/",
+      "color": "#e5eef6",
+      "topics": [
+        "Service journeys",
+        "Accessible forms",
+        "Plain language"
+      ],
+      "resources": [
+        {
+          "title": "GOV.UK Design System",
+          "url": "https://design-system.service.gov.uk/",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": ""
+        },
+        {
+          "title": "Components",
+          "url": "https://design-system.service.gov.uk/components/",
+          "kind": "Guide",
+          "category": "Components",
+          "note": ""
+        },
+        {
+          "title": "Styles",
+          "url": "https://design-system.service.gov.uk/styles/",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": ""
+        },
+        {
+          "title": "Patterns",
+          "url": "https://design-system.service.gov.uk/patterns/",
+          "kind": "Guide",
+          "category": "UX patterns",
+          "note": ""
+        }
+      ],
+      "kind": "Design system",
+      "preset": null,
+      "checked": "2026-10-13",
+      "previewLabel": "Atlas visual index"
+    },
+    {
+      "id": "uswds",
+      "name": "U.S. Web Design System",
+      "company": "USWDS",
+      "summary": "Federal web components, design tokens, utilities and implementation guidance.",
+      "url": "https://designsystem.digital.gov/",
+      "color": "#e7ecf2",
+      "topics": [
+        "Public services",
+        "Design tokens",
+        "Templates"
+      ],
+      "resources": [
+        {
+          "title": "USWDS overview",
+          "url": "https://designsystem.digital.gov/",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": ""
+        },
+        {
+          "title": "Components",
+          "url": "https://designsystem.digital.gov/components/",
+          "kind": "Guide",
+          "category": "Components",
+          "note": ""
+        },
+        {
+          "title": "Design tokens",
+          "url": "https://designsystem.digital.gov/design-tokens/",
+          "kind": "Tokens",
+          "category": "Foundations",
+          "note": ""
+        },
+        {
+          "title": "Patterns",
+          "url": "https://designsystem.digital.gov/patterns/",
+          "kind": "Guide",
+          "category": "UX patterns",
+          "note": ""
+        }
+      ],
+      "kind": "Design system",
+      "preset": null,
+      "checked": "2026-10-13",
+      "previewLabel": "Atlas visual index"
+    },
+    {
+      "id": "primer",
+      "name": "Primer",
+      "company": "GitHub",
+      "summary": "A public product design system and repositories for developer-facing interfaces.",
+      "url": "https://primer.style/",
+      "color": "#e8ebee",
+      "topics": [
+        "Developer tools",
+        "Product UI",
+        "Repositories"
+      ],
+      "resources": [
+        {
+          "title": "Primer overview",
+          "url": "https://primer.style/",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": ""
+        },
+        {
+          "title": "Primer repositories",
+          "url": "https://github.com/primer",
+          "kind": "Code",
+          "category": "Code & implementation",
+          "note": ""
+        }
+      ],
+      "kind": "Design system",
+      "preset": null,
+      "checked": "2026-10-13",
+      "previewLabel": "Atlas visual index"
+    },
+    {
+      "id": "mozilla",
+      "name": "Protocol",
+      "company": "Mozilla",
+      "summary": "Website components, brand themes, typography, color and design tokens.",
+      "url": "https://protocol.mozilla.org/",
+      "color": "#eee3f6",
+      "topics": [
+        "Brand themes",
+        "Website patterns",
+        "Typography"
+      ],
+      "resources": [
+        {
+          "title": "Protocol documentation",
+          "url": "https://protocol.mozilla.org/",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": ""
+        },
+        {
+          "title": "Protocol source",
+          "url": "https://github.com/mozilla/protocol",
+          "kind": "Code",
+          "category": "Code & implementation",
+          "note": ""
+        },
+        {
+          "title": "Mozilla brand resources",
+          "url": "https://brand.mozilla.com/",
+          "kind": "Brand guide",
+          "category": "Writing & brand",
+          "note": ""
+        }
+      ],
+      "kind": "Design system",
+      "preset": null,
+      "checked": "2026-10-13",
+      "previewLabel": "Atlas visual index"
+    },
+    {
+      "id": "slack",
+      "name": "Slack brand resources",
+      "company": "Slack",
+      "summary": "Brand identity, writing, illustration and official media resources.",
+      "url": "https://slack.com/media-kit",
+      "color": "#f0e5f0",
+      "topics": [
+        "Brand identity",
+        "Illustration",
+        "Voice"
+      ],
+      "resources": [
+        {
+          "title": "Slack media kit",
+          "url": "https://slack.com/media-kit",
+          "kind": "Brand guide",
+          "category": "Writing & brand",
+          "note": ""
+        },
+        {
+          "title": "Slack brand center",
+          "url": "https://brand.slackhq.com/",
+          "kind": "Brand guide",
+          "category": "Writing & brand",
+          "note": ""
+        },
+        {
+          "title": "Slack Brand Guidelines PDF / September 2020",
+          "url": "https://a.slack-edge.com/4d5bb/marketing/img/media-kit/slack_brand_guidelines_september2020.pdf",
+          "kind": "PDF",
+          "category": "Writing & brand",
+          "note": "Official archived guide, 50 pages. Use the current brand center to confirm present-day usage."
+        }
+      ],
+      "kind": "Brand guide",
+      "preset": null,
+      "checked": "2026-10-13",
+      "previewLabel": "Atlas visual index"
+    },
+    {
+      "id": "nasa",
+      "name": "NASA brand resources",
+      "company": "NASA",
+      "summary": "Graphic standards plus guidance for imagery, media and brand usage.",
+      "url": "https://www.nasa.gov/nasa-brand-center/",
+      "color": "#e4eaf4",
+      "topics": [
+        "Graphic standards",
+        "Imagery",
+        "Media usage"
+      ],
+      "resources": [
+        {
+          "title": "NASA Brand Center",
+          "url": "https://www.nasa.gov/nasa-brand-center/",
+          "kind": "Brand guide",
+          "category": "Writing & brand",
+          "note": ""
+        },
+        {
+          "title": "NASA Graphic Standards",
+          "url": "https://www.nasa.gov/nasa-brand-center/brand-guidelines/",
+          "kind": "Brand guide",
+          "category": "Writing & brand",
+          "note": ""
+        }
+      ],
+      "kind": "Brand guide",
+      "preset": null,
+      "checked": "2026-10-13",
+      "previewLabel": "Atlas visual index"
+    }
+  ]
+}

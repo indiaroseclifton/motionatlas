@@ -1,0 +1,4424 @@
+[
+  {
+    "id": "X001",
+    "system": "D22",
+    "reference": "S02",
+    "family": "Bau Forum",
+    "title": "Wordmark",
+    "category": "Typography",
+    "kind": "type",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      647,
+      5,
+      306,
+      63
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Wordmark from the original Bau Forum concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X002",
+    "system": "D22",
+    "reference": "S02",
+    "family": "Bau Forum",
+    "title": "Top navigation",
+    "category": "UI components",
+    "kind": "nav",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      984,
+      3,
+      251,
+      56
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Top navigation from the original Bau Forum concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X003",
+    "system": "D22",
+    "reference": "S02",
+    "family": "Bau Forum",
+    "title": "Editorial sidebar",
+    "category": "UI components",
+    "kind": "sidebar",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      650,
+      88,
+      110,
+      276
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Editorial sidebar from the original Bau Forum concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X004",
+    "system": "D22",
+    "reference": "S02",
+    "family": "Bau Forum",
+    "title": "Architecture hero",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      777,
+      73,
+      307,
+      306
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Architecture hero from the original Bau Forum concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X005",
+    "system": "D22",
+    "reference": "S02",
+    "family": "Bau Forum",
+    "title": "Display heading",
+    "category": "Typography",
+    "kind": "type",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      1093,
+      171,
+      133,
+      137
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Display heading from the original Bau Forum concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X006",
+    "system": "D22",
+    "reference": "S02",
+    "family": "Bau Forum",
+    "title": "Issue number",
+    "category": "Typography",
+    "kind": "type",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      1091,
+      68,
+      99,
+      77
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Issue number from the original Bau Forum concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X007",
+    "system": "D22",
+    "reference": "S02",
+    "family": "Bau Forum",
+    "title": "Explore link",
+    "category": "UI components",
+    "kind": "buttons",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      1091,
+      331,
+      105,
+      34
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Explore link from the original Bau Forum concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X008",
+    "system": "D22",
+    "reference": "S02",
+    "family": "Bau Forum",
+    "title": "Editorial card / The next city",
+    "category": "UI components",
+    "kind": "card",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      649,
+      391,
+      191,
+      208
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Editorial card / The next city from the original Bau Forum concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X009",
+    "system": "D22",
+    "reference": "S02",
+    "family": "Bau Forum",
+    "title": "Editorial card / Material intelligence",
+    "category": "UI components",
+    "kind": "card",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      844,
+      391,
+      198,
+      208
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Editorial card / Material intelligence from the original Bau Forum concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X010",
+    "system": "D22",
+    "reference": "S02",
+    "family": "Bau Forum",
+    "title": "Editorial card / A more human scale",
+    "category": "UI components",
+    "kind": "card",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      1046,
+      391,
+      186,
+      208
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Editorial card / A more human scale from the original Bau Forum concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X011",
+    "system": "D22",
+    "reference": "S02",
+    "family": "Bau Forum",
+    "title": "Facade image",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      766,
+      402,
+      64,
+      155
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Facade image from the original Bau Forum concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X012",
+    "system": "D22",
+    "reference": "S02",
+    "family": "Bau Forum",
+    "title": "Material image",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      945,
+      402,
+      67,
+      156
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Material image from the original Bau Forum concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X013",
+    "system": "D22",
+    "reference": "S02",
+    "family": "Bau Forum",
+    "title": "Curved architecture image",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      1147,
+      401,
+      64,
+      157
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Curved architecture image from the original Bau Forum concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X014",
+    "system": "D22",
+    "reference": "S02",
+    "family": "Bau Forum",
+    "title": "Editorial rules",
+    "category": "UI components",
+    "kind": "divider",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      649,
+      594,
+      583,
+      6
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Editorial rules from the original Bau Forum concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X015",
+    "system": "D24",
+    "reference": "S04",
+    "family": "Golden Hour",
+    "title": "Sound wordmark",
+    "category": "Typography",
+    "kind": "type",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      651,
+      652,
+      77,
+      23
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Sound wordmark from the original Golden Hour concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X016",
+    "system": "D24",
+    "reference": "S04",
+    "family": "Golden Hour",
+    "title": "Raised top navigation",
+    "category": "UI components",
+    "kind": "nav",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      745,
+      643,
+      215,
+      40
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Raised top navigation from the original Golden Hour concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X017",
+    "system": "D24",
+    "reference": "S04",
+    "family": "Golden Hour",
+    "title": "Search field",
+    "category": "UI components",
+    "kind": "search",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      982,
+      647,
+      179,
+      31
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Search field from the original Golden Hour concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X018",
+    "system": "D24",
+    "reference": "S04",
+    "family": "Golden Hour",
+    "title": "Navigation icons",
+    "category": "Icons",
+    "kind": "icons",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      645,
+      713,
+      86,
+      171
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Navigation icons from the original Golden Hour concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X019",
+    "system": "D24",
+    "reference": "S04",
+    "family": "Golden Hour",
+    "title": "Playlist sidebar",
+    "category": "UI components",
+    "kind": "sidebar",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      648,
+      897,
+      98,
+      172
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Playlist sidebar from the original Golden Hour concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X020",
+    "system": "D24",
+    "reference": "S04",
+    "family": "Golden Hour",
+    "title": "Music player panel",
+    "category": "UI components",
+    "kind": "player",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      758,
+      695,
+      477,
+      264
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Music player panel from the original Golden Hour concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X021",
+    "system": "D24",
+    "reference": "S04",
+    "family": "Golden Hour",
+    "title": "Album title",
+    "category": "Typography",
+    "kind": "type",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      783,
+      738,
+      183,
+      64
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Album title from the original Golden Hour concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X022",
+    "system": "D24",
+    "reference": "S04",
+    "family": "Golden Hour",
+    "title": "Waveform display",
+    "category": "UI components",
+    "kind": "wave",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      777,
+      815,
+      184,
+      47
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Waveform display from the original Golden Hour concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X023",
+    "system": "D24",
+    "reference": "S04",
+    "family": "Golden Hour",
+    "title": "Playback controls",
+    "category": "UI components",
+    "kind": "transport",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      778,
+      859,
+      184,
+      59
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Playback controls from the original Golden Hour concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X024",
+    "system": "D24",
+    "reference": "S04",
+    "family": "Golden Hour",
+    "title": "Circular album art",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      992,
+      729,
+      218,
+      216
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Circular album art from the original Golden Hour concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X025",
+    "system": "D24",
+    "reference": "S04",
+    "family": "Golden Hour",
+    "title": "Equalizer switch",
+    "category": "UI components",
+    "kind": "toggle",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      864,
+      980,
+      38,
+      25
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Equalizer switch from the original Golden Hour concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X026",
+    "system": "D24",
+    "reference": "S04",
+    "family": "Golden Hour",
+    "title": "Equalizer sliders",
+    "category": "UI components",
+    "kind": "sliders",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      775,
+      1016,
+      146,
+      114
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Equalizer sliders from the original Golden Hour concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X027",
+    "system": "D24",
+    "reference": "S04",
+    "family": "Golden Hour",
+    "title": "Sound preset selector",
+    "category": "UI components",
+    "kind": "options",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      937,
+      1001,
+      88,
+      137
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Sound preset selector from the original Golden Hour concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X028",
+    "system": "D24",
+    "reference": "S04",
+    "family": "Golden Hour",
+    "title": "Ambience controls",
+    "category": "UI components",
+    "kind": "ambience",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      1075,
+      999,
+      153,
+      147
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Ambience controls from the original Golden Hour concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X029",
+    "system": "D24",
+    "reference": "S04",
+    "family": "Golden Hour",
+    "title": "Volume slider",
+    "category": "UI components",
+    "kind": "slider",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      1088,
+      1092,
+      130,
+      29
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Volume slider from the original Golden Hour concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X030",
+    "system": "D24",
+    "reference": "S04",
+    "family": "Golden Hour",
+    "title": "Up next queue",
+    "category": "UI components",
+    "kind": "queue",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      645,
+      1139,
+      588,
+      94
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Up next queue from the original Golden Hour concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X031",
+    "system": "D24",
+    "reference": "S04",
+    "family": "Golden Hour",
+    "title": "Morning cover",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      674,
+      1173,
+      38,
+      39
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Morning cover from the original Golden Hour concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X032",
+    "system": "D24",
+    "reference": "S04",
+    "family": "Golden Hour",
+    "title": "Lavender cover",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      816,
+      1171,
+      38,
+      41
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Lavender cover from the original Golden Hour concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X033",
+    "system": "D24",
+    "reference": "S04",
+    "family": "Golden Hour",
+    "title": "Blue meadows cover",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      945,
+      1171,
+      38,
+      41
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Blue meadows cover from the original Golden Hour concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X034",
+    "system": "D24",
+    "reference": "S04",
+    "family": "Golden Hour",
+    "title": "Soft place cover",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      1076,
+      1171,
+      40,
+      41
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Soft place cover from the original Golden Hour concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X035",
+    "system": "D24",
+    "reference": "S04",
+    "family": "Golden Hour",
+    "title": "Home icon",
+    "category": "Icons",
+    "kind": "icon",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      657,
+      716,
+      25,
+      25
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Home icon from the original Golden Hour concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X036",
+    "system": "D24",
+    "reference": "S04",
+    "family": "Golden Hour",
+    "title": "Discover icon",
+    "category": "Icons",
+    "kind": "icon",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      657,
+      754,
+      25,
+      25
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Discover icon from the original Golden Hour concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X037",
+    "system": "D24",
+    "reference": "S04",
+    "family": "Golden Hour",
+    "title": "Library icon",
+    "category": "Icons",
+    "kind": "icon",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      657,
+      786,
+      25,
+      25
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Library icon from the original Golden Hour concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X038",
+    "system": "D24",
+    "reference": "S04",
+    "family": "Golden Hour",
+    "title": "Playlist icon",
+    "category": "Icons",
+    "kind": "icon",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      657,
+      814,
+      25,
+      25
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Playlist icon from the original Golden Hour concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X039",
+    "system": "D24",
+    "reference": "S04",
+    "family": "Golden Hour",
+    "title": "Liked icon",
+    "category": "Icons",
+    "kind": "icon",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      657,
+      841,
+      25,
+      25
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Liked icon from the original Golden Hour concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X040",
+    "system": "D24",
+    "reference": "S04",
+    "family": "Golden Hour",
+    "title": "Shuffle icon",
+    "category": "Icons",
+    "kind": "icon",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      780,
+      871,
+      25,
+      25
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Shuffle icon from the original Golden Hour concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X041",
+    "system": "D24",
+    "reference": "S04",
+    "family": "Golden Hour",
+    "title": "Previous icon",
+    "category": "Icons",
+    "kind": "icon",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      815,
+      871,
+      25,
+      25
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Previous icon from the original Golden Hour concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X042",
+    "system": "D24",
+    "reference": "S04",
+    "family": "Golden Hour",
+    "title": "Next icon",
+    "category": "Icons",
+    "kind": "icon",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      905,
+      871,
+      25,
+      25
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Next icon from the original Golden Hour concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X043",
+    "system": "D24",
+    "reference": "S04",
+    "family": "Golden Hour",
+    "title": "Repeat icon",
+    "category": "Icons",
+    "kind": "icon",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      936,
+      871,
+      25,
+      25
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Repeat icon from the original Golden Hour concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X044",
+    "system": "D25",
+    "reference": "S05",
+    "family": "Clearspace",
+    "title": "Orbit identity",
+    "category": "Typography",
+    "kind": "type",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      24,
+      58,
+      90,
+      29
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Orbit identity from the original Clearspace concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X045",
+    "system": "D25",
+    "reference": "S05",
+    "family": "Clearspace",
+    "title": "Glass sidebar",
+    "category": "UI components",
+    "kind": "sidebar",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      18,
+      42,
+      121,
+      519
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Glass sidebar from the original Clearspace concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X046",
+    "system": "D25",
+    "reference": "S05",
+    "family": "Clearspace",
+    "title": "Glass search",
+    "category": "UI components",
+    "kind": "search",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      22,
+      105,
+      106,
+      29
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Glass search from the original Clearspace concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X047",
+    "system": "D25",
+    "reference": "S05",
+    "family": "Clearspace",
+    "title": "Active navigation item",
+    "category": "UI components",
+    "kind": "tabs",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      24,
+      139,
+      106,
+      28
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Active navigation item from the original Clearspace concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X048",
+    "system": "D25",
+    "reference": "S05",
+    "family": "Clearspace",
+    "title": "Profile card",
+    "category": "UI components",
+    "kind": "profile",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      30,
+      515,
+      103,
+      38
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Profile card from the original Clearspace concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X049",
+    "system": "D25",
+    "reference": "S05",
+    "family": "Clearspace",
+    "title": "Welcome heading",
+    "category": "Typography",
+    "kind": "type",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      164,
+      72,
+      278,
+      57
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Welcome heading from the original Clearspace concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X050",
+    "system": "D25",
+    "reference": "S05",
+    "family": "Clearspace",
+    "title": "New project control",
+    "category": "UI components",
+    "kind": "buttons",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      490,
+      111,
+      105,
+      34
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "New project control from the original Clearspace concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X051",
+    "system": "D25",
+    "reference": "S05",
+    "family": "Clearspace",
+    "title": "Metric cards",
+    "category": "UI components",
+    "kind": "metrics",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      163,
+      173,
+      433,
+      97
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Metric cards from the original Clearspace concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X052",
+    "system": "D25",
+    "reference": "S05",
+    "family": "Clearspace",
+    "title": "Progress ring",
+    "category": "UI components",
+    "kind": "ring",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      503,
+      173,
+      92,
+      98
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Progress ring from the original Clearspace concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X053",
+    "system": "D25",
+    "reference": "S05",
+    "family": "Clearspace",
+    "title": "Glass project list",
+    "category": "UI components",
+    "kind": "projects",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      165,
+      286,
+      430,
+      274
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Glass project list from the original Clearspace concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X054",
+    "system": "D25",
+    "reference": "S05",
+    "family": "Clearspace",
+    "title": "Project row",
+    "category": "UI components",
+    "kind": "project-row",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      177,
+      329,
+      405,
+      73
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Project row from the original Clearspace concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X055",
+    "system": "D25",
+    "reference": "S05",
+    "family": "Clearspace",
+    "title": "Status tags",
+    "category": "UI components",
+    "kind": "tags",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      256,
+      358,
+      139,
+      17
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Status tags from the original Clearspace concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X056",
+    "system": "D25",
+    "reference": "S05",
+    "family": "Clearspace",
+    "title": "Project progress",
+    "category": "UI components",
+    "kind": "progress",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      255,
+      380,
+      231,
+      17
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Project progress from the original Clearspace concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X057",
+    "system": "D25",
+    "reference": "S05",
+    "family": "Clearspace",
+    "title": "Avatar stack",
+    "category": "UI components",
+    "kind": "avatars",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      490,
+      343,
+      49,
+      24
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Avatar stack from the original Clearspace concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X058",
+    "system": "D25",
+    "reference": "S05",
+    "family": "Clearspace",
+    "title": "Message badge",
+    "category": "UI components",
+    "kind": "badge",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      106,
+      329,
+      22,
+      27
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Message badge from the original Clearspace concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X059",
+    "system": "D25",
+    "reference": "S05",
+    "family": "Clearspace",
+    "title": "Landscape thumbnail",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      179,
+      337,
+      61,
+      50
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Landscape thumbnail from the original Clearspace concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X060",
+    "system": "D25",
+    "reference": "S05",
+    "family": "Clearspace",
+    "title": "Phone thumbnail",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      180,
+      408,
+      61,
+      51
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Phone thumbnail from the original Clearspace concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X061",
+    "system": "D25",
+    "reference": "S05",
+    "family": "Clearspace",
+    "title": "Leaf thumbnail",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      180,
+      481,
+      61,
+      50
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Leaf thumbnail from the original Clearspace concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X062",
+    "system": "D25",
+    "reference": "S05",
+    "family": "Clearspace",
+    "title": "Home icon",
+    "category": "Icons",
+    "kind": "icon",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      32,
+      144,
+      25,
+      25
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Home icon from the original Clearspace concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X063",
+    "system": "D25",
+    "reference": "S05",
+    "family": "Clearspace",
+    "title": "Projects icon",
+    "category": "Icons",
+    "kind": "icon",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      32,
+      175,
+      25,
+      25
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Projects icon from the original Clearspace concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X064",
+    "system": "D25",
+    "reference": "S05",
+    "family": "Clearspace",
+    "title": "Tasks icon",
+    "category": "Icons",
+    "kind": "icon",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      32,
+      207,
+      25,
+      25
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Tasks icon from the original Clearspace concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X065",
+    "system": "D25",
+    "reference": "S05",
+    "family": "Clearspace",
+    "title": "Calendar icon",
+    "category": "Icons",
+    "kind": "icon",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      32,
+      239,
+      25,
+      25
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Calendar icon from the original Clearspace concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X066",
+    "system": "D25",
+    "reference": "S05",
+    "family": "Clearspace",
+    "title": "Team icon",
+    "category": "Icons",
+    "kind": "icon",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      32,
+      270,
+      25,
+      25
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Team icon from the original Clearspace concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X067",
+    "system": "D25",
+    "reference": "S05",
+    "family": "Clearspace",
+    "title": "Analytics icon",
+    "category": "Icons",
+    "kind": "icon",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      32,
+      301,
+      25,
+      25
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Analytics icon from the original Clearspace concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X068",
+    "system": "D25",
+    "reference": "S05",
+    "family": "Clearspace",
+    "title": "Messages icon",
+    "category": "Icons",
+    "kind": "icon",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      32,
+      332,
+      25,
+      25
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Messages icon from the original Clearspace concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X069",
+    "system": "D25",
+    "reference": "S05",
+    "family": "Clearspace",
+    "title": "Settings icon",
+    "category": "Icons",
+    "kind": "icon",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      32,
+      364,
+      25,
+      25
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Settings icon from the original Clearspace concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X070",
+    "system": "D26",
+    "reference": "S06",
+    "family": "Palette",
+    "title": "Palette identity",
+    "category": "Typography",
+    "kind": "type",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      669,
+      26,
+      91,
+      31
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Palette identity from the original Palette concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X071",
+    "system": "D26",
+    "reference": "S06",
+    "family": "Palette",
+    "title": "Navigation bar",
+    "category": "UI components",
+    "kind": "nav",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      651,
+      14,
+      580,
+      59
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Navigation bar from the original Palette concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X072",
+    "system": "D26",
+    "reference": "S06",
+    "family": "Palette",
+    "title": "Log in and get started",
+    "category": "UI components",
+    "kind": "buttons",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      1066,
+      22,
+      151,
+      30
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Log in and get started from the original Palette concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X073",
+    "system": "D26",
+    "reference": "S06",
+    "family": "Palette",
+    "title": "Editorial display type",
+    "category": "Typography",
+    "kind": "type",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      667,
+      128,
+      257,
+      116
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Editorial display type from the original Palette concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X074",
+    "system": "D26",
+    "reference": "S06",
+    "family": "Palette",
+    "title": "Primary action pair",
+    "category": "UI components",
+    "kind": "buttons",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      669,
+      316,
+      239,
+      35
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Primary action pair from the original Palette concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X075",
+    "system": "D26",
+    "reference": "S06",
+    "family": "Palette",
+    "title": "Spatial composition",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      929,
+      56,
+      324,
+      480
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Spatial composition from the original Palette concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X076",
+    "system": "D26",
+    "reference": "S06",
+    "family": "Palette",
+    "title": "Floating tool palette",
+    "category": "UI components",
+    "kind": "toolbar",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      992,
+      95,
+      230,
+      67
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Floating tool palette from the original Palette concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X077",
+    "system": "D26",
+    "reference": "S06",
+    "family": "Palette",
+    "title": "Tool icons",
+    "category": "Icons",
+    "kind": "icons",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      1009,
+      109,
+      205,
+      31
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Tool icons from the original Palette concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X078",
+    "system": "D26",
+    "reference": "S06",
+    "family": "Palette",
+    "title": "Material sphere",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      900,
+      222,
+      120,
+      111
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Material sphere from the original Palette concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X079",
+    "system": "D26",
+    "reference": "S06",
+    "family": "Palette",
+    "title": "Transparent violet sphere",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      981,
+      295,
+      142,
+      150
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Transparent violet sphere from the original Palette concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X080",
+    "system": "D26",
+    "reference": "S06",
+    "family": "Palette",
+    "title": "Stone plinth",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      902,
+      326,
+      113,
+      201
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Stone plinth from the original Palette concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X081",
+    "system": "D26",
+    "reference": "S06",
+    "family": "Palette",
+    "title": "Globe object",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      1059,
+      381,
+      149,
+      145
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Globe object from the original Palette concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X082",
+    "system": "D26",
+    "reference": "S06",
+    "family": "Palette",
+    "title": "Preview board",
+    "category": "UI components",
+    "kind": "board",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      1089,
+      173,
+      164,
+      255
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Preview board from the original Palette concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X083",
+    "system": "D26",
+    "reference": "S06",
+    "family": "Palette",
+    "title": "Feature benefits row",
+    "category": "UI components",
+    "kind": "features",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      655,
+      546,
+      575,
+      58
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Feature benefits row from the original Palette concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X084",
+    "system": "D26",
+    "reference": "S06",
+    "family": "Palette",
+    "title": "Feature icons",
+    "category": "Icons",
+    "kind": "icons",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      657,
+      546,
+      480,
+      39
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Feature icons from the original Palette concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X085",
+    "system": "D26",
+    "reference": "S06",
+    "family": "Palette",
+    "title": "Pointer icon",
+    "category": "Icons",
+    "kind": "icon",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      1009,
+      113,
+      25,
+      25
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Pointer icon from the original Palette concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X086",
+    "system": "D26",
+    "reference": "S06",
+    "family": "Palette",
+    "title": "Select icon",
+    "category": "Icons",
+    "kind": "icon",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      1044,
+      113,
+      25,
+      25
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Select icon from the original Palette concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X087",
+    "system": "D26",
+    "reference": "S06",
+    "family": "Palette",
+    "title": "Shape icon",
+    "category": "Icons",
+    "kind": "icon",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      1075,
+      112,
+      25,
+      25
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Shape icon from the original Palette concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X088",
+    "system": "D26",
+    "reference": "S06",
+    "family": "Palette",
+    "title": "Triangle icon",
+    "category": "Icons",
+    "kind": "icon",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      1106,
+      110,
+      25,
+      25
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Triangle icon from the original Palette concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X089",
+    "system": "D26",
+    "reference": "S06",
+    "family": "Palette",
+    "title": "Type icon",
+    "category": "Icons",
+    "kind": "icon",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      1137,
+      108,
+      25,
+      25
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Type icon from the original Palette concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X090",
+    "system": "D26",
+    "reference": "S06",
+    "family": "Palette",
+    "title": "Image icon",
+    "category": "Icons",
+    "kind": "icon",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      1170,
+      107,
+      25,
+      25
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Image icon from the original Palette concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X091",
+    "system": "D27",
+    "reference": "S07",
+    "family": "Northwind",
+    "title": "Northwind identity",
+    "category": "Typography",
+    "kind": "type",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      18,
+      641,
+      95,
+      27
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Northwind identity from the original Northwind concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X092",
+    "system": "D27",
+    "reference": "S07",
+    "family": "Northwind",
+    "title": "Navigation bar",
+    "category": "UI components",
+    "kind": "nav",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      15,
+      632,
+      593,
+      49
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Navigation bar from the original Northwind concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X093",
+    "system": "D27",
+    "reference": "S07",
+    "family": "Northwind",
+    "title": "Project analytics title",
+    "category": "Typography",
+    "kind": "type",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      21,
+      702,
+      244,
+      54
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Project analytics title from the original Northwind concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X094",
+    "system": "D27",
+    "reference": "S07",
+    "family": "Northwind",
+    "title": "Date range control",
+    "category": "UI components",
+    "kind": "date",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      448,
+      690,
+      152,
+      31
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Date range control from the original Northwind concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X095",
+    "system": "D27",
+    "reference": "S07",
+    "family": "Northwind",
+    "title": "Revenue graph",
+    "category": "UI components",
+    "kind": "chart",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      20,
+      744,
+      326,
+      216
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Revenue graph from the original Northwind concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X096",
+    "system": "D27",
+    "reference": "S07",
+    "family": "Northwind",
+    "title": "Metric card grid",
+    "category": "UI components",
+    "kind": "metrics",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      353,
+      744,
+      255,
+      216
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Metric card grid from the original Northwind concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X097",
+    "system": "D27",
+    "reference": "S07",
+    "family": "Northwind",
+    "title": "Metric icon",
+    "category": "Icons",
+    "kind": "icons",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      364,
+      757,
+      29,
+      29
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Metric icon from the original Northwind concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X098",
+    "system": "D27",
+    "reference": "S07",
+    "family": "Northwind",
+    "title": "Trend badges",
+    "category": "UI components",
+    "kind": "badge",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      156,
+      777,
+      47,
+      33
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Trend badges from the original Northwind concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X099",
+    "system": "D27",
+    "reference": "S07",
+    "family": "Northwind",
+    "title": "Revenue tooltip",
+    "category": "UI components",
+    "kind": "tooltip",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      218,
+      819,
+      61,
+      40
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Revenue tooltip from the original Northwind concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X100",
+    "system": "D27",
+    "reference": "S07",
+    "family": "Northwind",
+    "title": "Top products table",
+    "category": "UI components",
+    "kind": "table",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      20,
+      966,
+      210,
+      171
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Top products table from the original Northwind concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X101",
+    "system": "D27",
+    "reference": "S07",
+    "family": "Northwind",
+    "title": "Growth bar chart",
+    "category": "UI components",
+    "kind": "bars",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      237,
+      966,
+      183,
+      171
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Growth bar chart from the original Northwind concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X102",
+    "system": "D27",
+    "reference": "S07",
+    "family": "Northwind",
+    "title": "Project timeline",
+    "category": "UI components",
+    "kind": "timeline",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      428,
+      966,
+      179,
+      266
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Project timeline from the original Northwind concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X103",
+    "system": "D27",
+    "reference": "S07",
+    "family": "Northwind",
+    "title": "Activity feed",
+    "category": "UI components",
+    "kind": "activity",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      18,
+      1143,
+      398,
+      93
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Activity feed from the original Northwind concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X104",
+    "system": "D27",
+    "reference": "S07",
+    "family": "Northwind",
+    "title": "View all link",
+    "category": "UI components",
+    "kind": "buttons",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      541,
+      970,
+      57,
+      18
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "View all link from the original Northwind concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X105",
+    "system": "D27",
+    "reference": "S07",
+    "family": "Northwind",
+    "title": "Product image",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      33,
+      1011,
+      31,
+      31
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Product image from the original Northwind concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X106",
+    "system": "D27",
+    "reference": "S07",
+    "family": "Northwind",
+    "title": "Leaf product image",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      32,
+      1101,
+      31,
+      27
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Leaf product image from the original Northwind concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X107",
+    "system": "D27",
+    "reference": "S07",
+    "family": "Northwind",
+    "title": "Users icon",
+    "category": "Icons",
+    "kind": "icon",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      364,
+      757,
+      25,
+      25
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Users icon from the original Northwind concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X108",
+    "system": "D27",
+    "reference": "S07",
+    "family": "Northwind",
+    "title": "Conversion icon",
+    "category": "Icons",
+    "kind": "icon",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      493,
+      757,
+      25,
+      25
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Conversion icon from the original Northwind concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X109",
+    "system": "D27",
+    "reference": "S07",
+    "family": "Northwind",
+    "title": "Revenue icon",
+    "category": "Icons",
+    "kind": "icon",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      365,
+      859,
+      25,
+      25
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Revenue icon from the original Northwind concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X110",
+    "system": "D27",
+    "reference": "S07",
+    "family": "Northwind",
+    "title": "Churn icon",
+    "category": "Icons",
+    "kind": "icon",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      493,
+      859,
+      25,
+      25
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Churn icon from the original Northwind concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X111",
+    "system": "D28",
+    "reference": "S08",
+    "family": "Signal Block",
+    "title": "Bureau identity",
+    "category": "Typography",
+    "kind": "type",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      641,
+      634,
+      111,
+      37
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Bureau identity from the original Signal Block concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X112",
+    "system": "D28",
+    "reference": "S08",
+    "family": "Signal Block",
+    "title": "Bold navigation",
+    "category": "UI components",
+    "kind": "nav",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      631,
+      632,
+      616,
+      40
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Bold navigation from the original Signal Block concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X113",
+    "system": "D28",
+    "reference": "S08",
+    "family": "Signal Block",
+    "title": "Start a project button",
+    "category": "UI components",
+    "kind": "buttons",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      1064,
+      639,
+      133,
+      27
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Start a project button from the original Signal Block concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X114",
+    "system": "D28",
+    "reference": "S08",
+    "family": "Signal Block",
+    "title": "Display headline",
+    "category": "Typography",
+    "kind": "type",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      643,
+      688,
+      266,
+      279
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Display headline from the original Signal Block concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X115",
+    "system": "D28",
+    "reference": "S08",
+    "family": "Signal Block",
+    "title": "Studio introduction",
+    "category": "UI components",
+    "kind": "text-panel",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      909,
+      710,
+      101,
+      180
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Studio introduction from the original Signal Block concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X116",
+    "system": "D28",
+    "reference": "S08",
+    "family": "Signal Block",
+    "title": "See our work button",
+    "category": "UI components",
+    "kind": "buttons",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      912,
+      882,
+      94,
+      36
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "See our work button from the original Signal Block concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X117",
+    "system": "D28",
+    "reference": "S08",
+    "family": "Signal Block",
+    "title": "Portrait image",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      1017,
+      678,
+      230,
+      304
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Portrait image from the original Signal Block concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X118",
+    "system": "D28",
+    "reference": "S08",
+    "family": "Signal Block",
+    "title": "Orange statement tile",
+    "category": "UI components",
+    "kind": "text-panel",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      630,
+      984,
+      153,
+      265
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Orange statement tile from the original Signal Block concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X119",
+    "system": "D28",
+    "reference": "S08",
+    "family": "Signal Block",
+    "title": "Skateboard image",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      783,
+      987,
+      183,
+      262
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Skateboard image from the original Signal Block concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X120",
+    "system": "D28",
+    "reference": "S08",
+    "family": "Signal Block",
+    "title": "Client list",
+    "category": "UI components",
+    "kind": "list",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      972,
+      997,
+      86,
+      233
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Client list from the original Signal Block concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X121",
+    "system": "D28",
+    "reference": "S08",
+    "family": "Signal Block",
+    "title": "Mountain image",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      1066,
+      985,
+      183,
+      264
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Mountain image from the original Signal Block concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X122",
+    "system": "D28",
+    "reference": "S08",
+    "family": "Signal Block",
+    "title": "Bold grid divider",
+    "category": "UI components",
+    "kind": "divider",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      631,
+      975,
+      614,
+      12
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Bold grid divider from the original Signal Block concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X123",
+    "system": "D28",
+    "reference": "S08",
+    "family": "Signal Block",
+    "title": "Corner arrow control",
+    "category": "Icons",
+    "kind": "icons",
+    "source": "assets/d1bd34fc70f4.jpg",
+    "rect": [
+      741,
+      1173,
+      33,
+      41
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Corner arrow control from the original Signal Block concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X124",
+    "system": "D30",
+    "reference": "S10",
+    "family": "Orion",
+    "title": "Orion identity",
+    "category": "Typography",
+    "kind": "type",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      651,
+      13,
+      203,
+      42
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Orion identity from the original Orion concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X125",
+    "system": "D30",
+    "reference": "S10",
+    "family": "Orion",
+    "title": "Function-key navigation",
+    "category": "UI components",
+    "kind": "nav",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      858,
+      13,
+      270,
+      34
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Function-key navigation from the original Orion concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X126",
+    "system": "D30",
+    "reference": "S10",
+    "family": "Orion",
+    "title": "Live time readout",
+    "category": "UI components",
+    "kind": "readout",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      1156,
+      12,
+      76,
+      41
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Live time readout from the original Orion concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X127",
+    "system": "D30",
+    "reference": "S10",
+    "family": "Orion",
+    "title": "Signal waveform",
+    "category": "UI components",
+    "kind": "wave",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      644,
+      65,
+      323,
+      209
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Signal waveform from the original Orion concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X128",
+    "system": "D30",
+    "reference": "S10",
+    "family": "Orion",
+    "title": "Spectrum display",
+    "category": "UI components",
+    "kind": "spectrum",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      972,
+      66,
+      264,
+      208
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Spectrum display from the original Orion concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X129",
+    "system": "D30",
+    "reference": "S10",
+    "family": "Orion",
+    "title": "Radar scope",
+    "category": "UI components",
+    "kind": "radar",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      643,
+      277,
+      341,
+      327
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Radar scope from the original Orion concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X130",
+    "system": "D30",
+    "reference": "S10",
+    "family": "Orion",
+    "title": "Target table",
+    "category": "UI components",
+    "kind": "table",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      990,
+      276,
+      243,
+      194
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Target table from the original Orion concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X131",
+    "system": "D30",
+    "reference": "S10",
+    "family": "Orion",
+    "title": "System status panel",
+    "category": "UI components",
+    "kind": "status",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      990,
+      480,
+      242,
+      120
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "System status panel from the original Orion concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X132",
+    "system": "D30",
+    "reference": "S10",
+    "family": "Orion",
+    "title": "Instrument labels",
+    "category": "Typography",
+    "kind": "type",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      651,
+      63,
+      270,
+      26
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Instrument labels from the original Orion concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X133",
+    "system": "D30",
+    "reference": "S10",
+    "family": "Orion",
+    "title": "Grid material",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      984,
+      93,
+      242,
+      150
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Grid material from the original Orion concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X134",
+    "system": "D30",
+    "reference": "S10",
+    "family": "Orion",
+    "title": "Instrument frame",
+    "category": "UI components",
+    "kind": "frame",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      642,
+      59,
+      595,
+      550
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Instrument frame from the original Orion concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X135",
+    "system": "D31",
+    "reference": "S11",
+    "family": "Nexus",
+    "title": "Nexus wordmark",
+    "category": "Typography",
+    "kind": "type",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      20,
+      642,
+      106,
+      28
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Nexus wordmark from the original Nexus concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X136",
+    "system": "D31",
+    "reference": "S11",
+    "family": "Nexus",
+    "title": "Music navigation",
+    "category": "UI components",
+    "kind": "nav",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      163,
+      642,
+      177,
+      25
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Music navigation from the original Nexus concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X137",
+    "system": "D31",
+    "reference": "S11",
+    "family": "Nexus",
+    "title": "Sign in button",
+    "category": "UI components",
+    "kind": "buttons",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      539,
+      642,
+      66,
+      31
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Sign in button from the original Nexus concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X138",
+    "system": "D31",
+    "reference": "S11",
+    "family": "Nexus",
+    "title": "Aurora title treatment",
+    "category": "Typography",
+    "kind": "type",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      23,
+      727,
+      227,
+      31
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Aurora title treatment from the original Nexus concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X139",
+    "system": "D31",
+    "reference": "S11",
+    "family": "Nexus",
+    "title": "Hero headline",
+    "category": "Typography",
+    "kind": "type",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      24,
+      759,
+      224,
+      174
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Hero headline from the original Nexus concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X140",
+    "system": "D31",
+    "reference": "S11",
+    "family": "Nexus",
+    "title": "Chromatic signature orb",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      262,
+      674,
+      346,
+      367
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Chromatic signature orb from the original Nexus concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X141",
+    "system": "D31",
+    "reference": "S11",
+    "family": "Nexus",
+    "title": "Listen and watch actions",
+    "category": "UI components",
+    "kind": "buttons",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      24,
+      960,
+      238,
+      60
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Listen and watch actions from the original Nexus concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X142",
+    "system": "D31",
+    "reference": "S11",
+    "family": "Nexus",
+    "title": "Watch film control",
+    "category": "UI components",
+    "kind": "transport",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      167,
+      967,
+      96,
+      43
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Watch film control from the original Nexus concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X143",
+    "system": "D31",
+    "reference": "S11",
+    "family": "Nexus",
+    "title": "Featured releases row",
+    "category": "UI components",
+    "kind": "queue",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      23,
+      1083,
+      585,
+      151
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Featured releases row from the original Nexus concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X144",
+    "system": "D31",
+    "reference": "S11",
+    "family": "Nexus",
+    "title": "Release heading",
+    "category": "Typography",
+    "kind": "type",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      25,
+      1072,
+      194,
+      19
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Release heading from the original Nexus concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X145",
+    "system": "D31",
+    "reference": "S11",
+    "family": "Nexus",
+    "title": "Aurora album cover",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      27,
+      1098,
+      83,
+      82
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Aurora album cover from the original Nexus concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X146",
+    "system": "D31",
+    "reference": "S11",
+    "family": "Nexus",
+    "title": "Momentum album cover",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      142,
+      1098,
+      84,
+      82
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Momentum album cover from the original Nexus concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X147",
+    "system": "D31",
+    "reference": "S11",
+    "family": "Nexus",
+    "title": "Echoes album cover",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      256,
+      1098,
+      84,
+      82
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Echoes album cover from the original Nexus concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X148",
+    "system": "D31",
+    "reference": "S11",
+    "family": "Nexus",
+    "title": "Horizon album cover",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      370,
+      1098,
+      84,
+      82
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Horizon album cover from the original Nexus concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X149",
+    "system": "D31",
+    "reference": "S11",
+    "family": "Nexus",
+    "title": "Parallel album cover",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      486,
+      1098,
+      84,
+      82
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Parallel album cover from the original Nexus concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X150",
+    "system": "D31",
+    "reference": "S11",
+    "family": "Nexus",
+    "title": "Album caption",
+    "category": "UI components",
+    "kind": "caption",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      26,
+      1184,
+      93,
+      49
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Album caption from the original Nexus concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X151",
+    "system": "D31",
+    "reference": "S11",
+    "family": "Nexus",
+    "title": "Horizon material backdrop",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      10,
+      1029,
+      607,
+      36
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Horizon material backdrop from the original Nexus concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X152",
+    "system": "D32",
+    "reference": "S12",
+    "family": "Terralux",
+    "title": "Terralux wordmark",
+    "category": "Typography",
+    "kind": "type",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      647,
+      640,
+      112,
+      27
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Terralux wordmark from the original Terralux concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X153",
+    "system": "D32",
+    "reference": "S12",
+    "family": "Terralux",
+    "title": "Technical navigation",
+    "category": "UI components",
+    "kind": "nav",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      782,
+      637,
+      450,
+      34
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Technical navigation from the original Terralux concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X154",
+    "system": "D32",
+    "reference": "S12",
+    "family": "Terralux",
+    "title": "Precision display type",
+    "category": "Typography",
+    "kind": "type",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      650,
+      691,
+      350,
+      100
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Precision display type from the original Terralux concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X155",
+    "system": "D32",
+    "reference": "S12",
+    "family": "Terralux",
+    "title": "Explore and download buttons",
+    "category": "UI components",
+    "kind": "buttons",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      652,
+      848,
+      279,
+      40
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Explore and download buttons from the original Terralux concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X156",
+    "system": "D32",
+    "reference": "S12",
+    "family": "Terralux",
+    "title": "Specification benefits",
+    "category": "UI components",
+    "kind": "features",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      1089,
+      689,
+      143,
+      145
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Specification benefits from the original Terralux concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X157",
+    "system": "D32",
+    "reference": "S12",
+    "family": "Terralux",
+    "title": "Engineering icons",
+    "category": "Icons",
+    "kind": "icons",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      1085,
+      693,
+      33,
+      145
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Engineering icons from the original Terralux concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X158",
+    "system": "D32",
+    "reference": "S12",
+    "family": "Terralux",
+    "title": "Exploded camera illustration",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      644,
+      859,
+      592,
+      268
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Exploded camera illustration from the original Terralux concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X159",
+    "system": "D32",
+    "reference": "S12",
+    "family": "Terralux",
+    "title": "Numbered annotation",
+    "category": "UI components",
+    "kind": "annotation",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      860,
+      887,
+      34,
+      68
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Numbered annotation from the original Terralux concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X160",
+    "system": "D32",
+    "reference": "S12",
+    "family": "Terralux",
+    "title": "Specification glossary",
+    "category": "UI components",
+    "kind": "specs",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      652,
+      1127,
+      580,
+      102
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Specification glossary from the original Terralux concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X161",
+    "system": "D32",
+    "reference": "S12",
+    "family": "Terralux",
+    "title": "Lens assembly",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      648,
+      938,
+      208,
+      141
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Lens assembly from the original Terralux concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X162",
+    "system": "D32",
+    "reference": "S12",
+    "family": "Terralux",
+    "title": "Camera chassis",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      908,
+      905,
+      167,
+      203
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Camera chassis from the original Terralux concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X163",
+    "system": "D32",
+    "reference": "S12",
+    "family": "Terralux",
+    "title": "Interface panel",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      1115,
+      880,
+      120,
+      218
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Interface panel from the original Terralux concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X164",
+    "system": "D32",
+    "reference": "S12",
+    "family": "Terralux",
+    "title": "Modular icon",
+    "category": "Icons",
+    "kind": "icon",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      1088,
+      695,
+      25,
+      25
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Modular icon from the original Terralux concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X165",
+    "system": "D32",
+    "reference": "S12",
+    "family": "Terralux",
+    "title": "Environment icon",
+    "category": "Icons",
+    "kind": "icon",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      1088,
+      729,
+      25,
+      25
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Environment icon from the original Terralux concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X166",
+    "system": "D32",
+    "reference": "S12",
+    "family": "Terralux",
+    "title": "Aerospace icon",
+    "category": "Icons",
+    "kind": "icon",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      1088,
+      763,
+      25,
+      25
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Aerospace icon from the original Terralux concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X167",
+    "system": "D32",
+    "reference": "S12",
+    "family": "Terralux",
+    "title": "Support icon",
+    "category": "Icons",
+    "kind": "icon",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      1088,
+      799,
+      25,
+      25
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Support icon from the original Terralux concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X168",
+    "system": "D21",
+    "reference": "S01",
+    "family": "Atelier Noir",
+    "title": "Atelier identity",
+    "category": "Typography",
+    "kind": "type",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      28,
+      10,
+      153,
+      33
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Atelier identity from the original Atelier Noir concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X169",
+    "system": "D21",
+    "reference": "S01",
+    "family": "Atelier Noir",
+    "title": "Editorial navigation",
+    "category": "UI components",
+    "kind": "nav",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      260,
+      8,
+      344,
+      28
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Editorial navigation from the original Atelier Noir concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X170",
+    "system": "D21",
+    "reference": "S01",
+    "family": "Atelier Noir",
+    "title": "Display headline",
+    "category": "Typography",
+    "kind": "type",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      28,
+      114,
+      158,
+      198
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Display headline from the original Atelier Noir concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X171",
+    "system": "D21",
+    "reference": "S01",
+    "family": "Atelier Noir",
+    "title": "Architecture hero",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      197,
+      40,
+      340,
+      376
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Architecture hero from the original Atelier Noir concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X172",
+    "system": "D21",
+    "reference": "S01",
+    "family": "Atelier Noir",
+    "title": "Category navigation",
+    "category": "UI components",
+    "kind": "sidebar",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      548,
+      170,
+      62,
+      113
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Category navigation from the original Atelier Noir concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X173",
+    "system": "D21",
+    "reference": "S01",
+    "family": "Atelier Noir",
+    "title": "View our work link",
+    "category": "UI components",
+    "kind": "buttons",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      25,
+      370,
+      115,
+      28
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "View our work link from the original Atelier Noir concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X174",
+    "system": "D21",
+    "reference": "S01",
+    "family": "Atelier Noir",
+    "title": "Stone bowl",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      21,
+      437,
+      134,
+      143
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Stone bowl from the original Atelier Noir concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X175",
+    "system": "D21",
+    "reference": "S01",
+    "family": "Atelier Noir",
+    "title": "Interior photograph",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      329,
+      437,
+      274,
+      168
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Interior photograph from the original Atelier Noir concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X176",
+    "system": "D21",
+    "reference": "S01",
+    "family": "Atelier Noir",
+    "title": "Editorial caption",
+    "category": "UI components",
+    "kind": "caption",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      178,
+      441,
+      136,
+      144
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Editorial caption from the original Atelier Noir concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X177",
+    "system": "D21",
+    "reference": "S01",
+    "family": "Atelier Noir",
+    "title": "Section index",
+    "category": "UI components",
+    "kind": "readout",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      28,
+      54,
+      92,
+      50
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Section index from the original Atelier Noir concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X178",
+    "system": "D23",
+    "reference": "S03",
+    "family": "Garden Notes",
+    "title": "Willow and Thyme identity",
+    "category": "Typography",
+    "kind": "type",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      72,
+      642,
+      151,
+      36
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Willow and Thyme identity from the original Garden Notes concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X179",
+    "system": "D23",
+    "reference": "S03",
+    "family": "Garden Notes",
+    "title": "Garden navigation",
+    "category": "UI components",
+    "kind": "nav",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      270,
+      640,
+      334,
+      40
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Garden navigation from the original Garden Notes concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X180",
+    "system": "D23",
+    "reference": "S03",
+    "family": "Garden Notes",
+    "title": "Botanical display heading",
+    "category": "Typography",
+    "kind": "type",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      65,
+      751,
+      137,
+      154
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Botanical display heading from the original Garden Notes concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X181",
+    "system": "D23",
+    "reference": "S03",
+    "family": "Garden Notes",
+    "title": "Shop plants button",
+    "category": "UI components",
+    "kind": "buttons",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      67,
+      942,
+      155,
+      41
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Shop plants button from the original Garden Notes concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X182",
+    "system": "D23",
+    "reference": "S03",
+    "family": "Garden Notes",
+    "title": "Olive tree photograph",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      201,
+      684,
+      347,
+      365
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Olive tree photograph from the original Garden Notes concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X183",
+    "system": "D23",
+    "reference": "S03",
+    "family": "Garden Notes",
+    "title": "Seasonal favourites tile",
+    "category": "UI components",
+    "kind": "card",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      28,
+      1051,
+      177,
+      170
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Seasonal favourites tile from the original Garden Notes concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X184",
+    "system": "D23",
+    "reference": "S03",
+    "family": "Garden Notes",
+    "title": "Pottery tile",
+    "category": "UI components",
+    "kind": "card",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      206,
+      1051,
+      172,
+      170
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Pottery tile from the original Garden Notes concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X185",
+    "system": "D23",
+    "reference": "S03",
+    "family": "Garden Notes",
+    "title": "Grow your own tile",
+    "category": "UI components",
+    "kind": "card",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      378,
+      1051,
+      173,
+      170
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Grow your own tile from the original Garden Notes concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X186",
+    "system": "D23",
+    "reference": "S03",
+    "family": "Garden Notes",
+    "title": "Seasonal flower art",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      30,
+      1052,
+      173,
+      99
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Seasonal flower art from the original Garden Notes concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X187",
+    "system": "D23",
+    "reference": "S03",
+    "family": "Garden Notes",
+    "title": "Terracotta pottery art",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      207,
+      1052,
+      170,
+      99
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Terracotta pottery art from the original Garden Notes concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X188",
+    "system": "D23",
+    "reference": "S03",
+    "family": "Garden Notes",
+    "title": "Foliage art",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      379,
+      1052,
+      171,
+      99
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Foliage art from the original Garden Notes concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X189",
+    "system": "D23",
+    "reference": "S03",
+    "family": "Garden Notes",
+    "title": "Product breadcrumbs",
+    "category": "UI components",
+    "kind": "caption",
+    "source": "assets/09b1d06eba49.jpg",
+    "rect": [
+      35,
+      999,
+      167,
+      35
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Product breadcrumbs from the original Garden Notes concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X190",
+    "system": "D29",
+    "reference": "S09",
+    "family": "Family Table",
+    "title": "Family Table wordmark",
+    "category": "Typography",
+    "kind": "type",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      24,
+      9,
+      182,
+      36
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Family Table wordmark from the original Family Table concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X191",
+    "system": "D29",
+    "reference": "S09",
+    "family": "Family Table",
+    "title": "Recipe navigation",
+    "category": "UI components",
+    "kind": "nav",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      230,
+      9,
+      369,
+      40
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Recipe navigation from the original Family Table concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X192",
+    "system": "D29",
+    "reference": "S09",
+    "family": "Family Table",
+    "title": "Family Table display type",
+    "category": "Typography",
+    "kind": "type",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      30,
+      87,
+      182,
+      226
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Family Table display type from the original Family Table concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X193",
+    "system": "D29",
+    "reference": "S09",
+    "family": "Family Table",
+    "title": "Bread and botanicals illustration",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      205,
+      48,
+      401,
+      326
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Bread and botanicals illustration from the original Family Table concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X194",
+    "system": "D29",
+    "reference": "S09",
+    "family": "Family Table",
+    "title": "Explore recipes action",
+    "category": "UI components",
+    "kind": "buttons",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      34,
+      340,
+      150,
+      38
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Explore recipes action from the original Family Table concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X195",
+    "system": "D29",
+    "reference": "S09",
+    "family": "Family Table",
+    "title": "Bookshelf collection",
+    "category": "UI components",
+    "kind": "queue",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      19,
+      388,
+      587,
+      217
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Bookshelf collection from the original Family Table concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X196",
+    "system": "D29",
+    "reference": "S09",
+    "family": "Family Table",
+    "title": "Bread book",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      80,
+      433,
+      82,
+      160
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Bread book from the original Family Table concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X197",
+    "system": "D29",
+    "reference": "S09",
+    "family": "Family Table",
+    "title": "Vegetables book",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      171,
+      433,
+      85,
+      160
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Vegetables book from the original Family Table concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X198",
+    "system": "D29",
+    "reference": "S09",
+    "family": "Family Table",
+    "title": "Pasta book",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      265,
+      433,
+      80,
+      160
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Pasta book from the original Family Table concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X199",
+    "system": "D29",
+    "reference": "S09",
+    "family": "Family Table",
+    "title": "Sweets book",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      354,
+      433,
+      82,
+      160
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Sweets book from the original Family Table concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X200",
+    "system": "D29",
+    "reference": "S09",
+    "family": "Family Table",
+    "title": "Preserves book",
+    "category": "Graphics",
+    "kind": "image",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      443,
+      433,
+      83,
+      160
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "Preserves book from the original Family Table concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  },
+  {
+    "id": "X201",
+    "system": "D29",
+    "reference": "S09",
+    "family": "Family Table",
+    "title": "View all action",
+    "category": "UI components",
+    "kind": "buttons",
+    "source": "assets/4bb6531f690e.jpg",
+    "rect": [
+      543,
+      382,
+      65,
+      30
+    ],
+    "sheet": [
+      1254,
+      1254
+    ],
+    "description": "View all action from the original Family Table concept.",
+    "provenance": "Exact region of an original generated Atlas mockup. Raster fragments retain their original background; editable examples are authored web reconstructions."
+  }
+]
