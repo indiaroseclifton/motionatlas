@@ -236,6 +236,14 @@ Your package of 11 films, 68 renders and a style list is merged in with
 - **Credits & licences**: a table of every outside source on the Source library page, linked
   from the footer.
 
+### Sharper images
+
+- Catalogue pictures used to be cropped from shared contact sheets (362–627 px per tile). Each tile
+  is now its own file in `site/assets/tiles/`, upscaled 4× with Real-ESRGAN, with an 800 px copy
+  for standard screens and a 1400 px copy for retina (`imageHTML` in `site/app.js` picks the tile).
+- The landing-effect source images in `site/assets/fx/` and the Glass Garden backdrop were
+  upscaled 2× the same way.
+
 ### What to upload
 
 Upload the contents of `site/` except `site/original/` (backups of the live files). The files
