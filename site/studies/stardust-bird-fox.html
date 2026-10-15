@@ -24,6 +24,7 @@
   </style>
   <script src="../vendor/three-r128.min.js"></script>
   <script>window.THREE || document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>');</script>
+  <script src="../vendor/GLTFLoader-r128.js"></script>
 </head>
 <body>
   <div id="stage" role="img" aria-label="A bird made of golden stardust flies, dissolves into drifting dust and re-forms as a running fox"></div>
@@ -49,8 +50,9 @@
   camera.position.set(0, 0.25, 10.5);
 
   /* ---------- helpers ---------- */
+  // mulberry32: a seeded generator without the lattice artefacts of a plain LCG
   let seed = 7;
-  const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+  const rnd = () => { seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
   const gauss = () => { let u = 0, v = 0; while (!u) u = rnd(); while (!v) v = rnd(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); };
   const lerp = (a, b, t) => a + (b - a) * t;
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -209,10 +211,13 @@
   halo.scale.set(3.6, 2.8, 1); halo.material.opacity = .16; scene.add(halo);
 
   /* ---------- 4. Animation ---------- */
-  const BIRD_YAW = .62, BIRD_PITCH = .05, BIRD_ROLL = .22, BIRD_POS = [.35, -.3, 0];
-  const cy = Math.cos(BIRD_YAW), sy = Math.sin(BIRD_YAW), cp = Math.cos(BIRD_PITCH), sp = Math.sin(BIRD_PITCH), cr = Math.cos(BIRD_ROLL), sr = Math.sin(BIRD_ROLL);
+  let BIRD_YAW = .62, BIRD_PITCH = .05, BIRD_ROLL = .22, BIRD_POS = [.35, -.3, 0], cy, sy, cp, sp, cr, sr;
+  function orient(yaw, pitch, roll) { BIRD_YAW = yaw; BIRD_PITCH = pitch; BIRD_ROLL = roll;
+    cy = Math.cos(yaw); sy = Math.sin(yaw); cp = Math.cos(pitch); sp = Math.sin(pitch); cr = Math.cos(roll); sr = Math.sin(roll); }
+  orient(BIRD_YAW, BIRD_PITCH, BIRD_ROLL);
   const out = new Float32Array(N * 3); // current animated positions, used as trail emitters
   function birdAt(b, t, o) {
+    if (MODELS) return sampleAt(b, MODELS.bw, o);
     let { x, y, z } = b; const w = t * 1.9;
     if (b.part === 2) { // flap: rotate about the shoulder, more towards the tip, with a lag along the span
       const a = (.62 + .34 * Math.sin(w - b.s * 1.1)) * (.3 + .7 * Math.min(1, b.s)) * b.side;
@@ -227,6 +232,7 @@
     o[0] = x0 * cy + z1 * sy + BIRD_POS[0]; o[1] = y1 + BIRD_POS[1]; o[2] = -x0 * sy + z1 * cy + BIRD_POS[2];
   }
   function foxAt(f, t, o) {
+    if (MODELS) return sampleAt(f, MODELS.fw, o);
     let { x, y, z } = f; const w = t * 7.2;
     if (f.part === 4) { // gallop: swing each leg from its hip, front pair and back pair out of phase
       const [hx] = hips[f.leg], ph = (f.leg < 2 ? 0 : Math.PI) + (f.leg % 2) * .5;
@@ -237,6 +243,62 @@
     else if (f.part === 0) { y += Math.sin(w - x * 1.5) * .025; }
     y += Math.abs(Math.sin(w)) * .08 - .62;
     o[0] = (x + .25) * .92; o[1] = y * .92 - .05; o[2] = z * .92;
+  }
+
+
+  /* ---------- 4b. Real sculpted models ----------
+     The stork (three.js examples) and the Khronos fox drive the dust when they load: particles are scattered
+     over each mesh's triangles by area and keep their barycentric spot, so they ride the real wing-flap morphs
+     and the fox's skinned run cycle. If the models can't load, the procedural creatures above are used. */
+  let MODELS = null;
+  let BIRD_S = .026; const FOX_S = .026, FLAP_PERIOD = 2.1, RUN_PERIOD = 1.05;
+  function sampleAt(p, W, o) { const a = p.tri[0] * 3, b = p.tri[1] * 3, c = p.tri[2] * 3, [u, v, w] = p.bw;
+    o[0] = W[a] * u + W[b] * v + W[c] * w + p.off[0]; o[1] = W[a + 1] * u + W[b + 1] * v + W[c + 1] * w + p.off[1]; o[2] = W[a + 2] * u + W[b + 2] * v + W[c + 2] * w + p.off[2]; }
+  function triangles(geo) { const P = geo.attributes.position, I = geo.index, n = I ? I.count / 3 : P.count / 3, tris = [], cum = new Float32Array(n);
+    const va = new THREE.Vector3(), vb = new THREE.Vector3(), vc = new THREE.Vector3(), tr = new THREE.Triangle(); let tot = 0;
+    for (let i = 0; i < n; i++) { const t = I ? [I.getX(i * 3), I.getX(i * 3 + 1), I.getX(i * 3 + 2)] : [i * 3, i * 3 + 1, i * 3 + 2];
+      va.fromBufferAttribute(P, t[0]); vb.fromBufferAttribute(P, t[1]); vc.fromBufferAttribute(P, t[2]); tr.set(va, vb, vc); tot += tr.getArea(); cum[i] = tot; tris.push(t); }
+    return { tris, cum, tot, P };
+  }
+  // Math.random here: successive values of the small seeded generator are correlated and draw diagonal stripes on a triangle
+  function pick(T) { const R = Math.random, r = R() * T.tot; let lo = 0, hi = T.cum.length - 1; while (lo < hi) { const m = (lo + hi) >> 1; if (T.cum[m] < r) lo = m + 1; else hi = m; }
+    let u = R(), v = R(); if (u + v > 1) { u = 1 - u; v = 1 - v; } return { tri: T.tris[lo], bw: [u, v, 1 - u - v] }; }
+  function adoptModels(stork, foxG) {
+    const sm = stork.scene.children[0], sg = sm.geometry, smx = new THREE.AnimationMixer(stork.scene), flap = stork.animations[0]; smx.clipAction(flap).play();
+    let fm = null; foxG.scene.traverse(c => { if (c.isSkinnedMesh) fm = c; });
+    const fmx = new THREE.AnimationMixer(foxG.scene), run = foxG.animations.find(a => a.name === 'Run') || foxG.animations[0]; fmx.clipAction(run).play();
+    const ST = triangles(sg), FT = triangles(fm.geometry), SP = ST.P, col = sg.attributes.color;
+    const bw = new Float32Array(SP.count * 3), fw = new Float32Array(fm.geometry.attributes.position.count * 3);
+    const tmp = [0, 0, 0], v = new THREE.Vector3();
+    for (let i = 0; i < N; i++) {
+      // bird grain: position in the rest pose decides its role (wing tip, tail) for the ember trail
+      const b = bird[i], q = pick(ST), r = q.tri[0];
+      const rx = SP.getX(r), rz = SP.getZ(r), span = Math.abs(rx) / 98;
+      b.tri = q.tri; b.bw = q.bw; b.part = span > .22 ? 2 : rz < -45 ? 3 : 0; b.s = span; b.side = Math.sign(rx) || 1;
+      const lum = col ? (col.getX(r) + col.getY(r) + col.getZ(r)) / 3 : .7, edge = Math.min(...q.bw) < .04 ? .18 : 0;
+      b.b = clamp(.42 + lum * .35 + edge + (span > .6 ? .12 : 0) + (rnd() - .5) * .2, 0, 1); b.a = .32 + rnd() * .3;
+      const fz = Math.abs(gauss()) * .018 + (rnd() < .08 ? rnd() * .07 : 0); b.off = [gauss() * fz, gauss() * fz, gauss() * fz];
+      // fox grain
+      const f = fox[i], qf = pick(FT), rf = qf.tri[0], FP = FT.P, fy = FP.getY(rf), fz2 = FP.getZ(rf);
+      f.tri = qf.tri; f.bw = qf.bw; f.part = fz2 < -38 ? 5 : fy < 14 ? 4 : 0; f.u = f.part === 5 ? clamp((-38 - fz2) / 55, 0, 1) : f.part === 4 ? 1 - fy / 14 : 0;
+      f.b = clamp((f.part === 5 && f.u > .8 ? .95 : .5) + (fy > 55 ? .2 : 0) + (rnd() - .5) * .25, 0, 1); f.a = .32 + rnd() * .3;
+      const ff = Math.abs(gauss()) * .02 + (f.part === 5 ? Math.abs(gauss()) * .03 : 0); f.off = [gauss() * ff, gauss() * ff, gauss() * ff];
+      b.c = gold(b.b); f.c = gold(f.b);
+    }
+    orient(2.3, .3, .25); BIRD_S = .025; // side-on with the wings rising in a V, as in the reference
+    MODELS = { bw, fw, prep(t, needB, needF) {
+      if (needB) { smx.setTime((t / FLAP_PERIOD % 1) * flap.duration); const w = sm.morphTargetInfluences, M = sg.morphAttributes.position;
+        for (let i = 0; i < SP.count; i++) { let x = SP.getX(i), y = SP.getY(i), z = SP.getZ(i);
+          for (let m = 0; m < M.length; m++) { const k = w[m]; if (k) { x += k * M[m].getX(i); y += k * M[m].getY(i); z += k * M[m].getZ(i); } }
+          // stork space (head +z, wings x, up y) to bird local units, then the same roll/pitch/yaw as the procedural bird
+          x *= BIRD_S; y = (y - 8) * BIRD_S; z = (z - 4) * BIRD_S;
+          const x0 = x * cr - y * sr, y0 = x * sr + y * cr, y1 = y0 * cp - z * sp, z1 = y0 * sp + z * cp;
+          bw[i * 3] = x0 * cy + z1 * sy + BIRD_POS[0]; bw[i * 3 + 1] = y1 + BIRD_POS[1] - Math.sin(t * 6.283 / FLAP_PERIOD) * .07; bw[i * 3 + 2] = -x0 * sy + z1 * cy + BIRD_POS[2]; } }
+      if (needF) { fmx.setTime((t / RUN_PERIOD % 1) * run.duration); foxG.scene.updateMatrixWorld(true); const FP = fm.geometry.attributes.position;
+        for (let i = 0; i < FP.count; i++) { v.fromBufferAttribute(FP, i); fm.boneTransform(i, v); v.applyMatrix4(fm.matrixWorld);
+          // fox space (nose +z, up y) turned so the nose points +x, in profile
+          fw[i * 3] = (v.z + 10) * FOX_S + .2; fw[i * 3 + 1] = v.y * FOX_S - 1.0; fw[i * 3 + 2] = -v.x * FOX_S; } }
+    } };
   }
 
   let mode = 2, morph = 0, target = 0, cycleT = 0, paused = false;
@@ -252,6 +314,7 @@
     if (mode === 0) target = 0; else if (mode === 1) target = 1; else { cycleT += dt; const c = cycleT % 16; target = c < 6.5 ? 0 : c < 8 ? (c - 6.5) / 1.5 : c < 14.5 ? 1 : 1 - (c - 14.5) / 1.5; }
     morph += (target - morph) * Math.min(1, dt * (mode === 2 ? 6 : 1.6));
     const m = morph, inMorph = m > .002 && m < .998;
+    if (MODELS) MODELS.prep(t, m < .999, m > .001);
     for (let i = 0; i < N; i++) {
       const b = bird[i], f = fox[i], i3 = i * 3;
       let k = clamp((m - b.delay * (1 - m) * 0) , 0, 1);
@@ -299,9 +362,18 @@
   const clock = new THREE.Clock();
   function still() { const target0 = mode === 1 ? 1 : 0; morph = target0; for (let k = 0; k < 4; k++) frame(1.3 + k * .4, .1); }
   function loop() { requestAnimationFrame(loop); const dt = Math.min(clock.getDelta(), .05); if (paused || document.hidden || reduce) return; frame(clock.getElapsedTime(), dt); }
-  if (reduce) { mode = 0; buttons.forEach(x => x.setAttribute('aria-pressed', String(x.dataset.mode === '0'))); still(); }
-  loop();
-  window.__stardust = { frameAt: (t, m) => { morph = m; mode = m >= 1 ? 1 : 0; frame(t, 0); } };
+  let started = false;
+  function start() { if (started) return; started = true;
+    if (reduce) { mode = 0; buttons.forEach(x => x.setAttribute('aria-pressed', String(x.dataset.mode === '0'))); still(); }
+    clock.start(); loop(); }
+  if (THREE.GLTFLoader) {
+    const gl = new THREE.GLTFLoader();
+    Promise.all([gl.loadAsync('../assets/models/stork.glb'), gl.loadAsync('../assets/models/fox.glb')])
+      .then(([s1, f1]) => { adoptModels(s1, f1); start(); }).catch(err => { console.warn('Stardust: models unavailable, using procedural shapes', err); start(); });
+    setTimeout(start, 6000); // never leave the stage empty on a slow connection
+  } else start();
+  window.__stardust = { frameAt: (t, m) => { morph = m; mode = m >= 1 ? 1 : 0; frame(t, 0); }, ready: () => !!MODELS,
+    pose: (yaw, pitch, roll, scale, pos) => { orient(yaw, pitch, roll); if (scale) BIRD_S = scale; if (pos) BIRD_POS = pos; } };
 })();
 </script>
 </body>

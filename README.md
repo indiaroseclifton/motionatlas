@@ -279,8 +279,10 @@ Your package of 11 films, 68 renders and a style list is merged in with
 
 - `site/studies/stardust-bird-fox.html`: about 39k additive particles form a golden bird with wings raised
   in a V, which dissolves and re-forms as a running fox on a 16 s loop. It also has a dust trail, bokeh,
-  and modes for the bird alone and the fox alone. It is built procedurally, with no external models, and
-  uses the vendored three.js. It answers `stardust:` and `lattice:` pause and play messages.
+  and modes for the bird alone and the fox alone. The dust is scattered over two real animated models,
+  hosted locally in `site/assets/models/`: the three.js examples stork (wing-flap morph targets, MIT) and
+  the Khronos glTF sample fox (skinned run cycle, CC BY 4.0, credited on the Sources page). It loads them
+  with `site/vendor/GLTFLoader-r128.js`; if they fail to load, it falls back to procedural shapes. It answers `stardust:` and `lattice:` pause and play messages.
 - Featured at the top of the Animation studio (`lattice-embed.js`, `lattice-embed.css`) as a
   click-to-play poster (`assets/studies/stardust-bird-fox.webp`) with a full-screen link.
 
