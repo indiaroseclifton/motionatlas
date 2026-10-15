@@ -16,9 +16,8 @@
   {id:'jelly',kind:'video',src:'assets/films/jellyfish.mp4',small:'assets/films/jellyfish-720.mp4',webm:'assets/films/jellyfish.webm',poster:'assets/films/jellyfish.jpg',open:'assets/films/jellyfish.mp4',kicker:'Film · loops seamlessly',title:'Jellyfish, drifting.',
    text:'A lantern jellyfish with an amber core turns through the dark while paler ones drift past, trailing threads of light.'},
   {id:'stardust',kind:'live',src:'studies/stardust-bird-fox.html?hero',open:'studies/stardust-bird-fox.html',kicker:'Live particles · WebGL',title:'Stardust: bird to fox.',
-   text:'Golden dust settles over animated models of a stork in flight and a running fox; every few seconds it lets go and re-forms as the other animal.'},
-  {id:'lattice',kind:'live',src:'studies/golden-lattice.html?hero',open:'studies/golden-lattice.html',kicker:'Live wireframe · WebGL',title:'Golden lattice.',
-   text:'A bird and a fox drawn as procedural wireframe and twinkling vertices, dissolving through a spiral vortex into one another.'}];
+   text:'Golden dust settles over animated models of a stork in flight and a running fox; every few seconds it lets go and re-forms as the other animal.'}];
+
  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
  const reduce=matchMedia('(prefers-reduced-motion: reduce)');
  let held=reduce.matches; // the river-wide pause
@@ -29,7 +28,7 @@
    v.innerHTML=`${it.small?`<source src="${it.small}" type="video/mp4" media="(max-width: 900px)">`:''}<source src="${it.webm}" type="video/webm"><source src="${it.src}" type="video/mp4">`;return v;}
   const f=document.createElement('iframe');f.src=it.src;f.title=it.title.replace(/\.$/,'')+', live study';f.tabIndex=-1;f.setAttribute('allowtransparency','true');f.setAttribute('loading','eager');return f;
  }
- function post(f,msg){['whale','lion','stardust','lattice','fly'].forEach(k=>{try{f.contentWindow.postMessage(k+':'+msg,'*');}catch{}});}
+ function post(f,msg){['whale','lion','stardust','fly'].forEach(k=>{try{f.contentWindow.postMessage(k+':'+msg,'*');}catch{}});}
  function run(r){
   if(!r.m)return;const go=r.visible&&!held&&isMotion();
   if(r.m.tagName==='VIDEO'){if(go)r.m.play().catch(()=>{});else r.m.pause();}

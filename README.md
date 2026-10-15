@@ -272,20 +272,13 @@ Your package of 11 films, 68 renders and a style list is merged in with
   - **Jellyfish:** upscaled from full-size frames.
   - **Phones:** each film has a `-720.mp4` cut made from the upscaled frames, served below 900 px.
 
-### Golden lattice: bird & fox (live study)
-
-- `site/studies/golden-lattice.html`: the three.js wireframe bird and fox study, standalone. It loads
-  three.js from `site/vendor/` (CDN fallback), pauses when hidden or asked by the parent page, keeps
-  sparkle sizes on resize and holds a still frame under reduced motion.
-- Now linked from the featured study as the earlier version.
-
 ### Animation studio river
 
 - `site/studio-river.js` and `studio-river.css` replace the old click-to-play box: the live studies and films sit in one dark band across the full width of the page.
   - **Blending:** the band fades out of the page background at the top and back in at the bottom. Each piece has feathered (masked) edges and no frame.
   - **Playback:** pieces play as they scroll into view and pause as they leave. There's one "Pause the motion" control for the whole band. With reduced motion on, nothing autoplays.
   - **Performance:** live studies load as they approach and are released once well out of view, so only two or three WebGL contexts exist at a time.
-- Order: the whale (a full-width stage it glides across), lion to phoenix (live), the lion film, the butterfly (live), the jellyfish film, bird to fox and the golden lattice.
+- Order: the whale (a full-width stage it glides across), lion to phoenix (live), the lion film, the butterfly (live), the jellyfish film and bird to fox. (The golden lattice study has been retired.)
 
 ### Whale and butterfly (live studies)
 
@@ -295,21 +288,20 @@ Your package of 11 films, 68 renders and a style list is merged in with
 - **`site/studies/butterfly.html`:** grains sampled from a wings-open frame of the butterfly film (`assets/studies/butterfly-source.jpg`).
   - **Motion:** every wing grain turns about the body axis, so the wings fold up out of the page. It flies a slow figure-of-eight and sheds glitter.
   - **Shared code:** the motion is written once in GLSL and once in JS, so the shed dust leaves from where the creature really is.
-- Both studies use the hero mode and `study:ready` handshake, and are also home hero scenes 05 and 06. The jellyfish film is scene 07.
+- Both studies use the hero mode and `study:ready` handshake, and are also home hero scenes 05 and 06.
 
 ### Home hero scenes
 
-- `site/hero-scenes.js` (styles at the end of `site/home.css`) lets the home hero show eight scenes:
-  1. the lion-to-phoenix film (the default)
-  2. the live lion-to-phoenix study
-  3. stardust bird to fox
-  4. the golden lattice
+- `site/hero-scenes.js` (styles at the end of `site/home.css`) lets the home hero show seven scenes:
+  1. the jellyfish film (the default)
+  2. the lion-to-phoenix film
+  3. the live lion-to-phoenix study
+  4. stardust bird to fox
   5. the whale (live)
   6. the butterfly (live)
-  7. the jellyfish film
-  8. Genesis, with its four plates
+  7. Genesis, with its four plates
 - Each scene tints the title's italic word and the eyebrow to its own light: gold, blue, champagne or violet-amber.
-- A row of thin marks in the hero's foot switches scenes. It shows the scene name and previews a name on hover. The choice is remembered per visitor in `localStorage`.
+- A row of thin marks in the hero's foot switches scenes. It shows the scene name and previews a name on hover. The choice is remembered per visitor in `localStorage` under `vmaHeroScene2`. The key was renamed when the jellyfish became the default, so earlier choices reset to it.
 - A new scene loads behind the current one and crossfades in over 1.6 s, only once it is drawing. Live studies post `study:ready` to say so, with a 4 s fallback.
 - Live studies load with `?hero` (`site/studies/hero-mode.js`). In that mode they hide their controls and drop their background so they sit on the hero's dark background.
 - **Desktop:** scenes sit right of the copy with a feathered left edge, and the title's italic word warms to gold.
@@ -337,8 +329,7 @@ Your package of 11 films, 68 renders and a style list is merged in with
   hosted locally in `site/assets/models/`: the three.js examples stork (wing-flap morph targets, MIT) and
   the Khronos glTF sample fox (skinned run cycle, CC BY 4.0, credited on the Sources page). It loads them
   with `site/vendor/GLTFLoader-r128.js`; if they fail to load, it falls back to procedural shapes. It answers `stardust:` and `lattice:` pause and play messages.
-- Featured at the top of the Animation studio (`lattice-embed.js`, `lattice-embed.css`) as a
-  click-to-play poster (`assets/studies/stardust-bird-fox.webp`) with a full-screen link.
+- Shown in the Animation studio river (`studio-river.js`).
 
 ### What to upload
 
