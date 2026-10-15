@@ -1,0 +1,624 @@
+{
+ "schema": "atlas-art-references-v1",
+ "checked": "2026-10-15",
+ "source": "The Met Open Access",
+ "licence": "CC0",
+ "refs": {
+  "R01": [
+   {
+    "src": "assets/art-refs/met-460707.webp",
+    "w": 600,
+    "h": 448,
+    "title": "The Bay of Naples",
+    "artist": "Unknown",
+    "date": "ca. 1835",
+    "medium": "Gouache",
+    "credit": "Robert Lehman Collection, 1975",
+    "url": "https://www.metmuseum.org/art/collection/search/460707",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   },
+   {
+    "src": "assets/art-refs/met-820765.webp",
+    "w": 517,
+    "h": 624,
+    "title": "Landscape with a Traveler Crossing a Bridge (recto); Sketches of a Gate, a Bridge, and a Town Hall (verso)",
+    "artist": "Anthonie Waterloo",
+    "date": "1629–90",
+    "medium": "Black chalk, watercolor and gouache; framing lines in black ink (recto); black chalk (verso)",
+    "credit": "Gift of Kenneth Grebinar, 2024",
+    "url": "https://www.metmuseum.org/art/collection/search/820765",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   }
+  ],
+  "R02": [
+   {
+    "src": "assets/art-refs/met-436533.webp",
+    "w": 599,
+    "h": 501,
+    "title": "Shoes",
+    "artist": "Vincent van Gogh",
+    "date": "1888",
+    "medium": "Oil on canvas",
+    "credit": "Purchase, The Annenberg Foundation Gift, 1992",
+    "url": "https://www.metmuseum.org/art/collection/search/436533",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   },
+   {
+    "src": "assets/art-refs/met-459123.webp",
+    "w": 501,
+    "h": 624,
+    "title": "Madame Roulin and Her Baby",
+    "artist": "Vincent van Gogh",
+    "date": "1888",
+    "medium": "Oil on canvas",
+    "credit": "Robert Lehman Collection, 1975",
+    "url": "https://www.metmuseum.org/art/collection/search/459123",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   }
+  ],
+  "R03": [
+   {
+    "src": "assets/art-refs/met-409003.webp",
+    "w": 474,
+    "h": 624,
+    "title": "The Architect Charles-Victor Famin",
+    "artist": "Jean Auguste Dominique Ingres",
+    "date": "1836",
+    "medium": "Graphite",
+    "credit": "Gift of Mrs. Charles Wrightsman, 2012",
+    "url": "https://www.metmuseum.org/art/collection/search/409003",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   },
+   {
+    "src": "assets/art-refs/met-697751.webp",
+    "w": 503,
+    "h": 624,
+    "title": "Portrait of Madame Paul Meurice, née Palmyre Granger",
+    "artist": "Jean Auguste Dominique Ingres",
+    "date": "ca. 1845–50",
+    "medium": "Graphite on wove paper",
+    "credit": "Purchase, Harris Brisbane Dick, Louis V. Bell, and Harry G. Sperling Funds, The Elisha Whittelsey Collection, The Elisha Whittelsey Fund, and Leon D. and Debra R. Black Gift, 2016",
+    "url": "https://www.metmuseum.org/art/collection/search/697751",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   }
+  ],
+  "R04": [
+   {
+    "src": "assets/art-refs/met-459567.webp",
+    "w": 497,
+    "h": 624,
+    "title": "Women Carrying Faggots",
+    "artist": "Jean-François Millet",
+    "date": "ca. 1858",
+    "medium": "Charcoal heightened with white gouache, charcoal border, on heavy laid gray-blue paper",
+    "credit": "Robert Lehman Collection, 1975",
+    "url": "https://www.metmuseum.org/art/collection/search/459567",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   },
+   {
+    "src": "assets/art-refs/met-14422.webp",
+    "w": 599,
+    "h": 326,
+    "title": "River Landscape",
+    "artist": "William Morris Hunt",
+    "date": "ca. 1877",
+    "medium": "Charcoal on off-white laid paper",
+    "credit": "Purchase, Gifts in memory of Stephen D. Rubin, 1992",
+    "url": "https://www.metmuseum.org/art/collection/search/14422",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   }
+  ],
+  "R05": [
+   {
+    "src": "assets/art-refs/met-436163.webp",
+    "w": 596,
+    "h": 624,
+    "title": "Three Dancers Preparing for Class",
+    "artist": "Edgar Degas",
+    "date": "after 1878",
+    "medium": "Pastel on buff-colored wove paper",
+    "credit": "H. O. Havemeyer Collection, Bequest of Mrs. H. O. Havemeyer, 1929",
+    "url": "https://www.metmuseum.org/art/collection/search/436163",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   },
+   {
+    "src": "assets/art-refs/met-334345.webp",
+    "w": 405,
+    "h": 625,
+    "title": "Madame Théodore Gobillard (Yves Morisot)",
+    "artist": "Edgar Degas",
+    "date": "1869",
+    "medium": "Pastel",
+    "credit": "Bequest of Joan Whitney Payson, 1975",
+    "url": "https://www.metmuseum.org/art/collection/search/334345",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   }
+  ],
+  "R06": [
+   {
+    "src": "assets/art-refs/met-334652.webp",
+    "w": 483,
+    "h": 624,
+    "title": "Embroidery; The Artist's Mother",
+    "artist": "Georges Seurat",
+    "date": "1882–83",
+    "medium": "Conté crayon",
+    "credit": "Purchase, Joseph Pulitzer Bequest, 1951; acquired from The Museum of Modern Art, Lillie P. Bliss Collection",
+    "url": "https://www.metmuseum.org/art/collection/search/334652",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   },
+   {
+    "src": "assets/art-refs/met-339752.webp",
+    "w": 600,
+    "h": 472,
+    "title": "Peasants",
+    "artist": "Georges Seurat",
+    "date": "1881–84",
+    "medium": "Conté crayon",
+    "credit": "Bequest of Miss Adelaide Milton de Groot (1876-1967), 1967",
+    "url": "https://www.metmuseum.org/art/collection/search/339752",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   }
+  ],
+  "R07": [
+   {
+    "src": "assets/art-refs/met-336228.webp",
+    "w": 494,
+    "h": 625,
+    "title": "Melencolia I",
+    "artist": "Albrecht Dürer",
+    "date": "1514",
+    "medium": "Engraving",
+    "credit": "Harris Brisbane Dick Fund, 1943",
+    "url": "https://www.metmuseum.org/art/collection/search/336228",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   },
+   {
+    "src": "assets/art-refs/met-336223.webp",
+    "w": 487,
+    "h": 625,
+    "title": "Knight, Death, and the Devil",
+    "artist": "Albrecht Dürer",
+    "date": "1513",
+    "medium": "Engraving",
+    "credit": "Harris Brisbane Dick Fund, 1943",
+    "url": "https://www.metmuseum.org/art/collection/search/336223",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   }
+  ],
+  "R08": [
+   {
+    "src": "assets/art-refs/met-459432.webp",
+    "w": 536,
+    "h": 625,
+    "title": "Mountainous Landscape with a Rock, Trees, and Buildings",
+    "artist": "Domenico Campagnola",
+    "date": "ca. 1520",
+    "medium": "Pen and brown ink",
+    "credit": "Robert Lehman Collection, 1975",
+    "url": "https://www.metmuseum.org/art/collection/search/459432",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   },
+   {
+    "src": "assets/art-refs/met-10244.webp",
+    "w": 600,
+    "h": 579,
+    "title": "Group on the Stockport Road",
+    "artist": "Mather Brown",
+    "date": "",
+    "medium": "Pen and iron-gall ink and graphite on off-white laid paper",
+    "credit": "Rogers Fund, 1953",
+    "url": "https://www.metmuseum.org/art/collection/search/10244",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   }
+  ],
+  "R10": [
+   {
+    "src": "assets/art-refs/met-56906.webp",
+    "w": 599,
+    "h": 401,
+    "title": "Station Thirty-Eight: Fujikawa, Scene at the Border, from the Fifty-Three Stations of the Tokaido",
+    "artist": "Utagawa Hiroshige",
+    "date": "ca. 1833–34",
+    "medium": "Woodblock print; ink and color on paper",
+    "credit": "The Howard Mansfield Collection, Purchase, Rogers Fund, 1936",
+    "url": "https://www.metmuseum.org/art/collection/search/56906",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   },
+   {
+    "src": "assets/art-refs/met-45294.webp",
+    "w": 599,
+    "h": 384,
+    "title": "Twilight Moon at Ryōgoku Bridge",
+    "artist": "Utagawa Hiroshige",
+    "date": "",
+    "medium": "Woodblock print; ink and color on paper",
+    "credit": "Rogers Fund, 1922",
+    "url": "https://www.metmuseum.org/art/collection/search/45294",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   }
+  ],
+  "R11": [
+   {
+    "src": "assets/art-refs/met-69299.webp",
+    "w": 600,
+    "h": 413,
+    "title": "Stencil with Theme from Matsukaze",
+    "artist": "Japan",
+    "date": "19th century",
+    "medium": "Paper, silk",
+    "credit": "Gift of Mrs. Horace Havemeyer, 1942",
+    "url": "https://www.metmuseum.org/art/collection/search/69299",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   },
+   {
+    "src": "assets/art-refs/met-69935.webp",
+    "w": 599,
+    "h": 457,
+    "title": "Stencil",
+    "artist": "Japan",
+    "date": "19th century",
+    "medium": "Paper",
+    "credit": "Gift of Mrs. Horace Havemeyer, 1950",
+    "url": "https://www.metmuseum.org/art/collection/search/69935",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   }
+  ],
+  "R13": [
+   {
+    "src": "assets/art-refs/met-437307.webp",
+    "w": 445,
+    "h": 624,
+    "title": "Poplars, Eragny",
+    "artist": "Camille Pissarro",
+    "date": "1895",
+    "medium": "Oil on canvas",
+    "credit": "Bequest of Miss Adelaide Milton de Groot (1876-1967), 1967",
+    "url": "https://www.metmuseum.org/art/collection/search/437307",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   },
+   {
+    "src": "assets/art-refs/met-437683.webp",
+    "w": 599,
+    "h": 477,
+    "title": "Sahurs Meadows in Morning Sun",
+    "artist": "Alfred Sisley",
+    "date": "1894",
+    "medium": "Oil on canvas",
+    "credit": "Gift of Janice H. Levin, 1991",
+    "url": "https://www.metmuseum.org/art/collection/search/437683",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   }
+  ],
+  "R16": [
+   {
+    "src": "assets/art-refs/met-637486.webp",
+    "w": 474,
+    "h": 624,
+    "title": "Poster for The Yellow Book, Volume IV",
+    "artist": "Aubrey Vincent Beardsley",
+    "date": "January 1895",
+    "medium": "Lithograph and relief process",
+    "credit": "Gift of Martin Birnbaum, 1957",
+    "url": "https://www.metmuseum.org/art/collection/search/637486",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   },
+   {
+    "src": "assets/art-refs/met-821354.webp",
+    "w": 442,
+    "h": 625,
+    "title": "The Road Rights of Wheelmen, Callaghan and Company, Chicago",
+    "artist": "E. Nadall",
+    "date": "1895",
+    "medium": "Lithograph",
+    "credit": "Purchase, The Lauder Foundation, Leonard and Judy Lauder Fund Gift, 2019",
+    "url": "https://www.metmuseum.org/art/collection/search/821354",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   }
+  ],
+  "R18": [
+   {
+    "src": "assets/art-refs/met-53656.webp",
+    "w": 419,
+    "h": 624,
+    "title": "The Outer Robe",
+    "artist": "Kitagawa Utamaro",
+    "date": "ca. 1795",
+    "medium": "Woodblock print; ink and color on paper",
+    "credit": "The Howard Mansfield Collection, Purchase, Rogers Fund, 1936",
+    "url": "https://www.metmuseum.org/art/collection/search/53656",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   },
+   {
+    "src": "assets/art-refs/met-36623.webp",
+    "w": 407,
+    "h": 624,
+    "title": "Woman Relaxing after Her Bath",
+    "artist": "Kitagawa Utamaro",
+    "date": "1790s",
+    "medium": "Woodblock print; ink and color on paper",
+    "credit": "Rogers Fund, 1914",
+    "url": "https://www.metmuseum.org/art/collection/search/36623",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   }
+  ],
+  "R19": [
+   {
+    "src": "assets/art-refs/met-437658.webp",
+    "w": 599,
+    "h": 407,
+    "title": "Study for \"A Sunday on La Grande Jatte\"",
+    "artist": "Georges Seurat",
+    "date": "1884",
+    "medium": "Oil on canvas",
+    "credit": "Bequest of Sam A. Lewisohn, 1951",
+    "url": "https://www.metmuseum.org/art/collection/search/437658",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   },
+   {
+    "src": "assets/art-refs/met-437654.webp",
+    "w": 600,
+    "h": 401,
+    "title": "Circus Sideshow (Parade de cirque)",
+    "artist": "Georges Seurat",
+    "date": "1887–88",
+    "medium": "Oil on canvas",
+    "credit": "Bequest of Stephen C. Clark, 1960",
+    "url": "https://www.metmuseum.org/art/collection/search/437654",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   }
+  ],
+  "R25": [
+   {
+    "src": "assets/art-refs/met-205044.webp",
+    "w": 599,
+    "h": 354,
+    "title": "Bowl with cover",
+    "artist": "Meissen Manufactory",
+    "date": "ca. 1734",
+    "medium": "Hard-paste porcelain, gold",
+    "credit": "Gift of Irwin Untermyer, 1968",
+    "url": "https://www.metmuseum.org/art/collection/search/205044",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   },
+   {
+    "src": "assets/art-refs/met-239350.webp",
+    "w": 517,
+    "h": 625,
+    "title": "Ice cream pail (one of a pair)",
+    "artist": "Meissen Manufactory",
+    "date": "porcelain ca. 1730, mounts 1777/78",
+    "medium": "Hard-paste porcelain, gilt bronze",
+    "credit": "Gift of Mrs. Charles Wrightsman, 2013",
+    "url": "https://www.metmuseum.org/art/collection/search/239350",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   }
+  ],
+  "R26": [
+   {
+    "src": "assets/art-refs/met-245829.webp",
+    "w": 468,
+    "h": 624,
+    "title": "Marble bust of Herodotos",
+    "artist": "Roman",
+    "date": "2nd century CE",
+    "medium": "Marble, Island ?",
+    "credit": "Gift of George F. Baker, 1891",
+    "url": "https://www.metmuseum.org/art/collection/search/245829",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   },
+   {
+    "src": "assets/art-refs/met-250675.webp",
+    "w": 468,
+    "h": 624,
+    "title": "Marble bust of a youth",
+    "artist": "Roman",
+    "date": "ca. 140 CE",
+    "medium": "Marble",
+    "credit": "Rogers Fund, 1918",
+    "url": "https://www.metmuseum.org/art/collection/search/250675",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   }
+  ],
+  "R27": [
+   {
+    "src": "assets/art-refs/met-255695.webp",
+    "w": 600,
+    "h": 609,
+    "title": "Bronze statuette of Artemis",
+    "artist": "Greek",
+    "date": "3rd–1st century BCE",
+    "medium": "Bronze",
+    "credit": "Gift of Louise Crane, in memory of her mother, Mrs. W. Murray Crane, 1980",
+    "url": "https://www.metmuseum.org/art/collection/search/255695",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   },
+   {
+    "src": "assets/art-refs/met-256661.webp",
+    "w": 600,
+    "h": 450,
+    "title": "Bronze statuette of bull",
+    "artist": "Roman",
+    "date": "1st–2nd century CE",
+    "medium": "Bronze",
+    "credit": "Museum Accession",
+    "url": "https://www.metmuseum.org/art/collection/search/256661",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   }
+  ],
+  "R29": [
+   {
+    "src": "assets/art-refs/met-227937.webp",
+    "w": 600,
+    "h": 450,
+    "title": "Embroidered sampler",
+    "artist": "Unknown maker",
+    "date": "1691",
+    "medium": "Silk on linen",
+    "credit": "From the Collection of Mrs. Lathrop Colgate Harper, Bequest of Mabel Herbert Harper, 1957",
+    "url": "https://www.metmuseum.org/art/collection/search/227937",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   },
+   {
+    "src": "assets/art-refs/met-16961.webp",
+    "w": 413,
+    "h": 624,
+    "title": "Embroidered Sampler",
+    "artist": "Anne Chase",
+    "date": "1721",
+    "medium": "Silk embroidery on wool",
+    "credit": "Gift of Philip Holzer, 2010",
+    "url": "https://www.metmuseum.org/art/collection/search/16961",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   }
+  ],
+  "R30": [
+   {
+    "src": "assets/art-refs/met-467916.webp",
+    "w": 353,
+    "h": 625,
+    "title": "Stained Glass Panel",
+    "artist": "South Netherlandish",
+    "date": "15th century",
+    "medium": "Stained Glass",
+    "credit": "Bequest of George D. Pratt, 1935",
+    "url": "https://www.metmuseum.org/art/collection/search/467916",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   },
+   {
+    "src": "assets/art-refs/met-467269.webp",
+    "w": 446,
+    "h": 624,
+    "title": "Stained Glass Fragment",
+    "artist": "French",
+    "date": "1200–1215",
+    "medium": "Stained glass, lead",
+    "credit": "Gift of George D. Pratt, 1930",
+    "url": "https://www.metmuseum.org/art/collection/search/467269",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   }
+  ],
+  "R32": [
+   {
+    "src": "assets/art-refs/met-824.webp",
+    "w": 495,
+    "h": 625,
+    "title": "Bowl",
+    "artist": "Louis C. Tiffany",
+    "date": "1893–96",
+    "medium": "Favrile glass",
+    "credit": "Gift of H. O. Havemeyer, 1896",
+    "url": "https://www.metmuseum.org/art/collection/search/824",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   },
+   {
+    "src": "assets/art-refs/met-826.webp",
+    "w": 599,
+    "h": 475,
+    "title": "Bowl",
+    "artist": "Louis C. Tiffany",
+    "date": "1893–96",
+    "medium": "Favrile glass",
+    "credit": "Gift of H. O. Havemeyer, 1896",
+    "url": "https://www.metmuseum.org/art/collection/search/826",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   }
+  ],
+  "R34": [
+   {
+    "src": "assets/art-refs/met-285421.webp",
+    "w": 444,
+    "h": 624,
+    "title": "Spiraea aruncus (Tyrol)",
+    "artist": "Anna Atkins",
+    "date": "1851–54",
+    "medium": "Cyanotype",
+    "credit": "Purchase, Alfred Stieglitz Society Gifts, 2004",
+    "url": "https://www.metmuseum.org/art/collection/search/285421",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   },
+   {
+    "src": "assets/art-refs/met-286896.webp",
+    "w": 510,
+    "h": 625,
+    "title": "Rhodomenia Polycarpa",
+    "artist": "Anna Atkins",
+    "date": "ca. 1853",
+    "medium": "Cyanotype",
+    "credit": "Gilman Collection, Purchase, The Horace W. Goldsmith Foundation Gift, through Joyce and Robert Menschel, 2005",
+    "url": "https://www.metmuseum.org/art/collection/search/286896",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   }
+  ],
+  "R35": [
+   {
+    "src": "assets/art-refs/met-504132.webp",
+    "w": 440,
+    "h": 624,
+    "title": "Woman Holding an Accordion tintype",
+    "artist": "American",
+    "date": "late 1860s",
+    "medium": "Tintype",
+    "credit": "Purchase, Frederick M. Lehman Bequest, 2005",
+    "url": "https://www.metmuseum.org/art/collection/search/504132",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   },
+   {
+    "src": "assets/art-refs/met-26898.webp",
+    "w": 386,
+    "h": 625,
+    "title": "Tintype Photograph of Gustave Young (1827–1895)",
+    "artist": "American, Springfield, Massachusetts",
+    "date": "ca. 1860",
+    "medium": "Tintype (in carte de visite format)",
+    "credit": "Purchase, Bernice and Jerome Zwanger Gift, 2003",
+    "url": "https://www.metmuseum.org/art/collection/search/26898",
+    "museum": "The Metropolitan Museum of Art",
+    "licence": "Public domain (CC0)"
+   }
+  ]
+ }
+}

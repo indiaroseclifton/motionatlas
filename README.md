@@ -221,6 +221,21 @@ Your package of 11 films, 68 renders and a style list is merged in with
   - **A26 Cellular automata:** Life, HighLife, Day & Night, Seeds, Maze and Coral; draw to add
     cells.
 
+### Open-source design systems, museum references and credits
+
+- **Four open-source systems (D33–D36)**: Primer, GOV.UK Frontend, Adobe Spectrum and USWDS, each
+  shown as a product screen built from the project's published tokens (`site/system-previews.js`,
+  `.css`). They sit beside the original 32 systems, which are unchanged. Filter with
+  "Open-source systems" on the Design systems page. Each hub shows a source and licence note.
+- **Official resources**: every collection now lists its licence and source repository, and the
+  cover shows the matching atlas screen or, when there is none, the publisher index card rather
+  than an unrelated system.
+- **Museum references**: 44 public-domain works from The Met Open Access (CC0) appear under 22 art
+  styles, on the Art styles workbench and in each style's detail view
+  (`site/art-references.json`, `art-references.js`, images in `site/assets/art-refs/`).
+- **Credits & licences**: a table of every outside source on the Source library page, linked
+  from the footer.
+
 ### What to upload
 
 Upload the contents of `site/` except `site/original/` (backups of the live files). The files

@@ -1,0 +1,23 @@
+/* Historical reference works beside the art styles */
+.artHistory{display:grid;gap:1rem;margin-top:1.6rem;padding-top:1.4rem;border-top:1px solid var(--line,#d9d9d9)}
+.artHistoryHead{display:grid;gap:.35rem}.artHistoryHead h3{margin:0;font-size:1.25rem;text-wrap:balance}.artHistoryHead p{margin:0;max-width:62ch;line-height:1.55}
+.artHistoryGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:1.2rem}
+.artRef{margin:0;display:grid;gap:.55rem;align-content:start;min-width:0}
+.artRef>a{display:block;aspect-ratio:4/3;box-sizing:border-box;max-width:100%;padding:.8rem;background:var(--panel-2,#efefec);border-radius:6px;overflow:hidden}
+.artRef img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,.16))}
+.artRef figcaption{display:grid;gap:.15rem;line-height:1.4}.artRef figcaption b{font-weight:600}.artRef figcaption span{font-size:.92rem}
+.artRef figcaption small{font-size:.8rem;opacity:.85}.artRef figcaption a{text-decoration:underline}
+#detailBody .artHistory{margin:1.6rem 0 .4rem}
+
+/* Credits & licences (Source library page) */
+.credits{display:grid;gap:.8rem;margin:2.4rem 0 1.6rem;padding-top:1.6rem;border-top:1px solid var(--line,#d9d9d9)}
+.credits h2{margin:0;font-size:clamp(1.4rem,2.4vw,2rem);text-wrap:balance}.credits h3{margin:1rem 0 0;font-size:1.15rem}.credits>p{margin:0;max-width:66ch;line-height:1.55}
+.credits>*{min-width:0}
+.creditsTable{position:relative;overflow-x:auto;max-width:100%}
+.creditsTable table{width:100%;border-collapse:collapse;font-size:.92rem;min-width:560px}
+.creditsTable th,.creditsTable td{text-align:left;vertical-align:top;padding:.6rem .7rem;border-bottom:1px solid var(--line,#d9d9d9)}
+.creditsTable thead th{font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;opacity:.8}
+.creditsTable tbody th{font-weight:600;white-space:nowrap}.creditsTable td:last-child{white-space:nowrap}
+.creditsMuseum{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:.4rem 1.6rem;margin:0;padding:0;list-style:none;font-size:.88rem;line-height:1.45}
+.creditsMuseum p{margin:0;padding:.35rem 0;border-bottom:1px dotted var(--line,#d9d9d9)}.creditsMuseum b{font-weight:600}
+.visually-hidden{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}

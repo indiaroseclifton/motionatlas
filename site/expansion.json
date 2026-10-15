@@ -1519,7 +1519,7 @@
       "build": "Hand-drawn layers, painted environments and carefully staged character poses.",
       "avoid": "Avoid treating every Disney film as one uniform style.",
       "motion": "Keep the state change readable; use a stable reduced-motion alternative.",
-      "tags": "Disney storybook / hand-drawn Cinematic directions Disney \u00b7 Beauty and the Beast / Fantasia",
+      "tags": "Disney storybook / hand-drawn Cinematic directions Disney · Beauty and the Beast / Fantasia",
       "effort": "Medium",
       "medium": "Cinematic illustration",
       "purpose": "Illustration",
@@ -1533,7 +1533,7 @@
         "Working interface": "Implement disney storybook / hand-drawn. Hand-drawn layers, painted environments and carefully staged character poses. Test: Build disney storybook / hand-drawn for a project library with three realistic records and long labels. Checks: Verify the primary action, focus order, readable labels, overflow, empty state and reduced-motion alternative."
       },
       "sourceIndex": 4,
-      "filmExamples": "Disney \u00b7 Beauty and the Beast / Fantasia",
+      "filmExamples": "Disney · Beauty and the Beast / Fantasia",
       "sourceURL": "https://www.disneyanimation.com/films/",
       "image": {
         "url": "assets/cinematic-directions.webp",
@@ -1553,7 +1553,7 @@
       "build": "Model original stylized forms; use soft lighting and deliberate material variation.",
       "avoid": "Do not confuse a rounded UI with a fully developed animated-film art direction.",
       "motion": "Keep the state change readable; use a stable reduced-motion alternative.",
-      "tags": "Pixar / warm stylized 3D Cinematic directions Pixar \u00b7 Up / Ratatouille",
+      "tags": "Pixar / warm stylized 3D Cinematic directions Pixar · Up / Ratatouille",
       "effort": "Medium",
       "medium": "Cinematic illustration",
       "purpose": "Illustration",
@@ -1567,7 +1567,7 @@
         "Working interface": "Implement pixar / warm stylized 3d. Model original stylized forms; use soft lighting and deliberate material variation. Test: Build pixar / warm stylized 3d for a project library with three realistic records and long labels. Checks: Verify the primary action, focus order, readable labels, overflow, empty state and reduced-motion alternative."
       },
       "sourceIndex": 4,
-      "filmExamples": "Pixar \u00b7 Up / Ratatouille",
+      "filmExamples": "Pixar · Up / Ratatouille",
       "sourceURL": "https://www.pixar.com/feature-films",
       "image": {
         "url": "assets/cinematic-directions.webp",
@@ -1587,7 +1587,7 @@
       "build": "Use emissive edges over controlled dark surfaces; keep text contrast independent of glow.",
       "avoid": "Avoid making every label neon or sacrificing readability.",
       "motion": "Keep the state change readable; use a stable reduced-motion alternative.",
-      "tags": "TRON / luminous digital world Cinematic directions Disney \u00b7 TRON: Legacy",
+      "tags": "TRON / luminous digital world Cinematic directions Disney · TRON: Legacy",
       "effort": "Medium",
       "medium": "Cinematic illustration",
       "purpose": "Illustration",
@@ -1601,7 +1601,7 @@
         "Working interface": "Implement tron / luminous digital world. Use emissive edges over controlled dark surfaces; keep text contrast independent of glow. Test: Build tron / luminous digital world for a project library with three realistic records and long labels. Checks: Verify the primary action, focus order, readable labels, overflow, empty state and reduced-motion alternative."
       },
       "sourceIndex": 4,
-      "filmExamples": "Disney \u00b7 TRON: Legacy",
+      "filmExamples": "Disney · TRON: Legacy",
       "sourceURL": "https://movies.disney.com/tron-legacy",
       "image": {
         "url": "assets/cinematic-directions.webp",
@@ -1621,7 +1621,7 @@
       "build": "Paint layered backgrounds with restrained ambient movement and clear character silhouettes.",
       "avoid": "Natural detail should support the focal object rather than clutter it.",
       "motion": "Keep the state change readable; use a stable reduced-motion alternative.",
-      "tags": "Studio Ghibli / painted nature Cinematic directions Studio Ghibli \u00b7 My Neighbor Totoro / Howl\u2019s Moving Castle",
+      "tags": "Studio Ghibli / painted nature Cinematic directions Studio Ghibli · My Neighbor Totoro / Howl’s Moving Castle",
       "effort": "Medium",
       "medium": "Cinematic illustration",
       "purpose": "Illustration",
@@ -1635,7 +1635,7 @@
         "Working interface": "Implement studio ghibli / painted nature. Paint layered backgrounds with restrained ambient movement and clear character silhouettes. Test: Build studio ghibli / painted nature for a project library with three realistic records and long labels. Checks: Verify the primary action, focus order, readable labels, overflow, empty state and reduced-motion alternative."
       },
       "sourceIndex": 4,
-      "filmExamples": "Studio Ghibli \u00b7 My Neighbor Totoro / Howl\u2019s Moving Castle",
+      "filmExamples": "Studio Ghibli · My Neighbor Totoro / Howl’s Moving Castle",
       "sourceURL": "https://www.ghibli.jp/works/",
       "image": {
         "url": "assets/cinematic-directions.webp",
@@ -1655,7 +1655,7 @@
       "build": "Layer original line art, halftone texture and deliberate timing changes.",
       "avoid": "Keep small UI text crisp and separate from ornamental printing effects.",
       "motion": "Keep the state change readable; use a stable reduced-motion alternative.",
-      "tags": "Spider-Verse / graphic mixed media Cinematic directions Sony Pictures Animation \u00b7 Into the Spider-Verse / Across the Spider-Verse",
+      "tags": "Spider-Verse / graphic mixed media Cinematic directions Sony Pictures Animation · Into the Spider-Verse / Across the Spider-Verse",
       "effort": "Medium",
       "medium": "Cinematic illustration",
       "purpose": "Illustration",
@@ -1669,7 +1669,7 @@
         "Working interface": "Implement spider-verse / graphic mixed media. Layer original line art, halftone texture and deliberate timing changes. Test: Build spider-verse / graphic mixed media for a project library with three realistic records and long labels. Checks: Verify the primary action, focus order, readable labels, overflow, empty state and reduced-motion alternative."
       },
       "sourceIndex": 4,
-      "filmExamples": "Sony Pictures Animation \u00b7 Into the Spider-Verse / Across the Spider-Verse",
+      "filmExamples": "Sony Pictures Animation · Into the Spider-Verse / Across the Spider-Verse",
       "sourceURL": "https://www.sonypictures.com/movies/spidermanacrossthespiderverse",
       "image": {
         "url": "assets/cinematic-directions.webp",
@@ -1689,7 +1689,7 @@
       "build": "Build original miniature forms or rendered equivalents; use deliberate stepped pose changes.",
       "avoid": "Do not label a still texture as a real photographed stop-motion sequence.",
       "motion": "Keep the state change readable; use a stable reduced-motion alternative.",
-      "tags": "Tactile miniature / stop motion Cinematic directions LAIKA \u00b7 Coraline / handmade miniatures",
+      "tags": "Tactile miniature / stop motion Cinematic directions LAIKA · Coraline / handmade miniatures",
       "effort": "Medium",
       "medium": "Cinematic illustration",
       "purpose": "Illustration",
@@ -1703,7 +1703,7 @@
         "Working interface": "Implement tactile miniature / stop motion. Build original miniature forms or rendered equivalents; use deliberate stepped pose changes. Test: Build tactile miniature / stop motion for a project library with three realistic records and long labels. Checks: Verify the primary action, focus order, readable labels, overflow, empty state and reduced-motion alternative."
       },
       "sourceIndex": 4,
-      "filmExamples": "LAIKA \u00b7 Coraline / handmade miniatures",
+      "filmExamples": "LAIKA · Coraline / handmade miniatures",
       "sourceURL": "https://www.youtube.com/watch?v=jXqqd0ZBEMA",
       "image": {
         "url": "assets/cinematic-directions.webp",
@@ -1723,7 +1723,7 @@
       "build": "Use controlled light/shadow and strong silhouette before adding decorative detail.",
       "avoid": "Keep informative content readable outside the dramatic image.",
       "motion": "Keep the state change readable; use a stable reduced-motion alternative.",
-      "tags": "Film noir / art-deco drama Cinematic directions Film noir \u00b7 Double Indemnity / The Third Man",
+      "tags": "Film noir / art-deco drama Cinematic directions Film noir · Double Indemnity / The Third Man",
       "effort": "Medium",
       "medium": "Cinematic illustration",
       "purpose": "Illustration",
@@ -1737,7 +1737,7 @@
         "Working interface": "Implement film noir / art-deco drama. Use controlled light/shadow and strong silhouette before adding decorative detail. Test: Build film noir / art-deco drama for a project library with three realistic records and long labels. Checks: Verify the primary action, focus order, readable labels, overflow, empty state and reduced-motion alternative."
       },
       "sourceIndex": 4,
-      "filmExamples": "Film noir \u00b7 Double Indemnity / The Third Man",
+      "filmExamples": "Film noir · Double Indemnity / The Third Man",
       "sourceURL": "https://www.bfi.org.uk/articles/subject/film-noir",
       "image": {
         "url": "assets/cinematic-directions.webp",
@@ -1757,7 +1757,7 @@
       "build": "Design original worn surfaces and clear mechanical hierarchies.",
       "avoid": "Do not reproduce a franchise character or confuse ornament with usable controls.",
       "motion": "Keep the state change readable; use a stable reduced-motion alternative.",
-      "tags": "Retro space opera / analog future Cinematic directions Retro space opera \u00b7 Star Wars: A New Hope",
+      "tags": "Retro space opera / analog future Cinematic directions Retro space opera · Star Wars: A New Hope",
       "effort": "Medium",
       "medium": "Cinematic illustration",
       "purpose": "Illustration",
@@ -1771,7 +1771,7 @@
         "Working interface": "Implement retro space opera / analog future. Design original worn surfaces and clear mechanical hierarchies. Test: Build retro space opera / analog future for a project library with three realistic records and long labels. Checks: Verify the primary action, focus order, readable labels, overflow, empty state and reduced-motion alternative."
       },
       "sourceIndex": 4,
-      "filmExamples": "Retro space opera \u00b7 Star Wars: A New Hope",
+      "filmExamples": "Retro space opera · Star Wars: A New Hope",
       "sourceURL": "https://www.starwars.com/films/star-wars-episode-iv-a-new-hope",
       "image": {
         "url": "assets/cinematic-directions.webp",
@@ -5041,6 +5041,190 @@
         ],
         "graphics": "The original reference mockup guides imagery, density and material. Supporting art treatments are linked below; controls remain native."
       }
+    },
+    {
+      "id": "D33",
+      "title": "Primer / open-source developer UI",
+      "group": "Design systems",
+      "kind": "Design systems",
+      "desc": "A repository issues screen built with GitHub Primer’s published colour, radius and type tokens.",
+      "cues": "Underline navigation with counts, filter bar, labelled issue rows.",
+      "use": "Developer tools, dashboards and dense collaborative products.",
+      "build": "Install the official package for production; use these tokens and this screen as a starting reference.",
+      "avoid": "Licence: MIT. Colours and type follow the official tokens; the screen is an atlas composition, not the project’s own component code, and uses no logos or restricted typefaces.",
+      "motion": "Keep the state change readable; use a stable reduced-motion alternative.",
+      "tags": "Primer / open-source developer UI Design systems open source official tokens MIT",
+      "effort": "Medium",
+      "medium": "Web components",
+      "purpose": "Interface",
+      "mood": "Precise",
+      "test": "Build Primer for a project library with three realistic records and long labels.",
+      "alternate": "Try the same example on a narrow phone viewport with keyboard navigation.",
+      "checks": "Verify the primary action, focus order, readable labels, overflow, empty state and reduced-motion alternative.",
+      "prompts": {
+        "Still image": "Create a reference screen in the style of Primer / open-source developer UI: Underline navigation with counts, filter bar, labelled issue rows.",
+        "Video": "Demonstrate Primer / open-source developer UI with a clear initial state, one purposeful change and a readable completed state.",
+        "Working interface": "Implement Primer / open-source developer UI using the official tokens. Underline navigation with counts, filter bar, labelled issue rows. Checks: Verify the primary action, focus order, readable labels, overflow, empty state and reduced-motion alternative."
+      },
+      "sourceIndex": 4,
+      "tokens": {
+        "background": "#f6f8fa",
+        "surface": "#ffffff",
+        "ink": "#1f2328",
+        "accent": "#0969da",
+        "radius": 6,
+        "font": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", \"Noto Sans\", Helvetica, Arial, sans-serif",
+        "space": [
+          4,
+          8,
+          12,
+          16,
+          24,
+          32,
+          40
+        ],
+        "controlHeight": 32,
+        "motionMs": 80
+      },
+      "rule": "Underline navigation with counts, filter bar, labelled issue rows."
+    },
+    {
+      "id": "D34",
+      "title": "GOV.UK Frontend / open-source public service",
+      "group": "Design systems",
+      "kind": "Design systems",
+      "desc": "A one-question form page built with GOV.UK Frontend’s published colours, spacing and error pattern.",
+      "cues": "One question per page, error summary, large radios, green continue button.",
+      "use": "Forms, applications and any service where everyone must succeed first time.",
+      "build": "Install the official package for production; use these tokens and this screen as a starting reference.",
+      "avoid": "Licence: MIT. Colours and type follow the official tokens; the screen is an atlas composition, not the project’s own component code, and uses no logos or restricted typefaces.",
+      "motion": "Keep the state change readable; use a stable reduced-motion alternative.",
+      "tags": "GOV.UK Frontend / open-source public service Design systems open source official tokens MIT",
+      "effort": "Medium",
+      "medium": "Web components",
+      "purpose": "Interface",
+      "mood": "Calm",
+      "test": "Build GOV.UK Frontend for a project library with three realistic records and long labels.",
+      "alternate": "Try the same example on a narrow phone viewport with keyboard navigation.",
+      "checks": "Verify the primary action, focus order, readable labels, overflow, empty state and reduced-motion alternative.",
+      "prompts": {
+        "Still image": "Create a reference screen in the style of GOV.UK Frontend / open-source public service: One question per page, error summary, large radios, green continue button.",
+        "Video": "Demonstrate GOV.UK Frontend / open-source public service with a clear initial state, one purposeful change and a readable completed state.",
+        "Working interface": "Implement GOV.UK Frontend / open-source public service using the official tokens. One question per page, error summary, large radios, green continue button. Checks: Verify the primary action, focus order, readable labels, overflow, empty state and reduced-motion alternative."
+      },
+      "sourceIndex": 4,
+      "tokens": {
+        "background": "#ffffff",
+        "surface": "#f3f2f1",
+        "ink": "#0b0c0c",
+        "accent": "#00703c",
+        "radius": 0,
+        "font": "\"Helvetica Neue\", Helvetica, Arial, sans-serif",
+        "space": [
+          5,
+          10,
+          15,
+          20,
+          25,
+          30,
+          40
+        ],
+        "controlHeight": 40,
+        "motionMs": 0
+      },
+      "rule": "One question per page, error summary, large radios, green continue button."
+    },
+    {
+      "id": "D35",
+      "title": "Spectrum / open-source creative tools",
+      "group": "Design systems",
+      "kind": "Design systems",
+      "desc": "A photo-editing workspace built with Adobe Spectrum’s published grey scale, accent and control tokens.",
+      "cues": "Tool rail, central canvas, labelled property panel, pill buttons.",
+      "use": "Creative tools, editors and any app where people’s own work should hold the colour.",
+      "build": "Install the official package for production; use these tokens and this screen as a starting reference.",
+      "avoid": "Licence: Apache 2.0. Colours and type follow the official tokens; the screen is an atlas composition, not the project’s own component code, and uses no logos or restricted typefaces.",
+      "motion": "Keep the state change readable; use a stable reduced-motion alternative.",
+      "tags": "Spectrum / open-source creative tools Design systems open source official tokens Apache 2.0",
+      "effort": "Medium",
+      "medium": "Web components",
+      "purpose": "Interface",
+      "mood": "Precise",
+      "test": "Build Spectrum for a project library with three realistic records and long labels.",
+      "alternate": "Try the same example on a narrow phone viewport with keyboard navigation.",
+      "checks": "Verify the primary action, focus order, readable labels, overflow, empty state and reduced-motion alternative.",
+      "prompts": {
+        "Still image": "Create a reference screen in the style of Spectrum / open-source creative tools: Tool rail, central canvas, labelled property panel, pill buttons.",
+        "Video": "Demonstrate Spectrum / open-source creative tools with a clear initial state, one purposeful change and a readable completed state.",
+        "Working interface": "Implement Spectrum / open-source creative tools using the official tokens. Tool rail, central canvas, labelled property panel, pill buttons. Checks: Verify the primary action, focus order, readable labels, overflow, empty state and reduced-motion alternative."
+      },
+      "sourceIndex": 4,
+      "tokens": {
+        "background": "#f8f8f8",
+        "surface": "#ffffff",
+        "ink": "#222222",
+        "accent": "#0265dc",
+        "radius": 4,
+        "font": "\"Source Sans 3\", \"Adobe Clean\", system-ui, sans-serif",
+        "space": [
+          4,
+          8,
+          12,
+          16,
+          24,
+          32,
+          40
+        ],
+        "controlHeight": 32,
+        "motionMs": 130
+      },
+      "rule": "Tool rail, central canvas, labelled property panel, pill buttons."
+    },
+    {
+      "id": "D36",
+      "title": "USWDS / open-source civic design",
+      "group": "Design systems",
+      "kind": "Design systems",
+      "desc": "A step-by-step application page built with the U.S. Web Design System’s published tokens and Public Sans.",
+      "cues": "Step indicator, info alert, card group with one action each.",
+      "use": "Civic and public-sector services, onboarding and multi-step applications.",
+      "build": "Install the official package for production; use these tokens and this screen as a starting reference.",
+      "avoid": "Licence: Public domain (CC0). Colours and type follow the official tokens; the screen is an atlas composition, not the project’s own component code, and uses no logos or restricted typefaces.",
+      "motion": "Keep the state change readable; use a stable reduced-motion alternative.",
+      "tags": "USWDS / open-source civic design Design systems open source official tokens Public domain (CC0)",
+      "effort": "Medium",
+      "medium": "Web components",
+      "purpose": "Interface",
+      "mood": "Calm",
+      "test": "Build USWDS for a project library with three realistic records and long labels.",
+      "alternate": "Try the same example on a narrow phone viewport with keyboard navigation.",
+      "checks": "Verify the primary action, focus order, readable labels, overflow, empty state and reduced-motion alternative.",
+      "prompts": {
+        "Still image": "Create a reference screen in the style of USWDS / open-source civic design: Step indicator, info alert, card group with one action each.",
+        "Video": "Demonstrate USWDS / open-source civic design with a clear initial state, one purposeful change and a readable completed state.",
+        "Working interface": "Implement USWDS / open-source civic design using the official tokens. Step indicator, info alert, card group with one action each. Checks: Verify the primary action, focus order, readable labels, overflow, empty state and reduced-motion alternative."
+      },
+      "sourceIndex": 4,
+      "tokens": {
+        "background": "#ffffff",
+        "surface": "#f0f0f0",
+        "ink": "#1b1b1b",
+        "accent": "#005ea2",
+        "radius": 4,
+        "font": "\"Public Sans\", system-ui, sans-serif",
+        "space": [
+          4,
+          8,
+          12,
+          16,
+          24,
+          32,
+          40
+        ],
+        "controlHeight": 44,
+        "motionMs": 150
+      },
+      "rule": "Step indicator, info alert, card group with one action each."
     }
   ],
   "references": [
@@ -5181,7 +5365,7 @@
       "codes": []
     },
     {
-      "title": "Disney \u00b7 Beauty and the Beast / Fantasia",
+      "title": "Disney · Beauty and the Beast / Fantasia",
       "creator": "Original studio / reference collection",
       "url": "https://www.disneyanimation.com/films/",
       "type": "Film reference",
@@ -5191,7 +5375,7 @@
       ]
     },
     {
-      "title": "Pixar \u00b7 Up / Ratatouille",
+      "title": "Pixar · Up / Ratatouille",
       "creator": "Original studio / reference collection",
       "url": "https://www.pixar.com/feature-films",
       "type": "Film reference",
@@ -5201,7 +5385,7 @@
       ]
     },
     {
-      "title": "Disney \u00b7 TRON: Legacy",
+      "title": "Disney · TRON: Legacy",
       "creator": "Original studio / reference collection",
       "url": "https://movies.disney.com/tron-legacy",
       "type": "Film reference",
@@ -5211,7 +5395,7 @@
       ]
     },
     {
-      "title": "Studio Ghibli \u00b7 My Neighbor Totoro / Howl\u2019s Moving Castle",
+      "title": "Studio Ghibli · My Neighbor Totoro / Howl’s Moving Castle",
       "creator": "Original studio / reference collection",
       "url": "https://www.ghibli.jp/works/",
       "type": "Film reference",
@@ -5221,7 +5405,7 @@
       ]
     },
     {
-      "title": "Sony Pictures Animation \u00b7 Into the Spider-Verse / Across the Spider-Verse",
+      "title": "Sony Pictures Animation · Into the Spider-Verse / Across the Spider-Verse",
       "creator": "Original studio / reference collection",
       "url": "https://www.sonypictures.com/movies/spidermanacrossthespiderverse",
       "type": "Film reference",
@@ -5231,7 +5415,7 @@
       ]
     },
     {
-      "title": "LAIKA \u00b7 Coraline / handmade miniatures",
+      "title": "LAIKA · Coraline / handmade miniatures",
       "creator": "Original studio / reference collection",
       "url": "https://www.youtube.com/watch?v=jXqqd0ZBEMA",
       "type": "Film reference",
@@ -5241,7 +5425,7 @@
       ]
     },
     {
-      "title": "Film noir \u00b7 Double Indemnity / The Third Man",
+      "title": "Film noir · Double Indemnity / The Third Man",
       "creator": "Original studio / reference collection",
       "url": "https://www.bfi.org.uk/articles/subject/film-noir",
       "type": "Film reference",
@@ -5251,7 +5435,7 @@
       ]
     },
     {
-      "title": "Retro space opera \u00b7 Star Wars: A New Hope",
+      "title": "Retro space opera · Star Wars: A New Hope",
       "creator": "Original studio / reference collection",
       "url": "https://www.starwars.com/films/star-wars-episode-iv-a-new-hope",
       "type": "Film reference",

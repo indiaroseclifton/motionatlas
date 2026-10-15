@@ -103,16 +103,76 @@
   <div class="sp-wave">${Array.from({length:36},(_,i)=>`<i style="--h:${(30+Math.round(60*Math.abs(Math.sin(i*.7)*Math.cos(i*.23))))}%;--d:${(i%9)*.08}s"></i>`).join('')}</div>
   <div class="sp-hudfoot"><span>CHANNEL A · ENCRYPTED</span>${btn(inert,'Scan channel','systemScan','sp-hudbtn')}</div></div>`;
 
+ /* ---------- Open-source systems (D33–D36) ----------
+    Colours, radii and type follow each project's published tokens. The screens are atlas compositions
+    built with those values; no logos, crests or restricted typefaces are used. */
+
+ /* D33 · GitHub Primer (MIT): repository header, underline nav with counters, issue list with labels. */
+ S.D33=inert=>`<div class="sp-primer"><div class="sp-phead"><span class="sp-pmark">${ic('grid')}</span><span class="sp-prepo"><span>atlas-studio</span> / <b>field-guide</b></span><em class="sp-plabel">Public</em><span class="sp-pacts"><span>${ic('star')}Star <i>128</i></span><span>${ic('share')}Fork <i>14</i></span></span></div>
+  <nav class="sp-ptabs"><a>${ic('doc')}Code</a><a class="on">${ic('check')}Issues <i>12</i></a><a>${ic('share')}Pull requests <i>3</i></a><a>${ic('play')}Actions</a><a>${ic('chart')}Insights</a></nav>
+  <div class="sp-pbar"><span class="sp-pfilter">${ic('search')}is:issue is:open</span><span class="sp-pbtn">Labels <i>9</i></span>${btn(inert,'New issue','systemAdd','sp-pnew')}</div>
+  <div class="sp-pbox"><div class="sp-ptop"><b>${ic('check')}12 Open</b><span>${ic('check')}48 Closed</span><span class="sp-psort">Author · Label · Sort</span></div>
+   ${[['Scroll story stalls on Safari when reduced motion is on','bug','#d1242f','#ffebe9','#1 opened 2 hours ago by rowe'],['Add a cyanotype export preset','enhancement','#0969da','#ddf4ff','#2 opened yesterday by mk'],['Document focus order for the studio menu','accessibility','#8250df','#fbefff','#3 opened 3 days ago by ir']].map(([t,l,c,bg,m])=>`<div class="sp-prow"><span class="sp-popen">${ic('check')}</span><div><b>${t}</b> <em class="sp-pl" style="--c:${c};--bg:${bg}">${l}</em><small>${m}</small></div><span class="sp-pcom">${ic('inbox')}4</span></div>`).join('')}</div></div>`;
+
+ /* D34 · GOV.UK Frontend (MIT): service header, phase banner, back link, error summary,
+    a question page with large radios, hint text and the green start-style button. */
+ S.D34=inert=>`<div class="sp-gov"><header class="sp-ghead"><b>Apply for a garden allotment</b><span>Sign out</span></header><div class="sp-gbar"></div>
+  <div class="sp-gbody"><p class="sp-gphase"><strong>Beta</strong>This is a new service. Help us improve it.</p><a class="sp-gback">Back</a>
+   <div class="sp-gerr"><b>There is a problem</b><a>Select where your allotment would be</a></div>
+   <span class="sp-gcap">Section 2 of 4</span><h3 class="sp-gh">Where would you like your allotment?</h3><p class="sp-ghint">Choose the site closest to your home. You can change this later.</p>
+   <div class="sp-gradios sp-gerrfield"><p class="sp-gmsg">Error: Select where your allotment would be</p>${['Riverside Gardens','Hill Lane','Old Station Yard'].map(x=>`<span class="sp-gradio"><i></i>${x}</span>`).join('')}</div>
+   ${btn(inert,'Continue','systemCheck','sp-gbtn')}</div></div>`;
+
+ /* D35 · Adobe Spectrum (Apache 2.0): a creative editing workspace with tool rail, canvas,
+    properties panel with field labels, sliders, switch, picker and pill buttons. */
+ S.D35=inert=>`<div class="sp-spec"><div class="sp-stop"><b>Garden journal</b><span class="sp-stabs"><a class="on">Edit</a><a>Review</a><a>Share</a></span><span class="sp-sbtns">${btn(inert,'Share','status','sp-sout')}${btn(inert,'Export','systemCheck','sp-sacc')}</span></div>
+  <div class="sp-swork"><aside class="sp-srail">${['grid','folder','star','sun','wave'].map((n,i)=>`<span class="${i===3?'on':''}">${ic(n)}</span>`).join('')}</aside>
+   <div class="sp-scanvas"><figure style="background-image:url('assets/fx/garden.webp')"></figure><span class="sp-szoom">100%</span></div>
+   <aside class="sp-sprops"><b class="sp-shd">Adjust</b>${[['Exposure','+0.4',62],['Contrast','12',56],['Warmth','-8',40]].map(([l,v,p])=>`<div class="sp-sfield"><span><label>${l}</label><em>${v}</em></span><i class="sp-strack"><i style="width:${p}%"></i><b style="left:${p}%"></b></i></div>`).join('')}
+    <div class="sp-sfield"><label>Profile</label><span class="sp-spick">Adobe Color ${ic('chev')}</span></div><div class="sp-sswitch"><span class="sp-sw on"><i></i></span>Auto tone</div></aside></div></div>`;
+
+ /* D36 · U.S. Web Design System (public domain): agency-style header, hero, step indicator,
+    info alert and a card group. Fictional programme; no flag banner or seals. */
+ S.D36=inert=>`<div class="sp-us"><header class="sp-uhead"><b>Community Gardens Program</b><span class="sp-unav"><a class="on">Apply</a><a>Find a garden</a><a>Resources</a></span><span class="sp-usearch">${ic('search')}</span></header>
+  <div class="sp-ubody"><div class="sp-ustep"><div class="sp-usegs"><i class="done"></i><i class="done"></i><i class="cur"></i><i></i></div><p><span class="sp-unum">3</span><b>Choose a site</b><small>of 4</small></p></div>
+   <div class="sp-ualert"><b>Applications close 30 November</b><span>Most applicants hear back within two weeks.</span></div>
+   <div class="sp-ucards">${[['Riverside Gardens','42 plots · water on site'],['Hill Lane','18 plots · raised beds'],['Old Station Yard','26 plots · step-free']].map(([t,s],i)=>`<div class="sp-ucard"><b>${t}</b><p>${s}</p><span class="sp-ubtn ${i?'out':''}">Select</span></div>`).join('')}</div>
+   <div class="sp-uactions">${btn(inert,'Continue','systemCheck','sp-ugo')}<a>Save and finish later</a></div></div></div>`;
+
+ /* Specs for the hub tabs, matching the shape of SystemAtlas.specs. */
+ const SPECS={
+  D33:{name:'Primer / developer collaboration',principle:'Dense, calm interfaces where content and status carry the colour.',pattern:'Use an underline navigation with counts, a filter bar above lists and labels that pair colour with text.',icons:'regular',components:['C03','C15','C20','C23','C31','C32'],motion:['M01','M09','M10','M18'],type:'System sans stack / 14px base / semibold for titles',motionRule:'Motion is almost absent: short fades for overlays and no movement on lists.',links:[['Primer','https://primer.style/'],['Primer primitives (tokens)','https://github.com/primer/primitives'],['Octicons','https://primer.style/foundations/icons']]},
+  D34:{name:'GOV.UK Frontend / public service forms',principle:'One question per page, plain words and controls large enough for everyone.',pattern:'Start with a back link and a caption, ask one thing, show errors in a summary and next to the field, then one green button.',icons:'bold',components:['C01','C06','C17','C21','C28','C30'],motion:['M01','M18'],type:'Large bold headings / 19px body / Arial fallback (GDS Transport is for GOV.UK services only)',motionRule:'No decorative motion. Focus is a thick yellow highlight so people never lose their place.',links:[['GOV.UK Design System','https://design-system.service.gov.uk/'],['govuk-frontend','https://github.com/alphagov/govuk-frontend'],['Question pages','https://design-system.service.gov.uk/patterns/question-pages/']]},
+  D35:{name:'Spectrum / creative tools',principle:'Quiet grey surfaces so people’s own work holds the colour.',pattern:'Keep tools in a rail, properties in a panel and the canvas central. Label every field above its control.',icons:'regular',components:['C09','C10','C18','C28','C35','C39'],motion:['M03','M04','M09','M18'],type:'Source Sans 3 (Adobe Clean on Adobe products) / clear field labels',motionRule:'Short, eased transitions for panels and pickers; nothing moves the canvas without the person asking.',links:[['Spectrum','https://spectrum.adobe.com/'],['Spectrum CSS','https://github.com/adobe/spectrum-css'],['Spectrum tokens','https://github.com/adobe/spectrum-tokens']]},
+  D36:{name:'USWDS / civic services',principle:'Trustworthy, accessible pages built from a small set of plain parts.',pattern:'Show where people are with a step indicator, explain deadlines in an alert and offer choices as cards with one action each.',icons:'regular',components:['C01','C06','C17','C21','C30','C34'],motion:['M01','M18'],type:'Public Sans / 17px body / generous line height',motionRule:'Keep motion functional and brief. Never rely on it to explain a state.',links:[['U.S. Web Design System','https://designsystem.digital.gov/'],['uswds on GitHub','https://github.com/uswds/uswds'],['Public Sans','https://public-sans.digital.gov/']]}
+ };
+ /* Source and licence notes shown on each hub's overview. */
+ const SOURCES={
+  D01:['Inspired by Apple Human Interface Guidelines','Guidance only. Apple’s UI kits, SF Symbols and SF fonts are free from Apple Design Resources for designing Apple-platform apps, but may not be re-hosted, so this preview is an original look-alike.','https://developer.apple.com/design/resources/','Apple Design Resources'],
+  D02:['Inspired by Material Design 3','Material components and tokens are Apache 2.0. This preset is an atlas interpretation; use Material Web for production.','https://github.com/material-components/material-web','Material Web on GitHub'],
+  D03:['Inspired by IBM Carbon','Carbon is Apache 2.0 and IBM Plex is OFL. This preset is an atlas interpretation.','https://github.com/carbon-design-system/carbon','Carbon on GitHub'],
+  D04:['Inspired by Microsoft Fluent 2','Fluent UI and Fluent System Icons are MIT. Segoe UI is a Windows system font, so the web stack falls back elsewhere.','https://github.com/microsoft/fluentui','Fluent UI on GitHub'],
+  D05:['Inspired by Radix and shadcn/ui','Both are MIT. Radix Colors provides the accessible scales this style leans on.','https://github.com/shadcn-ui/ui','shadcn/ui on GitHub'],
+  D33:['Built with GitHub Primer tokens','MIT licence. Colours, radius and type follow Primer primitives. The screen is an atlas composition; GitHub’s logo is not used.','https://github.com/primer/primitives','Primer primitives'],
+  D34:['Built with GOV.UK Frontend values','Code is MIT. The crown, the GOV.UK logotype and GDS Transport may only be used by GOV.UK services, so this sample uses a fictional service and Arial.','https://github.com/alphagov/govuk-frontend','govuk-frontend'],
+  D35:['Built with Adobe Spectrum tokens','Apache 2.0. Adobe Clean is proprietary, so this sample uses Source Sans 3, Adobe’s open-source face (OFL).','https://github.com/adobe/spectrum-tokens','Spectrum tokens'],
+  D36:['Built with U.S. Web Design System tokens','Public domain (CC0). Public Sans is OFL. Agency seals and the official-site banner are not used.','https://github.com/uswds/uswds','USWDS on GitHub']
+ };
+
  function render(e,inert){const f=S[e.id];if(!f)return null;const vars=window.AtlasExpansion?.variables?AtlasExpansion.variables(e.tokens):'';
+  if(e.id==='D35')loadFont('Source+Sans+3:wght@400;600;700');if(e.id==='D36')loadFont('Public+Sans:wght@400;600;700');
   if(e.id==='D03')loadFont('IBM+Plex+Sans:wght@400;500;600');if(e.id==='D06')loadFont('Playfair+Display:ital,wght@0,600;1,400&family=Source+Serif+4:ital,wght@0,400;1,400');if(e.id==='D08')loadFont('JetBrains+Mono:wght@400;600');
   return `<div class="systemSample systemIdentity sp sp-${e.id}" data-systemsample="${e.id}" style="${vars}" ${inert?'aria-hidden="true" inert':''}><div class="sp-frame">${f(inert)}</div>${inert?'':'<p class="demoStatus" role="status"></p>'}</div>`;}
  const fonts=new Set();function loadFont(q){if(fonts.has(q))return;fonts.add(q);const l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family='+q+'&display=swap';document.head.append(l);}
  function patch(){if(typeof SystemAtlas==='undefined'||!SystemAtlas.layout||SystemAtlas.layout.__sp)return false;
-  const lay=SystemAtlas.layout,thumb=SystemAtlas.thumbnail;
+  const lay=SystemAtlas.layout,thumb=SystemAtlas.thumbnail,hub=SystemAtlas.renderHub;
+  Object.assign(SystemAtlas.specs,SPECS);
+  SystemAtlas.renderHub=function(){hub.apply(this,arguments);try{const e=AtlasExpansion.system,src=e&&SOURCES[e.id],body=document.getElementById('systemHubBody');
+   if(src&&body&&this.tab==='overview')body.insertAdjacentHTML('afterbegin',`<aside class="sp-source"><p class="cardcode">Source &amp; licence</p><b>${src[0]}</b><p>${src[1]}</p><a href="${src[2]}" target="_blank" rel="noopener">${src[3]} ↗</a></aside>`);}catch{}};
   SystemAtlas.layout=function(e,inert=false){if(e&&S[e.id])return render(e,inert);return lay.apply(this,arguments);};SystemAtlas.layout.__sp=true;
   SystemAtlas.thumbnail=function(e,matched=false){if(e&&S[e.id]&&!matched)return render(e,true);return thumb.apply(this,arguments);};
   try{if(typeof AtlasExpansion!=='undefined'&&location.hash.startsWith('#systems'))SystemAtlas.renderHub?.();}catch{}
   return true;}
- const t=setInterval(()=>{if(patch())clearInterval(t);},100);
- window.SystemPreviews={render,ids:Object.keys(S)};
+ if(!patch()){const t=setInterval(()=>{if(patch())clearInterval(t);},100);}
+ window.SystemPreviews={render,ids:Object.keys(S),sources:SOURCES};
 })();

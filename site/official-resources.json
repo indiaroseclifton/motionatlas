@@ -1149,7 +1149,10 @@
       "previewLabel": "Official Apple design-kit preview",
       "preview": "assets/apple-ui-kit-official.webp",
       "previewSource": "https://developer.apple.com/design/resources/",
-      "pdfNote": "Apple’s PDF Style Guide covers editorial writing. Use the HIG and platform kits for UI design."
+      "pdfNote": "Apple’s PDF Style Guide covers editorial writing. Use the HIG and platform kits for UI design.",
+      "licence": "Proprietary · guidance and kits for Apple-platform apps",
+      "repo": "https://developer.apple.com/design/resources/",
+      "atlasPreset": "D01"
     },
     {
       "id": "material",
@@ -1206,7 +1209,10 @@
       "previewLabel": "Official publisher preview",
       "preview": "assets/official-material.webp",
       "previewSource": "https://m3.material.io/",
-      "previewAssetURL": "https://m3.material.io/static/assets/m3-social.jpg"
+      "previewAssetURL": "https://m3.material.io/static/assets/m3-social.jpg",
+      "licence": "Apache 2.0",
+      "repo": "https://github.com/material-components/material-web",
+      "atlasPreset": "D02"
     },
     {
       "id": "carbon",
@@ -1267,7 +1273,10 @@
       "kind": "Design system",
       "preset": "D03",
       "checked": "2026-10-13",
-      "previewLabel": "Atlas visual index"
+      "previewLabel": "Atlas visual index",
+      "licence": "Apache 2.0 · IBM Plex OFL",
+      "repo": "https://github.com/carbon-design-system/carbon",
+      "atlasPreset": "D03"
     },
     {
       "id": "fluent",
@@ -1317,7 +1326,10 @@
       "previewLabel": "Official publisher preview",
       "preview": "assets/official-fluent.svg",
       "previewSource": "https://fluent2.microsoft.design/",
-      "previewAssetURL": "https://fluent2websitecdn.azureedge.net/cdn/web_react_asset-1.BlnKyea0.svg"
+      "previewAssetURL": "https://fluent2websitecdn.azureedge.net/cdn/web_react_asset-1.BlnKyea0.svg",
+      "licence": "MIT",
+      "repo": "https://github.com/microsoft/fluentui",
+      "atlasPreset": "D04"
     },
     {
       "id": "atlassian",
@@ -1381,7 +1393,8 @@
       "previewLabel": "Official publisher preview",
       "preview": "assets/official-atlassian.webp",
       "previewSource": "https://atlassian.design/design-system",
-      "previewAssetURL": "https://atlassian.design/assets/700bfde52eb7/static/2-typography-light-0bb2592596a7a2b008c272c4e45facb4.png"
+      "previewAssetURL": "https://atlassian.design/assets/700bfde52eb7/static/2-typography-light-0bb2592596a7a2b008c272c4e45facb4.png",
+      "licence": "Restricted · for Atlassian products"
     },
     {
       "id": "polaris",
@@ -1414,7 +1427,8 @@
       "kind": "Design system",
       "preset": null,
       "checked": "2026-10-13",
-      "previewLabel": "Atlas visual index"
+      "previewLabel": "Atlas visual index",
+      "licence": "Restricted · for Shopify apps"
     },
     {
       "id": "lightning",
@@ -1461,7 +1475,9 @@
       "kind": "Design system",
       "preset": null,
       "checked": "2026-10-13",
-      "previewLabel": "Atlas visual index"
+      "previewLabel": "Atlas visual index",
+      "licence": "BSD-3-Clause code · icons and fonts licensed separately",
+      "repo": "https://github.com/salesforce-ux/design-system"
     },
     {
       "id": "spectrum",
@@ -1497,7 +1513,10 @@
       "previewLabel": "Official publisher preview",
       "preview": "assets/official-spectrum.webp",
       "previewSource": "https://spectrum.adobe.com/",
-      "previewAssetURL": "https://spectrum.adobe.com/media_1270372ba73a31b64cb998d3c4a0a3d44e565196f.png"
+      "previewAssetURL": "https://spectrum.adobe.com/media_1270372ba73a31b64cb998d3c4a0a3d44e565196f.png",
+      "licence": "Apache 2.0",
+      "repo": "https://github.com/adobe/spectrum-css",
+      "atlasPreset": "D35"
     },
     {
       "id": "govuk",
@@ -1544,7 +1563,10 @@
       "kind": "Design system",
       "preset": null,
       "checked": "2026-10-13",
-      "previewLabel": "Atlas visual index"
+      "previewLabel": "Atlas visual index",
+      "licence": "MIT code · crown and GDS Transport for GOV.UK only",
+      "repo": "https://github.com/alphagov/govuk-frontend",
+      "atlasPreset": "D34"
     },
     {
       "id": "uswds",
@@ -1591,7 +1613,10 @@
       "kind": "Design system",
       "preset": null,
       "checked": "2026-10-13",
-      "previewLabel": "Atlas visual index"
+      "previewLabel": "Atlas visual index",
+      "licence": "Public domain (CC0)",
+      "repo": "https://github.com/uswds/uswds",
+      "atlasPreset": "D36"
     },
     {
       "id": "primer",
@@ -1624,7 +1649,10 @@
       "kind": "Design system",
       "preset": null,
       "checked": "2026-10-13",
-      "previewLabel": "Atlas visual index"
+      "previewLabel": "Atlas visual index",
+      "licence": "MIT",
+      "repo": "https://github.com/primer/primitives",
+      "atlasPreset": "D33"
     },
     {
       "id": "mozilla",
@@ -1664,7 +1692,9 @@
       "kind": "Design system",
       "preset": null,
       "checked": "2026-10-13",
-      "previewLabel": "Atlas visual index"
+      "previewLabel": "Atlas visual index",
+      "licence": "MPL 2.0",
+      "repo": "https://github.com/mozilla/protocol"
     },
     {
       "id": "slack",
@@ -1704,7 +1734,8 @@
       "kind": "Brand guide",
       "preset": null,
       "checked": "2026-10-13",
-      "previewLabel": "Atlas visual index"
+      "previewLabel": "Atlas visual index",
+      "licence": "Brand terms · not open source"
     },
     {
       "id": "nasa",
@@ -1737,7 +1768,8 @@
       "kind": "Brand guide",
       "preset": null,
       "checked": "2026-10-13",
-      "previewLabel": "Atlas visual index"
+      "previewLabel": "Atlas visual index",
+      "licence": "Brand terms · not open source"
     }
   ]
 }
