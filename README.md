@@ -268,6 +268,14 @@ Your package of 11 films, 68 renders and a style list is merged in with
 - Still soft: the home hero video (1600 px) and the eleven film clips (960 px). Upscaling them needs a
   GPU or the original masters.
 
+### Golden lattice: bird & fox (live study)
+
+- `site/studies/golden-lattice.html`: the three.js wireframe bird and fox study, standalone. It loads
+  three.js from `site/vendor/` (CDN fallback), pauses when hidden or asked by the parent page, keeps
+  sparkle sizes on resize and holds a still frame under reduced motion.
+- Featured at the top of the Animation studio (`lattice-embed.js`, `lattice-embed.css`) as a
+  click-to-play poster (`assets/studies/golden-lattice.webp`) with a full-screen link.
+
 ### What to upload
 
 Upload the contents of `site/` except `site/original/` (backups of the live files). The files

@@ -1,0 +1,18 @@
+/* Featured live study on the Animation studio */
+.latticeFeature{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:1.6rem;align-items:center;margin:1.4rem 0 2.2rem;padding:1rem;border-radius:16px;background:#07070a;color:#efe6d2}
+.latticeFrame{position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#000;min-width:0}
+.latticeFrame iframe,.latticePlay{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+.latticePlay{padding:0;background:#000;cursor:pointer}
+.latticePlay img{width:100%;height:100%;object-fit:cover;display:block;opacity:.92;transition:opacity .3s,transform .6s cubic-bezier(.2,.7,.2,1)}
+.latticePlay:hover img{opacity:1;transform:scale(1.015)}
+.latticePlay span{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);padding:.75rem 1.3rem;border-radius:999px;background:rgba(14,10,4,.82);border:1px solid rgba(255,205,100,.6);color:#fff0cc;font:600 14px/1 inherit;letter-spacing:.02em;box-shadow:0 0 24px rgba(255,185,55,.25)}
+.latticePlay:focus-visible{outline:3px solid #ffd27a;outline-offset:-3px}
+.latticeText{display:grid;gap:.6rem;padding:.4rem .6rem}
+#motion .latticeFeature .latticeText .cardcode{color:#d9b56a;margin:0}
+#motion .latticeFeature .latticeText h2{margin:0;font-size:clamp(1.6rem,2.6vw,2.3rem);line-height:1.1;color:#fff4dc;text-wrap:balance}
+#motion .latticeFeature .latticeText p{margin:0;line-height:1.55;color:#d8cfbd}
+.latticeText ul{margin:0;padding-left:1.1rem;display:grid;gap:.25rem;color:#cfc5b1;font-size:14px}
+.latticeLinks{margin-top:.4rem!important}
+.latticeLinks .secondary{background:transparent!important;color:#fff0cc!important;border-color:rgba(255,205,100,.55)!important}
+@media (max-width:900px){.latticeFeature{grid-template-columns:minmax(0,1fr)}}
+@media (prefers-reduced-motion:reduce){.latticePlay img{transition:none}.latticePlay:hover img{transform:none}}

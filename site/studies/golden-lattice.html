@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Golden Wireframe Lattice & Stardust — Bird & Fox</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: #000000;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      user-select: none;
+    }
+    #canvas-container {
+      position: fixed;
+      inset: 0;
+      background: #000000;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    /* Minimalist HUD */
+    #hud {
+      position: fixed;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      background: rgba(10, 8, 4, 0.82);
+      border: 1px solid rgba(255, 200, 95, 0.25);
+      border-radius: 999px;
+      backdrop-filter: blur(10px);
+      z-index: 20;
+      max-width: calc(100% - 24px);
+      overflow-x: auto;
+    }
+    .phase-btn {
+      background: transparent;
+      color: rgba(255, 225, 165, 0.65);
+      border: 1px solid transparent;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .phase-btn:hover {
+      color: #ffe8b5;
+      background: rgba(255, 200, 95, 0.1);
+    }
+    .phase-btn:focus-visible { outline: 2px solid #ffd27a; outline-offset: 2px; }
+    .phase-btn.active {
+      background: rgba(255, 195, 75, 0.22);
+      border-color: rgba(255, 205, 100, 0.65);
+      color: #fff0cc;
+      box-shadow: 0 0 14px rgba(255, 185, 55, 0.25);
+    }
+  </style>
+  <!-- three.js r128: the atlas's own copy first, the public CDN as a fallback. -->
+  <script src="../vendor/three-r128.min.js"></script>
+  <script>window.THREE || document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>');</script>
+</head>
+<body>
+  <div id="canvas-container" role="img" aria-label="A golden wireframe bird and fox drawn in points and lines, moving through four scenes"></div>
+
+  <div id="hud" role="group" aria-label="Scenes">
+    <button class="phase-btn active" data-phase="0">1. Soaring Bird</button>
+    <button class="phase-btn" data-phase="1">2. Spiral Vortex</button>
+    <button class="phase-btn" data-phase="2">3. Running Fox</button>
+    <button class="phase-btn" data-phase="3">4. Bird & Fox Together</button>
+  </div>
+
+  <script>
+    // ============================================================================
+    // 1. SCENE & CAMERA (No blinding bloom — crisp wireframe + distinct particles)
+    // ============================================================================
+    const container = document.getElementById('canvas-container');
+    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0x000000, 1);
+    container.appendChild(renderer.domElement);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(38, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(0, 0.4, 9.2);
+
+    // Atlas addition: point-size uniforms follow the window height so sparkles keep their size on resize.
+    const scaledMaterials = [];
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      scaledMaterials.forEach((m) => { m.uniforms.uScale.value = window.innerHeight * 0.5; });
+    });
+
+    // Simple mouse drag orbit
+    let isDragging = false, prevX = 0, prevY = 0;
+    let userYaw = 0, userPitch = 0;
+    window.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('#hud')) return;
+      isDragging = true; prevX = e.clientX; prevY = e.clientY;
+    });
+    window.addEventListener('pointermove', (e) => {
+      if (!isDragging) return;
+      userYaw += (e.clientX - prevX) * 0.006;
+      userPitch = Math.max(-0.6, Math.min(0.6, userPitch + (e.clientY - prevY) * 0.006));
+      prevX = e.clientX; prevY = e.clientY;
+    });
+    window.addEventListener('pointerup', () => isDragging = false);
+
+    // ============================================================================
+    // 2. PROCEDURAL WIREFRAME & VERTEX LATTICE BUILDER (Bird & Fox)
+    // ============================================================================
+    function buildBirdLattice() {
+      const vertices = [];
+      const segments = [];
+
+      function addGridPatch(uSteps, vSteps, evalFn) {
+        const baseIdx = vertices.length;
+        for (let u = 0; u <= uSteps; u++) {
+          for (let v = 0; v <= vSteps; v++) {
+            const uu = u / uSteps;
+            const vv = v / vSteps;
+            vertices.push(evalFn(uu, vv));
+            const curr = baseIdx + u * (vSteps + 1) + v;
+            if (v < vSteps) segments.push(curr, curr + 1);
+            if (u < uSteps) segments.push(curr, curr + (vSteps + 1));
+            if (u < uSteps && v < vSteps) segments.push(curr, curr + (vSteps + 2));
+          }
+        }
+      }
+
+      // A. Sculpted Bird Body, Neck, Head, Beak & Crest (Lathe along spine Z)
+      addGridPatch(26, 14, (u, v) => {
+        const z = 1.35 - u * 2.35;
+        const theta = v * Math.PI * 2;
+        let rx = 0.01, ry = 0.01, yCenter = 0;
+
+        if (u < 0.08) {
+          const t = u / 0.08;
+          rx = t * 0.09;
+          ry = t * 0.08;
+          yCenter = 0.14 + t * 0.04;
+        } else if (u < 0.22) {
+          const t = (u - 0.08) / 0.14;
+          const profile = Math.sin(t * Math.PI);
+          rx = 0.09 + profile * 0.13;
+          ry = 0.08 + profile * 0.14;
+          yCenter = 0.18 + Math.sin(t * Math.PI * 0.7) * 0.08;
+        } else if (u < 0.72) {
+          const t = (u - 0.22) / 0.50;
+          const belly = Math.sin(t * Math.PI);
+          rx = 0.14 + belly * 0.22;
+          ry = 0.13 + belly * 0.24;
+          yCenter = 0.16 - t * 0.18 - (Math.sin(theta) < 0 ? belly * 0.08 : 0);
+        } else {
+          const t = (u - 0.72) / 0.28;
+          rx = 0.14 * (1 - t * 0.55);
+          ry = 0.13 * (1 - t * 0.65);
+          yCenter = -0.02 - t * 0.06;
+        }
+
+        return { x: Math.cos(theta) * rx, y: yCenter + Math.sin(theta) * ry, z: z, part: 'body', span: 0 };
+      });
+
+      // B. Head Crest Feathers
+      for (let c = 0; c < 4; c++) {
+        const f = c / 3;
+        addGridPatch(4, 2, (u, v) => {
+          const len = u * (0.28 - f * 0.05);
+          const ang = 0.65 + f * 0.22;
+          return {
+            x: (v - 0.5) * 0.04 * (1 - u),
+            y: 0.30 + Math.sin(ang) * len,
+            z: 0.92 - f * 0.08 - Math.cos(ang) * len,
+            part: 'body',
+            span: 0
+          };
+        });
+      }
+
+      // C. Left & Right Feathered Wings
+      [-1, 1].forEach((side) => {
+        addGridPatch(24, 8, (u, v) => {
+          const span = 0.24 + u * 2.65;
+          const leadZ = 0.42 - Math.pow(u, 1.3) * 0.68 + Math.sin(u * Math.PI) * 0.18;
+          const chordLen = (0.78 - u * 0.48) * (1.0 - Math.pow(u, 3) * 0.4);
+          const camber = Math.sin(v * Math.PI) * 0.07 * (1 - u * 0.5);
+          const thickness = (v > 0.1 && v < 0.9) ? 0.015 : 0;
+          return { x: side * span, y: 0.08 + camber + thickness, z: leadZ - v * chordLen, part: 'wing', span: u, side: side };
+        });
+
+        for (let f = 0; f < 11; f++) {
+          const fu = 0.25 + (f / 10) * 0.75;
+          const baseSpan = 0.24 + fu * 2.65;
+          const leadZ = 0.42 - Math.pow(fu, 1.3) * 0.68 + Math.sin(fu * Math.PI) * 0.18;
+          const baseChord = (0.78 - fu * 0.48) * 0.65;
+
+          addGridPatch(6, 2, (u, v) => {
+            const featherLen = (0.42 + Math.sin((f / 10) * Math.PI) * 0.28) * u;
+            const splayX = side * featherLen * (0.35 + fu * 0.55);
+            const splayZ = -featherLen * (0.92 - fu * 0.25);
+            const width = (1 - u * 0.85) * 0.048 * (v - 0.5);
+            return {
+              x: side * baseSpan + splayX + width * 0.5,
+              y: 0.06 + u * 0.03 * fu,
+              z: leadZ - baseChord + splayZ + width,
+              part: 'wing',
+              span: fu + u * 0.18,
+              side: side
+            };
+          });
+        }
+      });
+
+      // D. Fanned Tail Feathers
+      for (let t = 0; t < 9; t++) {
+        const tf = (t / 8) - 0.5;
+        const angle = tf * 0.85;
+        addGridPatch(7, 2, (u, v) => {
+          const r = u * 0.92;
+          const featherWidth = (v - 0.5) * 0.09 * (0.4 + u * 0.6) * (1 - Math.pow(u, 4) * 0.5);
+          return {
+            x: Math.sin(angle) * r + Math.cos(angle) * featherWidth,
+            y: -0.08 - r * 0.12 + Math.abs(tf) * 0.04,
+            z: -0.95 - Math.cos(angle) * r + Math.sin(angle) * featherWidth,
+            part: 'tail',
+            span: u
+          };
+        });
+      }
+
+      return { vertices, segments };
+    }
+
+    function buildFoxLattice() {
+      const vertices = [];
+      const segments = [];
+
+      function addGridPatch(uSteps, vSteps, evalFn) {
+        const baseIdx = vertices.length;
+        for (let u = 0; u <= uSteps; u++) {
+          for (let v = 0; v <= vSteps; v++) {
+            const uu = u / uSteps;
+            const vv = v / vSteps;
+            vertices.push(evalFn(uu, vv));
+            const curr = baseIdx + u * (vSteps + 1) + v;
+            if (v < vSteps) segments.push(curr, curr + 1);
+            if (u < uSteps) segments.push(curr, curr + (vSteps + 1));
+            if (u < uSteps && v < vSteps) segments.push(curr, curr + (vSteps + 2));
+          }
+        }
+      }
+
+      // A. Torso, Neck, Skull & Snout
+      addGridPatch(28, 14, (u, v) => {
+        const x = 1.65 - u * 2.55;
+        const theta = v * Math.PI * 2;
+        let ry = 0.02, rz = 0.02, yCenter = 0;
+
+        if (u < 0.12) {
+          const t = u / 0.12;
+          ry = 0.02 + t * 0.11;
+          rz = 0.02 + t * 0.11;
+          yCenter = 0.52 + t * 0.06;
+        } else if (u < 0.25) {
+          const t = (u - 0.12) / 0.13;
+          const dome = Math.sin(t * Math.PI);
+          ry = 0.13 + dome * 0.10;
+          rz = 0.13 + dome * 0.12;
+          yCenter = 0.58 + dome * 0.06 - t * 0.08;
+        } else if (u < 0.40) {
+          const t = (u - 0.25) / 0.15;
+          ry = 0.20 + t * 0.08;
+          rz = 0.18 + t * 0.06;
+          yCenter = 0.50 - t * 0.30;
+        } else if (u < 0.72) {
+          const t = (u - 0.40) / 0.32;
+          const chest = Math.sin(t * Math.PI);
+          ry = 0.28 + chest * 0.08 - t * 0.06;
+          rz = 0.23 + chest * 0.05 - t * 0.04;
+          yCenter = 0.20 - chest * 0.06 + t * 0.04;
+        } else {
+          const t = (u - 0.72) / 0.28;
+          const hip = Math.sin(t * Math.PI);
+          ry = 0.22 + hip * 0.05 * (1 - t);
+          rz = 0.19 + hip * 0.05 * (1 - t);
+          yCenter = 0.24 - t * 0.10;
+        }
+
+        return { x: x, y: yCenter + Math.sin(theta) * ry, z: Math.cos(theta) * rz, part: 'torso', u: u };
+      });
+
+      // B. Ears
+      [-1, 1].forEach((side) => {
+        addGridPatch(6, 4, (u, v) => {
+          const r = (1 - u) * 0.11;
+          const ang = (v - 0.5) * Math.PI * 1.2;
+          return {
+            x: 1.12 - u * 0.08 + Math.cos(ang) * r * 0.6,
+            y: 0.74 + u * 0.38,
+            z: side * (0.13 + u * 0.05) + Math.sin(ang) * r,
+            part: 'ear',
+            u: u
+          };
+        });
+      });
+
+      // C. Legs
+      const legs = [
+        { baseX: 0.58, side: -1, isFront: true, phase: 0 },
+        { baseX: 0.58, side:  1, isFront: true, phase: Math.PI },
+        { baseX: -0.68, side: -1, isFront: false, phase: Math.PI * 0.85 },
+        { baseX: -0.68, side:  1, isFront: false, phase: Math.PI * 1.85 }
+      ];
+      legs.forEach((leg) => {
+        addGridPatch(10, 5, (u, v) => {
+          const theta = v * Math.PI * 2;
+          const radius = (1 - u * 0.65) * (leg.isFront ? 0.095 : 0.125);
+          const kneeBend = leg.isFront
+            ? -Math.sin(u * Math.PI) * 0.06
+            : (u < 0.55 ? -u * 0.22 : -0.12 + (u - 0.55) * 0.35);
+          return {
+            x: leg.baseX + kneeBend + Math.cos(theta) * radius,
+            y: 0.08 - u * 1.05,
+            z: leg.side * 0.17 + Math.sin(theta) * radius,
+            part: 'leg',
+            u: u,
+            legPhase: leg.phase,
+            baseX: leg.baseX
+          };
+        });
+      });
+
+      // D. Brush Tail
+      addGridPatch(18, 10, (u, v) => {
+        const theta = v * Math.PI * 2;
+        const profile = Math.sin(Math.pow(u, 0.75) * Math.PI) * 0.28 + (1 - u) * 0.06;
+        const tailX = -0.88 - u * 1.45;
+        const tailY = 0.16 + Math.sin(u * Math.PI * 1.15) * 0.26 + u * 0.12;
+        return { x: tailX, y: tailY + Math.sin(theta) * profile, z: Math.cos(theta) * profile * 0.85, part: 'tail', u: u };
+      });
+
+      return { vertices, segments };
+    }
+
+    const birdData = buildBirdLattice();
+    const foxData  = buildFoxLattice();
+
+    // ============================================================================
+    // 3. UNIFIED MORPHING WIREFRAME + SURFACE SPARKLES
+    // ============================================================================
+    const VERT_COUNT = Math.max(birdData.vertices.length, foxData.vertices.length);
+    const SEG_COUNT  = Math.max(birdData.segments.length, foxData.segments.length);
+
+    while (birdData.vertices.length < VERT_COUNT) {
+      birdData.vertices.push({ ...birdData.vertices[birdData.vertices.length % 500] });
+    }
+    while (foxData.vertices.length < VERT_COUNT) {
+      foxData.vertices.push({ ...foxData.vertices[foxData.vertices.length % 500] });
+    }
+    while (birdData.segments.length < SEG_COUNT) {
+      const idx = birdData.segments.length % 400;
+      birdData.segments.push(birdData.segments[idx], birdData.segments[idx + 1]);
+    }
+    while (foxData.segments.length < SEG_COUNT) {
+      const idx = foxData.segments.length % 400;
+      foxData.segments.push(foxData.segments[idx], foxData.segments[idx + 1]);
+    }
+
+    function createSparkleTexture() {
+      const c = document.createElement('canvas');
+      c.width = 64; c.height = 64;
+      const ctx = c.getContext('2d');
+      const g = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+      g.addColorStop(0.0, 'rgba(255, 252, 235, 1.0)');
+      g.addColorStop(0.22, 'rgba(255, 215, 115, 0.92)');
+      g.addColorStop(0.55, 'rgba(235, 155, 35, 0.35)');
+      g.addColorStop(1.0, 'rgba(0, 0, 0, 0.0)');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, 64, 64);
+      return new THREE.CanvasTexture(c);
+    }
+    const sparkleTex = createSparkleTexture();
+
+    function createCreatureRig() {
+      const group = new THREE.Group();
+
+      const lineGeo = new THREE.BufferGeometry();
+      const linePositions = new Float32Array(SEG_COUNT * 3);
+      lineGeo.setAttribute('position', new THREE.BufferAttribute(linePositions, 3));
+      const lineMat = new THREE.LineBasicMaterial({
+        color: 0xf6c458,
+        transparent: true,
+        opacity: 0.24,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+      });
+      const lines = new THREE.LineSegments(lineGeo, lineMat);
+      group.add(lines);
+
+      const ptGeo = new THREE.BufferGeometry();
+      const ptPositions = new Float32Array(VERT_COUNT * 3);
+      const ptSizes = new Float32Array(VERT_COUNT);
+      const ptPhases = new Float32Array(VERT_COUNT);
+      for (let i = 0; i < VERT_COUNT; i++) {
+        ptSizes[i] = (i % 7 === 0) ? 0.16 : 0.075;
+        ptPhases[i] = (i * 1.6180339) % (Math.PI * 2);
+      }
+      ptGeo.setAttribute('position', new THREE.BufferAttribute(ptPositions, 3));
+      ptGeo.setAttribute('aSize', new THREE.BufferAttribute(ptSizes, 1));
+      ptGeo.setAttribute('aPhase', new THREE.BufferAttribute(ptPhases, 1));
+
+      const ptMat = new THREE.ShaderMaterial({
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        uniforms: {
+          uMap: { value: sparkleTex },
+          uTime: { value: 0 },
+          uOpacity: { value: 1.0 },
+          uScale: { value: window.innerHeight * 0.5 }
+        },
+        vertexShader: `
+          attribute float aSize;
+          attribute float aPhase;
+          uniform float uTime;
+          uniform float uScale;
+          varying float vTwinkle;
+          void main() {
+            vTwinkle = 0.55 + 0.45 * sin(uTime * 4.5 + aPhase);
+            vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
+            gl_Position = projectionMatrix * mvPos;
+            gl_PointSize = aSize * (uScale / -mvPos.z) * (0.8 + 0.4 * vTwinkle);
+          }
+        `,
+        fragmentShader: `
+          uniform sampler2D uMap;
+          uniform float uOpacity;
+          varying float vTwinkle;
+          void main() {
+            vec4 tex = texture2D(uMap, gl_PointCoord);
+            gl_FragColor = vec4(tex.rgb, tex.a * vTwinkle * uOpacity);
+          }
+        `
+      });
+      scaledMaterials.push(ptMat);
+      const points = new THREE.Points(ptGeo, ptMat);
+      group.add(points);
+
+      return { group, lines, points, linePositions, ptPositions, lineMat, ptMat };
+    }
+
+    const primaryRig = createCreatureRig();
+    scene.add(primaryRig.group);
+
+    const companionFoxRig = createCreatureRig();
+    companionFoxRig.group.visible = false;
+    scene.add(companionFoxRig.group);
+
+    // ============================================================================
+    // 4. TRAILING BOKEH FIREFLIES & RIBBON WAKE
+    // ============================================================================
+    const EMBER_COUNT = 260;
+    const emberGeo = new THREE.BufferGeometry();
+    const emberPos = new Float32Array(EMBER_COUNT * 3);
+    const emberSizes = new Float32Array(EMBER_COUNT);
+    const emberPhases = new Float32Array(EMBER_COUNT);
+    const emberMeta = [];
+
+    for (let i = 0; i < EMBER_COUNT; i++) {
+      emberSizes[i] = 0.14 + Math.pow(Math.random(), 1.8) * 0.28;
+      emberPhases[i] = Math.random() * Math.PI * 2;
+      emberMeta.push({
+        angle: Math.random() * Math.PI * 2,
+        radius: 0.35 + Math.random() * 2.5,
+        speed: 0.4 + Math.random() * 0.8,
+        yOff: (Math.random() - 0.5) * 1.6,
+        zLag: Math.random() * 2.8
+      });
+    }
+    emberGeo.setAttribute('position', new THREE.BufferAttribute(emberPos, 3));
+    emberGeo.setAttribute('aSize', new THREE.BufferAttribute(emberSizes, 1));
+    emberGeo.setAttribute('aPhase', new THREE.BufferAttribute(emberPhases, 1));
+
+    const emberMat = primaryRig.ptMat.clone();
+    emberMat.uniforms = {
+      uMap: { value: sparkleTex },
+      uTime: { value: 0 },
+      uOpacity: { value: 0.95 },
+      uScale: { value: window.innerHeight * 0.5 }
+    };
+    scaledMaterials.push(emberMat);
+    const emberPoints = new THREE.Points(emberGeo, emberMat);
+    scene.add(emberPoints);
+
+    // ============================================================================
+    // 5. SPIRAL PINWHEEL VORTEX STREAKS
+    // ============================================================================
+    const STREAK_COUNT = 54;
+    const STREAK_PTS = 28;
+    const vortexGroup = new THREE.Group();
+    const streakLines = [];
+
+    for (let s = 0; s < STREAK_COUNT; s++) {
+      const geo = new THREE.BufferGeometry();
+      const pos = new Float32Array(STREAK_PTS * 3);
+      geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+      const mat = new THREE.LineBasicMaterial({
+        color: s % 3 === 0 ? 0xfff0c2 : 0xf4b63f,
+        transparent: true,
+        opacity: 0,
+        blending: THREE.AdditiveBlending
+      });
+      const line = new THREE.Line(geo, mat);
+      vortexGroup.add(line);
+      streakLines.push({
+        line, pos, mat,
+        baseAngle: (s / STREAK_COUNT) * Math.PI * 2 + (s % 5) * 0.13,
+        maxRadius: 1.8 + (s % 7) * 0.48,
+        zTilt: ((s % 9) - 4) * 0.14,
+        speed: 1.2 + (s % 4) * 0.25
+      });
+    }
+    scene.add(vortexGroup);
+
+    // ============================================================================
+    // 6. REAL-TIME ARTICULATION & ANIMATION ENGINE
+    // ============================================================================
+    function evalBirdVertex(v, t) {
+      let x = v.x, y = v.y, z = v.z;
+      if (v.part === 'wing') {
+        const flap = Math.sin(t * 4.4 - v.span * 1.15);
+        const fold = Math.cos(t * 4.4 - v.span * 1.15);
+        const spanDist = Math.abs(x) - 0.18;
+        const rotAngle = flap * 0.62 * Math.pow(v.span, 0.85);
+        const cosA = Math.cos(rotAngle);
+        const sinA = Math.sin(rotAngle);
+        const localX = spanDist;
+        x = v.side * (0.18 + localX * cosA);
+        y = y + localX * sinA - Math.sin(t * 4.4) * 0.08;
+        z = z + fold * v.span * 0.12;
+      } else if (v.part === 'tail') {
+        const bodyBob = -Math.sin(t * 4.4) * 0.08;
+        y += bodyBob + Math.sin(t * 4.4 - 0.8) * v.span * 0.12;
+      } else {
+        y -= Math.sin(t * 4.4) * 0.08;
+      }
+      return [x, y, z];
+    }
+
+    function evalFoxVertex(v, t) {
+      let x = v.x, y = v.y, z = v.z;
+      const runCycle = t * 6.2;
+      if (v.part === 'leg') {
+        const stride = Math.sin(runCycle + v.legPhase);
+        const lift = Math.max(0, Math.cos(runCycle + v.legPhase));
+        x = v.baseX + (x - v.baseX) + stride * v.u * 0.42;
+        y += lift * v.u * 0.28 + Math.sin(runCycle * 2) * 0.04;
+      } else if (v.part === 'tail') {
+        y += Math.sin(runCycle - v.u * 2.8) * v.u * 0.22;
+        z += Math.cos(runCycle * 0.5 - v.u * 2.4) * v.u * 0.18;
+      } else {
+        const spineWave = Math.sin(runCycle - v.u * 2.2) * 0.055;
+        y += spineWave;
+      }
+      return [x, y, z];
+    }
+
+    let activePhase = 0;
+    let phaseTimer = 0;
+    let manualOverride = false;
+
+    const phaseButtons = document.querySelectorAll('.phase-btn');
+    phaseButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        activePhase = parseInt(btn.getAttribute('data-phase'), 10);
+        phaseTimer = 0;
+        manualOverride = true;
+        phaseButtons.forEach((b) => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
+        btn.classList.add('active');
+        btn.setAttribute('aria-pressed', 'true');
+        if (reduceMotion) renderOnce();
+      });
+    });
+
+    const state = { morph: 0, vortex: 0, duoSplit: 0, camYaw: 0.55 };
+
+    const clock = new THREE.Clock();
+
+    // Atlas additions: pause when hidden or when the embedding page asks, and respect reduced motion
+    // (scenes still change on click, but the creatures hold still instead of animating continuously).
+    let paused = false;
+    const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.addEventListener('message', (e) => {
+      if (e.data === 'lattice:pause') paused = true;
+      if (e.data === 'lattice:play') paused = false;
+    });
+    let frozenT = 2.0;
+
+    function step(dt, t) {
+      phaseTimer += dt;
+      if (!manualOverride && phaseTimer > 5.2) {
+        phaseTimer = 0;
+        activePhase = (activePhase + 1) % 4;
+        phaseButtons.forEach((b, idx) => b.classList.toggle('active', idx === activePhase));
+      }
+
+      let targetMorph = 0, targetVortex = 0, targetDuo = 0, targetYaw = 0.55;
+      if (activePhase === 0) {
+        targetMorph = 0; targetVortex = 0; targetDuo = 0;
+        targetYaw = Math.sin(t * 0.55) * 0.85;
+      } else if (activePhase === 1) {
+        targetMorph = 0.5; targetVortex = 1.0; targetDuo = 0;
+        targetYaw = 0.0;
+      } else if (activePhase === 2) {
+        targetMorph = 1.0; targetVortex = 0; targetDuo = 0;
+        targetYaw = Math.sin(t * 0.4) * 0.25;
+      } else if (activePhase === 3) {
+        targetMorph = 0.0;
+        targetVortex = 0;
+        targetDuo = 1.0;
+        targetYaw = 0.35 + Math.sin(t * 0.4) * 0.2;
+      }
+
+      const lerpSpeed = Math.min(1, 2.6 * dt);
+      state.morph    += (targetMorph - state.morph) * lerpSpeed;
+      state.vortex   += (targetVortex - state.vortex) * lerpSpeed;
+      state.duoSplit += (targetDuo - state.duoSplit) * lerpSpeed;
+      state.camYaw   += (targetYaw - state.camYaw) * lerpSpeed;
+
+      const pPtArr = primaryRig.ptPositions;
+      const pLnArr = primaryRig.linePositions;
+      const birdDuoOffsetY = state.duoSplit * 0.95;
+      const birdDuoScale   = 1.0 - state.duoSplit * 0.18;
+
+      for (let i = 0; i < VERT_COUNT; i++) {
+        const i3 = i * 3;
+        const bV = birdData.vertices[i];
+        const fV = foxData.vertices[i];
+        const [bx, by, bz] = evalBirdVertex(bV, t);
+        const [fx, fy, fz] = evalFoxVertex(fV, t);
+
+        const duoTurn = state.duoSplit * (Math.PI * 0.5);
+        const cosD = Math.cos(duoTurn), sinD = Math.sin(duoTurn);
+        const rbx = (bx * cosD + bz * sinD) * birdDuoScale;
+        const rby = by * birdDuoScale + birdDuoOffsetY;
+        const rbz = (-bx * sinD + bz * cosD) * birdDuoScale;
+
+        let mx = rbx + (fx - rbx) * state.morph;
+        let my = rby + (fy - rby) * state.morph;
+        let mz = rbz + (fz - rbz) * state.morph;
+
+        if (state.vortex > 0.001) {
+          const vRatio = (i / VERT_COUNT);
+          const armAngle = (i % 7) * ((Math.PI * 2) / 7) + vRatio * 6.5 - t * 2.8;
+          const radius = Math.pow(vRatio, 0.7) * 3.8;
+          const vx = Math.cos(armAngle) * radius;
+          const vy = Math.sin(armAngle) * radius;
+          const vz = Math.sin(vRatio * Math.PI * 4 - t * 2.0) * 0.45;
+          mx = mx * (1 - state.vortex) + vx * state.vortex;
+          my = my * (1 - state.vortex) + vy * state.vortex;
+          mz = mz * (1 - state.vortex) + vz * state.vortex;
+        }
+
+        pPtArr[i3]     = mx;
+        pPtArr[i3 + 1] = my;
+        pPtArr[i3 + 2] = mz;
+      }
+
+      for (let s = 0; s < SEG_COUNT; s += 2) {
+        const useFoxTop = state.morph > 0.5;
+        const segSource = useFoxTop ? foxData.segments : birdData.segments;
+        const idxA = segSource[s] * 3;
+        const idxB = segSource[s + 1] * 3;
+        const outIdx = s * 3;
+        pLnArr[outIdx]     = pPtArr[idxA];
+        pLnArr[outIdx + 1] = pPtArr[idxA + 1];
+        pLnArr[outIdx + 2] = pPtArr[idxA + 2];
+        pLnArr[outIdx + 3] = pPtArr[idxB];
+        pLnArr[outIdx + 4] = pPtArr[idxB + 1];
+        pLnArr[outIdx + 5] = pPtArr[idxB + 2];
+      }
+
+      primaryRig.points.geometry.attributes.position.needsUpdate = true;
+      primaryRig.lines.geometry.attributes.position.needsUpdate = true;
+      const morphFade = 1.0 - Math.sin(state.morph * Math.PI) * 0.92;
+      primaryRig.lineMat.opacity = 0.24 * morphFade * (1.0 - state.vortex);
+      primaryRig.ptMat.uniforms.uTime.value = t;
+
+      if (state.duoSplit > 0.02) {
+        companionFoxRig.group.visible = true;
+        const cPtArr = companionFoxRig.ptPositions;
+        const cLnArr = companionFoxRig.linePositions;
+        const foxScale = 0.88 * state.duoSplit;
+        const foxOffsetY = -0.82;
+        for (let i = 0; i < VERT_COUNT; i++) {
+          const i3 = i * 3;
+          const [fx, fy, fz] = evalFoxVertex(foxData.vertices[i], t);
+          cPtArr[i3]     = fx * foxScale;
+          cPtArr[i3 + 1] = fy * foxScale + foxOffsetY;
+          cPtArr[i3 + 2] = fz * foxScale;
+        }
+        for (let s = 0; s < SEG_COUNT; s += 2) {
+          const idxA = foxData.segments[s] * 3;
+          const idxB = foxData.segments[s + 1] * 3;
+          const outIdx = s * 3;
+          cLnArr[outIdx]     = cPtArr[idxA];
+          cLnArr[outIdx + 1] = cPtArr[idxA + 1];
+          cLnArr[outIdx + 2] = cPtArr[idxA + 2];
+          cLnArr[outIdx + 3] = cPtArr[idxB];
+          cLnArr[outIdx + 4] = cPtArr[idxB + 1];
+          cLnArr[outIdx + 5] = cPtArr[idxB + 2];
+        }
+        companionFoxRig.points.geometry.attributes.position.needsUpdate = true;
+        companionFoxRig.lines.geometry.attributes.position.needsUpdate = true;
+        companionFoxRig.lineMat.opacity = 0.24 * state.duoSplit;
+        companionFoxRig.ptMat.uniforms.uOpacity.value = state.duoSplit;
+        companionFoxRig.ptMat.uniforms.uTime.value = t;
+      } else {
+        companionFoxRig.group.visible = false;
+      }
+
+      for (let i = 0; i < EMBER_COUNT; i++) {
+        const i3 = i * 3;
+        const m = emberMeta[i];
+        const cycle = (t * m.speed + m.zLag) % 3.2;
+        const norm = cycle / 3.2;
+        const swirlAng = m.angle + t * 1.4 + norm * 2.5;
+        const spreadR = (0.25 + norm * 1.35) * (1.0 + state.vortex * 1.4);
+        if (state.vortex > 0.3) {
+          const vAng = m.angle + t * 2.2 - norm * 4.5;
+          const vRad = norm * 4.2;
+          emberPos[i3]     = Math.cos(vAng) * vRad;
+          emberPos[i3 + 1] = Math.sin(vAng) * vRad;
+          emberPos[i3 + 2] = (norm - 0.5) * 1.5;
+        } else {
+          emberPos[i3]     = Math.cos(swirlAng) * spreadR - state.morph * norm * 1.8;
+          emberPos[i3 + 1] = Math.sin(swirlAng) * spreadR * 0.65 + Math.sin(t * 2 + i) * 0.15;
+          emberPos[i3 + 2] = -norm * 2.4 * (1 - state.morph) + Math.sin(swirlAng) * 0.4;
+        }
+      }
+      emberGeo.attributes.position.needsUpdate = true;
+      emberMat.uniforms.uTime.value = t;
+
+      const streakVisibility = Math.max(state.vortex, (1 - state.morph) * 0.28);
+      for (let s = 0; s < STREAK_COUNT; s++) {
+        const st = streakLines[s];
+        st.mat.opacity = streakVisibility * (s % 3 === 0 ? 0.75 : 0.42);
+        const arr = st.pos;
+        for (let p = 0; p < STREAK_PTS; p++) {
+          const p3 = p * 3;
+          const u = p / (STREAK_PTS - 1);
+          if (state.vortex > 0.15) {
+            const r = Math.pow(u, 1.15) * st.maxRadius;
+            const theta = st.baseAngle + u * 3.6 - t * st.speed * 1.8;
+            arr[p3]     = Math.cos(theta) * r;
+            arr[p3 + 1] = Math.sin(theta) * r;
+            arr[p3 + 2] = st.zTilt * r;
+          } else {
+            if (s < 12) {
+              const ribbonSpread = ((s / 11) - 0.5) * 0.22;
+              const trailZ = -0.95 - u * 2.85;
+              const waveY = Math.sin(u * 7.0 - t * 5.0) * (0.12 + u * 0.22);
+              const waveX = Math.cos(u * 5.0 - t * 4.0) * (0.08 + u * 0.18) + ribbonSpread;
+              arr[p3]     = waveX;
+              arr[p3 + 1] = -0.12 + waveY + birdDuoOffsetY;
+              arr[p3 + 2] = trailZ;
+            } else {
+              st.mat.opacity = 0;
+            }
+          }
+        }
+        st.line.geometry.attributes.position.needsUpdate = true;
+      }
+
+      const totalYaw = state.camYaw + userYaw;
+      const dist = 7.4 + state.duoSplit * 0.8;
+      camera.position.x = Math.sin(totalYaw) * dist;
+      camera.position.z = Math.cos(totalYaw) * dist;
+      camera.position.y = 0.25 + userPitch * 3.0 + Math.sin(t * 0.6) * 0.15;
+      camera.lookAt(0, 0, 0);
+
+      renderer.render(scene, camera);
+    }
+
+    // Reduced motion: settle the chosen scene with a few quick steps, then hold a still frame.
+    function renderOnce() { for (let k = 0; k < 90; k++) step(1 / 30, frozenT); }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const dt = Math.min(clock.getDelta(), 0.05);
+      if (paused || document.hidden) return;
+      if (reduceMotion) { if (isDragging) step(0, frozenT); return; }
+      step(dt, clock.getElapsedTime());
+    }
+
+    if (reduceMotion) { manualOverride = true; renderOnce(); }
+    animate();
+  </script>
+</body>
+</html>
