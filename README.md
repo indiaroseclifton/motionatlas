@@ -279,11 +279,14 @@ Your package of 11 films, 68 renders and a style list is merged in with
 
 - `site/studies/lion-phoenix.html` is an 8-second loop: the lion holds, then transforms, then the phoenix holds, then it returns.
   - **Lion:** about 80k particles are sampled from `assets/studies/lion-source.jpg`. That file is the studio's own golden-dust lion reference. The sampling is weighted by brightness and fine detail, and the frame edges are feathered.
-  - **Phoenix:** drawn procedurally on a hidden canvas, then sampled the same way.
-  - **Motion:** the GPU does a staggered, swirling morph in which the mane leaves first. The mane moves in the wind, and the phoenix beats its wings.
+  - **Phoenix:** sampled the same way from a frame of the studio's film (`assets/studies/phoenix-source.jpg`, the frame at 7.4 s). A procedural painting stands in if that frame can't load.
+  - **Motion:** the GPU does a staggered morph in which the mane leaves first. On the way, the dust is pulled into a four-armed logarithmic spiral galaxy, as in the film. The mane moves in the wind, and the phoenix beats its wings.
   - **Layout:** fits the full width on phones.
   - **Messages:** answers any `*:pause` or `*:play` message.
-- The Animation studio's featured block (`lattice-embed.js`) now switches between three studies: lion to phoenix (the default), bird to fox and the golden lattice.
+- The film itself is in `assets/films/lion-phoenix.{mp4,webm,jpg}`:
+  - 720p, about 4 MB, with the audio dropped.
+  - The last 0.6 s crossfades into the first frames, so the loop has no visible seam.
+- The Animation studio's featured block (`lattice-embed.js`) switches between four items: the live lion-to-phoenix study (the default), the film, bird to fox and the golden lattice.
 
 ### Stardust: bird to fox (live study)
 

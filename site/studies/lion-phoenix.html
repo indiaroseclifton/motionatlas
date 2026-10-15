@@ -150,11 +150,20 @@
         float span = max(0.0, abs(b.x) - .35);
         if (b.y > -.55) { b.y += sin(uTime * 3.1 - span * .9) * .16 * pow(span, 1.15); b.z += cos(uTime * 3.1 - span * .9) * .08 * span; }
         else b.x += sin(uTime * 2.2 - b.y * 2.0) * .07 * (-.55 - b.y);
-        // staggered flight: the mane leaves first, swirling up and out before settling into place
-        float k = clamp(uMorph * 1.7 - aR.x, 0.0, 1.0); k = k * k * (3.0 - 2.0 * k);
-        float s = sin(k * 3.14159), ang = aR.y + uTime * 1.3;
-        vec3 p = mix(a, b, k) + vec3(cos(ang) * 1.1 + .6, sin(ang * .7) * .7 + .35, sin(ang) * 1.1) * s;
-        vCol = mix(aCA, aCB, k) * (1.0 + s * .55);
+        // staggered flight: the mane leaves first, while the face still holds
+        float k = clamp(uMorph * 1.45 - aR.x * .6, 0.0, 1.0); k = k * k * (3.0 - 2.0 * k);
+        float s = sin(k * 3.14159);
+        // on the way, each grain is pulled into a turning galaxy: four logarithmic spiral arms, faster near the core
+        float rho = .15 + 3.1 * pow(fract(aR.w * 1.618), .75);
+        rho *= 1.0 + (fract(aR.w * 13.7) - .5) * .25;                       // wide, smoky arms rather than thin lines
+        float arm = floor(fract(aR.y * .159) * 4.0) * 1.5708;
+        float th = arm + 2.3 * log(rho + .2) - uTime * (1.4 + 1.2 / (rho + .5)) + (fract(aR.w * 7.3) - .5) * .75;
+        vec3 vort = vec3(cos(th) * rho, sin(th) * rho * .62 + .1, sin(th) * rho * .3);
+        vort += vec3(sin(th * 3.0 + aR.y + uTime), cos(th * 2.0 + aR.y * 1.7 - uTime), 0.0) * .08 * rho; // curling eddies
+        float pull = smoothstep(0.0, 1.0, s * 1.15) * .9;
+        vec3 p = mix(mix(a, b, k), vort, pull);
+        float core = (1.0 - smoothstep(0.0, 1.2, rho)) * pull; // the bright heart of the vortex, where the phoenix is born
+        vCol = mix(aCA, aCB, k) * (1.0 + s * .3 + core * 1.0);
         float l = mix(aLA, aLB, k);
         vA = (.5 + l * .9) * (.75 + .25 * sin(uTime * 4.0 + aR.w * 9.0));
         vec4 mv = modelViewMatrix * vec4(p, 1.0); gl_Position = projectionMatrix * mv;
@@ -176,8 +185,8 @@
     fragmentShader: `uniform sampler2D uMap; varying float vA; void main(){ float a = texture2D(uMap, gl_PointCoord).a; a = smoothstep(0.0, .35, a) * vA; gl_FragColor = vec4(1.0, .72, .3, a); }` });
   const bokeh = new THREE.Points(bg, bmat); bokeh.frustumCulled = false; scene.add(bokeh);
 
-  function build(lionImg) {
-    const SL = sampler(lionImg), SP = sampler(paintPhoenix());
+  function build(lionImg, phxImg) {
+    const SL = sampler(lionImg), SP = sampler(phxImg || paintPhoenix());
     // depth: the face sits forward, the mane sweeps back; the phoenix's wings curve back from the body
     const lionDepth = (x, y, l) => .55 - (x / W) * .9 + l * .35;
     const phxDepth = (x, y, l) => .3 - Math.pow(Math.abs(x / W - .5) * 2, 1.6) * .9;
@@ -196,7 +205,7 @@
 
   /* ---------- timeline: 8 s seamless loop ---------- */
   const LOOP = 8, smooth = (a, b, x) => { const t = clampN((x - a) / (b - a)); return t * t * (3 - 2 * t); };
-  const morphAt = lt => lt < 2.6 ? 0 : lt < 4.4 ? smooth(2.6, 4.4, lt) : lt < 6.7 ? 1 : 1 - smooth(6.7, 8, lt);
+  const morphAt = lt => lt < 2 ? 0 : lt < 5 ? smooth(2, 5, lt) : lt < 7 ? 1 : 1 - smooth(7, 8, lt);
   let mode = 2, morph = 0, paused = false, ready = false, tx = 0, ty = 0, px = 0, py = 0;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const buttons = document.querySelectorAll('.mode');
@@ -228,10 +237,17 @@
   function loop() { requestAnimationFrame(loop); if (paused || document.hidden || reduce || !ready) return; const t = clock.getElapsedTime(); frame(t, targetFor(t)); }
   addEventListener('resize', () => { fit(); if (reduce) still(); });
 
-  const img = new Image();
-  img.onload = () => { const c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d'); g.drawImage(img, 0, 0, W, H);
-    build(g.getImageData(0, 0, W, H)); fit(); ready = true; if (reduce) { mode = 0; buttons.forEach(x => x.setAttribute('aria-pressed', String(x.dataset.mode === '0'))); still(); } };
-  img.src = '../assets/studies/lion-source.jpg';
+  // Both creatures come from stills: the lion reference and a frame of the phoenix from the studio's film.
+  // If the phoenix frame can't load, the procedural painting stands in.
+  const load = src => new Promise(res => { const im = new Image(); im.onload = () => res(im); im.onerror = () => res(null); im.src = src; });
+  const pixels = (im, contain) => { if (!im) return null; const c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d');
+    g.fillStyle = '#000'; g.fillRect(0, 0, W, H);
+    if (contain) { const k = Math.min(W / im.width, H / im.height), w = im.width * k, h = im.height * k; g.drawImage(im, (W - w) / 2, (H - h) / 2, w, h); } else g.drawImage(im, 0, 0, W, H);
+    return g.getImageData(0, 0, W, H); };
+  Promise.all([load('../assets/studies/lion-source.jpg'), load('../assets/studies/phoenix-source.jpg')]).then(([li, ph]) => {
+    if (!li) return;
+    build(pixels(li), pixels(ph, true)); fit(); ready = true;
+    if (reduce) { mode = 0; buttons.forEach(x => x.setAttribute('aria-pressed', String(x.dataset.mode === '0'))); still(); } });
   loop();
   window.__lion = { frameAt: t => { morph = targetFor(t); frame(t, morph); }, ready: () => ready };
 })();
