@@ -9,7 +9,7 @@
    text:'About 52,000 grains of blue light, sampled from a still of a humpback, cross the page. A wave runs from head to fluke and a wake of dust is left behind in the water.'},
   {id:'lion',kind:'live',src:'studies/lion-phoenix.html?hero',open:'studies/lion-phoenix.html',kicker:'Live particles · WebGL',title:'Lion to phoenix.',
    text:'A lion of golden dust, sampled from the reference still. The mane goes first, the dust turns through a spiral galaxy and settles as the phoenix from the film. An 8-second loop.'},
-  {id:'lionfilm',kind:'video',src:'assets/films/lion-phoenix.mp4',webm:'assets/films/lion-phoenix.webm',poster:'assets/films/lion-phoenix.jpg',open:'assets/films/lion-phoenix.mp4',kicker:'Film · loops seamlessly',title:'Lion to phoenix, the film.',
+  {id:'lionfilm',kind:'video',src:'assets/films/lion-phoenix.mp4',small:'assets/films/lion-phoenix-720.mp4',webm:'assets/films/lion-phoenix.webm',poster:'assets/films/lion-phoenix.jpg',open:'assets/films/lion-phoenix.mp4',kicker:'Film · loops seamlessly',title:'Lion to phoenix, the film.',
    text:'The original film the live study grew from: the lion dissolves into a golden vortex, a flash, and the phoenix opens its wings.'},
   {id:'butterfly',kind:'live',src:'studies/butterfly.html?hero',open:'studies/butterfly.html',kicker:'Live particles · WebGL',title:'Glitter butterfly.',
    text:'Grains sampled from a frame of the butterfly film, wings fully open. Each grain turns about the body, so the wings fold up out of the page and open again as it drifts, shedding glitter.'},
@@ -26,7 +26,7 @@
 
  function mediaFor(it){
   if(it.kind==='video'){const v=document.createElement('video');Object.assign(v,{muted:true,loop:true,playsInline:true,preload:'none',poster:it.poster});v.setAttribute('muted','');v.setAttribute('aria-label',it.title.replace(/\.$/,''));
-   v.innerHTML=`<source src="${it.webm}" type="video/webm"><source src="${it.src}" type="video/mp4">`;return v;}
+   v.innerHTML=`${it.small?`<source src="${it.small}" type="video/mp4" media="(max-width: 900px)">`:''}<source src="${it.webm}" type="video/webm"><source src="${it.src}" type="video/mp4">`;return v;}
   const f=document.createElement('iframe');f.src=it.src;f.title=it.title.replace(/\.$/,'')+', live study';f.tabIndex=-1;f.setAttribute('allowtransparency','true');f.setAttribute('loading','eager');return f;
  }
  function post(f,msg){['whale','lion','stardust','lattice','fly'].forEach(k=>{try{f.contentWindow.postMessage(k+':'+msg,'*');}catch{}});}

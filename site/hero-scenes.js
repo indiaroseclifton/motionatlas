@@ -6,7 +6,7 @@
 (()=>{
  const H=window.HomeAtlas;if(!H||!H.hero)return;
  const SCENES=[
-  {id:'lionfilm',name:'Lion to phoenix',label:'Lion to phoenix, film',kind:'video',src:'assets/films/lion-phoenix.mp4',webm:'assets/films/lion-phoenix.webm',poster:'assets/films/lion-phoenix.jpg'},
+  {id:'lionfilm',name:'Lion to phoenix',label:'Lion to phoenix, film',kind:'video',src:'assets/films/lion-phoenix.mp4',small:'assets/films/lion-phoenix-720.mp4',webm:'assets/films/lion-phoenix.webm',poster:'assets/films/lion-phoenix.jpg'},
   {id:'lion',name:'Lion to phoenix · live',label:'Lion to phoenix, live particles',kind:'live',src:'studies/lion-phoenix.html?hero'},
   {id:'stardust',name:'Bird to fox',label:'Stardust bird to fox, live particles',kind:'live',src:'studies/stardust-bird-fox.html?hero'},
   {id:'lattice',name:'Golden lattice',label:'Golden lattice, live wireframe',kind:'live',src:'studies/golden-lattice.html?hero'},
@@ -39,7 +39,7 @@
   const el=document.createElement('div');el.className='vmaSceneLayer isShifted';
   if(s.kind==='video'){
    const v=document.createElement('video');Object.assign(v,{muted:true,loop:true,playsInline:true,preload:'auto',poster:s.poster});v.setAttribute('muted','');
-   v.innerHTML=`<source src="${s.webm}" type="video/webm"><source src="${s.src}" type="video/mp4">`;el.append(v);
+   v.innerHTML=`${s.small?`<source src="${s.small}" type="video/mp4" media="(max-width: 900px)">`:''}<source src="${s.webm}" type="video/webm"><source src="${s.src}" type="video/mp4">`;el.append(v);
    v.addEventListener('timeupdate',()=>{if(cur===s.id)H.tc.textContent=`${H.fmt(v.currentTime)} / ${H.fmt(v.duration||8)}`;});
    return {el,m:v,ready:new Promise(res=>{v.addEventListener(paused?'loadeddata':'playing',res,{once:true});if(!paused)v.play().catch(()=>v.addEventListener('loadeddata',res,{once:true}));})};
   }
