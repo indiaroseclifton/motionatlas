@@ -72,7 +72,7 @@
     fdlg.close();if(g==='entry'){location.hash='browse';setTimeout(()=>window.openEntry?.(best),120);}if(g==='lab')location.hash=`ux?component=C30&theme=${best}`;if(g==='fx')location.hash=`effects?fx=${fx}`;if(g==='ease')location.hash=`motion?ease=${m[1].join(',')},${m[2]}`;});};
   q();if(!fdlg.open)fdlg.showModal();
  }
- function finderButton(){if($('.finderBtn'))return;const s=$('.aeSearchBtn');if(!s)return setTimeout(finderButton,300);const b=document.createElement('button');b.type='button';b.className='finderBtn';b.innerHTML='<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M10.5 5.5 9 9l-3.5 1.5L7 7z" fill="currentColor"/></svg><span>Find a direction</span>';b.onclick=finder;s.insertAdjacentElement('beforebegin',b);}
+ function finderButton(){if($('.finderBtn'))return;const s=$('.aeSearchBtn');if(!s)return setTimeout(finderButton,300);const b=document.createElement('button');b.type='button';b.className='finderBtn';b.setAttribute('aria-label','Find a direction');b.innerHTML='<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M10.5 5.5 9 9l-3.5 1.5L7 7z" fill="currentColor"/></svg><span>Find a direction</span>';b.onclick=finder;s.insertAdjacentElement('beforebegin',b);}
  window.AtlasFinder=finder;
 
  /* ---------- 3. Project moodboard + tokens ---------- */

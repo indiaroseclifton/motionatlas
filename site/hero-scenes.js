@@ -3,9 +3,27 @@
    studies in their hero mode, and the original Genesis film with its four plates. A quiet row of marks in
    the hero's foot switches between them. A new scene loads behind the current one and only crossfades in once it
    is actually drawing, so the change reads as one picture dissolving into the next. */
+/* How much motion this device should get. Live WebGL studies are skipped (stills or films instead) when the
+   browser asks to save data, has no WebGL, renders WebGL in software, or reports 2 GB of memory or less.
+   ?fullmotion or the "show live motion" link (localStorage atlasMotion=full) overrides it. */
+window.AtlasMotion=window.AtlasMotion||(()=>{
+ let force=null;try{force=localStorage.getItem('atlasMotion');}catch{}
+ if(/[?&]fullmotion\b/.test(location.search))force='full';
+ const conn=navigator.connection||{},saveData=!!conn.saveData;let noGL=false,soft=false;
+ try{const c=document.createElement('canvas'),gl=c.getContext('webgl')||c.getContext('experimental-webgl');
+  if(!gl)noGL=true;else{const ext=gl.getExtension('WEBGL_debug_renderer_info');const r=ext?String(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)):'';
+   soft=/swiftshader|llvmpipe|softpipe|software|basic render/i.test(r);const lose=gl.getExtension('WEBGL_lose_context');if(lose)lose.loseContext();}}catch{noGL=true;}
+ const lowMem=!!(navigator.deviceMemory&&navigator.deviceMemory<=2);
+ const lite=force==='full'?false:force==='lite'?true:(saveData||noGL||soft||lowMem);
+ const small=()=>matchMedia('(max-width: 900px)').matches;
+ // one download per device: the 720p cut on small screens (WebM only if MP4 can't play), WebM then MP4 elsewhere
+ const sources=s=>small()&&s.small?`<source src="${s.small}" type="video/mp4"><source src="${s.webm}" type="video/webm">`:`<source src="${s.webm}" type="video/webm"><source src="${s.src}" type="video/mp4">`;
+ return {lite,saveData,noGL,sources,setFull(on){try{localStorage.setItem('atlasMotion',on?'full':'lite');}catch{}}};
+})();
 (()=>{
  const H=window.HomeAtlas;if(!H||!H.hero)return;
- const SCENES=[
+ const M=window.AtlasMotion;
+ const SCENES_ALL=[
   {id:'jelly',name:'Jellyfish',label:'Jellyfish, film',kind:'video',src:'assets/films/jellyfish.mp4',small:'assets/films/jellyfish-720.mp4',webm:'assets/films/jellyfish.webm',poster:'assets/films/jellyfish.jpg',tint:['#f3eaff','#c7b6ff','#ffb98a','#e9d8ff'],eye:'#d6c4ff'},
   {id:'lionfilm',name:'Lion to phoenix',label:'Lion to phoenix, film',kind:'video',src:'assets/films/lion-phoenix.mp4',small:'assets/films/lion-phoenix-720.mp4',webm:'assets/films/lion-phoenix.webm',poster:'assets/films/lion-phoenix.jpg'},
   {id:'lion',name:'Lion to phoenix · live',label:'Lion to phoenix, live particles',kind:'live',src:'studies/lion-phoenix.html?hero'},
@@ -13,6 +31,8 @@
   {id:'whale',name:'Whale',label:'Whale gliding, live particles',kind:'live',src:'studies/whale-glide.html?hero',tint:['#e3f0ff','#6fb0ff','#2f6dff','#a9d4ff'],eye:'#8fc2ff'},
   {id:'butterfly',name:'Butterfly',label:'Glitter butterfly, live particles',kind:'live',src:'studies/butterfly.html?hero',tint:['#fffaf0','#f3e2c0','#d9b98a','#fff1d8'],eye:'#f0dcb4'},
   {id:'genesis',name:'Genesis',label:'Genesis, the atlas film in four plates',kind:'genesis'}];
+ // on a low-power device the hero keeps to its films and Genesis
+ const SCENES=SCENES_ALL.filter(s=>!M.lite||s.kind!=='live');
  const KEY='vmaHeroScene2',hero=H.hero,section=H.section,film=H.film,gv=H.video;
  const store={get(){try{return localStorage.getItem(KEY);}catch{return null;}},set(v){try{localStorage.setItem(KEY,v);}catch{}}};
 
@@ -26,7 +46,7 @@
  meta.prepend(pick);
  const nameEl=pick.querySelector('.vmaSceneName'),marks=[...pick.querySelectorAll('.vmaSceneMark')];
 
- let cur=null,layer=null,token=0,paused=H.reduced.matches,media=null;
+ let cur=null,layer=null,token=0,paused=H.reduced.matches||M.saveData,media=null;
  const scene=id=>SCENES.find(s=>s.id===id)||SCENES[0];
  const showName=s=>{nameEl.textContent=`${String(SCENES.indexOf(s)+1).padStart(2,'0')} · ${s.name}`;};
  marks.forEach(m=>{const s=scene(m.dataset.id);
@@ -38,7 +58,7 @@
   const el=document.createElement('div');el.className='vmaSceneLayer isShifted';
   if(s.kind==='video'){
    const v=document.createElement('video');Object.assign(v,{muted:true,loop:true,playsInline:true,preload:'auto',poster:s.poster});v.setAttribute('muted','');
-   v.innerHTML=`${s.small?`<source src="${s.small}" type="video/mp4" media="(max-width: 900px)">`:''}<source src="${s.webm}" type="video/webm"><source src="${s.src}" type="video/mp4">`;el.append(v);
+   v.innerHTML=M.sources(s);el.append(v);
    v.addEventListener('timeupdate',()=>{if(cur===s.id)H.tc.textContent=`${H.fmt(v.currentTime)} / ${H.fmt(v.duration||8)}`;});
    return {el,m:v,ready:new Promise(res=>{v.addEventListener(paused?'loadeddata':'playing',res,{once:true});if(!paused)v.play().catch(()=>v.addEventListener('loadeddata',res,{once:true}));})};
   }
@@ -53,6 +73,7 @@
   hero.classList.toggle('sceneOther',s.kind!=='genesis');
   H.cinemaBtn.querySelector('span').textContent=hero.classList.contains('isCinema')?'Show the atlas':(s.kind==='live'?'Watch the scene':'Watch the film');
   if(s.kind==='genesis'){
+   film.querySelectorAll('[data-src]').forEach(el=>{el.src=el.dataset.src;el.removeAttribute('data-src');});
    layer=null;media=null;H.eyebrow.textContent='';H.current=-1;H.tick();
    if(prev){prev.el.classList.remove('isOn');setTimeout(()=>prev.el.remove(),1800);}
    H.update();H.syncButton();return;
@@ -75,6 +96,7 @@
  // play / pause, visibility and cinema mode follow whichever scene is showing
  const baseUpdate=H.update.bind(H),baseSync=H.syncButton.bind(H),baseCinema=H.cinemaBtn.onclick;
  H.update=function(){
+  if(!cur)start();
   if(cur==='genesis'||!cur)return baseUpdate();
   const active=document.getElementById('home').classList.contains('active');
   document.body.classList.toggle('cinemaMode',active);if(!active)document.body.classList.remove('vmaCinema');
@@ -99,5 +121,7 @@
   document.body.classList.toggle('vmaCinema',on);if(on&&paused){paused=false;H.update();H.syncButton();}
  };
 
- switchTo(store.get()||SCENES[0].id,false);
+ const homeActive=()=>document.getElementById('home')?.classList.contains('active');
+ const start=()=>{if(cur||!homeActive())return;switchTo(store.get()||SCENES[0].id,false);};
+ start();addEventListener('hashchange',()=>setTimeout(start,30));
 })();

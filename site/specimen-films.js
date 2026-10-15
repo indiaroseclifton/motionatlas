@@ -115,7 +115,7 @@
   sec.innerHTML=`<div class="sfReelStage"><div class="sfReelLayer"></div><div class="sfReelLayer"></div><div class="sfReelShade"></div></div>
   <div class="vmaInner sfReelCopy">
    <p class="vmaLabel">Specimen reel &middot; Plates V&ndash;${ROMAN[list.length-1]}</p>
-   <h2 id="sfReelTitle"><span class="sfReelNo"></span><span class="sfReelName"></span></h2>
+   <h2 id="sfReelTitle"><span class="visually-hidden sfReelFallback">Specimen films</span><span class="sfReelNo"></span><span class="sfReelName"></span></h2>
    <p class="sfReelDesc"></p>
    <div class="vmaActions"><button type="button" class="vmaBtn vmaBtnPrimary sfReelOpen">Open the specimen <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5"/></svg></button><a class="vmaBtn vmaBtnGhost" href="#motion">All films in the studio</a><button type="button" class="vmaCtl sfReelPlay"></button></div>
   </div>

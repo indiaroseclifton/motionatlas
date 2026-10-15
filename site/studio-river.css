@@ -68,3 +68,8 @@
 #motion .studyRiver .riverMake{order:2;margin:0;color:#c9c3b6;font-size:15px}
 #motion .studyRiver .riverMake a{color:#f1e1b8;text-decoration:underline;text-decoration-color:rgba(241,225,184,.4);text-underline-offset:4px}
 #motion .studyRiver .riverMake a:focus-visible{outline:2px solid #e9cf8f;outline-offset:3px}
+/* low-power devices: stills in place of live WebGL, and a way to opt back in */
+.riverMedia .riverStill{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block}
+#motion .studyRiver .riverLite{order:2;flex-basis:100%;margin:0;color:#c9c3b6;font-size:14px}
+#motion .studyRiver .riverLiteOn{background:none;border:0;padding:6px 0;min-height:36px;color:#f1e1b8;font:inherit;text-decoration:underline;text-underline-offset:4px;cursor:pointer}
+#motion .studyRiver .riverLiteOn:focus-visible{outline:2px solid #e9cf8f;outline-offset:3px}

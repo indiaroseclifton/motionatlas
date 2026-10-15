@@ -19,5 +19,18 @@
   window.studyReady = () => { if (sent || parent === window) return; sent = true;
     requestAnimationFrame(() => requestAnimationFrame(() => { try { parent.postMessage('study:ready', '*'); } catch (e) {} })); };
   window.studyHero = hero;
+  // Adaptive sharpness: if frames run slow for a few seconds, render at a lower pixel ratio (2 → 1.5 → 1 → 0.75).
+  // It only ever steps down, so it cannot oscillate. onChange(ratio) lets a study rescale its point sizes.
+  window.studyAdapt = (renderer, onChange) => {
+    let last = 0, sum = 0, n = 0, warm = 0;
+    const tick = now => { requestAnimationFrame(tick); if (document.hidden) { last = 0; return; }
+      if (last) { const dt = now - last; if (dt < 250) { sum += dt; n++; } } last = now;
+      if (++warm < 120 || n < 90) return;
+      const avg = sum / n; sum = 0; n = 0;
+      const r = renderer.getPixelRatio();
+      if (avg > 30 && r > .75) { const next = r > 1.5 ? 1.5 : r > 1 ? 1 : .75; renderer.setPixelRatio(next); if (onChange) onChange(next); }
+    };
+    requestAnimationFrame(tick);
+  };
   window.studyParams = params;
 })();

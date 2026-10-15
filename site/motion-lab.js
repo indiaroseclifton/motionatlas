@@ -60,7 +60,7 @@
      <div class="ezl-demo"><div class="ezl-card" id="ezlCard"><b>Saved</b><span>Direction added to project</span></div><div class="ezl-modal" id="ezlModal"></div></div>
     </div>
     <div class="ezl-actions"><button type="button" class="ezl-btn primary" id="ezlPlay">Play both</button><button type="button" class="ezl-btn" id="ezlShare">Copy share link</button><button type="button" class="ezl-btn" id="ezlSave">Save as motion token</button></div>
-    <div class="ezl-code"><div class="ezl-tabs" role="group" aria-label="Code format">${['CSS','Web Animations','GSAP','Motion'].map((k,i)=>`<button type="button" data-code="${i}">${k}</button>`).join('')}<button type="button" class="ezl-copy" id="ezlCopy">Copy</button></div><pre class="ezl-pre"><code id="ezlOut"></code></pre></div>
+    <div class="ezl-code"><div class="ezl-tabs" role="group" aria-label="Code format">${['CSS','Web Animations','GSAP','Motion'].map((k,i)=>`<button type="button" data-code="${i}">${k}</button>`).join('')}<button type="button" class="ezl-copy" id="ezlCopy">Copy</button></div><pre class="ezl-pre" tabindex="0" aria-label="Generated code"><code id="ezlOut"></code></pre></div>
     <div class="ezl-tokens"><div class="ezl-row"><b>Motion tokens</b><button type="button" class="ezl-btn small" id="ezlExport">Copy as CSS variables</button></div><ol id="ezlTokens"></ol></div>
    </div>
   </div>`;

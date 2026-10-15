@@ -284,6 +284,20 @@ Your package of 11 films, 68 renders and a style list is merged in with
   - **Performance:** live studies load as they approach and are released once well out of view, so only two or three WebGL contexts exist at a time.
 - Order: the whale (a full-width stage it glides across), lion to phoenix (live), the lion film, the butterfly (live), the jellyfish film and bird to fox. (The golden lattice study has been retired.)
 
+### Performance and low-power mode
+
+- **Loading:**
+  - The home hero waits until the home page is showing, so landing on another page never pulls the jellyfish film.
+  - The Genesis poster and video load only when Genesis is chosen.
+  - Each device downloads one video source. Phones get the 720p MP4 (with WebM as a fallback if MP4 can't play); larger screens get WebM, then MP4.
+  - The river creates films and studies only as they come within 40% of a screen of view.
+- **Low-power mode** (`window.AtlasMotion` in `hero-scenes.js`):
+  - **Triggers:** Data Saver, no WebGL, WebGL rendered in software, or 2 GB of memory or less.
+  - **Effect:** the hero drops its live scenes, and the river shows each live study's source still with a "Show live motion" opt-in (`localStorage atlasMotion`; `?fullmotion` overrides). With Data Saver on, films don't autoplay.
+- **Adaptive sharpness** (`studyAdapt` in `studies/hero-mode.js`): a study that runs slower than about 30 ms a frame steps its pixel ratio down (2 → 1.5 → 1 → 0.75). It never steps back up.
+- **Measured locally:** the jellyfish starts playing in about 1–1.7 s, and the home page transfers about 4 MB on desktop.
+- **Share card:** `assets/og-atlas.jpg` now shows the jellyfish, and the canonical, Open Graph, sitemap and robots URLs point to https://motionatlas-ten.vercel.app.
+
 ### Particle studio
 
 - `site/particle-studio.html` is a standalone tool, linked from the Motion menu and the Animation studio river. You drop in any picture, or use the lion, whale, butterfly and phoenix samples.

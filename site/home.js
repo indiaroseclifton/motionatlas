@@ -22,8 +22,8 @@ window.HomeAtlas={
  section.innerHTML=`<div class="vmaHome">
 <section class="vmaHero" id="vmaHero" aria-label="Visual and Motion Atlas">
  <div class="vmaFilm" id="vmaFilm" aria-hidden="true">
-  <img src="assets/atlas-hero-poster.jpg" alt="">
-  <video id="genesisHero" muted playsinline loop preload="metadata">
+  <img data-src="assets/atlas-hero-poster.jpg" alt="">
+  <video id="genesisHero" muted playsinline loop preload="none">
    <source src="assets/atlas-hero-720.mp4" type="video/mp4" media="(max-width: 900px)">
    <source src="assets/atlas-hero-1080.mp4" type="video/mp4">
    <source src="assets/atlas-hero.webm" type="video/webm">
@@ -87,6 +87,10 @@ window.HomeAtlas={
 <footer class="vmaInner vmaFooter"><span>Visual &amp; Motion Atlas</span><a href="#inspiration">Your inspiration library &rarr;</a><a href="#home?film" id="vmaBackToFilm">Back to the film &uarr;</a></footer>
 </div>`;
  document.getElementById('main').prepend(section);
+ // the Genesis poster waits for the scene switcher to ask for it; without the switcher it loads straight away
+ // (checked once every script has run: a plain timeout can fire while the switcher is still downloading)
+ const genesisArt=()=>{if(!window.AtlasMotion)section.querySelectorAll('#vmaFilm [data-src]').forEach(el=>{el.src=el.dataset.src;el.removeAttribute('data-src');});};
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',genesisArt,{once:true});else setTimeout(genesisArt,0);
 
  const $=s=>section.querySelector(s);
  this.section=section;this.hero=$('#vmaHero');this.film=$('#vmaFilm');this.video=$('#genesisHero');

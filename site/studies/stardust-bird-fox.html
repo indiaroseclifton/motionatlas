@@ -46,6 +46,7 @@
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setClearColor(0x000000, 0);
   stage.appendChild(renderer.domElement);
+  if (window.studyAdapt) studyAdapt(renderer, () => scaled.forEach(m => m.uniforms.uScale.value = innerHeight * renderer.getPixelRatio() * .5));
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(34, window.innerWidth / window.innerHeight, 0.1, 100);
   camera.position.set(0, 0.25, 10.5);
