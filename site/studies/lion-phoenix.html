@@ -54,7 +54,7 @@
   const STOPS = [[.62, .3, .05], [1, .6, .12], [1, .82, .4], [1, .96, .82]];
   const gold = k => { k = Math.max(0, Math.min(.999, k)) * 3; const i = k | 0, f = k - i; return STOPS[i].map((c, j) => c + (STOPS[i + 1][j] - c) * f); };
   const W = 900, H = 604, SPAN = 7.7;               // source canvas size and its width in world units
-  const N = 80000, BOKEH = 70;
+  const N = 150000, BOKEH = 70;
 
   /* ---------- sampling a picture into particles ---------- */
   // Weight = brightness, boosted where the picture has fine detail (bright grain against a darker neighbourhood),
@@ -80,7 +80,9 @@
     const r = rnd() * S.tot; let lo = 0, hi = W * H - 1; while (lo < hi) { const m = (lo + hi) >> 1; if (S.w[m] < r) lo = m + 1; else hi = m; }
     const px = lo % W + rnd(), py = Math.floor(lo / W) + rnd(), l = S.L[lo];
     pos[i * 3] = (px / W - .5) * SPAN; pos[i * 3 + 1] = -(py / H - .5) * SPAN * H / W; pos[i * 3 + 2] = depth(px, py, l) + gauss() * .05;
-    const c = gold(Math.min(1, l * 1.25 + gauss() * .08)); col[i * 3] = c[0]; col[i * 3 + 1] = c[1]; col[i * 3 + 2] = c[2];
+    // the palette colour, blended with the picture's own hue so the amber of the reference survives
+    const g = gold(Math.min(1, l * 1.15 + gauss() * .08)), pr = S.C[lo * 4] / 255, pg = S.C[lo * 4 + 1] / 255, pb = S.C[lo * 4 + 2] / 255, m = Math.max(pr, pg, pb, .05);
+    col[i * 3] = g[0] * .6 + pr / m * .4; col[i * 3 + 1] = g[1] * .6 + pg / m * .4; col[i * 3 + 2] = g[2] * .6 + pb / m * .4;
     lum[i] = l;
   }
 
@@ -166,13 +168,35 @@
         float core = (1.0 - smoothstep(0.0, 1.2, rho)) * pull; // the bright heart of the vortex, where the phoenix is born
         vCol = mix(aCA, aCB, k) * (1.0 + s * .3 + core * 1.0);
         float l = mix(aLA, aLB, k);
-        vA = (.5 + l * .9) * (.75 + .25 * sin(uTime * 4.0 + aR.w * 9.0));
+        vA = (.36 + l * .8) * (.75 + .25 * sin(uTime * 4.0 + aR.w * 9.0));
         vec4 mv = modelViewMatrix * vec4(p, 1.0); gl_Position = projectionMatrix * mv;
         gl_PointSize = max(1.0, aR.z * (1.0 + s * .6) * uScale / -mv.z);
       }`,
     fragmentShader: `uniform sampler2D uMap; uniform float uGain; varying vec3 vCol; varying float vA;
       void main(){ float a = texture2D(uMap, gl_PointCoord).a * vA * uGain; if (a < .004) discard; gl_FragColor = vec4(vCol, a); }` });
   const points = new THREE.Points(geo, mat); points.frustumCulled = false; scene.add(points);
+
+  /* ---------- glow layers: the source pictures themselves, dim and feathered, under the dust ----------
+     They carry the fine detail (the eye, fur, feather barbs) that loose grains can only hint at. The phoenix layer
+     is finely subdivided and runs the same wingbeat as its particles, so glow and dust move as one. */
+  const glowMat = kind => new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    uniforms: { map: { value: null }, uOp: { value: 0 }, uTime: { value: 0 } },
+    vertexShader: `uniform float uTime; varying vec2 vUv;
+      void main(){ vUv = uv; vec3 b = position;
+        ${kind ? `float span = max(0.0, abs(b.x) - .35);
+        if (b.y > -.55) { b.y += sin(uTime * 3.1 - span * .9) * .16 * pow(span, 1.15); b.z += cos(uTime * 3.1 - span * .9) * .08 * span; }
+        else b.x += sin(uTime * 2.2 - b.y * 2.0) * .07 * (-.55 - b.y);` : ''}
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(b, 1.0); }`,
+    fragmentShader: `uniform sampler2D map; uniform float uOp; varying vec2 vUv;
+      void main(){ vec2 d = min(vUv, 1.0 - vUv); float f = smoothstep(0.0, .22, d.x) * smoothstep(0.0, .22, d.y);
+        vec3 c = max(texture2D(map, vUv).rgb - .07, 0.0) / .93; gl_FragColor = vec4(c * c * 1.3 * uOp * f, 1.0); }` });
+  const glows = [0, 1].map(k => { const m = new THREE.Mesh(new THREE.PlaneGeometry(SPAN, SPAN * H / W, k ? 220 : 1, k ? 150 : 1), glowMat(k));
+    m.visible = false; m.renderOrder = -1; scene.add(m); return m; });
+  // pictures are drawn at twice the sampling size for a crisp glow, using the same placement as the sampler
+  function glowTexture(im, contain) { const c = document.createElement('canvas'); c.width = W * 2; c.height = H * 2; const g = c.getContext('2d');
+    g.fillStyle = '#000'; g.fillRect(0, 0, c.width, c.height);
+    if (contain) { const k = Math.min(c.width / im.width, c.height / im.height), w = im.width * k, h = im.height * k; g.drawImage(im, (c.width - w) / 2, (c.height - h) / 2, w, h); } else g.drawImage(im, 0, 0, c.width, c.height);
+    const t = new THREE.CanvasTexture(c); t.minFilter = THREE.LinearMipMapLinearFilter; t.anisotropy = 4; return t; }
 
   // Soft out-of-focus orbs drifting in depth, like the glints around the reference lion
   const bg = new THREE.BufferGeometry(), bp = new Float32Array(BOKEH * 3), bm = [];
@@ -195,7 +219,7 @@
       draw(SL, A, CA, LA, i, lionDepth); draw(SP, B, CB, LB, i, phxDepth);
       // the mane (right side of the picture) leaves first, the face last
       R[i * 4] = .62 * (1 - clampN((A[i * 3] + 1.6) / 4.2)) + rnd() * .1; R[i * 4 + 1] = rnd() * 6.283;
-      R[i * 4 + 2] = (.026 + Math.pow(rnd(), 3) * .055) * (rnd() < .015 ? 2.4 : 1); R[i * 4 + 3] = rnd() * 6.283;
+      R[i * 4 + 2] = (.019 + Math.pow(rnd(), 3) * .045) * (rnd() < .012 ? 2.4 : 1); R[i * 4 + 3] = rnd() * 6.283;
     }
     geo.setAttribute('position', new THREE.BufferAttribute(A, 3)); geo.setAttribute('aB', new THREE.BufferAttribute(B, 3));
     geo.setAttribute('aCA', new THREE.BufferAttribute(CA, 3)); geo.setAttribute('aCB', new THREE.BufferAttribute(CB, 3));
@@ -225,6 +249,10 @@
   function frame(t, target) {
     morph += (target - morph) * (mode === 2 ? 1 : .06);
     const u = mat.uniforms; u.uTime.value = t; u.uMorph.value = morph;
+    // the lion's glow lets go as the mane starts to leave; the phoenix's glow arrives as the last grains settle
+    const sm = (a, b, x) => { const q = Math.max(0, Math.min(1, (x - a) / (b - a))); return q * q * (3 - 2 * q); };
+    glows[0].material.uniforms.uOp.value = .5 * (1 - sm(0, .28, morph)); glows[1].material.uniforms.uOp.value = .5 * sm(.8, 1, morph);
+    glows.forEach(g => { g.material.uniforms.uTime.value = t; });
     for (let i = 0; i < BOKEH; i++) { const q = bm[i]; bp[i * 3] = q.x + Math.sin(t * q.sp + q.s) * .4; bp[i * 3 + 1] = q.y + Math.cos(t * q.sp * .8 + q.s) * .25; bp[i * 3 + 2] = q.z; }
     bg.attributes.position.needsUpdate = true;
     px += (tx - px) * .04; py += (ty - py) * .04;
@@ -248,6 +276,8 @@
   Promise.all([load('../assets/studies/lion-source.jpg'), load('../assets/studies/phoenix-source.jpg')]).then(([li, ph]) => {
     if (!li) return;
     build(pixels(li), pixels(ph, true)); fit(); ready = true; window.studyReady && studyReady();
+    glows[0].material.uniforms.map.value = glowTexture(li, false); glows[0].visible = true;
+    if (ph) { glows[1].material.uniforms.map.value = glowTexture(ph, true); glows[1].visible = true; }
     if (reduce) { mode = 0; buttons.forEach(x => x.setAttribute('aria-pressed', String(x.dataset.mode === '0'))); still(); } });
   loop();
   window.__lion = { frameAt: t => { morph = targetFor(t); frame(t, morph); }, ready: () => ready };
