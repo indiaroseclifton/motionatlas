@@ -65,3 +65,6 @@
 #motion .studyRiver .riverRow.isWide:has(.riverKit[open]) .riverText{position:static;margin-top:8px}
 #motion .studyRiver .riverRow.isWide:has(.riverKit[open]) .riverKit[open] .kitBody{background:transparent;padding:6px 0 14px}
 #motion .studyRiver .kitField select{background:#0b0c12!important;color:#f1e6cc!important;-webkit-appearance:menulist;appearance:auto;color-scheme:dark}
+#motion .studyRiver .riverMake{order:2;margin:0;color:#c9c3b6;font-size:15px}
+#motion .studyRiver .riverMake a{color:#f1e1b8;text-decoration:underline;text-decoration-color:rgba(241,225,184,.4);text-underline-offset:4px}
+#motion .studyRiver .riverMake a:focus-visible{outline:2px solid #e9cf8f;outline-offset:3px}

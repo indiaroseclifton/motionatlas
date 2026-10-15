@@ -87,6 +87,7 @@
   const intro=page.querySelector(':scope > .intro');if(!intro)return false;
   const river=document.createElement('section');river.className='studyRiver';river.setAttribute('aria-labelledby','riverTitle');
   river.innerHTML=`<div class="riverHead"><p class="riverKicker">Live studies &amp; films</p><h2 id="riverTitle">Motion, set loose.</h2>
+   <p class="riverMake">Want your own? <a href="particle-studio.html">Turn any picture into particles in the Particle studio</a> <span aria-hidden="true">→</span></p>
    <button type="button" class="riverHold" aria-pressed="${held}">${held?'Play the motion':'Pause the motion'}</button></div>`+
    ITEMS.map((it,i)=>`<article class="riverRow${it.wide?' isWide':''}${!it.wide&&i%2===0?' isFlip':''}" data-id="${it.id}">
     <div class="riverMedia${it.kind==='video'?' isFilm':''}"></div>

@@ -284,6 +284,18 @@ Your package of 11 films, 68 renders and a style list is merged in with
   - **Performance:** live studies load as they approach and are released once well out of view, so only two or three WebGL contexts exist at a time.
 - Order: the whale (a full-width stage it glides across), lion to phoenix (live), the lion film, the butterfly (live), the jellyfish film and bird to fox. (The golden lattice study has been retired.)
 
+### Particle studio
+
+- `site/particle-studio.html` is a standalone tool, linked from the Motion menu and the Animation studio river. You drop in any picture, or use the lion, whale, butterfly and phoenix samples.
+  - **Motions:** breathe, glide across, flap, dissolve (into a spiral galaxy and back), or morph into a second picture.
+  - **Look:** particle count, grain size, brightness, glow layer, threshold, palette (from the picture, gold, ice, champagne, rose, violet or a custom tint), bokeh, speed and background, including transparent.
+- Pictures are read and scaled in the browser; nothing is uploaded.
+- **Export:** "Download as HTML" or "Copy the HTML" gives one self-contained file. The picture is embedded as a data URI and the engine is inlined; the file needs only three.js r128 from cdnjs. A typical export is about 120 KB.
+- `site/particle-engine.js` is the shared engine (`ParticleEngine.create(container, options)`).
+  - **Sampling:** grains are weighted by brightness and fine detail, with the frame edges feathered.
+  - **Shared motion:** the grains and the glow layer run the same GLSL motion.
+  - **Behaviour:** it pauses on `*:pause` messages and when the tab is hidden, and holds a still frame for reduced motion.
+
 ### "Use it on your site" kits
 
 - Every piece in the Animation studio river has a collapsed kit panel (`studio-river.js`, styles in `studio-river.css`).
