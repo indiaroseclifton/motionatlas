@@ -275,6 +275,21 @@ Your package of 11 films, 68 renders and a style list is merged in with
   sparkle sizes on resize and holds a still frame under reduced motion.
 - Now linked from the featured study as the earlier version.
 
+### Home hero scenes
+
+- `site/hero-scenes.js` (styles at the end of `site/home.css`) lets the home hero show five scenes:
+  1. the lion-to-phoenix film (the default)
+  2. the live lion-to-phoenix study
+  3. stardust bird to fox
+  4. the golden lattice
+  5. Genesis, with its four plates
+- A row of thin marks in the hero's foot switches scenes. It shows the scene name and previews a name on hover. The choice is remembered per visitor in `localStorage`.
+- A new scene loads behind the current one and crossfades in over 1.6 s, only once it is drawing. Live studies post `study:ready` to say so, with a 4 s fallback.
+- Live studies load with `?hero` (`site/studies/hero-mode.js`). In that mode they hide their controls and drop their background so they sit on the hero's dark background.
+- **Desktop:** scenes sit right of the copy with a feathered left edge, and the title's italic word warms to gold.
+- **Genesis only:** the plate index and timecode appear only while Genesis plays.
+- **Shared behaviour:** Pause, "Watch the film/scene", leaving the page and reduced motion all apply to whichever scene is showing.
+
 ### Lion to phoenix (live study)
 
 - `site/studies/lion-phoenix.html` is an 8-second loop: the lion holds, then transforms, then the phoenix holds, then it returns.

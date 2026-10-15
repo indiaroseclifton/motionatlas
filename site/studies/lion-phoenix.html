@@ -20,6 +20,7 @@
     .mode:focus-visible { outline: 2px solid #ffcf70; outline-offset: 2px; }
     @media (max-width: 420px) { #controls { bottom: 12px; gap: 2px; padding: 4px; } .mode { padding: 6px 9px; font-size: 11px; } }
   </style>
+  <script src="hero-mode.js"></script>
   <script src="../vendor/three-r128.min.js"></script>
   <script>window.THREE || document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>');</script>
 </head>
@@ -246,7 +247,7 @@
     return g.getImageData(0, 0, W, H); };
   Promise.all([load('../assets/studies/lion-source.jpg'), load('../assets/studies/phoenix-source.jpg')]).then(([li, ph]) => {
     if (!li) return;
-    build(pixels(li), pixels(ph, true)); fit(); ready = true;
+    build(pixels(li), pixels(ph, true)); fit(); ready = true; window.studyReady && studyReady();
     if (reduce) { mode = 0; buttons.forEach(x => x.setAttribute('aria-pressed', String(x.dataset.mode === '0'))); still(); } });
   loop();
   window.__lion = { frameAt: t => { morph = targetFor(t); frame(t, morph); }, ready: () => ready };

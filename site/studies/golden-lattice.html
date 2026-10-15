@@ -68,6 +68,7 @@
     }
   </style>
   <!-- three.js r128: the atlas's own copy first, the public CDN as a fallback. -->
+  <script src="hero-mode.js"></script>
   <script src="../vendor/three-r128.min.js"></script>
   <script>window.THREE || document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>');</script>
 </head>
@@ -810,5 +811,6 @@
     if (reduceMotion) { manualOverride = true; renderOnce(); }
     animate();
   </script>
+<script>addEventListener('load', () => setTimeout(() => window.studyReady && studyReady(), 400));</script>
 </body>
 </html>
