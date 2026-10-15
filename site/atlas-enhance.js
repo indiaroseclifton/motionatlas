@@ -17,16 +17,16 @@
   creations:{no:6,name:'Your creations',family:'Studio',color:'gold',related:['projects','inspiration'],h:[1,5,-3]},
   ux:{no:7,name:'UI components',family:'Systems',color:'mint',related:['icons','typography','playground'],h:[1,-3,4]},
   icons:{no:8,name:'Icon families',family:'Systems',color:'mint',related:['ux','assets','systems'],h:[1,4,-5]},
-  typography:{no:9,name:'Fonts & pairings',family:'Systems',color:'mint',related:['pairings','playground','systems'],h:[1,-6,2]},
+  typography:{no:9,name:'Fonts & type',family:'Systems',color:'mint',related:['pairings','playground','systems'],h:[1,-6,2]},
   playground:{no:10,name:'System playground',family:'Systems',color:'mint',related:['systems','typography','ux'],h:[1,3,-2,5]},
   assets:{no:11,name:'Extracted assets',family:'Systems',color:'mint',related:['systems','icons','ux'],h:[1,-5,3]},
   art:{no:12,name:'Art styles',family:'Graphics',color:'ice',related:['vases','cinema','compare'],h:[1,-2,5,-3]},
   cinema:{no:13,name:'Film looks',family:'Graphics',color:'ice',related:['art','motion','pairings'],h:[1,4,-2]},
   vases:{no:14,name:'Vase studies',family:'Graphics',color:'ice',related:['art','compare','cinema'],h:[1,-4,2,5]},
-  pairings:{no:15,name:'Direction pairings',family:'Motion',color:'rose',related:['systems','motion','typography'],h:[1,2,-5]},
+  pairings:{no:15,name:'Style pairings',family:'Motion',color:'rose',related:['systems','motion','typography'],h:[1,2,-5]},
   effects:{no:16,name:'Landing effects',family:'Motion',color:'rose',related:['motion','ux','playground'],h:[1,-3,2,-6]},
   compare:{no:17,name:'Comparison desk',family:'Motion',color:'rose',related:['art','systems','vases'],h:[1,3,-6]},
-  references:{no:18,name:'Sources & downloads',family:'Studio',color:'gold',related:['browse','systems','typography'],h:[1,-2,4]}
+  references:{no:18,name:'Sources & credits',family:'Studio',color:'gold',related:['browse','systems','typography'],h:[1,-2,4]}
  };
  const COLORS={ice:['#7dd3fc','#0369a1'],mint:['#6ee7b7','#047857'],rose:['#fda4af','#be123c'],gold:['#fde68a','#854d0e']};
  const reduced=matchMedia('(prefers-reduced-motion: reduce)');

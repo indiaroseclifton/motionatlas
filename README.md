@@ -252,6 +252,22 @@ Your package of 11 films, 68 renders and a style list is merged in with
 - Exports: 4K and HD PNG at six aspect ratios, a 6-second seamless loop (WebM), a CSS approximation,
   standalone live code that reproduces the exact image, and a shareable link (`#backgrounds?bg=…`).
 
+### Audit fixes and Showcase reels
+
+- **Navigation**: the library row is now Visual (art, film looks, backgrounds, vase studies, style
+  pairings, compare), Motion (animation studio, landing effects, showcase reels) and Interface
+  (design systems, UI components, icons, fonts & type, playground, extracted assets), plus
+  Sources & credits. Only the menu holding the current page is highlighted.
+- **Resolution**: home plates, the 201 extracted fragments (display and PNG download) and share cards
+  now use the upscaled tiles; museum works are 1400 px; film posters are 1920 px.
+- **Assets page** shows 24 fragments at a time. **Your creations** explains that publishing needs the
+  atlas server, which the static site does not run.
+- **Showcase reels** (`#showcase`, `site/showcase.js`, `showcase.css`): eight motion templates (Rise,
+  Rolodex, Comet, Deck, Marquee, Carousel, Folio, Spotlight) for presenting your own images or the atlas
+  mockups, four formats, generated backgrounds, and 1080p video export.
+- Still soft: the home hero video (1600 px) and the eleven film clips (960 px). Upscaling them needs a
+  GPU or the original masters.
+
 ### What to upload
 
 Upload the contents of `site/` except `site/original/` (backups of the live files). The files

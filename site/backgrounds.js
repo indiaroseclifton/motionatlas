@@ -186,5 +186,7 @@ S.colors.forEach((x,i)=>g.uniform3fv(u('C'+i),rgb(x)));g.drawArrays(g.TRIANGLES,
   library();layout();syncPlay();}
  addEventListener('hashchange',onRoute);document.addEventListener('visibilitychange',()=>syncPlay());
  if(document.readyState==='loading')addEventListener('DOMContentLoaded',onRoute);else onRoute();
- window.BackgroundAtlas={COLLECTIONS,ALL,FAMILIES};
+ /* Render any preset (or settings object) to a still canvas, for other tools such as Showcase reels. */
+ function still(p,w,h){const c=document.createElement('canvas');c.width=w;c.height=h;let r=null;try{r=Renderer(c,{keep:true});}catch{}if(!r)return null;r.draw(typeof p==='string'?ALL.find(x=>x.key===p):p,0);return c;}
+ window.BackgroundAtlas={COLLECTIONS,ALL,FAMILIES,still};
 })();

@@ -7,8 +7,8 @@
   "R01": [
    {
     "src": "assets/art-refs/met-460707.webp",
-    "w": 600,
-    "h": 448,
+    "w": 1400,
+    "h": 1045,
     "title": "The Bay of Naples",
     "artist": "Unknown",
     "date": "ca. 1835",
@@ -20,8 +20,8 @@
    },
    {
     "src": "assets/art-refs/met-820765.webp",
-    "w": 517,
-    "h": 624,
+    "w": 1160,
+    "h": 1400,
     "title": "Landscape with a Traveler Crossing a Bridge (recto); Sketches of a Gate, a Bridge, and a Town Hall (verso)",
     "artist": "Anthonie Waterloo",
     "date": "1629–90",
@@ -35,8 +35,8 @@
   "R02": [
    {
     "src": "assets/art-refs/met-436533.webp",
-    "w": 599,
-    "h": 501,
+    "w": 1400,
+    "h": 1171,
     "title": "Shoes",
     "artist": "Vincent van Gogh",
     "date": "1888",
@@ -48,8 +48,8 @@
    },
    {
     "src": "assets/art-refs/met-459123.webp",
-    "w": 501,
-    "h": 624,
+    "w": 1124,
+    "h": 1400,
     "title": "Madame Roulin and Her Baby",
     "artist": "Vincent van Gogh",
     "date": "1888",
@@ -63,8 +63,8 @@
   "R03": [
    {
     "src": "assets/art-refs/met-409003.webp",
-    "w": 474,
-    "h": 624,
+    "w": 1063,
+    "h": 1400,
     "title": "The Architect Charles-Victor Famin",
     "artist": "Jean Auguste Dominique Ingres",
     "date": "1836",
@@ -76,8 +76,8 @@
    },
    {
     "src": "assets/art-refs/met-697751.webp",
-    "w": 503,
-    "h": 624,
+    "w": 1129,
+    "h": 1400,
     "title": "Portrait of Madame Paul Meurice, née Palmyre Granger",
     "artist": "Jean Auguste Dominique Ingres",
     "date": "ca. 1845–50",
@@ -91,8 +91,8 @@
   "R04": [
    {
     "src": "assets/art-refs/met-459567.webp",
-    "w": 497,
-    "h": 624,
+    "w": 1115,
+    "h": 1400,
     "title": "Women Carrying Faggots",
     "artist": "Jean-François Millet",
     "date": "ca. 1858",
@@ -104,8 +104,8 @@
    },
    {
     "src": "assets/art-refs/met-14422.webp",
-    "w": 599,
-    "h": 326,
+    "w": 1400,
+    "h": 762,
     "title": "River Landscape",
     "artist": "William Morris Hunt",
     "date": "ca. 1877",
@@ -119,8 +119,8 @@
   "R05": [
    {
     "src": "assets/art-refs/met-436163.webp",
-    "w": 596,
-    "h": 624,
+    "w": 1337,
+    "h": 1400,
     "title": "Three Dancers Preparing for Class",
     "artist": "Edgar Degas",
     "date": "after 1878",
@@ -132,8 +132,8 @@
    },
    {
     "src": "assets/art-refs/met-334345.webp",
-    "w": 405,
-    "h": 625,
+    "w": 908,
+    "h": 1400,
     "title": "Madame Théodore Gobillard (Yves Morisot)",
     "artist": "Edgar Degas",
     "date": "1869",
@@ -147,8 +147,8 @@
   "R06": [
    {
     "src": "assets/art-refs/met-334652.webp",
-    "w": 483,
-    "h": 624,
+    "w": 1084,
+    "h": 1400,
     "title": "Embroidery; The Artist's Mother",
     "artist": "Georges Seurat",
     "date": "1882–83",
@@ -160,8 +160,8 @@
    },
    {
     "src": "assets/art-refs/met-339752.webp",
-    "w": 600,
-    "h": 472,
+    "w": 1400,
+    "h": 1102,
     "title": "Peasants",
     "artist": "Georges Seurat",
     "date": "1881–84",
@@ -175,8 +175,8 @@
   "R07": [
    {
     "src": "assets/art-refs/met-336228.webp",
-    "w": 494,
-    "h": 625,
+    "w": 1109,
+    "h": 1400,
     "title": "Melencolia I",
     "artist": "Albrecht Dürer",
     "date": "1514",
@@ -188,8 +188,8 @@
    },
    {
     "src": "assets/art-refs/met-336223.webp",
-    "w": 487,
-    "h": 625,
+    "w": 1093,
+    "h": 1400,
     "title": "Knight, Death, and the Devil",
     "artist": "Albrecht Dürer",
     "date": "1513",
@@ -203,8 +203,8 @@
   "R08": [
    {
     "src": "assets/art-refs/met-459432.webp",
-    "w": 536,
-    "h": 625,
+    "w": 1201,
+    "h": 1400,
     "title": "Mountainous Landscape with a Rock, Trees, and Buildings",
     "artist": "Domenico Campagnola",
     "date": "ca. 1520",
@@ -216,8 +216,8 @@
    },
    {
     "src": "assets/art-refs/met-10244.webp",
-    "w": 600,
-    "h": 579,
+    "w": 1400,
+    "h": 1351,
     "title": "Group on the Stockport Road",
     "artist": "Mather Brown",
     "date": "",
@@ -231,8 +231,8 @@
   "R10": [
    {
     "src": "assets/art-refs/met-56906.webp",
-    "w": 599,
-    "h": 401,
+    "w": 1400,
+    "h": 936,
     "title": "Station Thirty-Eight: Fujikawa, Scene at the Border, from the Fifty-Three Stations of the Tokaido",
     "artist": "Utagawa Hiroshige",
     "date": "ca. 1833–34",
@@ -244,8 +244,8 @@
    },
    {
     "src": "assets/art-refs/met-45294.webp",
-    "w": 599,
-    "h": 384,
+    "w": 1400,
+    "h": 897,
     "title": "Twilight Moon at Ryōgoku Bridge",
     "artist": "Utagawa Hiroshige",
     "date": "",
@@ -259,8 +259,8 @@
   "R11": [
    {
     "src": "assets/art-refs/met-69299.webp",
-    "w": 600,
-    "h": 413,
+    "w": 1400,
+    "h": 964,
     "title": "Stencil with Theme from Matsukaze",
     "artist": "Japan",
     "date": "19th century",
@@ -272,8 +272,8 @@
    },
    {
     "src": "assets/art-refs/met-69935.webp",
-    "w": 599,
-    "h": 457,
+    "w": 1400,
+    "h": 1068,
     "title": "Stencil",
     "artist": "Japan",
     "date": "19th century",
@@ -287,8 +287,8 @@
   "R13": [
    {
     "src": "assets/art-refs/met-437307.webp",
-    "w": 445,
-    "h": 624,
+    "w": 999,
+    "h": 1400,
     "title": "Poplars, Eragny",
     "artist": "Camille Pissarro",
     "date": "1895",
@@ -300,8 +300,8 @@
    },
    {
     "src": "assets/art-refs/met-437683.webp",
-    "w": 599,
-    "h": 477,
+    "w": 1400,
+    "h": 1115,
     "title": "Sahurs Meadows in Morning Sun",
     "artist": "Alfred Sisley",
     "date": "1894",
@@ -315,8 +315,8 @@
   "R16": [
    {
     "src": "assets/art-refs/met-637486.webp",
-    "w": 474,
-    "h": 624,
+    "w": 1063,
+    "h": 1400,
     "title": "Poster for The Yellow Book, Volume IV",
     "artist": "Aubrey Vincent Beardsley",
     "date": "January 1895",
@@ -328,8 +328,8 @@
    },
    {
     "src": "assets/art-refs/met-821354.webp",
-    "w": 442,
-    "h": 625,
+    "w": 991,
+    "h": 1400,
     "title": "The Road Rights of Wheelmen, Callaghan and Company, Chicago",
     "artist": "E. Nadall",
     "date": "1895",
@@ -343,8 +343,8 @@
   "R18": [
    {
     "src": "assets/art-refs/met-53656.webp",
-    "w": 419,
-    "h": 624,
+    "w": 940,
+    "h": 1400,
     "title": "The Outer Robe",
     "artist": "Kitagawa Utamaro",
     "date": "ca. 1795",
@@ -356,8 +356,8 @@
    },
    {
     "src": "assets/art-refs/met-36623.webp",
-    "w": 407,
-    "h": 624,
+    "w": 914,
+    "h": 1400,
     "title": "Woman Relaxing after Her Bath",
     "artist": "Kitagawa Utamaro",
     "date": "1790s",
@@ -371,8 +371,8 @@
   "R19": [
    {
     "src": "assets/art-refs/met-437658.webp",
-    "w": 599,
-    "h": 407,
+    "w": 1400,
+    "h": 952,
     "title": "Study for \"A Sunday on La Grande Jatte\"",
     "artist": "Georges Seurat",
     "date": "1884",
@@ -384,8 +384,8 @@
    },
    {
     "src": "assets/art-refs/met-437654.webp",
-    "w": 600,
-    "h": 401,
+    "w": 1400,
+    "h": 936,
     "title": "Circus Sideshow (Parade de cirque)",
     "artist": "Georges Seurat",
     "date": "1887–88",
@@ -399,8 +399,8 @@
   "R25": [
    {
     "src": "assets/art-refs/met-205044.webp",
-    "w": 599,
-    "h": 354,
+    "w": 1400,
+    "h": 828,
     "title": "Bowl with cover",
     "artist": "Meissen Manufactory",
     "date": "ca. 1734",
@@ -412,8 +412,8 @@
    },
    {
     "src": "assets/art-refs/met-239350.webp",
-    "w": 517,
-    "h": 625,
+    "w": 1159,
+    "h": 1400,
     "title": "Ice cream pail (one of a pair)",
     "artist": "Meissen Manufactory",
     "date": "porcelain ca. 1730, mounts 1777/78",
@@ -427,8 +427,8 @@
   "R26": [
    {
     "src": "assets/art-refs/met-245829.webp",
-    "w": 468,
-    "h": 624,
+    "w": 1050,
+    "h": 1400,
     "title": "Marble bust of Herodotos",
     "artist": "Roman",
     "date": "2nd century CE",
@@ -440,8 +440,8 @@
    },
    {
     "src": "assets/art-refs/met-250675.webp",
-    "w": 468,
-    "h": 624,
+    "w": 1050,
+    "h": 1400,
     "title": "Marble bust of a youth",
     "artist": "Roman",
     "date": "ca. 140 CE",
@@ -455,8 +455,8 @@
   "R27": [
    {
     "src": "assets/art-refs/met-255695.webp",
-    "w": 600,
-    "h": 609,
+    "w": 1377,
+    "h": 1400,
     "title": "Bronze statuette of Artemis",
     "artist": "Greek",
     "date": "3rd–1st century BCE",
@@ -468,8 +468,8 @@
    },
    {
     "src": "assets/art-refs/met-256661.webp",
-    "w": 600,
-    "h": 450,
+    "w": 1400,
+    "h": 1050,
     "title": "Bronze statuette of bull",
     "artist": "Roman",
     "date": "1st–2nd century CE",
@@ -483,8 +483,8 @@
   "R29": [
    {
     "src": "assets/art-refs/met-227937.webp",
-    "w": 600,
-    "h": 450,
+    "w": 1400,
+    "h": 1050,
     "title": "Embroidered sampler",
     "artist": "Unknown maker",
     "date": "1691",
@@ -496,8 +496,8 @@
    },
    {
     "src": "assets/art-refs/met-16961.webp",
-    "w": 413,
-    "h": 624,
+    "w": 921,
+    "h": 1392,
     "title": "Embroidered Sampler",
     "artist": "Anne Chase",
     "date": "1721",
@@ -511,8 +511,8 @@
   "R30": [
    {
     "src": "assets/art-refs/met-467916.webp",
-    "w": 353,
-    "h": 625,
+    "w": 791,
+    "h": 1400,
     "title": "Stained Glass Panel",
     "artist": "South Netherlandish",
     "date": "15th century",
@@ -524,8 +524,8 @@
    },
    {
     "src": "assets/art-refs/met-467269.webp",
-    "w": 446,
-    "h": 624,
+    "w": 1000,
+    "h": 1400,
     "title": "Stained Glass Fragment",
     "artist": "French",
     "date": "1200–1215",
@@ -539,8 +539,8 @@
   "R32": [
    {
     "src": "assets/art-refs/met-824.webp",
-    "w": 495,
-    "h": 625,
+    "w": 1109,
+    "h": 1400,
     "title": "Bowl",
     "artist": "Louis C. Tiffany",
     "date": "1893–96",
@@ -552,8 +552,8 @@
    },
    {
     "src": "assets/art-refs/met-826.webp",
-    "w": 599,
-    "h": 475,
+    "w": 1400,
+    "h": 1110,
     "title": "Bowl",
     "artist": "Louis C. Tiffany",
     "date": "1893–96",
@@ -567,8 +567,8 @@
   "R34": [
    {
     "src": "assets/art-refs/met-285421.webp",
-    "w": 444,
-    "h": 624,
+    "w": 996,
+    "h": 1400,
     "title": "Spiraea aruncus (Tyrol)",
     "artist": "Anna Atkins",
     "date": "1851–54",
@@ -580,8 +580,8 @@
    },
    {
     "src": "assets/art-refs/met-286896.webp",
-    "w": 510,
-    "h": 625,
+    "w": 1143,
+    "h": 1400,
     "title": "Rhodomenia Polycarpa",
     "artist": "Anna Atkins",
     "date": "ca. 1853",
@@ -595,8 +595,8 @@
   "R35": [
    {
     "src": "assets/art-refs/met-504132.webp",
-    "w": 440,
-    "h": 624,
+    "w": 987,
+    "h": 1400,
     "title": "Woman Holding an Accordion tintype",
     "artist": "American",
     "date": "late 1860s",
@@ -608,8 +608,8 @@
    },
    {
     "src": "assets/art-refs/met-26898.webp",
-    "w": 386,
-    "h": 625,
+    "w": 865,
+    "h": 1400,
     "title": "Tintype Photograph of Gustave Young (1827–1895)",
     "artist": "American, Springfield, Massachusetts",
     "date": "ca. 1860",
