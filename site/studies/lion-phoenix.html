@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Golden Stardust — Lion to Phoenix</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; user-select: none; }
+    #stage { position: fixed; inset: 0; background: radial-gradient(ellipse at 50% 48%, #120a02 0%, #050300 55%, #000 100%); }
+    canvas { display: block; width: 100%; height: 100%; }
+    #controls { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px;
+      padding: 6px; background: rgba(10, 7, 2, .78); border: 1px solid rgba(255, 196, 92, .22); border-radius: 999px;
+      backdrop-filter: blur(10px); z-index: 5; max-width: calc(100% - 24px); overflow-x: auto; }
+    .mode { background: transparent; border: 1px solid transparent; color: rgba(255, 226, 170, .7); padding: 7px 15px; border-radius: 999px;
+      font-family: inherit; font-size: 12px; font-weight: 600; line-height: 1; letter-spacing: .03em; cursor: pointer; white-space: nowrap; }
+    .mode:hover { color: #fff1d0; }
+    .mode[aria-pressed="true"] { background: rgba(255, 180, 60, .18); border-color: rgba(255, 200, 100, .6); color: #fff4dc; box-shadow: 0 0 16px rgba(255, 170, 40, .22); }
+    .mode:focus-visible { outline: 2px solid #ffcf70; outline-offset: 2px; }
+    @media (max-width: 420px) { #controls { bottom: 12px; gap: 2px; padding: 4px; } .mode { padding: 6px 9px; font-size: 11px; } }
+  </style>
+  <script src="../vendor/three-r128.min.js"></script>
+  <script>window.THREE || document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>');</script>
+</head>
+<body>
+  <div id="stage" role="img" aria-label="Golden particles form a lion's head in profile with a flowing mane, then blow away and re-form as a phoenix with its wings spread"></div>
+  <div id="controls" role="group" aria-label="Scenes">
+    <button class="mode" data-mode="2" aria-pressed="true">Lion to phoenix</button>
+    <button class="mode" data-mode="0" aria-pressed="false">Lion</button>
+    <button class="mode" data-mode="1" aria-pressed="false">Phoenix</button>
+  </div>
+<script>
+/* Lion to phoenix, an 8-second loop.
+   The lion is sampled from a reference still that is itself made of golden dust (assets/studies/lion-source.jpg):
+   particles land where the picture is bright and detailed, and take its colour. The phoenix is drawn procedurally
+   on a hidden canvas and sampled the same way. Each particle has a lion spot and a phoenix spot; the GPU blends
+   between them with a staggered, swirling flight, so the dust blows off the mane first and re-forms as wings. */
+(() => {
+  const stage = document.getElementById('stage');
+  const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, powerPreference: 'high-performance' });
+  const DPR = Math.min(window.devicePixelRatio || 1, 2);
+  renderer.setPixelRatio(DPR); renderer.setSize(innerWidth, innerHeight); renderer.setClearColor(0, 0);
+  stage.appendChild(renderer.domElement);
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(34, innerWidth / innerHeight, .1, 100);
+
+  let seed = 20251015;
+  const rnd = () => { seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  const gauss = () => Math.sqrt(-2 * Math.log(Math.max(1e-6, rnd()))) * Math.cos(6.2831853 * rnd());
+
+  // bronze -> amber -> gold -> white-gold, the reference palette
+  const STOPS = [[.62, .3, .05], [1, .6, .12], [1, .82, .4], [1, .96, .82]];
+  const gold = k => { k = Math.max(0, Math.min(.999, k)) * 3; const i = k | 0, f = k - i; return STOPS[i].map((c, j) => c + (STOPS[i + 1][j] - c) * f); };
+  const W = 900, H = 604, SPAN = 7.7;               // source canvas size and its width in world units
+  const N = 80000, BOKEH = 70;
+
+  /* ---------- sampling a picture into particles ---------- */
+  // Weight = brightness, boosted where the picture has fine detail (bright grain against a darker neighbourhood),
+  // so the dust gathers on fur, mane strands and feathers rather than on soft glows.
+  function sampler(img) {
+    const L = new Float32Array(W * H), C = img.data;
+    for (let i = 0; i < W * H; i++) L[i] = (C[i * 4] * .3 + C[i * 4 + 1] * .55 + C[i * 4 + 2] * .15) / 255;
+    const B = boxBlur(boxBlur(L, 6), 6), w = new Float32Array(W * H); let tot = 0;
+    for (let i = 0; i < W * H; i++) { const l = L[i], d = Math.max(0, l - B[i]), x = i % W, y = (i / W) | 0;
+      const edge = Math.min(1, Math.min(x, W - x) / 110) * Math.min(1, Math.min(y, H - y) / 80); // feather the frame edges away
+      const v = Math.pow(Math.max(0, l - .07), 1.35) * (.3 + d * 5) * edge * edge; tot += v; w[i] = tot; }
+    return { L, C, w, tot };
+  }
+  function boxBlur(src, r) { // separable box blur, horizontal then vertical
+    const tmp = new Float32Array(W * H), out = new Float32Array(W * H), k = 1 / (2 * r + 1);
+    for (let y = 0; y < H; y++) { let s = 0; for (let x = -r; x <= r; x++) s += src[y * W + Math.min(W - 1, Math.max(0, x))];
+      for (let x = 0; x < W; x++) { tmp[y * W + x] = s * k; s += src[y * W + Math.min(W - 1, x + r + 1)] - src[y * W + Math.max(0, x - r)]; } }
+    for (let x = 0; x < W; x++) { let s = 0; for (let y = -r; y <= r; y++) s += tmp[Math.min(H - 1, Math.max(0, y)) * W + x];
+      for (let y = 0; y < H; y++) { out[y * W + x] = s * k; s += tmp[Math.min(H - 1, y + r + 1) * W + x] - tmp[Math.max(0, y - r) * W + x]; } }
+    return out;
+  }
+  function draw(S, pos, col, lum, i, depth) {
+    const r = rnd() * S.tot; let lo = 0, hi = W * H - 1; while (lo < hi) { const m = (lo + hi) >> 1; if (S.w[m] < r) lo = m + 1; else hi = m; }
+    const px = lo % W + rnd(), py = Math.floor(lo / W) + rnd(), l = S.L[lo];
+    pos[i * 3] = (px / W - .5) * SPAN; pos[i * 3 + 1] = -(py / H - .5) * SPAN * H / W; pos[i * 3 + 2] = depth(px, py, l) + gauss() * .05;
+    const c = gold(Math.min(1, l * 1.25 + gauss() * .08)); col[i * 3] = c[0]; col[i * 3 + 1] = c[1]; col[i * 3 + 2] = c[2];
+    lum[i] = l;
+  }
+
+  /* ---------- the phoenix, drawn as glowing strokes ---------- */
+  function paintPhoenix() {
+    const c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d');
+    g.fillStyle = '#000'; g.fillRect(0, 0, W, H); g.globalCompositeOperation = 'lighter'; g.lineCap = 'round';
+    const col = (a, l = 1) => `rgba(${255 * l | 0},${205 * l | 0},${120 * l | 0},${a})`;
+    // one feather: a tapered, slightly curved vane, bright along its shaft and leading edge
+    function feather(x, y, ang, len, wid, a, curl = .18) {
+      ang += (rnd() - .5) * .12; len *= .9 + rnd() * .2; wid *= .85 + rnd() * .3;
+      const dx = Math.cos(ang), dy = Math.sin(ang), nx = -dy, ny = dx, ex = x + dx * len, ey = y + dy * len;
+      const bx = x + dx * len * .45 + nx * len * curl, by = y + dy * len * .45 + ny * len * curl;
+      g.beginPath(); g.moveTo(x, y);
+      g.quadraticCurveTo(bx + nx * wid, by + ny * wid, ex, ey); g.quadraticCurveTo(bx - nx * wid * .6, by - ny * wid * .6, x, y);
+      const gr = g.createLinearGradient(x, y, ex, ey); gr.addColorStop(0, col(a)); gr.addColorStop(.7, col(a * .7)); gr.addColorStop(1, col(a * .25));
+      g.fillStyle = gr; g.fill();
+      g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(bx, by, ex, ey); g.lineWidth = 1.4; g.strokeStyle = col(a * 1.4); g.stroke();
+    }
+    g.translate(450, 280); g.scale(.84, .84); g.translate(-450, -300);
+    const cx = 450;
+    for (const s of [-1, 1]) {
+      // the wing's leading edge rises from the shoulder in a high arch
+      const edge = u => [cx + s * (26 + u * 395), 240 - Math.sin(u * Math.PI * .78) * 175 - u * 18];
+      const down = Math.PI / 2;
+      for (let f = 0; f < 18; f++) { const u = .5 + f / 17 * .5, [x, y] = edge(u); feather(x, y, down - s * (.55 + u * .75), 150 + u * 110, 22, .34, .1 * s); }   // primaries
+      for (let f = 0; f < 20; f++) { const u = .08 + f / 19 * .52, [x, y] = edge(u); feather(x, y + 30, down - s * (.12 + u * .55), 120 + u * 70, 20, .3, .08 * s); } // secondaries
+      for (let f = 0; f < 36; f++) { const u = .04 + f / 35 * .92, [x, y] = edge(u); feather(x, y + 4, down - s * (.2 + u * .5), 55 + Math.sin(u * Math.PI) * 30, 14, .32, .05 * s); } // coverts
+      g.beginPath(); for (let i = 0; i <= 60; i++) { const [x, y] = edge(i / 60); i ? g.lineTo(x, y) : g.moveTo(x, y); } g.lineWidth = 6; g.strokeStyle = col(.55, 1); g.stroke();
+    }
+    // body: a glowing teardrop with scalloped breast feathers
+    const bgr = g.createRadialGradient(cx, 290, 6, cx, 300, 80); bgr.addColorStop(0, col(1)); bgr.addColorStop(1, col(0));
+    g.beginPath(); g.ellipse(cx, 300, 52, 96, 0, 0, 7); g.fillStyle = bgr; g.fill();
+    for (let i = 0; i < 26; i++) { const yy = 225 + rnd() * 140, xx = cx + (rnd() - .5) * 60 * Math.sin((yy - 205) / 180 * Math.PI); feather(xx, yy, Math.PI / 2 + (rnd() - .5) * .5, 26 + rnd() * 18, 8, .22, 0); }
+    // neck and head in profile, beak to the left, a sweeping flame crest
+    for (let i = 0; i < 14; i++) { const o = (i / 13 - .5) * 26; g.beginPath(); g.moveTo(cx + o, 228); g.quadraticCurveTo(cx - 6 + o, 190, cx - 22 + o * .5, 160); g.lineWidth = 2; g.strokeStyle = col(.3); g.stroke(); }
+    const hg = g.createRadialGradient(cx - 26, 150, 2, cx - 26, 150, 26); hg.addColorStop(0, col(.9)); hg.addColorStop(1, col(0));
+    g.beginPath(); g.ellipse(cx - 26, 150, 24, 19, -.3, 0, 7); g.fillStyle = hg; g.fill();
+    g.beginPath(); g.moveTo(cx - 44, 142); g.quadraticCurveTo(cx - 74, 146, cx - 80, 166); g.quadraticCurveTo(cx - 62, 156, cx - 44, 160); g.fillStyle = col(.9); g.fill();
+    g.beginPath(); g.arc(cx - 34, 146, 3.5, 0, 7); g.fillStyle = 'rgba(255,252,235,1)'; g.fill();
+    for (let k = 0; k < 7; k++) feather(cx - 18, 136, -2.1 + k * .2, 70 + k * 9, 9, .4, .2);
+    // tail: long flame plumes fanning downward, with fine streamers between them
+    for (let p = 0; p < 9; p++) { const f = p / 8 - .5; feather(cx + f * 30, 368, Math.PI / 2 - f * 1.5, 190 + (1 - Math.abs(f) * 2) * 70, 26, .32, .25 * Math.sign(f || 1)); }
+    for (let p = 0; p < 16; p++) { const f = p / 15 - .5; g.beginPath(); g.moveTo(cx + f * 20, 370); g.bezierCurveTo(cx + f * 120, 450, cx + f * 260, 470, cx + f * 420, 575 - Math.abs(f) * 90); g.lineWidth = 1; g.strokeStyle = col(.35); g.stroke(); }
+    return g.getImageData(0, 0, W, H);
+  }
+
+  /* ---------- particle buffers ---------- */
+  const A = new Float32Array(N * 3), B = new Float32Array(N * 3), CA = new Float32Array(N * 3), CB = new Float32Array(N * 3);
+  const LA = new Float32Array(N), LB = new Float32Array(N), R = new Float32Array(N * 4);
+  const geo = new THREE.BufferGeometry();
+  const tex = (() => { const c = document.createElement('canvas'); c.width = c.height = 64; const x = c.getContext('2d');
+    const gr = x.createRadialGradient(32, 32, 0, 32, 32, 32); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(.22, 'rgba(255,255,255,.8)');
+    gr.addColorStop(.55, 'rgba(255,255,255,.16)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = gr; x.fillRect(0, 0, 64, 64); return new THREE.CanvasTexture(c); })();
+
+  const mat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    uniforms: { uMap: { value: tex }, uTime: { value: 0 }, uMorph: { value: 0 }, uScale: { value: 1 }, uGain: { value: 1 } },
+    vertexShader: `
+      attribute vec3 aB; attribute vec3 aCA; attribute vec3 aCB; attribute float aLA; attribute float aLB; attribute vec4 aR;
+      uniform float uTime, uMorph, uScale; varying vec3 vCol; varying float vA;
+      void main(){
+        // aR: x = delay, y = swirl angle, z = size, w = phase
+        vec3 a = position, b = aB;
+        // lion: the mane streams in a slow wind, more the further it is from the face
+        float wind = smoothstep(-1.2, 2.6, a.x);
+        a.y += sin(uTime * 1.6 - a.x * 1.7 + aR.w) * .05 * wind; a.x += (sin(uTime * 1.1 + a.y * 2.0 + aR.w) * .035 + .02) * wind;
+        // phoenix: wings beat from the shoulders, tail plumes sway
+        float span = max(0.0, abs(b.x) - .35);
+        if (b.y > -.55) { b.y += sin(uTime * 3.1 - span * .9) * .16 * pow(span, 1.15); b.z += cos(uTime * 3.1 - span * .9) * .08 * span; }
+        else b.x += sin(uTime * 2.2 - b.y * 2.0) * .07 * (-.55 - b.y);
+        // staggered flight: the mane leaves first, swirling up and out before settling into place
+        float k = clamp(uMorph * 1.7 - aR.x, 0.0, 1.0); k = k * k * (3.0 - 2.0 * k);
+        float s = sin(k * 3.14159), ang = aR.y + uTime * 1.3;
+        vec3 p = mix(a, b, k) + vec3(cos(ang) * 1.1 + .6, sin(ang * .7) * .7 + .35, sin(ang) * 1.1) * s;
+        vCol = mix(aCA, aCB, k) * (1.0 + s * .55);
+        float l = mix(aLA, aLB, k);
+        vA = (.5 + l * .9) * (.75 + .25 * sin(uTime * 4.0 + aR.w * 9.0));
+        vec4 mv = modelViewMatrix * vec4(p, 1.0); gl_Position = projectionMatrix * mv;
+        gl_PointSize = max(1.0, aR.z * (1.0 + s * .6) * uScale / -mv.z);
+      }`,
+    fragmentShader: `uniform sampler2D uMap; uniform float uGain; varying vec3 vCol; varying float vA;
+      void main(){ float a = texture2D(uMap, gl_PointCoord).a * vA * uGain; if (a < .004) discard; gl_FragColor = vec4(vCol, a); }` });
+  const points = new THREE.Points(geo, mat); points.frustumCulled = false; scene.add(points);
+
+  // Soft out-of-focus orbs drifting in depth, like the glints around the reference lion
+  const bg = new THREE.BufferGeometry(), bp = new Float32Array(BOKEH * 3), bm = [];
+  for (let i = 0; i < BOKEH; i++) bm.push({ x: (rnd() - .5) * 11, y: (rnd() - .5) * 6.5, z: -3 + rnd() * 5.5, s: rnd() * 6.28, sp: .04 + rnd() * .1 });
+  const bs = new Float32Array(BOKEH), ba = new Float32Array(BOKEH);
+  bm.forEach((q, i) => { bs[i] = q.z > 1.2 ? 26 + rnd() * 40 : 6 + rnd() * 18; ba[i] = q.z > 1.2 ? .04 + rnd() * .05 : .08 + rnd() * .2; });
+  bg.setAttribute('position', new THREE.BufferAttribute(bp, 3)); bg.setAttribute('aS', new THREE.BufferAttribute(bs, 1)); bg.setAttribute('aA', new THREE.BufferAttribute(ba, 1));
+  const bmat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, uniforms: { uMap: { value: tex }, uScale: { value: 1 } },
+    vertexShader: `attribute float aS; attribute float aA; uniform float uScale; varying float vA;
+      void main(){ vec4 mv = modelViewMatrix * vec4(position,1.0); gl_Position = projectionMatrix * mv; gl_PointSize = aS * uScale / -mv.z; vA = aA; }`,
+    fragmentShader: `uniform sampler2D uMap; varying float vA; void main(){ float a = texture2D(uMap, gl_PointCoord).a; a = smoothstep(0.0, .35, a) * vA; gl_FragColor = vec4(1.0, .72, .3, a); }` });
+  const bokeh = new THREE.Points(bg, bmat); bokeh.frustumCulled = false; scene.add(bokeh);
+
+  function build(lionImg) {
+    const SL = sampler(lionImg), SP = sampler(paintPhoenix());
+    // depth: the face sits forward, the mane sweeps back; the phoenix's wings curve back from the body
+    const lionDepth = (x, y, l) => .55 - (x / W) * .9 + l * .35;
+    const phxDepth = (x, y, l) => .3 - Math.pow(Math.abs(x / W - .5) * 2, 1.6) * .9;
+    for (let i = 0; i < N; i++) {
+      draw(SL, A, CA, LA, i, lionDepth); draw(SP, B, CB, LB, i, phxDepth);
+      // the mane (right side of the picture) leaves first, the face last
+      R[i * 4] = .62 * (1 - clampN((A[i * 3] + 1.6) / 4.2)) + rnd() * .1; R[i * 4 + 1] = rnd() * 6.283;
+      R[i * 4 + 2] = (.026 + Math.pow(rnd(), 3) * .055) * (rnd() < .015 ? 2.4 : 1); R[i * 4 + 3] = rnd() * 6.283;
+    }
+    geo.setAttribute('position', new THREE.BufferAttribute(A, 3)); geo.setAttribute('aB', new THREE.BufferAttribute(B, 3));
+    geo.setAttribute('aCA', new THREE.BufferAttribute(CA, 3)); geo.setAttribute('aCB', new THREE.BufferAttribute(CB, 3));
+    geo.setAttribute('aLA', new THREE.BufferAttribute(LA, 1)); geo.setAttribute('aLB', new THREE.BufferAttribute(LB, 1));
+    geo.setAttribute('aR', new THREE.BufferAttribute(R, 4));
+  }
+  const clampN = v => Math.max(0, Math.min(1, v));
+
+  /* ---------- timeline: 8 s seamless loop ---------- */
+  const LOOP = 8, smooth = (a, b, x) => { const t = clampN((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+  const morphAt = lt => lt < 2.6 ? 0 : lt < 4.4 ? smooth(2.6, 4.4, lt) : lt < 6.7 ? 1 : 1 - smooth(6.7, 8, lt);
+  let mode = 2, morph = 0, paused = false, ready = false, tx = 0, ty = 0, px = 0, py = 0;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const buttons = document.querySelectorAll('.mode');
+  buttons.forEach(b => b.addEventListener('click', () => { mode = +b.dataset.mode; buttons.forEach(x => x.setAttribute('aria-pressed', String(x === b))); if (reduce) still(); }));
+  addEventListener('message', e => { const d = String(e.data); if (/:(pause)$/.test(d)) paused = true; if (/:(play)$/.test(d)) paused = false; });
+  addEventListener('pointermove', e => { tx = e.clientX / innerWidth - .5; ty = e.clientY / innerHeight - .5; });
+
+  // keep the whole composition (about 8 units wide) in view on narrow screens
+  const camZ = () => Math.max(10.2, 13.4 / camera.aspect);
+  function fit() {
+    camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight);
+    camera.aspect = innerWidth / innerHeight; const zoom = camZ() / 10.2, s = innerHeight * DPR * .5; mat.uniforms.uScale.value = s * 1.1 * (1 + (zoom - 1) * .55); bmat.uniforms.uScale.value = s * .06;
+    // fewer, larger-looking grains on a small screen read better than a grey haze
+    mat.uniforms.uGain.value = innerWidth < 700 ? 1.15 : 1;
+  }
+  function frame(t, target) {
+    morph += (target - morph) * (mode === 2 ? 1 : .06);
+    const u = mat.uniforms; u.uTime.value = t; u.uMorph.value = morph;
+    for (let i = 0; i < BOKEH; i++) { const q = bm[i]; bp[i * 3] = q.x + Math.sin(t * q.sp + q.s) * .4; bp[i * 3 + 1] = q.y + Math.cos(t * q.sp * .8 + q.s) * .25; bp[i * 3 + 2] = q.z; }
+    bg.attributes.position.needsUpdate = true;
+    px += (tx - px) * .04; py += (ty - py) * .04;
+    const z = camZ();
+    camera.position.set(Math.sin(t * .4) * .15 + px * .8, Math.cos(t * .33) * .1 - py * .5, z); camera.lookAt(0, 0, 0);
+    renderer.render(scene, camera);
+  }
+  const targetFor = t => mode === 0 ? 0 : mode === 1 ? 1 : morphAt(t % LOOP);
+  const clock = new THREE.Clock();
+  function still() { morph = mode === 1 ? 1 : 0; frame(1.2, morph); }
+  function loop() { requestAnimationFrame(loop); if (paused || document.hidden || reduce || !ready) return; const t = clock.getElapsedTime(); frame(t, targetFor(t)); }
+  addEventListener('resize', () => { fit(); if (reduce) still(); });
+
+  const img = new Image();
+  img.onload = () => { const c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d'); g.drawImage(img, 0, 0, W, H);
+    build(g.getImageData(0, 0, W, H)); fit(); ready = true; if (reduce) { mode = 0; buttons.forEach(x => x.setAttribute('aria-pressed', String(x.dataset.mode === '0'))); still(); } };
+  img.src = '../assets/studies/lion-source.jpg';
+  loop();
+  window.__lion = { frameAt: t => { morph = targetFor(t); frame(t, morph); }, ready: () => ready };
+})();
+</script>
+</body>
+</html>

@@ -16,3 +16,7 @@
 .latticeLinks .secondary{background:transparent!important;color:#fff0cc!important;border-color:rgba(255,205,100,.55)!important}
 @media (max-width:900px){.latticeFeature{grid-template-columns:minmax(0,1fr)}}
 @media (prefers-reduced-motion:reduce){.latticePlay img{transition:none}.latticePlay:hover img{transform:none}}
+.studyChips{display:flex;flex-wrap:wrap;gap:.4rem}
+#motion .latticeFeature .studyChip{min-height:36px;padding:.45rem .9rem;border-radius:999px;border:1px solid rgba(255,205,100,.35);background:transparent;color:#e9dcc0;font:600 13px/1 inherit;cursor:pointer}
+#motion .latticeFeature .studyChip[aria-pressed="true"]{background:rgba(255,190,70,.18);border-color:rgba(255,210,120,.75);color:#fff4dc}
+#motion .latticeFeature .studyChip:focus-visible{outline:2px solid #ffd27a;outline-offset:2px}

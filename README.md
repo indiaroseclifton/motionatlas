@@ -275,6 +275,16 @@ Your package of 11 films, 68 renders and a style list is merged in with
   sparkle sizes on resize and holds a still frame under reduced motion.
 - Now linked from the featured study as the earlier version.
 
+### Lion to phoenix (live study)
+
+- `site/studies/lion-phoenix.html` is an 8-second loop: the lion holds, then transforms, then the phoenix holds, then it returns.
+  - **Lion:** about 80k particles are sampled from `assets/studies/lion-source.jpg`. That file is the studio's own golden-dust lion reference. The sampling is weighted by brightness and fine detail, and the frame edges are feathered.
+  - **Phoenix:** drawn procedurally on a hidden canvas, then sampled the same way.
+  - **Motion:** the GPU does a staggered, swirling morph in which the mane leaves first. The mane moves in the wind, and the phoenix beats its wings.
+  - **Layout:** fits the full width on phones.
+  - **Messages:** answers any `*:pause` or `*:play` message.
+- The Animation studio's featured block (`lattice-embed.js`) now switches between three studies: lion to phoenix (the default), bird to fox and the golden lattice.
+
 ### Stardust: bird to fox (live study)
 
 - `site/studies/stardust-bird-fox.html`: about 39k additive particles form a golden bird with wings raised
