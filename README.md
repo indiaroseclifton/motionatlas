@@ -269,7 +269,7 @@ Your package of 11 films, 68 renders and a style list is merged in with
   - **Method:** Real-ESRGAN from half-size frames.
   - **Encoding:** H.264 at quality setting 28, capped at 4 Mbit/s, which gives 2.4–7.6 MB per clip.
   - **Lissajous scrub:** keeps a keyframe every 8 frames so it scrubs smoothly.
-- Still soft: the Genesis home hero (1600 px source). Its full-size upscale is in progress.
+- Genesis (home hero scene 07) stays at its 1600 × 900 source. It's already fairly sharp, and an upscale would roughly double the file size for a scene few visitors open. The upscaling script can be rerun if that changes.
 - **Upscaled films:** the lion-to-phoenix and jellyfish films are now 1080p.
   - **Model:** Real-ESRGAN `realesr-general-x4v3`, run on CPU with PyTorch. Near-black tiles are skipped.
   - **Lion:** upscaled from half-size frames, which gave the crispest grain.
