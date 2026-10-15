@@ -244,6 +244,14 @@ Your package of 11 films, 68 renders and a style list is merged in with
 - The landing-effect source images in `site/assets/fx/` and the Glass Garden backdrop were
   upscaled 2× the same way.
 
+### Background generator (`#backgrounds`)
+
+- `site/backgrounds.js` and `backgrounds.css`: ten procedural families (Mesh, Liquid, Aurora, Swirl,
+  Iridescent, Horizon, Portal, Orbs, Grain, ASCII) drawn by one WebGL fragment shader, with 50 named
+  presets in 10 collections. Palette, scale, distortion, softness, grain, motion and seed are editable.
+- Exports: 4K and HD PNG at six aspect ratios, a 6-second seamless loop (WebM), a CSS approximation,
+  standalone live code that reproduces the exact image, and a shareable link (`#backgrounds?bg=…`).
+
 ### What to upload
 
 Upload the contents of `site/` except `site/original/` (backups of the live files). The files
