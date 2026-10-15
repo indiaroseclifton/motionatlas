@@ -275,14 +275,36 @@ Your package of 11 films, 68 renders and a style list is merged in with
   sparkle sizes on resize and holds a still frame under reduced motion.
 - Now linked from the featured study as the earlier version.
 
+### Animation studio river
+
+- `site/studio-river.js` and `studio-river.css` replace the old click-to-play box: the live studies and films sit in one dark band across the full width of the page.
+  - **Blending:** the band fades out of the page background at the top and back in at the bottom. Each piece has feathered (masked) edges and no frame.
+  - **Playback:** pieces play as they scroll into view and pause as they leave. There's one "Pause the motion" control for the whole band. With reduced motion on, nothing autoplays.
+  - **Performance:** live studies load as they approach and are released once well out of view, so only two or three WebGL contexts exist at a time.
+- Order: the whale (a full-width stage it glides across), lion to phoenix (live), the lion film, the butterfly (live), the jellyfish film, bird to fox and the golden lattice.
+
+### Whale and butterfly (live studies)
+
+- **`site/studies/whale-glide.html`:** about 52k blue grains sampled from the studio's whale still (`assets/studies/whale-source.jpg`, masked to the whale and its dust).
+  - **Motion:** a travelling wave from head to fluke that grows towards the tail, sweeping pectoral fins, and a wake shed mostly from the tail half.
+  - **Glide:** it glides fully across the screen every 24 s. "Swim in place" holds it centred.
+- **`site/studies/butterfly.html`:** grains sampled from a wings-open frame of the butterfly film (`assets/studies/butterfly-source.jpg`).
+  - **Motion:** every wing grain turns about the body axis, so the wings fold up out of the page. It flies a slow figure-of-eight and sheds glitter.
+  - **Shared code:** the motion is written once in GLSL and once in JS, so the shed dust leaves from where the creature really is.
+- Both studies use the hero mode and `study:ready` handshake, and are also home hero scenes 05 and 06. The jellyfish film is scene 07.
+
 ### Home hero scenes
 
-- `site/hero-scenes.js` (styles at the end of `site/home.css`) lets the home hero show five scenes:
+- `site/hero-scenes.js` (styles at the end of `site/home.css`) lets the home hero show eight scenes:
   1. the lion-to-phoenix film (the default)
   2. the live lion-to-phoenix study
   3. stardust bird to fox
   4. the golden lattice
-  5. Genesis, with its four plates
+  5. the whale (live)
+  6. the butterfly (live)
+  7. the jellyfish film
+  8. Genesis, with its four plates
+- Each scene tints the title's italic word and the eyebrow to its own light: gold, blue, champagne or violet-amber.
 - A row of thin marks in the hero's foot switches scenes. It shows the scene name and previews a name on hover. The choice is remembered per visitor in `localStorage`.
 - A new scene loads behind the current one and crossfades in over 1.6 s, only once it is drawing. Live studies post `study:ready` to say so, with a 4 s fallback.
 - Live studies load with `?hero` (`site/studies/hero-mode.js`). In that mode they hide their controls and drop their background so they sit on the hero's dark background.
@@ -301,7 +323,7 @@ Your package of 11 films, 68 renders and a style list is merged in with
 - The film itself is in `assets/films/lion-phoenix.{mp4,webm,jpg}`:
   - 720p, about 4 MB, with the audio dropped.
   - The last 0.6 s crossfades into the first frames, so the loop has no visible seam.
-- The Animation studio's featured block (`lattice-embed.js`) switches between four items: the live lion-to-phoenix study (the default), the film, bird to fox and the golden lattice.
+- The Animation studio shows every live study and film in the river (`studio-river.js`).
 
 ### Stardust: bird to fox (live study)
 

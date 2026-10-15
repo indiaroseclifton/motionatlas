@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Particle Whale — Glide</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #01030a;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; user-select: none; }
+    #stage { position: fixed; inset: 0; background: radial-gradient(ellipse at 50% 45%, #030a1c 0%, #01040d 55%, #000 100%); }
+    canvas { display: block; width: 100%; height: 100%; }
+    #controls { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; padding: 6px;
+      background: rgba(3, 8, 20, .78); border: 1px solid rgba(110, 170, 255, .25); border-radius: 999px; backdrop-filter: blur(10px); z-index: 5; }
+    .mode { background: transparent; border: 1px solid transparent; color: rgba(190, 220, 255, .72); padding: 7px 15px; border-radius: 999px;
+      font-family: inherit; font-size: 12px; font-weight: 600; line-height: 1; letter-spacing: .03em; cursor: pointer; white-space: nowrap; }
+    .mode:hover { color: #eaf4ff; }
+    .mode[aria-pressed="true"] { background: rgba(70, 140, 255, .2); border-color: rgba(120, 180, 255, .6); color: #f0f7ff; box-shadow: 0 0 16px rgba(60, 130, 255, .25); }
+    .mode:focus-visible { outline: 2px solid #8fc2ff; outline-offset: 2px; }
+    @media (max-width: 420px) { #controls { bottom: 12px; gap: 2px; padding: 4px; } .mode { padding: 6px 9px; font-size: 11px; } }
+  </style>
+  <script src="hero-mode.js"></script>
+  <script src="../vendor/three-r128.min.js"></script>
+  <script>window.THREE || document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>');</script>
+</head>
+<body>
+  <div id="stage" role="img" aria-label="A humpback whale made of blue particles glides across the screen, its body and tail undulating, leaving a wake of drifting light"></div>
+  <div id="controls" role="group" aria-label="Scenes">
+    <button class="mode" data-mode="0" aria-pressed="true">Glide across</button>
+    <button class="mode" data-mode="1" aria-pressed="false">Swim in place</button>
+  </div>
+<script>
+/* A particle whale that glides across the screen. Its dust is sampled from a reference still of a whale made of
+   blue light (assets/studies/whale-source.jpg). A travelling wave runs from head to fluke, growing towards the
+   tail, the pectoral fins sweep, and a wake of fading grains is shed behind it. */
+(() => {
+  const stage = document.getElementById('stage');
+  const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, powerPreference: 'high-performance' });
+  const DPR = Math.min(window.devicePixelRatio || 1, 2);
+  renderer.setPixelRatio(DPR); renderer.setSize(innerWidth, innerHeight); renderer.setClearColor(0, 0);
+  stage.appendChild(renderer.domElement);
+  const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(34, innerWidth / innerHeight, .1, 100);
+  let seed = 7121;
+  const rnd = () => { seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  const gauss = () => Math.sqrt(-2 * Math.log(Math.max(1e-6, rnd()))) * Math.cos(6.2831853 * rnd());
+  const W = 900, H = 604, SPAN = 7.2, N = 52000, WAKE = 5000, BOKEH = 60;
+  const HEAD = 2.95, LEN = 5.9;            // head x and nose-to-fluke length in world units
+  const STOPS = [[.02, .07, .42], [.05, .28, 1], [.16, .56, 1], [.62, .86, 1]];
+  const blue = k => { k = Math.max(0, Math.min(.999, k)) * 3; const i = k | 0, f = k - i; return STOPS[i].map((c, j) => c + (STOPS[i + 1][j] - c) * f); };
+
+  // the swimming motion, written once for the GPU and once for the wake emitter so the two always agree
+  const OMEGA = 6.2831853 / 4.6;
+  function swim(x, y, z, t, o) {
+    const s = Math.max(0, Math.min(1, (HEAD - x) / LEN));
+    let dy = .34 * Math.pow(s, 2.2) * Math.sin(OMEGA * t - s * 2.4) + .05 * Math.sin(OMEGA * t + 1.3);
+    if (x > .1 && x < 1.9 && y < -.25) dy += .16 * Math.sin(OMEGA * t + .8) * (-.25 - y);   // pectoral fins
+    o[0] = x; o[1] = y + dy; o[2] = z + .08 * Math.pow(s, 2) * Math.cos(OMEGA * t - s * 2.4);
+  }
+  const SWIM_GLSL = `
+    vec3 swim(vec3 p, float t){
+      float s = clamp((${HEAD.toFixed(2)} - p.x) / ${LEN.toFixed(2)}, 0.0, 1.0);
+      float dy = .34 * pow(s, 2.2) * sin(${OMEGA.toFixed(5)} * t - s * 2.4) + .05 * sin(${OMEGA.toFixed(5)} * t + 1.3);
+      if (p.x > .1 && p.x < 1.9 && p.y < -.25) dy += .16 * sin(${OMEGA.toFixed(5)} * t + .8) * (-.25 - p.y);
+      return vec3(p.x, p.y + dy, p.z + .08 * s * s * cos(${OMEGA.toFixed(5)} * t - s * 2.4));
+    }`;
+
+  function boxBlur(src, r) {
+    const tmp = new Float32Array(W * H), out = new Float32Array(W * H), k = 1 / (2 * r + 1);
+    for (let y = 0; y < H; y++) { let s = 0; for (let x = -r; x <= r; x++) s += src[y * W + Math.min(W - 1, Math.max(0, x))];
+      for (let x = 0; x < W; x++) { tmp[y * W + x] = s * k; s += src[y * W + Math.min(W - 1, x + r + 1)] - src[y * W + Math.max(0, x - r)]; } }
+    for (let x = 0; x < W; x++) { let s = 0; for (let y = -r; y <= r; y++) s += tmp[Math.min(H - 1, Math.max(0, y)) * W + x];
+      for (let y = 0; y < H; y++) { out[y * W + x] = s * k; s += tmp[Math.min(H - 1, y + r + 1) * W + x] - tmp[Math.max(0, y - r) * W + x]; } }
+    return out;
+  }
+
+  const tex = (() => { const c = document.createElement('canvas'); c.width = c.height = 64; const x = c.getContext('2d');
+    const g = x.createRadialGradient(32, 32, 0, 32, 32, 32); g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(.22, 'rgba(255,255,255,.8)');
+    g.addColorStop(.55, 'rgba(255,255,255,.16)'); g.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = g; x.fillRect(0, 0, 64, 64); return new THREE.CanvasTexture(c); })();
+  const pointMat = (vert, uniforms) => new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    uniforms: Object.assign({ uMap: { value: tex }, uScale: { value: 1 } }, uniforms), vertexShader: vert,
+    fragmentShader: `uniform sampler2D uMap; varying vec3 vCol; varying float vA;
+      void main(){ float a = texture2D(uMap, gl_PointCoord).a * vA; if (a < .004) discard; gl_FragColor = vec4(vCol, a); }` });
+
+  /* ---------- whale body ---------- */
+  const P = new Float32Array(N * 3), C = new Float32Array(N * 3), R = new Float32Array(N * 2), base = [];
+  const geo = new THREE.BufferGeometry();
+  const mat = pointMat(`attribute vec3 aC; attribute vec2 aR; uniform float uTime, uScale, uK; uniform vec3 uOff; varying vec3 vCol; varying float vA;
+    ${SWIM_GLSL}
+    void main(){ vec3 p = swim(position, uTime) * uK + uOff; vCol = aC; vA = .85 * (.72 + .28 * sin(uTime * 3.2 + aR.y * 9.0));
+      vec4 mv = modelViewMatrix * vec4(p, 1.0); gl_Position = projectionMatrix * mv; gl_PointSize = max(1.0, aR.x * uScale / -mv.z); }`,
+    { uTime: { value: 0 }, uK: { value: 1 }, uOff: { value: new THREE.Vector3() } });
+  const whale = new THREE.Points(geo, mat); whale.frustumCulled = false; scene.add(whale);
+
+  function build(img) {
+    const L = new Float32Array(W * H), D = img.data;
+    for (let i = 0; i < W * H; i++) L[i] = (D[i * 4] * .2 + D[i * 4 + 1] * .35 + D[i * 4 + 2] * .45) / 255;
+    const Bl = boxBlur(boxBlur(L, 5), 5), w = new Float32Array(W * H); let tot = 0;
+    for (let i = 0; i < W * H; i++) { const l = L[i]; tot += Math.pow(Math.max(0, l - .05), 1.3) * (.35 + Math.max(0, l - Bl[i]) * 5); w[i] = tot; }
+    for (let i = 0; i < N; i++) {
+      const r = rnd() * tot; let lo = 0, hi = W * H - 1; while (lo < hi) { const m = (lo + hi) >> 1; if (w[m] < r) lo = m + 1; else hi = m; }
+      const px = lo % W + Math.random(), py = Math.floor(lo / W) + Math.random(), l = L[lo];
+      const x = (px / W - .5) * SPAN, y = -(py / H - .5) * SPAN * H / W, z = gauss() * .12 + l * .2;
+      P.set([x, y, z], i * 3); C.set(blue(Math.min(1, l * 1.05 + gauss() * .07)), i * 3);
+      R[i * 2] = (.028 + Math.pow(rnd(), 3) * .05) * (rnd() < .015 ? 2.3 : 1); R[i * 2 + 1] = rnd() * 6.283;
+      base.push([x, y, z, (HEAD - x) / LEN]);
+    }
+    geo.setAttribute('position', new THREE.BufferAttribute(P, 3)); geo.setAttribute('aC', new THREE.BufferAttribute(C, 3)); geo.setAttribute('aR', new THREE.BufferAttribute(R, 2));
+  }
+
+  /* ---------- wake: grains shed mostly from the tail half, left behind in the water ---------- */
+  const wg = new THREE.BufferGeometry(), WP = new Float32Array(WAKE * 3), WC = new Float32Array(WAKE * 3), WA = new Float32Array(WAKE), WS = new Float32Array(WAKE), wm = [];
+  for (let i = 0; i < WAKE; i++) { wm.push({ off: rnd() * 6, life: 3 + rnd() * 3.5, last: 99, sx: 0, sy: 0, sz: 0, vx: 0, vy: 0, vz: 0 }); WS[i] = (.02 + rnd() * .035) * (rnd() < .05 ? 2.2 : 1); }
+  wg.setAttribute('position', new THREE.BufferAttribute(WP, 3)); wg.setAttribute('aC', new THREE.BufferAttribute(WC, 3));
+  wg.setAttribute('aA', new THREE.BufferAttribute(WA, 1)); wg.setAttribute('aS', new THREE.BufferAttribute(WS, 1));
+  const wmat = pointMat(`attribute vec3 aC; attribute float aA, aS; uniform float uScale; varying vec3 vCol; varying float vA;
+    void main(){ vCol = aC; vA = aA; vec4 mv = modelViewMatrix * vec4(position, 1.0); gl_Position = projectionMatrix * mv; gl_PointSize = max(1.0, aS * uScale / -mv.z); }`, {});
+  const wake = new THREE.Points(wg, wmat); wake.frustumCulled = false; scene.add(wake);
+
+  // soft blue orbs drifting in depth
+  const bg = new THREE.BufferGeometry(), BP = new Float32Array(BOKEH * 3), BS = new Float32Array(BOKEH), BA = new Float32Array(BOKEH), bm = [];
+  for (let i = 0; i < BOKEH; i++) { const z = -3 + rnd() * 5.5; bm.push({ x: (rnd() - .5) * 14, y: (rnd() - .5) * 7, z, s: rnd() * 6.28, sp: .03 + rnd() * .08 });
+    BS[i] = z > 1.2 ? 22 + rnd() * 34 : 5 + rnd() * 14; BA[i] = z > 1.2 ? .05 + rnd() * .06 : .1 + rnd() * .22; }
+  bg.setAttribute('position', new THREE.BufferAttribute(BP, 3)); bg.setAttribute('aS', new THREE.BufferAttribute(BS, 1)); bg.setAttribute('aA', new THREE.BufferAttribute(BA, 1));
+  const bmat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, uniforms: { uMap: { value: tex }, uScale: { value: 1 } },
+    vertexShader: `attribute float aS, aA; uniform float uScale; varying float vA; void main(){ vec4 mv = modelViewMatrix * vec4(position,1.0); gl_Position = projectionMatrix * mv; gl_PointSize = aS * uScale / -mv.z; vA = aA; }`,
+    fragmentShader: `uniform sampler2D uMap; varying float vA; void main(){ float a = smoothstep(0.0, .35, texture2D(uMap, gl_PointCoord).a) * vA; gl_FragColor = vec4(.25, .55, 1.0, a); }` });
+  const bokeh = new THREE.Points(bg, bmat); bokeh.frustumCulled = false; scene.add(bokeh);
+
+  /* ---------- glide path ---------- */
+  let mode = 0, paused = false, ready = false;
+  const PERIOD = 24, Z = 11;
+  const halfWidth = () => Math.tan(17 * Math.PI / 180) * Z * camera.aspect;
+  function offsetAt(t) {
+    if (mode === 1) return [Math.sin(t * .2) * .35, Math.sin(t * .27) * .25, 0];
+    // enter fully off-screen left, leave fully off-screen right, with a slow rise and fall
+    const span = halfWidth() + 3.6, u = (t % PERIOD) / PERIOD;
+    return [-span + u * span * 2, Math.sin(u * Math.PI * 2 + .6) * .45 - .1, -.4 + Math.sin(u * Math.PI) * .4];
+  }
+  const tmp = [0, 0, 0];
+  function frame(t, dt) {
+    const off = offsetAt(t); mat.uniforms.uTime.value = t; mat.uniforms.uOff.value.set(off[0], off[1], off[2]);
+    for (let i = 0; i < WAKE; i++) {
+      const q = wm[i], age = (t + q.off) % q.life;
+      if (age < q.last) { // re-spawn at a point on the swimming body, weighted towards the tail
+        let b; for (let k = 0; k < 4; k++) { b = base[(rnd() * base.length) | 0]; if (b[3] > .45 || rnd() < .15) break; }
+        swim(b[0], b[1], b[2], t, tmp); const k = mat.uniforms.uK.value; q.sx = tmp[0] * k + off[0]; q.sy = tmp[1] * k + off[1]; q.sz = tmp[2] * k + off[2];
+        q.vx = -.08 + gauss() * .06; q.vy = gauss() * .05 - .02; q.vz = gauss() * .05;
+        WC.set(blue(.35 + rnd() * .55), i * 3);
+      }
+      q.last = age; const life = age / q.life;
+      WP[i * 3] = q.sx + q.vx * age; WP[i * 3 + 1] = q.sy + q.vy * age; WP[i * 3 + 2] = q.sz + q.vz * age;
+      WA[i] = Math.min(1, life * 8) * Math.pow(1 - life, 1.6) * .55;
+    }
+    wg.attributes.position.needsUpdate = true; wg.attributes.aC.needsUpdate = true; wg.attributes.aA.needsUpdate = true;
+    for (let i = 0; i < BOKEH; i++) { const q = bm[i]; BP[i * 3] = q.x + Math.sin(t * q.sp + q.s) * .5; BP[i * 3 + 1] = q.y + Math.cos(t * q.sp * .8 + q.s) * .3; BP[i * 3 + 2] = q.z; }
+    bg.attributes.position.needsUpdate = true;
+    camera.position.set(0, .1, Z); camera.lookAt(0, 0, 0);
+    renderer.render(scene, camera);
+  }
+  function fit() {
+    camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight);
+    // on a narrow screen the whale is scaled to stay about 85% of the width
+    const k = Math.min(1, halfWidth() * 2 * .85 / LEN); mat.uniforms.uK.value = k;
+    const s = innerHeight * DPR * .5 * 1.1; mat.uniforms.uScale.value = s * (.6 + .4 * k); wmat.uniforms.uScale.value = s; bmat.uniforms.uScale.value = s * .06;
+  }
+  const buttons = document.querySelectorAll('.mode');
+  buttons.forEach(b => b.addEventListener('click', () => { mode = +b.dataset.mode; buttons.forEach(x => x.setAttribute('aria-pressed', String(x === b))); if (reduce) still(); }));
+  addEventListener('message', e => { const d = String(e.data); if (/:pause$/.test(d)) paused = true; if (/:play$/.test(d)) paused = false; });
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches, clock = new THREE.Clock();
+  function still() { const m = mode; mode = 1; frame(1.5, 0); mode = m; }
+  function loop() { requestAnimationFrame(loop); if (paused || document.hidden || reduce || !ready) return; frame(clock.getElapsedTime(), 0); }
+  addEventListener('resize', () => { fit(); if (reduce) still(); });
+  const img = new Image();
+  img.onload = () => { const c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d'); g.drawImage(img, 0, 0, W, H);
+    build(g.getImageData(0, 0, W, H)); fit(); ready = true; if (reduce) still(); window.studyReady && studyReady(); };
+  img.src = '../assets/studies/whale-source.jpg';
+  loop();
+  window.__whale = { frameAt: t => frame(t, 0), ready: () => ready, mode: m => { mode = m; } };
+})();
+</script>
+</body>
+</html>

@@ -10,6 +10,9 @@
   {id:'lion',name:'Lion to phoenix · live',label:'Lion to phoenix, live particles',kind:'live',src:'studies/lion-phoenix.html?hero'},
   {id:'stardust',name:'Bird to fox',label:'Stardust bird to fox, live particles',kind:'live',src:'studies/stardust-bird-fox.html?hero'},
   {id:'lattice',name:'Golden lattice',label:'Golden lattice, live wireframe',kind:'live',src:'studies/golden-lattice.html?hero'},
+  {id:'whale',name:'Whale',label:'Whale gliding, live particles',kind:'live',src:'studies/whale-glide.html?hero',tint:['#e3f0ff','#6fb0ff','#2f6dff','#a9d4ff'],eye:'#8fc2ff'},
+  {id:'butterfly',name:'Butterfly',label:'Glitter butterfly, live particles',kind:'live',src:'studies/butterfly.html?hero',tint:['#fffaf0','#f3e2c0','#d9b98a','#fff1d8'],eye:'#f0dcb4'},
+  {id:'jelly',name:'Jellyfish',label:'Jellyfish, film',kind:'video',src:'assets/films/jellyfish.mp4',webm:'assets/films/jellyfish.webm',poster:'assets/films/jellyfish.jpg',tint:['#f3eaff','#c7b6ff','#ffb98a','#e9d8ff'],eye:'#d6c4ff'},
   {id:'genesis',name:'Genesis',label:'Genesis, the atlas film in four plates',kind:'genesis'}];
  const KEY='vmaHeroScene',hero=H.hero,section=H.section,film=H.film,gv=H.video;
  const store={get(){try{return localStorage.getItem(KEY);}catch{return null;}},set(v){try{localStorage.setItem(KEY,v);}catch{}}};
@@ -55,7 +58,10 @@
    if(prev){prev.el.classList.remove('isOn');setTimeout(()=>prev.el.remove(),1800);}
    H.update();H.syncButton();return;
   }
-  H.eyebrow.textContent=`Scene ${String(SCENES.indexOf(s)+1).padStart(2,'0')} · ${s.name}`;section.style.setProperty('--plate','var(--gold)');
+  H.eyebrow.textContent=`Scene ${String(SCENES.indexOf(s)+1).padStart(2,'0')} · ${s.name}`;
+  // each scene tints the title's iridescent word and the eyebrow to its own light; gold by default
+  const tint=s.tint||['#fff4d6','#fde68a','#f2b14a','#ffe3a0'];tint.forEach((c,i)=>hero.style.setProperty('--st'+i,c));
+  section.style.setProperty('--plate',s.eye||'var(--gold)');
   H.tc.textContent=s.kind==='live'?'Live · WebGL':'00:00 / 00:07';
   const L=makeLayer(s);stack.append(L.el);
   L.ready.then(()=>{
