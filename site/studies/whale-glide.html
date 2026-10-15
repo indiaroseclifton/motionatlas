@@ -26,8 +26,8 @@
 <body>
   <div id="stage" role="img" aria-label="A humpback whale made of blue particles glides across the screen, its body and tail undulating, leaving a wake of drifting light"></div>
   <div id="controls" role="group" aria-label="Scenes">
-    <button class="mode" data-mode="0" aria-pressed="true">Glide across</button>
-    <button class="mode" data-mode="1" aria-pressed="false">Swim in place</button>
+    <button class="mode" data-mode="0" data-key="glide" aria-pressed="true">Glide across</button>
+    <button class="mode" data-mode="1" data-key="swim" aria-pressed="false">Swim in place</button>
   </div>
 <script>
 /* A particle whale that glides across the screen. Its dust is sampled from a reference still of a whale made of
@@ -43,7 +43,7 @@
   let seed = 7121;
   const rnd = () => { seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
   const gauss = () => Math.sqrt(-2 * Math.log(Math.max(1e-6, rnd()))) * Math.cos(6.2831853 * rnd());
-  const W = 900, H = 604, SPAN = 7.2, N = 52000, WAKE = 5000, BOKEH = 60;
+  const W = 900, H = 604, SPAN = 7.2, N = Math.round(52000 * (window.studyParams ? studyParams.density : 1)), WAKE = 5000, BOKEH = 60;
   const HEAD = 2.95, LEN = 5.9;            // head x and nose-to-fluke length in world units
   const STOPS = [[.02, .07, .42], [.05, .28, 1], [.16, .56, 1], [.62, .86, 1]];
   const blue = k => { k = Math.max(0, Math.min(.999, k)) * 3; const i = k | 0, f = k - i; return STOPS[i].map((c, j) => c + (STOPS[i + 1][j] - c) * f); };
@@ -168,7 +168,7 @@
   addEventListener('message', e => { const d = String(e.data); if (/:pause$/.test(d)) paused = true; if (/:play$/.test(d)) paused = false; });
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches, clock = new THREE.Clock();
   function still() { const m = mode; mode = 1; frame(1.5, 0); mode = m; }
-  function loop() { requestAnimationFrame(loop); if (paused || document.hidden || reduce || !ready) return; frame(clock.getElapsedTime(), 0); }
+  function loop() { requestAnimationFrame(loop); if (paused || document.hidden || reduce || !ready) return; frame(clock.getElapsedTime() * (window.studyParams ? studyParams.speed : 1), 0); }
   addEventListener('resize', () => { fit(); if (reduce) still(); });
   const img = new Image();
   img.onload = () => { const c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d'); g.drawImage(img, 0, 0, W, H);

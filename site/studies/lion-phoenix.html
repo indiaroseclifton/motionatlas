@@ -27,9 +27,9 @@
 <body>
   <div id="stage" role="img" aria-label="Golden particles form a lion's head in profile with a flowing mane, then blow away and re-form as a phoenix with its wings spread"></div>
   <div id="controls" role="group" aria-label="Scenes">
-    <button class="mode" data-mode="2" aria-pressed="true">Lion to phoenix</button>
-    <button class="mode" data-mode="0" aria-pressed="false">Lion</button>
-    <button class="mode" data-mode="1" aria-pressed="false">Phoenix</button>
+    <button class="mode" data-mode="2" data-key="loop" aria-pressed="true">Lion to phoenix</button>
+    <button class="mode" data-mode="0" data-key="lion" aria-pressed="false">Lion</button>
+    <button class="mode" data-mode="1" data-key="phoenix" aria-pressed="false">Phoenix</button>
   </div>
 <script>
 /* Lion to phoenix, an 8-second loop.
@@ -54,7 +54,7 @@
   const STOPS = [[.62, .3, .05], [1, .6, .12], [1, .82, .4], [1, .96, .82]];
   const gold = k => { k = Math.max(0, Math.min(.999, k)) * 3; const i = k | 0, f = k - i; return STOPS[i].map((c, j) => c + (STOPS[i + 1][j] - c) * f); };
   const W = 900, H = 604, SPAN = 7.7;               // source canvas size and its width in world units
-  const N = 150000, BOKEH = 70;
+  const N = Math.round(150000 * (window.studyParams ? studyParams.density : 1)), BOKEH = 70;
 
   /* ---------- sampling a picture into particles ---------- */
   // Weight = brightness, boosted where the picture has fine detail (bright grain against a darker neighbourhood),
@@ -263,7 +263,7 @@
   const targetFor = t => mode === 0 ? 0 : mode === 1 ? 1 : morphAt(t % LOOP);
   const clock = new THREE.Clock();
   function still() { morph = mode === 1 ? 1 : 0; frame(1.2, morph); }
-  function loop() { requestAnimationFrame(loop); if (paused || document.hidden || reduce || !ready) return; const t = clock.getElapsedTime(); frame(t, targetFor(t)); }
+  function loop() { requestAnimationFrame(loop); if (paused || document.hidden || reduce || !ready) return; const t = clock.getElapsedTime() * (window.studyParams ? studyParams.speed : 1); frame(t, targetFor(t)); }
   addEventListener('resize', () => { fit(); if (reduce) still(); });
 
   // Both creatures come from stills: the lion reference and a frame of the phoenix from the studio's film.

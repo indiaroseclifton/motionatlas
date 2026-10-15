@@ -284,6 +284,21 @@ Your package of 11 films, 68 renders and a style list is merged in with
   - **Performance:** live studies load as they approach and are released once well out of view, so only two or three WebGL contexts exist at a time.
 - Order: the whale (a full-width stage it glides across), lion to phoenix (live), the lion film, the butterfly (live), the jellyfish film and bird to fox. (The golden lattice study has been retired.)
 
+### "Use it on your site" kits
+
+- Every piece in the Animation studio river has a collapsed kit panel (`studio-river.js`, styles in `studio-river.css`).
+  - **Live studies:** speed, particle count and starting mode, plus transparent background and feathered edges. The `<iframe>` snippet updates as the settings change, and there's a preview link.
+  - **Films:** a `<video>` snippet with the 720p, WebM and MP4 sources, with feathered edges optional.
+  - **Prompts:** each panel carries the prompt behind the piece. The lion's is the original Gemini prompt; the others are labelled as suggested prompts to recreate the source.
+- Study URL settings (`site/studies/hero-mode.js`):
+  - `?speed=0.25–3`
+  - `?density=0.2–1.5` (lion, whale and butterfly)
+  - `?mode=` loop/lion/phoenix, glide/swim, flutter/rest or loop/bird/fox
+  - `?controls=0`
+  - `?bg=transparent`
+- Snippets use the clean URLs the live site serves. Vercel sends no frame-blocking headers, so the iframes work on other sites.
+- The river is excluded from the site theme's form-control rules (`atlas-theme.css`), so its controls keep the dark style.
+
 ### Whale and butterfly (live studies)
 
 - **`site/studies/whale-glide.html`:** about 52k blue grains sampled from the studio's whale still (`assets/studies/whale-source.jpg`, masked to the whale and its dust).

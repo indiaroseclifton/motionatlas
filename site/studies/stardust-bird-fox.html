@@ -30,9 +30,9 @@
 <body>
   <div id="stage" role="img" aria-label="A bird made of golden stardust flies, dissolves into drifting dust and re-forms as a running fox"></div>
   <div id="controls" role="group" aria-label="Scenes">
-    <button class="mode" data-mode="2" aria-pressed="true">Bird to fox</button>
-    <button class="mode" data-mode="0" aria-pressed="false">Golden bird</button>
-    <button class="mode" data-mode="1" aria-pressed="false">Running fox</button>
+    <button class="mode" data-mode="2" data-key="loop" aria-pressed="true">Bird to fox</button>
+    <button class="mode" data-mode="0" data-key="bird" aria-pressed="false">Golden bird</button>
+    <button class="mode" data-mode="1" data-key="fox" aria-pressed="false">Running fox</button>
   </div>
 <script>
 /* Golden stardust bird and fox.
@@ -362,7 +362,7 @@
 
   const clock = new THREE.Clock();
   function still() { const target0 = mode === 1 ? 1 : 0; morph = target0; for (let k = 0; k < 4; k++) frame(1.3 + k * .4, .1); }
-  function loop() { requestAnimationFrame(loop); const dt = Math.min(clock.getDelta(), .05); if (paused || document.hidden || reduce) return; frame(clock.getElapsedTime(), dt); }
+  function loop() { requestAnimationFrame(loop); const k = (window.studyParams ? studyParams.speed : 1), dt = Math.min(clock.getDelta(), .05) * k; if (paused || document.hidden || reduce) return; frame(clock.getElapsedTime() * k, dt); }
   let started = false;
   function start() { if (started) return; started = true; setTimeout(() => window.studyReady && studyReady(), 200);
     if (reduce) { mode = 0; buttons.forEach(x => x.setAttribute('aria-pressed', String(x.dataset.mode === '0'))); still(); }
