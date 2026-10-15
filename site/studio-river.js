@@ -13,7 +13,7 @@
    text:'The original film the live study grew from: the lion dissolves into a golden vortex, a flash, and the phoenix opens its wings.'},
   {id:'butterfly',kind:'live',src:'studies/butterfly.html?hero',open:'studies/butterfly.html',kicker:'Live particles · WebGL',title:'Glitter butterfly.',
    text:'Grains sampled from a frame of the butterfly film, wings fully open. Each grain turns about the body, so the wings fold up out of the page and open again as it drifts, shedding glitter.'},
-  {id:'jelly',kind:'video',src:'assets/films/jellyfish.mp4',webm:'assets/films/jellyfish.webm',poster:'assets/films/jellyfish.jpg',open:'assets/films/jellyfish.mp4',kicker:'Film · loops seamlessly',title:'Jellyfish, drifting.',
+  {id:'jelly',kind:'video',src:'assets/films/jellyfish.mp4',small:'assets/films/jellyfish-720.mp4',webm:'assets/films/jellyfish.webm',poster:'assets/films/jellyfish.jpg',open:'assets/films/jellyfish.mp4',kicker:'Film · loops seamlessly',title:'Jellyfish, drifting.',
    text:'A lantern jellyfish with an amber core turns through the dark while paler ones drift past, trailing threads of light.'},
   {id:'stardust',kind:'live',src:'studies/stardust-bird-fox.html?hero',open:'studies/stardust-bird-fox.html',kicker:'Live particles · WebGL',title:'Stardust: bird to fox.',
    text:'Golden dust settles over animated models of a stork in flight and a running fox; every few seconds it lets go and re-forms as the other animal.'},

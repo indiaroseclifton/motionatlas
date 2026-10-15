@@ -265,8 +265,12 @@ Your package of 11 films, 68 renders and a style list is merged in with
 - **Showcase reels** (`#showcase`, `site/showcase.js`, `showcase.css`): eight motion templates (Rise,
   Rolodex, Comet, Deck, Marquee, Carousel, Folio, Spotlight) for presenting your own images or the atlas
   mockups, four formats, generated backgrounds, and 1080p video export.
-- Still soft: the home hero video (1600 px) and the eleven film clips (960 px). Upscaling them needs a
-  GPU or the original masters.
+- Still soft: the home hero video (1600 px) and the eleven film clips (960 px).
+- **Upscaled films:** the lion-to-phoenix and jellyfish films are now 1080p.
+  - **Model:** Real-ESRGAN `realesr-general-x4v3`, run on CPU with PyTorch. Near-black tiles are skipped.
+  - **Lion:** upscaled from half-size frames, which gave the crispest grain.
+  - **Jellyfish:** upscaled from full-size frames.
+  - **Phones:** each film has a `-720.mp4` cut made from the upscaled frames, served below 900 px.
 
 ### Golden lattice: bird & fox (live study)
 
