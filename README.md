@@ -265,7 +265,11 @@ Your package of 11 films, 68 renders and a style list is merged in with
 - **Showcase reels** (`#showcase`, `site/showcase.js`, `showcase.css`): eight motion templates (Rise,
   Rolodex, Comet, Deck, Marquee, Carousel, Folio, Spotlight) for presenting your own images or the atlas
   mockups, four formats, generated backgrounds, and 1080p video export.
-- Still soft: the home hero video (1600 px) and the eleven film clips (960 px).
+- The 12 older film clips are upscaled to twice their size: 1920 × 1288 (Lissajous scrub 1440 × 968).
+  - **Method:** Real-ESRGAN from half-size frames.
+  - **Encoding:** H.264 at quality setting 28, capped at 4 Mbit/s, which gives 2.4–7.6 MB per clip.
+  - **Lissajous scrub:** keeps a keyframe every 8 frames so it scrubs smoothly.
+- Still soft: the Genesis home hero (1600 px source). Its full-size upscale is in progress.
 - **Upscaled films:** the lion-to-phoenix and jellyfish films are now 1080p.
   - **Model:** Real-ESRGAN `realesr-general-x4v3`, run on CPU with PyTorch. Near-black tiles are skipped.
   - **Lion:** upscaled from half-size frames, which gave the crispest grain.
