@@ -273,8 +273,16 @@ Your package of 11 films, 68 renders and a style list is merged in with
 - `site/studies/golden-lattice.html`: the three.js wireframe bird and fox study, standalone. It loads
   three.js from `site/vendor/` (CDN fallback), pauses when hidden or asked by the parent page, keeps
   sparkle sizes on resize and holds a still frame under reduced motion.
+- Now linked from the featured study as the earlier version.
+
+### Stardust: bird to fox (live study)
+
+- `site/studies/stardust-bird-fox.html`: about 39k additive particles form a golden bird with wings raised
+  in a V, which dissolves and re-forms as a running fox on a 16 s loop. It also has a dust trail, bokeh,
+  and modes for the bird alone and the fox alone. It is built procedurally, with no external models, and
+  uses the vendored three.js. It answers `stardust:` and `lattice:` pause and play messages.
 - Featured at the top of the Animation studio (`lattice-embed.js`, `lattice-embed.css`) as a
-  click-to-play poster (`assets/studies/golden-lattice.webp`) with a full-screen link.
+  click-to-play poster (`assets/studies/stardust-bird-fox.webp`) with a full-screen link.
 
 ### What to upload
 

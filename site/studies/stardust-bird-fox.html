@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Golden Stardust — Bird to Fox</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #020205;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; user-select: none; }
+    #stage { position: fixed; inset: 0;
+      background: radial-gradient(ellipse at 55% 42%, #0b0906 0%, #040407 55%, #010103 100%); }
+    canvas { display: block; width: 100%; height: 100%; }
+    #controls { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px;
+      padding: 6px; background: rgba(8, 7, 5, .78); border: 1px solid rgba(255, 205, 110, .22); border-radius: 999px;
+      backdrop-filter: blur(10px); z-index: 5; max-width: calc(100% - 24px); overflow-x: auto; }
+    .mode { background: transparent; border: 1px solid transparent; color: rgba(255, 228, 180, .68); padding: 7px 15px;
+      border-radius: 999px; font-family: inherit; font-size: 12px; font-weight: 600; line-height: 1; letter-spacing: .03em; cursor: pointer; white-space: nowrap; }
+    .mode:hover { color: #fff3d8; }
+    .mode[aria-pressed="true"] { background: rgba(255, 192, 80, .18); border-color: rgba(255, 208, 115, .6); color: #fff5e0;
+      box-shadow: 0 0 16px rgba(255, 180, 60, .22); }
+    @media (max-width: 420px) { #controls { bottom: 12px; gap: 2px; padding: 4px; } .mode { padding: 6px 9px; font-size: 11px; } }
+    .mode:focus-visible { outline: 2px solid #ffd27a; outline-offset: 2px; }
+  </style>
+  <script src="../vendor/three-r128.min.js"></script>
+  <script>window.THREE || document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>');</script>
+</head>
+<body>
+  <div id="stage" role="img" aria-label="A bird made of golden stardust flies, dissolves into drifting dust and re-forms as a running fox"></div>
+  <div id="controls" role="group" aria-label="Scenes">
+    <button class="mode" data-mode="2" aria-pressed="true">Bird to fox</button>
+    <button class="mode" data-mode="0" aria-pressed="false">Golden bird</button>
+    <button class="mode" data-mode="1" aria-pressed="false">Running fox</button>
+  </div>
+<script>
+/* Golden stardust bird and fox.
+   Every creature is a cloud of fine additive points, not a mesh: feathers are strands of particles,
+   bodies are dense soft volumes, and a stardust trail is shed from the wing tips and tail.
+   Each particle has a bird position and a fox position; the morph dissolves one into the other. */
+(() => {
+  const stage = document.getElementById('stage');
+  const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, powerPreference: 'high-performance' });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x000000, 0);
+  stage.appendChild(renderer.domElement);
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(34, window.innerWidth / window.innerHeight, 0.1, 100);
+  camera.position.set(0, 0.25, 10.5);
+
+  /* ---------- helpers ---------- */
+  let seed = 7;
+  const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+  const gauss = () => { let u = 0, v = 0; while (!u) u = rnd(); while (!v) v = rnd(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); };
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const GOLD = [[.80, .50, .18], [1.0, .76, .36], [1.0, .90, .66], [1.0, .97, .88]];
+  const gold = k => { const i = Math.min(2, Math.floor(k * 3)), f = k * 3 - i; return GOLD[i].map((c, j) => lerp(c, GOLD[i + 1][j], f)); };
+
+  /* ---------- 1. BIRD: local space, head toward +z, wings along x ---------- */
+  // part codes: 0 body, 1 head, 2 wing, 3 tail
+  const bird = [];
+  const addB = (x, y, z, part, o = {}) => bird.push({ x, y, z, part, side: o.side || 0, s: o.s || 0, b: o.b ?? .6, a: o.a ?? .55, size: o.size ?? 1 });
+
+  // Body: a soft teardrop, denser and brighter towards its core.
+  for (let i = 0; i < 7600; i++) {
+    const u = Math.pow(rnd(), .9), z = -0.85 + u * 1.75;
+    const r = 0.34 * Math.sin(Math.PI * Math.pow(u, .78)) + 0.03;
+    const ang = rnd() * Math.PI * 2, rad = r * Math.pow(rnd(), .45);
+    const surf = rad / r;
+    addB(Math.cos(ang) * rad, Math.sin(ang) * rad * .82 - (u < .35 ? (.35 - u) * .18 : 0), z, 0, { b: .55 + .45 * (1 - surf) * (u > .25 && u < .85 ? 1 : .6), a: .35 + .3 * rnd() });
+  }
+  // Head and beak.
+  for (let i = 0; i < 1900; i++) {
+    const t = rnd() * Math.PI * 2, p = Math.acos(2 * rnd() - 1), r = .16 * Math.cbrt(rnd());
+    addB(Math.sin(p) * Math.cos(t) * r, .2 + Math.cos(p) * r * .9, .98 + Math.sin(p) * Math.sin(t) * r * 1.1, 1, { b: .8 + .2 * rnd(), a: .5 });
+  }
+  for (let i = 0; i < 320; i++) { const u = rnd(), r = (1 - u) * .045; const ang = rnd() * 6.283;
+    addB(Math.cos(ang) * r, .17 - u * .03 + Math.sin(ang) * r * .6, 1.12 + u * .22, 1, { b: .9, a: .6 }); }
+
+  // Wings: a leading-edge arm, a covert field, then individual secondary and primary feathers.
+  const shoulder = [.16, .12, .35];
+  const edge = s => [0.16 + s * 2.55, .12 + Math.sin(s * Math.PI) * .16 + s * .1, .35 - Math.pow(s, 1.25) * .62 + Math.sin(s * Math.PI) * .16];
+  [-1, 1].forEach(side => {
+    // Coverts: dense near the leading edge, thinning towards the trailing edge.
+    for (let i = 0; i < 7600; i++) {
+      const s = Math.pow(rnd(), .85), e = edge(s), chord = (.78 - s * .36), v = Math.pow(rnd(), 1.5);
+      addB(side * e[0] + side * v * .05 * s, e[1] - v * .03 + gauss() * .012, e[2] - v * chord, 2,
+        { side, s, b: .55 + .45 * (1 - v), a: .3 + .38 * Math.pow(1 - v, 2) });
+    }
+    // Secondaries: shorter feathers sweeping back from the inner wing.
+    for (let f = 0; f < 15; f++) {
+      const s0 = .06 + f / 15 * .5, e = edge(s0), chord = .62 - s0 * .32, len = .5 + rnd() * .12;
+      for (let j = 0; j < 170; j++) { const u = rnd(), w = (1 - u * .6) * gauss() * .04;
+        addB(side * (e[0] + u * .12 * s0) + side * w, e[1] - .03 - u * .05, e[2] - chord - u * len + w * .3, 2,
+          { side, s: s0 + u * .05, b: .62 - u * .25, a: .45 - u * .2, size: .9 }); }
+    }
+    // Primaries: long strands fanning out from the outer wing, the look of the reference feathers.
+    for (let f = 0; f < 24; f++) {
+      const k = f / 23, s0 = .5 + k * .5, e = edge(s0), chord = .78 - s0 * .36;
+      const dirA = -0.3 - (1 - k) * 1.15 + (rnd() - .5) * .1; // fan angle: inner feathers point back, outer ones point out
+      const len = .62 + Math.sin(k * Math.PI) * .42 + k * .16 + rnd() * .08;
+      for (let j = 0; j < 150; j++) {
+        const u = Math.pow(rnd(), .8), curve = u * u * .12, w = (1 - u * .75) * gauss() * .034;
+        const dx = Math.cos(dirA) * u * len, dz = Math.sin(dirA) * u * len;
+        addB(side * (e[0] + dx * .9 + w), e[1] - chord * .05 + curve * .4 + u * .1, e[2] - chord * .55 + dz + w, 2,
+          { side, s: Math.min(1.25, s0 + u * .35), b: .78 - u * .4, a: .5 - u * .22, size: .85 + (1 - u) * .3 });
+      }
+    }
+  });
+  // Tail: a fan of feather strands.
+  for (let f = 0; f < 11; f++) {
+    const a = (f / 10 - .5) * 1.0, len = .75 + (1 - Math.abs(f / 10 - .5) * 2) * .25;
+    for (let j = 0; j < 190; j++) { const u = rnd(), w = (1 - u * .6) * gauss() * .02;
+      addB(Math.sin(a) * u * len + w, -.1 - u * .16, -.82 - Math.cos(a) * u * len, 3, { s: u, b: .7 - u * .35, a: .45 - u * .2 }); }
+  }
+  const N = bird.length;
+
+  /* ---------- 2. FOX: world space in profile, nose toward +x, generated to the same count ---------- */
+  // part codes: 0 torso, 1 head/ears, 4 leg, 5 tail
+  const fox = [];
+  const addF = (x, y, z, part, o = {}) => fox.push({ x, y, z, part, leg: o.leg ?? -1, u: o.u || 0, b: o.b ?? .6, a: o.a ?? .5 });
+  const quota = { torso: .30, head: .09, legs: .2, tail: .37, chest: .04 };
+  const n = k => Math.round(N * quota[k]);
+  for (let i = 0; i < n('torso'); i++) { // lean torso, deeper at the chest
+    const u = rnd(), x = 0.95 - u * 1.85, r = .3 * Math.sin(Math.PI * (.12 + u * .8)) + .06 - u * .03;
+    const ang = rnd() * 6.283, rad = r * Math.pow(rnd(), .4) + Math.abs(gauss()) * .025, top = Math.sin(ang) > 0;
+    addF(x, .64 + Math.sin(ang) * rad * (top ? .85 : 1.05 - u * .3) + Math.sin(u * Math.PI) * .05, Math.cos(ang) * rad * .7, 0, { u, b: .5 + .4 * (1 - Math.min(1, rad / r)), a: .32 + .25 * rnd() });
+  }
+  for (let i = 0; i < n('chest'); i++) { // neck joining chest to head
+    const u = rnd(), ang = rnd() * 6.283, r = (.2 - u * .06) * Math.pow(rnd(), .4);
+    addF(.85 + u * .38 + Math.cos(ang) * r * .5, .7 + u * .26 + Math.sin(ang) * r, Math.cos(ang) * r * .7, 0, { u: 0, b: .75, a: .45 }); }
+  const headN = n('head');
+  for (let i = 0; i < headN; i++) {
+    const k = rnd();
+    if (k < .55) { // skull
+      const t = rnd() * 6.283, p = Math.acos(2 * rnd() - 1), r = .22 * Math.cbrt(rnd());
+      addF(1.3 + Math.sin(p) * Math.cos(t) * r, .98 + Math.cos(p) * r * .8, Math.sin(p) * Math.sin(t) * r * .8, 1, { b: .85, a: .5 });
+    } else if (k < .8) { // pointed snout
+      const u = rnd(), r = (1 - u) * .12 + .02, ang = rnd() * 6.283;
+      addF(1.44 + u * .32, .92 - u * .12 + Math.sin(ang) * r * .75, Math.cos(ang) * r * .8, 1, { b: .9, a: .55 });
+    } else { // two tall ears
+      const side = rnd() < .5 ? -1 : 1, u = Math.sqrt(rnd()), w = (1 - u) * .13 * (rnd() - .5) * 2;
+      addF(1.24 - u * .04 + w, 1.12 + u * .3, side * (.1 + u * .02) + gauss() * .015, 1, { b: .95, a: .55 });
+    }
+  }
+  const hips = [[.78, 1], [.78, -1], [-.72, 1], [-.72, -1]];
+  const legN = n('legs');
+  for (let i = 0; i < legN; i++) {
+    const leg = i % 4, [hx, side] = hips[leg], u = rnd(), r = (u > .93 ? 1.25 : 1 - u * .65) * (leg < 2 ? .075 : (u < .4 ? .14 - u * .1 : .09));
+    const ang = rnd() * 6.283;
+    addF(hx + Math.cos(ang) * r, .55 - u * .95, side * .14 + Math.sin(ang) * r * .8, 4, { leg, u, b: .55 + (1 - u) * .2, a: .4 });
+  }
+  // Brush tail: fur strands along an S-curve, the fox's answer to the bird's flight feathers.
+  const tailN = N - fox.length;
+  for (let i = 0; i < tailN; i++) {
+    const u = Math.pow(rnd(), .85), cx = -.8 - u * 1.5, cy = .6 + Math.sin(u * Math.PI * 1.1) * .2 - u * .1;
+    const prof = Math.sin(Math.pow(u, .7) * Math.PI) * .28 + .04, ang = rnd() * 6.283, rad = prof * Math.pow(rnd(), .35) + Math.abs(gauss()) * .03;
+    addF(cx, cy + Math.sin(ang) * rad, Math.cos(ang) * rad * .75, 5, { u, b: u > .85 ? .95 : .5 + .3 * (1 - rad / prof), a: .3 + .3 * rnd() });
+  }
+  // Shuffle so each bird particle maps to a random fox particle: the morph reads as dust re-forming.
+  for (let i = fox.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [fox[i], fox[j]] = [fox[j], fox[i]]; }
+
+  /* ---------- 3. Point buffers ---------- */
+  const tex = (() => { const c = document.createElement('canvas'); c.width = c.height = 64; const x = c.getContext('2d');
+    const g = x.createRadialGradient(32, 32, 0, 32, 32, 32); g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(.25, 'rgba(255,255,255,.75)');
+    g.addColorStop(.6, 'rgba(255,255,255,.18)'); g.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = g; x.fillRect(0, 0, 64, 64); return new THREE.CanvasTexture(c); })();
+  const material = () => new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    uniforms: { uMap: { value: tex }, uScale: { value: window.innerHeight * renderer.getPixelRatio() * .5 }, uTime: { value: 0 } },
+    vertexShader: `attribute float aSize; attribute float aAlpha; attribute vec3 aColor; uniform float uScale; uniform float uTime;
+      varying vec3 vColor; varying float vAlpha;
+      void main(){ vec4 mv = modelViewMatrix * vec4(position,1.0); gl_Position = projectionMatrix * mv;
+        float tw = .75 + .25 * sin(uTime * 3.1 + position.x * 23.0 + position.y * 17.0);
+        gl_PointSize = max(1.0, aSize * uScale / -mv.z); vColor = aColor; vAlpha = aAlpha * tw; }`,
+    fragmentShader: `uniform sampler2D uMap; varying vec3 vColor; varying float vAlpha;
+      void main(){ float a = texture2D(uMap, gl_PointCoord).a * vAlpha; if (a < .004) discard; gl_FragColor = vec4(vColor, a); }` });
+  const scaled = [];
+  function points(count) {
+    const g = new THREE.BufferGeometry();
+    const pos = new Float32Array(count * 3), col = new Float32Array(count * 3), size = new Float32Array(count), alpha = new Float32Array(count);
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('aColor', new THREE.BufferAttribute(col, 3));
+    g.setAttribute('aSize', new THREE.BufferAttribute(size, 1)); g.setAttribute('aAlpha', new THREE.BufferAttribute(alpha, 1));
+    const m = material(); scaled.push(m); const p = new THREE.Points(g, m); p.frustumCulled = false; scene.add(p);
+    return { g, pos, col, size, alpha, m };
+  }
+  const main = points(N);
+  for (let i = 0; i < N; i++) {
+    const b = bird[i], f = fox[i];
+    b.c = gold(clamp(b.b + (rnd() - .5) * .25, 0, 1)); f.c = gold(clamp(f.b + (rnd() - .5) * .25, 0, 1));
+    main.size[i] = (.026 + rnd() * .03) * b.size * (rnd() < .03 ? 2.4 : 1);
+    b.delay = rnd() * .45; b.swirl = rnd() * 6.283; b.lift = (rnd() - .3) * 1.2;
+  }
+
+  // Stardust shed behind the creature: each grain lives a few seconds, drifting back and down.
+  const T = 7000, trail = points(T), tmeta = [];
+  for (let i = 0; i < T; i++) { tmeta.push({ off: rnd() * 4, life: 2.2 + rnd() * 2.4, src: 0, sx: 0, sy: 0, sz: 0, vx: 0, vy: 0, vz: 0, last: 9, cool: rnd() < .45 });
+    trail.size[i] = (.02 + rnd() * .03) * (rnd() < .06 ? 2.5 : 1); }
+  // Defocused bokeh in depth, like the out-of-focus glints in the reference.
+  const K = 420, bokeh = points(K), bmeta = [];
+  for (let i = 0; i < K; i++) {
+    const z = -7 + rnd() * 11, far = z < -2 || z > 2.5;
+    bmeta.push({ x: (rnd() - .5) * 16, y: (rnd() - .5) * 9, z, s: rnd() * 6.283, sp: .05 + rnd() * .12 });
+    bokeh.size[i] = far ? .09 + rnd() * .22 : .02 + rnd() * .04; bokeh.alpha[i] = far ? .05 + rnd() * .1 : .15 + rnd() * .3;
+    const c = rnd() < .7 ? gold(.35 + rnd() * .5) : [.55, .6, .72]; bokeh.col.set(c, i * 3);
+  }
+  // A faint warm glow behind the body.
+  const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, color: 0xffb04a, transparent: true, opacity: .08, blending: THREE.AdditiveBlending, depthWrite: false }));
+  halo.scale.set(3.6, 2.8, 1); halo.material.opacity = .16; scene.add(halo);
+
+  /* ---------- 4. Animation ---------- */
+  const BIRD_YAW = .62, BIRD_PITCH = .05, BIRD_ROLL = .22, BIRD_POS = [.35, -.3, 0];
+  const cy = Math.cos(BIRD_YAW), sy = Math.sin(BIRD_YAW), cp = Math.cos(BIRD_PITCH), sp = Math.sin(BIRD_PITCH), cr = Math.cos(BIRD_ROLL), sr = Math.sin(BIRD_ROLL);
+  const out = new Float32Array(N * 3); // current animated positions, used as trail emitters
+  function birdAt(b, t, o) {
+    let { x, y, z } = b; const w = t * 1.9;
+    if (b.part === 2) { // flap: rotate about the shoulder, more towards the tip, with a lag along the span
+      const a = (.62 + .34 * Math.sin(w - b.s * 1.1)) * (.3 + .7 * Math.min(1, b.s)) * b.side;
+      const dx = x - b.side * shoulder[0], dy = y - shoulder[1], c = Math.cos(a), s = Math.sin(a);
+      x = b.side * shoulder[0] + dx * c - dy * s; y = shoulder[1] + dx * s + dy * c;
+      z += Math.cos(w - b.s * 1.1) * .06 * b.s;
+    } else if (b.part === 3) { y += Math.sin(w - .9) * b.s * .08; }
+    y -= Math.sin(w) * .07;
+    // orient: roll, pitch, then yaw, then place
+    const x0 = x * cr - y * sr, y0 = x * sr + y * cr;
+    const y1 = y0 * cp - z * sp, z1 = y0 * sp + z * cp;
+    o[0] = x0 * cy + z1 * sy + BIRD_POS[0]; o[1] = y1 + BIRD_POS[1]; o[2] = -x0 * sy + z1 * cy + BIRD_POS[2];
+  }
+  function foxAt(f, t, o) {
+    let { x, y, z } = f; const w = t * 7.2;
+    if (f.part === 4) { // gallop: swing each leg from its hip, front pair and back pair out of phase
+      const [hx] = hips[f.leg], ph = (f.leg < 2 ? 0 : Math.PI) + (f.leg % 2) * .5;
+      const a = .55 * Math.sin(w + ph), knee = f.u > .5 ? .5 * Math.max(0, Math.sin(w + ph + 1.2)) * (f.u - .5) * 2 : 0;
+      const dx = x - hx, dy = y - .55, c = Math.cos(a + knee * (f.leg < 2 ? -1 : 1)), s = Math.sin(a + knee * (f.leg < 2 ? -1 : 1));
+      x = hx + dx * c - dy * s; y = .55 + dx * s + dy * c;
+    } else if (f.part === 5) { y += Math.sin(w * .5 - f.u * 2.6) * f.u * .16; z += Math.cos(w * .35 - f.u * 2) * f.u * .1; }
+    else if (f.part === 0) { y += Math.sin(w - x * 1.5) * .025; }
+    y += Math.abs(Math.sin(w)) * .08 - .62;
+    o[0] = (x + .25) * .92; o[1] = y * .92 - .05; o[2] = z * .92;
+  }
+
+  let mode = 2, morph = 0, target = 0, cycleT = 0, paused = false;
+  const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const buttons = document.querySelectorAll('.mode');
+  buttons.forEach(b => b.addEventListener('click', () => { mode = +b.dataset.mode; cycleT = 0; buttons.forEach(x => x.setAttribute('aria-pressed', String(x === b))); if (reduce) still(); }));
+  addEventListener('message', e => { if (e.data === 'stardust:pause' || e.data === 'lattice:pause') paused = true; if (e.data === 'stardust:play' || e.data === 'lattice:play') paused = false; });
+  let px = 0, py = 0, tx = 0, ty = 0;
+  addEventListener('pointermove', e => { tx = (e.clientX / innerWidth - .5); ty = (e.clientY / innerHeight - .5); });
+
+  const A = [0, 0, 0], B = [0, 0, 0];
+  function frame(t, dt) {
+    if (mode === 0) target = 0; else if (mode === 1) target = 1; else { cycleT += dt; const c = cycleT % 16; target = c < 6.5 ? 0 : c < 8 ? (c - 6.5) / 1.5 : c < 14.5 ? 1 : 1 - (c - 14.5) / 1.5; }
+    morph += (target - morph) * Math.min(1, dt * (mode === 2 ? 6 : 1.6));
+    const m = morph, inMorph = m > .002 && m < .998;
+    for (let i = 0; i < N; i++) {
+      const b = bird[i], f = fox[i], i3 = i * 3;
+      let k = clamp((m - b.delay * (1 - m) * 0) , 0, 1);
+      // staggered dissolve: each grain leaves at its own moment
+      k = clamp((m * 1.45 - b.delay), 0, 1); k = ease(k);
+      if (k < 1) birdAt(b, t, A); if (k > 0) foxAt(f, t, B);
+      let x, y, z;
+      if (k <= 0) { x = A[0]; y = A[1]; z = A[2]; } else if (k >= 1) { x = B[0]; y = B[1]; z = B[2]; }
+      else { const s = Math.sin(k * Math.PI), ang = b.swirl + t * .8;
+        x = lerp(A[0], B[0], k) + Math.cos(ang) * s * .9; y = lerp(A[1], B[1], k) + s * b.lift; z = lerp(A[2], B[2], k) + Math.sin(ang) * s * .9; }
+      main.pos[i3] = out[i3] = x; main.pos[i3 + 1] = out[i3 + 1] = y; main.pos[i3 + 2] = out[i3 + 2] = z;
+      const c0 = b.c, c1 = f.c; main.col[i3] = lerp(c0[0], c1[0], k); main.col[i3 + 1] = lerp(c0[1], c1[1], k); main.col[i3 + 2] = lerp(c0[2], c1[2], k);
+      main.alpha[i] = lerp(b.a, f.a, k) * (1 + Math.sin(k * Math.PI) * .4);
+    }
+    // trail: respawn grains from wing tips / tail (bird) or tail and paws (fox), then let them drift
+    const foxish = m > .5;
+    for (let i = 0; i < T; i++) {
+      const q = tmeta[i], age = (t + q.off) % q.life;
+      if (age < q.last) { // respawn
+        let src; for (let tries = 0; tries < 6; tries++) { src = Math.floor(rnd() * N);
+          const p = foxish ? fox[src] : bird[src]; if (foxish ? (p.part === 5 && p.u > .4) || (p.part === 4 && p.u > .8) : (p.part === 2 && p.s > .55) || p.part === 3) break; }
+        q.sx = out[src * 3]; q.sy = out[src * 3 + 1]; q.sz = out[src * 3 + 2];
+        const back = foxish ? [-.55, .02, 0] : [-.32, -.34, .05];
+        q.vx = back[0] + gauss() * .12; q.vy = back[1] + gauss() * .1; q.vz = back[2] + gauss() * .12;
+        const c = q.cool ? [.55 + rnd() * .15, .6 + rnd() * .15, .72] : gold(.25 + rnd() * .6); trail.col.set(c, i * 3);
+      }
+      q.last = age; const life = age / q.life, i3 = i * 3;
+      trail.pos[i3] = q.sx + q.vx * age; trail.pos[i3 + 1] = q.sy + q.vy * age - age * age * .03; trail.pos[i3 + 2] = q.sz + q.vz * age;
+      trail.alpha[i] = Math.sin(Math.min(1, life * 6) * Math.PI / 2) * (1 - life) * (q.cool ? .3 : .5);
+    }
+    for (let i = 0; i < K; i++) { const q = bmeta[i]; bokeh.pos[i * 3] = q.x + Math.sin(t * q.sp + q.s) * .3; bokeh.pos[i * 3 + 1] = q.y + Math.cos(t * q.sp * .8 + q.s) * .2; bokeh.pos[i * 3 + 2] = q.z; }
+    halo.position.set(lerp(BIRD_POS[0], .1, m), lerp(BIRD_POS[1], .15, m), -.6);
+    [main, trail, bokeh].forEach(p => { p.g.attributes.position.needsUpdate = true; p.g.attributes.aColor.needsUpdate = true; p.g.attributes.aAlpha.needsUpdate = true; p.m.uniforms.uTime.value = t; });
+    main.g.attributes.aSize.needsUpdate = false;
+    px += (tx - px) * .04; py += (ty - py) * .04;
+    const fit = Math.min(1.55, Math.max(1, .95 / camera.aspect));
+    camera.position.x = px * 1.2; camera.position.y = .25 - py * .8; camera.position.z = 10.5 * fit; camera.lookAt(0, .1, 0);
+    renderer.render(scene, camera);
+  }
+  [main, trail, bokeh].forEach(p => { p.g.attributes.aSize.needsUpdate = true; });
+
+  addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight);
+    scaled.forEach(m => m.uniforms.uScale.value = innerHeight * renderer.getPixelRatio() * .5); if (reduce) still(); });
+
+  const clock = new THREE.Clock();
+  function still() { const target0 = mode === 1 ? 1 : 0; morph = target0; for (let k = 0; k < 4; k++) frame(1.3 + k * .4, .1); }
+  function loop() { requestAnimationFrame(loop); const dt = Math.min(clock.getDelta(), .05); if (paused || document.hidden || reduce) return; frame(clock.getElapsedTime(), dt); }
+  if (reduce) { mode = 0; buttons.forEach(x => x.setAttribute('aria-pressed', String(x.dataset.mode === '0'))); still(); }
+  loop();
+  window.__stardust = { frameAt: (t, m) => { morph = m; mode = m >= 1 ? 1 : 0; frame(t, 0); } };
+})();
+</script>
+</body>
+</html>
