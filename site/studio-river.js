@@ -29,6 +29,12 @@
   {id:'horse',kind:'video',src:'assets/films/sketchbook-horse.mp4',small:'assets/films/sketchbook-horse-720.mp4',webm:'assets/films/sketchbook-horse.webm',poster:'assets/films/sketchbook-horse.jpg',open:'assets/films/sketchbook-horse.mp4',kicker:'Film · loops seamlessly',title:'A horse that leaves the page.',
    text:'A pencil horse gallops across an open sketchbook, trailing ribbons of warm light across the gutter.',
    kit:{original:false,prompt:'An open sketchbook on a dark wooden desk, a loose graphite drawing of a galloping horse spanning both pages; the drawing comes alive and gallops in place while ribbons of soft golden light and sparks swirl around it. Warm, cosy, 3:2, 15 seconds, seamless loop.'}},
+  {id:'petals',kind:'video',tall:true,src:'assets/films/petal-swirl.mp4',small:'assets/films/petal-swirl-720.mp4',webm:'assets/films/petal-swirl.webm',poster:'assets/films/petal-swirl.jpg',open:'assets/films/petal-swirl.mp4',kicker:'Film · loops seamlessly',title:'Petals in a slow vortex.',
+   text:'Translucent peach and lilac petals spiral around a glowing centre, folding over each other like silk in water.',
+   kit:{original:false,prompt:'Translucent silken petals in peach, blush and lilac spiralling slowly around a softly glowing centre on a pale cream background, layers folding over each other like fabric underwater, dreamy and luminous. Vertical 2:3, 15 seconds, seamless loop.'}},
+  {id:'paperbird',kind:'video',src:'assets/films/paper-bird.mp4',small:'assets/films/paper-bird-720.mp4',webm:'assets/films/paper-bird.webm',poster:'assets/films/paper-bird.jpg',open:'assets/films/paper-bird.mp4',kicker:'Film · loops seamlessly',title:'A bird cut from paper.',
+   text:'A white paper-sculpture bird beats its layered wings while paper curls unfurl beneath it.',
+   kit:{original:false,prompt:'A white paper-craft bird with layered cut-paper feathers flying against an off-white relief background, curled paper scrolls unfurling below, soft studio light and gentle shadows, all white on white. 3:2, 15 seconds, seamless loop.'}},
   {id:'threads',kind:'video',src:'assets/films/light-threads.mp4',small:'assets/films/light-threads-720.mp4',webm:'assets/films/light-threads.webm',poster:'assets/films/light-threads.jpg',open:'assets/films/light-threads.mp4',kicker:'Film · loops seamlessly',title:'Light threads.',
    text:'Points of cyan light swing like a chaotic pendulum, and every path they take stays on the plate until the dark fills with a tangle of glowing string.',
    kit:{original:false,prompt:'A few glowing cyan points swing on invisible strings like a chaotic multi-pendulum on pure black, each leaving a thin luminous trail that never fades, so the paths build into a dense tangle of light. Long exposure look, calm and hypnotic, 3:2, 15 seconds, seamless loop.'}},
@@ -116,7 +122,7 @@
     <div class="riverMedia${it.kind==='video'?' isFilm':''}"></div>
     <div class="riverText"><p class="riverKicker">${esc(it.kicker)}</p><h3>${esc(it.title)}</h3><p>${esc(it.text)}</p>
      <a class="riverOpen" href="${it.open}" target="_blank" rel="noopener">${it.kind==='video'?'Open the film':'Open full screen'} <span aria-hidden="true">↗</span></a>${kitHTML(it)}</div></article>`).join('');
-  intro.after(river);bindKits(river);
+  const anchor=intro.nextElementSibling&&intro.nextElementSibling.classList.contains("aeRelated")?intro.nextElementSibling:intro;anchor.after(river);bindKits(river);
   const fit=()=>{const sb=innerWidth-document.documentElement.clientWidth;river.style.setProperty('--sbw',sb+'px');};fit();addEventListener('resize',fit);
 
   river.querySelectorAll('.riverRow').forEach(el=>{const it=ITEMS.find(x=>x.id===el.dataset.id);const r={el,it,box:el.querySelector('.riverMedia'),m:null,visible:false};rows.push(r);
