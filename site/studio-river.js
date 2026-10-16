@@ -8,11 +8,8 @@
   {id:'whale',kind:'live',wide:true,still:'assets/studies/whale-source.jpg',src:'studies/whale-glide.html?hero',open:'studies/whale-glide.html',kicker:'Live particles · WebGL',title:'Whale, gliding.',
    text:'About 52,000 grains of blue light, sampled from a still of a humpback, cross the page. A wave runs from head to fluke and a wake of dust is left behind in the water.',
    kit:{file:'whale-glide.html',modes:[['glide','Glide across'],['swim','Swim in place']],density:true,original:false,prompt:'A humpback whale made entirely of tiny glowing blue particles, side profile facing right, gliding through a deep black void. Electric-blue stardust outlines the body, flukes and long pectoral fins, with a trail of drifting particles behind the tail and a few soft out-of-focus blue bokeh orbs. Dark, cinematic, highly detailed, 3:2.'}},
-  {id:'lion',kind:'live',still:'assets/studies/lion-source.jpg',src:'studies/lion-phoenix.html?hero',open:'studies/lion-phoenix.html',kicker:'Live particles · WebGL',title:'Lion to phoenix.',
-   text:'A lion of golden dust, sampled from the reference still. The mane goes first, the dust turns through a spiral galaxy and settles as the phoenix from the film. An 8-second loop.',
-   kit:{file:'lion-phoenix.html',modes:[['loop','Lion to phoenix'],['lion','Lion'],['phoenix','Phoenix']],density:true,original:true,prompt:'8-second particle animation to embed in a website. Warm golden particles form a lion’s head, hold, then scatter and reform into a phoenix with wings spread. Dramatic yet elegant luminous motion.'}},
-  {id:'lionfilm',kind:'video',src:'assets/films/lion-phoenix.mp4',small:'assets/films/lion-phoenix-720.mp4',webm:'assets/films/lion-phoenix.webm',poster:'assets/films/lion-phoenix.jpg',open:'assets/films/lion-phoenix.mp4',kicker:'Film · loops seamlessly',title:'Lion to phoenix, the film.',
-   text:'The original film the live study grew from: the lion dissolves into a golden vortex, a flash, and the phoenix opens its wings.',
+  {id:'lionfilm',kind:'video',src:'assets/films/lion-phoenix.mp4',small:'assets/films/lion-phoenix-720.mp4',webm:'assets/films/lion-phoenix.webm',poster:'assets/films/lion-phoenix.jpg',open:'assets/films/lion-phoenix.mp4',kicker:'Film · loops seamlessly',title:'Lion to phoenix.',
+   text:'A lion of golden light dissolves into a spiralling vortex, a flash, and a phoenix opens its wings.',
    kit:{original:true,prompt:'8-second particle animation to embed in a website. Warm golden particles form a lion’s head, hold, then scatter and reform into a phoenix with wings spread. Dramatic yet elegant luminous motion.'}},
   {id:'butterfly',kind:'live',still:'assets/studies/butterfly-source.jpg',src:'studies/butterfly.html?hero',open:'studies/butterfly.html',kicker:'Live particles · WebGL',title:'Glitter butterfly.',
    text:'Grains sampled from a frame of the butterfly film, wings fully open. Each grain turns about the body, so the wings fold up out of the page and open again as it drifts, shedding glitter.',
@@ -32,9 +29,7 @@
   {id:'tree',kind:'video',src:'assets/films/particle-tree.mp4',small:'assets/films/particle-tree-720.mp4',webm:'assets/films/particle-tree.webm',poster:'assets/films/particle-tree.jpg',open:'assets/films/particle-tree.mp4',kicker:'Film · loops seamlessly',title:'A seed becomes a tree.',
    text:'A golden seed of light sprouts, its stem winds upward and branches out into a tree of glowing particles with green buds at every tip.',
    kit:{original:false,prompt:'A single seed made of golden glowing particles sprouts on black, a winding stem grows upward and branches into a full tree of fine golden light, small green glowing buds appear at the tips. Elegant, magical, vertical 2:3, 15 seconds, seamless loop.'}},
-  {id:'stardust',kind:'live',still:'assets/studies/stardust-still.jpg',src:'studies/stardust-bird-fox.html?hero',open:'studies/stardust-bird-fox.html',kicker:'Live particles · WebGL',title:'Stardust: bird to fox.',
-   text:'Golden dust settles over animated models of a stork in flight and a running fox; every few seconds it lets go and re-forms as the other animal.',
-   kit:{file:'stardust-bird-fox.html',modes:[['loop','Bird to fox'],['bird','Golden bird'],['fox','Running fox']],density:false,original:false,prompt:'Golden stardust forms a stork in flight with its wings raised in a V, shedding embers, then lets go and re-forms as a running fox, and back again. Additive gold particles on black, soft bokeh, elegant and calm.'}}];
+];
 
  const M=window.AtlasMotion||{lite:false,saveData:false,sources:s=>`<source src="${s.webm}" type="video/webm"><source src="${s.src}" type="video/mp4">`,setFull(){}};
  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');

@@ -330,6 +330,7 @@ The Animation studio header now has a film behind it, like the home hero: **Biol
     - They're upscaled from the 1168 × 784 originals with Real-ESRGAN (`realesr-general-x4v3`, half-size frames, near-black tiles skipped) to 1920 px, with seamless 15 s loops.
     - Bitrates are capped (H.264 ≤ 6 Mbit/s; VP9 3 Mbit/s full size, 1.6 Mbit/s for the 1280px cuts), which keeps fine glowing detail from ballooning WebM sizes.
     - The same four also join the Animation studio's "Live studies & films" strip.
+- **Strip and home hero cleanup:** the live lion-to-phoenix and stardust bird-to-fox studies are gone from the strip and the home hero picker. The lion film is the stronger version, and the bird study fell short of its reference. Their study pages stay in `site/studies/` for direct links.
   - Each uses a 1280px `-720` WebM/MP4 cut. Tool pages (UI components, icons, playground, assets, projects, creations, sources) stay without one.
 
 ### Channel brand styles: Kitchen noir and Kitchen paper (`site/dataviz/styles.js`)

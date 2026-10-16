@@ -26,8 +26,6 @@ window.AtlasMotion=window.AtlasMotion||(()=>{
  const SCENES_ALL=[
   {id:'jelly',name:'Jellyfish',label:'Jellyfish, film',kind:'video',src:'assets/films/jellyfish.mp4',small:'assets/films/jellyfish-720.mp4',webm:'assets/films/jellyfish.webm',poster:'assets/films/jellyfish.jpg',tint:['#f3eaff','#c7b6ff','#ffb98a','#e9d8ff'],eye:'#d6c4ff'},
   {id:'lionfilm',name:'Lion to phoenix',label:'Lion to phoenix, film',kind:'video',src:'assets/films/lion-phoenix.mp4',small:'assets/films/lion-phoenix-720.mp4',webm:'assets/films/lion-phoenix.webm',poster:'assets/films/lion-phoenix.jpg'},
-  {id:'lion',name:'Lion to phoenix · live',label:'Lion to phoenix, live particles',kind:'live',src:'studies/lion-phoenix.html?hero'},
-  {id:'stardust',name:'Bird to fox',label:'Stardust bird to fox, live particles',kind:'live',src:'studies/stardust-bird-fox.html?hero'},
   {id:'whale',name:'Whale',label:'Whale gliding, live particles',kind:'live',src:'studies/whale-glide.html?hero',tint:['#e3f0ff','#6fb0ff','#2f6dff','#a9d4ff'],eye:'#8fc2ff'},
   {id:'butterfly',name:'Butterfly',label:'Glitter butterfly, live particles',kind:'live',src:'studies/butterfly.html?hero',tint:['#fffaf0','#f3e2c0','#d9b98a','#fff1d8'],eye:'#f0dcb4'},
   {id:'genesis',name:'Genesis',label:'Genesis, the atlas film in four plates',kind:'genesis'}];
