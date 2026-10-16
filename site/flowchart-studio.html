@@ -27,7 +27,7 @@ header{grid-column:1/-1;display:flex;align-items:center;gap:16px;padding:12px ma
 .sec h2 small{font:500 11px Inter;letter-spacing:0;text-transform:none;color:var(--mute)}
 label.field{display:grid;gap:5px;font-size:12.5px;color:var(--mute)}
 input[type=text],select{min-height:36px;border:1px solid var(--hair);border-radius:9px;padding:0 10px;background:var(--panel);color:var(--ink)}
-textarea{font-variant-ligatures:none;width:100%;min-height:300px;resize:vertical;border:1px solid var(--hair);border-radius:12px;padding:12px 14px;background:#FBFBFD;font:12.5px/1.65 'JetBrains Mono',ui-monospace,monospace;tab-size:2;white-space:pre;overflow:auto;color:#262A38}
+textarea{font-variant-ligatures:none;font-feature-settings:"calt" 0,"liga" 0;width:100%;min-height:300px;resize:vertical;border:1px solid var(--hair);border-radius:12px;padding:12px 14px;background:#FBFBFD;font:12.5px/1.65 'JetBrains Mono',ui-monospace,monospace;tab-size:2;white-space:pre;overflow:auto;color:#262A38}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .seg{display:inline-flex;padding:3px;border-radius:10px;background:var(--soft);border:1px solid var(--hair)}
 .seg button{border:0;background:none;min-height:30px;padding:0 11px;border-radius:7px;font-size:12.5px;font-weight:500;color:var(--mute)}
@@ -71,6 +71,7 @@ details.help summary::before{content:'+ ';}details.help[open] summary::before{co
  <header>
   <div class="brand"><a href="atlas.html#systems" aria-label="Back to the Visual & Motion Atlas">← Atlas</a><h1>Flowchart studio</h1></div>
   <div class="exports" role="group" aria-label="Export">
+   <a class="btn" href="chart-styles.html" style="text-decoration:none">Chart styles</a>
    <button class="btn" id="exSvg" title="Download SVG">SVG <span>file</span></button>
    <button class="btn" id="exPng" title="Download PNG at 2×">PNG <span>2×</span></button>
    <button class="btn" id="exCopy" title="Copy SVG markup">Copy <span>SVG</span></button>

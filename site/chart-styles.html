@@ -1,0 +1,184 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Chart style guides · Visual & Motion Atlas</title>
+<meta name="description" content="Seventeen chart style guides: validated colour palettes, type and mark specs, a dashboard and thirteen chart forms in each style, ready to copy or download.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap">
+<style>
+:root{--bg:#F4F5F8;--panel:#FFFFFF;--ink:#1C1F2A;--mute:#626879;--hair:#E4E7EE;--soft:#F7F8FB;--accent:#5B2DFF;--shadow:0 1px 2px rgba(20,24,40,.04),0 8px 24px -12px rgba(20,24,40,.12);color-scheme:light}
+*{box-sizing:border-box}html{scroll-padding-top:120px}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit}button{font:inherit;color:inherit;cursor:pointer}
+header.top{position:sticky;top:0;z-index:5;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--hair)}
+.bar{display:flex;align-items:center;gap:16px;padding:10px max(18px,env(safe-area-inset-right)) 10px max(18px,env(safe-area-inset-left))}
+.brand{display:flex;align-items:baseline;gap:12px;min-width:0}
+.brand a{font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);text-decoration:none;white-space:nowrap}
+.brand h1{margin:0;font:500 26px/1 'Cormorant Garamond',Georgia,serif;font-style:italic;white-space:nowrap}
+.acts{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.btn{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 13px;border-radius:10px;border:1px solid var(--hair);background:var(--panel);font-weight:500;font-size:13px;text-decoration:none;transition:border-color .15s,background .15s}
+.btn:hover{border-color:#CBD0DB;background:var(--soft)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 6px 16px -8px var(--accent)}.btn.primary:hover{background:#4A1FF0}
+.btn:focus-visible,.chip:focus-visible,[data-tip]:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.styles{display:flex;gap:6px;overflow-x:auto;padding:8px max(18px,env(safe-area-inset-left)) 12px;scrollbar-width:thin;align-items:center}
+.styles .lbl{flex:none;font:600 10.5px Inter;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);padding:0 6px 0 2px}
+.styles .lbl:not(:first-child){margin-left:10px;padding-left:14px;border-left:1px solid var(--hair)}
+.chip{flex:none;display:inline-flex;align-items:center;gap:8px;min-height:36px;padding:0 12px 0 6px;border-radius:999px;border:1px solid var(--hair);background:var(--panel);font-size:12.5px;font-weight:500;white-space:nowrap}
+.chip[aria-pressed=true]{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+.sw{width:24px;height:24px;border-radius:50%;display:grid;grid-template-columns:1fr 1fr;overflow:hidden;border:1px solid rgba(0,0,0,.08);flex:none}
+main{max-width:1240px;margin:0 auto;padding:40px max(20px,env(safe-area-inset-left)) 80px max(20px,env(safe-area-inset-right))}
+.intro{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:40px;align-items:end;margin-bottom:28px}
+.kicker{margin:0 0 8px;font:600 11px/1 Inter;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.intro h2{margin:0;font:500 clamp(40px,6vw,68px)/1 'Cormorant Garamond',Georgia,serif;letter-spacing:-.01em}
+.intro p{margin:12px 0 0;max-width:60ch;color:#3B4050}
+.intro .suits{font-size:13.5px;color:var(--mute)}
+nav.toc{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;margin:6px 0 34px;padding-bottom:14px;border-bottom:1px solid var(--hair)}
+nav.toc a{color:var(--mute);text-decoration:none}nav.toc a:hover{color:var(--ink)}
+h3.sec{margin:46px 0 14px;font:600 12px/1 Inter;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+h3.sec small{font:400 13px Inter;letter-spacing:0;text-transform:none}
+.panel{background:var(--panel);border:1px solid var(--hair);border-radius:16px;padding:20px;box-shadow:var(--shadow)}
+.pal{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:14px}
+.pal h4{margin:0 0 10px;font-size:13.5px}.pal p{margin:8px 0 0;font-size:12.5px;color:var(--mute)}
+.swatches{display:flex;gap:6px}.swatches div{flex:1;min-width:0}
+.swatches span{display:block;height:44px;border-radius:8px;border:1px solid rgba(0,0,0,.06)}
+.swatches code{display:block;margin-top:5px;font:10.5px 'JetBrains Mono',monospace;letter-spacing:-.02em;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.swatches b{display:block;font:600 10.5px Inter;color:var(--ink)}
+.ramp{display:flex;border-radius:8px;overflow:hidden;height:30px}.ramp span{flex:1}
+.checks{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.checks span{font:500 11.5px Inter;padding:3px 9px;border-radius:999px;background:#EAF7EF;color:#17633A}.checks span.w{background:#FFF4E2;color:#8A5300}
+table.spec{width:100%;border-collapse:collapse;font-size:13.5px}table.spec th,table.spec td{text-align:left;padding:9px 12px;border-bottom:1px solid #EEF0F4;vertical-align:top}table.spec th{font-size:11.5px;color:var(--mute);font-weight:600}
+table.spec td:first-child{white-space:nowrap;color:var(--mute)}
+.stage{border-radius:20px;padding:20px;overflow:hidden}.stage.dark{color:#E9ECF3}.stage.dark .cap p,.stage.dark details.tbl summary{color:#A3ABBD}.stage.dark .btn{background:#1B1F2A;border-color:#30364A;color:#E9ECF3}.stage.dark details.tbl table{background:#151924;border-color:#30364A;color:#E9ECF3}.stage.dark details.tbl th{color:#A3ABBD}.stage.dark details.tbl th,.stage.dark details.tbl td{border-color:#262B3A}
+.dash{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.dash .wide{grid-column:1/-1}
+.lib{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+.card{display:grid;gap:10px;min-width:0}
+.fig{position:relative;border-radius:var(--cr,14px);overflow:hidden;line-height:0;box-shadow:var(--cs,var(--shadow));border:var(--cb,1px solid var(--hair))}
+.fig svg{width:100%;height:auto;display:block}
+.cap{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+.cap b{font-size:14px}.cap p{margin:2px 0 0;font-size:12.5px;color:var(--mute);max-width:52ch}
+.cap .btn{min-height:30px;font-size:12px;padding:0 10px;flex:none}
+details.tbl summary{cursor:pointer;font-size:12.5px;color:var(--mute)}
+details.tbl table{width:100%;border-collapse:collapse;margin-top:8px;font-size:12.5px;font-variant-numeric:tabular-nums;background:var(--panel);border:1px solid var(--hair);border-radius:10px;overflow:hidden}
+details.tbl th,details.tbl td{padding:6px 10px;border-bottom:1px solid #EEF0F4;text-align:left}details.tbl th{color:var(--mute);font-weight:600;font-size:11.5px}
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:16px}.rules ul{margin:8px 0 0;padding-left:18px}.rules li{margin:5px 0;font-size:14px}
+.tip{position:fixed;z-index:20;pointer-events:none;min-width:150px;max-width:260px;padding:10px 12px;border-radius:10px;background:#16181F;color:#F4F5F8;font-size:12.5px;line-height:1.45;box-shadow:0 12px 30px -10px rgba(0,0,0,.4);opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s}
+.tip.on{opacity:1;transform:none}.tip .t{color:#A9AFBE;font-size:11.5px;margin-bottom:4px}.tip .r{display:flex;align-items:center;gap:8px}.tip .r i{width:12px;height:2.5px;border-radius:2px;flex:none}.tip .r b{font-weight:600}.tip .r span{color:#A9AFBE}
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);opacity:0;padding:10px 16px;border-radius:10px;background:var(--ink);color:#fff;font-size:13px;transition:opacity .2s,transform .2s;pointer-events:none;z-index:30}.toast.on{opacity:1;transform:translate(-50%,0)}
+@media (max-width:960px){.intro,.rules{grid-template-columns:1fr}.lib,.dash{grid-template-columns:1fr}.brand h1{font-size:22px}.bar{flex-wrap:wrap}.acts{margin-left:0;width:100%;justify-content:flex-start}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head>
+<body>
+<header class="top">
+ <div class="bar">
+  <div class="brand"><a href="atlas.html#systems" aria-label="Back to the Visual & Motion Atlas">← Atlas</a><h1>Chart style guides</h1></div>
+  <div class="acts">
+   <a class="btn" href="flowchart-studio.html">Flowchart studio</a>
+   <button class="btn" id="exJson" type="button">Tokens JSON</button>
+   <button class="btn" id="exCss" type="button">CSS variables</button>
+   <button class="btn primary" id="exGuide" type="button">Download this guide</button>
+  </div>
+ </div>
+ <div class="styles" id="styles" role="group" aria-label="Style"></div>
+</header>
+<main id="guide" aria-live="polite"></main>
+<div class="tip" id="tip" aria-hidden="true"></div>
+<div class="toast" id="toast" role="status"></div>
+<script src="dataviz/styles.js"></script>
+<script src="dataviz/charts.js"></script>
+<script>
+'use strict';
+(()=>{
+const $=id=>document.getElementById(id),esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const store={get(k){try{return localStorage.getItem('csg:'+k);}catch{return null;}},set(k,v){try{localStorage.setItem('csg:'+k,v);}catch{}}};
+const toast=m=>{const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),1800);};
+let style=(location.hash.match(/s=([a-z]+)/)||[])[1]||store.get('style')||'workflow';if(!DVStyles.some(s=>s.id===style))style='workflow';
+const rendered=new Map();
+
+/* style picker */
+const chip=s=>`<button class="chip" type="button" data-style="${s.id}" aria-pressed="${s.id===style}" title="${esc(s.kicker)}"><span class="sw">${s.t.cat.slice(0,4).map(c=>`<i style="background:${c}"></i>`).join('')}</span>${esc(s.name)}</button>`;
+$('styles').innerHTML=`<span class="lbl">From your board</span>${DVStyles.filter(s=>s.board).map(chip).join('')}<span class="lbl">Researched</span>${DVStyles.filter(s=>!s.board).map(chip).join('')}`;
+$('styles').onclick=e=>{const b=e.target.closest('[data-style]');if(!b)return;style=b.dataset.style;store.set('style',style);history.replaceState(null,'','#s='+style);
+ $('styles').querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',String(c===b)));build();scrollTo({top:0,behavior:'instant'});};
+
+/* page chrome per style: the stage behind the charts and the card frame */
+function frameVars(s){const t=s.t;const r=Math.min(t.radius,22);
+ const cs=t.neu?'8px 8px 18px #B9C2D0,-8px -8px 18px #FFFFFF':t.hardShadow?'5px 5px 0 #000':t.glow?'0 24px 48px -24px rgba(0,0,0,.6)':t.softShadow?'0 10px 30px -14px rgba(30,30,60,.25)':t.id==='tufte'||t.id==='editorial'||t.id==='newsroom'?'none':'0 1px 2px rgba(20,24,40,.05)';
+ const cb=t.neu||t.glow||t.frost||t.clay?'0':t.id==='brutal'?'2px solid #000':t.id==='blueprint'?'1px solid rgba(241,246,255,.35)':'1px solid '+(t.dark?'#2A2A2A':'rgba(20,24,40,.08)');
+ const stage=t.neu?t.bg:t.dark?(t.id==='blueprint'?'#0B2A4E':t.id==='glass'?'#070A12':'#000000'):t.frost?'linear-gradient(135deg,#D6F0E6,#F3E2EA 55%,#E2DDF7)':t.clay?'linear-gradient(135deg,#FBE5DC,#F2E4F5)':t.bg;
+ return {cr:r+'px',cs,cb,stage};}
+
+/* guide */
+function chartCard(kind,s,wide,pre=''){const key=pre+kind+(wide?'-w':'');const r=DVCharts.render(kind,s,{width:wide?1080:560});rendered.set(key,r);const tb=r.table;
+ return `<article class="card${wide?' wide':''}" id="c-${key}"><div class="fig" data-k="${key}">${r.svg}</div>
+  <div class="cap"><div><b>${esc(r.name)}</b><p>${esc(r.note)}</p></div><button class="btn" type="button" data-copy="${key}">Copy SVG</button></div>
+  <details class="tbl"><summary>Data table</summary><table><thead><tr>${tb.head.map(h=>`<th scope="col">${esc(h)}</th>`).join('')}</tr></thead><tbody>${tb.rows.map(row=>`<tr>${row.map(c=>`<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></details></article>`;}
+function guideHTML(s,forExport){const t=s.t,fv=frameVars(s),ch=t.check||{};const fam=f=>f.split(',')[0].replace(/'/g,'');
+ const sw=(c,i,lab)=>`<div><span style="background:${c}"></span><b>${lab||'Slot '+(i+1)}</b><code>${c}</code></div>`;
+ const styleNotes={workflow:'Cards sit on a dotted canvas with soft shadows; the first slot (violet) is the accent for the one series that matters.',neu:'Surfaces are moulded from the background: raise marks with a paired light and shade, never a border. Keep series to three.',frost:'Charts sit on milky glass over a soft wash; area fills fade to nothing, lines curve gently.',calm:'Sage leads, warm neutrals follow. Generous radius and quiet shadows; let whitespace do the separating.',lilac:'Violet carries the primary series; titles take the serif display face, numbers stay in Inter.',clay:'Pastel pillows with a top light: keep marks few and chunky, rounded data ends, warm blurred shadows.',editorial:'The headline states the finding; a red tag and rule sit top-left; a source line closes every chart.',tufte:'No grid, range-frame axes, direct labels, a single quiet accent. Erase anything that is not data.',newsroom:'Everything grey except the one thing the story is about; seven colours is the hard ceiling.',saas:'Token-driven: categorical order fixed across the product, current period in colour, comparison in grey.',mono:'Black, white and hairlines; one blue for the live state; mono numerals.',sketch:'A hand-drawn wobble signals a working draft; keep values in labels so nothing depends on the wobble.',pastel:'Tinted fills with darker same-hue edges; friendly and legible.',blueprint:'White hairlines on Prussian blue, mono capitals set like dimensions, a two-level grid.',glass:'A period style: neon series on a deep ground with soft glow. Use knowingly.',brutal:'Thick black outlines and a hard offset shadow. Adjacent hues sit in the 6–8 CVD floor band, so labels and gaps are mandatory here.',riso:'Two or three spot inks overprinted on warm paper with grain and a hair of misregistration.'};
+ return `${forExport?'':''}<section class="intro"><div><p class="kicker">${esc(s.kicker)}${s.board?' · from your board':''}</p><h2>${esc(s.name)}</h2><p>${esc(s.blurb)}</p></div><div><p class="suits"><b>Suits</b> · ${esc(s.suits)}</p><p class="suits">${esc(styleNotes[s.id]||'')}</p></div></section>
+ <nav class="toc" aria-label="On this page"><a href="#palette">Palette</a><a href="#type">Type &amp; marks</a><a href="#dashboard">Dashboard</a><a href="#library">Chart library</a><a href="#rules">Rules</a></nav>
+ <h3 class="sec" id="palette">Palette <small>computed, then validated, never eyeballed</small></h3>
+ <div class="pal">
+  <div class="panel"><h4>Categorical · fixed order</h4><div class="swatches">${t.cat.map((c,i)=>sw(c,i)).join('')}</div>
+   <div class="checks"><span>Lightness band ✓</span><span>Chroma floor ✓</span><span class="${ch.cvdState==='floor'?'w':''}">Colour-blind ΔE ${ch.cvd}${ch.cvdState==='floor'?' · floor band: direct labels required':' ✓'}</span><span>Normal ΔE ${ch.normal} ✓</span><span>First three distinct in every pair ✓</span><span class="${ch.contrast==='relief'?'w':''}">${ch.contrast==='relief'?'Some slots under 3:1 · labels + table required':'Contrast 3:1 ✓'}</span></div>
+   <p>Assign in this order and let colour follow the entity: YouTube is always slot 1. A sixth series folds into “Other”.</p></div>
+  <div class="panel"><h4>Sequential · one hue, light to dark</h4><div class="ramp">${t.seq.map(c=>`<span style="background:${c}" title="${c}"></span>`).join('')}</div><div class="swatches" style="margin-top:6px">${t.seq.map(c=>`<div><code>${c}</code></div>`).join('')}</div><p>For magnitude: heatmaps, ordered stages, choropleths. Monotone lightness, one hue, pale end still clears the surface.</p></div>
+  <div class="panel"><h4>Diverging · two poles, neutral middle</h4><div class="ramp">${t.div.map(c=>`<span style="background:${c}" title="${c}"></span>`).join('')}</div><div class="swatches" style="margin-top:6px">${t.div.map(c=>`<div><code>${c}</code></div>`).join('')}</div><p>For values either side of a meaningful zero. The middle is grey and means “nothing”.</p></div>
+  <div class="panel"><h4>Status · reserved</h4><div class="swatches">${sw(t.good,0,'Good')}${sw(t.dark?'#FBBF24':'#D97706',0,'Warning')}${sw(t.bad,0,'Critical')}</div><p>Only for state, always with an icon or sign (▲ ▼ ✓ !), never reused as a series colour.</p></div>
+  <div class="panel"><h4>Surfaces &amp; ink</h4><div class="swatches">${sw(t.bg,0,'Canvas')}${sw(t.surface.startsWith('#')?t.surface:'rgba',0,'Card')}${sw(t.ink,0,'Ink')}${sw(t.mute,0,'Muted')}${sw(t.grid&&t.grid.startsWith('#')?t.grid:'—',0,'Grid')}</div><p>Text always wears ink tokens, never a series colour.</p></div>
+ </div>
+ <h3 class="sec" id="type">Type &amp; marks</h3>
+ <div class="panel"><table class="spec"><tbody>
+  <tr><td>Chart title</td><td>${fam(t.serifTitle||t.id==='tufte'||t.id==='editorial'?t.head:t.font)}, ${t.serifTitle||t.id==='tufte'||t.id==='editorial'?19:16.5}px, 600. States the finding, not the topic.</td></tr>
+  <tr><td>Subtitle &amp; labels</td><td>${fam(t.font)}, 12px; axis ticks ${fam(t.mono)} 10.5px with tabular figures${t.upper?'; capitals throughout':''}.</td></tr>
+  <tr><td>Hero &amp; tile values</td><td>${fam(t.font)}, 26px+, 600, proportional figures. One hero number per view.</td></tr>
+  <tr><td>Bars &amp; columns</td><td>At most 24px thick, ${C_r(t)}px rounded data end, square at the baseline, 2px surface gap between touching fills${t.id==='brutal'?'; 2px black outline and hard 3px shadow are this style’s signature':''}.</td></tr>
+  <tr><td>Lines &amp; markers</td><td>2px${t.glow?' with a soft glow':''}${t.rough?', drawn with a hand wobble':''}; end markers r 4.5 with a 2px surface ring.</td></tr>
+  <tr><td>Area</td><td>${t.glow||t.frost?'Gradient from about 38% to 0':'A 10% wash of the series hue'} under the line.</td></tr>
+  <tr><td>Grid &amp; axes</td><td>${t.rangeFrame?'No grid; a range-frame axis spans only the data':'Solid 1px hairlines one step off the surface, never dashed'}.</td></tr>
+  <tr><td>Legend &amp; labels</td><td>A legend for two or more series, plus direct labels on the endpoint, the extreme or the one series that matters. Never a number on every point.</td></tr>
+  <tr><td>Interaction</td><td>Crosshair and one readout for every series on lines and areas; a per-mark readout on bars, cells and ribbons; every value also in a data table.</td></tr>
+ </tbody></table></div>
+ <h3 class="sec" id="dashboard">Dashboard <small>KPI row, then trend, then breakdown, then detail</small></h3>
+ <div class="stage${t.dark?' dark':''}" style="background:${fv.stage}"><div class="dash">${chartCard('kpi',s,true,'d-')}${chartCard('line',s,false,'d-')}${chartCard('columns',s,false,'d-')}${chartCard('table',s,false,'d-')}${chartCard('donut',s,false,'d-')}</div></div>
+ <h3 class="sec" id="library">Chart library <small>13 forms, one story, one style</small></h3>
+ <div class="stage${t.dark?' dark':''}" style="background:${fv.stage}"><div class="lib">${DVCharts.kinds.filter(k=>k.id!=='kpi').map(k=>chartCard(k.id,s)).join('')}</div></div>
+ <h3 class="sec" id="rules">Rules</h3>
+ <div class="rules"><div class="panel"><b>Do</b><ul><li>Pick the form from the data’s job first; colour comes last.</li><li>Keep categorical hues in this order, and let colour follow the entity through every filter.</li><li>Title with the finding; label the one thing that matters.</li><li>Give every chart a data table and a hover readout.</li><li>Use status colours only for state, with an icon or sign.</li></ul></div>
+ <div class="panel"><b>Don’t</b><ul><li>Plot two y-axes on one chart; split it or index to 100.</li><li>Use more than five slices, or a donut for close values.</li><li>Colour text with a series colour.</li><li>Draw dashed gridlines or borders around marks${t.id==='brutal'?' (this style’s outline is the one deliberate exception)':''}.</li><li>Generate a sixth hue; fold the tail into “Other”.</li></ul></div></div>`;}
+function C_r(t){return t.id==='brutal'||t.id==='blueprint'||t.id==='editorial'||t.id==='tufte'?0:t.clay?7:4;}
+
+function build(){const s=DVStyle(style);DVFonts(s);rendered.clear();const fv=frameVars(s);
+ $('guide').style.setProperty('--cr',fv.cr);$('guide').style.setProperty('--cs',fv.cs);$('guide').style.setProperty('--cb',fv.cb);
+ $('guide').innerHTML=guideHTML(s);document.title=s.name+' · Chart style guides';
+ $('styles').querySelector('[aria-pressed=true]')?.scrollIntoView({block:'nearest',inline:'center'});}
+
+/* tooltips and crosshair, shared */
+const tip=$('tip');let cur=null;
+function show(el,x,y){const fig=el.closest('.fig');if(!fig)return;const r=rendered.get(fig.dataset.k);const d=r&&r.tips[+el.dataset.tip];if(!d)return;
+ tip.replaceChildren();const ti=document.createElement('div');ti.className='t';ti.textContent=d.title;tip.append(ti);
+ d.rows.forEach(([c,v,l])=>{const row=document.createElement('div');row.className='r';if(c){const i=document.createElement('i');i.style.background=c;row.append(i);}const b=document.createElement('b');b.textContent=v;row.append(b);if(l){const sp=document.createElement('span');sp.textContent=l;row.append(sp);}tip.append(row);});
+ const w=tip.offsetWidth||180,h=tip.offsetHeight||60;tip.style.left=Math.min(innerWidth-w-12,x+14)+'px';tip.style.top=Math.max(8,y-h-12)+'px';tip.classList.add('on');
+ const g=el.closest('.xh'),svg=el.ownerSVGElement;svg.querySelector('.xhl')?.remove();if(g){const L=document.createElementNS('http://www.w3.org/2000/svg','line');L.setAttribute('class','xhl');L.setAttribute('x1',g.dataset.x);L.setAttribute('x2',g.dataset.x);L.setAttribute('y1',g.dataset.y0);L.setAttribute('y2',g.dataset.y1);L.setAttribute('stroke',DVStyle(style).t.mute);L.setAttribute('stroke-width','1');L.setAttribute('pointer-events','none');svg.append(L);}
+ cur=el;}
+function hide(){tip.classList.remove('on');if(cur){cur.ownerSVGElement?.querySelector('.xhl')?.remove();cur=null;}}
+document.addEventListener('pointermove',e=>{const el=e.target.closest?.('[data-tip]');if(el)show(el,e.clientX,e.clientY);else if(cur)hide();});
+document.addEventListener('focusin',e=>{const el=e.target.closest?.('[data-tip]');if(el){const b=el.getBoundingClientRect();show(el,b.left+b.width/2,b.top);}});
+document.addEventListener('focusout',hide);addEventListener('scroll',hide,{passive:true});
+
+/* copy & exports */
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-copy]');if(!b)return;const r=rendered.get(b.dataset.copy);try{await navigator.clipboard.writeText(r.svg);toast('SVG copied');}catch{toast('Copy was blocked by the browser');}});
+const download=(name,data,type)=>{const a=document.createElement('a'),u=URL.createObjectURL(new Blob([data],{type}));a.href=u;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);};
+const tokens=s=>({style:s.id,name:s.name,surface:{canvas:s.t.bg,card:s.t.surface,ink:s.t.ink,muted:s.t.mute,grid:s.t.grid},categorical:s.t.cat,sequential:s.t.seq,diverging:s.t.div,status:{good:s.t.good,warning:s.t.dark?'#FBBF24':'#D97706',critical:s.t.bad},
+ type:{body:s.t.font,title:s.t.serifTitle||['tufte','editorial'].includes(s.t.id)?s.t.head:s.t.font,numbers:s.t.mono},marks:{barMaxThickness:24,barEndRadius:C_r(s.t),line:2,markerRadius:4.5,surfaceGap:2,areaWash:s.t.glow||s.t.frost?'gradient .38→0':.1},validation:s.t.check});
+$('exJson').onclick=()=>{const s=DVStyle(style);download(`chart-tokens-${s.id}.json`,JSON.stringify(tokens(s),null,2),'application/json');toast('Tokens downloaded');};
+$('exCss').onclick=async()=>{const s=DVStyle(style),k=tokens(s);const css=`/* ${s.name} chart tokens */\n:root{\n  --chart-canvas:${k.surface.canvas};\n  --chart-card:${k.surface.card};\n  --chart-ink:${k.surface.ink};\n  --chart-muted:${k.surface.muted};\n  --chart-grid:${k.surface.grid};\n${k.categorical.map((c,i)=>`  --chart-cat-${i+1}:${c};`).join('\n')}\n${k.sequential.map((c,i)=>`  --chart-seq-${i+1}:${c};`).join('\n')}\n${k.diverging.map((c,i)=>`  --chart-div-${i+1}:${c};`).join('\n')}\n  --chart-good:${k.status.good};\n  --chart-warning:${k.status.warning};\n  --chart-critical:${k.status.critical};\n  --chart-font:${k.type.body};\n  --chart-title-font:${k.type.title};\n  --chart-bar-radius:${k.marks.barEndRadius}px;\n}\n`;
+ try{await navigator.clipboard.writeText(css);toast('CSS variables copied');}catch{download(`chart-tokens-${s.id}.css`,css,'text/css');toast('CSS downloaded');}};
+const fontCache=new Map();
+async function fontCSS(s){if(fontCache.has(s.id))return fontCache.get(s.id);const p=(async()=>{try{const css=await fetch('https://fonts.googleapis.com/css2?'+s.fonts.map(f=>'family='+f).join('&')+'&display=swap').then(r=>r.text());let out='';
+ for(const m of css.matchAll(/\/\*\s*latin\s*\*\/\s*@font-face\s*\{([^}]*)\}/g)){const u=(m[1].match(/url\(([^)]+)\)/)||[])[1];if(!u)continue;const buf=new Uint8Array(await fetch(u).then(r=>r.arrayBuffer()));let bin='';for(let i=0;i<buf.length;i+=0x8000)bin+=String.fromCharCode.apply(null,buf.subarray(i,i+0x8000));out+=`@font-face{${m[1].replace(/src:[^;]+;/,`src:url(data:font/woff2;base64,${btoa(bin)}) format('woff2');`)}}`;}return out;}catch{return '';}})();fontCache.set(s.id,p);return p;}
+$('exGuide').onclick=async()=>{const s=DVStyle(style);toast('Preparing the guide…');const fonts=await fontCSS(s);const page=document.documentElement.cloneNode(true);
+ page.querySelectorAll('script,header.top,.tip,.toast,link[rel=preconnect]').forEach(n=>n.remove());page.querySelectorAll('[data-copy]').forEach(n=>n.remove());page.querySelectorAll('details.tbl').forEach(d=>d.setAttribute('open',''));
+ page.querySelector('style').textContent+=fonts+'html{scroll-padding-top:20px}';const html='<!doctype html>\n'+page.outerHTML;download(`chart-style-guide-${s.id}.html`,html,'text/html');toast('Style guide downloaded');};
+
+build();
+addEventListener('hashchange',()=>{const m=location.hash.match(/s=([a-z]+)/);if(m&&m[1]!==style&&DVStyles.some(x=>x.id===m[1])){style=m[1];$('styles').querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',String(c.dataset.style===style)));build();}});
+})();
+</script>
+</body></html>

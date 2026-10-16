@@ -276,6 +276,18 @@ Your package of 11 films, 68 renders and a style list is merged in with
   - **Jellyfish:** upscaled from full-size frames.
   - **Phones:** each film has a `-720.mp4` cut made from the upscaled frames, served below 900 px.
 
+### Chart style guides (`site/chart-styles.html`, `site/dataviz/charts.js`)
+
+A style guide per style (the same seventeen styles as the flowchart studio, board styles first). Each guide contains:
+- **Palette:** computed and validated with the dataviz method's checks rather than eyeballed. Categorical colours come in a fixed order (first three distinct in every pair, neighbours distinct, lightness band, chroma floor, colour-blind and normal-vision separation), plus a one-hue sequential ramp, a diverging pair with a grey middle, reserved status colours, and surfaces and ink.
+- **Type and mark specs:** bars at most 24px thick with 4px rounded data ends, 2px lines, ringed markers, hairline grids, sparing direct labels.
+- **A dashboard composition:** KPI row, trend, comparison, table, donut.
+- **The chart library:** thirteen forms telling one story (KPI tiles, line, area, ranked bars, current vs previous, stacked columns, donut, table with sparklines, heatmap, sankey, roadmap timeline, goal meter, funnel).
+  - Every chart has a hover readout (a crosshair on time series), keyboard focus, a data-table twin and Copy SVG.
+- **Exports:** tokens as JSON, CSS variables, and the whole guide as a standalone HTML page with fonts embedded.
+
+Palettes live in `dataviz/styles.js` (`DVChartPalettes`, with the validation results). Clay, sketch, neo-brutalist and risograph sit in the colour-blind floor band (ΔE 6–8), so their charts always carry direct labels.
+
 ### Flowchart studio (`site/flowchart-studio.html`, `site/dataviz/`)
 
 Write a flowchart as text and get a clean, consistent diagram in seventeen styles.
