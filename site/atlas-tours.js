@@ -51,7 +51,7 @@
     <p class="tsStep">Stop ${n+1} of ${stops.length}${n<stops.length-1?` · <a href="#stop-${n+2}" data-jump="${n+2}">Next stop ↓</a>`:''}</p></div></li>`).join('')}</ol>
    <footer class="tourNext"><p class="tKicker">Next tour</p><a href="#tours?t=${next.k}"><b>${esc(next.title)}</b> →</a></footer></article>`;}
  function go(h){if(h.startsWith('entry:')){const id=h.slice(6);location.hash='browse';setTimeout(()=>window.openEntry?.(id),120);}
-  else if(h.startsWith('study:')){const id=h.slice(6);location.hash='motion';setTimeout(()=>{window.selectStudy?.(id);document.getElementById('motionStage')?.scrollIntoView({block:'center',behavior:reduce.matches?'auto':'smooth'});},160);}
+  else if(h.startsWith('study:')){const id=h.slice(6);if(window.UIMotion)window.UIMotion.show(id);else location.hash='motion';}
   else location.hash=h.replace(/^#/,'');}
  function wire(){
   page.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));

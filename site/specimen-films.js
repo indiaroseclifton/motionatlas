@@ -17,7 +17,7 @@
  const cat=()=>typeof catalogue!=='undefined'?catalogue:[];
  const get=id=>cat().find(e=>e.id===id);
  const filmed=()=>cat().filter(e=>e.film);
- const isStudy=id=>/^A(0\d|[1-3]\d|40)$/.test(id)||(window.LiveSims?.ids||[]).includes(id);
+ const isStudy=id=>/^M\d\d$/.test(id)||(window.LiveSims?.ids||[]).includes(id);
  const play=v=>{const p=v.play();if(p)p.catch(()=>{});};
  const video=(f,{auto=!still(),cls='',label=''}={})=>`<video class="${cls}" ${auto?'autoplay':''} muted loop playsinline preload="${auto?'auto':'none'}" poster="${f.poster}" ${label?`aria-label="${esc(label)}"`:'aria-hidden="true"'}><source src="${f.src}" type="video/mp4"></video>`;
  const pauseIcon='<svg viewBox="0 0 10 10" aria-hidden="true"><rect x="1.5" y="1" width="2.5" height="8" fill="currentColor"/><rect x="6" y="1" width="2.5" height="8" fill="currentColor"/></svg>';

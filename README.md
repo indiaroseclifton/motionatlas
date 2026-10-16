@@ -276,6 +276,21 @@ Your package of 11 films, 68 renders and a style list is merged in with
   - **Jellyfish:** upscaled from full-size frames.
   - **Phones:** each film has a `-720.mp4` cut made from the upscaled frames, served below 900 px.
 
+### Live design-system components (`site/system-components/`)
+
+The 90 UI components from the twelve custom systems (D21–D32) are real HTML and CSS, not screenshot crops.
+- `render.js` renders each component in its own shadow root, so the atlas theme never leaks in, and with no backdrop of its own. Cards scale it to fit; the detail view shows it at full size.
+- `D21.js` … `D32.js` hold each system's fonts (Google Fonts), shared CSS and components, with small scripts for working states: tabs, toggles, players, menus. Images they use are in `img/`.
+- `integrate.js` swaps the fragments for live components on cards, system hubs, catalogue tiles and the inspector, loading a system's file only when it scrolls near. "Copy code" and "Download HTML" give a standalone snippet; the original crop stays in the inspector under "Original mockup crop".
+- `preview.html?sys=D22` shows one system's components on their own for checking.
+
+### Animation studio: live simulations and UI motion (`site/ui-motion.js`)
+
+The old 2D sketch viewer (A01–A40 drawn on a canvas, plus the M-series demos) is retired and hidden. In its place, one dark band:
+- **Live simulations:** the nine real simulations (ferrofluid, Lorenz, double pendulum, flow field, cellular automata, reaction-diffusion, metaballs, bioluminescent swarm, harmonograph) on a clean stage, with Pause, Full screen and Tune.
+- **UI motion:** twenty interaction cards (M01–M20). Each plays itself while on screen and hands over to the pointer on hover or tap. "Slow motion" plays them at quarter speed, and "Copy code" gives a standalone snippet with the same behaviour.
+- Old links (`#motion?id=…`, tours, "Play the study") now go to the matching card or simulation. A-series entries without a simulation open their entry, with its film.
+
 ### Animation studio river
 
 - `site/studio-river.js` and `studio-river.css` replace the old click-to-play box: the live studies and films sit in one dark band across the full width of the page.

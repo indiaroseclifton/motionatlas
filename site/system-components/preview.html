@@ -1,0 +1,11 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>System components preview</title>
+<style>body{margin:0;font:13px system-ui;background:#f2f3f6;color:#111}.row{display:grid;grid-template-columns:200px 1fr 1fr;gap:20px;padding:24px;border-bottom:1px solid #ccc;align-items:center}.dark{background:#111418;padding:20px;border-radius:8px}.lt{padding:20px}.fit{height:230px;width:380px;outline:1px dashed #bbb}code{font-size:11px}</style>
+<script src="render.js"></script></head><body><div id="out"></div>
+<script>
+const q=new URLSearchParams(location.search),sys=q.get('sys'),only=q.get('id');
+const s=document.createElement('script');s.src=sys+'.js?'+Date.now();s.onload=()=>{const S=SysComponents.systems[sys];
+ for(const id of Object.keys(S.items)){if(only&&id!==only)continue;const r=document.createElement('div');r.className='row';r.id='row-'+id;
+  r.innerHTML=`<div><b>${id}</b><br><code>w=${S.items[id].w||'auto'}</code></div><div class="lt"><div class="nat"></div></div><div><div class="fit"></div></div>`;out.append(r);
+  SysComponents.mount(r.querySelector('.nat'),id);SysComponents.mount(r.querySelector('.fit'),id,{fit:true});}};
+document.head.append(s);
+</script></body></html>

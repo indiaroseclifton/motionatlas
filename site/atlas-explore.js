@@ -25,7 +25,7 @@
   A67:['light','generative'],A63:['light','line'],A75:['light','liquid'],A40:['light','generative'],A87:['light','hand','glass'],S14:['light','glass'],
   A72:['hand'],A08:['hand'],A86:['hand','retro'],A17:['hand','glass'],A07:['hand','liquid'],A09:['hand','line'],A83:['hand','light','print'],S15:['hand','glass'],S13:['glass','liquid'],
   A04:['retro','generative'],A05:['retro'],A48:['retro','light'],S19:['retro'],A03:['retro','line'],A19:['retro','light']};
- const STUDY_RE=/^(A(0\d|[1-3]\d|40)|M\d\d)$/;
+ const STUDY_RE=/^M\d\d$/;
  const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  const all=()=>typeof catalogue!=='undefined'?catalogue:[];
  const cache=new Map();
@@ -73,7 +73,7 @@
   const h=notes.querySelector('h3');(h||notes.lastElementChild).insertAdjacentElement('beforebegin',p);
   p.addEventListener('click',ev=>{const a=ev.target.closest('a');if(!a)return;ev.preventDefault();document.getElementById('detail')?.close();
    if(a.dataset.feelLink){S.feel=a.dataset.feelLink;S.film=false;S.live=false;location.hash='browse?feel='+S.feel;setTimeout(()=>apply(false),60);}
-   else{location.hash='motion';setTimeout(()=>window.selectStudy?.(e.id),120);}});}
+   else if(window.UIMotion)window.UIMotion.show(e.id);else location.hash='motion';});}
 
  const ready=setInterval(()=>{if(!all().length||!document.getElementById('browse'))return;if(!patch())return;clearInterval(ready);
   buildBar();readHash();apply(false);
