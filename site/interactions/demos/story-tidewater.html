@@ -1,0 +1,96 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tidewater · scroll story</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500&family=Inter:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#06141A;--deep:#0A1F27;--ink:#E7F2F1;--mute:#93AEB0;--glow:#5FE0D0;--sand:#EFE6D6;--sandInk:#1C2A2C}
+*{box-sizing:border-box}html{scroll-behavior:smooth}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.6 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.serif{font-family:Fraunces,Georgia,serif;font-weight:300;letter-spacing:-.02em}
+nav{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;gap:28px;padding:18px max(16px,4vw);transition:background .4s,backdrop-filter .4s}
+nav.solid{background:rgba(6,20,26,.72);backdrop-filter:blur(12px)}
+nav .logo{font:500 20px/1 Fraunces,Georgia,serif;letter-spacing:.02em;text-decoration:none}
+nav .links{display:flex;gap:22px;margin-left:auto;font-size:14px}
+nav .links a{text-decoration:none;color:var(--mute)}nav .links a:hover{color:var(--ink)}
+.book{display:inline-flex;align-items:center;min-height:44px;padding:0 20px;border-radius:999px;background:var(--glow);color:#03201C;font-weight:600;font-size:14px;text-decoration:none;border:0;cursor:pointer}
+.book:focus-visible,a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--glow);outline-offset:3px}
+.hero{position:relative;height:100vh;min-height:560px;display:grid;align-items:end;overflow:hidden}
+.hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(calc(1 + var(--hp,0) * .15))}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,var(--bg) 2%,rgba(6,20,26,.2) 45%,rgba(6,20,26,.45))}
+.hero .copy{position:relative;z-index:2;padding:0 max(16px,6vw) 12vh;max-width:1100px;opacity:calc(1 - var(--hp,0) * 1.6);transform:translateY(calc(var(--hp,0) * -60px))}
+.hero h1{font-size:clamp(46px,9vw,128px);line-height:.92;margin:0}
+.hero p{max-width:44ch;color:#C6DADA;font-size:clamp(16px,1.6vw,19px);margin:22px 0 0}
+.cue{position:absolute;z-index:2;right:max(16px,6vw);bottom:12vh;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--mute);writing-mode:vertical-rl}
+.manifesto{padding:22vh max(16px,8vw);max-width:1300px;margin:0 auto}
+.manifesto p{font-size:clamp(28px,4.4vw,60px);line-height:1.15;margin:0}
+.manifesto span{opacity:.16;transition:opacity .3s}
+.manifesto span.lit{opacity:1}
+.rooms{height:340vh;position:relative;background:var(--sand);color:var(--sandInk)}
+.rooms .pin{position:sticky;top:0;height:100vh;overflow:hidden;display:flex;flex-direction:column;justify-content:center;gap:4vh}
+.rooms header{padding:0 max(16px,6vw);display:flex;align-items:baseline;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.rooms h2{font-size:clamp(36px,6vw,80px);margin:0;line-height:1}
+.rooms header p{color:#4F5E60;max-width:36ch;margin:0}
+.track{display:flex;gap:3vw;padding:0 max(16px,6vw);will-change:transform}
+.room{flex:0 0 clamp(260px,34vw,460px)}
+.room img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:4px;display:block}
+.room h3{font:400 26px/1.1 Fraunces,Georgia,serif;margin:14px 0 4px}
+.room p{margin:0;color:#4F5E60;font-size:14px}
+.room b{font-weight:600;color:var(--sandInk)}
+.night{display:grid;grid-template-columns:1fr 1fr;background:var(--deep)}
+.night .film{position:sticky;top:0;height:100vh}
+.night .film video{width:100%;height:100%;object-fit:cover}
+.night .steps{padding:0 max(16px,6vw)}
+.step{min-height:90vh;display:grid;align-content:center;gap:14px;max-width:46ch;opacity:.45;transition:opacity .6s}
+.step.on{opacity:1}
+.step small{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--glow)}
+.step h3{font-size:clamp(30px,3.6vw,48px);margin:0;line-height:1.05}
+.step p{margin:0;color:var(--mute)}
+.cta{padding:20vh max(16px,6vw) 8vh;text-align:center;background:radial-gradient(60% 50% at 50% 30%,rgba(95,224,208,.12),transparent)}
+.cta h2{font-size:clamp(40px,7vw,96px);margin:0 0 4vh;line-height:1}
+form{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;align-items:end}
+label{display:grid;gap:6px;text-align:left;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+input{min-height:48px;padding:0 14px;border-radius:12px;border:1px solid #2A4850;background:#0B232B;color:var(--ink);font:inherit;letter-spacing:0;text-transform:none}
+.ok{min-height:1.6em;color:var(--glow);margin-top:16px}
+footer{display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;padding:6vh max(16px,6vw);color:var(--mute);font-size:13px;border-top:1px solid #16323A}
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .9s,transform .9s cubic-bezier(.2,.8,.2,1)}.reveal.in{opacity:1;transform:none}
+@media (max-width:760px){nav .links{display:none}nav .book{margin-left:auto}.night{grid-template-columns:1fr}.night .film{height:60vh;position:sticky;top:0;z-index:0}.night .steps{position:relative;z-index:1;background:linear-gradient(transparent,var(--deep) 10%)}.step{min-height:70vh}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.reveal,.step,.manifesto span{transition:none}.hero video{transform:none}}
+</style></head><body>
+<nav id="nav"><a class="logo" href="#top">Tidewater</a><div class="links"><a href="#rooms">Rooms</a><a href="#night">The night tide</a><a href="#book">Visit</a></div><a class="book" href="#book">Book a night</a></nav>
+<header class="hero" id="top"><video autoplay muted loop playsinline poster="../../assets/films/bioluminescent-trails.jpg"><source src="../../assets/films/bioluminescent-trails-720.webm" type="video/webm"><source src="../../assets/films/bioluminescent-trails-720.mp4" type="video/mp4"></video>
+<div class="copy"><h1 class="serif">Stay where<br>the sea glows.</h1><p>Eleven rooms on a quiet northern bay. On still summer nights the water lights up blue under every oar stroke.</p></div><span class="cue" aria-hidden="true">Scroll</span></header>
+<main>
+<section class="manifesto" aria-label="About"><p class="serif" id="words">We built Tidewater for the hour after dinner, when the bay goes dark and every wave leaves a trail of light. No televisions. Thick wool, cold water, warm stone, and a boat waiting at the jetty.</p></section>
+<section class="rooms" id="rooms"><div class="pin"><header><h2 class="serif">Rooms</h2><p>Each room faces the water. Scroll to walk the corridor.</p></header><div class="track" id="track">
+<article class="room"><img src="../../assets/shelf/lighthouse.webp" alt="Lighthouse on a stormy coast"><h3>The Keeper’s Loft</h3><p>Top floor, lamp-room view · <b>from £240</b></p></article>
+<article class="room"><img src="../../assets/shelf/erosion.webp" alt="River valley seen from above"><h3>Estuary Suite</h3><p>Two rooms, sunrise side · <b>from £310</b></p></article>
+<article class="room"><img src="../../assets/shelf/sand.webp" alt="Patterns drawn in pale sand"><h3>Sand Room</h3><p>Ground floor, steps to the beach · <b>from £190</b></p></article>
+<article class="room"><img src="../../assets/shelf/soap.webp" alt="Iridescent film of colour"><h3>The Glasshouse</h3><p>Sleeping under a glass roof · <b>from £280</b></p></article>
+<article class="room"><img src="../../assets/shelf/sumi.webp" alt="Marbled ink on water"><h3>Ink Cabin</h3><p>Detached, wood-fired bath · <b>from £260</b></p></article>
+</div></div></section>
+<section class="night" id="night"><div class="film"><video muted loop playsinline preload="none" poster="../../assets/films/jellyfish.jpg" data-lazy><source src="../../assets/films/jellyfish-720.webm" type="video/webm"><source src="../../assets/films/jellyfish-720.mp4" type="video/mp4"></video></div>
+<div class="steps"><div class="step"><small>22:30</small><h3 class="serif">Down to the jetty.</h3><p>Lanterns off. Your guide hands you a paddle and points at the black water.</p></div>
+<div class="step"><small>22:50</small><h3 class="serif">The first stroke.</h3><p>Plankton flare blue along the blade. Jellyfish drift underneath like slow lamps.</p></div>
+<div class="step"><small>23:40</small><h3 class="serif">Back for cocoa.</h3><p>The sauna is lit, the kitchen leaves cocoa on the stove, and nobody checks the time.</p></div></div></section>
+<section class="cta" id="book"><h2 class="serif reveal">Book the night tide.</h2>
+<form id="f" class="reveal"><label>Arrive<input type="date" required></label><label>Nights<input type="number" min="1" max="14" value="2" required style="width:90px"></label><label>Guests<input type="number" min="1" max="6" value="2" required style="width:90px"></label><button class="book" type="submit">Check dates</button></form><p class="ok" id="ok" role="status"></p></section>
+</main>
+<footer><span>Tidewater · North Bay</span><span>A template from the Visual &amp; Motion Atlas</span></footer>
+<script>
+(()=>{const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const nav=document.getElementById('nav'),hero=document.querySelector('.hero'),rooms=document.getElementById('rooms'),track=document.getElementById('track');
+const W=document.getElementById('words');W.innerHTML=W.textContent.split(' ').map(w=>`<span>${w}</span>`).join(' ');const ws=[...W.children];
+if(reduce){document.querySelectorAll('video').forEach(v=>{v.removeAttribute('autoplay');v.pause()});ws.forEach(s=>s.classList.add('lit'))}
+function u(){const y=scrollY,h=innerHeight;nav.classList.toggle('solid',y>h*.6);
+if(!reduce)hero.style.setProperty('--hp',Math.min(1,y/h));
+const r=W.getBoundingClientRect();if(!reduce){const p=Math.min(1,Math.max(0,(h*.8-r.top)/(r.height+h*.3)));const n=Math.round(p*ws.length);ws.forEach((s,i)=>s.classList.toggle('lit',i<n))}
+const rr=rooms.getBoundingClientRect(),p2=Math.min(1,Math.max(0,-rr.top/(rr.height-h)));const max=track.scrollWidth-innerWidth;track.style.transform=`translateX(${-p2*Math.max(0,max)}px)`}
+addEventListener('scroll',u,{passive:true});addEventListener('resize',u);u();
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on','in')}else if(e.target.classList.contains('step'))e.target.classList.remove('on')}),{rootMargin:'-35% 0px -35% 0px'});
+document.querySelectorAll('.step').forEach(s=>io.observe(s));
+const io2=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:.2});document.querySelectorAll('.reveal').forEach(s=>io2.observe(s));
+const vio=new IntersectionObserver(es=>es.forEach(e=>{const v=e.target;if(reduce)return;if(e.isIntersecting){if(v.dataset.lazy!==undefined&&v.preload==='none'){v.preload='auto';v.load()}v.play().catch(()=>{})}else v.pause()}));document.querySelectorAll('video').forEach(v=>vio.observe(v));
+document.getElementById('f').addEventListener('submit',e=>{e.preventDefault();document.getElementById('ok').textContent='Those dates look good. This is a template, so no booking was made.'});
+})();
+</script></body></html>

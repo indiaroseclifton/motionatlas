@@ -1,0 +1,80 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Field Notes · scroll story</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{--paper:#F2EEE6;--ink:#1D1A16;--mute:#625B50;--rule:#D8D1C4;--ink2:#2F4B7C}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font:16px/1.6 'IBM Plex Sans',system-ui,sans-serif}
+a{color:inherit}a:focus-visible{outline:2px solid var(--ink2);outline-offset:3px}
+.serif{font-family:'Instrument Serif',Georgia,serif;font-weight:400}
+.mono{font:500 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+header.bar{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:20px max(16px,5vw);border-bottom:1px solid var(--rule)}
+header.bar b{font:400 24px/1 'Instrument Serif',serif}
+.open{height:260vh;position:relative}
+.open .pin{position:sticky;top:0;height:100vh;overflow:hidden;display:grid;justify-items:center;align-content:start}
+.open video,.open img.post{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;clip-path:circle(var(--r,14%) at 50% 64%)}
+.open h1{position:relative;z-index:2;margin:14vh 16px 0;text-align:center;font-size:clamp(40px,8.4vw,128px);line-height:.9;letter-spacing:-.02em;color:var(--ink);opacity:calc(1 - var(--p,0) * 2.2)}
+.open h1 em{display:block}
+.open .note{position:absolute;bottom:5vh;left:max(16px,5vw);right:max(16px,5vw);display:flex;justify-content:space-between;gap:16px;z-index:2;opacity:calc(1 - var(--p,0) * 3)}
+.open .cap{position:absolute;bottom:6vh;left:max(16px,5vw);z-index:2;color:#fff;font:italic 400 clamp(22px,3vw,36px)/1.2 'Instrument Serif',serif;max-width:24ch;opacity:calc((var(--p,0) - .75) * 4);text-shadow:0 2px 20px rgba(0,0,0,.5)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.stat{padding:6vh max(16px,3vw);border-right:1px solid var(--rule)}
+.stat b{display:block;font:400 clamp(56px,8vw,110px)/1 'Instrument Serif',serif;font-variant-numeric:tabular-nums}
+.method{display:grid;grid-template-columns:1fr 1fr;gap:5vw;padding:0 max(16px,5vw)}
+.method .plate{position:sticky;top:10vh;height:80vh;margin:10vh 0}
+.method .plate img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:2px;opacity:0;transition:opacity .8s;filter:sepia(.15)}
+.method .plate img.on{opacity:1}
+.method .plate .mono{position:absolute;left:0;bottom:-28px}
+.entries{padding:10vh 0}
+.entry{min-height:80vh;display:grid;align-content:center;gap:12px;border-top:1px solid var(--rule)}
+.entry h2{margin:0;font-size:clamp(36px,4.6vw,64px);line-height:1}
+.entry p{margin:0;max-width:44ch;color:#3E3830}
+.entry ul{margin:6px 0 0;padding:0;list-style:none;display:flex;gap:8px;flex-wrap:wrap}
+.entry li{font:500 11px/1 'IBM Plex Mono',monospace;padding:7px 10px;border:1px solid var(--rule);border-radius:999px;color:var(--mute)}
+.index{padding:14vh max(16px,5vw)}
+.index h2{font-size:clamp(40px,6vw,80px);margin:0 0 4vh}
+.row{display:grid;grid-template-columns:5ch 1fr auto;gap:20px;padding:18px 0;border-top:1px solid var(--rule);text-decoration:none;align-items:baseline;transition:padding .3s}
+.row:hover{padding-left:10px}.row b{font:400 clamp(24px,3vw,36px)/1.1 'Instrument Serif',serif}
+footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:4vh max(16px,5vw);border-top:1px solid var(--rule)}
+@media (max-width:760px){.method{display:block}.method .plate{height:38vh;top:0;margin:0 -16px;z-index:3;background:var(--paper)}.method .plate .mono{display:none}.entry{min-height:70vh}.open h1{margin-top:12vh}.stat{border-right:0;border-bottom:1px solid var(--rule)}}
+@media (prefers-reduced-motion:reduce){.method .plate img,.row{transition:none}}
+</style></head><body>
+<header class="bar"><b>Field Notes</b><span class="mono">Material research studio · est. 2019</span></header>
+<section class="open" id="open"><div class="pin">
+<video muted loop playsinline autoplay poster="../../assets/films/suminagashi.jpg"><source src="../../assets/films/suminagashi-720.webm" type="video/webm"><source src="../../assets/films/suminagashi-720.mp4" type="video/mp4"></video>
+<h1 class="serif">We study<em>what things are made of.</em></h1>
+<div class="note"><span class="mono">Plate 01 · Suminagashi, ink on water</span><span class="mono">Scroll to open</span></div>
+<p class="cap">Ink floated on still water, lifted onto paper in a single pass.</p>
+</div></section>
+<section class="stats" aria-label="The studio in numbers">
+<div class="stat"><b data-n="214">0</b><span class="mono">Materials sampled</span></div>
+<div class="stat"><b data-n="38">0</b><span class="mono">Published notes</span></div>
+<div class="stat"><b data-n="12">0</b><span class="mono">Partner workshops</span></div>
+</section>
+<section class="method">
+<div class="plate" aria-hidden="true"><img class="on" src="../../assets/shelf/sumi.webp" alt=""><img src="../../assets/shelf/bloom.webp" alt=""><img src="../../assets/shelf/sand.webp" alt=""><img src="../../assets/shelf/embroidery.webp" alt=""><span class="mono" id="plateLab">Plate 01</span></div>
+<div class="entries">
+<article class="entry" data-i="0"><span class="mono">Note 01 · Liquids</span><h2 class="serif">Ink that refuses to settle.</h2><p>Three weeks of floating sumi ink on trays of rainwater, measuring how long each ring holds before it drifts.</p><ul><li>Rainwater</li><li>Sumi</li><li>Hosho paper</li></ul></article>
+<article class="entry" data-i="1"><span class="mono">Note 02 · Pigments</span><h2 class="serif">Colour that blooms.</h2><p>Dropping mineral pigments into wet gesso and filming each bloom at 240 frames a second.</p><ul><li>Malachite</li><li>Lapis</li><li>Gesso</li></ul></article>
+<article class="entry" data-i="2"><span class="mono">Note 03 · Grains</span><h2 class="serif">Drawing with sand.</h2><p>A light table, a sieve and a single finger: how fast a line can be drawn before the edges slump.</p><ul><li>Silica</li><li>Light table</li></ul></article>
+<article class="entry" data-i="3"><span class="mono">Note 04 · Fibres</span><h2 class="serif">The weight of a stitch.</h2><p>Satin stitch against long-and-short: what each one does to the light across a petal.</p><ul><li>Silk floss</li><li>Linen</li></ul></article>
+</div></section>
+<section class="index"><h2 class="serif">All notes</h2>
+<a class="row" href="#open"><span class="mono">05</span><b>Smoke held in resin</b><span class="mono">2025</span></a>
+<a class="row" href="#open"><span class="mono">06</span><b>Soap film thickness, by colour</b><span class="mono">2025</span></a>
+<a class="row" href="#open"><span class="mono">07</span><b>Erosion in a sand tray</b><span class="mono">2024</span></a>
+<a class="row" href="#open"><span class="mono">08</span><b>Ferrofluid under a hand magnet</b><span class="mono">2024</span></a>
+</section>
+<footer><span class="mono">Field Notes</span><span class="mono">A template from the Visual &amp; Motion Atlas</span></footer>
+<script>
+(()=>{const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;const open=document.getElementById('open');const v=open.querySelector('video');if(reduce){v.removeAttribute('autoplay');v.pause()}
+function u(){const r=open.getBoundingClientRect(),p=Math.min(1,Math.max(0,-r.top/(r.height-innerHeight)));const e=reduce?(p>.4?1:0):p*p*(3-2*p);open.style.setProperty('--p',e);open.style.setProperty('--r',(14+e*62)+'%')}
+addEventListener('scroll',u,{passive:true});u();
+const st=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;st.unobserve(e.target);const el=e.target,n=+el.dataset.n;if(reduce){el.textContent=n;return}const t0=performance.now();(function f(t){const k=Math.min(1,(t-t0)/1400);el.textContent=Math.round(n*(1-Math.pow(1-k,3)));if(k<1)requestAnimationFrame(f)})(t0)}),{threshold:.6});
+document.querySelectorAll('[data-n]').forEach(e=>st.observe(e));
+const imgs=[...document.querySelectorAll('.plate img')],lab=document.getElementById('plateLab');
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){const i=+e.target.dataset.i;imgs.forEach((m,j)=>m.classList.toggle('on',i===j));lab.textContent='Plate 0'+(i+2)}}),{rootMargin:'-45% 0px -45% 0px'});
+document.querySelectorAll('.entry').forEach(e=>io.observe(e));
+})();
+</script></body></html>

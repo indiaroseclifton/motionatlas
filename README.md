@@ -354,6 +354,12 @@ Seventeen original showpiece interactions, each one self-contained HTML file wit
 - Every piece supports the keyboard, works at phone width, respects reduced motion and passes axe WCAG A/AA.
 - The ideas follow familiar interaction-gallery patterns; the designs, names and code are our own.
 - `#<id>` deep-links straight to a piece.
+- **Scroll stories:** four full one-page sites built around the atlas films, each one HTML file (`interactions/demos/story-*.html`):
+  - **Tidewater** (coastal hotel): a film hero that zooms as you scroll, words that light up as you read, rooms scrolled sideways inside a pinned section, a night itinerary beside a pinned film, and a booking form.
+  - **Gilt** (gold-leaf atelier): the film shows through the brand name using a multiply-blended mask, then three chapters cross-fade between the golden dove, the gold figure and the lion.
+  - **Field Notes** (research studio): the marbling film opens from a small circle, counters run, and a pinned plate swaps image with each note.
+  - **Signal** (product launch): a film hero, a bento grid that assembles in sequence, counting stats, a gradient-edged plan and a film close.
+  - Off-screen films load lazily and pause, and every story respects reduced motion.
 
 ### Diagram studio (`site/diagram-studio.html`, `site/dataviz/diagrams.js`)
 
