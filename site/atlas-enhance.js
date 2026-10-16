@@ -15,13 +15,16 @@
    film:{src:'assets/films/game-of-life-720.mp4',webm:'assets/films/game-of-life-720.webm',poster:'assets/films/game-of-life.jpg',label:'Game of Life',tone:'dark'}},
   motion:{no:3,name:'Animation studio',family:'Motion',color:'rose',related:['effects','compare','pairings'],h:[1,-3,5,-7,9],
    film:{src:'assets/films/bioluminescent-trails-720.mp4',webm:'assets/films/bioluminescent-trails-720.webm',poster:'assets/films/bioluminescent-trails.jpg',label:'Bioluminescent trails',tone:'dark',to:'.studyRiver'}},
-  projects:{no:4,name:'My projects',family:'Studio',color:'gold',related:['inspiration','creations','browse'],h:[1,2,-3]},
+  projects:{no:4,name:'My projects',family:'Studio',color:'gold',related:['inspiration','creations','browse'],h:[1,2,-3],
+   film:{src:'assets/films/particle-tree-720.mp4',webm:'assets/films/particle-tree-720.webm',poster:'assets/films/particle-tree.jpg',label:'Particle tree',tone:'dark',pos:'50% 32%'}},
   inspiration:{no:5,name:'Inspiration',family:'Studio',color:'gold',related:['projects','references','creations'],h:[1,-4,6],
    film:{src:'assets/films/embroidery-720.mp4',webm:'assets/films/embroidery-720.webm',poster:'assets/films/embroidery.jpg',label:'Embroidery',tone:'light'}},
-  creations:{no:6,name:'Your creations',family:'Studio',color:'gold',related:['projects','inspiration'],h:[1,5,-3]},
+  creations:{no:6,name:'Your creations',family:'Studio',color:'gold',related:['projects','inspiration'],h:[1,5,-3],
+   film:{src:'assets/films/pigment-bloom-720.mp4',webm:'assets/films/pigment-bloom-720.webm',poster:'assets/films/pigment-bloom.jpg',label:'Pigment bloom',tone:'dark'}},
   ux:{no:7,name:'UI components',family:'Systems',color:'mint',related:['icons','typography','playground'],h:[1,-3,4]},
   icons:{no:8,name:'Icon families',family:'Systems',color:'mint',related:['ux','assets','systems'],h:[1,4,-5]},
-  typography:{no:9,name:'Fonts & type',family:'Systems',color:'mint',related:['pairings','playground','systems'],h:[1,-6,2]},
+  typography:{no:9,name:'Fonts & type',family:'Systems',color:'mint',related:['pairings','playground','systems'],h:[1,-6,2],
+   film:{src:'assets/films/light-threads-720.mp4',webm:'assets/films/light-threads-720.webm',poster:'assets/films/light-threads.jpg',label:'Light threads',tone:'dark'}},
   playground:{no:10,name:'System playground',family:'Systems',color:'mint',related:['systems','typography','ux'],h:[1,3,-2,5]},
   assets:{no:11,name:'Extracted assets',family:'Systems',color:'mint',related:['systems','icons','ux'],h:[1,-5,3]},
   art:{no:12,name:'Art styles',family:'Graphics',color:'ice',related:['vases','cinema','compare'],h:[1,-2,5,-3],
@@ -36,7 +39,8 @@
    film:{src:'assets/films/soap-film-720.mp4',webm:'assets/films/soap-film-720.webm',poster:'assets/films/soap-film.jpg',label:'Soap film',tone:'dark'}},
   compare:{no:17,name:'Comparison desk',family:'Motion',color:'rose',related:['art','systems','vases'],h:[1,3,-6],
    film:{src:'assets/films/ferrofluid-720.mp4',webm:'assets/films/ferrofluid-720.webm',poster:'assets/films/ferrofluid.jpg',label:'Ferrofluid',tone:'dark'}},
-  references:{no:18,name:'Sources & credits',family:'Studio',color:'gold',related:['browse','systems','typography'],h:[1,-2,4]}
+  references:{no:18,name:'Sources & credits',family:'Studio',color:'gold',related:['browse','systems','typography'],h:[1,-2,4],
+   film:{src:'assets/films/smoke-plume-720.mp4',webm:'assets/films/smoke-plume-720.webm',poster:'assets/films/smoke-plume.jpg',label:'Smoke plume',tone:'dark',pos:'40% 50%'}}
  };
  const COLORS={ice:['#7dd3fc','#0369a1'],mint:['#6ee7b7','#047857'],rose:['#fda4af','#be123c'],gold:['#fde68a','#854d0e']};
  const reduced=matchMedia('(prefers-reduced-motion: reduce)');
@@ -73,7 +77,7 @@
   bg.innerHTML=`<video muted loop playsinline preload="none" poster="${f.poster}">${f.webm?`<source src="${f.webm}" type="video/webm">`:''}<source src="${f.src}" type="video/mp4"></video><i></i>`;
   const tg=document.createElement('button');tg.type='button';tg.className='aeHeroToggle';tg.innerHTML='<span aria-hidden="true"></span><b>Pause film</b>';
   const dark=f.tone!=='light';page.prepend(bg);page.append(tg);page.classList.add('aeHasFilm',dark?'aeHeroDark':'aeHeroLight');if(!f.to)page.classList.add('aeHeroFade');
-  const v=$('video',bg);let userPaused=false,visible=false;
+  const v=$('video',bg);if(f.pos)v.style.objectPosition=f.pos;let userPaused=false,visible=false;
   /* the backdrop runs from under the site header (behind the breadcrumb) to the top of the dark section */
   const fit=()=>{if(!page.isConnected||page.hidden)return;const pr=page.getBoundingClientRect(),trail=document.querySelector('.routeTrail'),end=page.querySelector(f.to);
    const top=trail&&dark?Math.min(0,trail.getBoundingClientRect().top-pr.top-12):0;const bottom=end?end.getBoundingClientRect().top-pr.top+Math.min(160,parseFloat(getComputedStyle(end).paddingTop)||0):(rel.getBoundingClientRect().bottom-pr.top+(dark?150:90));
@@ -137,8 +141,10 @@
   const id=current();
   drawings.forEach((d,k)=>d&&k!==id&&d.stop());
   if(!id)return;
+  const page=document.getElementById(id);
+  /* some pages (Your creations) are built by another script after the route fires: try again shortly */
+  if(!page||!page.querySelector('h1')){if((onRoute.n=(onRoute.n||0)+1)<24)setTimeout(onRoute,250);return;}onRoute.n=0;
   decorate(id);
-  const page=document.getElementById(id);if(!page)return;
   page.classList.remove('aeEnter');void page.offsetWidth;if(!reduced.matches)page.classList.add('aeEnter');
   drawings.get(id)?.play();
   requestAnimationFrame(()=>reveal(page));

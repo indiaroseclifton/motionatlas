@@ -326,6 +326,10 @@ The Animation studio header now has a film behind it, like the home hero: **Biol
 - Ten pages now have one, in one of two tones:
   - **Dark** (`tone:'dark'`): Animation studio (Bioluminescent trails), Landing effects (Soap film), Comparison desk (Ferrofluid), Style pairings (Lion to phoenix) and Design systems (Game of Life). The header turns dark, the text turns light, and the film fades into the page below.
   - **Light** (`tone:'light'`): Catalogue (Hydraulic erosion), Art styles (Suminagashi), Film looks (Pixel sorting), Vase studies (Sand drawing) and Inspiration (Embroidery). The film washes into the page colour behind dark text.
+  - **Your films:** Fonts & type (Light threads), My projects (Particle tree), Your creations (Pigment bloom) and Sources & credits (Smoke plume), all dark.
+    - They're upscaled from the 1168 × 784 originals with Real-ESRGAN (`realesr-general-x4v3`, half-size frames, near-black tiles skipped) to 1920 px, with seamless 15 s loops.
+    - Bitrates are capped (H.264 ≤ 6 Mbit/s; VP9 3 Mbit/s full size, 1.6 Mbit/s for the 1280px cuts), which keeps fine glowing detail from ballooning WebM sizes.
+    - The same four also join the Animation studio's "Live studies & films" strip.
   - Each uses a 1280px `-720` WebM/MP4 cut. Tool pages (UI components, icons, playground, assets, projects, creations, sources) stay without one.
 
 ### Channel brand styles: Kitchen noir and Kitchen paper (`site/dataviz/styles.js`)

@@ -126,3 +126,7 @@ body.aeDarkHead .routeTrail a{color:rgba(244,241,234,.85)}
 .aeHeroLight.aeHeroFade>.aeRelated{margin-bottom:70px}
 .aeHeroLight .aeHeroToggle{border-color:rgba(13,18,32,.18);background:rgba(255,255,255,.7);color:#1C1F2A}
 @media (max-width:760px){.aeHeroLight .aeHeroBg i{background:linear-gradient(180deg,rgba(242,244,247,.7) 0%,rgba(242,244,247,.78) 55%,var(--pagebg) 100%)}}
+
+.aeHeroDark>.intro a{color:#F4F1EA!important;text-decoration-color:rgba(244,241,234,.5)}
+.aeHeroDark>.aeRelated~.intro{color:inherit!important;text-shadow:none}
+.aeHeroDark>.aeRelated~.intro a{color:inherit!important}
