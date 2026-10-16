@@ -268,5 +268,5 @@ function render(type,src,s,opt={}){const g=typeof src==='string'?window.FlowEngi
  if(type==='flow')return window.FlowEngine.render(src,s,opt);
  if(type==='swimlanes')return window.FlowEngine.render(src,s,{...opt,lanes:true,direction:opt.direction||'LR'});
  const f={stepper,stages,cycle,tree,capability,mindmap}[type]||stepper;return f(g,s,opt);}
-window.FlowTypes={TYPES,render,suggest,analyse};
+window.FlowTypes={TYPES,render,suggest,analyse,kit:{ctx,frame,heading,wrap,measure,esc,alpha,mix}};
 })();

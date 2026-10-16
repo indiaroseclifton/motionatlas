@@ -317,6 +317,30 @@ Write a flowchart as text and get a clean, consistent diagram in eight layouts a
 - **Examples** (`dataviz/examples.js`): creative review, sign-up, release pipeline (lanes), and the AI cooking-channel workflow, both cleaned up and as first drawn. Finished exports of the channel chart are in `deliverables/channel-flowchart/`.
 - **Research notes:** `docs/dataviz-research.md`.
 
+### Diagram studio (`site/diagram-studio.html`, `site/dataviz/diagrams.js`)
+
+For charts that are not a process. It uses the same seventeen styles and the same drawing kit as the flowchart layouts, so a style looks the same everywhere. Each kind has a form editor rather than a syntax:
+- **Roadmap:** workstreams × periods. Items have a from/to and a status (planned, in progress, done, at risk). Overlapping items stack into extra rows. There are milestones and a "today" marker.
+- **Org chart:** one person per line (`Name — Role [Team]`), indented under who they report to. Teams take a colour from their top-level lead. A team of more than three people with no reports stacks in a column, and "Open role" draws a dashed vacancy.
+- **Journey map:** stages × doing / touchpoints / thinking / feeling / pain points / opportunities. Feeling is a −2…+2 slider drawn as a curve with faces.
+- **Comparison matrix:** options × criteria with group headings. Cells take yes / no / partial (drawn as icons) or any text, and one option can be marked as recommended.
+- The starter content is themed on the AI cooking channel. `#roadmap`, `#org`, `#journey` and `#matrix` deep-link to a kind. Edits persist locally.
+
+### Motion and export (`site/dataviz/reveal.js`, `site/dataviz/export.js`, `site/vendor/`)
+- **Build-up animation:** FlowReveal reads the geometry of the rendered SVG, so it works for every layout and style without touching the renderers.
+  - Heading, lanes and group boxes are there from the start.
+  - Cards fade up in reading order, with their labels and icons.
+  - Connectors draw on just before the card they lead to, and loops come last.
+  - Reading order depends on the layout: top-down, left-right, by column, by row, clockwise round a cycle, or outward from the centre of a mind map.
+- **Play** runs it in the preview at slow, normal or fast speed.
+- **Video** encodes in the browser with WebCodecs: H.264 MP4 where the browser has an encoder (Chrome, Edge, Safari), otherwise VP9 WebM. Muxing uses vendored `mp4-muxer` / `webm-muxer` (MIT).
+- **GIF** uses vendored `gifenc` (MIT), with one palette taken from the finished chart so colours don't flicker, and repeated frames merged.
+- `DVExport` also holds the shared font embedding and PNG export used by both studios.
+
+### Flowchart templates and style guide
+- **Templates** (`site/dataviz/templates.js`): twelve real processes. The list is content pipeline, client onboarding, creative approval, hiring, launch readiness, support triage, sprint, order fulfilment, campaign plan, newsletter, bug lifecycle and brand project. Each is paired with the layout that suits it and previewed live in the current style.
+- **Style guide download:** now includes a "Diagram types" section with the user's chart drawn in all eight layouts, each with "use when" and "avoid when" guidance. Click a preview to see it full size.
+
 ### Live design-system components (`site/system-components/`)
 
 The 90 UI components from the twelve custom systems (D21–D32) are real HTML and CSS, not screenshot crops.

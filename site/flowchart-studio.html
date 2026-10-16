@@ -55,7 +55,7 @@ details.help summary::before{content:'+ ';}details.help[open] summary::before{co
 .tpl-in{padding:22px clamp(16px,3vw,28px) 28px}
 .tpl-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}
 .tpl-in h2{margin:0;font:600 22px/1.2 'Instrument Serif',Georgia,serif;letter-spacing:0;text-transform:none;color:var(--ink)}
-.tpl-in p{margin:4px 0 0;font-size:13px;color:var(--mute)}
+.tpl-in p{margin:4px 0 0;font-size:13px;color:#525868}
 .tpl-cats{display:flex;flex-wrap:wrap;gap:6px;margin:16px 0}
 .tpl-cats button{border:1px solid var(--hair);background:var(--panel);border-radius:999px;min-height:32px;padding:0 12px;font-size:12.5px;cursor:pointer}
 .tpl-cats button[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
@@ -125,6 +125,15 @@ details.help summary::before{content:'+ ';}details.help[open] summary::before{co
 .stage.drag{cursor:grabbing}
 .paper{position:absolute;left:0;top:0;transform-origin:0 0;box-shadow:0 30px 60px -30px rgba(20,24,40,.35),0 0 0 1px rgba(20,24,40,.06);border-radius:10px;overflow:hidden;line-height:0}
 .paper svg{display:block}
+.motion{position:absolute;left:16px;bottom:16px;display:flex;gap:4px;align-items:center;padding:4px;border-radius:12px;background:var(--panel);box-shadow:var(--shadow);border:1px solid var(--hair);max-width:calc(100% - 260px);flex-wrap:wrap}
+.motion button{border:0;background:none;min-height:32px;padding:0 10px;border-radius:8px;font-weight:600;font-size:12.5px;color:var(--ink);cursor:pointer}
+.motion button:hover:not(:disabled){background:var(--soft)}.motion button:disabled{opacity:.45;cursor:default}
+.motion .mv-play{display:inline-flex;align-items:center;gap:6px;background:var(--ink);color:#fff}.motion .mv-play:hover:not(:disabled){background:#000}
+.motion .mv-play svg{width:12px;height:12px}
+.motion select{border:0;background:var(--soft);border-radius:8px;min-height:32px;padding:0 6px;font-size:12px}
+.motion output{font:500 11.5px 'JetBrains Mono',monospace;color:var(--mute);padding:0 6px}
+.motion output:empty{display:none}
+@media(max-width:700px){.motion{max-width:calc(100% - 32px);bottom:64px}}
 .zoom{position:absolute;right:16px;bottom:16px;display:flex;gap:4px;padding:4px;border-radius:12px;background:var(--panel);box-shadow:var(--shadow);border:1px solid var(--hair)}
 .zoom button{border:0;background:none;min-width:34px;height:32px;border-radius:8px;font-weight:600;color:var(--ink)}
 .zoom button:hover{background:var(--soft)}
@@ -141,7 +150,7 @@ details.help summary::before{content:'+ ';}details.help[open] summary::before{co
  <header>
   <div class="brand"><a href="atlas.html#systems" aria-label="Back to the Visual & Motion Atlas">← Atlas</a><h1>Flowchart studio</h1></div>
   <div class="exports" role="group" aria-label="Export">
-   <a class="btn" href="chart-styles.html" style="text-decoration:none">Chart styles</a>
+   <a class="btn" href="diagram-studio.html" style="text-decoration:none">Diagram studio</a><a class="btn" href="chart-styles.html" style="text-decoration:none">Chart styles</a>
    <button class="btn" id="exSvg" title="Download SVG">SVG <span>file</span></button>
    <button class="btn" id="exPng" title="Download PNG at 2×">PNG <span>2×</span></button>
    <button class="btn" id="exCopy" title="Copy SVG markup">Copy <span>SVG</span></button>
@@ -208,6 +217,9 @@ details.help summary::before{content:'+ ';}details.help[open] summary::before{co
   <div class="styles" id="styles" role="group" aria-label="Style"></div>
   <div class="stage" id="stage" aria-label="Flowchart preview. Drag to pan, use the zoom buttons or Ctrl and scroll to zoom.">
    <div class="paper" id="paper"></div>
+   <div class="motion" role="group" aria-label="Animation"><button type="button" id="mvPlay" class="mv-play" aria-label="Play the build-up animation"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg><span>Play</span></button>
+    <select id="mvSpeed" aria-label="Animation speed"><option value="0.6">Slow</option><option value="1" selected>Normal</option><option value="1.6">Fast</option></select>
+    <button type="button" id="mvVideo" title="Download the build-up as a video">Video</button><button type="button" id="mvGif" title="Download the build-up as an animated GIF">GIF</button><output id="mvProg" aria-live="polite"></output></div>
    <div class="zoom"><button id="zOut" aria-label="Zoom out">−</button><output id="zVal">100%</output><button id="zIn" aria-label="Zoom in">+</button><button id="zFit" aria-label="Fit to screen">Fit</button></div>
   </div>
  </main>
@@ -223,6 +235,8 @@ details.help summary::before{content:'+ ';}details.help[open] summary::before{co
 <script src="dataviz/templates.js"></script>
 <script src="dataviz/flowtypes.js"></script>
 <script src="dataviz/flow-editor.js"></script>
+<script src="dataviz/reveal.js"></script>
+<script src="dataviz/export.js"></script>
 <script>
 'use strict';
 (()=>{
@@ -294,7 +308,7 @@ const loadedFonts=new Set();
 function render(fit){const st=DVStyle(S.style);DVFonts(st);
  if(!loadedFonts.has(st.id)&&document.fonts){loadedFonts.add(st.id);const fam=st.t.font.split(',')[0],hd=st.t.head.split(',')[0];Promise.all([document.fonts.load(`600 14px ${fam}`),document.fonts.load(`400 12px ${fam}`),document.fonts.load(`600 20px ${hd}`)]).then(()=>render(false)).catch(()=>{});}
  let src=source();if(/^\s*(flowchart|graph)\s+(TD|TB|LR|RL|BT)/i.test(src))src=src.replace(/^\s*(flowchart|graph)\s+(TD|TB|LR|RL|BT)/i,'$1 '+S.dir);else S.dirForced=S.dir;
- if(S.mode==='visual')editor.load(source());
+ stopPlay();if(S.mode==='visual')editor.load(source());
  const type=pickType();S.cur=type;
  let r;try{r=FlowTypes.render(type,src,st,{title:$('title').value.trim(),subtitle:$('subtitle').value.trim(),direction:S.dir,spacing:S.spacing,decision:S.decision,showLegend:S.legend==='1',id:'fc'});}
  catch(err){console.error(err);$('notes').innerHTML=`<li class="warn">Could not read that: ${String(err.message||err).replace(/</g,'&lt;')}</li>`;return;}
@@ -314,7 +328,7 @@ function fitView(){const r=S.last;if(!r)return;const W=stage.clientWidth,H=stage
 function zoomAt(k,cx,cy){const z=Math.min(3,Math.max(.12,S.zoom*k));S.x=cx-(cx-S.x)*(z/S.zoom);S.y=cy-(cy-S.y)*(z/S.zoom);S.zoom=z;apply();}
 $('zIn').onclick=()=>zoomAt(1.2,stage.clientWidth/2,stage.clientHeight/2);$('zOut').onclick=()=>zoomAt(1/1.2,stage.clientWidth/2,stage.clientHeight/2);$('zFit').onclick=fitView;
 stage.addEventListener('wheel',e=>{if(!(e.ctrlKey||e.metaKey)){S.x-=e.deltaX;S.y-=e.deltaY;apply();e.preventDefault();return;}e.preventDefault();const b=stage.getBoundingClientRect();zoomAt(Math.exp(-e.deltaY*.0022),e.clientX-b.left,e.clientY-b.top);},{passive:false});
-let drag=null;stage.addEventListener('pointerdown',e=>{if(e.target.closest('.zoom,.styleinfo'))return;drag={x:e.clientX,y:e.clientY,sx:S.x,sy:S.y};stage.classList.add('drag');stage.setPointerCapture(e.pointerId);});
+let drag=null;stage.addEventListener('pointerdown',e=>{if(e.target.closest('.zoom,.styleinfo,.motion'))return;drag={x:e.clientX,y:e.clientY,sx:S.x,sy:S.y};stage.classList.add('drag');stage.setPointerCapture(e.pointerId);});
 stage.addEventListener('pointermove',e=>{if(!drag)return;S.x=drag.sx+e.clientX-drag.x;S.y=drag.sy+e.clientY-drag.y;apply();});
 stage.addEventListener('pointerup',e=>{const d=drag;drag=null;stage.classList.remove('drag');
  /* a click without a drag selects the step under the pointer */
@@ -325,14 +339,7 @@ addEventListener('resize',()=>{clearTimeout(fitView.t);fitView.t=setTimeout(fitV
 
 /* exports */
 const slug=()=>($('title').value.trim()||'flowchart').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'flowchart';
-const download=(name,data,type)=>{const a=document.createElement('a'),u=URL.createObjectURL(data instanceof Blob?data:new Blob([data],{type}));a.href=u;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);};
-const fontCache=new Map();
-async function fontCSS(st){if(!st.fonts?.length)return '';const key=st.id;if(fontCache.has(key))return fontCache.get(key);
- const p=(async()=>{try{const css=await fetch('https://fonts.googleapis.com/css2?'+st.fonts.map(f=>'family='+f).join('&')+'&display=swap').then(r=>r.text());
-  const blocks=[...css.matchAll(/\/\*\s*latin\s*\*\/\s*@font-face\s*\{([^}]*)\}/g)].map(m=>m[1]);let out='';
-  for(const b of blocks){const u=(b.match(/url\(([^)]+)\)/)||[])[1];if(!u)continue;const buf=await fetch(u).then(r=>r.arrayBuffer());let bin='';const bytes=new Uint8Array(buf);for(let i=0;i<bytes.length;i+=0x8000)bin+=String.fromCharCode.apply(null,bytes.subarray(i,i+0x8000));
-   out+=`@font-face{${b.replace(/src:[^;]+;/,`src:url(data:font/woff2;base64,${btoa(bin)}) format('woff2');`)}}`;}
-  return out;}catch(e){console.warn('fonts not embedded',e);return '';}})();fontCache.set(key,p);return p;}
+const download=DVExport.download,fontCSS=DVExport.fontCSS;
 async function svgWithFonts(){const css=await fontCSS(DVStyle(S.style));return css?S.last.svg.replace('<defs>',`<defs><style>${css}</style>`):S.last.svg;}
 $('exSvg').onclick=async()=>{download(slug()+'.svg',await svgWithFonts(),'image/svg+xml');toast('SVG downloaded, fonts included');};
 $('exCopy').onclick=async()=>{try{await navigator.clipboard.writeText(S.last.svg);toast('SVG copied');}catch{toast('Copy was blocked by the browser');}};
@@ -370,6 +377,20 @@ table{border-collapse:collapse;width:100%;background:#fff;border:1px solid #E4E7
 <h2>Rules</h2><div class="two"><div class="card"><b>Do</b><ul><li>Keep one direction for the whole chart.</li><li>Start with a single pill; end every path at a pill.</li><li>Label every branch out of a decision.</li><li>Group steps into stages or lanes, five or six at most.</li><li>Give colour one job: status, or group, never both.</li></ul></div><div class="card"><b>Don’t</b><ul><li>Cross connectors or run them diagonally.</li><li>Stuff long text into decisions; ask one short question.</li><li>Mix arrowheads, line weights or radii.</li><li>Put more than about 25 steps on one canvas; split it.</li><li>Rely on colour alone for meaning.</li></ul></div></div>
 <h2>Source</h2><div class="card"><pre style="margin:0;font:12.5px/1.6 'JetBrains Mono',monospace;white-space:pre-wrap">${$('src').value.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}</pre></div>
 <script>document.querySelectorAll('.tcard .card').forEach(c=>c.onclick=()=>c.classList.toggle('full'));<\/script></main></body></html>`;download(slug()+'-'+st.id+'-style-guide.html',page,'text/html');toast('Style guide downloaded');};
+
+/* ---------- animated build-up ---------- */
+let play=null;const orderFor=()=>{const t=S.cur||'flow';return (t==='flow'||t==='swimlanes')?(S.dir==='LR'?'x':'y'):FlowReveal.ORDER[t]||'y';};
+const svgEl=()=>$('paper').querySelector('svg');
+function stopPlay(){if(!play)return;cancelAnimationFrame(play.raf);play.P.reset();play=null;$('mvPlay').querySelector('span').textContent='Play';$('mvPlay').setAttribute('aria-label','Play the build-up animation');}
+$('mvPlay').onclick=()=>{if(play){stopPlay();return;}const el=svgEl();if(!el)return;const P=FlowReveal.plan(el,{order:orderFor(),speed:+$('mvSpeed').value});P.apply(0);
+ const t0=performance.now();play={P,raf:0};$('mvPlay').querySelector('span').textContent='Stop';$('mvPlay').setAttribute('aria-label','Stop the animation');
+ const tick=now=>{if(!play)return;const t=now-t0;P.apply(t);if(t>=P.duration+600){stopPlay();return;}play.raf=requestAnimationFrame(tick);};play.raf=requestAnimationFrame(tick);};
+const busy=on=>{['mvPlay','mvVideo','mvGif'].forEach(id=>$(id).disabled=on);if(!on)setTimeout(()=>{$('mvProg').textContent='';},2500);};
+const animOpts=()=>({svgEl:svgEl(),width:S.last.width,height:S.last.height,style:DVStyle(S.style),order:orderFor(),speed:+$('mvSpeed').value,onProgress:p=>{$('mvProg').textContent=`Rendering ${Math.round(p*100)}%`;}});
+$('mvVideo').onclick=async()=>{stopPlay();busy(true);try{const {blob,ext}=await DVExport.video(animOpts());download(slug()+'-build.'+ext,blob);$('mvProg').textContent='Done';toast(ext==='mp4'?'MP4 downloaded':'WebM downloaded (this browser has no H.264 encoder)');}
+ catch(err){console.error(err);toast('Video export failed: '+(err.message||err));}finally{busy(false);}};
+$('mvGif').onclick=async()=>{stopPlay();busy(true);try{download(slug()+'-build.gif',await DVExport.gif(animOpts()));$('mvProg').textContent='Done';toast('GIF downloaded');}
+ catch(err){console.error(err);toast('GIF export failed: '+(err.message||err));}finally{busy(false);}};
 
 /* start */
 (function init(){const h=new URLSearchParams(location.hash.slice(1));let src=store.get('src'),title=store.get('title'),sub=store.get('subtitle');
