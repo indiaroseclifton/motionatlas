@@ -1,6 +1,6 @@
 'use strict';
 /* Background generator (#backgrounds).
-   Ten procedural families drawn by one WebGL fragment shader. Every image is computed from its
+   Sixteen procedural families drawn by one WebGL fragment shader. Every image is computed from its
    settings, so the library is unlimited and everything exported belongs to the person who made it.
    Motion is a seamless loop: time is an angle, and noise is sampled on a circle. */
 (()=>{
@@ -28,13 +28,19 @@ void main(){vec2 uv=gl_FragCoord.xy/R;float asp=R.x/R.y;vec2 p=(uv-.5)*vec2(asp,
  else if(M==6){vec2 q=p*SC*.8;float r=length(q),an=atan(q.y,q.x);float rings=.5+.5*cos(r*(10.+WP*30.)-A);float n=fbm(vec2(cos(an),sin(an))*1.6+vec2(r*3.)+sd+L*.3);float glow=exp(-r*(2.6-SF*1.6));col=pal(clamp(glow*(.72+.28*rings)+n*.18,0.,1.));}
  else if(M==7){col=C0;for(int i=1;i<5;i++){float fi=float(i);vec2 c=(h22(vec2(fi,S))-.5)*vec2(asp,1.)*.95+.12*vec2(cos(A+fi*2.),sin(A+fi*1.3))*MO;float rad=(.22+.28*h21(vec2(fi,S+3.)))/(SC*.7);float d=length(p-c+WP*.08*(vec2(fbm(p*2.+sd+fi),fbm(p*2.-sd+fi))-.5));col=mix(col,pick(i),(1.-smoothstep(rad*.15*(1.-SF),rad*(1.+SF*1.1),d))*.92);}}
  else if(M==8){float an=S*.7;vec2 dir=vec2(cos(an),sin(an));float t=dot(p,dir)*SC*.7+.5+WP*.3*(fbm(p*2.+sd+L*.4)-.5);col=pal(clamp(t,0.,1.));}
+ else if(M==10){vec2 q=p*SC*2.+sd;vec2 w=q+(.5+WP)*vec2(fbm(q*.7+L*.5),fbm(q*.7+3.1-L*.5));float r1=1.-abs(fbm(w*1.3)*2.-1.);float r2=1.-abs(fbm(w*1.9+7.3+L*.3)*2.-1.);float k=clamp(pow(r1,14.-SF*8.)*.8+pow(r2,18.-SF*8.)*.55,0.,1.);float depth=fbm(p*SC*.8+sd);col=mix(pal(depth*.55),pal(.95),k);col+=C4*k*k*.3;}
+ else if(M==11){vec2 q=p*SC*.9;float h=(fbm(q+sd+L*.25+WP*.5*vec2(fbm(q*1.7+sd),fbm(q*1.7-sd)))-.2)/.6;float n=9.+WP*18.;float hn=h*n;float f=fract(hn);float line=1.-smoothstep(0.,.07+(1.-SF)*.08,min(f,1.-f)*1.6);float major=mod(floor(hn+.5),5.)<.5?1.:0.;col=mix(C0,C1,clamp(h,0.,1.));col=mix(col,C2,line*.6);col=mix(col,C3,line*major*.85);}
+ else if(M==12){float cell=mix(26.,8.,clamp((SC-.5)/3.,0.,1.))*GS;float an=.5+S*.01;mat2 ro=mat2(cos(an),-sin(an),sin(an),cos(an));vec2 g=ro*gl_FragCoord.xy/cell;vec2 id=floor(g),f=fract(g)-.5;vec2 cp=(ro*((id+.5)*cell)/R.x-vec2(.5,.5*R.y/R.x))*1.6;float v=smoothstep(.2,.8,fbm(cp*1.2+sd+L*.4+WP*vec2(fbm(cp*2.+sd),0.)));float r=sqrt(v)*.62;float d=length(f);float dot1=1.-smoothstep(r-.06-.1*(1.-SF),r+.02,d);col=mix(C0,pal(.25+.75*v),dot1);}
+ else if(M==13){vec2 q=p*SC;float n=fbm(q*.8+sd+L*.35);float lines=12.+WP*40.;float v=sin((q.y+n*(.6+WP*1.4))*lines);float band=smoothstep(-.2-(1.-SF)*.6,.2+(1.-SF)*.6,v);float t=fbm(q*.5-sd);col=mix(pal(t*.45),pal(.55+t*.45),band);}
+ else if(M==14){vec2 q=p*SC*2.2+sd;q+=WP*.4*vec2(fbm(q*.8+L*.3),fbm(q*.8+5.-L*.3));vec2 i=floor(q),f=fract(q);float d1=8.,d2=8.;vec2 bi=vec2(0.);for(int y=-1;y<=1;y++)for(int x=-1;x<=1;x++){vec2 o=vec2(float(x),float(y));vec2 pt=h22(i+o);pt=.5+(pt-.5)*.8+.1*sin(A+6.2831*pt)*MO;float d=length(o+pt-f);if(d<d1){d2=d1;d1=d;bi=i+o;}else if(d<d2)d2=d;}float edge=smoothstep(0.,.04+.12*SF,d2-d1);float k=h21(bi+S);col=mix(C0,pal(.2+.8*k)*(.75+.25*(1.-d1)),edge);}
+ else if(M==15){vec2 q=p*SC*2.;float an=.6+S*.37;vec2 d=vec2(cos(an),sin(an));float u=dot(q,d),v=dot(q,vec2(-d.y,d.x));float w=(noise(vec2(u*.3,v*.45)+sd+L*.25)*2.+noise(vec2(u*.6,v*.9)-sd)*.8)*(2.5+WP*4.);float h=sin(u*1.9+w)*(.7+.3*noise(q*.4-sd));float spec=pow(max(0.,h),4.+SF*14.);float shade=smoothstep(-1.,1.,h);col=pal(clamp(.06+shade*.78,0.,1.))+C4*spec*.5;}
  else{float cell=mix(30.,9.,clamp((SC-.5)/3.,0.,1.))*GS;vec2 cs=vec2(cell*.62,cell);vec2 cid=floor(gl_FragCoord.xy/cs);vec2 cuv=fract(gl_FragCoord.xy/cs);vec2 cp=(cid*cs/R-.5)*vec2(asp,1.)*1.6;
   vec2 a=vec2(fbm(cp+sd+L*.5),fbm(cp+sd+vec2(5.2,1.3)));float f=smoothstep(.28,.72,fbm(cp+WP*2.*a));float g=glyph(1.+f*7.,cuv);col=mix(C0,pal(.3+.7*f),g*(.55+.45*SF+.0));}
  float g=h21(floor(gl_FragCoord.xy/max(GS,1.))+S)-.5;col+=g*GR*.2;gl_FragColor=vec4(clamp(col,0.,1.),1.);}`;
  const VERT='attribute vec2 v;void main(){gl_Position=vec4(v,0.,1.);}';
- const FAMILIES=['Mesh','Liquid','Aurora','Swirl','Iridescent','Horizon','Portal','Orbs','Grain','ASCII'];
+ const FAMILIES=['Mesh','Liquid','Aurora','Swirl','Iridescent','Horizon','Portal','Orbs','Grain','ASCII','Caustics','Contours','Halftone','Op lines','Cells','Silk'];
  const P=(name,mode,colors,seed,scale,warp,soft,grain,motion=1)=>({name,mode,colors,seed,scale,warp,soft,grain,motion});
- /* Ten named collections, five presets each. Palettes run dark-to-light or ground-to-highlight. */
+ /* Sixteen named collections, five presets each. Palettes run dark-to-light or ground-to-highlight. */
  const COLLECTIONS=[
   {id:'velvet',name:'Velvet Mesh',note:'Soft colour fields that melt into one another.',presets:[
    P('Peach Silk',0,['#f6d5c4','#f29c8f','#c9a7eb','#fbe3a7','#ffffff'],3,1.2,.55,.75,.18),P('Deep Plum',0,['#1b1033','#5b2a86','#c0417a','#f08a5d','#2c1b5a'],11,1.1,.7,.7,.22),
@@ -65,7 +71,25 @@ void main(){vec2 uv=gl_FragCoord.xy/R;float asp=R.x/R.y;vec2 p=(uv-.5)*vec2(asp,
    P('Ultramarine',8,['#08104a','#1d3ccf','#6c8cff','#d5ddff','#ffffff'],22,1.2,.5,.5,.55),P('Matcha',8,['#1f2d1a','#4b6b2e','#9cbf5a','#e7efc5','#fbfdf2'],35,.9,.3,.5,.5),P('Neon Signage',8,['#12001f','#ff2fb9','#ff8a00','#00e5ff','#ffffff'],50,1.3,.7,.5,.65)]},
   {id:'terminal',name:'Terminal Weather',note:'Noise fields drawn as text characters.',presets:[
    P('Phosphor',9,['#020a04','#0b3d16','#22c55e','#86efac','#f0fff4'],10,1.6,1.0,.8,.1),P('Amber CRT',9,['#0d0700','#3d2200','#f59e0b','#fcd34d','#fffbeb'],20,1.8,1.1,.8,.12),
-   P('Blueprint',9,['#0a1f44','#1e3a8a','#60a5fa','#bfdbfe','#ffffff'],30,2.2,.9,.9,.08),P('Paper Type',9,['#f5f1e8','#d8d0c0','#8a7f6e','#3b342c','#14110d'],45,2.6,1.2,.9,.14),P('Magenta Static',9,['#0f0614','#4a1060','#e040fb','#ff80ab','#ffffff'],65,1.4,1.3,.7,.16)]}
+   P('Blueprint',9,['#0a1f44','#1e3a8a','#60a5fa','#bfdbfe','#ffffff'],30,2.2,.9,.9,.08),P('Paper Type',9,['#f5f1e8','#d8d0c0','#8a7f6e','#3b342c','#14110d'],45,2.6,1.2,.9,.14),P('Magenta Static',9,['#0f0614','#4a1060','#e040fb','#ff80ab','#ffffff'],65,1.4,1.3,.7,.16)]},
+  {id:'caustics',name:'Pool Light',note:'Rippling caustics, like sun through water onto a pool floor.',presets:[
+   P('Lido',10,['#03243a','#0a5f86','#1aa6c9','#7fe3f0','#ffffff'],4,1.0,.5,.5,.12),P('Midnight Pool',10,['#010814','#06213f','#145a8c','#4fb3e8','#d8f6ff'],18,1.2,.6,.4,.18),
+   P('Lagoon Gold',10,['#0b2a26','#14615a','#3fae95','#ffd98a','#fff8e1'],29,.9,.4,.6,.14),P('Rose Water',10,['#2a0f24','#6e2a5a','#c45a8f','#ffb3cf','#fff2f8'],43,1.1,.55,.5,.12),P('Glass Floor',10,['#e8f1f3','#c3dce2','#8fc3cf','#5aa6b8','#ffffff'],57,1.3,.45,.7,.08)]},
+  {id:'contours',name:'Survey Lines',note:'Topographic contour lines over a soft height field.',presets:[
+   P('Ordnance',11,['#f3efe4','#e3dac6','#b7a98c','#7a5a3a','#ffffff'],3,1.2,.4,.6,.14),P('Night Survey',11,['#0b1220','#17263f','#4b6a9b','#9cc3ff','#ffffff'],14,1.0,.5,.5,.16),
+   P('Moss Map',11,['#1d2a1a','#2f4a2a','#88a86a','#e6d79a','#ffffff'],27,1.4,.6,.55,.18),P('Blueprint Hills',11,['#0d2c5a','#123a74','#6fa8ff','#e6f0ff','#ffffff'],40,1.1,.45,.4,.1),P('Clay Relief',11,['#f6e7d8','#e9c8a8','#c9825a','#7a3a22','#ffffff'],55,1.3,.7,.6,.16)]},
+  {id:'halftone',name:'Riso Dots',note:'Halftone dot screens that grow and shrink with the field.',presets:[
+   P('Riso Pink',12,['#fbf4ea','#ff5ea8','#ff7aa8','#f2386f','#2b2bd8'],5,1.4,.6,.7,.2),P('Newsprint',12,['#f1ece2','#4a4a4a','#2b2b2b','#151515','#000000'],16,1.8,.5,.7,.25),
+   P('Teal Screen',12,['#0e1a1c','#0f6b6b','#24a6a0','#7de0d2','#e9fffb'],30,1.2,.7,.6,.15),P('Sun Dots',12,['#2a0d05','#e8541b','#f7931e','#ffd23f','#fff7d6'],46,1.6,.8,.65,.18),P('Indigo Print',12,['#f4f1ea','#1d2b8a','#3047c9','#6f84ff','#c9d2ff'],63,2.0,.6,.7,.22)]},
+  {id:'oplines',name:'Op Lines',note:'Parallel lines bent by noise, from calm stripes to optical ripples.',presets:[
+   P('Bridget',13,['#0a0a0a','#1e1e1e','#f2f2f2','#ffffff','#ffffff'],2,1.2,.6,.1,.08),P('Candy Stripe',13,['#ffe3ec','#ff8fb1','#fff7f0','#7ec8e3','#3a6ea5'],19,1.0,.4,.5,.1),
+   P('Dune Lines',13,['#3b2414','#8a5a33','#e0b07c','#f6dfbf','#fff6ea'],33,1.4,.5,.6,.16),P('Electric',13,['#06021a','#2a0a6e','#ff2fb9','#29f0ff','#ffffff'],48,1.1,.8,.3,.12),P('Sage Ripple',13,['#1d2a22','#3f5a48','#a8c3a0','#e8efe0','#ffffff'],60,1.3,.3,.7,.14)]},
+  {id:'cells',name:'Stained Cells',note:'Voronoi cells, from leaded glass to crackle glaze.',presets:[
+   P('Leaded Glass',14,['#0b0b10','#1f4e79','#c0392b','#f1c40f','#27ae60'],7,1.0,.2,.15,.14),P('Crackle Glaze',14,['#2b2a26','#e9e2d0','#d8cfb8','#f4efe2','#c9bfa6'],21,1.6,.4,.1,.16),
+   P('Coral Reef',14,['#071f2b','#ff7f6e','#ffb38a','#3ec1d3','#f6f7d7'],34,1.2,.6,.4,.12),P('Mosaic Night',14,['#05060a','#2d1e6b','#5a2a8a','#1f6b8a','#c9a227'],52,1.4,.3,.2,.18),P('Pebble',14,['#e7e2d8','#bfb5a5','#9a8f80','#d8d1c4','#f6f3ec'],67,1.8,.5,.6,.14)]},
+  {id:'silk',name:'Silk Folds',note:'Draped fabric with soft folds and a satin highlight.',presets:[
+   P('Champagne Satin',15,['#3a2a18','#8a6a3e','#d4b07a','#f2dfb8','#fff8ea'],6,1.0,.5,.4,.1),P('Midnight Silk',15,['#05060f','#121a3a','#2e3f8f','#7d8fe0','#e8ecff'],17,1.2,.6,.5,.12),
+   P('Rose Charmeuse',15,['#2a0a14','#7a2340','#c9577a','#f2a6bd','#fff0f5'],28,.9,.45,.45,.1),P('Emerald Drape',15,['#03140c','#0b3d26','#1f7a50','#6fd3a0','#eafff4'],44,1.1,.55,.35,.12),P('Ivory Sheet',15,['#d9d2c5','#e8e2d6','#f2ede3','#faf7f1','#ffffff'],59,1.3,.4,.6,.08)]}
  ];
  const ALL=COLLECTIONS.flatMap(c=>c.presets.map((p,i)=>({...p,collection:c.id,key:c.id+'-'+i})));
  const RATIOS=[['16:9',16/9,'Desktop'],['21:9',21/9,'Wide'],['4:3',4/3,'Slide'],['1:1',1,'Square'],['4:5',.8,'Portrait'],['9:16',9/16,'Story']];
@@ -94,7 +118,7 @@ void main(){vec2 uv=gl_FragCoord.xy/R;float asp=R.x/R.y;vec2 p=(uv-.5)*vec2(asp,
 
  function encode(s){return [s.mode,s.colors.map(c=>c.slice(1)).join('-'),s.seed,s.scale,s.warp,s.soft,s.grain,s.motion,state.ratio.replace(':','x')].join('.');}
  function decode(str){try{const [m,c,seed,sc,wp,sf,gr,mo,ra]=decodeURIComponent(str).split('.');const colors=c.split('-').map(x=>'#'+x);if(colors.length!==5||colors.some(x=>!/^#[0-9a-f]{6}$/i.test(x)))return null;const r=(ra||'16x9').replace('x',':');if(RATIOS.some(x=>x[0]===r))state.ratio=r;
-  return {name:'Shared background',mode:Math.max(0,Math.min(9,+m|0)),colors,seed:+seed||0,scale:+sc||1,warp:+wp||0,soft:+sf||0,grain:+gr||0,motion:+mo||1};}catch{return null;}}
+  return {name:'Shared background',mode:Math.max(0,Math.min(FAMILIES.length-1,+m|0)),colors,seed:+seed||0,scale:+sc||1,warp:+wp||0,soft:+sf||0,grain:+gr||0,motion:+mo||1};}catch{return null;}}
 
  function shell(){const sec=document.getElementById('backgrounds');if(!sec||built)return;built=true;
   sec.innerHTML=`<header class="bgHead"><p class="cardcode">Generator · ${ALL.length} presets · unlimited variations</p><h1 class="pagetitle" id="bgTitle">Backgrounds.</h1><p class="intro">Gradients, light, liquid, grain and type, computed in your browser. Start from a preset, change the seed or the colours, then download a 4K image, a looping video or the code. Everything you make here is yours to use in personal and client work.</p></header>

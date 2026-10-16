@@ -246,9 +246,10 @@ Your package of 11 films, 68 renders and a style list is merged in with
 
 ### Background generator (`#backgrounds`)
 
-- `site/backgrounds.js` and `backgrounds.css`: ten procedural families (Mesh, Liquid, Aurora, Swirl,
-  Iridescent, Horizon, Portal, Orbs, Grain, ASCII) drawn by one WebGL fragment shader, with 50 named
-  presets in 10 collections. Palette, scale, distortion, softness, grain, motion and seed are editable.
+- `site/backgrounds.js` and `backgrounds.css`: sixteen procedural families (Mesh, Liquid, Aurora, Swirl,
+  Iridescent, Horizon, Portal, Orbs, Grain, ASCII, Caustics, Contours, Halftone, Op lines, Cells, Silk) drawn by one WebGL
+  fragment shader, with 80 named presets in 16 collections. The six newest collections are Pool Light, Survey Lines, Riso Dots,
+  Op Lines, Stained Cells and Silk Folds. Palette, scale, distortion, softness, grain, motion and seed are editable.
 - Exports: 4K and HD PNG at six aspect ratios, a 6-second seamless loop (WebM), a CSS approximation,
   standalone live code that reproduces the exact image, and a shareable link (`#backgrounds?bg=…`).
 
