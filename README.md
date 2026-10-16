@@ -276,6 +276,21 @@ Your package of 11 films, 68 renders and a style list is merged in with
   - **Jellyfish:** upscaled from full-size frames.
   - **Phones:** each film has a `-720.mp4` cut made from the upscaled frames, served below 900 px.
 
+### Flowchart studio (`site/flowchart-studio.html`, `site/dataviz/`)
+
+Write a flowchart as text and get a clean, consistent diagram in seventeen styles.
+- **Input:** the flowchart subset of Mermaid, which most tools and AI assistants export. That covers shapes, labelled branches, dashed and thick links, subgraphs, and `:::have` / `:::dont` / `:::partial` / `:::accent` status. A plain list of steps also works: lines ending in "?" become decisions, and indented `Yes: step` lines become branches.
+- **Layout** (`dataviz/flow.js`, no libraries):
+  - Ranks with loops set aside, crossing-reducing ordering, and isotonic placement so lines run straight.
+  - Right-angle routing with every connector on its own track; loops run round the outside, dashed in the accent colour.
+  - Stage outlines follow their own steps row by row, so stages never overlap.
+  - Swimlane mode turns top-level subgraphs into lanes.
+- **Styles** (`dataviz/styles.js`): six drawn from the Pinterest board (Workflow canvas, Soft neumorphic, Frosted glass, Calm sage, Lilac flow, Soft clay 3D) and eleven from research (Swiss editorial, Tufte, newsroom grey, design-system SaaS, monochrome developer, hand-drawn, pastel diagramming, blueprint, dark glass, neo-brutalist, risograph).
+- **Pre-flight:** notes on what the layout did, plus warnings for unlabelled branches, several starts, crowded ranks and oversized charts.
+- **Exports:** SVG and HTML with the fonts embedded, PNG at 2×, a share link (the chart is encoded in the URL), and a style guide. The style guide is a one-page flowchart design system for the chosen look: your chart, colour tokens, type roles, shapes, status, geometry, and dos and don'ts.
+- **Examples** (`dataviz/examples.js`): creative review, sign-up, release pipeline (lanes), and the AI cooking-channel workflow.
+- **Research notes:** `docs/dataviz-research.md`.
+
 ### Live design-system components (`site/system-components/`)
 
 The 90 UI components from the twelve custom systems (D21–D32) are real HTML and CSS, not screenshot crops.

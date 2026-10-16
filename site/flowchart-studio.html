@@ -1,0 +1,253 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Flowchart studio · Visual & Motion Atlas</title>
+<meta name="description" content="Write a flowchart as text, get a clean, well-laid-out diagram in seventeen styles, and export it as SVG, PNG, HTML or a style guide.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap">
+<style>
+:root{--bg:#F4F5F8;--panel:#FFFFFF;--ink:#1C1F2A;--mute:#6B7183;--hair:#E4E7EE;--soft:#F7F8FB;--accent:#5B2DFF;--accent-ink:#FFFFFF;--ok:#1E9E6A;--warn:#C9771C;--shadow:0 1px 2px rgba(20,24,40,.04),0 8px 24px -12px rgba(20,24,40,.12);color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:14px/1.5 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit}button,select,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+.app{display:grid;grid-template-columns:minmax(320px,380px) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);height:100vh;height:100dvh}
+header{grid-column:1/-1;display:flex;align-items:center;gap:16px;padding:12px max(18px,env(safe-area-inset-right)) 12px max(18px,env(safe-area-inset-left));background:var(--panel);border-bottom:1px solid var(--hair)}
+.brand{display:flex;align-items:baseline;gap:12px;min-width:0}
+.brand a{font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);text-decoration:none;white-space:nowrap}
+.brand a:hover{color:var(--ink)}
+.brand h1{margin:0;font:500 26px/1 'Cormorant Garamond',Georgia,serif;font-style:italic;letter-spacing:-.01em;white-space:nowrap}
+.exports{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.btn{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 13px;border-radius:10px;border:1px solid var(--hair);background:var(--panel);font-weight:500;font-size:13px;transition:border-color .15s,background .15s,box-shadow .15s}
+.btn:hover{border-color:#CBD0DB;background:var(--soft)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);box-shadow:0 6px 16px -8px var(--accent)}
+.btn.primary:hover{background:#4A1FF0}
+.btn:focus-visible,.chip:focus-visible,.seg button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.side{background:var(--panel);border-right:1px solid var(--hair);display:flex;flex-direction:column;min-height:0;overflow:auto}
+.sec{padding:16px 18px;border-bottom:1px solid var(--hair);display:grid;gap:10px}
+.sec h2{margin:0;font:600 11px/1 Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);display:flex;justify-content:space-between;align-items:center}
+.sec h2 small{font:500 11px Inter;letter-spacing:0;text-transform:none;color:var(--mute)}
+label.field{display:grid;gap:5px;font-size:12.5px;color:var(--mute)}
+input[type=text],select{min-height:36px;border:1px solid var(--hair);border-radius:9px;padding:0 10px;background:var(--panel);color:var(--ink)}
+textarea{font-variant-ligatures:none;width:100%;min-height:300px;resize:vertical;border:1px solid var(--hair);border-radius:12px;padding:12px 14px;background:#FBFBFD;font:12.5px/1.65 'JetBrains Mono',ui-monospace,monospace;tab-size:2;white-space:pre;overflow:auto;color:#262A38}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.seg{display:inline-flex;padding:3px;border-radius:10px;background:var(--soft);border:1px solid var(--hair)}
+.seg button{border:0;background:none;min-height:30px;padding:0 11px;border-radius:7px;font-size:12.5px;font-weight:500;color:var(--mute)}
+.seg button[aria-pressed=true]{background:var(--panel);color:var(--ink);box-shadow:0 1px 3px rgba(20,24,40,.1)}
+.opt{display:grid;grid-template-columns:96px 1fr;align-items:center;gap:8px;font-size:12.5px;color:var(--mute)}
+.notes{display:grid;gap:7px;margin:0;padding:0;list-style:none}
+.notes li{display:grid;grid-template-columns:18px 1fr;gap:6px;font-size:12.5px;line-height:1.45}
+.notes li::before{content:'';width:14px;height:14px;margin-top:2px;border-radius:50%;background:var(--ok) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M4 7.2l2 2L10.2 5' fill='none' stroke='white' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E")}
+.notes li.warn::before{background:var(--warn) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M7 3.6v4M7 10v.2' fill='none' stroke='white' stroke-width='1.7' stroke-linecap='round'/%3E%3C/svg%3E")}
+.cheat{margin:0;display:grid;grid-template-columns:auto 1fr;gap:5px 12px;font-size:12px}
+.cheat code{font:12px 'JetBrains Mono',monospace;color:#3B2A9A;background:#F3F0FF;border-radius:5px;padding:1px 6px;white-space:nowrap}
+.cheat dd{margin:0;color:var(--mute)}
+details.help summary{cursor:pointer;font-size:12.5px;color:var(--mute);list-style:none}
+details.help summary::before{content:'+ ';}details.help[open] summary::before{content:'– '}
+.main{display:grid;grid-template-rows:auto minmax(0,1fr);min-width:0;min-height:0}
+.styles{display:flex;gap:6px;overflow-x:auto;padding:12px 18px;border-bottom:1px solid var(--hair);background:var(--panel);scrollbar-width:thin;align-items:center}
+.styles .lbl{flex:none;font:600 10.5px Inter;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);padding:0 6px 0 2px}
+.styles .lbl:not(:first-child){margin-left:10px;padding-left:14px;border-left:1px solid var(--hair)}
+.chip{flex:none;display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:0 12px 0 6px;border-radius:999px;border:1px solid var(--hair);background:var(--panel);font-size:12.5px;font-weight:500;white-space:nowrap}
+.chip:hover{border-color:#CBD0DB}
+.chip[aria-pressed=true]{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+.sw{width:26px;height:26px;border-radius:50%;position:relative;border:1px solid rgba(0,0,0,.08);overflow:hidden;flex:none}
+.sw i{position:absolute;right:3px;bottom:3px;width:11px;height:11px;border-radius:3px}
+.stage{position:relative;overflow:hidden;background:#EDEFF4;background-image:radial-gradient(#D6DAE3 1px,transparent 1px);background-size:18px 18px;cursor:grab;touch-action:none}
+.stage.drag{cursor:grabbing}
+.paper{position:absolute;left:0;top:0;transform-origin:0 0;box-shadow:0 30px 60px -30px rgba(20,24,40,.35),0 0 0 1px rgba(20,24,40,.06);border-radius:10px;overflow:hidden;line-height:0}
+.paper svg{display:block}
+.zoom{position:absolute;right:16px;bottom:16px;display:flex;gap:4px;padding:4px;border-radius:12px;background:var(--panel);box-shadow:var(--shadow);border:1px solid var(--hair)}
+.zoom button{border:0;background:none;min-width:34px;height:32px;border-radius:8px;font-weight:600;color:var(--ink)}
+.zoom button:hover{background:var(--soft)}
+.zoom output{min-width:46px;text-align:center;align-self:center;font:500 12px 'JetBrains Mono',monospace;color:var(--mute)}
+.styleinfo{font-size:12.5px;line-height:1.5}
+.styleinfo b{display:block;font-size:13px;margin-bottom:2px}.styleinfo span{color:var(--mute)}
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);opacity:0;padding:10px 16px;border-radius:10px;background:var(--ink);color:#fff;font-size:13px;transition:opacity .2s,transform .2s;pointer-events:none;z-index:9}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+@media (max-width:900px){.app{grid-template-columns:1fr;grid-template-rows:auto auto auto;height:auto}header{order:0}.main{order:1}.side{order:2}.side{border-right:0;overflow:visible}.main{grid-template-rows:auto 70vh}.exports .btn span{display:none}.brand h1{font-size:22px}header{flex-wrap:wrap}.exports{margin-left:0;width:100%;justify-content:flex-start}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head>
+<body>
+<div class="app">
+ <header>
+  <div class="brand"><a href="atlas.html#systems" aria-label="Back to the Visual & Motion Atlas">← Atlas</a><h1>Flowchart studio</h1></div>
+  <div class="exports" role="group" aria-label="Export">
+   <button class="btn" id="exSvg" title="Download SVG">SVG <span>file</span></button>
+   <button class="btn" id="exPng" title="Download PNG at 2×">PNG <span>2×</span></button>
+   <button class="btn" id="exCopy" title="Copy SVG markup">Copy <span>SVG</span></button>
+   <button class="btn" id="exHtml" title="Download a standalone HTML page">HTML</button>
+   <button class="btn" id="exShare" title="Copy a link to this chart">Share <span>link</span></button>
+   <button class="btn primary" id="exGuide" title="Download a style guide for this look">Style guide</button>
+  </div>
+ </header>
+ <aside class="side">
+  <div class="sec">
+   <h2>Chart <small><select id="example" aria-label="Start from an example"><option value="">Start from…</option></select></small></h2>
+   <label class="field">Title<input type="text" id="title" placeholder="Optional title"></label>
+   <label class="field">Subtitle<input type="text" id="subtitle" placeholder="Optional one-line subtitle"></label>
+  </div>
+  <div class="sec">
+   <h2>Style</h2>
+   <div class="styleinfo" id="styleinfo"></div>
+  </div>
+  <div class="sec">
+   <h2>Steps <small>Mermaid flowchart syntax</small></h2>
+   <textarea id="src" spellcheck="false" aria-label="Flowchart source" autocapitalize="off" autocomplete="off"></textarea>
+   <details class="help"><summary>Syntax in one minute</summary>
+    <dl class="cheat">
+     <dt><code>a([Start])</code></dt><dd>start or end (pill)</dd>
+     <dt><code>b[Do a thing]</code></dt><dd>action</dd>
+     <dt><code>c{Approved?}</code></dt><dd>decision</dd>
+     <dt><code>d[(Database)]</code></dt><dd>data store</dd>
+     <dt><code>e[/Upload/]</code></dt><dd>input or output</dd>
+     <dt><code>f[[Sub-process]]</code></dt><dd>linked sub-process</dd>
+     <dt><code>[Title | note]</code></dt><dd>a second, quieter line</dd>
+     <dt><code>a --> b</code></dt><dd>connector</dd>
+     <dt><code>c -->|Yes| b</code></dt><dd>labelled branch</dd>
+     <dt><code>a -.-> b</code></dt><dd>optional or async</dd>
+     <dt><code>a ==> b</code></dt><dd>the main path</dd>
+     <dt><code>b:::have</code></dt><dd>status: have, dont, partial, accent</dd>
+     <dt><code>subgraph id [Stage]</code></dt><dd>group or lane, close with <code>end</code></dd>
+    </dl>
+    <p style="margin:8px 0 0;font-size:12px;color:var(--mute)">Or write one step per line. Lines ending in “?” become decisions, and indented <code>Yes: step</code> lines become branches.</p>
+   </details>
+  </div>
+  <div class="sec">
+   <h2>Layout</h2>
+   <div class="opt">Direction<div class="seg" id="dir"><button data-v="TB" aria-pressed="true">Top → down</button><button data-v="LR" aria-pressed="false">Left → right</button></div></div>
+   <div class="opt">Groups<div class="seg" id="lanes"><button data-v="0" aria-pressed="true">Boxes</button><button data-v="1" aria-pressed="false">Swimlanes</button></div></div>
+   <div class="opt">Spacing<div class="seg" id="spacing"><button data-v="compact" aria-pressed="false">Tight</button><button data-v="comfortable" aria-pressed="true">Even</button><button data-v="airy" aria-pressed="false">Airy</button></div></div>
+   <div class="opt">Decisions<div class="seg" id="decision"><button data-v="badge" aria-pressed="true">Badge</button><button data-v="diamond" aria-pressed="false">Diamond</button></div></div>
+   <div class="opt">Legend<div class="seg" id="legend"><button data-v="1" aria-pressed="true">Show</button><button data-v="0" aria-pressed="false">Hide</button></div></div>
+  </div>
+  <div class="sec">
+   <h2>Pre-flight</h2>
+   <ul class="notes" id="notes" aria-live="polite"></ul>
+  </div>
+ </aside>
+ <main class="main">
+  <div class="styles" id="styles" role="group" aria-label="Style"></div>
+  <div class="stage" id="stage" aria-label="Flowchart preview. Drag to pan, use the zoom buttons or Ctrl and scroll to zoom.">
+   <div class="paper" id="paper"></div>
+   <div class="zoom"><button id="zOut" aria-label="Zoom out">−</button><output id="zVal">100%</output><button id="zIn" aria-label="Zoom in">+</button><button id="zFit" aria-label="Fit to screen">Fit</button></div>
+  </div>
+ </main>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<script src="dataviz/styles.js"></script>
+<script src="dataviz/flow.js"></script>
+<script src="dataviz/examples.js"></script>
+<script>
+'use strict';
+(()=>{
+const $=id=>document.getElementById(id);
+const store={get(k){try{return localStorage.getItem('fcs:'+k);}catch{return null;}},set(k,v){try{localStorage.setItem('fcs:'+k,v);}catch{}}};
+const S={style:store.get('style')||'workflow',dir:'TB',lanes:'0',spacing:'comfortable',decision:'badge',legend:'1',zoom:1,x:0,y:0,last:null};
+const toast=m=>{const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),1800);};
+
+/* plain step lists become Mermaid */
+function fromList(text){const lines=text.split('\n').filter(l=>l.trim());const ids=new Map();let n=0,out=['flowchart TD'],prev=null,lastDecision=null,taken=new Set();
+ const node=label=>{const k=label.trim();if(ids.has(k))return ids.get(k);const id='s'+(++n),q=/\?$/.test(k),first=!ids.size;ids.set(k,id);out.push(`  ${id}${q?'{':first?'([':'['}${k.replace(/[\[\]{}()|]/g,' ')}${q?'}':first?'])':']'}`);return id;};
+ for(const raw of lines){const ind=/^\s+/.test(raw),line=raw.trim().replace(/^[-*•\d.)\s]+/,'');
+  const br=line.match(/^([^:]{1,24}):\s*(.+)$/);
+  if(ind&&lastDecision&&br){const id=node(br[2]);out.push(`  ${lastDecision} -->|${br[1].trim()}| ${id}`);taken.add(id);continue;}
+  const id=node(line);if(prev&&!taken.has(id))out.push(`  ${prev} --> ${id}`);prev=id;taken=new Set();lastDecision=/\?$/.test(line)?id:null;}
+ return out.join('\n');}
+const isMermaid=t=>/^\s*(flowchart|graph)\b/i.test(t)||/-->|==>|-\.->|---/.test(t);
+
+/* style chips */
+const chipHTML=st=>`<button class="chip" data-style="${st.id}" aria-pressed="${st.id===S.style}" title="${st.kicker}"><span class="sw" style="background:${st.t.bg.startsWith('#')?st.t.bg:'#0B0F1A'}"><i style="background:${st.t.accent}"></i></span>${st.name}</button>`;
+$('styles').innerHTML=`<span class="lbl">From your board</span>${DVStyles.filter(s=>s.board).map(chipHTML).join('')}<span class="lbl">Researched</span>${DVStyles.filter(s=>!s.board).map(chipHTML).join('')}`;
+$('styles').onclick=e=>{const b=e.target.closest('[data-style]');if(!b)return;S.style=b.dataset.style;store.set('style',S.style);$('styles').querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',String(c===b)));render(true);};
+for(const id of ['dir','lanes','spacing','decision','legend'])$(id).onclick=e=>{const b=e.target.closest('button');if(!b)return;S[id]=b.dataset.v;$(id).querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));render(true);};
+
+/* examples */
+$('example').innerHTML+=FlowExamples.map(x=>`<option value="${x.id}">${x.name}</option>`).join('');
+$('example').onchange=e=>{const x=FlowExamples.find(y=>y.id===e.target.value);if(!x)return;$('src').value=x.src;$('title').value=x.title||x.name;$('subtitle').value=x.subtitle||'';
+ if(x.id==='release'){setSeg('lanes','1');}else setSeg('lanes','0');setSeg('dir',/flowchart\s+LR/.test(x.src)?'LR':'TB');render(true);e.target.value='';};
+function setSeg(id,v){S[id]=v;$(id).querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.v===v)));}
+
+/* render */
+let timer=0;
+function source(){const t=$('src').value;return isMermaid(t)?t:fromList(t);}
+const loadedFonts=new Set();
+function render(fit){const st=DVStyle(S.style);DVFonts(st);
+ if(!loadedFonts.has(st.id)&&document.fonts){loadedFonts.add(st.id);const fam=st.t.font.split(',')[0],hd=st.t.head.split(',')[0];Promise.all([document.fonts.load(`600 14px ${fam}`),document.fonts.load(`400 12px ${fam}`),document.fonts.load(`600 20px ${hd}`)]).then(()=>render(false)).catch(()=>{});}
+ let src=source();if(/^\s*(flowchart|graph)\s+(TD|TB|LR|RL|BT)/i.test(src))src=src.replace(/^\s*(flowchart|graph)\s+(TD|TB|LR|RL|BT)/i,'$1 '+S.dir);else S.dirForced=S.dir;
+ let r;try{r=FlowEngine.render(src,st,{title:$('title').value.trim(),subtitle:$('subtitle').value.trim(),direction:S.dir,lanes:S.lanes==='1',spacing:S.spacing,decision:S.decision,showLegend:S.legend==='1',id:'fc'});}
+ catch(err){console.error(err);$('notes').innerHTML=`<li class="warn">Could not read that: ${String(err.message||err).replace(/</g,'&lt;')}</li>`;return;}
+ S.last=r;$('paper').innerHTML=r.svg;$('paper').style.width=r.width+'px';$('paper').style.height=r.height+'px';
+ $('notes').innerHTML=r.notes.map(n=>`<li class="${n.ok?'':'warn'}">${n.text.replace(/</g,'&lt;')}</li>`).join('');
+ $('styleinfo').innerHTML=`<b>${st.name}</b><span style="display:block;color:var(--mute);font-size:11.5px;margin-bottom:4px">${st.kicker}</span><span>${st.blurb}</span><span style="display:block;margin-top:6px;color:var(--mute)">Suits: ${st.suits}</span>`;
+ store.set('src',$('src').value);store.set('title',$('title').value);store.set('subtitle',$('subtitle').value);
+ if(fit)fitView();else apply();}
+const later=()=>{clearTimeout(timer);timer=setTimeout(()=>render(false),180);};
+$('src').addEventListener('input',later);$('title').addEventListener('input',later);$('subtitle').addEventListener('input',later);
+$('src').addEventListener('keydown',e=>{if(e.key==='Tab'&&!e.shiftKey&&!e.metaKey&&!e.ctrlKey){/* indent, but let Escape-then-Tab leave */const ta=e.target;if(ta.dataset.esc==='1'){ta.dataset.esc='';return;}e.preventDefault();const a=ta.selectionStart,b=ta.selectionEnd;ta.setRangeText('  ',a,b,'end');later();}if(e.key==='Escape')e.target.dataset.esc='1';});
+
+/* pan and zoom */
+const stage=$('stage'),paper=$('paper');
+function apply(){paper.style.transform=`translate(${S.x}px,${S.y}px) scale(${S.zoom})`;$('zVal').textContent=Math.round(S.zoom*100)+'%';}
+function fitView(){const r=S.last;if(!r)return;const W=stage.clientWidth,H=stage.clientHeight,pad=40;const all=Math.min((W-pad*2)/r.width,(H-pad*2-40)/r.height);S.zoom=Math.min(1.25,Math.max(.15,Math.min((W-pad*2)/r.width,Math.max(all,.62))));S.x=(W-r.width*S.zoom)/2;S.y=r.height*S.zoom>H-pad*2-40?pad:Math.max(pad,(H-40-r.height*S.zoom)/2);apply();}
+function zoomAt(k,cx,cy){const z=Math.min(3,Math.max(.12,S.zoom*k));S.x=cx-(cx-S.x)*(z/S.zoom);S.y=cy-(cy-S.y)*(z/S.zoom);S.zoom=z;apply();}
+$('zIn').onclick=()=>zoomAt(1.2,stage.clientWidth/2,stage.clientHeight/2);$('zOut').onclick=()=>zoomAt(1/1.2,stage.clientWidth/2,stage.clientHeight/2);$('zFit').onclick=fitView;
+stage.addEventListener('wheel',e=>{if(!(e.ctrlKey||e.metaKey)){S.x-=e.deltaX;S.y-=e.deltaY;apply();e.preventDefault();return;}e.preventDefault();const b=stage.getBoundingClientRect();zoomAt(Math.exp(-e.deltaY*.0022),e.clientX-b.left,e.clientY-b.top);},{passive:false});
+let drag=null;stage.addEventListener('pointerdown',e=>{if(e.target.closest('.zoom,.styleinfo'))return;drag={x:e.clientX,y:e.clientY,sx:S.x,sy:S.y};stage.classList.add('drag');stage.setPointerCapture(e.pointerId);});
+stage.addEventListener('pointermove',e=>{if(!drag)return;S.x=drag.sx+e.clientX-drag.x;S.y=drag.sy+e.clientY-drag.y;apply();});
+stage.addEventListener('pointerup',()=>{drag=null;stage.classList.remove('drag');});
+addEventListener('resize',()=>{clearTimeout(fitView.t);fitView.t=setTimeout(fitView,150);});
+
+/* exports */
+const slug=()=>($('title').value.trim()||'flowchart').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'flowchart';
+const download=(name,data,type)=>{const a=document.createElement('a'),u=URL.createObjectURL(data instanceof Blob?data:new Blob([data],{type}));a.href=u;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);};
+const fontCache=new Map();
+async function fontCSS(st){if(!st.fonts?.length)return '';const key=st.id;if(fontCache.has(key))return fontCache.get(key);
+ const p=(async()=>{try{const css=await fetch('https://fonts.googleapis.com/css2?'+st.fonts.map(f=>'family='+f).join('&')+'&display=swap').then(r=>r.text());
+  const blocks=[...css.matchAll(/\/\*\s*latin\s*\*\/\s*@font-face\s*\{([^}]*)\}/g)].map(m=>m[1]);let out='';
+  for(const b of blocks){const u=(b.match(/url\(([^)]+)\)/)||[])[1];if(!u)continue;const buf=await fetch(u).then(r=>r.arrayBuffer());let bin='';const bytes=new Uint8Array(buf);for(let i=0;i<bytes.length;i+=0x8000)bin+=String.fromCharCode.apply(null,bytes.subarray(i,i+0x8000));
+   out+=`@font-face{${b.replace(/src:[^;]+;/,`src:url(data:font/woff2;base64,${btoa(bin)}) format('woff2');`)}}`;}
+  return out;}catch(e){console.warn('fonts not embedded',e);return '';}})();fontCache.set(key,p);return p;}
+async function svgWithFonts(){const css=await fontCSS(DVStyle(S.style));return css?S.last.svg.replace('<defs>',`<defs><style>${css}</style>`):S.last.svg;}
+$('exSvg').onclick=async()=>{download(slug()+'.svg',await svgWithFonts(),'image/svg+xml');toast('SVG downloaded, fonts included');};
+$('exCopy').onclick=async()=>{try{await navigator.clipboard.writeText(S.last.svg);toast('SVG copied');}catch{toast('Copy was blocked by the browser');}};
+$('exPng').onclick=async()=>{const svg=await svgWithFonts(),r=S.last,k=2,img=new Image();img.decoding='async';
+ img.onload=()=>{const c=document.createElement('canvas');c.width=r.width*k;c.height=r.height*k;const x=c.getContext('2d');x.scale(k,k);x.drawImage(img,0,0);c.toBlob(b=>{download(slug()+'.png',b);toast('PNG downloaded at 2×');},'image/png');};
+ img.onerror=()=>toast('PNG export failed in this browser; use SVG');img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);};
+$('exHtml').onclick=async()=>{const st=DVStyle(S.style);const html=`<!doctype html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${($('title').value||'Flowchart').replace(/</g,'&lt;')}</title>\n<style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:${st.t.bg.startsWith('#')?st.t.bg:'#0B0F1A'};padding:24px}figure{margin:0;max-width:100%}svg{max-width:100%;height:auto}</style></head>\n<body><figure>${await svgWithFonts()}</figure></body></html>`;download(slug()+'.html',html,'text/html');toast('HTML page downloaded');};
+const b64=s=>btoa(unescape(encodeURIComponent(s))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''),unb64=s=>decodeURIComponent(escape(atob(s.replace(/-/g,'+').replace(/_/g,'/'))));
+$('exShare').onclick=async()=>{const q=new URLSearchParams({s:S.style,d:S.dir,l:S.lanes,t:$('title').value,st:$('subtitle').value,c:b64($('src').value)});const url=location.origin+location.pathname+'#'+q.toString();
+ history.replaceState(null,'','#'+q.toString());try{await navigator.clipboard.writeText(url);toast('Link copied');}catch{toast('Link is in the address bar');}};
+
+/* style guide: this look as a small flowchart design system */
+$('exGuide').onclick=async()=>{const st=DVStyle(S.style),t=st.t,css=await fontCSS(st);
+ const shapes=FlowEngine.render(`flowchart LR\n  a([Start or end]) --> b[Action | optional note] --> c{Decision?}\n  c -->|Yes| d[(Data store)]\n  c -->|No| e[/Input or output/]\n  e -.-> f[[Sub-process]]\n  d ==> g([Done])`,st,{showLegend:false,id:'g1'}).svg;
+ const status=FlowEngine.render(`flowchart LR\n  a[Have]:::have --> b[Partial]:::partial --> c[Don't have]:::dont --> d[Key step]:::accent\n  d -->|loop| a`,st,{id:'g2'}).svg;
+ const sw=(n,v)=>`<div class="sw"><span style="background:${v}"></span><b>${n}</b><code>${v}</code></div>`;
+ const fam=f=>f.split(',')[0].replace(/'/g,'');
+ const page=`<!doctype html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${st.name} flowchart system</title><style>${css}
+body{margin:0;background:#F6F7F9;color:#1C1F2A;font:15px/1.6 Inter,system-ui,sans-serif}main{max-width:1080px;margin:0 auto;padding:56px 24px}
+h1{font:600 40px/1.1 ${t.head};margin:0 0 8px}h2{font:600 13px/1 Inter;letter-spacing:.12em;text-transform:uppercase;color:#6B7183;margin:48px 0 16px}p{max-width:62ch;color:#3B4050}
+.card{background:#fff;border:1px solid #E4E7EE;border-radius:16px;padding:20px;overflow:auto}.card svg{max-width:100%;height:auto;display:block}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}.sw{display:grid;grid-template-columns:40px 1fr;grid-template-rows:auto auto;column-gap:12px;align-items:center;background:#fff;border:1px solid #E4E7EE;border-radius:12px;padding:10px}.sw span{grid-row:span 2;width:40px;height:40px;border-radius:10px;border:1px solid rgba(0,0,0,.08)}.sw code{font:12px 'JetBrains Mono',monospace;color:#6B7183}
+table{border-collapse:collapse;width:100%;background:#fff;border:1px solid #E4E7EE;border-radius:12px;overflow:hidden}td,th{text-align:left;padding:10px 14px;border-bottom:1px solid #EEF0F4;font-size:14px;vertical-align:top}th{font-size:12px;color:#6B7183;font-weight:600}
+ul{padding-left:18px}li{margin:4px 0}.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:720px){.two{grid-template-columns:1fr}}</style></head><body><main>
+<p style="font:600 11px/1 Inter;letter-spacing:.14em;text-transform:uppercase;color:#6B7183">Flowchart design system</p><h1>${st.name}</h1><p>${st.blurb}</p>
+<h2>Your chart</h2><div class="card">${S.last.svg}</div>
+<h2>Colour</h2><div class="grid">${sw('Canvas',t.bg)}${sw('Surface',t.surface)}${sw('Ink',t.ink)}${sw('Muted text',t.mute)}${sw('Connector',t.line)}${sw('Accent / loops',t.accent)}${sw('Have',t.good)}${sw('Don’t have',t.bad)}${t.series.map((c,i)=>sw('Group '+(i+1),c)).join('')}</div>
+<h2>Type</h2><table><tr><th>Role</th><th>Face</th><th>Size / weight</th></tr><tr><td>Chart title</td><td>${fam(t.head)}</td><td>${t.serifTitle?26:21}px / 600</td></tr><tr><td>Step title</td><td>${fam(t.font)}</td><td>13.5px / 600, line 1.3</td></tr><tr><td>Step note</td><td>${fam(t.font)}</td><td>12px / 400, muted</td></tr><tr><td>Branch label</td><td>${fam(t.font)}</td><td>11.5px / 600 on a ${t.id==='brutal'?'square':'pill'} plate</td></tr><tr><td>Group label</td><td>${fam(t.mono)}</td><td>10.5px / 600, capitals, +1.2 tracking</td></tr></table>
+<h2>Shapes</h2><div class="card">${shapes}</div>
+<h2>Status</h2><div class="card">${status}</div><p>Status is always colour plus a glyph (✓ ✕ !), never colour alone.</p>
+<h2>Geometry</h2><table><tr><th>Token</th><th>Value</th></tr><tr><td>Step corner radius</td><td>${t.nodeRadius}px (pills fully round)</td></tr><tr><td>Step stroke</td><td>${t.stroke}px</td></tr><tr><td>Connector</td><td>${t.edge}px, ${t.route==='curve'?'rounded elbows ('+(t.curve||22)+'px)':'right angles, small radius'}</td></tr><tr><td>Arrowhead</td><td>${t.arrow==='none'?'none: a dot marks each end':t.arrow==='open'?'open chevron':'small solid triangle'}</td></tr><tr><td>Loops</td><td>dashed, accent colour, routed round the outside</td></tr><tr><td>Rank gap · sibling gap</td><td>about 34px · 40px (Even spacing)</td></tr><tr><td>Step width</td><td>132–232px, text wraps at 200px</td></tr></table>
+<h2>Rules</h2><div class="two"><div class="card"><b>Do</b><ul><li>Keep one direction for the whole chart.</li><li>Start with a single pill; end every path at a pill.</li><li>Label every branch out of a decision.</li><li>Group steps into stages or lanes, five or six at most.</li><li>Give colour one job: status, or group, never both.</li></ul></div><div class="card"><b>Don’t</b><ul><li>Cross connectors or run them diagonally.</li><li>Stuff long text into decisions; ask one short question.</li><li>Mix arrowheads, line weights or radii.</li><li>Put more than about 25 steps on one canvas; split it.</li><li>Rely on colour alone for meaning.</li></ul></div></div>
+<h2>Source</h2><div class="card"><pre style="margin:0;font:12.5px/1.6 'JetBrains Mono',monospace;white-space:pre-wrap">${$('src').value.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}</pre></div>
+</main></body></html>`;download(slug()+'-'+st.id+'-style-guide.html',page,'text/html');toast('Style guide downloaded');};
+
+/* start */
+(function init(){const h=new URLSearchParams(location.hash.slice(1));let src=store.get('src'),title=store.get('title'),sub=store.get('subtitle');
+ if(h.get('c')){try{src=unb64(h.get('c'));title=h.get('t')||'';sub=h.get('st')||'';if(h.get('s'))S.style=h.get('s');if(h.get('d'))setSeg('dir',h.get('d'));if(h.get('l'))setSeg('lanes',h.get('l'));}catch{}}
+ const first=FlowExamples[0];$('src').value=src||first.src;$('title').value=title??first.name;$('subtitle').value=sub||'';
+ if(!DVStyles.some(s=>s.id===S.style))S.style='workflow';$('styles').querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',String(c.dataset.style===S.style)));
+ render(true);document.fonts?.ready.then(()=>setTimeout(()=>render(false),60));
+ $('styles').querySelector('[aria-pressed=true]')?.scrollIntoView({block:'nearest',inline:'center'});})();
+})();
+</script>
+</body></html>
