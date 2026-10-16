@@ -151,7 +151,7 @@ function cycle(g,s,opt){const A=analyse(g),C=ctx(s,opt),t=C.t,PAD=48;const secs=
  const mk=(sec,x,y)=>{const lines=sec.steps.slice(0,10).map(st=>({h:19,svg:(xx,yy)=>`<circle cx="${xx+4}" cy="${yy-4}" r="4" fill="${st.status?C.col[st.status]:alpha(t.ink,.35)}"/><text x="${xx+14}" y="${yy}" ${C.F} font-size="12" fill="${t.ink}">${esc(wrap(st.label,12,400,t.font,cw-48)[0])}${wrap(st.label,12,400,t.font,cw-48).length>1?'…':''}</text>`}));
   if(sec.steps.length>10)lines.push({h:19,svg:(xx,yy)=>`<text x="${xx}" y="${yy}" ${C.F} font-size="12" fill="${t.mute}">+${sec.steps.length-10} more</text>`});
   const c=statusCount(sec.steps),has=c.good+c.bad+c.warn;
-  return C.card(x,y,cw,{title:sec.loose?sec.steps[0].label:sec.title.replace(/^[\d–\-, ]+·\s*/,''),note:sec.loose?(sec.steps[0].note||''):(has?`${c.good} of ${sec.steps.length} in place`:`${sec.steps.length} steps`),badge:String(secs.indexOf(sec)+1),badgeFill:C.tint(secs.indexOf(sec)),lines:(sec.loose?[]:lines).concat(loopLines(sec)),status:sec.loose?sec.steps[0].status:null,decision:sec.loose&&sec.steps[0].shape==='decision',size:14});};
+  return C.card(x,y,cw,{title:sec.loose?sec.steps[0].label:sec.title.replace(/^[\d–\-, ]+·\s*/,''),note:sec.loose?(sec.steps[0].note||''):(has?`${c.good} of ${sec.steps.length} in place`:`${sec.steps.length} step${sec.steps.length===1?"":"s"}`),badge:String(secs.indexOf(sec)+1),badgeFill:C.tint(secs.indexOf(sec)),lines:(sec.loose?[]:lines).concat(loopLines(sec)),status:sec.loose?sec.steps[0].status:null,decision:sec.loose&&sec.steps[0].shape==='decision',size:14});};
  const hs=secs.map(sec=>mk(sec,0,0).h),maxH=Math.max(...hs);
  /* ellipse big enough that neighbouring cards clear each other */
  let Rx=Math.max(340,n*(cw+40)/(2*Math.PI)*1.15),Ry=Math.max(230,Rx*.62);const P=i=>{const a=-Math.PI/2+i*2*Math.PI/n;return [Math.cos(a)*Rx,Math.sin(a)*Ry];};
@@ -189,7 +189,7 @@ function tree(g,s,opt){const A=analyse(g),C=ctx(s,opt),t=C.t,PAD=40,colW=opt.col
  const cardOf=b=>{const title=b.run.length===1?b.run[0].label:b.run[0].label;const lines=b.run.length>1?b.run.slice(1).map(r=>({h:19,svg:(x,y)=>`<text x="${x}" y="${y}" ${C.F} font-size="12" fill="${t.ink}"><tspan fill="${r.status?C.col[r.status]:r.shape==='decision'?t.accent:t.mute}">${r.shape==='decision'?'◆':'●'}</tspan> ${esc(wrap(r.label,12,400,t.font,colW-50)[0])}</text>`})):[];
   const ins=(inputs.get(b.run[0].id)||[]).map(n=>({h:24,svg:(x,y)=>C.chip(x,y-14,`← ${n.label}`,n.status?C.col[n.status]:t.mute).svg}));
   const extra=[...ins,...lines,...b.refs.map(r=>({h:24,svg:(x,y)=>C.chip(x,y-14,`${r.e.label?r.e.label+' → ':'→ '}${g.nodes.get(r.id).label}`,r.e.label&&/^(no|fail)/i.test(r.e.label)?t.bad:t.mute).svg})),...b.loops.map(e=>({h:24,svg:(x,y)=>C.chip(x,y-14,`${e.label?e.label+': ':''}back to ${g.nodes.get(e.to).label}`,t.accent,{icon:'↺'}).svg}))];
-  return o=>C.card(o.x,o.y,colW,{title,note:b.run.length===1?b.run[0].note:(b.run.length>1?`${b.run.length} steps`:''),status:b.run.length===1?b.run[0].status:null,decision:b.run.length===1&&b.run[0].shape==='decision',lines:extra});};
+  return o=>C.card(o.x,o.y,colW,{title,note:b.run.length===1?b.run[0].note:(b.run.length>1?`${b.run.length} step${b.run.length===1?"":"s"}`:''),status:b.run.length===1?b.run[0].status:null,decision:b.run.length===1&&b.run[0].shape==='decision',lines:extra});};
  blocks.forEach(b=>{b.draw=cardOf(b);b.h=b.draw({x:0,y:0}).h;});
  /* tidy layout: leaves stacked, parents centred on their children */
  let nextY=0;const place=b=>{if(!b.kids.length){b.y=nextY;nextY+=b.h+gapY;return;}b.kids.forEach(k=>place(k.b));const f=b.kids[0].b,l=b.kids[b.kids.length-1].b;b.y=Math.max((f.y+l.y+l.h)/2-b.h/2,f.y-b.h+20);if(b.y+b.h+gapY>nextY)nextY=b.y+b.h+gapY;};
@@ -205,7 +205,7 @@ function tree(g,s,opt){const A=analyse(g),C=ctx(s,opt),t=C.t,PAD=40,colW=opt.col
  return {svg:frame(C,W,H,opt,edges+o),width:W,height:H,notes:[{ok:true,text:`${blocks.length} cards: plain runs of steps folded together, every decision opens a new branch.`},{ok:true,text:'Where branches meet again, the tree says “→ go to” instead of drawing a crossing line.'}]};}
 
 /* ---------- 5. capability map ---------- */
-function capability(g,s,opt){const A=analyse(g),C=ctx(s,opt),t=C.t,PAD=40,colW=opt.colW||226,gap=20,perRow=Math.min(opt.perRow||5,A.secs.length);const W=PAD*2+perRow*colW+(perRow-1)*gap;
+function capability(g,s,opt){const A=analyse(g),C=ctx(s,opt),t=C.t,PAD=40,colW=opt.colW||226,gap=20,perRow=opt.perRow||Math.ceil(A.secs.length/Math.ceil(A.secs.length/5));const W=PAD*2+perRow*colW+(perRow-1)*gap;
  let y=PAD,o='';const hd=heading(C,opt,PAD,y);o+=hd.o;y+=hd.h;
  const all=statusCount(A.nodes),tot=A.nodes.length;if(all.good+all.bad+all.warn){const bw=W-PAD*2;o+=`<text x="${PAD}" y="${y+14}" ${C.F} font-size="14" fill="${t.ink}"><tspan font-weight="700">${all.good}</tspan> of ${tot} parts in place${all.warn?` · ${all.warn} partial`:''} · <tspan font-weight="700">${all.bad}</tspan> to build</text>`;
   y+=26;o+=`<rect x="${PAD}" y="${y}" width="${bw}" height="10" rx="5" fill="${alpha(t.bad,t.dark?.35:.25)}"/><rect x="${PAD}" y="${y}" width="${bw*all.good/tot}" height="10" rx="5" fill="${t.good}"/>${all.warn?`<rect x="${PAD+bw*all.good/tot}" y="${y}" width="${bw*all.warn/tot}" height="10" fill="${C.col.warn}"/>`:''}`;y+=30;}
@@ -255,14 +255,14 @@ function suggest(g){const A=analyse(g),n=A.nodes.length,dec=A.nodes.filter(x=>x.
  return S.sort((a,b)=>b.score-a.score);}
 
 const TYPES=[
- {id:'flow',name:'Flow',hint:'Top-down process with decisions'},
- {id:'stepper',name:'Step list',hint:'Numbered, long processes'},
- {id:'stages',name:'Stage columns',hint:'Phases side by side'},
- {id:'cycle',name:'Cycle',hint:'Processes that loop'},
- {id:'tree',name:'Decision tree',hint:'Many yes/no forks'},
- {id:'capability',name:'Capability map',hint:'What we have vs need'},
- {id:'swimlanes',name:'Swimlanes',hint:'Owners in lanes'},
- {id:'mindmap',name:'Mind map',hint:'Overview, no order'}];
+ {id:'flow',name:'Flow',hint:'Top-down process with decisions',use:'Under about 15 steps, with a few decisions, where the shape of the path matters.',avoid:'Long processes; every extra step makes it taller and more tangled.'},
+ {id:'stepper',name:'Step list',hint:'Numbered, long processes',use:'Long processes, how-to docs, phones and anything people follow step by step.',avoid:'When people need to see the whole system at a glance.'},
+ {id:'stages',name:'Stage columns',hint:'Phases side by side',use:'Overviews in briefs and decks: three or more phases, each with its steps.',avoid:'Processes without clear phases; you get one column per step.'},
+ {id:'cycle',name:'Cycle',hint:'Processes that loop',use:'Processes that feed back into themselves: content loops, sprints, learning cycles.',avoid:'One-way processes; a ring implies the end leads back to the start.'},
+ {id:'tree',name:'Decision tree',hint:'Many yes/no forks',use:'Triage, eligibility, support scripts: many decisions, few loops.',avoid:'Long linear chains; the tree turns into one wide row.'},
+ {id:'capability',name:'Capability map',hint:'What we have vs need',use:'Planning and status: what exists, what is missing, per stage.',avoid:'Explaining order; it shows no connections at all.'},
+ {id:'swimlanes',name:'Swimlanes',hint:'Owners in lanes',use:'Hand-offs between people, teams or systems.',avoid:'When groups are phases rather than owners; use stage columns.'},
+ {id:'mindmap',name:'Mind map',hint:'Overview, no order',use:'Scoping and inventories: everything involved, grouped.',avoid:'Anything where order or flow matters.'}];
 function render(type,src,s,opt={}){const g=typeof src==='string'?window.FlowEngine.parse(src):src;if(window.DVFonts)window.DVFonts(s);
  if(!g.nodes.size)return window.FlowEngine.render(src,s,opt);
  if(type==='flow')return window.FlowEngine.render(src,s,opt);

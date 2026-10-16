@@ -47,6 +47,27 @@ details.help summary::before{content:'+ ';}details.help[open] summary::before{co
 .styles .lbl{flex:none;font:600 10.5px Inter;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);padding:0 6px 0 2px}
 .styles .lbl:not(:first-child){margin-left:10px;padding-left:14px;border-left:1px solid var(--hair)}
 [hidden]{display:none!important}
+.startrow{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px;align-items:center;min-width:0}.startrow select{max-width:100%;min-width:0}
+.tplbtn{border:1px solid var(--accent);color:var(--accent);background:var(--panel);border-radius:9px;min-height:34px;padding:0 12px;font-size:12.5px;font-weight:600;cursor:pointer}
+.tplbtn:hover{background:var(--accent);color:#fff}
+#tpl{border:0;padding:0;border-radius:18px;width:min(1120px,calc(100vw - 32px));max-height:calc(100vh - 48px);box-shadow:0 30px 80px -20px rgba(20,24,40,.45);background:var(--bg)}
+#tpl::backdrop{background:rgba(20,24,40,.45)}
+.tpl-in{padding:22px clamp(16px,3vw,28px) 28px}
+.tpl-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}
+.tpl-in h2{margin:0;font:600 22px/1.2 'Instrument Serif',Georgia,serif;letter-spacing:0;text-transform:none;color:var(--ink)}
+.tpl-in p{margin:4px 0 0;font-size:13px;color:var(--mute)}
+.tpl-cats{display:flex;flex-wrap:wrap;gap:6px;margin:16px 0}
+.tpl-cats button{border:1px solid var(--hair);background:var(--panel);border-radius:999px;min-height:32px;padding:0 12px;font-size:12.5px;cursor:pointer}
+.tpl-cats button[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.tpl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.tpl-card{display:grid;text-align:left;border:1px solid var(--hair);background:var(--panel);border-radius:14px;padding:0;overflow:hidden;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.tpl-card:hover,.tpl-card:focus-visible{transform:translateY(-2px);box-shadow:var(--shadow);border-color:#CBD0DB}
+.tpl-card:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tpl-thumb{height:170px;display:grid;place-items:start center;padding:10px 10px 0;background:var(--soft);border-bottom:1px solid var(--hair);overflow:hidden}
+.tpl-thumb svg{width:100%;height:auto;border-radius:8px 8px 0 0;box-shadow:0 1px 3px rgba(20,24,40,.08)}
+.tpl-meta{padding:10px 12px 12px;display:grid;gap:3px}
+.tpl-meta b{font-size:13.5px;color:var(--ink)}
+.tpl-meta span{font-size:11.5px;color:var(--mute)}
 .fe{display:grid;gap:10px}
 .fe-stage{border:1px solid var(--hair);border-radius:12px;background:var(--soft);padding:8px}
 .fe-head{display:flex;align-items:center;gap:4px;margin-bottom:6px}
@@ -131,7 +152,7 @@ details.help summary::before{content:'+ ';}details.help[open] summary::before{co
  </header>
  <aside class="side">
   <div class="sec">
-   <h2>Chart <small><select id="example" aria-label="Start from an example"><option value="">Start from…</option></select></small></h2>
+   <h2>Chart <small class="startrow"><button type="button" class="tplbtn" id="tplOpen">Templates</button><select id="example" aria-label="Start from an example"><option value="">Start from…</option></select></small></h2>
    <label class="field">Title<input type="text" id="title" placeholder="Optional title"></label>
    <label class="field">Subtitle<input type="text" id="subtitle" placeholder="Optional one-line subtitle"></label>
   </div>
@@ -192,9 +213,14 @@ details.help summary::before{content:'+ ';}details.help[open] summary::before{co
  </main>
 </div>
 <div class="toast" id="toast" role="status"></div>
+<dialog id="tpl" aria-labelledby="tplTitle"><div class="tpl-in">
+ <div class="tpl-head"><div><h2 id="tplTitle">Start from a template</h2><p>Real processes, each drawn in the layout that suits it. Previews use your current style.</p></div><button type="button" class="fe-ic" id="tplClose" aria-label="Close templates">×</button></div>
+ <div class="tpl-cats" id="tplCats" role="group" aria-label="Filter templates"></div>
+ <div class="tpl-grid" id="tplGrid"></div></div></dialog>
 <script src="dataviz/styles.js"></script>
 <script src="dataviz/flow.js"></script>
 <script src="dataviz/examples.js"></script>
+<script src="dataviz/templates.js"></script>
 <script src="dataviz/flowtypes.js"></script>
 <script src="dataviz/flow-editor.js"></script>
 <script>
@@ -238,9 +264,22 @@ function pickType(){const g=graph(),sug=g&&g.nodes.size?FlowTypes.suggest(g):[];
 $('types').onclick=e=>{const b=e.target.closest('[data-type]');if(!b)return;S.type=b.dataset.type;store.set('type',S.type);render(true);};
 
 /* examples */
-$('example').innerHTML+=FlowExamples.map(x=>`<option value="${x.id}">${x.name}</option>`).join('');
-$('example').onchange=e=>{const x=FlowExamples.find(y=>y.id===e.target.value);if(!x)return;$('src').value=x.src;$('title').value=x.title||x.name;$('subtitle').value=x.subtitle||'';
- S.type=x.id==='release'?'swimlanes':'auto';store.set('type',S.type);setSeg('dir',/flowchart\s+LR/.test(x.src)?'LR':'TB');render(true);e.target.value='';};
+$('example').innerHTML+=`<optgroup label="Examples">${FlowExamples.map(x=>`<option value="${x.id}">${x.name}</option>`).join('')}</optgroup><optgroup label="Templates">${FlowTemplates.map(x=>`<option value="${x.id}">${x.name}</option>`).join('')}</optgroup>`;
+const ALL=FlowExamples.map(x=>({...x,cat:'Examples'})).concat(FlowTemplates);
+function loadChart(x){$('src').value=x.src;$('title').value=x.title||x.name;$('subtitle').value=x.subtitle||'';
+ S.type=x.type||(x.id==='release'?'swimlanes':'auto');store.set('type',S.type);setSeg('dir',/flowchart\s+LR/.test(x.src)?'LR':'TB');if(S.mode==='visual')editor.load(x.src);render(true);}
+let tplCat='All';
+function drawTemplates(){const cats=['All',...new Set(ALL.map(x=>x.cat))];
+ $('tplCats').innerHTML=cats.map(c=>`<button type="button" data-cat="${c}" aria-pressed="${c===tplCat}">${c}</button>`).join('');
+ const st=DVStyle(S.style);$('tplGrid').innerHTML=ALL.filter(x=>tplCat==='All'||x.cat===tplCat).map((x,i)=>{let svg='';const ty=x.type||(x.id==='release'?'swimlanes':FlowTypes.suggest(FlowEngine.parse(x.src))[0].id);
+  try{svg=FlowTypes.render(ty,x.src,st,{title:x.title||x.name,id:'tp'+i,showLegend:false}).svg;}catch{}
+  const nm=(FlowTypes.TYPES.find(t=>t.id===ty)||{}).name||'';return `<button type="button" class="tpl-card" data-tpl="${x.id}"><span class="tpl-thumb" aria-hidden="true">${svg}</span><span class="tpl-meta"><b>${x.name}</b><span>${x.cat} · ${nm}</span></span></button>`;}).join('');}
+$('tplOpen').onclick=()=>{drawTemplates();$('tpl').showModal();};
+$('tplClose').onclick=()=>$('tpl').close();
+$('tpl').addEventListener('click',e=>{if(e.target===$('tpl'))$('tpl').close();});
+$('tplCats').onclick=e=>{const b=e.target.closest('[data-cat]');if(!b)return;tplCat=b.dataset.cat;drawTemplates();};
+$('tplGrid').onclick=e=>{const b=e.target.closest('[data-tpl]');if(!b)return;const x=ALL.find(y=>y.id===b.dataset.tpl);$('tpl').close();loadChart(x);toast(`Loaded “${x.name}”`);};
+$('example').onchange=e=>{const x=ALL.find(y=>y.id===e.target.value);if(!x)return;loadChart(x);e.target.value='';};
 const editor=FlowEditor.mount($('visual'),{set(src){$('src').value=src;later();}});
 S.mode=store.get('mode')||'visual';
 function setMode(m){S.mode=m;store.set('mode',m);$('mode').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===m)));
@@ -311,15 +350,18 @@ $('exGuide').onclick=async()=>{const st=DVStyle(S.style),t=st.t,css=await fontCS
  const status=FlowEngine.render(`flowchart LR\n  a[Have]:::have --> b[Partial]:::partial --> c[Don't have]:::dont --> d[Key step]:::accent\n  d -->|loop| a`,st,{id:'g2'}).svg;
  const sw=(n,v)=>`<div class="sw"><span style="background:${v}"></span><b>${n}</b><code>${v}</code></div>`;
  const fam=f=>f.split(',')[0].replace(/'/g,'');
+ const g0=FlowEngine.parse(source()),rec=(FlowTypes.suggest(g0)[0]||{}).id,o0={title:$('title').value.trim(),subtitle:$('subtitle').value.trim(),direction:S.dir,spacing:S.spacing,decision:S.decision,showLegend:S.legend==='1'};
+ const typeCards=FlowTypes.TYPES.map((x,i)=>{let svg='';try{svg=FlowTypes.render(x.id,source(),st,{...o0,id:'gt'+i}).svg;}catch{}return `<section class="tcard${x.id===S.cur?' cur':''}"><header><b>${x.name}</b>${x.id===rec?'<i>Best fit</i>':''}${x.id===S.cur?'<i class="on">In use</i>':''}</header><div class="card">${svg}</div><dl><dt>Use when</dt><dd>${x.use}</dd><dt>Avoid when</dt><dd>${x.avoid}</dd></dl></section>`;}).join('');
  const page=`<!doctype html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${st.name} flowchart system</title><style>${css}
 body{margin:0;background:#F6F7F9;color:#1C1F2A;font:15px/1.6 Inter,system-ui,sans-serif}main{max-width:1080px;margin:0 auto;padding:56px 24px}
 h1{font:600 40px/1.1 ${t.head};margin:0 0 8px}h2{font:600 13px/1 Inter;letter-spacing:.12em;text-transform:uppercase;color:#6B7183;margin:48px 0 16px}p{max-width:62ch;color:#3B4050}
 .card{background:#fff;border:1px solid #E4E7EE;border-radius:16px;padding:20px;overflow:auto}.card svg{max-width:100%;height:auto;display:block}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}.sw{display:grid;grid-template-columns:40px 1fr;grid-template-rows:auto auto;column-gap:12px;align-items:center;background:#fff;border:1px solid #E4E7EE;border-radius:12px;padding:10px}.sw span{grid-row:span 2;width:40px;height:40px;border-radius:10px;border:1px solid rgba(0,0,0,.08)}.sw code{font:12px 'JetBrains Mono',monospace;color:#6B7183}
 table{border-collapse:collapse;width:100%;background:#fff;border:1px solid #E4E7EE;border-radius:12px;overflow:hidden}td,th{text-align:left;padding:10px 14px;border-bottom:1px solid #EEF0F4;font-size:14px;vertical-align:top}th{font-size:12px;color:#6B7183;font-weight:600}
-ul{padding-left:18px}li{margin:4px 0}.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:720px){.two{grid-template-columns:1fr}}</style></head><body><main>
+.types{display:grid;grid-template-columns:repeat(auto-fill,minmax(440px,1fr));gap:16px}@media(max-width:520px){.types{grid-template-columns:1fr}}.tcard header{display:flex;gap:8px;align-items:center;margin-bottom:8px;font-size:16px}.tcard header i{font:600 10.5px/1 Inter;font-style:normal;letter-spacing:.06em;text-transform:uppercase;padding:4px 7px;border-radius:6px;background:#EEF0F4;color:#3B4050}.tcard header i.on{background:#1C1F2A;color:#fff}.tcard.cur .card{border-color:#1C1F2A}.tcard .card{height:300px;display:grid;place-items:center;cursor:zoom-in}.tcard .card.full{height:auto;cursor:zoom-out}.tcard .card.full svg{max-height:none;width:100%}.tcard .card svg{max-height:100%;width:auto}.tcard dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:10px 0 0;font-size:13.5px}.tcard dt{color:#6B7183;font-weight:600}.tcard dd{margin:0}ul{padding-left:18px}li{margin:4px 0}.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:720px){.two{grid-template-columns:1fr}}</style></head><body><main>
 <p style="font:600 11px/1 Inter;letter-spacing:.14em;text-transform:uppercase;color:#6B7183">Flowchart design system</p><h1>${st.name}</h1><p>${st.blurb}</p>
 <h2>Your chart</h2><div class="card">${S.last.svg}</div>
+<h2>Diagram types</h2><p>The same steps, drawn eight ways. Pick the layout for the job, not the look. Click a preview to see it full size.</p><div class="types">${typeCards}</div>
 <h2>Colour</h2><div class="grid">${sw('Canvas',t.bg)}${sw('Surface',t.surface)}${sw('Ink',t.ink)}${sw('Muted text',t.mute)}${sw('Connector',t.line)}${sw('Accent / loops',t.accent)}${sw('Have',t.good)}${sw('Don’t have',t.bad)}${t.series.map((c,i)=>sw('Group '+(i+1),c)).join('')}</div>
 <h2>Type</h2><table><tr><th>Role</th><th>Face</th><th>Size / weight</th></tr><tr><td>Chart title</td><td>${fam(t.head)}</td><td>${t.serifTitle?26:21}px / 600</td></tr><tr><td>Step title</td><td>${fam(t.font)}</td><td>13.5px / 600, line 1.3</td></tr><tr><td>Step note</td><td>${fam(t.font)}</td><td>12px / 400, muted</td></tr><tr><td>Branch label</td><td>${fam(t.font)}</td><td>11.5px / 600 on a ${t.id==='brutal'?'square':'pill'} plate</td></tr><tr><td>Group label</td><td>${fam(t.mono)}</td><td>10.5px / 600, capitals, +1.2 tracking</td></tr></table>
 <h2>Shapes</h2><div class="card">${shapes}</div>
@@ -327,7 +369,7 @@ ul{padding-left:18px}li{margin:4px 0}.two{display:grid;grid-template-columns:1fr
 <h2>Geometry</h2><table><tr><th>Token</th><th>Value</th></tr><tr><td>Step corner radius</td><td>${t.nodeRadius}px (pills fully round)</td></tr><tr><td>Step stroke</td><td>${t.stroke}px</td></tr><tr><td>Connector</td><td>${t.edge}px, ${t.route==='curve'?'rounded elbows ('+(t.curve||22)+'px)':'right angles, small radius'}</td></tr><tr><td>Arrowhead</td><td>${t.arrow==='none'?'none: a dot marks each end':t.arrow==='open'?'open chevron':'small solid triangle'}</td></tr><tr><td>Loops</td><td>dashed, accent colour, routed round the outside</td></tr><tr><td>Rank gap · sibling gap</td><td>about 34px · 40px (Even spacing)</td></tr><tr><td>Step width</td><td>132–232px, text wraps at 200px</td></tr></table>
 <h2>Rules</h2><div class="two"><div class="card"><b>Do</b><ul><li>Keep one direction for the whole chart.</li><li>Start with a single pill; end every path at a pill.</li><li>Label every branch out of a decision.</li><li>Group steps into stages or lanes, five or six at most.</li><li>Give colour one job: status, or group, never both.</li></ul></div><div class="card"><b>Don’t</b><ul><li>Cross connectors or run them diagonally.</li><li>Stuff long text into decisions; ask one short question.</li><li>Mix arrowheads, line weights or radii.</li><li>Put more than about 25 steps on one canvas; split it.</li><li>Rely on colour alone for meaning.</li></ul></div></div>
 <h2>Source</h2><div class="card"><pre style="margin:0;font:12.5px/1.6 'JetBrains Mono',monospace;white-space:pre-wrap">${$('src').value.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}</pre></div>
-</main></body></html>`;download(slug()+'-'+st.id+'-style-guide.html',page,'text/html');toast('Style guide downloaded');};
+<script>document.querySelectorAll('.tcard .card').forEach(c=>c.onclick=()=>c.classList.toggle('full'));<\/script></main></body></html>`;download(slug()+'-'+st.id+'-style-guide.html',page,'text/html');toast('Style guide downloaded');};
 
 /* start */
 (function init(){const h=new URLSearchParams(location.hash.slice(1));let src=store.get('src'),title=store.get('title'),sub=store.get('subtitle');
