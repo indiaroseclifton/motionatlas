@@ -317,6 +317,16 @@ Write a flowchart as text and get a clean, consistent diagram in eight layouts a
 - **Examples** (`dataviz/examples.js`): creative review, sign-up, release pipeline (lanes), and the AI cooking-channel workflow, both cleaned up and as first drawn. Finished exports of the channel chart are in `deliverables/channel-flowchart/`.
 - **Research notes:** `docs/dataviz-research.md`.
 
+### Channel brand styles: Kitchen noir and Kitchen paper (`site/dataviz/styles.js`)
+
+These are the AI cooking channel's own styles. They come first in every style row, under "Your brand", in the flowchart studio, the diagram studio and the chart style guides.
+- **Kitchen noir** (dark, for video and slides):
+  - Warm charcoal `#16120F`, cream type `#F3EADB` and a saffron accent `#E2A24A`.
+  - Fraunces for headlines, DM Sans for text, and a light film grain.
+- **Kitchen paper** (light, for documents and print): recipe-card cream `#F6F0E6`, ink-brown type, and the saffron deepened to caramel `#B9741C`.
+- **Validation:** both categorical palettes pass the dataviz validator. Noir's colour-blind ΔE is 9.4. Paper's is 6.3, which is in the floor band and fine with the direct labels these charts use. Status red and green are never reused as series colours.
+- **Plan pack:** the channel plan deck's charts are in `deliverables/channel-plan/`, in both styles.
+
 ### Diagram studio (`site/diagram-studio.html`, `site/dataviz/diagrams.js`)
 
 For charts that are not a process. It uses the same seventeen styles and the same drawing kit as the flowchart layouts, so a style looks the same everywhere. Each kind has a form editor rather than a syntax:

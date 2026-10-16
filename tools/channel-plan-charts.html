@@ -1,0 +1,21 @@
+<!doctype html><meta charset=utf-8><body style="margin:0">
+<script src="../site/dataviz/styles.js"></script><script src="../site/dataviz/flow.js"></script><script src="../site/dataviz/examples.js"></script><script src="../site/dataviz/flowtypes.js"></script><script src="../site/dataviz/diagrams.js"></script>
+<div id=o></div><script>
+const p=new URLSearchParams(location.search),st=DVStyle(p.get('s')||'noir');DVFonts(st);
+const ch=FlowExamples.find(x=>x.id==='channel');
+const roadmap={periods:['Phase 1','Phase 2','Phase 3','Phase 4','Phase 5'],today:'',lanes:['Identity + recipes','Making','Quality + packaging','Distribution','Learning + money'],
+ items:[{label:'Character bible, ref sheets, face lock',lane:0,start:0,end:0,status:'planned'},{label:'Episode recipe presets',lane:0,start:0,end:1,status:'planned'},{label:'Assign-chef picker',lane:0,start:1,end:1,status:'planned'},{label:'Rights check process',lane:0,start:0,end:0,status:'planned'},
+  {label:'Shot list + storyboard',lane:1,start:1,end:1,status:'planned'},{label:'Camera + lighting grammar',lane:1,start:1,end:2,status:'planned'},{label:'Premium model: refs + takes',lane:1,start:1,end:2,status:'doing',progress:.3},{label:'Upscaler',lane:1,start:2,end:2,status:'planned'},{label:'Colour grade beyond looks.mjs',lane:1,start:2,end:2,status:'doing',progress:.2},{label:'Sound design + SFX',lane:1,start:2,end:3,status:'doing',progress:.3},
+  {label:'Review tool + approval queue',lane:2,start:2,end:2,status:'planned'},{label:'Thumbnails + titles',lane:2,start:3,end:3,status:'planned'},{label:'Reformat per platform',lane:2,start:3,end:3,status:'planned'},
+  {label:'Account registry',lane:3,start:3,end:3,status:'planned'},{label:'Scheduler',lane:3,start:3,end:4,status:'planned'},{label:'Posting + replies (Composio)',lane:3,start:4,end:4,status:'planned'},
+  {label:'Top-views data feeds',lane:4,start:0,end:0,status:'planned'},{label:'Analytics ingestion',lane:4,start:4,end:4,status:'planned'},{label:'What-worked memory (flag on)',lane:4,start:4,end:4,status:'doing',progress:.4},{label:'Monetisation set-up',lane:4,start:4,end:4,status:'planned'}],
+ milestones:[{label:'First test episode',at:'2'},{label:'Weekly posting',at:'4'}]};
+const journey={persona:'Hypothesis to test with the first episodes',stages:[
+ {name:'Discover',doing:'Scrolls Shorts\nStops on a close-up of hands and food',touchpoints:'Shorts; TikTok; Reels',thinking:'What is this? Who is she?',feeling:1,feelingNote:'curious',pains:'Looks like generic AI food',ideas:'One iconic chef, deadpan and silent, in the first second'},
+ {name:'Watch',doing:'Watches the full episode',touchpoints:'YouTube long-form',thinking:'Nonna Lucia again, I like her',feeling:2,feelingNote:'hooked',pains:'Faces drift between shots',ideas:'Face lock + character bible'},
+ {name:'Try',doing:'Looks for the recipe',touchpoints:'Description; pinned comment',thinking:'Is this a real dish?',feeling:-1,feelingNote:'unsure',pains:'Famous recipes without credit',ideas:'Attribution line on every famous recipe'},
+ {name:'Return',doing:'Follows a favourite chef',touchpoints:'Subscriptions; notifications',thinking:'Big Earl on Fridays',feeling:2,feelingNote:'loyal',pains:'No regular slot yet',ideas:'One weekly slot per chef'}]};
+const spec={stages:()=>FlowTypes.render('stages',ch.src,st,{title:'',id:'a'}),capability:()=>FlowTypes.render('capability',ch.src,st,{title:'',id:'b',perRow:6}),cycle:()=>FlowTypes.render('cycle',ch.src,st,{title:'',id:'c'}),
+ roadmap:()=>Diagrams.render('roadmap',roadmap,st,{title:'',id:'d',colW:236}),journey:()=>Diagrams.render('journey',journey,st,{title:'',id:'e'})};
+document.fonts.load('600 14px "DM Sans"').then(()=>document.fonts.load('600 20px Fraunces')).then(()=>{const r=spec[p.get('k')]();o.innerHTML=r.svg;window.R={w:r.width,h:r.height,notes:r.notes};});
+</script>

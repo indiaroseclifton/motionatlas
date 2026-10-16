@@ -92,7 +92,7 @@ const rendered=new Map();
 
 /* style picker */
 const chip=s=>`<button class="chip" type="button" data-style="${s.id}" aria-pressed="${s.id===style}" title="${esc(s.kicker)}"><span class="sw">${s.t.cat.slice(0,4).map(c=>`<i style="background:${c}"></i>`).join('')}</span>${esc(s.name)}</button>`;
-$('styles').innerHTML=`<span class="lbl">From your board</span>${DVStyles.filter(s=>s.board).map(chip).join('')}<span class="lbl">Researched</span>${DVStyles.filter(s=>!s.board).map(chip).join('')}`;
+$('styles').innerHTML=`<span class="lbl">Your brand</span>${DVStyles.filter(s=>s.brand).map(chip).join('')}<span class="lbl">From your board</span>${DVStyles.filter(s=>s.board).map(chip).join('')}<span class="lbl">Researched</span>${DVStyles.filter(s=>!s.board&&!s.brand).map(chip).join('')}`;
 $('styles').onclick=e=>{const b=e.target.closest('[data-style]');if(!b)return;style=b.dataset.style;store.set('style',style);history.replaceState(null,'','#s='+style);
  $('styles').querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',String(c===b)));build();scrollTo({top:0,behavior:'instant'});};
 
