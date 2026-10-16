@@ -20,37 +20,38 @@ a{color:inherit}button,input,textarea,select{font:inherit;color:inherit}
 .styles{position:fixed;right:max(12px,env(safe-area-inset-right));bottom:12px;z-index:50;display:flex;gap:2px;padding:4px;border-radius:999px;background:rgba(128,128,128,.18);backdrop-filter:blur(10px);font:500 12px/1 system-ui,sans-serif}
 .styles button{border:0;background:transparent;color:var(--ink);padding:9px 11px;border-radius:999px;cursor:pointer;min-height:32px}
 .styles button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
-
-.top{text-align:center;display:grid;justify-items:center;gap:12px;margin-bottom:40px}
-.top h2{font-size:clamp(36px,5vw,64px);margin:0;max-width:18ch}
-.wall{position:relative;height:620px;overflow:hidden;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;-webkit-mask:linear-gradient(transparent,#000 12%,#000 88%,transparent);mask:linear-gradient(transparent,#000 12%,#000 88%,transparent)}
-.col{display:flex;flex-direction:column;gap:16px;animation:up var(--d,40s) linear infinite}
-.col:nth-child(2){--d:52s;animation-direction:reverse}.col:nth-child(3){--d:46s}
-.wall:hover .col,.wall:focus-within .col{animation-play-state:paused}
-@keyframes up{to{transform:translateY(-50%)}}
-figure{margin:0;padding:22px;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);display:grid;gap:16px}
-blockquote{margin:0;font-size:15.5px}
-blockquote b{font-family:var(--head);font-weight:var(--hw);font-style:var(--hs);font-size:21px;line-height:1.2;display:block;margin-bottom:6px;letter-spacing:var(--track)}
-figcaption{display:flex;gap:12px;align-items:center;font-size:14px}
-figcaption img{width:40px;height:40px;border-radius:50%;object-fit:cover}
-figcaption span{display:block;color:var(--mute);font-size:13px}
-.stars{color:var(--accent-ink,var(--accent));letter-spacing:2px;font-size:14px}
-.pause{display:flex;justify-content:center;margin-top:20px}
-.wall.stopped .col{animation-play-state:paused}
-@media (max-width:860px){.wall{grid-template-columns:1fr 1fr}.col:nth-child(3){display:none}}
-@media (max-width:560px){.wall{grid-template-columns:1fr;height:560px}.col:nth-child(2){display:none}}
-
+.b-sec-testimonials .top{text-align:center;display:grid;justify-items:center;gap:12px;margin-bottom:40px}
+.b-sec-testimonials .top h2{font-size:clamp(36px,5vw,64px);margin:0;max-width:18ch}
+.b-sec-testimonials .wall{position:relative;height:620px;overflow:hidden;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;-webkit-mask:linear-gradient(transparent,#000 12%,#000 88%,transparent);mask:linear-gradient(transparent,#000 12%,#000 88%,transparent)}
+.b-sec-testimonials .col{display:flex;flex-direction:column;gap:16px;animation:up-b-sec-testimonials var(--d,40s) linear infinite}
+.b-sec-testimonials .col:nth-child(2){--d:52s;animation-direction:reverse}
+.b-sec-testimonials .col:nth-child(3){--d:46s}
+.b-sec-testimonials .wall:hover .col,.b-sec-testimonials .wall:focus-within .col{animation-play-state:paused}
+@keyframes up-b-sec-testimonials{to{transform:translateY(-50%)}}
+.b-sec-testimonials figure{margin:0;padding:22px;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);display:grid;gap:16px}
+.b-sec-testimonials blockquote{margin:0;font-size:15.5px}
+.b-sec-testimonials blockquote b{font-family:var(--head);font-weight:var(--hw);font-style:var(--hs);font-size:21px;line-height:1.2;display:block;margin-bottom:6px;letter-spacing:var(--track)}
+.b-sec-testimonials figcaption{display:flex;gap:12px;align-items:center;font-size:14px}
+.b-sec-testimonials figcaption img{width:40px;height:40px;border-radius:50%;object-fit:cover}
+.b-sec-testimonials figcaption span{display:block;color:var(--mute);font-size:13px}
+.b-sec-testimonials .stars{color:var(--accent-ink,var(--accent));letter-spacing:2px;font-size:14px}
+.b-sec-testimonials .pause{display:flex;justify-content:center;margin-top:20px}
+.b-sec-testimonials .wall.stopped .col{animation-play-state:paused}
+@media (max-width:860px){.b-sec-testimonials .wall{grid-template-columns:1fr 1fr}
+.b-sec-testimonials .col:nth-child(3){display:none}}
+@media (max-width:560px){.b-sec-testimonials .wall{grid-template-columns:1fr;height:560px}
+.b-sec-testimonials .col:nth-child(2){display:none}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
 </style></head><body>
-<section class="wrap" aria-labelledby="tt"><div class="top"><p class="k">Loved by cooks</p><h2 class="h" id="tt">Twelve thousand kitchens, one recurring complaint: they wish they’d started sooner.</h2></div>
-<div class="wall" id="wall"></div><div class="pause"><button class="btn" id="pause" aria-pressed="false">Pause the wall</button></div></section>
+<div class="b-sec-testimonials"><section class="wrap" aria-labelledby="tt"><div class="top"><p class="k">Loved by cooks</p><h2 class="h" id="tt">Twelve thousand kitchens, one recurring complaint: they wish they’d started sooner.</h2></div>
+<div class="wall" id="wall"></div><div class="pause"><button class="btn" id="tpause" aria-pressed="false">Pause the wall</button></div></section></div>
 <div class="styles" role="group" aria-label="Style"><button data-s="noir">Noir</button><button data-s="paper">Paper</button><button data-s="studio">Studio</button><button data-s="signal">Signal</button></div>
 <script>
 (()=>{const B=[...document.querySelectorAll('.styles button')];const set=s=>{document.documentElement.dataset.style=s;B.forEach(b=>b.setAttribute('aria-pressed',b.dataset.s===s));try{localStorage.setItem('atlas-section-style',s)}catch(e){}};
 let s=location.hash.slice(1);if(!B.some(b=>b.dataset.s===s)){try{s=localStorage.getItem('atlas-section-style')}catch(e){}}set(B.some(b=>b.dataset.s===s)?s:'noir');B.forEach(b=>b.onclick=()=>set(b.dataset.s));})();
-
+(()=>{const root=document.querySelector(".b-sec-testimonials");
 const Q=[['The face never drifts.','Our chef looks the same in every shot now. Viewers stopped asking if it was a different person.','Ana Ruiz','Saffron Hour','bloom'],['Posting weekly, finally.','We went from one episode a month to one a week without hiring.','Tom Becker','Low & Slow','ferro'],['Credits handled.','The rights check flagged two recipes we would have posted without credit.','Mei Lin','Dumpling Desk','sumi'],['It feels like us.','The house style is so consistent that people recognise our thumbnails before the name.','Kofi Mensah','Pepper Pot','amber'],['Thumbnails that work.','Click-through went up a third after we switched to the shot-list framing.','Lucía Gómez','Mesa','dove'],['Calmer edits.','Deadpan pacing sounded odd until we saw the retention curve.','Jonas Weber','Brot','owl'],['Our editor loves it.','Fewer notes, fewer reshoots, and the music no longer fights the knife sounds.','Priya Nair','Tadka','threads'],['Worth it for the bible.','The character bible alone saved a week of back-and-forth.','Sam Okoro','Jollof Lab','smoke']];
 const card=([h,t,n,r,i])=>`<figure><span class="stars" aria-label="5 out of 5">★★★★★</span><blockquote><b>${h}</b>${t}</blockquote><figcaption><img src="../../assets/shelf/${i}.webp" alt=""><div>${n}<span>${r}</span></div></figcaption></figure>`;
 const wall=document.getElementById('wall');[0,1,2].forEach(c=>{const items=Q.filter((_,i)=>i%3===c);const col=document.createElement('div');col.className='col';col.innerHTML=items.map(card).join('')+items.map(card).join('');col.querySelectorAll('figure').forEach((f,i)=>{if(i>=items.length)f.setAttribute('aria-hidden','true')});wall.append(col)});
-const pb=document.getElementById('pause');pb.onclick=()=>{const on=wall.classList.toggle('stopped');pb.setAttribute('aria-pressed',on);pb.textContent=on?'Play the wall':'Pause the wall'};
+const pb=document.getElementById('tpause');pb.onclick=()=>{const on=wall.classList.toggle('stopped');pb.setAttribute('aria-pressed',on);pb.textContent=on?'Play the wall':'Pause the wall'};})();
 </script></body></html>

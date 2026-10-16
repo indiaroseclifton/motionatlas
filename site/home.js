@@ -52,7 +52,7 @@ window.HomeAtlas={
  </footer>
 </section>
 
-<nav class="vmaInner vmaIndex" aria-label="Atlas sections"><span class="vmaLabel">Browse the atlas</span><a href="#systems">Design systems</a><a href="#motion">Animation studio</a><a href="#art">Art &amp; graphics</a><a href="#ux">UI components</a><a href="#typography">Typography</a><a href="#effects">Landing effects</a></nav>
+<nav class="vmaInner vmaIndex" aria-label="Atlas sections"><span class="vmaLabel">Browse the atlas</span><a href="#systems">Design systems</a><a href="#motion">Animation studio</a><a href="#art">Art &amp; graphics</a><a href="#ux">UI components</a><a href="#typography">Typography</a><a href="#effects">Landing effects</a><a href="interactions.html">Interactions shelf</a><a href="page-builder.html">Page builder</a></nav>
 
 <section class="vmaInner vmaSection" style="--c:var(--mint)">
  <div class="vmaSectionHead"><div><p class="vmaLabel vmaLabelC">Design systems &middot; 32 worlds</p><h2>Different worlds.<br><em>One creative library.</em></h2></div><p>Original concepts, coordinated materials and individual assets. Go from a whole visual world to the detail that makes it work.</p></div>
@@ -70,6 +70,14 @@ window.HomeAtlas={
    <div class="vmaActions"><a class="vmaBtn vmaBtnPrimary" href="#motion">Enter the animation studio <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5"/></svg></a><a class="vmaBtn vmaBtnGhost" href="#effects">Try landing effects</a></div>
    <button id="homeMotionToggle" class="vmaCtl" type="button" aria-pressed="false">Pause the drawing</button>
   </div>
+ </div>
+</section>
+
+<section class="vmaInner vmaSection vmaBuildSec" style="--c:var(--gold)">
+ <div class="vmaSectionHead"><div><p class="vmaLabel vmaLabelC">Build with it &middot; copy, stack, ship</p><h2>Take it home.<br><em>One file at a time.</em></h2></div><p>Every interaction, scroll story and page section is a single HTML file you can copy. Or stack sections into a whole page, pick a style, write your words and download it.</p></div>
+ <div class="vmaBuild">
+  <a class="vmaBuildCard" href="interactions.html"><span class="vmaBuildImg"><img src="assets/films/golden-dove.jpg" alt="" loading="lazy" width="1920" height="1288"></span><span class="vmaBuildTxt"><span class="vmaLabel">Interactions shelf &middot; 29 pieces</span><b>Showpieces, stories and sections</b><span>Card decks, carousels, scroll reveals, four film-led scroll stories and eight page sections, each with code and an AI build prompt.</span></span></a>
+  <a class="vmaBuildCard" href="page-builder.html"><span class="vmaBuildImg"><img src="assets/films/paper-bird.jpg" alt="" loading="lazy" width="1920" height="1288"></span><span class="vmaBuildTxt"><span class="vmaLabel">Page builder &middot; 12 blocks, 4 styles</span><b>Stack a page and download it</b><span>Film heroes, features, proof, pricing, contact and a footer. Edit the words, switch styles, then export one HTML file or a prompt.</span></span></a>
  </div>
 </section>
 

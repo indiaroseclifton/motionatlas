@@ -345,6 +345,17 @@ These are the AI cooking channel's own styles. They come first in every style ro
 - **Validation:** both categorical palettes pass the dataviz validator. Noir's colour-blind ΔE is 9.4. Paper's is 6.3, which is in the floor band and fine with the direct labels these charts use. Status red and green are never reused as series colours.
 - **Plan pack:** the channel plan deck's charts are in `deliverables/channel-plan/`, in both styles.
 
+### Page builder (`site/page-builder.html`, `site/builder/blocks.js`, `tools/blocks.py`)
+
+Stack sections into a whole page, choose a style, write your own words and export it.
+- **Twelve blocks:** navigation bar, film hero, split hero, statement (words brighten as you read), bento features, testimonial wall, logo marquee, pricing, FAQ, contact form, film call to action and wordmark footer. Each block can appear once; arrows reorder and ✕ removes.
+- **Four styles:** Kitchen noir, Kitchen paper, Studio and Signal. A brand name feeds the nav, footer wordmark and legal line, and film blocks take any of 22 atlas films.
+- **Starting points:** Recipe channel, Product launch and Studio portfolio, with one-step undo.
+- **Preview:** live in an iframe, with desktop and phone widths and an "open in a new tab" option. Choosing a section jumps the preview to it. Work is saved in this browser.
+- **Export:** **Download HTML** (one file with only the chosen style and its fonts; films and images load from the live site), **Copy HTML**, and **Copy AI prompt** (style tokens plus each section's description, words and film URL).
+- `tools/blocks.py` builds `blocks.js` and regenerates the eight `sec-*` demos from `tools/sections_src.py`. Every block's CSS is scoped under `.b-<id>` (keyframes renamed too), so blocks never clash on one page. Edit the source and run `python3 tools/blocks.py`.
+- All twelve blocks together pass axe WCAG A/AA in every style, and typed text is escaped.
+
 ### Interactions shelf (`site/interactions.html`, `site/interactions/`)
 
 Seventeen original showpiece interactions, each one self-contained HTML file with no libraries in `interactions/demos/`, listed in `interactions/manifest.js`. The pieces are: fanned card deck, arc carousel, 3D ring carousel, image tunnel, particle globe, clothesline gallery, folder tabs, hover list with cursor image, expanding panels, dial slider, swipe quote deck, halo magnetic button, watching-eyes button, parallax tilt row, zoom-through reveal, scroll index and flowing line mesh.
@@ -355,7 +366,10 @@ Seventeen original showpiece interactions, each one self-contained HTML file wit
 - Demo images are 640×800 crops in `assets/shelf/`.
 - Every piece supports the keyboard, works at phone width, respects reduced motion and passes axe WCAG A/AA.
 - The ideas follow familiar interaction-gallery patterns; the designs, names and code are our own.
-- `#<id>` deep-links straight to a piece.
+- `#<id>` deep-links straight to a piece, including when only the hash changes.
+- **Search** filters by name, description, category, uses and how it works, alongside the type chips.
+- **Use your own images:** pick up to eight photos in a piece's panel. They're shrunk to 1200 px JPEG, and a small script in the preview and in the copied or downloaded file swaps each demo picture for one of yours as it appears. The panel only shows for pieces that use pictures.
+- The home page has a **Build with it** section linking the shelf and the page builder, and both are in the home index and the Interface menu.
 - **Scroll stories:** four full one-page sites built around the atlas films, each one HTML file (`interactions/demos/story-*.html`):
   - **Tidewater** (coastal hotel): a film hero that zooms as you scroll, words that light up as you read, rooms scrolled sideways inside a pinned section, a night itinerary beside a pinned film, and a booking form.
   - **Gilt** (gold-leaf atelier): the film shows through the brand name using a multiply-blended mask, then three chapters cross-fade between the golden dove, the gold figure and the lion.

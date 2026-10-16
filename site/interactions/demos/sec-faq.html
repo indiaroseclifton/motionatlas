@@ -20,38 +20,37 @@ a{color:inherit}button,input,textarea,select{font:inherit;color:inherit}
 .styles{position:fixed;right:max(12px,env(safe-area-inset-right));bottom:12px;z-index:50;display:flex;gap:2px;padding:4px;border-radius:999px;background:rgba(128,128,128,.18);backdrop-filter:blur(10px);font:500 12px/1 system-ui,sans-serif}
 .styles button{border:0;background:transparent;color:var(--ink);padding:9px 11px;border-radius:999px;cursor:pointer;min-height:32px}
 .styles button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
-
-.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:clamp(28px,6vw,80px)}
-.grid h2{font-size:clamp(36px,5vw,64px);margin:8px 0 16px}
-.grid .side p{color:var(--mute);margin:0 0 20px;max-width:34ch}
-details{border-bottom:1px solid var(--line)}
-details:first-of-type{border-top:1px solid var(--line)}
-summary{list-style:none;display:flex;justify-content:space-between;gap:20px;align-items:center;padding:22px 0;cursor:pointer;font-size:18px;font-weight:500}
-summary::-webkit-details-marker{display:none}
-summary i{flex:0 0 28px;height:28px;border-radius:50%;border:1px solid var(--line);position:relative;transition:transform .3s,background .3s}
-summary i::before,summary i::after{content:"";position:absolute;left:50%;top:50%;width:10px;height:1.5px;margin:-.75px -5px;background:currentColor}
-summary i::after{transform:rotate(90deg);transition:transform .3s}
-details[open] summary i{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
-details[open] summary i::after{transform:rotate(0)}
-.a{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s cubic-bezier(.2,.8,.2,1)}
-details[open] .a{grid-template-rows:1fr}
-.a>div{overflow:hidden}.a p{margin:0 0 22px;color:var(--mute);max-width:58ch}
-@media (max-width:760px){.grid{grid-template-columns:1fr}}
-
+.b-sec-faq .grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:clamp(28px,6vw,80px)}
+.b-sec-faq .grid h2{font-size:clamp(36px,5vw,64px);margin:8px 0 16px}
+.b-sec-faq .grid .side p{color:var(--mute);margin:0 0 20px;max-width:34ch}
+.b-sec-faq details{border-bottom:1px solid var(--line)}
+.b-sec-faq details:first-of-type{border-top:1px solid var(--line)}
+.b-sec-faq summary{list-style:none;display:flex;justify-content:space-between;gap:20px;align-items:center;padding:22px 0;cursor:pointer;font-size:18px;font-weight:500}
+.b-sec-faq summary::-webkit-details-marker{display:none}
+.b-sec-faq summary i{flex:0 0 28px;height:28px;border-radius:50%;border:1px solid var(--line);position:relative;transition:transform .3s,background .3s}
+.b-sec-faq summary i::before,.b-sec-faq summary i::after{content:"";position:absolute;left:50%;top:50%;width:10px;height:1.5px;margin:-.75px -5px;background:currentColor}
+.b-sec-faq summary i::after{transform:rotate(90deg);transition:transform .3s}
+.b-sec-faq details[open] summary i{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.b-sec-faq details[open] summary i::after{transform:rotate(0)}
+.b-sec-faq .a{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s cubic-bezier(.2,.8,.2,1)}
+.b-sec-faq details[open] .a{grid-template-rows:1fr}
+.b-sec-faq .a>div{overflow:hidden}
+.b-sec-faq .a p{margin:0 0 22px;color:var(--mute);max-width:58ch}
+@media (max-width:760px){.b-sec-faq .grid{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
 </style></head><body>
-<section class="wrap"><div class="grid"><div class="side"><p class="k">Questions</p><h2 class="h">Before you start cooking.</h2><p>Can’t find what you need? A real person answers within a working day.</p><a class="btn p" href="#">Ask us</a></div>
+<div class="b-sec-faq"><section class="wrap"><div class="grid"><div class="side"><p class="k">Questions</p><h2 class="h">Before you start cooking.</h2><p>Can’t find what you need? A real person answers within a working day.</p><a class="btn p" href="#">Ask us</a></div>
 <div>
 <details open><summary>Do I need my own footage?<i aria-hidden="true"></i></summary><div class="a"><div><p>No. You can start from a recipe and a character bible; we generate the shots. If you have footage, upload it and we’ll match the grade.</p></div></div></details>
 <details><summary>Who owns what I make?<i aria-hidden="true"></i></summary><div class="a"><div><p>You do. Episodes, thumbnails and recipe cards are yours to post anywhere, including after you cancel.</p></div></div></details>
 <details><summary>How do recipe credits work?<i aria-hidden="true"></i></summary><div class="a"><div><p>When a recipe comes from a known chef or book, we add an on-screen credit and a line in the description, and hold the post until someone approves it.</p></div></div></details>
 <details><summary>Can my chef look the same every time?<i aria-hidden="true"></i></summary><div class="a"><div><p>Yes. A character bible fixes the face, hands, clothes and kitchen, and every shot is checked against it before it renders.</p></div></div></details>
 <details><summary>What happens if I cancel?<i aria-hidden="true"></i></summary><div class="a"><div><p>Your library stays downloadable for 90 days. We’ll email you before anything is deleted.</p></div></div></details>
-</div></div></section>
+</div></div></section></div>
 <div class="styles" role="group" aria-label="Style"><button data-s="noir">Noir</button><button data-s="paper">Paper</button><button data-s="studio">Studio</button><button data-s="signal">Signal</button></div>
 <script>
 (()=>{const B=[...document.querySelectorAll('.styles button')];const set=s=>{document.documentElement.dataset.style=s;B.forEach(b=>b.setAttribute('aria-pressed',b.dataset.s===s));try{localStorage.setItem('atlas-section-style',s)}catch(e){}};
 let s=location.hash.slice(1);if(!B.some(b=>b.dataset.s===s)){try{s=localStorage.getItem('atlas-section-style')}catch(e){}}set(B.some(b=>b.dataset.s===s)?s:'noir');B.forEach(b=>b.onclick=()=>set(b.dataset.s));})();
-
-document.querySelectorAll('a[href="#"]').forEach(a=>a.onclick=e=>e.preventDefault());
+(()=>{const root=document.querySelector(".b-sec-faq");
+root.querySelectorAll('a[href="#"]').forEach(a=>a.onclick=e=>e.preventDefault());})();
 </script></body></html>

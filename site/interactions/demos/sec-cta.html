@@ -20,31 +20,30 @@ a{color:inherit}button,input,textarea,select{font:inherit;color:inherit}
 .styles{position:fixed;right:max(12px,env(safe-area-inset-right));bottom:12px;z-index:50;display:flex;gap:2px;padding:4px;border-radius:999px;background:rgba(128,128,128,.18);backdrop-filter:blur(10px);font:500 12px/1 system-ui,sans-serif}
 .styles button{border:0;background:transparent;color:var(--ink);padding:9px 11px;border-radius:999px;cursor:pointer;min-height:32px}
 .styles button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
-
-.band{position:relative;overflow:hidden;border-radius:calc(var(--radius) * 1.6);min-height:440px;display:grid;align-items:end;isolation:isolate}
-.band video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}
-.band::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(100deg,var(--bg) 8%,color-mix(in srgb,var(--bg) 70%,transparent) 45%,transparent 80%)}
-.in{padding:clamp(28px,5vw,64px);max-width:640px;display:grid;gap:16px}
-.in h2{font-size:clamp(40px,6vw,76px);margin:0}
-.in p{margin:0;color:var(--mute);max-width:40ch;font-size:17px}
-.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
-.ctrl{position:absolute;right:16px;top:16px;width:44px;height:44px;border-radius:50%;border:0;background:color-mix(in srgb,var(--surface) 80%,transparent);cursor:pointer;display:grid;place-items:center}
-.ctrl svg{width:16px;height:16px}
-@media (max-width:640px){.band::before{background:linear-gradient(0deg,var(--bg) 25%,color-mix(in srgb,var(--bg) 60%,transparent) 65%,transparent)}.band{min-height:520px}}
-
+.b-sec-cta .band{position:relative;overflow:hidden;border-radius:calc(var(--radius) * 1.6);min-height:440px;display:grid;align-items:end;isolation:isolate}
+.b-sec-cta .band video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}
+.b-sec-cta .band::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(100deg,var(--bg) 8%,color-mix(in srgb,var(--bg) 70%,transparent) 45%,transparent 80%)}
+.b-sec-cta .in{padding:clamp(28px,5vw,64px);max-width:640px;display:grid;gap:16px}
+.b-sec-cta .in h2{font-size:clamp(40px,6vw,76px);margin:0}
+.b-sec-cta .in p{margin:0;color:var(--mute);max-width:40ch;font-size:17px}
+.b-sec-cta .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.b-sec-cta .ctrl{position:absolute;right:16px;top:16px;width:44px;height:44px;border-radius:50%;border:0;background:color-mix(in srgb,var(--surface) 80%,transparent);cursor:pointer;display:grid;place-items:center}
+.b-sec-cta .ctrl svg{width:16px;height:16px}
+@media (max-width:640px){.b-sec-cta .band::before{background:linear-gradient(0deg,var(--bg) 25%,color-mix(in srgb,var(--bg) 60%,transparent) 65%,transparent)}
+.b-sec-cta .band{min-height:520px}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
 </style></head><body>
-<section class="wrap"><div class="band"><video id="v" autoplay muted loop playsinline poster="../../assets/films/pigment-bloom.jpg"><source src="../../assets/films/pigment-bloom-720.webm" type="video/webm"><source src="../../assets/films/pigment-bloom-720.mp4" type="video/mp4"></video>
+<div class="b-sec-cta"><section class="wrap"><div class="band"><video id="v" autoplay muted loop playsinline poster="../../assets/films/pigment-bloom.jpg"><source src="../../assets/films/pigment-bloom-720.webm" type="video/webm"><source src="../../assets/films/pigment-bloom-720.mp4" type="video/mp4"></video>
 <button class="ctrl" id="pv" aria-label="Pause background film"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="3" y="2" width="3.5" height="12" rx="1"/><rect x="9.5" y="2" width="3.5" height="12" rx="1"/></svg></button>
-<div class="in"><p class="k">Start this week</p><h2 class="h">Your first episode is one recipe away.</h2><p>Bring a dish you love. We’ll handle the chef, the shots and the colour.</p><div class="row"><a class="btn p" href="#">Start free</a><a class="btn" href="#">Watch a sample</a></div></div></div></section>
+<div class="in"><p class="k">Start this week</p><h2 class="h">Your first episode is one recipe away.</h2><p>Bring a dish you love. We’ll handle the chef, the shots and the colour.</p><div class="row"><a class="btn p" href="#">Start free</a><a class="btn" href="#">Watch a sample</a></div></div></div></section></div>
 <div class="styles" role="group" aria-label="Style"><button data-s="noir">Noir</button><button data-s="paper">Paper</button><button data-s="studio">Studio</button><button data-s="signal">Signal</button></div>
 <script>
 (()=>{const B=[...document.querySelectorAll('.styles button')];const set=s=>{document.documentElement.dataset.style=s;B.forEach(b=>b.setAttribute('aria-pressed',b.dataset.s===s));try{localStorage.setItem('atlas-section-style',s)}catch(e){}};
 let s=location.hash.slice(1);if(!B.some(b=>b.dataset.s===s)){try{s=localStorage.getItem('atlas-section-style')}catch(e){}}set(B.some(b=>b.dataset.s===s)?s:'noir');B.forEach(b=>b.onclick=()=>set(b.dataset.s));})();
-
-document.querySelectorAll('a[href="#"]').forEach(a=>a.onclick=e=>e.preventDefault());
+(()=>{const root=document.querySelector(".b-sec-cta");
+root.querySelectorAll('a[href="#"]').forEach(a=>a.onclick=e=>e.preventDefault());
 const v=document.getElementById('v'),pv=document.getElementById('pv');const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const play='<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>',pause=pv.innerHTML;
 function st(p){if(p){v.play().catch(()=>{});pv.innerHTML=pause;pv.setAttribute('aria-label','Pause background film')}else{v.pause();pv.innerHTML=play;pv.setAttribute('aria-label','Play background film')}}
-if(reduce){v.removeAttribute('autoplay');st(false)}pv.onclick=()=>st(v.paused);
+if(reduce){v.removeAttribute('autoplay');st(false)}pv.onclick=()=>st(v.paused);})();
 </script></body></html>
