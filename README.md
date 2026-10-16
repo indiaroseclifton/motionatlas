@@ -324,10 +324,11 @@ The Animation studio header now has a film behind it, like the home hero: **Biol
 - It runs full width from under the site header to the dark "Live studies" section, fading into the title on the left and into that section at the bottom, and the header text turns light over it.
 - It plays only while on screen and only on that page, never under reduced motion, and has a pause/play button.
 - Any page can take one by adding a `film` entry to its record in `PAGES`.
-- Ten pages now have one, in one of two tones:
+- Eighteen pages now have one, in one of two tones:
   - **Dark** (`tone:'dark'`): Animation studio (Bioluminescent trails), Landing effects (Soap film), Comparison desk (Ferrofluid), Style pairings (Lion to phoenix) and Design systems (Game of Life). The header turns dark, the text turns light, and the film fades into the page below.
   - **Light** (`tone:'light'`): Catalogue (Hydraulic erosion), Art styles (Suminagashi), Film looks (Pixel sorting), Vase studies (Sand drawing) and Inspiration (Embroidery). The film washes into the page colour behind dark text.
-  - **Your films:** Fonts & type (Light threads), My projects (Particle tree), Your creations (Pigment bloom) and Sources & credits (Smoke plume), all dark.
+  - **Your films:** Fonts & type (Light threads), My projects (Particle tree), Your creations (Pigment bloom) and Sources & credits (Smoke plume), all dark; System playground (Swan construction, dark); Icon families (Sketchbook horse), Extracted assets (Paper bird) and UI components (Light mesh), all light.
+    - The Live studies strip also gained Drawn in gold leaf, the swan, the horse, Petals in a slow vortex and the paper bird. The "Pairs well with" links stay in the header above the strip.
     - They're upscaled from the 1168 × 784 originals with Real-ESRGAN (`realesr-general-x4v3`, half-size frames, near-black tiles skipped) to 1920 px, with seamless 15 s loops.
     - Bitrates are capped (H.264 ≤ 6 Mbit/s; VP9 3 Mbit/s full size, 1.6 Mbit/s for the 1280px cuts), which keeps fine glowing detail from ballooning WebM sizes.
     - The same four also join the Animation studio's "Live studies & films" strip.
