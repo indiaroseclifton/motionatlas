@@ -46,6 +46,44 @@ details.help summary::before{content:'+ ';}details.help[open] summary::before{co
 .styles{display:flex;gap:6px;overflow-x:auto;padding:12px 18px;border-bottom:1px solid var(--hair);background:var(--panel);scrollbar-width:thin;align-items:center}
 .styles .lbl{flex:none;font:600 10.5px Inter;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);padding:0 6px 0 2px}
 .styles .lbl:not(:first-child){margin-left:10px;padding-left:14px;border-left:1px solid var(--hair)}
+[hidden]{display:none!important}
+.fe{display:grid;gap:10px}
+.fe-stage{border:1px solid var(--hair);border-radius:12px;background:var(--soft);padding:8px}
+.fe-head{display:flex;align-items:center;gap:4px;margin-bottom:6px}
+.fe-num{font:700 10.5px/1 'JetBrains Mono',ui-monospace,monospace;color:var(--mute);letter-spacing:.06em;padding:0 4px}
+.fe-title{flex:1;min-width:0;border:1px solid transparent;background:none;border-radius:8px;padding:6px 8px;font-weight:650;font-size:13px}
+.fe-title:hover,.fe-label:hover{border-color:var(--hair)}
+.fe-title:focus,.fe-label:focus{border-color:var(--accent);background:var(--panel);outline:none;box-shadow:0 0 0 3px rgba(91,45,255,.12)}
+.fe-steps{list-style:none;margin:0;padding:0;display:grid;gap:5px}
+.fe-step{background:var(--panel);border:1px solid var(--hair);border-radius:10px;padding:4px 4px 6px;transition:box-shadow .3s}
+.fe-step.dec{border-style:dashed}
+.fe-step.flash{box-shadow:0 0 0 3px var(--accent)}
+.fe-row{display:flex;align-items:center;gap:4px}
+.fe-label{flex:1;min-width:0;border:1px solid transparent;background:none;border-radius:7px;padding:6px 6px;font-size:13px;font-weight:550}
+.fe-dot{flex:none;width:32px;height:32px;border:0;background:none;border-radius:8px;display:grid;place-items:center;cursor:pointer}
+.fe-dot::before{content:'';width:13px;height:13px;border-radius:50%;border:2px dashed #B9BECB;box-sizing:border-box}
+.fe-dot[data-st=have]::before{background:#1E9E6A;border:0}.fe-dot[data-st=dont]::before{background:#DC3B3B;border:0}.fe-dot[data-st=partial]::before{background:#D9901C;border:0}.fe-dot[data-st=accent]::before{background:var(--accent);border:0}
+.fe-dot:hover{background:var(--soft)}
+.fe-ic{flex:none;width:32px;height:32px;border:0;background:none;border-radius:8px;color:var(--mute);font-size:14px;cursor:pointer}
+.fe-ic:hover:not(:disabled){background:var(--soft);color:var(--ink)}.fe-ic:disabled{opacity:.3;cursor:default}
+.fe-sum{margin:0 8px 0 40px;font-size:11.5px;line-height:1.4;color:var(--mute);overflow-wrap:anywhere}
+.fe-sum b{color:var(--ink);font-weight:600}.fe-end{font-style:italic}
+.fe-tag{font-style:normal;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent)}
+.fe-more{display:grid;gap:8px;margin:8px 6px 2px;padding-top:8px;border-top:1px solid var(--hair)}
+.fe-f{display:grid;gap:4px;font-size:11.5px;color:var(--mute)}
+.fe-f input,.fe-f select,.fe-links input,.fe-links select{min-width:0;border:1px solid var(--hair);border-radius:8px;padding:6px 8px;background:var(--panel);font-size:12.5px}
+.fe-two{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.fe-links{list-style:none;margin:0;padding:0;display:grid;gap:5px}
+.fe-links li{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.4fr) minmax(0,.8fr) 32px;gap:4px;align-items:center}
+.fe-acts{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.fe-btn{border:1px solid var(--hair);background:var(--panel);border-radius:8px;min-height:32px;padding:0 10px;font-size:12px;font-weight:550;cursor:pointer}
+.fe-btn:hover{border-color:#CBD0DB}.fe-btn.danger{color:#C02F2F}
+.fe-add{width:100%;margin-top:6px;border:1px dashed #CBD0DB;background:none;border-radius:9px;min-height:34px;font-size:12.5px;color:var(--mute);cursor:pointer}
+.fe-add:hover{color:var(--ink);border-color:var(--ink)}
+.fe-foot{padding-top:2px}
+.fe-hint{margin:8px 0 0;font-size:12px;color:var(--mute)}
+.fe-err{font-size:12.5px;color:#C02F2F}
+.fe :focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .types{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .type{position:relative;display:grid;grid-template-columns:34px 1fr;gap:2px 8px;align-items:center;text-align:left;padding:8px;border-radius:10px;border:1px solid var(--hair);background:var(--panel);min-height:52px}
 .type svg{grid-row:span 2;width:34px;height:28px;color:var(--mute)}
@@ -107,7 +145,10 @@ details.help summary::before{content:'+ ';}details.help[open] summary::before{co
    <div class="styleinfo" id="styleinfo"></div>
   </div>
   <div class="sec">
-   <h2>Steps <small>Mermaid flowchart syntax</small></h2>
+   <h2>Steps <span class="seg" id="mode" role="group" aria-label="Editor"><button type="button" data-v="visual" aria-pressed="true">Visual</button><button type="button" data-v="code" aria-pressed="false">Code</button></span></h2>
+   <div id="visual" class="fe" aria-label="Visual step editor"></div>
+   <p class="fe-hint" id="feHint">Click a step in the chart to edit it. Enter in a step name adds the next step.</p>
+   <div id="codeWrap" hidden>
    <textarea id="src" spellcheck="false" aria-label="Flowchart source" autocapitalize="off" autocomplete="off"></textarea>
    <details class="help"><summary>Syntax in one minute</summary>
     <dl class="cheat">
@@ -127,6 +168,7 @@ details.help summary::before{content:'+ ';}details.help[open] summary::before{co
     </dl>
     <p style="margin:8px 0 0;font-size:12px;color:var(--mute)">Or write one step per line. Lines ending in “?” become decisions, and indented <code>Yes: step</code> lines become branches.</p>
    </details>
+   </div>
   </div>
   <div class="sec" data-flowonly>
    <h2>Layout <small>flow and swimlanes</small></h2>
@@ -154,6 +196,7 @@ details.help summary::before{content:'+ ';}details.help[open] summary::before{co
 <script src="dataviz/flow.js"></script>
 <script src="dataviz/examples.js"></script>
 <script src="dataviz/flowtypes.js"></script>
+<script src="dataviz/flow-editor.js"></script>
 <script>
 'use strict';
 (()=>{
@@ -198,6 +241,11 @@ $('types').onclick=e=>{const b=e.target.closest('[data-type]');if(!b)return;S.ty
 $('example').innerHTML+=FlowExamples.map(x=>`<option value="${x.id}">${x.name}</option>`).join('');
 $('example').onchange=e=>{const x=FlowExamples.find(y=>y.id===e.target.value);if(!x)return;$('src').value=x.src;$('title').value=x.title||x.name;$('subtitle').value=x.subtitle||'';
  S.type=x.id==='release'?'swimlanes':'auto';store.set('type',S.type);setSeg('dir',/flowchart\s+LR/.test(x.src)?'LR':'TB');render(true);e.target.value='';};
+const editor=FlowEditor.mount($('visual'),{set(src){$('src').value=src;later();}});
+S.mode=store.get('mode')||'visual';
+function setMode(m){S.mode=m;store.set('mode',m);$('mode').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===m)));
+ $('visual').hidden=$('feHint').hidden=m!=='visual';$('codeWrap').hidden=m!=='code';if(m==='visual')editor.load(source());}
+$('mode').onclick=e=>{const b=e.target.closest('button');if(b)setMode(b.dataset.v);};
 function setSeg(id,v){S[id]=v;$(id).querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.v===v)));}
 
 /* render */
@@ -207,6 +255,7 @@ const loadedFonts=new Set();
 function render(fit){const st=DVStyle(S.style);DVFonts(st);
  if(!loadedFonts.has(st.id)&&document.fonts){loadedFonts.add(st.id);const fam=st.t.font.split(',')[0],hd=st.t.head.split(',')[0];Promise.all([document.fonts.load(`600 14px ${fam}`),document.fonts.load(`400 12px ${fam}`),document.fonts.load(`600 20px ${hd}`)]).then(()=>render(false)).catch(()=>{});}
  let src=source();if(/^\s*(flowchart|graph)\s+(TD|TB|LR|RL|BT)/i.test(src))src=src.replace(/^\s*(flowchart|graph)\s+(TD|TB|LR|RL|BT)/i,'$1 '+S.dir);else S.dirForced=S.dir;
+ if(S.mode==='visual')editor.load(source());
  const type=pickType();S.cur=type;
  let r;try{r=FlowTypes.render(type,src,st,{title:$('title').value.trim(),subtitle:$('subtitle').value.trim(),direction:S.dir,spacing:S.spacing,decision:S.decision,showLegend:S.legend==='1',id:'fc'});}
  catch(err){console.error(err);$('notes').innerHTML=`<li class="warn">Could not read that: ${String(err.message||err).replace(/</g,'&lt;')}</li>`;return;}
@@ -228,7 +277,11 @@ $('zIn').onclick=()=>zoomAt(1.2,stage.clientWidth/2,stage.clientHeight/2);$('zOu
 stage.addEventListener('wheel',e=>{if(!(e.ctrlKey||e.metaKey)){S.x-=e.deltaX;S.y-=e.deltaY;apply();e.preventDefault();return;}e.preventDefault();const b=stage.getBoundingClientRect();zoomAt(Math.exp(-e.deltaY*.0022),e.clientX-b.left,e.clientY-b.top);},{passive:false});
 let drag=null;stage.addEventListener('pointerdown',e=>{if(e.target.closest('.zoom,.styleinfo'))return;drag={x:e.clientX,y:e.clientY,sx:S.x,sy:S.y};stage.classList.add('drag');stage.setPointerCapture(e.pointerId);});
 stage.addEventListener('pointermove',e=>{if(!drag)return;S.x=drag.sx+e.clientX-drag.x;S.y=drag.sy+e.clientY-drag.y;apply();});
-stage.addEventListener('pointerup',()=>{drag=null;stage.classList.remove('drag');});
+stage.addEventListener('pointerup',e=>{const d=drag;drag=null;stage.classList.remove('drag');
+ /* a click without a drag selects the step under the pointer */
+ if(!d||Math.hypot(e.clientX-d.x,e.clientY-d.y)>4)return;let best=null,bd=1e9;
+ for(const t of $('paper').querySelectorAll('text')){const r=t.getBoundingClientRect();if(!r.width)continue;const dx=Math.max(r.left-e.clientX,0,e.clientX-r.right),dy=Math.max(r.top-e.clientY,0,e.clientY-r.bottom),dd=dx*dx+dy*dy;if(dd<bd){const id=editor.find(t.textContent);if(id){bd=dd;best=id;}}}
+ if(best&&bd<60*60*S.zoom*S.zoom+400){if(S.mode!=='visual')setMode('visual');editor.select(best);}});
 addEventListener('resize',()=>{clearTimeout(fitView.t);fitView.t=setTimeout(fitView,150);});
 
 /* exports */
@@ -281,7 +334,7 @@ ul{padding-left:18px}li{margin:4px 0}.two{display:grid;grid-template-columns:1fr
  if(h.get('c')){try{src=unb64(h.get('c'));title=h.get('t')||'';sub=h.get('st')||'';if(h.get('s'))S.style=h.get('s');if(h.get('d'))setSeg('dir',h.get('d'));if(h.get('y'))S.type=h.get('y');else if(h.get('l')==='1')S.type='swimlanes';}catch{}}
  const first=FlowExamples[0];$('src').value=src||first.src;$('title').value=title??first.name;$('subtitle').value=sub||'';
  if(!DVStyles.some(s=>s.id===S.style))S.style='workflow';$('styles').querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',String(c.dataset.style===S.style)));
- render(true);document.fonts?.ready.then(()=>setTimeout(()=>render(false),60));
+ setMode(S.mode);render(true);document.fonts?.ready.then(()=>setTimeout(()=>render(false),60));
  $('styles').querySelector('[aria-pressed=true]')?.scrollIntoView({block:'nearest',inline:'center'});})();
 })();
 </script>

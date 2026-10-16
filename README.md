@@ -291,6 +291,11 @@ Palettes live in `dataviz/styles.js` (`DVChartPalettes`, with the validation res
 ### Flowchart studio (`site/flowchart-studio.html`, `site/dataviz/`)
 
 Write a flowchart as text and get a clean, consistent diagram in eight layouts and seventeen styles.
+- **Visual editor** (`dataviz/flow-editor.js`): build a chart without writing any syntax. The Steps panel opens in Visual mode, where each stage is a card holding its steps.
+  - Each step has a status dot (click to cycle have / don't have / partial / key), an editable name and a details panel. The panel holds the note, the kind (step, decision, start, data, input/output, sub-process), the stage, and a "Goes to" list of connections with optional labels and line styles.
+  - **Enter** in a step name adds the next step and wires it into the chain. "+ Yes / No after" inserts a decision with both branches. Deleting a step joins its neighbours back up.
+  - Clicking a step in the preview opens it in the editor, in any diagram type.
+  - Every change is written back as Mermaid, so the Code tab, share links and exports stay in sync both ways.
 - **Input:** the flowchart subset of Mermaid, which most tools and AI assistants export. That covers shapes, labelled branches, dashed and thick links, subgraphs, and `:::have` / `:::dont` / `:::partial` / `:::accent` status. A plain list of steps also works: lines ending in "?" become decisions, and indented `Yes: step` lines become branches.
 - **Layout** (`dataviz/flow.js`, no libraries):
   - Ranks with loops set aside, crossing-reducing ordering, and isotonic placement so lines run straight.
@@ -309,7 +314,7 @@ Write a flowchart as text and get a clean, consistent diagram in eight layouts a
 - **Styles** (`dataviz/styles.js`): six drawn from the Pinterest board (Workflow canvas, Soft neumorphic, Frosted glass, Calm sage, Lilac flow, Soft clay 3D) and eleven from research (Swiss editorial, Tufte, newsroom grey, design-system SaaS, monochrome developer, hand-drawn, pastel diagramming, blueprint, dark glass, neo-brutalist, risograph).
 - **Pre-flight:** notes on what the layout did, plus warnings for unlabelled branches, several starts, crowded ranks and oversized charts.
 - **Exports:** SVG and HTML with the fonts embedded, PNG at 2×, a share link (the chart is encoded in the URL), and a style guide. The style guide is a one-page flowchart design system for the chosen look: your chart, colour tokens, type roles, shapes, status, geometry, and dos and don'ts.
-- **Examples** (`dataviz/examples.js`): creative review, sign-up, release pipeline (lanes), and the AI cooking-channel workflow.
+- **Examples** (`dataviz/examples.js`): creative review, sign-up, release pipeline (lanes), and the AI cooking-channel workflow, both cleaned up and as first drawn. Finished exports of the channel chart are in `deliverables/channel-flowchart/`.
 - **Research notes:** `docs/dataviz-research.md`.
 
 ### Live design-system components (`site/system-components/`)
