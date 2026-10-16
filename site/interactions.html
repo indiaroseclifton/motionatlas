@@ -1,6 +1,6 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Interactions shelf · Visual & Motion Atlas</title>
-<meta name="description" content="Seventeen original showpiece interactions and four scroll-story site templates: card decks, carousels, scroll reveals, canvas backgrounds and playful buttons. Each one is a single HTML file you can copy, with an AI prompt to rebuild it.">
+<meta name="description" content="Seventeen original showpiece interactions four scroll-story site templates and eight style-switchable page sections: card decks, carousels, scroll reveals, canvas backgrounds and playful buttons. Each one is a single HTML file you can copy, with an AI prompt to rebuild it.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap">
 <style>
@@ -60,7 +60,7 @@ dialog::backdrop{background:rgba(14,16,24,.6);backdrop-filter:blur(4px)}
 <a class="skip" href="#grid">Skip to the interactions</a>
 <header><a class="back" href="atlas.html#ux">← Atlas / Interface</a><nav aria-label="Related"><a href="atlas.html#effects">Landing effects</a><a href="atlas.html#ux">UI components</a><a href="atlas.html#backgrounds">Backgrounds</a></nav></header>
 <main>
-<section class="hero"><h1>Interactions shelf.</h1><p>Seventeen showpiece interactions and four full scroll-story sites built around our films. Each is <b>one HTML file with no libraries</b>. Open any piece to try it full size, copy its code, or copy a prompt that tells an AI builder how to recreate it in your own stack.</p></section>
+<section class="hero"><h1>Interactions shelf.</h1><p>Seventeen showpiece interactions, four full scroll-story sites built around our films, and eight page sections that switch between our four styles. Each is <b>one HTML file with no libraries</b>. Open any piece to try it full size, copy its code, or copy a prompt that tells an AI builder how to recreate it in your own stack.</p></section>
 <div class="filters" id="filters" role="group" aria-label="Filter by type"></div>
 <div class="grid" id="grid"></div>
 <p class="note"><b>How to use these.</b> Every piece works with a keyboard, has a phone layout and calms down when the visitor has asked for reduced motion. Copied code points its images at this site, so it runs as soon as you paste it; swap in your own images before you ship. The ideas here follow familiar patterns from interaction galleries; the designs, names and code are our own.</p>
@@ -83,12 +83,12 @@ const SITE='https://motionatlas-ten.vercel.app/';
 const cats=['All',...new Set(L.map(x=>x.cat))];let cat='All';
 cats.forEach(c=>{const b=document.createElement('button');b.className='chip';b.textContent=c==='All'?`All (${L.length})`:c;b.setAttribute('aria-pressed',c===cat);b.onclick=()=>{cat=c;[...filters.children].forEach(x=>x.setAttribute('aria-pressed',x===b));render()};filters.append(b)});
 const io=new IntersectionObserver(es=>es.forEach(e=>{const v=e.target,f=v.querySelector('iframe');if(e.isIntersecting&&!f){const fr=document.createElement('iframe');fr.src=v.dataset.src;fr.loading='lazy';fr.tabIndex=-1;fr.title='';fr.setAttribute('aria-hidden','true');v.append(fr)}else if(!e.isIntersecting&&f){f.remove()}}),{rootMargin:'200px 0px'});
-function render(){io.disconnect();grid.innerHTML='';L.filter(x=>cat==='All'||x.cat===cat).forEach(x=>{const b=document.createElement('button');b.className='card';b.innerHTML=`<div class="view ${x.tone==='light'?'light':''}" data-src="interactions/demos/${x.id}.html"><span class="poster">Loading preview</span></div><div class="meta"><span class="k">${x.cat}</span><h2>${x.t}</h2><p>${x.d}</p></div>`;b.onclick=()=>open(x);grid.append(b);io.observe(b.firstElementChild)})}
+function render(){io.disconnect();grid.innerHTML='';L.filter(x=>cat==='All'||x.cat===cat).forEach(x=>{const b=document.createElement('button');b.className='card';b.innerHTML=`<div class="view ${x.tone==='light'?'light':''}" data-src="interactions/demos/${x.id}.html${x.hash?'#'+x.hash:''}"><span class="poster">Loading preview</span></div><div class="meta"><span class="k">${x.cat}</span><h2>${x.t}</h2><p>${x.d}</p></div>`;b.onclick=()=>open(x);grid.append(b);io.observe(b.firstElementChild)})}
 render();
 const dlg=document.getElementById('dlg'),stage=document.getElementById('stage'),toast=document.getElementById('toast');let cur=null;
 function say(m){toast.textContent=m;toast.classList.add('on');clearTimeout(say.t);say.t=setTimeout(()=>toast.classList.remove('on'),1800)}
-function open(x){cur=x;document.getElementById('dCat').textContent=x.cat;document.getElementById('dTitle').textContent=x.t;document.getElementById('dDesc').textContent=x.d;document.getElementById('dHow').textContent=x.how;document.getElementById('dUse').textContent=x.use;document.getElementById('dPrompt').textContent=x.p;document.getElementById('openFull').href=`interactions/demos/${x.id}.html`;
-stage.innerHTML=`<iframe src="interactions/demos/${x.id}.html" title="${x.t}, live demo"></iframe>`;dlg.showModal();code();history.replaceState(null,'','#'+x.id)}
+function open(x){cur=x;document.getElementById('dCat').textContent=x.cat;document.getElementById('dTitle').textContent=x.t;document.getElementById('dDesc').textContent=x.d;document.getElementById('dHow').textContent=x.how;document.getElementById('dUse').textContent=x.use;document.getElementById('dPrompt').textContent=x.p;const hs=x.hash?'#'+x.hash:'';document.getElementById('openFull').href=`interactions/demos/${x.id}.html${hs}`;
+stage.innerHTML=`<iframe src="interactions/demos/${x.id}.html${hs}" title="${x.t}, live demo"></iframe>`;dlg.showModal();code();history.replaceState(null,'','#'+x.id)}
 function shut(){dlg.close()}
 dlg.addEventListener('close',()=>{stage.innerHTML='';history.replaceState(null,'',location.pathname)});
 document.getElementById('close').onclick=shut;dlg.addEventListener('click',e=>{if(e.target===dlg)shut()});

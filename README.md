@@ -360,6 +360,10 @@ Seventeen original showpiece interactions, each one self-contained HTML file wit
   - **Field Notes** (research studio): the marbling film opens from a small circle, counters run, and a pinned plate swaps image with each note.
   - **Signal** (product launch): a film hero, a bento grid that assembles in sequence, counting stats, a gradient-edged plan and a film close.
   - Off-screen films load lazily and pause, and every story respects reduced motion.
+- **Sections:** eight page blocks (`interactions/demos/sec-*.html`): pricing with a billing toggle, bento feature grid, scrolling testimonial wall, FAQ accordion, contact form with inline validation, big wordmark footer, logo marquee and a film call-to-action banner.
+  - Each file carries four styles as CSS variables on `[data-style]`: Kitchen noir, Kitchen paper, Studio and Signal.
+  - A small switcher changes the style. `#paper` (and so on) in the URL picks one, and the shelf previews show a mix.
+  - The paper accent is darkened to `#9A5B12` here so white button text passes AA.
 
 ### Diagram studio (`site/diagram-studio.html`, `site/dataviz/diagrams.js`)
 

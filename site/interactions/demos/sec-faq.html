@@ -1,0 +1,57 @@
+<!doctype html><html lang="en" data-style="noir"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FAQ section</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Cormorant+Garamond:ital,wght@1,500&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap">
+<style>
+/* Four interchangeable styles. Pick one with data-style on <html>, or delete the ones you don't need. */
+:root,[data-style=noir]{--bg:#16120F;--surface:#211B16;--ink:#F3EADB;--mute:#B3A592;--line:#3B3129;--accent:#E2A24A;--on-accent:#1A120A;--head:Fraunces,Georgia,serif;--body:'DM Sans',system-ui,sans-serif;--hw:400;--hs:normal;--radius:14px;--track:-.02em;color-scheme:dark}
+[data-style=paper]{--bg:#F6F0E6;--surface:#FFFBF4;--ink:#231C15;--mute:#6A5D4E;--line:#E3D7C4;--accent:#9A5B12;--on-accent:#FFFFFF;--accent-ink:#8A520C;--head:Fraunces,Georgia,serif;--body:'DM Sans',system-ui,sans-serif;--hw:400;--hs:normal;--radius:14px;--track:-.02em;color-scheme:light}
+[data-style=studio]{--bg:#F4F5F8;--surface:#FFFFFF;--ink:#1C1F2A;--mute:#5E6476;--line:#E1E4EC;--accent:#5B2DFF;--on-accent:#FFFFFF;--head:'Cormorant Garamond',Georgia,serif;--body:Inter,system-ui,sans-serif;--hw:500;--hs:italic;--radius:16px;--track:-.01em;color-scheme:light}
+[data-style=signal]{--bg:#05070B;--surface:#0C1119;--ink:#EAF0F8;--mute:#93A0B4;--line:#1C2533;--accent:#7CF0FF;--on-accent:#04121A;--head:'Space Grotesk',Inter,sans-serif;--body:Inter,system-ui,sans-serif;--hw:500;--hs:normal;--radius:18px;--track:-.03em;color-scheme:dark}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.6 var(--body);-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+a{color:inherit}button,input,textarea,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.h{font-family:var(--head);font-weight:var(--hw);font-style:var(--hs);letter-spacing:var(--track);line-height:1.02;text-wrap:balance}
+.k{font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--accent-ink,var(--accent))}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 20px;border-radius:calc(var(--radius) * .7);border:1px solid var(--line);background:var(--surface);font-weight:600;font-size:15px;text-decoration:none;cursor:pointer}
+.btn.p{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.wrap{max-width:1180px;margin:0 auto;padding:clamp(56px,10vh,110px) max(16px,4vw)}
+.styles{position:fixed;right:max(12px,env(safe-area-inset-right));bottom:12px;z-index:50;display:flex;gap:2px;padding:4px;border-radius:999px;background:rgba(128,128,128,.18);backdrop-filter:blur(10px);font:500 12px/1 system-ui,sans-serif}
+.styles button{border:0;background:transparent;color:var(--ink);padding:9px 11px;border-radius:999px;cursor:pointer;min-height:32px}
+.styles button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:clamp(28px,6vw,80px)}
+.grid h2{font-size:clamp(36px,5vw,64px);margin:8px 0 16px}
+.grid .side p{color:var(--mute);margin:0 0 20px;max-width:34ch}
+details{border-bottom:1px solid var(--line)}
+details:first-of-type{border-top:1px solid var(--line)}
+summary{list-style:none;display:flex;justify-content:space-between;gap:20px;align-items:center;padding:22px 0;cursor:pointer;font-size:18px;font-weight:500}
+summary::-webkit-details-marker{display:none}
+summary i{flex:0 0 28px;height:28px;border-radius:50%;border:1px solid var(--line);position:relative;transition:transform .3s,background .3s}
+summary i::before,summary i::after{content:"";position:absolute;left:50%;top:50%;width:10px;height:1.5px;margin:-.75px -5px;background:currentColor}
+summary i::after{transform:rotate(90deg);transition:transform .3s}
+details[open] summary i{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+details[open] summary i::after{transform:rotate(0)}
+.a{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s cubic-bezier(.2,.8,.2,1)}
+details[open] .a{grid-template-rows:1fr}
+.a>div{overflow:hidden}.a p{margin:0 0 22px;color:var(--mute);max-width:58ch}
+@media (max-width:760px){.grid{grid-template-columns:1fr}}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+</style></head><body>
+<section class="wrap"><div class="grid"><div class="side"><p class="k">Questions</p><h2 class="h">Before you start cooking.</h2><p>Can’t find what you need? A real person answers within a working day.</p><a class="btn p" href="#">Ask us</a></div>
+<div>
+<details open><summary>Do I need my own footage?<i aria-hidden="true"></i></summary><div class="a"><div><p>No. You can start from a recipe and a character bible; we generate the shots. If you have footage, upload it and we’ll match the grade.</p></div></div></details>
+<details><summary>Who owns what I make?<i aria-hidden="true"></i></summary><div class="a"><div><p>You do. Episodes, thumbnails and recipe cards are yours to post anywhere, including after you cancel.</p></div></div></details>
+<details><summary>How do recipe credits work?<i aria-hidden="true"></i></summary><div class="a"><div><p>When a recipe comes from a known chef or book, we add an on-screen credit and a line in the description, and hold the post until someone approves it.</p></div></div></details>
+<details><summary>Can my chef look the same every time?<i aria-hidden="true"></i></summary><div class="a"><div><p>Yes. A character bible fixes the face, hands, clothes and kitchen, and every shot is checked against it before it renders.</p></div></div></details>
+<details><summary>What happens if I cancel?<i aria-hidden="true"></i></summary><div class="a"><div><p>Your library stays downloadable for 90 days. We’ll email you before anything is deleted.</p></div></div></details>
+</div></div></section>
+<div class="styles" role="group" aria-label="Style"><button data-s="noir">Noir</button><button data-s="paper">Paper</button><button data-s="studio">Studio</button><button data-s="signal">Signal</button></div>
+<script>
+(()=>{const B=[...document.querySelectorAll('.styles button')];const set=s=>{document.documentElement.dataset.style=s;B.forEach(b=>b.setAttribute('aria-pressed',b.dataset.s===s));try{localStorage.setItem('atlas-section-style',s)}catch(e){}};
+let s=location.hash.slice(1);if(!B.some(b=>b.dataset.s===s)){try{s=localStorage.getItem('atlas-section-style')}catch(e){}}set(B.some(b=>b.dataset.s===s)?s:'noir');B.forEach(b=>b.onclick=()=>set(b.dataset.s));})();
+
+document.querySelectorAll('a[href="#"]').forEach(a=>a.onclick=e=>e.preventDefault());
+</script></body></html>
