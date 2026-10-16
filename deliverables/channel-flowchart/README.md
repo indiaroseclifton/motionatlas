@@ -20,5 +20,6 @@
 | `channel-step-list` | Working docs and phones: every step numbered |
 | `channel-flow` | The classic flowchart, if someone asks for one |
 | `before-original-layout` | The original, for comparison |
+| `channel-stage-columns-build.gif` | Social posts and slides: the stage columns building up, stage by stage, loops last |
 
-PNGs are at 2× resolution. SVGs scale to any size; they use Inter, so install it or open them in a browser.
+PNGs are at 2× resolution. For an MP4 of the build-up, open the chart in the flowchart studio in Chrome, Edge or Safari and press **Video**. SVGs scale to any size; they use Inter, so install it or open them in a browser.
