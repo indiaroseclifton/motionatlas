@@ -26,7 +26,7 @@
   {id:'bloom',kind:'video',src:'assets/films/pigment-bloom.mp4',small:'assets/films/pigment-bloom-720.mp4',webm:'assets/films/pigment-bloom.webm',poster:'assets/films/pigment-bloom.jpg',open:'assets/films/pigment-bloom.mp4',kicker:'Film · loops seamlessly',title:'Pigment bloom.',
    text:'Magenta and cyan pigment collide in a burst of powder, and out of the cloud a feathered violet flower opens.',
    kit:{original:false,prompt:'A burst of magenta and cyan pigment powder colliding on black, billowing ink-like clouds, then a feathered violet flower blooms open out of the middle of the cloud. Vivid, high detail, slow motion, 3:2, 15 seconds, seamless loop.'}},
-  {id:'tree',kind:'video',src:'assets/films/particle-tree.mp4',small:'assets/films/particle-tree-720.mp4',webm:'assets/films/particle-tree.webm',poster:'assets/films/particle-tree.jpg',open:'assets/films/particle-tree.mp4',kicker:'Film · loops seamlessly',title:'A seed becomes a tree.',
+  {id:'tree',kind:'video',tall:true,src:'assets/films/particle-tree.mp4',small:'assets/films/particle-tree-720.mp4',webm:'assets/films/particle-tree.webm',poster:'assets/films/particle-tree.jpg',open:'assets/films/particle-tree.mp4',kicker:'Film · loops seamlessly',title:'A seed becomes a tree.',
    text:'A golden seed of light sprouts, its stem winds upward and branches out into a tree of glowing particles with green buds at every tip.',
    kit:{original:false,prompt:'A single seed made of golden glowing particles sprouts on black, a winding stem grows upward and branches into a full tree of fine golden light, small green glowing buds appear at the tips. Elegant, magical, vertical 2:3, 15 seconds, seamless loop.'}},
 ];
@@ -100,7 +100,7 @@
    <p class="riverMake">Want your own? <a href="particle-studio.html">Turn any picture into particles in the Particle studio</a> <span aria-hidden="true">→</span></p>
    ${M.lite?`<p class="riverLite">Showing stills on this device to save power. <button type="button" class="riverLiteOn">Show live motion</button></p>`:''}
    <button type="button" class="riverHold" aria-pressed="${held}">${held?'Play the motion':'Pause the motion'}</button></div>`+
-   ITEMS.map((it,i)=>`<article class="riverRow${it.wide?' isWide':''}${!it.wide&&i%2===0?' isFlip':''}" data-id="${it.id}">
+   ITEMS.map((it,i)=>`<article class="riverRow${it.wide?' isWide':''}${it.tall?' isTall':''}${!it.wide&&i%2===0?' isFlip':''}" data-id="${it.id}">
     <div class="riverMedia${it.kind==='video'?' isFilm':''}"></div>
     <div class="riverText"><p class="riverKicker">${esc(it.kicker)}</p><h3>${esc(it.title)}</h3><p>${esc(it.text)}</p>
      <a class="riverOpen" href="${it.open}" target="_blank" rel="noopener">${it.kind==='video'?'Open the film':'Open full screen'} <span aria-hidden="true">↗</span></a>${kitHTML(it)}</div></article>`).join('');
