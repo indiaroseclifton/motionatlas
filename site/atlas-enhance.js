@@ -11,7 +11,8 @@
  const PAGES={
   browse:{no:1,name:'Catalogue',family:'Index',color:'ice',related:['systems','motion','art','compare'],h:[1,-2,3,-5]},
   systems:{no:2,name:'Design systems',family:'Systems',color:'mint',related:['playground','ux','typography','assets'],h:[1,3,-4,7]},
-  motion:{no:3,name:'Animation studio',family:'Motion',color:'rose',related:['effects','compare','pairings'],h:[1,-3,5,-7,9]},
+  motion:{no:3,name:'Animation studio',family:'Motion',color:'rose',related:['effects','compare','pairings'],h:[1,-3,5,-7,9],
+   film:{src:'assets/films/bioluminescent-trails-720.mp4',webm:'assets/films/bioluminescent-trails-720.webm',poster:'assets/films/bioluminescent-trails.jpg',label:'Bioluminescent trails',to:'.studyRiver'}},
   projects:{no:4,name:'My projects',family:'Studio',color:'gold',related:['inspiration','creations','browse'],h:[1,2,-3]},
   inspiration:{no:5,name:'Inspiration',family:'Studio',color:'gold',related:['projects','references','creations'],h:[1,-4,6]},
   creations:{no:6,name:'Your creations',family:'Studio',color:'gold',related:['projects','inspiration'],h:[1,5,-3]},
@@ -53,6 +54,28 @@
   rel.innerHTML=`<span class="aeRelLabel">Pairs well with</span>`+meta.related.map(r=>`<a href="#${r}" style="--c:${COLORS[PAGES[r].color][1]}"><span class="aeRelNo">${pad(PAGES[r].no)}</span>${PAGES[r].name}<span aria-hidden="true">→</span></a>`).join('');
   if(intro)intro.insertAdjacentElement('afterend',rel);else head.insertAdjacentElement('afterend',rel);
   drawings.set(id,curve($('canvas',band),meta));
+  if(meta.film)film(page,band,rel,meta);
+ }
+
+ /* A film behind the page header (pages with a film), like the home hero: it runs full width, fades into the
+    title on the left and into the dark section below, plays only while on screen and never under reduced motion */
+ function film(page,band,rel,meta){
+  const f=meta.film,bg=document.createElement('div');bg.className='aeHeroBg';bg.setAttribute('aria-hidden','true');
+  bg.innerHTML=`<video muted loop playsinline preload="none" poster="${f.poster}">${f.webm?`<source src="${f.webm}" type="video/webm">`:''}<source src="${f.src}" type="video/mp4"></video><i></i>`;
+  const tg=document.createElement('button');tg.type='button';tg.className='aeHeroToggle';tg.innerHTML='<span aria-hidden="true"></span><b>Pause film</b>';
+  page.prepend(bg);page.append(tg);page.classList.add('aeHasFilm');
+  const v=$('video',bg);let userPaused=false,visible=false;
+  /* the backdrop runs from under the site header (behind the breadcrumb) to the top of the dark section */
+  const fit=()=>{if(!page.isConnected||page.hidden)return;const pr=page.getBoundingClientRect(),trail=document.querySelector('.routeTrail'),end=page.querySelector(f.to);
+   const top=trail?Math.min(0,trail.getBoundingClientRect().top-pr.top-12):0;const bottom=end?end.getBoundingClientRect().top-pr.top+Math.min(160,parseFloat(getComputedStyle(end).paddingTop)||0):(rel.getBoundingClientRect().bottom-pr.top+80);
+   bg.style.top=top+'px';bg.style.height=Math.max(320,bottom-top)+'px';tg.style.top=(top+24)+'px';};
+  const sync=()=>{const go=visible&&!userPaused&&!reduced.matches&&current()===page.id;if(go)v.play().catch(()=>{});else v.pause();
+   const on=!(userPaused||reduced.matches);tg.classList.toggle('paused',!on);tg.querySelector('b').textContent=on?'Pause film':'Play film';};
+  tg.onclick=()=>{if(reduced.matches){v.play().catch(()=>{});tg.classList.remove('paused');tg.querySelector('b').textContent='Pause film';return;}userPaused=!userPaused;sync();};
+  if('IntersectionObserver' in window)new IntersectionObserver(es=>{visible=es[0].isIntersecting;sync();},{threshold:.05}).observe(bg);else{visible=true;sync();}
+  reduced.addEventListener?.('change',sync);addEventListener('resize',fit);addEventListener('hashchange',()=>setTimeout(()=>{fit();sync();document.body.classList.toggle('aeDarkHead',current()===page.id);},60));
+  if('ResizeObserver' in window)new ResizeObserver(fit).observe(page);
+  document.body.classList.toggle('aeDarkHead',current()===page.id);fit();setTimeout(fit,400);setTimeout(fit,1500);
  }
 
  /* A Fourier pen traces each page's own curve in its plate colour */

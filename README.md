@@ -317,6 +317,13 @@ Write a flowchart as text and get a clean, consistent diagram in eight layouts a
 - **Examples** (`dataviz/examples.js`): creative review, sign-up, release pipeline (lanes), and the AI cooking-channel workflow, both cleaned up and as first drawn. Finished exports of the channel chart are in `deliverables/channel-flowchart/`.
 - **Research notes:** `docs/dataviz-research.md`.
 
+### Animation studio header film (`site/atlas-enhance.js`, `atlas-enhance.css`)
+
+The Animation studio header now has a film behind it, like the home hero: **Bioluminescent trails**, as 1280px WebM and MP4 cuts.
+- It runs full width from under the site header to the dark "Live studies" section, fading into the title on the left and into that section at the bottom, and the header text turns light over it.
+- It plays only while on screen and only on that page, never under reduced motion, and has a pause/play button.
+- Any page can take one by adding a `film` entry to its record in `PAGES`.
+
 ### Channel brand styles: Kitchen noir and Kitchen paper (`site/dataviz/styles.js`)
 
 These are the AI cooking channel's own styles. They come first in every style row, under "Your brand", in the flowchart studio, the diagram studio and the chart style guides.
