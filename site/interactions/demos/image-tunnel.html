@@ -1,0 +1,24 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Image tunnel</title>
+<style>
+:root{--bg:#050506;--ink:#F2F2F2;--mute:#9A9AA0}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;overflow:hidden}
+.tunnel{position:fixed;inset:0;perspective:600px;overflow:hidden}
+.tunnel img{position:absolute;left:50%;top:50%;width:min(240px,40vw);aspect-ratio:4/5;object-fit:cover;border-radius:10px;will-change:transform,opacity}
+h1{position:fixed;inset:0;margin:auto;height:max-content;text-align:center;font:600 clamp(28px,6vw,64px)/1 Georgia,serif;letter-spacing:-.02em;z-index:5;pointer-events:none;mix-blend-mode:difference}
+p{position:fixed;bottom:18px;width:100%;text-align:center;color:var(--mute);font-size:13px;z-index:5}
+</style></head><body>
+<div class="tunnel" id="t" aria-hidden="true"></div>
+<h1>Fly through the work.</h1>
+<p>Scroll or swipe to travel. The tunnel drifts on its own.</p>
+<script>
+const names=['jellyfish','dove','threads','bloom','tree','smoke','ferro','sumi','soap','embroidery','lion','erosion','sand','biolum','owl','lighthouse','origami','statue','nebula','amber'];
+const t=document.getElementById('t');const D=2400;const items=[];
+names.concat(names).forEach((n,i)=>{const im=new Image();im.src=`../../assets/shelf/${n}.webp`;im.alt='';t.append(im);const a=i*2.39996;items.push({el:im,x:Math.cos(a)*(260+(i%3)*90),y:Math.sin(a)*(170+(i%4)*50),z:-i*(D/40)})});
+let speed=0,base=matchMedia('(prefers-reduced-motion: reduce)').matches?0:1.4;
+addEventListener('wheel',e=>{speed+=e.deltaY*.05},{passive:true});
+let ty=0;addEventListener('touchstart',e=>ty=e.touches[0].clientY,{passive:true});addEventListener('touchmove',e=>{const y=e.touches[0].clientY;speed+=(ty-y)*.15;ty=y},{passive:true});
+addEventListener('keydown',e=>{if(e.key==='ArrowDown'||e.key===' ')speed+=20;if(e.key==='ArrowUp')speed-=20});
+function f(){speed*=.92;const v=base+speed;items.forEach(o=>{o.z+=v;if(o.z>600)o.z-=D;if(o.z<-D+600)o.z+=D;const op=Math.min(1,(o.z+D-600)/800)*Math.min(1,(600-o.z)/300);o.el.style.opacity=Math.max(0,op);o.el.style.transform=`translate(-50%,-50%) translate3d(${o.x}px,${o.y}px,${o.z}px)`});requestAnimationFrame(f)}f();
+</script></body></html>

@@ -1,0 +1,37 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Clothesline gallery</title>
+<style>
+:root{--bg:#EFE9DF;--ink:#2A241D;--mute:#6A5F52;--line:#8A7B68}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 Georgia,serif;overflow-x:hidden}
+h1{font-weight:500;font-size:clamp(26px,4vw,44px);margin:0;padding:6vh 0 0;text-align:center;letter-spacing:-.01em}
+.sub{text-align:center;color:var(--mute);font:13px system-ui;margin:.4em 0 0}
+.wrap{position:relative;margin-top:6vh;height:60vh;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+.wrap::-webkit-scrollbar{display:none}
+svg{position:absolute;left:0;top:0;height:120px;pointer-events:none}
+.row{position:relative;display:flex;gap:clamp(18px,3vw,40px);padding:22px 8vw 0;width:max-content}
+.pin{position:relative;transform-origin:50% 0;will-change:transform}
+.pin::before{content:"";position:absolute;left:50%;top:-14px;width:8px;height:22px;margin-left:-4px;background:#C9A472;border-radius:2px;box-shadow:inset 0 -2px 0 rgba(0,0,0,.15);z-index:2}
+.pin figure{margin:0;background:#FBF8F2;padding:8px 8px 26px;box-shadow:0 14px 24px -14px rgba(60,40,10,.5);width:clamp(140px,18vw,200px)}
+.pin img{width:100%;aspect-ratio:4/5;object-fit:cover;display:block}
+.pin figcaption{font:italic 13px Georgia,serif;color:var(--mute);margin-top:6px;text-align:center}
+.wrap:focus-visible{outline:2px solid var(--ink);outline-offset:-4px}
+</style></head><body>
+<h1>Studio notes, hung to dry.</h1><p class="sub">Drag or scroll sideways. Each print swings with your movement.</p>
+<div class="wrap" id="wrap" tabindex="0" aria-label="Prints on a line; scroll sideways"><svg id="svg"><path id="cord" fill="none" stroke="#8A7B68" stroke-width="1.5"/></svg><div class="row" id="row"></div></div>
+<script>
+const items=[['sumi','Marbling'],['embroidery','Thread'],['sand','Sand'],['erosion','Terrain'],['bloom','Pigment'],['origami','Fold'],['statue','Plaster'],['amber','Resin'],['owl','Night'],['lighthouse','Coast']];
+const row=document.getElementById('row'),wrap=document.getElementById('wrap'),cord=document.getElementById('cord'),svg=document.getElementById('svg');
+items.forEach(([n,c])=>{const d=document.createElement('div');d.className='pin';d.innerHTML=`<figure><img src="../../assets/shelf/${n}.webp" alt="${c}"><figcaption>${c}</figcaption></figure>`;row.append(d)});
+const pins=[...row.children].map(el=>({el,a:0,v:0}));
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let last=wrap.scrollLeft,down=false,sx=0,sl=0,mvx=0;
+wrap.addEventListener('pointerdown',e=>{if(e.pointerType!=='mouse')return;down=true;sx=e.clientX;sl=wrap.scrollLeft});
+addEventListener('pointerup',()=>down=false);
+wrap.addEventListener('pointermove',e=>{if(down)wrap.scrollLeft=sl-(e.clientX-sx);mvx=e.movementX||0});
+function sag(){const w=row.scrollWidth;svg.setAttribute('width',w);svg.style.width=w+'px';let d=`M0 18`;const step=w/12;for(let i=1;i<=12;i++){d+=` Q${i*step-step/2} 34 ${i*step} 18`}cord.setAttribute('d',d)}
+sag();addEventListener('resize',sag);
+function f(){const ds=wrap.scrollLeft-last;last=wrap.scrollLeft;pins.forEach(p=>{const r=p.el.getBoundingClientRect();if(!reduce)p.v+=-ds*.02;p.v+=-p.a*.04;p.v*=.93;p.a+=p.v;p.a=Math.max(-14,Math.min(14,p.a));p.el.style.transform=`rotate(${p.a}deg)`});requestAnimationFrame(f)}
+wrap.addEventListener('pointerover',e=>{const pin=e.target.closest('.pin');if(pin&&!reduce){const p=pins.find(q=>q.el===pin);p.v+=(mvx>=0?1:-1)*1.2}});
+f();
+</script></body></html>

@@ -1,0 +1,36 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>3D ring carousel</title>
+<style>
+:root{--bg:#0B0D12;--ink:#EEF1F7;--mute:#98A0B3;--accent:#8FB8FF}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{background:radial-gradient(80% 60% at 50% 40%,#1A2030,var(--bg));color:var(--ink);font:15px/1.5 system-ui,sans-serif;display:grid;place-items:center;overflow:hidden;touch-action:pan-y}
+.stage{perspective:1100px;width:100%;height:70vh;display:grid;place-items:center;cursor:grab}
+.stage:active{cursor:grabbing}
+.ring{position:relative;width:min(170px,30vw);aspect-ratio:4/5;transform-style:preserve-3d}
+.ring figure{position:absolute;inset:0;margin:0;border-radius:12px;overflow:hidden;backface-visibility:hidden;box-shadow:0 20px 50px -20px #000}
+.ring img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+.ctl{position:fixed;bottom:20px;display:flex;gap:10px;align-items:center;color:var(--mute);font-size:13px}
+button{font:inherit;color:var(--ink);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:999px;min-width:44px;min-height:44px;cursor:pointer}
+button:focus-visible,.stage:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+</style></head><body>
+<div class="stage" id="stage" tabindex="0" aria-label="Image ring. Drag or use the arrow keys to turn it." role="region"><div class="ring" id="ring"></div></div>
+<div class="ctl"><button id="prev" aria-label="Turn left">←</button><span>Drag to spin</span><button id="next" aria-label="Turn right">→</button></div>
+<script>
+const names=['owl','lighthouse','origami','statue','nebula','amber','jellyfish','dove','bloom','sumi'];
+const ring=document.getElementById('ring'),stage=document.getElementById('stage');
+const N=names.length,step=360/N;
+names.forEach((n,i)=>{const f=document.createElement('figure');f.innerHTML=`<img src="../../assets/shelf/${n}.webp" alt="${n}">`;ring.append(f)});
+const figs=[...ring.children];
+let angle=0,vel=0,drag=false,lastX=0;
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function radius(){return ring.offsetWidth/2/Math.tan(Math.PI/N)+24}
+function draw(){const r=radius();ring.style.transform=`translateZ(${-r}px) rotateY(${angle}deg)`;figs.forEach((f,i)=>{f.style.transform=`rotateY(${i*step}deg) translateZ(${r}px)`})}
+function tick(){if(!drag){if(Math.abs(vel)>.01){angle+=vel;vel*=.95}else if(!reduce)angle-=.06}draw();requestAnimationFrame(tick)}
+stage.addEventListener('pointerdown',e=>{drag=true;lastX=e.clientX;vel=0;stage.setPointerCapture(e.pointerId)});
+stage.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-lastX;lastX=e.clientX;angle+=dx*.3;vel=dx*.3});
+stage.addEventListener('pointerup',()=>drag=false);stage.addEventListener('pointercancel',()=>drag=false);
+const turn=d=>{vel=0;angle=Math.round((angle+d*step)/step)*step};
+document.getElementById('prev').onclick=()=>turn(1);document.getElementById('next').onclick=()=>turn(-1);
+stage.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')turn(1);if(e.key==='ArrowRight')turn(-1)});
+tick();
+</script></body></html>

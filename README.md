@@ -343,6 +343,18 @@ These are the AI cooking channel's own styles. They come first in every style ro
 - **Validation:** both categorical palettes pass the dataviz validator. Noir's colour-blind ΔE is 9.4. Paper's is 6.3, which is in the floor band and fine with the direct labels these charts use. Status red and green are never reused as series colours.
 - **Plan pack:** the channel plan deck's charts are in `deliverables/channel-plan/`, in both styles.
 
+### Interactions shelf (`site/interactions.html`, `site/interactions/`)
+
+Seventeen original showpiece interactions, each one self-contained HTML file with no libraries in `interactions/demos/`, listed in `interactions/manifest.js`. The pieces are: fanned card deck, arc carousel, 3D ring carousel, image tunnel, particle globe, clothesline gallery, folder tabs, hover list with cursor image, expanding panels, dial slider, swipe quote deck, halo magnetic button, watching-eyes button, parallax tilt row, zoom-through reveal, scroll index and flowing line mesh.
+
+- The grid mounts live previews only while they are on screen. A filter separates the types.
+- Opening a piece shows a full-size demo with **Copy HTML**, **Download**, **Open full screen**, notes on how it works and what it suits, and an **AI build prompt** for recreating it in another stack.
+- Copied code rewrites `../../assets/` to the live site, so it runs as soon as it is pasted.
+- Demo images are 640×800 crops in `assets/shelf/`.
+- Every piece supports the keyboard, works at phone width, respects reduced motion and passes axe WCAG A/AA.
+- The ideas follow familiar interaction-gallery patterns; the designs, names and code are our own.
+- `#<id>` deep-links straight to a piece.
+
 ### Diagram studio (`site/diagram-studio.html`, `site/dataviz/diagrams.js`)
 
 For charts that are not a process. It uses the same seventeen styles and the same drawing kit as the flowchart layouts, so a style looks the same everywhere. Each kind has a form editor rather than a syntax:

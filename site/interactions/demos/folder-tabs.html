@@ -1,0 +1,35 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Folder tabs</title>
+<style>
+:root{--bg:#E8E4DA;--ink:#1F1C17;--mute:#6C6457;--f1:#D9C9A8;--f2:#C7B48E;--f3:#B9A47C;--f4:#A8936B}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,sans-serif;display:grid;place-items:center;padding:6vh max(16px,4vw)}
+.cab{width:min(720px,100%)}
+[role=tablist]{display:flex;gap:4px;padding-left:8px;position:relative;z-index:2}
+[role=tab]{border:0;font:600 12px/1 system-ui;letter-spacing:.1em;text-transform:uppercase;padding:12px 18px 14px;border-radius:12px 12px 0 0;cursor:pointer;color:var(--ink);transform:translateY(6px);transition:transform .25s cubic-bezier(.2,.8,.2,1);min-height:44px}
+[role=tab][aria-selected=true]{transform:translateY(0)}
+[role=tab]:hover{transform:translateY(0)}
+[role=tab]:focus-visible{outline:2px solid var(--ink);outline-offset:-4px}
+.panels{position:relative;height:clamp(300px,52vh,420px)}
+[role=tabpanel]{position:absolute;inset:0;border-radius:4px 14px 14px 14px;padding:clamp(18px,4vw,36px);display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center;box-shadow:0 -1px 0 rgba(255,255,255,.5) inset,0 20px 40px -24px rgba(40,30,10,.5);transition:transform .45s cubic-bezier(.2,.8,.2,1),opacity .3s}
+[role=tabpanel][hidden]{display:grid!important;opacity:0;transform:translateY(24px);pointer-events:none;visibility:hidden}
+[role=tabpanel] h2{font:500 clamp(24px,3.6vw,38px)/1.05 Georgia,serif;margin:0 0 .4em}
+[role=tabpanel] p{margin:0;color:#3A342B;max-width:38ch}
+[role=tabpanel] img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:6px;transform:rotate(2deg);box-shadow:0 14px 30px -16px rgba(0,0,0,.5)}
+@media (max-width:560px){[role=tabpanel]{grid-template-columns:1fr}[role=tabpanel] img{display:none}[role=tab]{padding:12px 12px 14px;letter-spacing:.04em}}
+@media (prefers-reduced-motion:reduce){[role=tab],[role=tabpanel]{transition:none}}
+</style></head><body>
+<div class="cab">
+<div role="tablist" aria-label="Case files" id="tabs"></div>
+<div class="panels" id="panels"></div>
+</div>
+<script>
+const data=[['Brief','The ask, in a paragraph.','A fishmonger wants a site that smells of the harbour at 5am: salt, ice, chalkboard prices.','lighthouse','--f1'],['Research','What we found out.','Twelve shop visits, forty photos of handwritten signs, one tide table pinned by the till.','sumi','--f2'],['Direction','The idea we chose.','Tide-chart typography, wet-slate greys and a single buoy orange for anything you can buy.','soap','--f3'],['Delivery','What shipped.','A one-page site, a printable price board and a delivery map that updates with the boats.','erosion','--f4']];
+const tabs=document.getElementById('tabs'),panels=document.getElementById('panels');
+data.forEach(([t,h,p,img,col],i)=>{const b=document.createElement('button');b.role='tab';b.id='t'+i;b.textContent=t;b.style.background=`var(${col})`;b.setAttribute('aria-controls','p'+i);tabs.append(b);
+const s=document.createElement('section');s.role='tabpanel';s.id='p'+i;s.setAttribute('aria-labelledby','t'+i);s.tabIndex=0;s.style.background=`var(${col})`;s.innerHTML=`<div><h2>${h}</h2><p>${p}</p></div><img src="../../assets/shelf/${img}.webp" alt="">`;panels.append(s)});
+const T=[...tabs.children],P=[...panels.children];
+function sel(i,focus){T.forEach((b,j)=>{b.setAttribute('aria-selected',j===i);b.tabIndex=j===i?0:-1;P[j].hidden=j!==i;P[j].style.zIndex=j===i?5:1});if(focus)T[i].focus()}
+T.forEach((b,i)=>{b.onclick=()=>sel(i);b.onkeydown=e=>{const k={ArrowRight:1,ArrowLeft:-1}[e.key];if(k)sel((i+k+T.length)%T.length,true);if(e.key==='Home')sel(0,true);if(e.key==='End')sel(T.length-1,true)}});
+sel(0);
+</script></body></html>

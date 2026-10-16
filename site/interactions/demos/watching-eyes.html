@@ -1,0 +1,22 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Watching eyes button</title>
+<style>
+:root{--bg:#F6E7C8;--ink:#2B1D0E;--mute:#7C6447;--btn:#2B1D0E}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;display:grid;place-items:center}
+.btn{display:inline-flex;align-items:center;gap:14px;font:700 18px/1 system-ui;color:#F6E7C8;background:var(--btn);border:0;border-radius:999px;padding:14px 26px 14px 16px;cursor:pointer;transition:transform .2s}
+.btn:active{transform:scale(.97)}
+.btn:focus-visible{outline:3px solid var(--ink);outline-offset:4px}
+.eyes{display:flex;gap:4px}
+.eye{position:relative;width:26px;height:26px;border-radius:50%;background:#FFF8EA;overflow:hidden;transition:height .12s}
+.eye i{position:absolute;left:50%;top:50%;width:11px;height:11px;margin:-5.5px;border-radius:50%;background:#140C04}
+.blink .eye{height:3px;margin-top:11px}
+p{text-align:center;color:var(--mute);font-size:13px}
+</style></head><body>
+<div><button class="btn" id="btn"><span class="eyes" aria-hidden="true"><span class="eye"><i></i></span><span class="eye"><i></i></span></span>Say hello</button><p>The eyes follow the pointer, and blink now and then.</p></div>
+<script>
+const b=document.getElementById('btn'),P=[...b.querySelectorAll('.eye i')];
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+addEventListener('pointermove',e=>{P.forEach(p=>{const r=p.parentElement.getBoundingClientRect(),dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2),a=Math.atan2(dy,dx),d=Math.min(7,Math.hypot(dx,dy)/20);p.style.transform=`translate(${Math.cos(a)*d}px,${Math.sin(a)*d}px)`})});
+if(!reduce)(function blink(){setTimeout(()=>{b.classList.add('blink');setTimeout(()=>{b.classList.remove('blink');blink()},140)},2200+Math.random()*3000)})();
+</script></body></html>

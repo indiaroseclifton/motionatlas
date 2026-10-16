@@ -1,0 +1,27 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Arc carousel</title>
+<style>
+:root{--bg:#F1EEE8;--ink:#1C1A17;--mute:#756E63}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;overflow:hidden}
+h1{position:absolute;left:0;right:0;top:10vh;text-align:center;margin:0;font:400 clamp(28px,5vw,56px)/1 Georgia,serif;letter-spacing:-.02em}
+h1 small{display:block;font:13px system-ui;color:var(--mute);margin-top:12px;letter-spacing:0}
+.arc{position:absolute;inset:0;touch-action:pan-y;cursor:grab}
+.arc img{position:absolute;left:50%;top:100%;width:clamp(110px,14vw,170px);aspect-ratio:4/5;object-fit:cover;border-radius:10px;box-shadow:0 18px 30px -18px rgba(0,0,0,.5);transform-origin:50% 50%;will-change:transform}
+.arc:focus-visible{outline:2px solid var(--ink);outline-offset:-6px}
+</style></head><body>
+<h1>A season of studies.<small>Drag, scroll or use the arrow keys to turn the arc.</small></h1>
+<div class="arc" id="arc" role="region" tabindex="0" aria-label="Image arc; turn with the arrow keys"></div>
+<script>
+const names=['jellyfish','dove','threads','bloom','tree','smoke','ferro','sumi','soap','embroidery','lion','erosion','sand','biolum','owl','lighthouse','origami','statue'];
+const arc=document.getElementById('arc');names.forEach(n=>{const i=new Image();i.src=`../../assets/shelf/${n}.webp`;i.alt='';arc.append(i)});
+const I=[...arc.children],N=I.length,step=360/N;let rot=0,v=0,drag=false,lx=0;
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+arc.addEventListener('pointerdown',e=>{drag=true;lx=e.clientX;arc.setPointerCapture(e.pointerId)});
+arc.addEventListener('pointermove',e=>{if(!drag)return;const d=(e.clientX-lx)*.12;rot+=d;v=d;lx=e.clientX});
+arc.addEventListener('pointerup',()=>drag=false);
+addEventListener('wheel',e=>{v-=e.deltaY*.01},{passive:true});
+arc.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')v+=1.4;if(e.key==='ArrowRight')v-=1.4});
+function f(){if(!drag){rot+=v;v*=.94;if(!reduce&&Math.abs(v)<.02)rot-=.05}const R=Math.max(innerWidth*.62,520);
+I.forEach((im,i)=>{const a=((i*step+rot)%360+360)%360-180;const rad=a*Math.PI/180;const x=Math.sin(rad)*R,y=-Math.cos(rad)*R;const vis=Math.abs(a)<80;im.style.opacity=vis?1-Math.abs(a)/90:0;im.style.transform=`translate(-50%,-50%) translate(${x}px,${y+R-innerHeight*.36}px) rotate(${a}deg)`});requestAnimationFrame(f)}f();
+</script></body></html>

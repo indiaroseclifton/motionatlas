@@ -1,0 +1,32 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Particle globe</title>
+<style>
+:root{--bg:#06080D;--ink:#E9EEF8;--mute:#8C96AB;--accent:#6FD3FF}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;overflow:hidden}
+canvas{position:fixed;inset:0;width:100%;height:100%;cursor:grab;touch-action:none}
+.copy{position:fixed;left:max(20px,4vw);bottom:max(20px,5vh);max-width:28ch;pointer-events:none}
+.copy b{display:block;font:600 clamp(24px,4vw,40px)/1.05 Georgia,serif;letter-spacing:-.01em}
+.copy span{color:var(--mute);font-size:13px}
+</style></head><body>
+<canvas id="c" aria-label="A rotating globe of points. Drag to turn it; points scatter away from the pointer." role="img"></canvas>
+<div class="copy"><b>Every point is a client, a city, a signal.</b><span>Drag to turn. Move close to scatter the points.</span></div>
+<script>
+const c=document.getElementById('c'),x=c.getContext('2d');let W,H,dpr;
+function size(){dpr=Math.min(2,devicePixelRatio||1);W=c.width=innerWidth*dpr;H=c.height=innerHeight*dpr}size();addEventListener('resize',size);
+const N=1400,pts=[];const g=Math.PI*(3-Math.sqrt(5));
+for(let i=0;i<N;i++){const y=1-i/(N-1)*2,r=Math.sqrt(1-y*y),a=i*g;pts.push({x:Math.cos(a)*r,y,z:Math.sin(a)*r,ox:0,oy:0})}
+let rx=-.3,ry=0,vy=.0025,drag=false,lx=0,ly=0,mx=-1e4,my=-1e4;
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;if(reduce)vy=0;
+c.addEventListener('pointerdown',e=>{drag=true;lx=e.clientX;ly=e.clientY;c.setPointerCapture(e.pointerId)});
+c.addEventListener('pointermove',e=>{mx=e.clientX*dpr;my=e.clientY*dpr;if(!drag)return;ry+=(e.clientX-lx)*.006;rx+=(e.clientY-ly)*.006;vy=(e.clientX-lx)*.0006;lx=e.clientX;ly=e.clientY});
+c.addEventListener('pointerup',()=>drag=false);c.addEventListener('pointerleave',()=>{mx=my=-1e4});
+function f(){if(!drag)ry+=vy;if(!reduce&&Math.abs(vy)<.0025)vy+=(.0025-vy)*.02;
+x.fillStyle='#06080D';x.fillRect(0,0,W,H);const R=Math.min(W,H)*.34,cx=W*.55,cy=H*.46;
+const cr=Math.cos(rx),sr=Math.sin(rx),cY=Math.cos(ry),sY=Math.sin(ry);
+for(const p of pts){let X=p.x*cY-p.z*sY,Z=p.x*sY+p.z*cY,Y=p.y*cr-Z*sr;Z=p.y*sr+Z*cr;
+const s=1/(1.9-Z*.6);let px=cx+X*R*s,py=cy+Y*R*s;const dx=px-mx,dy=py-my,d=Math.hypot(dx,dy),rad=120*dpr;
+if(d<rad&&Z>0){const k=(1-d/rad)*30*dpr;p.ox+=(dx/d*k-p.ox)*.2;p.oy+=(dy/d*k-p.oy)*.2}else{p.ox*=.9;p.oy*=.9}
+px+=p.ox;py+=p.oy;const a=Z>0?.55+Z*.45:.14+(Z+1)*.16;x.fillStyle=Z>0?`rgba(111,211,255,${a})`:`rgba(160,170,200,${a})`;const sz=(Z>0?2.6:1.5)*dpr*s;x.fillRect(px-sz/2,py-sz/2,sz,sz)}
+requestAnimationFrame(f)}f();
+</script></body></html>

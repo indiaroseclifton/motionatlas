@@ -1,0 +1,29 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Expanding panels</title>
+<style>
+:root{--bg:#101112;--ink:#F4F2EE;--mute:#A9A49B}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;display:grid;place-items:center;padding:4vh max(16px,3vw)}
+.panels{display:flex;gap:10px;width:min(1100px,100%);height:min(560px,80vh)}
+.p{position:relative;flex:1;min-width:0;border:0;padding:0;border-radius:18px;overflow:hidden;cursor:pointer;color:inherit;text-align:left;background:#000;transition:flex .6s cubic-bezier(.2,.8,.2,1)}
+.p[aria-expanded=true]{flex:5}
+.p img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .8s cubic-bezier(.2,.8,.2,1),filter .4s;filter:saturate(.6) brightness(.7)}
+.p[aria-expanded=true] img{filter:none;transform:scale(1.04)}
+.p::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.75),transparent 55%)}
+.lab{position:absolute;left:18px;bottom:18px;right:18px;z-index:2}
+.lab b{display:block;font:500 clamp(20px,2.6vw,32px)/1.05 Georgia,serif;white-space:nowrap}
+.lab span{display:block;color:#DDD8CF;max-width:36ch;opacity:0;transform:translateY(8px);transition:opacity .3s,transform .4s;font-size:14px;margin-top:6px}
+.p[aria-expanded=true] .lab span{opacity:1;transform:none;transition-delay:.25s}
+.p[aria-expanded=false] .lab b{writing-mode:vertical-rl;transform:rotate(180deg);font-size:18px}
+.p:focus-visible{outline:2px solid #fff;outline-offset:3px}
+@media (max-width:640px){.panels{flex-direction:column;height:auto}.p{flex:none;height:64px}.p[aria-expanded=true]{height:360px}.p[aria-expanded=false] .lab b{writing-mode:horizontal-tb;transform:none}.p{transition:height .5s cubic-bezier(.2,.8,.2,1)}}
+@media (prefers-reduced-motion:reduce){.p,.p img,.lab span{transition:none}}
+</style></head><body>
+<div class="panels" id="panels"></div>
+<script>
+const d=[['Jellyfish','Bioluminescent drift, shot as a slow loop for hero backgrounds.','jellyfish'],['Golden dove','Gilded feathers turning in warm light.','dove'],['Pigment','Ink blooms across wet paper, one colour at a time.','bloom'],['Smoke','A single plume folding into itself.','smoke'],['Threads','Light pulled into fibres and woven across black.','threads']];
+const el=document.getElementById('panels');
+d.forEach(([t,s,img],i)=>{const b=document.createElement('button');b.className='p';b.setAttribute('aria-expanded',i===0);b.innerHTML=`<img src="../../assets/shelf/${img}.webp" alt=""><div class="lab"><b>${t}</b><span>${s}</span></div>`;el.append(b)});
+const P=[...el.children];const open=i=>P.forEach((p,j)=>p.setAttribute('aria-expanded',i===j));
+P.forEach((p,i)=>{p.onclick=()=>open(i);if(matchMedia('(hover:hover)').matches)p.onpointerenter=()=>open(i);p.onfocus=()=>open(i)});
+</script></body></html>
