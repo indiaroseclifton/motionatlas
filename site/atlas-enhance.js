@@ -9,24 +9,33 @@
    Everything degrades to the plain page if this script does not run. */
 (()=>{
  const PAGES={
-  browse:{no:1,name:'Catalogue',family:'Index',color:'ice',related:['systems','motion','art','compare'],h:[1,-2,3,-5]},
-  systems:{no:2,name:'Design systems',family:'Systems',color:'mint',related:['playground','ux','typography','assets'],h:[1,3,-4,7]},
+  browse:{no:1,name:'Catalogue',family:'Index',color:'ice',related:['systems','motion','art','compare'],h:[1,-2,3,-5],
+   film:{src:'assets/films/hydraulic-erosion-720.mp4',webm:'assets/films/hydraulic-erosion-720.webm',poster:'assets/films/hydraulic-erosion.jpg',label:'Hydraulic erosion',tone:'light'}},
+  systems:{no:2,name:'Design systems',family:'Systems',color:'mint',related:['playground','ux','typography','assets'],h:[1,3,-4,7],
+   film:{src:'assets/films/game-of-life-720.mp4',webm:'assets/films/game-of-life-720.webm',poster:'assets/films/game-of-life.jpg',label:'Game of Life',tone:'dark'}},
   motion:{no:3,name:'Animation studio',family:'Motion',color:'rose',related:['effects','compare','pairings'],h:[1,-3,5,-7,9],
-   film:{src:'assets/films/bioluminescent-trails-720.mp4',webm:'assets/films/bioluminescent-trails-720.webm',poster:'assets/films/bioluminescent-trails.jpg',label:'Bioluminescent trails',to:'.studyRiver'}},
+   film:{src:'assets/films/bioluminescent-trails-720.mp4',webm:'assets/films/bioluminescent-trails-720.webm',poster:'assets/films/bioluminescent-trails.jpg',label:'Bioluminescent trails',tone:'dark',to:'.studyRiver'}},
   projects:{no:4,name:'My projects',family:'Studio',color:'gold',related:['inspiration','creations','browse'],h:[1,2,-3]},
-  inspiration:{no:5,name:'Inspiration',family:'Studio',color:'gold',related:['projects','references','creations'],h:[1,-4,6]},
+  inspiration:{no:5,name:'Inspiration',family:'Studio',color:'gold',related:['projects','references','creations'],h:[1,-4,6],
+   film:{src:'assets/films/embroidery-720.mp4',webm:'assets/films/embroidery-720.webm',poster:'assets/films/embroidery.jpg',label:'Embroidery',tone:'light'}},
   creations:{no:6,name:'Your creations',family:'Studio',color:'gold',related:['projects','inspiration'],h:[1,5,-3]},
   ux:{no:7,name:'UI components',family:'Systems',color:'mint',related:['icons','typography','playground'],h:[1,-3,4]},
   icons:{no:8,name:'Icon families',family:'Systems',color:'mint',related:['ux','assets','systems'],h:[1,4,-5]},
   typography:{no:9,name:'Fonts & type',family:'Systems',color:'mint',related:['pairings','playground','systems'],h:[1,-6,2]},
   playground:{no:10,name:'System playground',family:'Systems',color:'mint',related:['systems','typography','ux'],h:[1,3,-2,5]},
   assets:{no:11,name:'Extracted assets',family:'Systems',color:'mint',related:['systems','icons','ux'],h:[1,-5,3]},
-  art:{no:12,name:'Art styles',family:'Graphics',color:'ice',related:['vases','cinema','compare'],h:[1,-2,5,-3]},
-  cinema:{no:13,name:'Film looks',family:'Graphics',color:'ice',related:['art','motion','pairings'],h:[1,4,-2]},
-  vases:{no:14,name:'Vase studies',family:'Graphics',color:'ice',related:['art','compare','cinema'],h:[1,-4,2,5]},
-  pairings:{no:15,name:'Style pairings',family:'Motion',color:'rose',related:['systems','motion','typography'],h:[1,2,-5]},
-  effects:{no:16,name:'Landing effects',family:'Motion',color:'rose',related:['motion','ux','playground'],h:[1,-3,2,-6]},
-  compare:{no:17,name:'Comparison desk',family:'Motion',color:'rose',related:['art','systems','vases'],h:[1,3,-6]},
+  art:{no:12,name:'Art styles',family:'Graphics',color:'ice',related:['vases','cinema','compare'],h:[1,-2,5,-3],
+   film:{src:'assets/films/suminagashi-720.mp4',webm:'assets/films/suminagashi-720.webm',poster:'assets/films/suminagashi.jpg',label:'Suminagashi',tone:'light'}},
+  cinema:{no:13,name:'Film looks',family:'Graphics',color:'ice',related:['art','motion','pairings'],h:[1,4,-2],
+   film:{src:'assets/films/pixel-sorting-720.mp4',webm:'assets/films/pixel-sorting-720.webm',poster:'assets/films/pixel-sorting.jpg',label:'Pixel sorting',tone:'light'}},
+  vases:{no:14,name:'Vase studies',family:'Graphics',color:'ice',related:['art','compare','cinema'],h:[1,-4,2,5],
+   film:{src:'assets/films/sand-drawing-720.mp4',webm:'assets/films/sand-drawing-720.webm',poster:'assets/films/sand-drawing.jpg',label:'Sand drawing',tone:'light'}},
+  pairings:{no:15,name:'Style pairings',family:'Motion',color:'rose',related:['systems','motion','typography'],h:[1,2,-5],
+   film:{src:'assets/films/lion-phoenix-720.mp4',webm:'assets/films/lion-phoenix-720.webm',poster:'assets/films/lion-phoenix.jpg',label:'Lion to phoenix',tone:'dark'}},
+  effects:{no:16,name:'Landing effects',family:'Motion',color:'rose',related:['motion','ux','playground'],h:[1,-3,2,-6],
+   film:{src:'assets/films/soap-film-720.mp4',webm:'assets/films/soap-film-720.webm',poster:'assets/films/soap-film.jpg',label:'Soap film',tone:'dark'}},
+  compare:{no:17,name:'Comparison desk',family:'Motion',color:'rose',related:['art','systems','vases'],h:[1,3,-6],
+   film:{src:'assets/films/ferrofluid-720.mp4',webm:'assets/films/ferrofluid-720.webm',poster:'assets/films/ferrofluid.jpg',label:'Ferrofluid',tone:'dark'}},
   references:{no:18,name:'Sources & credits',family:'Studio',color:'gold',related:['browse','systems','typography'],h:[1,-2,4]}
  };
  const COLORS={ice:['#7dd3fc','#0369a1'],mint:['#6ee7b7','#047857'],rose:['#fda4af','#be123c'],gold:['#fde68a','#854d0e']};
@@ -63,19 +72,19 @@
   const f=meta.film,bg=document.createElement('div');bg.className='aeHeroBg';bg.setAttribute('aria-hidden','true');
   bg.innerHTML=`<video muted loop playsinline preload="none" poster="${f.poster}">${f.webm?`<source src="${f.webm}" type="video/webm">`:''}<source src="${f.src}" type="video/mp4"></video><i></i>`;
   const tg=document.createElement('button');tg.type='button';tg.className='aeHeroToggle';tg.innerHTML='<span aria-hidden="true"></span><b>Pause film</b>';
-  page.prepend(bg);page.append(tg);page.classList.add('aeHasFilm');
+  const dark=f.tone!=='light';page.prepend(bg);page.append(tg);page.classList.add('aeHasFilm',dark?'aeHeroDark':'aeHeroLight');if(!f.to)page.classList.add('aeHeroFade');
   const v=$('video',bg);let userPaused=false,visible=false;
   /* the backdrop runs from under the site header (behind the breadcrumb) to the top of the dark section */
   const fit=()=>{if(!page.isConnected||page.hidden)return;const pr=page.getBoundingClientRect(),trail=document.querySelector('.routeTrail'),end=page.querySelector(f.to);
-   const top=trail?Math.min(0,trail.getBoundingClientRect().top-pr.top-12):0;const bottom=end?end.getBoundingClientRect().top-pr.top+Math.min(160,parseFloat(getComputedStyle(end).paddingTop)||0):(rel.getBoundingClientRect().bottom-pr.top+80);
+   const top=trail&&dark?Math.min(0,trail.getBoundingClientRect().top-pr.top-12):0;const bottom=end?end.getBoundingClientRect().top-pr.top+Math.min(160,parseFloat(getComputedStyle(end).paddingTop)||0):(rel.getBoundingClientRect().bottom-pr.top+(dark?150:90));
    bg.style.top=top+'px';bg.style.height=Math.max(320,bottom-top)+'px';tg.style.top=(top+24)+'px';};
   const sync=()=>{const go=visible&&!userPaused&&!reduced.matches&&current()===page.id;if(go)v.play().catch(()=>{});else v.pause();
    const on=!(userPaused||reduced.matches);tg.classList.toggle('paused',!on);tg.querySelector('b').textContent=on?'Pause film':'Play film';};
   tg.onclick=()=>{if(reduced.matches){v.play().catch(()=>{});tg.classList.remove('paused');tg.querySelector('b').textContent='Pause film';return;}userPaused=!userPaused;sync();};
   if('IntersectionObserver' in window)new IntersectionObserver(es=>{visible=es[0].isIntersecting;sync();},{threshold:.05}).observe(bg);else{visible=true;sync();}
-  reduced.addEventListener?.('change',sync);addEventListener('resize',fit);addEventListener('hashchange',()=>setTimeout(()=>{fit();sync();document.body.classList.toggle('aeDarkHead',current()===page.id);},60));
+  reduced.addEventListener?.('change',sync);addEventListener('resize',fit);addEventListener('hashchange',()=>setTimeout(()=>{fit();sync();document.body.classList.toggle('aeDarkHead',dark&&current()===page.id);},60));
   if('ResizeObserver' in window)new ResizeObserver(fit).observe(page);
-  document.body.classList.toggle('aeDarkHead',current()===page.id);fit();setTimeout(fit,400);setTimeout(fit,1500);
+  document.body.classList.toggle('aeDarkHead',dark&&current()===page.id);fit();setTimeout(fit,400);setTimeout(fit,1500);
  }
 
  /* A Fourier pen traces each page's own curve in its plate colour */

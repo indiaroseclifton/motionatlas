@@ -323,6 +323,10 @@ The Animation studio header now has a film behind it, like the home hero: **Biol
 - It runs full width from under the site header to the dark "Live studies" section, fading into the title on the left and into that section at the bottom, and the header text turns light over it.
 - It plays only while on screen and only on that page, never under reduced motion, and has a pause/play button.
 - Any page can take one by adding a `film` entry to its record in `PAGES`.
+- Ten pages now have one, in one of two tones:
+  - **Dark** (`tone:'dark'`): Animation studio (Bioluminescent trails), Landing effects (Soap film), Comparison desk (Ferrofluid), Style pairings (Lion to phoenix) and Design systems (Game of Life). The header turns dark, the text turns light, and the film fades into the page below.
+  - **Light** (`tone:'light'`): Catalogue (Hydraulic erosion), Art styles (Suminagashi), Film looks (Pixel sorting), Vase studies (Sand drawing) and Inspiration (Embroidery). The film washes into the page colour behind dark text.
+  - Each uses a 1280px `-720` WebM/MP4 cut. Tool pages (UI components, icons, playground, assets, projects, creations, sources) stay without one.
 
 ### Channel brand styles: Kitchen noir and Kitchen paper (`site/dataviz/styles.js`)
 
