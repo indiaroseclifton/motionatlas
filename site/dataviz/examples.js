@@ -9,7 +9,63 @@ window.FlowExamples=[
   produce --> qa{Passes QA?}
   qa -->|Yes| ship([Publish])
   qa -->|No| produce`},
- {id:'channel',name:'AI cooking channel',title:'Premium AI cooking channel',subtitle:'One connected loop · green = have, red = don’t have',src:`flowchart TD
+ {id:'channel',name:'AI cooking channel',title:'Premium AI cooking channel',subtitle:'One episode, start to finish · green = have, red = still to build',src:`flowchart TD
+  subgraph research [Research]
+    lessons([Study Jean Phil lessons | one iconic, repeatable character]):::have
+    feeds[Pull top-views data | no analytics or trend API yet]:::dont
+    scan[Research top channels, cuts, formats | web + X search]:::have
+  end
+  subgraph roster [Chef roster]
+    chefs[Define chef roster | 4 chefs: look, cuisine, voice]:::have
+    identity[Lock photoreal identity | ref sheets, face lock]:::dont
+  end
+  subgraph recipe [Recipe → episode]
+    source{Recipe source?}:::have
+    original[Chef's original recipe | LLM via router]:::have
+    famous[Famous recipe | found by web search]:::have
+    rights[Attribution + rights check]:::dont
+    assign[Assign chef from roster | manual today]:::dont
+    episode[Episode recipe | prompt, shot, style spec]:::dont
+    styling[Food styling + plating spec]:::dont
+  end
+  subgraph make [Make the video]
+    shots[Shot list / storyboard]:::dont
+    camera[Cinematic camera + lighting]:::dont
+    model[Top-tier video model]:::dont
+    upscale[Upscaler]:::dont
+    grade[Colour grade]:::dont
+    voice[Voice · ElevenLabs]:::have
+    sound[Sound design + music]:::dont
+    render[Render · ffmpeg, MediaOS]:::have
+    gate{Human approval?}:::dont
+  end
+  subgraph publish [Package and post]
+    thumbs[Thumbnails, titles, captions]:::dont
+    reformat[Reformat 9:16 / 16:9]:::dont
+    accounts[Choose accounts]:::dont
+    schedule[Scheduler]:::dont
+    post[Post · YouTube, TikTok, IG]:::dont
+  end
+  subgraph learn [Money and feedback]
+    money[Monetisation | YPP, Creator Rewards, brands]:::dont
+    replies[Community replies]:::dont
+    analytics[Analytics: what lands]:::dont
+    memory[(What-worked memory | per chef, format, cut)]:::dont
+  end
+  lessons --> feeds -->|view counts| scan
+  scan -->|emulate| chefs --> identity --> source
+  source -->|Chef's own| original --> assign
+  source -->|Famous dish| famous --> rights -->|cleared| assign
+  assign --> episode --> styling --> shots
+  shots --> camera --> model --> upscale --> grade --> voice --> sound --> render --> gate
+  gate -->|Fail: remake| shots
+  gate -->|Pass| thumbs
+  thumbs --> reformat --> accounts --> schedule --> post
+  post --> replies --> analytics --> memory
+  post --> money
+  memory -.->|what worked| episode
+  memory -.->|next round| scan`},
+ {id:'channel-before',name:'AI cooking channel (as first drawn)',title:'Premium AI cooking channel',subtitle:'One connected loop · green = have, red = don’t have',src:`flowchart TD
   subgraph research [0 · Research]
     feeds[Top-views data feeds | no analytics or trend API]:::dont
     lessons[Jean Phil lessons | one iconic repeatable character]:::have

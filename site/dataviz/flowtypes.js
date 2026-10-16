@@ -126,7 +126,7 @@ function stages(g,s,opt){const A=analyse(g),C=ctx(s,opt),t=C.t,PAD=40,colW=opt.c
   const title=sec.loose?sec.steps[0].label:sec.title;
   o+=`<text x="${x}" y="${yy+14}" ${C.FM} font-size="11" font-weight="700" letter-spacing="1.3" fill="${t.mute}">${String(i+1).padStart(2,'0')}</text><text x="${x+26}" y="${yy+14}" ${C.F} font-size="13.5" font-weight="700" fill="${t.ink}">${esc(C.T(title.replace(/^[\d–\-, ]+·\s*/,'')))}</text>`;
   yy+=24;if(has){const bw=colW,gw=bw*c.good/sec.steps.length,ww=bw*c.warn/sec.steps.length;o+=`<rect x="${x}" y="${yy}" width="${bw}" height="5" rx="2.5" fill="${alpha(t.bad,t.dark?.35:.22)}"/><rect x="${x}" y="${yy}" width="${gw}" height="5" rx="2.5" fill="${t.good}"/>${ww?`<rect x="${x+gw}" y="${yy}" width="${ww}" height="5" fill="${C.col.warn}"/>`:''}<text x="${x+colW}" y="${yy-6}" ${C.F} font-size="11" fill="${t.mute}" text-anchor="end">${c.good}/${sec.steps.length}</text>`;yy+=16;}else yy+=6;
-  const colTop=yy;sec.steps.forEach((nd,j)=>{const skips=A.fwd.filter(e=>e.from===nd.id&&A.secs.indexOf(A.secOf.get(e.to))-i>1).map(e=>({h:24,svg:(xx,y2)=>C.chip(xx,y2-14,`${e.label?e.label+' ':''}→ ${String(A.secs.indexOf(A.secOf.get(e.to))+1).padStart(2,'0')} ${g.nodes.get(e.to).label}`,t.mute).svg}));const cd=C.card(x,yy,colW,{title:nd.label,note:nd.note,status:nd.status,decision:nd.shape==='decision',size:13,lines:skips});
+  const colTop=yy;sec.steps.forEach((nd,j)=>{const brs=nd.shape==='decision'?A.fwd.filter(e=>e.from===nd.id&&e.label&&A.secOf.get(e.to)===sec).map(e=>({h:24,svg:(xx,y2)=>C.chip(xx,y2-14,`${e.label} → ${g.nodes.get(e.to).label}`,t.mute).svg})):[];const inl=A.back.filter(e=>e.from===nd.id&&e.from!==e.to&&A.secOf.get(e.to)===sec).map(e=>({h:24,svg:(xx,y2)=>C.chip(xx,y2-14,`${e.label||'back'} → ${g.nodes.get(e.to).label}`,t.accent,{icon:'↺'}).svg}));const skips=brs.concat(inl).concat(A.fwd.filter(e=>e.from===nd.id&&A.secs.indexOf(A.secOf.get(e.to))-i>1).map(e=>({h:24,svg:(xx,y2)=>C.chip(xx,y2-14,`${e.label?e.label+' ':''}→ ${String(A.secs.indexOf(A.secOf.get(e.to))+1).padStart(2,'0')} ${g.nodes.get(e.to).label}`,t.mute).svg})));const cd=C.card(x,yy,colW,{title:nd.label,note:nd.note,status:nd.status,decision:nd.shape==='decision',size:13,lines:skips});
    const inner=j>0&&A.fwd.some(e=>e.from===sec.steps[j-1].id&&e.to===nd.id);if(inner)o+=`<path d="M${x+colW/2} ${yy-9}v6" stroke="${C.line}" stroke-width="1.5"${C.arrow()}/>`;
    o+=cd.svg;cardPos.set(nd.id,{x,y:yy,h:cd.h,col:i});yy+=cd.h+12;});
   sec.top=colTop;sec.bottom=yy-12;maxB=Math.max(maxB,yy);});
@@ -136,35 +136,36 @@ function stages(g,s,opt){const A=analyse(g),C=ctx(s,opt),t=C.t,PAD=40,colW=opt.c
  /* links that skip stages: a chip on the source card */
  let extra='';
  /* loops as arcs under the columns */
- let ly=maxB+24;const arcs=[];A.back.forEach((e,k)=>{const a=cardPos.get(e.from),b=cardPos.get(e.to);if(!a||!b)return;const x0=a.x+colW/2+8,x1=b.x+colW/2-8,yy=ly+k*30;
+ let ly=maxB+24;const arcs=[];const cross=A.back.filter(e=>{const a=cardPos.get(e.from),b=cardPos.get(e.to);return a&&b&&a.col!==b.col;});cross.forEach((e,k)=>{const a=cardPos.get(e.from),b=cardPos.get(e.to);const x0=a.x+colW/2+8,x1=b.x+colW/2-8,yy=ly+k*30;
   arcs.push(`<path d="M${x0} ${A.secs[a.col].bottom+4}V${yy-10}Q${x0} ${yy} ${x0-10} ${yy}H${x1+10}Q${x1} ${yy} ${x1} ${yy-10}V${A.secs[b.col].bottom+6}" fill="none" stroke="${t.accent}" stroke-width="1.6" stroke-dasharray="5 4"${C.arrow('loop')}/>`);
   const lab=`↺ ${e.label||'back'}: ${g.nodes.get(e.from).label} → ${g.nodes.get(e.to).label}`;const ch=C.chip(Math.min(x0,x1)+(Math.abs(x0-x1)-measure(lab,11.5,600,t.font)-16)/2,yy-10,lab,t.accent,{max:Math.max(160,Math.abs(x0-x1)-20)});arcs.push(ch.svg);});
- const H=maxB+(A.back.length?24+A.back.length*30:0)+PAD;
+ const H=maxB+(cross.length?24+cross.length*30:0)+PAD;
  return {svg:frame(C,W,H,opt,o+extra+arcs.join('')),width:W,height:H,notes:[{ok:true,text:`${n} stages read left to right; steps inside a stage read top to bottom.`},{ok:true,text:A.back.length?`${A.back.length} loop${A.back.length>1?'s':''} drawn once each, under the stages, with a label.`:'No loops.'}]};}
 
 /* ---------- 3. cycle ---------- */
-function cycle(g,s,opt){const A=analyse(g),C=ctx(s,opt),t=C.t,PAD=48;const secs=A.secs,n=secs.length,cw=opt.cardW||236;C.chipMax=cw-60;
+function cycle(g,s,opt){const A=analyse(g),C=ctx(s,opt),t=C.t,PAD=48;const secs=A.secs,n=secs.length,cw=opt.cardW||256;C.chipMax=cw-56;
  const si=id=>secs.indexOf(A.secOf.get(id)),closer=A.back.find(e=>si(e.from)===n-1&&si(e.to)===0),toFirst=A.back.some(e=>si(e.to)===0);
  /* loops other than the ring closing are written on the card they leave from */
  const loopLines=sec=>A.back.filter(e=>e!==closer&&A.secOf.get(e.from)===sec&&e.from!==e.to).map(e=>({h:24,svg:(xx,yy)=>C.chip(xx,yy-12,`${e.label||'back'} → ${si(e.to)+1} ${g.nodes.get(e.to).label}`,t.accent,{icon:'↺'}).svg}));
  /* card heights first */
- const mk=(sec,x,y)=>{const lines=sec.steps.slice(0,8).map(st=>({h:19,svg:(xx,yy)=>`<circle cx="${xx+4}" cy="${yy-4}" r="4" fill="${st.status?C.col[st.status]:alpha(t.ink,.35)}"/><text x="${xx+14}" y="${yy}" ${C.F} font-size="12" fill="${t.ink}">${esc(wrap(st.label,12,400,t.font,cw-48)[0])}${wrap(st.label,12,400,t.font,cw-48).length>1?'…':''}</text>`}));
-  if(sec.steps.length>8)lines.push({h:19,svg:(xx,yy)=>`<text x="${xx}" y="${yy}" ${C.F} font-size="12" fill="${t.mute}">+${sec.steps.length-8} more</text>`});
+ const mk=(sec,x,y)=>{const lines=sec.steps.slice(0,10).map(st=>({h:19,svg:(xx,yy)=>`<circle cx="${xx+4}" cy="${yy-4}" r="4" fill="${st.status?C.col[st.status]:alpha(t.ink,.35)}"/><text x="${xx+14}" y="${yy}" ${C.F} font-size="12" fill="${t.ink}">${esc(wrap(st.label,12,400,t.font,cw-48)[0])}${wrap(st.label,12,400,t.font,cw-48).length>1?'…':''}</text>`}));
+  if(sec.steps.length>10)lines.push({h:19,svg:(xx,yy)=>`<text x="${xx}" y="${yy}" ${C.F} font-size="12" fill="${t.mute}">+${sec.steps.length-10} more</text>`});
   const c=statusCount(sec.steps),has=c.good+c.bad+c.warn;
   return C.card(x,y,cw,{title:sec.loose?sec.steps[0].label:sec.title.replace(/^[\d–\-, ]+·\s*/,''),note:sec.loose?(sec.steps[0].note||''):(has?`${c.good} of ${sec.steps.length} in place`:`${sec.steps.length} steps`),badge:String(secs.indexOf(sec)+1),badgeFill:C.tint(secs.indexOf(sec)),lines:(sec.loose?[]:lines).concat(loopLines(sec)),status:sec.loose?sec.steps[0].status:null,decision:sec.loose&&sec.steps[0].shape==='decision',size:14});};
  const hs=secs.map(sec=>mk(sec,0,0).h),maxH=Math.max(...hs);
  /* ellipse big enough that neighbouring cards clear each other */
  let Rx=Math.max(340,n*(cw+40)/(2*Math.PI)*1.15),Ry=Math.max(230,Rx*.62);const P=i=>{const a=-Math.PI/2+i*2*Math.PI/n;return [Math.cos(a)*Rx,Math.sin(a)*Ry];};
- for(let it=0;it<40;it++){let clash=false;for(let i=0;i<n;i++){const j=(i+1)%n,[x0,y0]=P(i),[x1,y1]=P(j);if(Math.abs(x0-x1)<cw+28&&Math.abs(y0-y1)<(hs[i]+hs[j])/2+64)clash=true;}if(!clash)break;Rx*=1.07;Ry*=1.07;}
+ for(let it=0;it<40;it++){let clash=false;for(let i=0;i<n;i++){const j=(i+1)%n,[x0,y0]=P(i),[x1,y1]=P(j);if(Math.abs(x0-x1)<cw+150&&Math.abs(y0-y1)<(hs[i]+hs[j])/2+64)clash=true;}if(!clash)break;Rx*=1.07;Ry*=1.07;}
  const hd=heading(C,opt,PAD,PAD),cx=PAD+Rx+cw/2,cy=PAD+hd.h+Ry+maxH/2+10,W=Math.round(cx*2),H=Math.round(cy+Ry+maxH/2+PAD+(A.back.length>1?10:0));
  let o=hd.o,ring='';const centres=secs.map((_,i)=>{const [x,y]=P(i);return [cx+x,cy+y];});
  /* ring arrows between consecutive stages, along the ellipse */
  const linked=(i,j)=>A.fwd.concat(A.back).some(e=>A.secOf.get(e.from)===secs[i]&&A.secOf.get(e.to)===secs[j]);
- for(let i=0;i<n;i++){const j=(i+1)%n;if(j===0&&!toFirst)continue;const a0=-Math.PI/2+i*2*Math.PI/n,a1=-Math.PI/2+(i+1)*2*Math.PI/n,steps=18,pts=[];
-  for(let k=0;k<=steps;k++){const a=a0+(a1-a0)*k/steps;pts.push([cx+Math.cos(a)*Rx,cy+Math.sin(a)*Ry]);}
-  const inside=(p,c,h)=>Math.abs(p[0]-c[0])<cw/2+6&&Math.abs(p[1]-c[1])<h/2+6;const seg=pts.filter(p=>!inside(p,centres[i],hs[i])&&!inside(p,centres[j],hs[j]));if(seg.length<2)continue;
-  const isLoop=j===0||!linked(i,j);ring+=`<path d="M${seg.map(p=>p.map(v=>v.toFixed(1)).join(' ')).join(' L')}" fill="none" stroke="${isLoop?t.accent:alpha(t.ink,.55)}" stroke-width="${isLoop?2:1.8}"${isLoop?' stroke-dasharray="6 5"':''} stroke-linecap="round"${C.arrow(isLoop?'loop':'ink')}/>`;
-  if(j===0){const lab=closer?closer.label||'loop':'next round';const m=seg[Math.floor(seg.length/2)];const ch=C.chip(m[0]-measure('↺ '+lab,11.5,600,t.font)/2-8,m[1]-10,lab,t.accent,{icon:'↺'});ring+=ch.svg;}}
+ const edgePt=(c,h,dx,dy)=>{const hw=cw/2+8,hh=h/2+8,k=Math.min(dx?hw/Math.abs(dx):1e9,dy?hh/Math.abs(dy):1e9);return [c[0]+dx*k,c[1]+dy*k];};
+ for(let i=0;i<n;i++){const j=(i+1)%n;if(j===0&&!toFirst)continue;if(n<2)break;
+  const a=centres[i],b=centres[j],dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy)||1;const p0=edgePt(a,hs[i],dx/L,dy/L),p1=edgePt(b,hs[j],-dx/L,-dy/L);
+  const mx=(p0[0]+p1[0])/2,my=(p0[1]+p1[1])/2,ox=mx-cx,oy=my-cy,ol=Math.hypot(ox,oy)||1,bend=Math.min(40,Math.hypot(p1[0]-p0[0],p1[1]-p0[1])*.25),qx=mx+ox/ol*bend,qy=my+oy/ol*bend;
+  const isLoop=j===0||!linked(i,j);ring+=`<path d="M${p0[0].toFixed(1)} ${p0[1].toFixed(1)}Q${qx.toFixed(1)} ${qy.toFixed(1)} ${p1[0].toFixed(1)} ${p1[1].toFixed(1)}" fill="none" stroke="${isLoop?t.accent:alpha(t.ink,.55)}" stroke-width="${isLoop?2:1.8}"${isLoop?' stroke-dasharray="6 5"':''} stroke-linecap="round"${C.arrow(isLoop?'loop':'ink')}/>`;
+  if(j===0){const lab=closer?closer.label||'loop':'next round';const lx=(p0[0]+2*qx+p1[0])/4,ly=(p0[1]+2*qy+p1[1])/4;const ch=C.chip(lx-measure(lab,11.5,600,t.font)/2-15,ly-10,lab,t.accent,{icon:'↺',max:400});ring+=ch.svg;}}
  secs.forEach((sec,i)=>{const [x,y]=centres[i];o+=mk(sec,x-cw/2,y-hs[i]/2).svg;});
  /* the centre */
  const lg=legendRow(C,A,0,0);o+=`<text x="${cx}" y="${cy-6}" ${C.F} font-size="12" fill="${t.mute}" text-anchor="middle">${esc(C.T(A.back.length?'One connected loop':'A cycle'))}</text><text x="${cx}" y="${cy+16}" ${C.F} font-size="13" font-weight="600" fill="${t.ink}" text-anchor="middle">${n} stages · ${A.nodes.length} steps</text>`;
