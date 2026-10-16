@@ -290,13 +290,22 @@ Palettes live in `dataviz/styles.js` (`DVChartPalettes`, with the validation res
 
 ### Flowchart studio (`site/flowchart-studio.html`, `site/dataviz/`)
 
-Write a flowchart as text and get a clean, consistent diagram in seventeen styles.
+Write a flowchart as text and get a clean, consistent diagram in eight layouts and seventeen styles.
 - **Input:** the flowchart subset of Mermaid, which most tools and AI assistants export. That covers shapes, labelled branches, dashed and thick links, subgraphs, and `:::have` / `:::dont` / `:::partial` / `:::accent` status. A plain list of steps also works: lines ending in "?" become decisions, and indented `Yes: step` lines become branches.
 - **Layout** (`dataviz/flow.js`, no libraries):
   - Ranks with loops set aside, crossing-reducing ordering, and isotonic placement so lines run straight.
   - Right-angle routing with every connector on its own track; loops run round the outside, dashed in the accent colour.
   - Stage outlines follow their own steps row by row, so stages never overlap.
   - Swimlane mode turns top-level subgraphs into lanes.
+- **Diagram types** (`dataviz/flowtypes.js`): the same source can be drawn as eight different layouts, not just re-skinned. The studio scores your content and marks the best fit.
+  - **Flow:** the layered flowchart above, for short processes with decisions.
+  - **Step list:** every step numbered in reading order on one rail. Branches and loops are written as routes on the step ("→ 21", "↺ back to 12"), so no line crosses the page. Best for long processes.
+  - **Stage columns:** one column per subgraph with a progress bar. Steps stack inside; skips become chips; loops are drawn once each under the columns.
+  - **Cycle:** stages round a ring, read clockwise. The closing arc is the feedback loop; other loops are written on the card they leave from.
+  - **Decision tree:** plain runs of steps fold into one card, and every decision opens a branch. Lone inputs become "←" chips on the step they feed.
+  - **Capability map:** have / don't-have per stage, with an overall bar. No connectors.
+  - **Swimlanes:** the flow layout with subgraphs as owner lanes.
+  - **Mind map:** stages and steps as branches, for an overview without order.
 - **Styles** (`dataviz/styles.js`): six drawn from the Pinterest board (Workflow canvas, Soft neumorphic, Frosted glass, Calm sage, Lilac flow, Soft clay 3D) and eleven from research (Swiss editorial, Tufte, newsroom grey, design-system SaaS, monochrome developer, hand-drawn, pastel diagramming, blueprint, dark glass, neo-brutalist, risograph).
 - **Pre-flight:** notes on what the layout did, plus warnings for unlabelled branches, several starts, crowded ranks and oversized charts.
 - **Exports:** SVG and HTML with the fonts embedded, PNG at 2×, a share link (the chart is encoded in the URL), and a style guide. The style guide is a one-page flowchart design system for the chosen look: your chart, colour tokens, type roles, shapes, status, geometry, and dos and don'ts.
