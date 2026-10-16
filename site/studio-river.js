@@ -90,7 +90,7 @@
  function kitCode(it,box){
   const v=k=>box.querySelector(`[data-k="${k}"]`),feather=v('feather')?.checked?FEATHER:'';
   if(it.kind==='video'){const a=p=>ORIGIN+'/'+p;
-   return {code:`<video autoplay muted loop playsinline poster="${a(it.poster)}" aria-label="${it.title.replace(/\.$/,'')}"\n  style="display:block;width:100%;height:auto;background:#000;${feather}">\n  <source src="${a(it.small)}" type="video/mp4" media="(max-width: 900px)">\n  <source src="${a(it.webm)}" type="video/webm">\n  <source src="${a(it.src)}" type="video/mp4">\n</video>`};}
+   return {code:`<video autoplay muted loop playsinline poster="${a(it.poster)}" aria-label="${it.title.replace(/\.$/,'')}"\n  style="display:block;width:100%;height:auto;background:#000;${feather}">\n  <source src="${a(it.small)}" type="video/mp4" media="(max-width: 900px)">\n  <source src="${a(it.src)}" type="video/mp4">\n  <source src="${a(it.webm)}" type="video/webm">\n</video>`};}
   const q=new URLSearchParams();const sp=+v('speed').value,dn=v('density')?+v('density').value:1,md=v('mode')?.value;
   if(sp!==1)q.set('speed',sp);if(dn!==1)q.set('density',dn);if(md&&md!==it.kit.modes[0][0])q.set('mode',md);q.set('controls','0');
   const bg=v('bg').checked;if(bg)q.set('bg','transparent');

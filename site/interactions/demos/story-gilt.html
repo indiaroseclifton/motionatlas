@@ -64,7 +64,7 @@ footer{position:relative;z-index:2;background:#F1E9DA;color:#6A5D4B;display:flex
 <script>
 (()=>{const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;const base='../../assets/films/';
 const V=[...document.querySelectorAll('.films video')];
-V.forEach(v=>{v.innerHTML=`<source src="${base}${v.dataset.src}-720.webm" type="video/webm"><source src="${base}${v.dataset.src}-720.mp4" type="video/mp4">`;v.preload=v.classList.contains('on')?'auto':'none'});
+V.forEach(v=>{v.innerHTML=`<source src="${base}${v.dataset.src}-720.mp4" type="video/mp4"><source src="${base}${v.dataset.src}-720.webm" type="video/webm">`;v.preload=v.classList.contains('on')?'auto':'none'});
 function show(i){V.forEach((v,j)=>{const on=i===j;v.classList.toggle('on',on);if(on&&!reduce){if(v.preload==='none'){v.preload='auto';v.load()}v.play().catch(()=>{})}else v.pause()})}
 show(0);
 const mask=document.getElementById('mask');

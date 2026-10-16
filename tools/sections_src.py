@@ -252,7 +252,7 @@ S['sec-cta']=('Film call-to-action banner','''
 .ctrl{position:absolute;right:16px;top:16px;width:44px;height:44px;border-radius:50%;border:0;background:color-mix(in srgb,var(--surface) 80%,transparent);cursor:pointer;display:grid;place-items:center}
 .ctrl svg{width:16px;height:16px}
 @media (max-width:640px){.band::before{background:linear-gradient(0deg,var(--bg) 25%,color-mix(in srgb,var(--bg) 60%,transparent) 65%,transparent)}.band{min-height:520px}}
-''','''<section class="wrap"><div class="band"><video id="v" autoplay muted loop playsinline poster="../../assets/films/pigment-bloom.jpg"><source src="../../assets/films/pigment-bloom-720.webm" type="video/webm"><source src="../../assets/films/pigment-bloom-720.mp4" type="video/mp4"></video>
+''','''<section class="wrap"><div class="band"><video id="v" autoplay muted loop playsinline poster="../../assets/films/pigment-bloom.jpg"><source src="../../assets/films/pigment-bloom-720.mp4" type="video/mp4"><source src="../../assets/films/pigment-bloom-720.webm" type="video/webm"></video>
 <button class="ctrl" id="pv" aria-label="Pause background film"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="3" y="2" width="3.5" height="12" rx="1"/><rect x="9.5" y="2" width="3.5" height="12" rx="1"/></svg></button>
 <div class="in"><p class="k">Start this week</p><h2 class="h">Your first episode is one recipe away.</h2><p>Bring a dish you love. We’ll handle the chef, the shots and the colour.</p><div class="row"><a class="btn p" href="#">Start free</a><a class="btn" href="#">Watch a sample</a></div></div></div></section>''','''
 document.querySelectorAll('a[href="#"]').forEach(a=>a.onclick=e=>e.preventDefault());

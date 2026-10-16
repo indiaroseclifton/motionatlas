@@ -89,7 +89,7 @@ function st(p){if(p){v.play().catch(()=>{});pv.innerHTML=pause;pv.setAttribute('
 if(reduce){v.removeAttribute('autoplay');st(false)}pv.onclick=()=>st(v.paused);'''
 CTRL_CSS = '.ctrl{position:absolute;right:16px;top:16px;width:44px;height:44px;border-radius:50%;border:0;background:color-mix(in srgb,var(--surface) 80%,transparent);color:var(--ink);cursor:pointer;display:grid;place-items:center;z-index:2}.ctrl svg{width:16px;height:16px}'
 CTRL_HTML = '<button class="ctrl" aria-label="Pause background film"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="3" y="2" width="3.5" height="12" rx="1"/><rect x="9.5" y="2" width="3.5" height="12" rx="1"/></svg></button>'
-VIDEO = '<video autoplay muted loop playsinline poster="{{A}}films/{{film}}.jpg"><source src="{{A}}films/{{film}}-720.webm" type="video/webm"><source src="{{A}}films/{{film}}-720.mp4" type="video/mp4"></video>'
+VIDEO = '<video autoplay muted loop playsinline poster="{{A}}films/{{film}}.jpg"><source src="{{A}}films/{{film}}-720.mp4" type="video/mp4"><source src="{{A}}films/{{film}}-720.webm" type="video/webm"></video>'
 NOHASH = "root.querySelectorAll('a[href=\"#\"]').forEach(a=>a.onclick=e=>e.preventDefault());"
 
 # id, name, group, description, css, html, js, fields [(key,label,type,default)], prompt

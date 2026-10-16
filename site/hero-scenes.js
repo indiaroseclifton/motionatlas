@@ -17,7 +17,8 @@ window.AtlasMotion=window.AtlasMotion||(()=>{
  const lite=force==='full'?false:force==='lite'?true:(saveData||noGL||soft||lowMem);
  const small=()=>matchMedia('(max-width: 900px)').matches;
  // one download per device: the 720p cut on small screens (WebM only if MP4 can't play), WebM then MP4 elsewhere
- const sources=s=>small()&&s.small?`<source src="${s.small}" type="video/mp4"><source src="${s.webm}" type="video/webm">`:`<source src="${s.webm}" type="video/webm"><source src="${s.src}" type="video/mp4">`;
+ /* Safari can stall on VP9 WebM without falling back, so it gets H.264 first */const safari=/^((?!chrome|chromium|android|crios|fxios|edg).)*safari/i.test(navigator.userAgent);
+ const sources=s=>small()&&s.small?`<source src="${s.small}" type="video/mp4"><source src="${s.webm}" type="video/webm">`:safari?`<source src="${s.src}" type="video/mp4"><source src="${s.webm}" type="video/webm">`:`<source src="${s.webm}" type="video/webm"><source src="${s.src}" type="video/mp4">`;
  return {lite,saveData,noGL,sources,setFull(on){try{localStorage.setItem('atlasMotion',on?'full':'lite');}catch{}}};
 })();
 (()=>{

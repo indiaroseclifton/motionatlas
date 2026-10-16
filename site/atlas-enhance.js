@@ -74,7 +74,8 @@
     title on the left and into the dark section below, plays only while on screen and never under reduced motion */
  function film(page,band,rel,meta){
   const f=meta.film,bg=document.createElement('div');bg.className='aeHeroBg';bg.setAttribute('aria-hidden','true');
-  bg.innerHTML=`<video muted loop playsinline preload="none" poster="${f.poster}">${f.webm?`<source src="${f.webm}" type="video/webm">`:''}<source src="${f.src}" type="video/mp4"></video><i></i>`;
+  const mp4First=/^((?!chrome|chromium|android|crios|fxios|edg).)*safari/i.test(navigator.userAgent);const wb=f.webm?`<source src="${f.webm}" type="video/webm">`:'',mp=`<source src="${f.src}" type="video/mp4">`;
+  bg.innerHTML=`<video muted loop playsinline preload="none" poster="${f.poster}">${mp4First?mp+wb:wb+mp}</video><i></i>`;
   const tg=document.createElement('button');tg.type='button';tg.className='aeHeroToggle';tg.innerHTML='<span aria-hidden="true"></span><b>Pause film</b>';
   const dark=f.tone!=='light';page.prepend(bg);page.append(tg);page.classList.add('aeHasFilm',dark?'aeHeroDark':'aeHeroLight');if(!f.to)page.classList.add('aeHeroFade');
   const v=$('video',bg);if(f.pos)v.style.objectPosition=f.pos;let userPaused=false,visible=false;
