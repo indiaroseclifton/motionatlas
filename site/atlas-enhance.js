@@ -25,7 +25,7 @@
   icons:{no:8,name:'Icon families',family:'Systems',color:'mint',related:['ux','assets','systems'],h:[1,4,-5]},
   typography:{no:9,name:'Fonts & type',family:'Systems',color:'mint',related:['pairings','playground','systems'],h:[1,-6,2],
    film:{src:'assets/films/light-threads-720.mp4',webm:'assets/films/light-threads-720.webm',poster:'assets/films/light-threads.jpg',label:'Light threads',tone:'dark'}},
-  playground:{no:10,name:'System playground',family:'Systems',color:'mint',related:['systems','typography','ux'],h:[1,3,-2,5]},
+  playground:{no:10,name:'System playground',family:'Systems',color:'mint',related:['systems','typography','ux'],h:[1,3,-2,5],film:{src:'assets/films/swan-construction-720.mp4',webm:'assets/films/swan-construction-720.webm',poster:'assets/films/swan-construction.jpg',label:'Swan drawn on its construction lines',tone:'dark'}},
   assets:{no:11,name:'Extracted assets',family:'Systems',color:'mint',related:['systems','icons','ux'],h:[1,-5,3]},
   art:{no:12,name:'Art styles',family:'Graphics',color:'ice',related:['vases','cinema','compare'],h:[1,-2,5,-3],
    film:{src:'assets/films/suminagashi-720.mp4',webm:'assets/films/suminagashi-720.webm',poster:'assets/films/suminagashi.jpg',label:'Suminagashi',tone:'light'}},
