@@ -32,7 +32,8 @@
    ['#icons','Icon families','Outline, solid, pixel, colour and 3D icon sets.','sketchbook-horse'],
    ['#typography','Fonts & type','Type pairings and scales, ready to use.','light-threads'],
    ['#playground','System playground','Try a system across a landing page, dashboard and phone.','swan-construction'],
-   ['#assets','Extracted assets','201 fragments cut from our original mock-ups.','paper-bird']]},
+   ['#assets','Extracted assets','201 fragments cut from our original mock-ups.','paper-bird'],
+   ['theme-kits.html','Theme kits','Matrix to Bauhaus: tokens, components, backgrounds and assets.','game-of-life']]},
   {name:'Make',items:[
    ['interactions.html','Interactions shelf','Showpieces, scroll stories and sections to copy.','golden-dove'],
    ['page-builder.html','Page builder','Stack sections, pick a style, download one HTML file.','paper-bird'],

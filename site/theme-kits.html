@@ -1,0 +1,228 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Theme kits · Visual & Motion Atlas</title>
+<meta name="description" content="Eight complete theme kits, from Matrix (01) to Bauhaus (08): colour and type tokens, components, a live animated background, SVG logo, pattern and icons, and a one-click download of the whole kit.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap">
+<link id="kitFonts" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700&family=Michroma&family=Archivo+Black&family=Poiret+One&family=IBM+Plex+Mono:wght@500&family=Righteous&family=Jost:wght@700&display=swap">
+<style>
+:root{--pbg:#F4F5F8;--ppanel:#FFFFFF;--pink:#1C1F2A;--pmute:#5E6476;--phair:#E1E4EC;--paccent:#5B2DFF;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--pbg);color:var(--pink);font:15px/1.55 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit}button,input,select{font:inherit;color:inherit}
+.skip{position:absolute;left:-999px}.skip:focus{left:12px;top:12px;z-index:50;background:#fff;padding:8px 12px;border-radius:8px}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.top{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:12px max(18px,4vw);background:var(--ppanel);border-bottom:1px solid var(--phair)}
+.top a.back{font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--pmute);text-decoration:none}
+.top nav{margin-left:auto;display:flex;gap:14px;font-size:13px}.top nav a{color:var(--pmute);text-decoration:none}.top nav a:hover{color:var(--pink)}
+.intro{max-width:1320px;margin:0 auto;padding:clamp(28px,6vh,60px) max(18px,4vw) 18px;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:28px;align-items:end}
+.intro h1{margin:0;font:italic 500 clamp(44px,7vw,88px)/.92 'Cormorant Garamond',Georgia,serif;letter-spacing:-.02em}
+.intro p{margin:0;color:var(--pmute);max-width:54ch}
+.picker{max-width:1320px;margin:0 auto;padding:10px max(18px,4vw) 28px;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:10px}
+.pick{position:relative;aspect-ratio:3/4;border-radius:14px;overflow:hidden;border:2px solid transparent;padding:0;cursor:pointer;background:#111;text-align:left}
+.pick canvas{position:absolute;inset:0;width:100%;height:100%}
+.pick span{position:absolute;left:0;right:0;bottom:0;padding:10px;display:grid;gap:2px;background:linear-gradient(transparent,rgba(0,0,0,.78));color:#fff}
+.pick b{font-size:18px;line-height:1.05;font-weight:400}
+.pick small{font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.12em;opacity:.9}
+.pick[aria-pressed=true]{border-color:var(--paccent);box-shadow:0 0 0 3px rgba(91,45,255,.25)}
+.pick:focus-visible{outline:3px solid var(--paccent);outline-offset:3px}
+/* ---------- The kit, styled entirely from its tokens ---------- */
+.kit{background:var(--bg);color:var(--ink);font:16px/1.6 var(--font-body);border-top:1px solid var(--phair)}
+.kit :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.kit h2,.kit h3,.kit .h{font-family:var(--font-head);text-transform:var(--case);line-height:1.05;font-weight:400;letter-spacing:.01em}
+.kin{max-width:1320px;margin:0 auto;padding:clamp(40px,7vh,72px) max(18px,4vw)}
+.khero{position:relative;min-height:min(78vh,720px);display:grid;align-items:end;overflow:hidden;isolation:isolate}
+.khero canvas{position:absolute;inset:0;width:100%;height:100%;z-index:-2}
+.khero::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,var(--bg) 0,color-mix(in srgb,var(--bg) 70%,transparent) 45%,transparent 80%)}
+.khero .kin{display:grid;gap:18px;width:100%}
+.khero img.logo{height:56px;width:auto;justify-self:start}
+.khero h2{margin:0;font-size:clamp(44px,7vw,104px);max-width:13ch}
+.khero p.tag{margin:0;max-width:46ch;font-size:clamp(17px,1.6vw,20px);color:var(--ink)}
+.kpause{position:absolute;right:max(18px,4vw);top:20px;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);display:grid;place-items:center;cursor:pointer}
+.kpause svg{width:16px;height:16px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.kbtn{display:inline-flex;align-items:center;gap:8px;min-height:46px;padding:0 22px;border:2px solid var(--accent);border-radius:var(--radius);background:var(--accent);color:var(--on-accent);font:600 15px/1 var(--font-body);text-transform:var(--case);letter-spacing:.03em;cursor:pointer;text-decoration:none;transition:box-shadow .2s,transform .2s}
+.kbtn:hover{box-shadow:var(--glow);transform:translateY(-1px)}
+.kbtn.ghost{background:var(--surface);color:var(--ink);border-color:var(--line)}
+.kbtn[disabled]{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+.kbtn svg{width:18px;height:18px}
+.ksec{border-top:1px solid var(--line)}
+.ksec>.kin>h2{margin:0 0 6px;font-size:clamp(28px,3.4vw,44px)}
+.ksec .lede{margin:0 0 28px;color:var(--mute);max-width:60ch}
+.sw{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.chip{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--surface);padding:0;text-align:left;cursor:pointer}
+.chip i{display:block;height:72px;border-bottom:1px solid var(--line)}
+.chip span{display:grid;padding:10px 12px;gap:2px;font-size:13px}
+.chip b{font-family:var(--font-body);font-weight:600}
+.chip code{font:12px ui-monospace,monospace;color:var(--mute)}
+.types{display:grid;grid-template-columns:1.2fr 1fr;gap:24px}
+.tbox{border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);padding:24px;box-shadow:var(--shadow)}
+.tbox .big{font-family:var(--font-head);text-transform:var(--case);font-size:clamp(40px,6vw,76px);line-height:1;margin:0 0 10px}
+.tbox p{margin:0 0 8px}
+.tbox small{color:var(--mute);font-family:ui-monospace,monospace;font-size:12px}
+.comp{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px}
+.cbox{border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);padding:22px;box-shadow:var(--shadow);display:grid;gap:14px;align-content:start}
+.cbox h3{margin:0;font-size:13px;letter-spacing:.14em;color:var(--mute);font-family:var(--font-body);font-weight:600;text-transform:uppercase}
+.kf{display:grid;gap:6px}.kf label{font-size:14px;font-weight:600}
+.kinput,.kselect{width:100%;min-height:44px;padding:0 14px;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);font:inherit}
+.kinput:focus,.kselect:focus{outline:none;border-color:var(--accent);box-shadow:var(--glow)}
+.kinput[aria-invalid=true]{border-color:var(--accent)}
+.hint{font-size:13px;color:var(--mute);margin:0}
+.chk{display:flex;align-items:center;gap:10px;font-size:15px;cursor:pointer}
+.chk input{appearance:none;width:22px;height:22px;border:2px solid var(--line);border-radius:calc(var(--radius) / 2);background:var(--bg);display:grid;place-items:center;margin:0;cursor:pointer}
+.chk input:checked{background:var(--accent);border-color:var(--accent)}
+.chk input:checked::after{content:"";width:10px;height:6px;border-left:2px solid var(--on-accent);border-bottom:2px solid var(--on-accent);transform:rotate(-45deg) translate(1px,-1px)}
+.tog{appearance:none;width:46px;height:26px;border-radius:999px;background:var(--line);position:relative;cursor:pointer;margin:0;transition:background .2s}
+.tog::after{content:"";position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:var(--surface);transition:transform .2s}
+.tog:checked{background:var(--accent)}.tog:checked::after{transform:translateX(20px)}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line)}
+.tabs button{border:0;background:none;padding:10px 12px;color:var(--mute);font:600 14px var(--font-body);text-transform:var(--case);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs button[aria-selected=true]{color:var(--ink);border-color:var(--accent)}
+.badges{display:flex;gap:8px;flex-wrap:wrap}
+.kbadge{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;border:1px solid var(--line);font-size:12.5px;font-weight:600;text-transform:var(--case);letter-spacing:.04em}
+.kbadge.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.kbadge i{width:7px;height:7px;border-radius:50%;background:var(--accent)}
+.alert{display:grid;grid-template-columns:auto 1fr;gap:12px;padding:14px 16px;border:1px solid var(--accent);border-radius:var(--radius);background:color-mix(in srgb,var(--accent) 10%,var(--surface))}
+.alert svg{width:22px;height:22px}
+.alert p{margin:0;font-size:14.5px}
+.bar{height:10px;border-radius:999px;background:var(--line);overflow:hidden}.bar i{display:block;height:100%;width:68%;background:var(--accent)}
+table.kt{width:100%;border-collapse:collapse;font-size:14px}
+.kt th,.kt td{text-align:left;padding:9px 6px;border-bottom:1px solid var(--line)}
+.kt th{color:var(--mute);font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.kcard{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--surface);box-shadow:var(--shadow)}
+.kcard .art{height:130px;background-repeat:repeat}
+.kcard .body{padding:16px;display:grid;gap:8px}
+.kcard .body h4{margin:0;font-family:var(--font-head);text-transform:var(--case);font-size:22px;font-weight:400}
+.kcard .body p{margin:0;color:var(--mute);font-size:14px}
+.knav{display:flex;align-items:center;gap:16px;padding:12px 14px;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg)}
+.knav img{height:30px}.knav a{color:var(--mute);text-decoration:none;font-size:14px}.knav a:first-of-type{color:var(--ink)}
+.knav .kbtn{margin-left:auto;min-height:36px;padding:0 14px;font-size:13px}
+.assets{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:16px}
+.abox{border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);display:grid;grid-template-rows:180px auto;overflow:hidden}
+.abox .view{display:grid;place-items:center;border-bottom:1px solid var(--line);background:var(--bg);padding:14px;overflow:hidden}
+.abox .view img{max-width:100%;max-height:100%}
+.abox .meta{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;font-size:14px}
+.abox .meta b{font-weight:600}
+.mini{border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);color:var(--ink);font:600 12.5px var(--font-body);padding:7px 11px;cursor:pointer;text-transform:var(--case)}
+.mini:hover{border-color:var(--accent)}
+.icons{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;padding:18px}
+.icons button{aspect-ratio:1;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);display:grid;place-items:center;cursor:pointer;padding:0}
+.icons button img{width:26px;height:26px}
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:16px}
+.rules ul{margin:0;padding-left:18px;display:grid;gap:8px}
+.voice{display:grid;gap:10px}
+.voice q{font-family:var(--font-head);text-transform:var(--case);font-size:clamp(20px,2.4vw,30px);line-height:1.2;quotes:none;display:block}
+.dl{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:center}
+.dl ul{margin:10px 0 0;padding-left:18px;color:var(--mute);font-size:14.5px;columns:2;column-gap:28px}
+.dl .row{justify-content:flex-end}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1C1F2A;color:#fff;padding:10px 16px;border-radius:999px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:100}
+.toast.on{opacity:1}
+@media (max-width:1000px){.picker{grid-template-columns:repeat(4,minmax(0,1fr))}.intro{grid-template-columns:1fr}.types{grid-template-columns:1fr}.dl{grid-template-columns:1fr}.dl .row{justify-content:flex-start}}
+@media (max-width:560px){.picker{grid-template-columns:repeat(2,minmax(0,1fr))}.pick{aspect-ratio:4/3}.icons{grid-template-columns:repeat(4,1fr)}.dl ul{columns:1}.khero::after{background:linear-gradient(0deg,var(--bg) 20%,color-mix(in srgb,var(--bg) 70%,transparent) 60%,transparent)}}
+@media (prefers-reduced-motion:reduce){.kbtn,.tog,.tog::after{transition:none}}
+</style></head><body>
+<a class="skip" href="#kit">Skip to the kit</a>
+<header class="top"><a class="back" href="atlas.html#systems">← Atlas / Design systems</a><nav aria-label="Related"><a href="page-builder.html">Page builder</a><a href="interactions.html">Interactions shelf</a><a href="atlas.html#backgrounds">Backgrounds</a></nav></header>
+<section class="intro"><h1>Theme kits.</h1><p>Eight complete kits, from <b>Matrix (01)</b> to <b>Bauhaus (08)</b>. Each has colour and type tokens, every common component, a live animated background, and SVG assets: logo, mark, pattern, divider and twelve icons. Download the whole kit as a zip, or copy just the tokens or an AI prompt.</p></section>
+<div class="picker" id="picker" role="group" aria-label="Choose a theme kit"></div>
+<main id="kit" class="kit" tabindex="-1"></main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="kits/themes.js"></script>
+<script>
+(()=>{
+const TK=window.ThemeKits,L=TK.list,$=s=>document.querySelector(s);
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const svgURL=s=>'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(s);
+let stop=()=>{},cur=null,playing=!reduce;
+function say(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(say.t);say.t=setTimeout(()=>t.classList.remove('on'),1900)}
+async function copy(text,m){try{await navigator.clipboard.writeText(text);say(m)}catch(e){const ta=document.createElement('textarea');ta.value=text;document.body.append(ta);ta.select();try{document.execCommand('copy');say(m)}catch(_){say('Copy failed')}ta.remove()}}
+function save(blob,name){const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),3000)}
+function lum(h){const c=[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)/255).map(v=>v<=.03928?v/12.92:((v+.055)/1.055)**2.4);return .2126*c[0]+.7152*c[1]+.0722*c[2]}
+const ratio=(a,b)=>{const x=lum(a),y=lum(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)};
+const headName=k=>k.fonts.head.split(',')[0].replace(/'/g,''),bodyName=k=>k.fonts.body.split(',')[0].replace(/'/g,'');
+
+/* picker */
+L.forEach(k=>{const b=document.createElement('button');b.className='pick';b.dataset.id=k.id;b.setAttribute('aria-pressed','false');b.innerHTML=`<canvas aria-hidden="true"></canvas><span><small>${k.no}</small><b style="font-family:${esc(k.fonts.head)}">${esc(k.name)}</b></span>`;b.onclick=()=>{location.hash=k.id};$('#picker').append(b);
+ requestAnimationFrame(()=>TK.BG[k.bg](b.querySelector('canvas'),k.t,true))});
+
+function vars(k){const t=k.t;return `--bg:${t.bg};--surface:${t.surface};--ink:${t.ink};--mute:${t.mute};--line:${t.line};--accent:${t.accent};--on-accent:${t.onAccent};--accent-2:${t.accent2};--radius:${t.radius};--shadow:${t.shadow};--glow:${t.glow};--font-head:${k.fonts.head};--font-body:${k.fonts.body};--case:${k.case==='upper'?'uppercase':'none'}`}
+function prompt(k){const t=k.t;return `Design and build a website in the “${k.name}” theme (${k.tagline}). Mood: ${k.mood}.
+Colours: background ${t.bg}, surfaces ${t.surface}, text ${t.ink}, muted text ${t.mute}, lines ${t.line}, accent ${t.accent} (text on accent ${t.onAccent}), second accent ${t.accent2}${t.accent3?`, third accent ${t.accent3}`:''}.
+Type: headings in ${headName(k)}${k.case==='upper'?' set in capitals':''}, body in ${bodyName(k)} (Google Fonts). Corner radius ${t.radius}. Shadow: ${t.shadow}. Focus and hover glow: ${t.glow}. Icons: ${k.stroke.w}px strokes with ${k.stroke.cap} caps.
+Signature background: ${({matrix:'falling columns of green katakana and binary digits that fade as they drop',synth:'a striped neon sun over a perspective grid scrolling towards the viewer',chrome:'slowly drifting chrome bubbles with soft highlights',brutal:'a hard-edged grid of black, orange, blue and white blocks that change one at a time',deco:'gold sunburst rays and concentric arcs rising from the bottom centre',blueprint:'a drafting grid where circles, boxes and dimension lines draw themselves and fade',vapor:'a pastel sky with a striped sunset over a scrolling checkerboard floor',bauhaus:'circles, squares, triangles and quarter-circles in primaries that gently rotate'})[k.bg]}, on a canvas behind the hero, paused under prefers-reduced-motion and with a pause button.
+Voice: ${k.voice.join(' / ')}
+Do: ${k.dos.join(' ')}
+Avoid: ${k.donts.join(' ')}
+Keep text contrast at WCAG AA and make every control keyboard-accessible.`}
+function demoHTML(k){return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${k.name} kit demo</title><link rel="stylesheet" href="tokens.css"><style>
+.hero{position:relative;min-height:80vh;display:grid;align-items:end;padding:6vw;overflow:hidden;isolation:isolate}.hero canvas{position:absolute;inset:0;width:100%;height:100%;z-index:-2}.hero::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,var(--bg) 0,color-mix(in srgb,var(--bg) 70%,transparent) 45%,transparent 80%)}
+.hero h1{font-size:clamp(44px,8vw,110px);margin:16px 0}.hero p{max-width:44ch;font-size:19px}.row{display:flex;gap:12px;flex-wrap:wrap}
+main{padding:6vw;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}.pause{position:absolute;top:20px;right:20px}</style></head><body>
+<section class="hero"><canvas id="bg" aria-hidden="true"></canvas><button class="btn ghost pause" id="p">Pause</button><img src="svg/logo.svg" alt="${k.name}" height="56"><h1>${esc(k.voice[0])}</h1><p>${esc(k.tagline)}</p><div class="row"><a class="btn" href="#">Get started</a><a class="btn ghost" href="#">Learn more</a></div></section>
+<main><div class="card"><h3>Card</h3><p>Surfaces, borders and shadows come from tokens.css.</p><span class="badge">New</span></div><div class="card"><label for="e">Email</label><input id="e" class="field" placeholder="you@example.com"></div><div class="card"><h3>Icons</h3><img src="svg/icons/home.svg" alt="" width="24"> <img src="svg/icons/search.svg" alt="" width="24"> <img src="svg/icons/heart.svg" alt="" width="24"></div></main>
+<script src="background.js"><\/script><script>const c=document.getElementById('bg');const still=matchMedia('(prefers-reduced-motion: reduce)').matches;let stop=startBackground(c,still);let on=!still;const p=document.getElementById('p');p.textContent=on?'Pause':'Play';p.onclick=()=>{stop();on=!on;stop=startBackground(c,!on);p.textContent=on?'Pause':'Play'};<\/script></body></html>`}
+function bgJS(k){return `/* ${k.name} (${k.no}) animated background · Visual & Motion Atlas
+   startBackground(canvas, still) draws on the canvas and returns a stop() function.
+   Pass still=true for a single frame (use it under prefers-reduced-motion). */
+(function(){var T=${JSON.stringify(k.t)};var draw=${TK.BG[k.bg].toString().replace(/^\w+\(/,'function(')};
+window.startBackground=function(canvas,still){return draw(canvas,T,!!still)};})();
+`}
+function pngBlob(k,w=1920,h=1080){return new Promise(res=>{const c=document.createElement('canvas');c.style.cssText=`position:fixed;left:-99999px;width:${w}px;height:${h}px`;document.body.append(c);TK.BG[k.bg](c,k.t,true);c.toBlob(b=>{c.remove();res(b)},'image/png')})}
+async function zipKit(k){say('Packing the '+k.name+' kit…');const files=[['README.txt',`${k.name} (${k.no}) theme kit · Visual & Motion Atlas\n${k.tagline}\n\nOpen demo.html to see the kit working.\n\ntokens.css   CSS custom properties, fonts and base components\ntokens.json  the same tokens as data\nbackground.js  the animated background: startBackground(canvas, still)\nsvg/         logo, logo on dark, mark, pattern tile, divider, 12 icons\npng/background.png  a 1920x1080 still of the background\nprompt.txt   an AI build prompt for this theme\n\nFonts: ${headName(k)} and ${bodyName(k)} from Google Fonts (SIL Open Font Licence).\nEverything else in this kit was generated by the atlas and is yours to use.\n`],
+ ['tokens.css',TK.css(k)],['tokens.json',TK.json(k)],['background.js',bgJS(k)],['demo.html',demoHTML(k)],['prompt.txt',prompt(k)],
+ ['svg/logo.svg',TK.logo(k,false)],['svg/logo-on-background.svg',TK.logo(k,true)],['svg/mark.svg',`<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">${TK.mark(k)}</svg>`],['svg/pattern.svg',TK.pattern(k)],['svg/divider.svg',TK.divider(k)],
+ ...Object.keys(TK.ICONS).map(n=>['svg/icons/'+n+'.svg',TK.icon(k,n)])];
+ const png=new Uint8Array(await (await pngBlob(k)).arrayBuffer());files.push(['png/background.png',png]);
+ save(TK.zip(files),`${k.id}-theme-kit.zip`);say('Downloaded '+k.id+'-theme-kit.zip')}
+
+function render(k){stop();cur=k;document.title=`${k.name} (${k.no}) · Theme kits · Visual & Motion Atlas`;
+ document.querySelectorAll('.pick').forEach(b=>b.setAttribute('aria-pressed',b.dataset.id===k.id));
+ let fl=document.getElementById('kitFull');if(!fl){fl=document.createElement('link');fl.id='kitFull';fl.rel='stylesheet';document.head.append(fl)}fl.href='https://fonts.googleapis.com/css2?'+k.fonts.css+'&display=swap';
+ const t=k.t,m=$('#kit');m.setAttribute('style',vars(k));m.setAttribute('aria-label',k.name+' theme kit');
+ const logo=svgURL(TK.logo(k,false)),pat=svgURL(TK.pattern(k));
+ const tokens=[['Background','bg'],['Surface','surface'],['Text','ink'],['Muted text','mute'],['Lines','line'],['Accent','accent'],['On accent','onAccent'],['Accent 2','accent2'],...(t.accent3?[['Accent 3','accent3']]:[])];
+ const ic=n=>TK.icon(k,n).replace('<svg ','<svg aria-hidden="true" ');
+ m.innerHTML=`
+ <section class="khero" aria-labelledby="kh"><canvas id="kbg" aria-hidden="true"></canvas><button class="kpause" id="kpause" aria-label="${playing?'Pause':'Play'} the background"></button>
+  <div class="kin"><img class="logo" src="${logo}" alt="${esc(k.name)} logo"><p class="kbadge on" style="justify-self:start;margin:0">Kit ${k.no} · ${esc(k.mood)}</p><h2 id="kh">${esc(k.voice[0])}</h2><p class="tag">${esc(k.tagline)} ${esc(k.voice[1])}</p>
+  <div class="row"><button class="kbtn" id="zipTop">${ic('download')}Download the kit</button><button class="kbtn ghost" id="cssTop">Copy tokens</button></div></div></section>
+ <section class="ksec"><div class="kin"><h2>Colour</h2><p class="lede">Select a swatch to copy it. Contrast is measured against the background.</p><div class="sw">${tokens.map(([n,key])=>{const r=ratio(t[key],t.bg);return `<button class="chip" data-copy="${t[key]}"><i style="background:${t[key]}"></i><span><b>${n}</b><code>${t[key]}</code><code>${key==='bg'?'base':r.toFixed(1)+':1'+(r>=4.5?' AA text':r>=3?' large text / UI':' decoration only')}</code></span></button>`}).join('')}</div></div></section>
+ <section class="ksec"><div class="kin"><h2>Type</h2><p class="lede">${esc(headName(k))} for headings${k.case==='upper'?', set in capitals':''}; ${esc(bodyName(k))} for everything you read.</p><div class="types"><div class="tbox"><p class="big">${esc(k.name)}</p><small>${esc(headName(k))} · headings</small></div><div class="tbox"><p style="font-size:20px;line-height:1.4">${esc(k.voice[2])} The quick brown fox jumps over the lazy dog.</p><p style="color:var(--mute)">Body text at 16px with 1.6 line height keeps paragraphs comfortable.</p><small>${esc(bodyName(k))} · body</small></div></div></div></section>
+ <section class="ksec"><div class="kin"><h2>Components</h2><p class="lede">Every piece below is real HTML styled only by the kit's tokens.</p><div class="comp">
+  <div class="cbox"><h3>Navigation</h3><div class="knav"><img src="${svgURL(`<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">${TK.mark(k)}</svg>`)}" alt=""><a href="#kit">Home</a><a href="#kit">Work</a><button class="kbtn">Join</button></div></div>
+  <div class="cbox"><h3>Buttons</h3><div class="row"><button class="kbtn">${ic('arrow')}Primary</button><button class="kbtn ghost">Secondary</button><button class="kbtn" disabled>Disabled</button></div></div>
+  <div class="cbox"><h3>Form</h3><div class="kf"><label for="ke">Email</label><input id="ke" class="kinput" type="email" placeholder="you@example.com" aria-describedby="keh"><p class="hint" id="keh">We'll only use it to send the kit.</p></div><div class="kf"><label for="ks">Plan</label><select id="ks" class="kselect"><option>Starter</option><option>Studio</option></select></div><label class="chk"><input type="checkbox" checked> Send me updates</label><label class="chk"><input type="checkbox" class="tog" checked aria-label="Dark preview"> Dark preview</label></div>
+  <div class="cbox"><h3>Tabs, badges, progress</h3><div class="tabs" role="tablist" aria-label="Example tabs"><button role="tab" aria-selected="true">Overview</button><button role="tab" aria-selected="false" tabindex="-1">Assets</button><button role="tab" aria-selected="false" tabindex="-1">Notes</button></div><div class="badges"><span class="kbadge on">Live</span><span class="kbadge"><i></i>Draft</span><span class="kbadge">v${k.no}</span></div><div class="bar" role="progressbar" aria-valuenow="68" aria-valuemin="0" aria-valuemax="100" aria-label="Upload progress"><i></i></div></div>
+  <div class="cbox"><h3>Alert</h3><div class="alert" role="note">${ic('star')}<p><b>${esc(k.voice[1])}</b> Alerts use the accent border and a tint of the accent.</p></div></div>
+  <div class="cbox"><h3>Card</h3><div class="kcard"><div class="art" style="background-image:url('${pat}')"></div><div class="body"><h4>${esc(k.name)} card</h4><p>Pattern header, title in the heading face, muted description.</p><div class="row"><button class="kbtn ghost" style="min-height:38px;padding:0 14px;font-size:13px">Open</button></div></div></div></div>
+  <div class="cbox"><h3>Table</h3><table class="kt"><thead><tr><th scope="col">Asset</th><th scope="col">Type</th><th scope="col">Size</th></tr></thead><tbody><tr><td>logo.svg</td><td>Vector</td><td>2 KB</td></tr><tr><td>pattern.svg</td><td>Tile</td><td>1 KB</td></tr><tr><td>background.js</td><td>Canvas</td><td>3 KB</td></tr></tbody></table></div>
+ </div></div></section>
+ <section class="ksec"><div class="kin"><h2>Assets</h2><p class="lede">All vector, all generated for this kit. Download any one, or get everything in the zip.</p><div class="assets">
+  <div class="abox"><div class="view"><img src="${logo}" alt="${esc(k.name)} logo"></div><div class="meta"><b>Logo</b><button class="mini" data-dl="logo">SVG</button></div></div>
+  <div class="abox"><div class="view" style="background-image:url('${pat}')"></div><div class="meta"><b>Pattern tile</b><button class="mini" data-dl="pattern">SVG</button></div></div>
+  <div class="abox"><div class="view"><img src="${svgURL(`<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 64 64">${TK.mark(k)}</svg>`)}" alt="${esc(k.name)} mark" width="120" height="120"></div><div class="meta"><b>Mark</b><button class="mini" data-dl="mark">SVG</button></div></div>
+  <div class="abox"><div class="view"><img src="${svgURL(TK.divider(k))}" alt="" style="width:100%"></div><div class="meta"><b>Divider</b><button class="mini" data-dl="divider">SVG</button></div></div>
+  <div class="abox"><div class="icons" role="group" aria-label="Icons: select one to download it">${Object.keys(TK.ICONS).map(n=>`<button data-icon="${n}" aria-label="Download ${n} icon"><img src="${svgURL(TK.icon(k,n))}" alt=""></button>`).join('')}</div><div class="meta"><b>12 icons · ${k.stroke.w}px ${k.stroke.cap} stroke</b></div></div>
+  <div class="abox"><div class="view" style="padding:0"><canvas id="kstill" style="width:100%;height:100%" aria-label="Still frame of the ${esc(k.name)} background" role="img"></canvas></div><div class="meta"><b>Background still</b><button class="mini" data-dl="png">PNG 1920×1080</button></div></div>
+ </div></div></section>
+ <section class="ksec"><div class="kin"><h2>Voice &amp; rules</h2><p class="lede">How the theme sounds, and what keeps it working.</p><div class="rules"><div class="tbox voice">${k.voice.map(v=>`<q>${esc(v)}</q>`).join('')}</div><div class="tbox"><h3 style="margin:0 0 10px;font-size:18px">Do</h3><ul>${k.dos.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div><div class="tbox"><h3 style="margin:0 0 10px;font-size:18px">Avoid</h3><ul>${k.donts.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div></div></div></section>
+ <section class="ksec"><div class="kin dl"><div><h2>Take the whole kit</h2><ul><li>tokens.css and tokens.json</li><li>background.js (animated, with a still mode)</li><li>demo.html, ready to open</li><li>Logo, mark, pattern, divider</li><li>Twelve icons as SVG</li><li>Background still as PNG</li><li>An AI build prompt</li></ul></div><div class="row"><button class="kbtn" id="zipBottom">${ic('download')}Download .zip</button><button class="kbtn ghost" id="promptBtn">Copy AI prompt</button><button class="kbtn ghost" id="bgBtn">Copy background.js</button></div></div></section>`;
+ const cv=m.querySelector('#kbg'),pb=m.querySelector('#kpause');
+ const icoP='<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="3" y="2" width="3.5" height="12" rx="1"/><rect x="9.5" y="2" width="3.5" height="12" rx="1"/></svg>',icoPl='<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>';
+ const run=()=>{stop();stop=TK.BG[k.bg](cv,t,!playing);pb.innerHTML=playing?icoP:icoPl;pb.setAttribute('aria-label',(playing?'Pause':'Play')+' the background')};
+ requestAnimationFrame(run);pb.onclick=()=>{playing=!playing;run()};
+ requestAnimationFrame(()=>TK.BG[k.bg](m.querySelector('#kstill'),t,true));
+ m.querySelectorAll('[data-copy]').forEach(b=>b.onclick=()=>copy(b.dataset.copy,'Copied '+b.dataset.copy));
+ const one={logo:()=>[TK.logo(k,false),'logo.svg'],pattern:()=>[TK.pattern(k),'pattern.svg'],mark:()=>[`<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">${TK.mark(k)}</svg>`,'mark.svg'],divider:()=>[TK.divider(k),'divider.svg']};
+ m.querySelectorAll('[data-dl]').forEach(b=>b.onclick=async()=>{if(b.dataset.dl==='png'){save(await pngBlob(k),k.id+'-background.png');return}const [s,n]=one[b.dataset.dl]();save(new Blob([s],{type:'image/svg+xml'}),k.id+'-'+n);say('Downloaded '+k.id+'-'+n)});
+ m.querySelectorAll('[data-icon]').forEach(b=>b.onclick=()=>{save(new Blob([TK.icon(k,b.dataset.icon)],{type:'image/svg+xml'}),`${k.id}-${b.dataset.icon}.svg`);say('Downloaded '+b.dataset.icon+' icon')});
+ m.querySelectorAll('.tabs [role=tab]').forEach((tb,i,all)=>{tb.onclick=()=>all.forEach(x=>{x.setAttribute('aria-selected',x===tb);x.tabIndex=x===tb?0:-1});tb.onkeydown=e=>{const d={ArrowRight:1,ArrowLeft:-1}[e.key];if(d){const n=all[(i+d+all.length)%all.length];n.click();n.focus()}}});
+ m.querySelector('#zipTop').onclick=m.querySelector('#zipBottom').onclick=()=>zipKit(k);
+ m.querySelector('#cssTop').onclick=()=>copy(TK.css(k),'Tokens copied');
+ m.querySelector('#promptBtn').onclick=()=>copy(prompt(k),'Prompt copied');
+ m.querySelector('#bgBtn').onclick=()=>copy(bgJS(k),'background.js copied');}
+function fromHash(){const k=L.find(x=>x.id===location.hash.slice(1))||cur||L[0];if(k!==cur)render(k)}
+addEventListener('hashchange',()=>{fromHash();$('#kit').focus({preventScroll:true});$('#kit').scrollIntoView({behavior:reduce?'auto':'smooth'})});
+fromHash();
+})();
+</script></body></html>
