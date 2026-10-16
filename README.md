@@ -347,6 +347,17 @@ These are the AI cooking channel's own styles. They come first in every style ro
 - **Validation:** both categorical palettes pass the dataviz validator. Noir's colour-blind ΔE is 9.4. Paper's is 6.3, which is in the floor band and fine with the direct labels these charts use. Status red and green are never reused as series colours.
 - **Plan pack:** the channel plan deck's charts are in `deliverables/channel-plan/`, in both styles.
 
+### Navigation (`site/atlas-nav.js`, `atlas-nav.css`)
+
+One slim top bar replaces the two rows of menus: **brand · Library · Make ▾ · Your studio ▾ · Search**.
+- **Library** opens a left drawer (a modal dialog: focus moves in, Escape or the backdrop closes it). Every section sits in one of six plain groups: Explore, Visual, Motion, Interface, Make and Your studio. Each item has a 40px film thumbnail and a one-line purpose, and the current page is marked.
+  - On wide screens, hovering or focusing an item plays that section's film in a framed preview beside the list (posters only under reduced motion).
+  - Quick actions at the top: **Search everything** and **Find a direction**, which reuse the existing palette and finder.
+- **Make** and **Your studio** are short dropdowns with a description per link; on phones they live in the drawer only.
+- **Page trail:** `Atlas / Group / Page`. The group name is a button that opens the drawer at that group.
+- **Catalogue on phones:** the collections rail becomes a left drawer opened by a "Collection: …" button, which shows the active collection and how many other filters are on. Choosing a collection closes it.
+- The old menus stay in the DOM, hidden, because several modules hook into them. The new bar reuses the `navGroup` open/close behaviour. Thumbnails are in `assets/films/mini/`.
+
 ### Page builder (`site/page-builder.html`, `site/builder/blocks.js`, `tools/blocks.py`)
 
 Stack sections into a whole page, choose a style, write your own words and export it.

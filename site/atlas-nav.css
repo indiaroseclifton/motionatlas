@@ -1,0 +1,100 @@
+/* Navigation: slim top bar, Library drawer, page trail and phone filter drawer (atlas-nav.js) */
+body.anNav>header nav[aria-label=Main],body.anNav>header .librarynav,body.anNav .mobileNavHint,body.anNav>header .finderBtn{display:none!important}
+body.anNav>header{flex-wrap:nowrap;row-gap:0;padding-bottom:12px}
+.anBar{order:1;display:flex;align-items:center;gap:6px;flex:1;min-width:0;margin-left:clamp(8px,2vw,28px)}
+.anLibBtn{display:inline-flex;align-items:center;gap:9px;min-height:40px;padding:0 16px 0 13px;border-radius:999px;border:1px solid rgba(253,230,138,.45);background:rgba(253,230,138,.1);color:#fde68a;font:600 13.5px/1 "Manrope",system-ui,sans-serif;letter-spacing:.01em;cursor:pointer;transition:background .2s,border-color .2s}
+.anLibBtn:hover{background:rgba(253,230,138,.18);border-color:rgba(253,230,138,.7)}
+.anLibBtn svg{width:16px;height:16px}
+.anLibBtn:focus-visible,.anMenu summary:focus-visible,.anDrawer a:focus-visible,.anDrawer button:focus-visible,.anTrailGroup:focus-visible,.anFilterBtn:focus-visible{outline:2px solid #fde68a;outline-offset:3px}
+.anMenu{position:relative}
+.anMenu summary{list-style:none;display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 12px;border-radius:999px;color:#c9d3e3;font:500 14px/1 "Manrope",system-ui,sans-serif;cursor:pointer;white-space:nowrap}
+.anMenu summary::-webkit-details-marker{display:none}
+.anMenu summary:hover,.anMenu[open] summary{color:#fff;background:rgba(255,255,255,.07)}
+.anMenu.anHere summary{color:#fff;box-shadow:inset 0 -2px 0 #fde68a}
+.anMenu summary svg{width:10px;height:10px;transition:transform .2s}
+.anMenu[open] summary svg{transform:rotate(180deg)}
+.anMenu>div{position:absolute;top:calc(100% + 8px);left:0;z-index:60;display:grid;gap:2px;width:min(330px,80vw);padding:8px;border-radius:16px;background:#0d111b;border:1px solid rgba(190,210,240,.16);box-shadow:0 24px 60px -20px rgba(0,0,0,.7)}
+.anMenu>div a{display:grid;gap:2px;padding:10px 12px;border-radius:10px;text-decoration:none;color:#e8edf5}
+.anMenu>div a:hover,.anMenu>div a.active{background:rgba(255,255,255,.07)}
+.anMenu>div a b{font:600 14px/1.25 "Manrope",system-ui,sans-serif}
+.anMenu>div a span{font-size:12.5px;line-height:1.4;color:#9eabbe}
+body.anNav>header .aeSearchBtn{margin-left:auto}
+
+/* Library drawer */
+.anDrawer{position:fixed;inset:0 auto 0 0;margin:0;width:min(900px,100vw);max-width:100vw;height:100%;max-height:100%;padding:0;border:0;background:#0b0e16;color:#e8edf5;display:none;grid-template-columns:minmax(0,440px) minmax(0,1fr);box-shadow:30px 0 80px -30px rgba(0,0,0,.8)}
+.anDrawer[open]{display:grid;animation:anIn .32s cubic-bezier(.2,.8,.2,1)}
+.anDrawer::backdrop{background:rgba(4,6,12,.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+@keyframes anIn{from{transform:translateX(-40px);opacity:0}to{transform:none;opacity:1}}
+body.anOpen{overflow:hidden}
+.anPanel{display:flex;flex-direction:column;min-height:0;overflow:auto;padding:max(18px,env(safe-area-inset-top)) 20px 28px max(20px,env(safe-area-inset-left));border-right:1px solid rgba(190,210,240,.1)}
+.anHead{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.anTitle{margin:0;font:italic 500 30px/1 "Cormorant Garamond",Georgia,serif;letter-spacing:-.01em}
+.anClose{width:40px;height:40px;border-radius:50%;border:1px solid rgba(190,210,240,.2);background:transparent;color:inherit;display:grid;place-items:center;cursor:pointer}
+.anClose svg{width:16px;height:16px}
+.anQuick{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.anQ{display:flex;align-items:center;gap:9px;min-height:44px;padding:0 12px;border-radius:12px;border:1px solid rgba(190,210,240,.16);background:rgba(255,255,255,.03);color:#e8edf5;font:500 13.5px/1.2 "Manrope",system-ui,sans-serif;text-align:left;cursor:pointer}
+.anQ:hover{background:rgba(255,255,255,.07)}
+.anQ svg{width:16px;height:16px;flex:0 0 16px}
+.anQ kbd{margin-left:auto;font:500 11px/1 "JetBrains Mono",monospace;padding:3px 6px;border:1px solid rgba(190,210,240,.25);border-radius:5px;color:#9eabbe}
+.anFind{border-color:rgba(253,230,138,.4);color:#fde68a}
+.anGroup{padding-top:14px}
+.anGroup h2{margin:0 0 6px;padding:0 4px;font:500 11px/1 "JetBrains Mono",monospace;letter-spacing:.16em;text-transform:uppercase;color:#9eabbe}
+.anGroup ul{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.anGroup a{display:grid;grid-template-columns:40px minmax(0,1fr);gap:12px;align-items:center;padding:7px 8px;border-radius:12px;text-decoration:none;color:inherit}
+.anGroup a:hover,.anGroup a:focus-visible{background:rgba(255,255,255,.06)}
+.anGroup a[aria-current=page]{background:rgba(253,230,138,.1);box-shadow:inset 3px 0 0 #fde68a}
+.anGroup img{width:40px;height:40px;border-radius:9px;object-fit:cover;background:#1a2030}
+.anGroup b{display:block;font:600 14.5px/1.25 "Manrope",system-ui,sans-serif}
+.anGroup small{display:block;font-size:12.5px;line-height:1.4;color:#9eabbe}
+.anPreview{display:flex;flex-direction:column;gap:8px;padding:24px 24px 28px;min-width:0;min-height:0}
+.anFilm{position:relative;flex:1;min-height:0;border-radius:18px;overflow:hidden;background:#151a26;margin-bottom:10px}
+.anFilm img,.anFilm video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.anPreview p{margin:0;max-width:38ch}
+.anPGroup{align-self:flex-start;font:500 11px/1 "JetBrains Mono",monospace;letter-spacing:.16em;text-transform:uppercase;color:#fde68a;}
+.anPName{font:500 clamp(34px,4vw,52px)/1 "Cormorant Garamond",Georgia,serif;letter-spacing:-.01em}
+.anPNote{color:#c9d3e3;font-size:15px;line-height:1.5}
+
+/* Page trail: the group opens the drawer */
+.anTrailGroup{all:unset;cursor:pointer;color:inherit;text-decoration:underline;text-decoration-color:currentColor;text-decoration-thickness:1px;text-underline-offset:3px;opacity:.85}
+.anTrailGroup:hover{opacity:1}
+
+/* Catalogue: collections and filters as a drawer on phones */
+.anFilterBtn,.anRailHead{display:none}
+@media (max-width:900px){
+ .anFilterBtn{display:inline-flex;align-items:center;gap:9px;min-height:44px;padding:0 16px;margin:0 0 14px;border-radius:999px;font-weight:600}
+ .anFilterBtn svg{width:16px;height:16px}
+ .anFilterBtn b{font-weight:700}
+ .anFilterBtn em{font-style:normal;margin-left:6px;padding:2px 8px;border-radius:999px;background:#1C1F2A;color:#fff;font-size:12px}
+ #browse .collectionrail{position:fixed;inset:0 auto 0 0;z-index:90;width:min(340px,88vw);max-height:none;height:100%;margin:0;border-radius:0 18px 18px 0;overflow:auto;transform:translateX(-104%);transition:transform .3s cubic-bezier(.2,.8,.2,1);display:block;padding:max(16px,env(safe-area-inset-top)) 16px 24px max(16px,env(safe-area-inset-left));box-shadow:20px 0 60px -20px rgba(0,0,0,.4);visibility:hidden}
+ #browse .collectionrail.anRailOpen{transform:none;visibility:visible}
+ #browse .collectionrail button[data-collection]{display:flex;width:100%;justify-content:space-between;min-height:44px}
+ .anRailHead{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+ .anRailHead p{margin:0;font:500 11px/1 "JetBrains Mono",monospace;letter-spacing:.16em;text-transform:uppercase}
+ .anRailHead .anClose{color:inherit;border-color:rgba(0,0,0,.15)}
+ .anShade{position:fixed;inset:0;z-index:89;background:rgba(10,12,20,.45)}
+ #browse .collectionrail .railtitle{display:none}
+}
+@media (max-width:1100px){.anMenu summary{padding:0 9px;font-size:13.5px}}
+@media (max-width:760px){
+ .anMake,.anStudio{display:none}
+ .anBar{margin-left:auto;flex:0 0 auto}
+ body.anNav>header .aeSearchBtn{margin-left:6px}
+ .anDrawer{grid-template-columns:1fr}
+ .anPreview{display:none}
+ .anPanel{border-right:0}
+}
+@media (max-width:420px){.anQuick{grid-template-columns:1fr}.anLibBtn span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}.anLibBtn{padding:0;width:42px;justify-content:center}}
+@media (prefers-reduced-motion:reduce){.anDrawer[open]{animation:none}#browse .collectionrail{transition:none}.anLibBtn,.anMenu summary svg{transition:none}}
+/* Guard against the site's general nav, list and menu styles */
+.anDrawer .anGroups{white-space:normal;overflow:visible;font-size:inherit;flex:none}
+.anDrawer .anGroups,.anDrawer .anGroup{display:block;width:auto;margin:0;padding-left:0;padding-right:0;border:0;background:none;gap:0}
+.anDrawer .anGroup{padding-top:14px}
+.anDrawer .anGroup ul{display:grid;grid-template-columns:1fr;gap:2px}
+.anDrawer .anGroup li{display:block;margin:0;padding:0}
+.anDrawer .anGroup a{width:auto;white-space:normal}
+.anMenu summary::after,.anMenu summary::before{content:none!important;display:none!important}
+body.anNav>header .brand{order:0}
+body.anNav>header .aeSearchBtn{order:3}
+.anDrawer .anGroups a,.anDrawer .anGroups a.active{color:#e8edf5}
+.anDrawer .anGroups a::after,.anDrawer .anGroups a::before,.anMenu>div a::after,.anMenu>div a::before{content:none!important;display:none!important}
+.anMenu>div a,.anMenu>div a.active{color:#e8edf5}
