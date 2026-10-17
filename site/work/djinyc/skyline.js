@@ -139,7 +139,7 @@ window.Skyline=(()=>{
   function size(){const w=canvas.clientWidth,h=canvas.clientHeight;if(!w||!h)return;R.setSize(w,h,false);cam.aspect=w/h;cam.fov=w<700?64:50;cam.updateProjectionMatrix();U.pix.value=h*1.1}
   size();const ro=new ResizeObserver(size);ro.observe(canvas);
   const pos=new T.Vector3(),ahead=new T.Vector3(),prev=new T.Vector3(),look=new T.Vector3();let roll=0;
-  function place(t,dt){const u=(t/LOOP)%1,u2=(u+.03)%1;route.getPointAt(u,pos);route.getPointAt(u2,ahead);
+  function place(t,dt){const u=((t/LOOP)%1+1)%1,u2=(u+.03)%1;route.getPointAt(u,pos);route.getPointAt(u2,ahead);
    const lift=scroll*scroll*(3-2*scroll)*260;pos.y+=lift;ahead.y+=lift-(70+scroll*180);
    mx+=(tx-mx)*.03;my+=(ty-my)*.03;
    const side=new T.Vector3().subVectors(ahead,pos).cross(new T.Vector3(0,1,0)).normalize();
@@ -149,7 +149,7 @@ window.Skyline=(()=>{
    if(dt>0){state.speed=pos.distanceTo(prev)/dt}prev.copy(pos);
    state.alt=pos.y;state.dist=Math.hypot(pos.x-home.x,pos.z-home.z);state.heading=(Math.atan2(t3.x,-t3.z)*180/Math.PI+389)%360}
   function renderAt(t,dt=1/30){U.time.value=t;place(t,dt);R.render(scene,cam)}
-  function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;clock+=dt;renderAt(clock,dt);if(running)raf=requestAnimationFrame(frame)}
+  function frame(now){const dt=Math.max(0,Math.min(.05,(now-last)/1000));last=now;clock+=dt;renderAt(clock,dt);if(running)raf=requestAnimationFrame(frame)}
   if(still){clock=38;renderAt(clock,0);addEventListener('scroll',()=>requestAnimationFrame(()=>renderAt(clock,0)),{passive:true})}else raf=requestAnimationFrame(frame);
   const vis=()=>{if(document.hidden){cancelAnimationFrame(raf)}else if(running){last=performance.now();raf=requestAnimationFrame(frame)}};document.addEventListener('visibilitychange',vis);
   return {state,renderAt,size,pause(){running=false;cancelAnimationFrame(raf)},play(){if(still||running)return;running=true;last=performance.now();raf=requestAnimationFrame(frame)},get running(){return running},count:N};
