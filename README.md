@@ -355,6 +355,22 @@ Eight complete kits: **Matrix (01)**, **Synthwave (02)**, **Y2K Chrome (03)**, *
 - **Download the kit** builds a zip in the browser (a small stored-zip writer, no library). It contains `tokens.css`, `tokens.json`, `background.js` (`startBackground(canvas, still)`), a working `demo.html`, `svg/`, `png/`, `prompt.txt` and a README. You can also copy just the tokens, the AI prompt or `background.js`.
 - Every kit passes axe WCAG A/AA. The page is in the Library drawer under Interface.
 
+### Case study: 01ai (`site/work/01/`, `api/apply.js`)
+
+A worked example of using the atlas on a real brief: the 01 brand brief (01ai, 01 Agency, 01 Workspace). Live at `/work/01/home`; it is also in the Library drawer under Make.
+
+- `home.html`: "city circuits", a three.js motherboard laid out like a city (`city.js`) with an angled, off-centre camera, pointer parallax and a scroll dolly. Below it: war-room feeds (`feeds.js`), six claims set as hairline rows, a "Powered by 01ai" ticker and teasers. `assets/city-poster.jpg` is the still shown before WebGL starts.
+- `agents.html`: a faint, small binary DNA strand (`dna.js`) that unzips, recombines and sends off a new agent every ten seconds, plus the agent roster and how agents are born.
+- `integrations.html`: 76 real integration marks from Simple Icons (CC0, `integrations-data.js`), with filters, search and live dots.
+- `origin.html`: 100+ coders, 4 continents, 3+ years; a 24-hour follow-the-sun board, the route so far and a live changelog.
+- `apply.html`: a six-stage application with minimum lengths, autosave on the device and a review step. It posts to `/api/apply`, which emails it through Resend when `RESEND_API_KEY` and `APPLY_TO` are set on the Vercel project (`APPLY_FROM` optional). Without them the page offers the applicant a copy and a text download.
+- `login.html`: a discreet sign-in form. It is front-end only and says so.
+- `chat.html`: the interface showpiece. It runs scripted demos (labelled on screen) showing model routing, the agent swarm, tool calls and a streamed answer.
+- `brand.html`: the design system: logo, colour, type, routed motion (with live demos), the synthesised sound kit, components, voice, the atlas pieces each part came from, and 01 Agency and 01 Workspace applications.
+- Shared: `01.css` holds the tokens and components, and `01.js` holds the header, sound kit, decode and routed reveals. The logos are in `assets/` as SVG.
+- The system is also in the atlas as theme kit 09, "01 Graphite" (`site/kits/themes.js`).
+- Still to confirm: the ticker uses placeholder names (Company 01–40), and real names go in only with permission. The origin time zones and milestones are drafts.
+
 ### Project files and sharing (`site/project-share.js`, `site/share-client.js`, `site/shared.html`, `api/`)
 
 - **Files:** add images, video, PDFs, fonts, zips or text to a project when you create it or later, by choosing or dropping files (up to 100 MB each). They are kept in this browser in IndexedDB (`atlas-project-files`) and previewed in the project.

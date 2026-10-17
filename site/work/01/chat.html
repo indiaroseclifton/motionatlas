@@ -74,7 +74,7 @@
 .swarm i.ok{background:var(--green)}
 .idle{color:var(--pt-3);font-size:14px;margin:0}
 @media (max-width:1180px){.app{grid-template-columns:200px minmax(0,1fr)}.right{display:none}}
-@media (max-width:760px){.app{grid-template-columns:1fr;padding-top:104px}.left{display:none}.thread{max-height:none}.composer{position:sticky;bottom:0}}
+@media (max-width:760px){.composer textarea{font-size:16px}.app{grid-template-columns:1fr;padding-top:104px}.left{display:none}.thread{max-height:none}.composer{position:sticky;bottom:0}}
 </style></head><body>
 <main id="main" class="app">
  <aside class="left" aria-label="Sessions">
@@ -99,7 +99,7 @@
    </div>
   </div>
   <div class="composer">
-   <form id="ask"><div class="o-field"><label for="q" class="vh">Message 01ai</label><textarea class="o-input o-textarea" id="q" rows="1" placeholder="Give the agents something hard…"></textarea></div><button class="o-btn solid" type="submit" id="go">Send</button></form>
+   <form id="ask"><div class="o-field"><label for="q" class="vh">Message 01ai</label><textarea class="o-input o-textarea" id="q" rows="1" placeholder="Give them something hard…"></textarea></div><button class="o-btn solid" type="submit" id="go">Send</button></form>
    <p class="opts"><span>Routing <b>Adaptive</b></span><span>Agents <b>Swarm</b></span><span>Tools <b>All 60+</b></span><span>Enter to send</span></p>
   </div>
  </section>

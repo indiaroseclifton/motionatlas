@@ -1,5 +1,5 @@
 'use strict';
-/* Theme kits: tokens, fonts, voice, animated backgrounds and SVG assets for eight themes.
+/* Theme kits: tokens, fonts, voice, animated backgrounds and SVG assets for nine themes.
    Every background is a self-contained function (canvas, tokens, still) -> stop(), so it can be
    exported as-is with Function.prototype.toString(). Every asset is generated as an SVG string. */
 (()=>{
@@ -59,7 +59,14 @@ const K=[
   bg:'bauhaus',stroke:{w:2,cap:'butt'},case:'none',
   voice:['Form follows function.','Less, but better.','Learn by making.'],
   dos:['Build layouts from circles, squares and triangles.','Use primaries in flat blocks.','Set headlines heavy and tight, body light.'],
-  donts:['Gradients and shadows.','More than three colours plus black.','Ornament without purpose.']}
+  donts:['Gradients and shadows.','More than three colours plus black.','Ornament without purpose.']},
+ {id:'graphite',no:'09',name:'01 Graphite',tagline:'A motherboard city at night.',mood:'AI, infrastructure, fintech, anything that should feel expensive and alive',
+  fonts:{head:"'Geist',system-ui,sans-serif",body:"'Geist',system-ui,sans-serif",css:'family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500'},
+  t:{bg:'#07090C',surface:'#0F1318',ink:'#E7EAEE',mute:'#8A94A2',line:'#252D38',accent:'#7FE7F7',onAccent:'#07090C',accent2:'#3CF29A',accent3:'#A98BFF',radius:'4px',shadow:'0 0 0 1px #252D38',glow:'0 0 10px rgba(127,231,247,.55)'},
+  bg:'graphite',stroke:{w:1.4,cap:'square'},case:'none',
+  voice:['The most powerful agentic system.','Coordinated. Adaptive. Unyielding.','1000+ models, and more always coming.'],
+  dos:['Set the headline huge, platinum, left-aligned and off-centre.','Let numbers tick in steps; text decodes from 0s and 1s.','Keep cyan for signal and green for "live"; purple and amber stay rare.'],
+  donts:['Boxed callout cards: use hairlines and corner ticks instead.','Overhead or symmetrical compositions.','Small headlines, or any "by invitation only" line.']}
 ];
 
 /* ---------- Animated backgrounds: (canvas, t, still) -> stop() ---------- */
@@ -110,6 +117,19 @@ vapor(c,t,still){const x=c.getContext('2d');let W,H,raf,off=0;
   const r=Math.min(W,H)*.18,cx=W*.5,cy=hz-r*.2;g=x.createLinearGradient(0,cy-r,0,cy+r);g.addColorStop(0,'#FFB3D9');g.addColorStop(1,'#FF7EB6');x.save();x.beginPath();x.arc(cx,cy,r,0,Math.PI*2);x.clip();x.fillStyle=g;x.fillRect(cx-r,cy-r,2*r,2*r);x.fillStyle='#FCE4F6';for(let i=0;i<5;i++)x.fillRect(cx-r,cy+i*r*.18,2*r,3+i*2);x.restore();
   x.fillStyle='#2B1240';x.fillRect(0,hz,W,H-hz);const rows=14;for(let j=0;j<rows;j++){const p0=((j+off)/rows),p1=((j+1+off)/rows);const y0=hz+(H-hz)*p0*p0,y1=hz+(H-hz)*p1*p1;const n=16;for(let i=-n;i<n;i++){if((i+j)%2)continue;const xa0=W/2+i/n*W*(.15+p0*1.2),xb0=W/2+(i+1)/n*W*(.15+p0*1.2),xa1=W/2+i/n*W*(.15+p1*1.2),xb1=W/2+(i+1)/n*W*(.15+p1*1.2);x.fillStyle=j%2?'#00B3B3':'#F9A8D4';x.beginPath();x.moveTo(xa0,y0);x.lineTo(xb0,y0);x.lineTo(xb1,y1);x.lineTo(xa1,y1);x.fill()}}}
  size();if(still){draw();return()=>{}}const loop=()=>{off=(off+.01)%2;draw();raf=requestAnimationFrame(loop)};loop();const ro=new ResizeObserver(size);ro.observe(c);return()=>{cancelAnimationFrame(raf);ro.disconnect()}},
+graphite(c,t,still){const x=c.getContext('2d');let W,H,d,raf,routes=[],cars=[],chips=[];
+ function size(){d=Math.min(2,devicePixelRatio||1);W=c.width=c.clientWidth*d;H=c.height=c.clientHeight*d;const g=24*d;routes=[];chips=[];
+  for(let k=0;k<26;k++){const cw=(2+Math.random()*4|0)*g,ch=(2+Math.random()*3|0)*g;chips.push([Math.round(Math.random()*W/g)*g,Math.round(Math.random()*H/g)*g,cw,ch])}
+  for(let k=0;k<46;k++){let px=Math.round(Math.random()*W/g)*g,py=Math.round(Math.random()*H/g)*g,dx=Math.random()<.5?1:-1,dy=0;const pts=[[px,py]];if(Math.random()<.5){dy=dx;dx=0}
+   for(let s=0;s<6;s++){const L=(2+Math.random()*8|0)*g;px+=dx*L;py+=dy*L;pts.push([px,py]);if(Math.random()<.6){const tt=Math.random()<.5?1:-1;const ndx=dx?0:tt,ndy=dy?0:tt;px+=(dx+ndx)*g*.5;py+=(dy+ndy)*g*.5;pts.push([px,py]);dx=ndx;dy=ndy}}
+   const len=[0];for(let i=1;i<pts.length;i++)len.push(len[i-1]+Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]));routes.push({pts,len,hi:Math.random()<.25})}
+  cars=Array.from({length:140},()=>{const r=routes[Math.random()*routes.length|0];return{r,t:Math.random()*r.len[r.len.length-1],v:(40+Math.random()*90)*d,c:Math.random()<.06?t.accent2:Math.random()<.5?t.accent:'#DDFBFF'}})}
+ function draw(dt){x.fillStyle=t.bg;x.fillRect(0,0,W,H);x.lineWidth=d;
+  chips.forEach(([a,b,w,h])=>{x.fillStyle='#10141A';x.fillRect(a,b,w,h);x.strokeStyle='rgba(168,216,226,.28)';x.strokeRect(a+.5,b+.5,w,h);x.fillStyle='rgba(190,200,212,.35)';for(let i=a+6*d;i<a+w-4*d;i+=8*d){x.fillRect(i,b-4*d,3*d,4*d);x.fillRect(i,b+h,3*d,4*d)}});
+  routes.forEach(r=>{x.strokeStyle=r.hi?'rgba(127,231,247,.45)':'rgba(44,143,160,.45)';x.lineWidth=(r.hi?1.6:1)*d;x.beginPath();r.pts.forEach(([a,b],i)=>i?x.lineTo(a,b):x.moveTo(a,b));x.stroke()});
+  cars.forEach(k=>{const r=k.r,tot=r.len[r.len.length-1];k.t=(k.t+k.v*dt)%tot;let i=1;while(i<r.len.length-1&&r.len[i]<k.t)i++;const a=r.pts[i-1],b=r.pts[i],f=(k.t-r.len[i-1])/((r.len[i]-r.len[i-1])||1),px=a[0]+(b[0]-a[0])*f,py=a[1]+(b[1]-a[1])*f;
+   const g=x.createRadialGradient(px,py,0,px,py,6*d);g.addColorStop(0,k.c);g.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=g;x.fillRect(px-6*d,py-6*d,12*d,12*d)})}
+ size();if(still){draw(0);return()=>{}}let last=performance.now();const loop=n=>{raf=requestAnimationFrame(loop);const dt=Math.min(.05,(n-last)/1000);last=n;draw(dt)};raf=requestAnimationFrame(loop);const ro=new ResizeObserver(size);ro.observe(c);return()=>{cancelAnimationFrame(raf);ro.disconnect()}},
 bauhaus(c,t,still){const x=c.getContext('2d');let W,H,raf,a=0,items=[];const cols=[t.accent,t.accent2,t.accent3||'#F5C400',t.ink];
  function size(){const d=Math.min(2,devicePixelRatio||1);W=c.width=c.clientWidth*d;H=c.height=c.clientHeight*d;const s=Math.max(70,W/9);items=[];for(let y=0;y<H/s;y++)for(let i=0;i<W/s;i++){if(Math.random()<.45)items.push({X:i*s,Y:y*s,s,k:Math.random()*4|0,c:cols[Math.random()*cols.length|0],r:Math.random()*4|0,sp:(Math.random()-.5)*.6})}}
  function draw(){x.fillStyle=t.bg;x.fillRect(0,0,W,H);items.forEach(e=>{x.save();x.translate(e.X+e.s/2,e.Y+e.s/2);x.rotate(e.r*Math.PI/2+Math.sin(a+e.X)*e.sp);x.fillStyle=e.c;const h=e.s/2;x.beginPath();if(e.k===0)x.arc(0,0,h*.9,0,Math.PI*2);else if(e.k===1)x.rect(-h*.8,-h*.8,h*1.6,h*1.6);else if(e.k===2){x.moveTo(-h*.9,h*.8);x.lineTo(0,-h*.9);x.lineTo(h*.9,h*.8)}else{x.arc(-h,h,h*1.8,-Math.PI/2,0);x.lineTo(-h,h)}x.fill();x.restore()})}
@@ -127,6 +147,7 @@ function pattern(k){const t=k.t;switch(k.id){
  case 'deco':return `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="32" viewBox="0 0 64 32"><rect width="64" height="32" fill="${t.bg}"/><g fill="none" stroke="${t.accent}" stroke-width="1"><path d="M0 32a32 32 0 0 1 64 0"/><path d="M8 32a24 24 0 0 1 48 0"/><path d="M16 32a16 16 0 0 1 32 0"/><path d="M24 32a8 8 0 0 1 16 0"/><path d="M-32 32a32 32 0 0 1 64 0" transform="translate(0 -32)"/><path d="M32 32a32 32 0 0 1 64 0" transform="translate(0 -32)"/></g></svg>`;
  case 'blueprint':return `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="${t.bg}"/><g stroke="#fff" stroke-opacity=".1"><path d="M20 0v100M40 0v100M60 0v100M80 0v100M0 20h100M0 40h100M0 60h100M0 80h100"/></g><path d="M0 .5h100M.5 0v100" stroke="#fff" stroke-opacity=".3"/></svg>`;
  case 'vaporwave':return `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><rect width="40" height="40" fill="${t.bg}"/><rect width="20" height="20" fill="${t.line}"/><rect x="20" y="20" width="20" height="20" fill="${t.line}"/><path d="M26 6l6 10H20z" fill="${t.accent2}" fill-opacity=".6"/></svg>`;
+ case 'graphite':return `<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96"><rect width="96" height="96" fill="${t.bg}"/><g fill="none" stroke-width="1"><path d="M0 24h30l12 12h54M48 0v18l12 12v66M0 72h20l10-10h22" stroke="#2C8FA0" stroke-opacity=".7"/><path d="M72 0v40l-8 8H0" stroke="${t.accent}" stroke-opacity=".55"/></g><rect x="56" y="56" width="22" height="16" fill="${t.surface}" stroke="#A8D8E2" stroke-opacity=".35"/><circle cx="30" cy="24" r="2" fill="${t.accent}"/><circle cx="64" cy="48" r="2" fill="${t.accent2}"/></svg>`;
  default:return `<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96"><rect width="96" height="96" fill="${t.bg}"/><circle cx="24" cy="24" r="18" fill="${t.accent}"/><rect x="54" y="6" width="36" height="36" fill="${t.accent2}"/><path d="M6 90 24 54l18 36z" fill="${t.accent3||'#F5C400'}"/><path d="M54 54h36v36a36 36 0 0 1-36-36z" fill="${t.ink}"/></svg>`}}
 function mark(k){const t=k.t;switch(k.id){
  case 'matrix':return `<g fill="none" stroke="${t.accent}" stroke-width="3"><rect x="6" y="6" width="52" height="52"/><path d="M18 22l10 10-10 10M32 44h14"/></g>`;
@@ -136,6 +157,7 @@ function mark(k){const t=k.t;switch(k.id){
  case 'deco':return `<g fill="none" stroke="${t.accent}" stroke-width="2"><path d="M32 4 60 32 32 60 4 32z"/><path d="M32 14 50 32 32 50 14 32z"/><path d="M32 4v56M4 32h56"/></g>`;
  case 'blueprint':return `<g fill="none" stroke="#fff" stroke-width="2"><circle cx="32" cy="32" r="22"/><path d="M32 4v56M4 32h56"/></g><circle cx="32" cy="32" r="5" fill="${t.accent}"/>`;
  case 'vaporwave':return `<rect x="6" y="10" width="52" height="44" rx="4" fill="#fff" stroke="${t.ink}" stroke-width="3"/><path d="M6 20h52" stroke="${t.ink}" stroke-width="3"/><circle cx="32" cy="38" r="10" fill="${t.accent}"/>`;
+ case 'graphite':return `<rect x="2" y="2" width="60" height="60" rx="8" fill="${t.surface}"/><text x="9" y="44" font-family="Geist,Arial,sans-serif" font-weight="700" font-size="30" fill="${t.ink}" letter-spacing="-1.5">01</text><rect x="49" y="37" width="7" height="7" fill="${t.accent}"/>`;
  default:return `<circle cx="20" cy="20" r="16" fill="${t.accent}"/><rect x="34" y="4" width="26" height="26" fill="${t.accent2}"/><path d="M4 60 20 34l16 26z" fill="${t.accent3||'#F5C400'}"/><path d="M38 60V36h22a24 24 0 0 1-22 24z" fill="${t.ink}"/>`}}
 function logo(k,dark){const t=k.t,w=Math.max(260,k.name.length*26+110);const fam=k.fonts.head.split(',')[0].replace(/'/g,'');return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="80" viewBox="0 0 ${w} 80"><rect width="${w}" height="80" fill="${dark?t.bg:'none'}"/><g transform="translate(8 8)">${mark(k)}</g><text x="88" y="50" fill="${t.ink}" font-family="${fam}, sans-serif" font-size="30" letter-spacing="${k.case==='upper'?3:0}">${k.case==='upper'?k.name.toUpperCase():k.name}</text></svg>`}
 function divider(k){const t=k.t;const by={deco:`<path d="M0 12h150M250 12h150" stroke="${t.accent}"/><path d="M200 2l10 10-10 10-10-10z" fill="none" stroke="${t.accent}"/><circle cx="170" cy="12" r="2" fill="${t.accent}"/><circle cx="230" cy="12" r="2" fill="${t.accent}"/>`,brutalist:`<rect y="6" width="400" height="12" fill="${t.ink}"/><rect x="0" y="6" width="120" height="12" fill="${t.accent}"/>`,matrix:`<text x="0" y="17" fill="${t.accent}" font-family="monospace" font-size="14">${'01001101 01000001 01010100 01010010 01001001 01011000'.slice(0,52)}</text>`,blueprint:`<path d="M0 12h400M0 4v16M400 4v16" stroke="#fff"/><text x="185" y="9" fill="${t.accent}" font-family="monospace" font-size="9">400</text>`};

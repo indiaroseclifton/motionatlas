@@ -15,7 +15,7 @@
 .rail .fill{position:absolute;left:3px;z-index:1;top:10px;width:1px;background:var(--cyan);box-shadow:0 0 8px var(--cyan);transition:height var(--d-scene) var(--e-route)}
 .rail button{position:relative;display:grid;gap:2px;width:100%;text-align:left;background:none;border:0;padding:8px 0;cursor:pointer;color:var(--pt-3)}
 .rail button::before{content:"";position:absolute;left:-26px;top:14px;width:7px;height:7px;background:var(--bg);border:1px solid var(--line-2)}
-.rail button span{font:11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase}
+.rail button span{font:11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase}.rail button em{font-style:normal}
 .rail button b{font:500 16px var(--f-sans);letter-spacing:-.01em;color:inherit}
 .rail button[aria-current=step]{color:var(--pt)}
 .rail button[aria-current=step]::before{border-color:var(--cyan);background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
@@ -48,7 +48,7 @@ legend{font:11.5px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;c
 .result{display:grid;gap:22px}
 .result pre{margin:0;max-height:320px;overflow:auto;padding:16px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);font:12.5px/1.6 var(--f-mono);color:var(--pt-2);white-space:pre-wrap}
 .hp{position:absolute;left:-9999px}
-@media (max-width:900px){.app{grid-template-columns:1fr}.rail{position:static}.rail ol{grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);padding:0;gap:0}.rail ol::before,.rail .fill{display:none}.rail button{padding:12px 0 0;border-top:2px solid var(--line)}.rail button::before{display:none}.rail button[aria-current=step]{border-top-color:var(--cyan)}.rail button.done{border-top-color:var(--green)}.rail button b{display:none}.rail .saved{margin:12px 0 0}.row{grid-template-columns:1fr}.review dl{grid-template-columns:1fr}}
+@media (max-width:900px){.app{grid-template-columns:1fr}.rail{position:static}.rail ol{grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);padding:0;gap:0}.rail ol::before,.rail .fill{display:none}.rail button{padding:12px 0 0;border-top:2px solid var(--line)}.rail button::before{display:none}.rail button[aria-current=step]{border-top-color:var(--cyan)}.rail button.done{border-top-color:var(--green)}.rail button b{display:none}.rail button em{display:none}.rail .saved{margin:12px 0 0}.row{grid-template-columns:1fr}.review dl{grid-template-columns:1fr}}
 </style></head><body>
 <main id="main">
 <section class="intro" aria-labelledby="h">
@@ -114,7 +114,7 @@ function stageHTML(i){const [id,,title,why,fs]=S[i];
  return `<section class="stage" aria-labelledby="st"><p class="mono" style="color:var(--pt-3);margin:0">Stage ${i+1} of ${S.length}</p><h2 id="st" tabindex="-1">${title}</h2><p class="why">${why}</p><div class="row">${fs.map(field).join('')}</div>
   <div class="nav">${i?'<button type="button" class="o-btn" data-go="-1">← Back</button>':'<span></span>'}<button type="button" class="o-btn solid" data-go="1">Continue →</button></div></section>`}
 function drawRail(){rail.querySelectorAll('li').forEach(x=>x.remove());S.forEach(([id,short,title],i)=>{const li=document.createElement('li');const can=i<=cur||done.has(S[i-1]?.[0])||i===0;
-  li.innerHTML=`<button type="button" data-i="${i}"${i===cur?' aria-current="step"':''}${can?'':' disabled'} class="${done.has(id)?'done':''}"><span>${String(i+1).padStart(2,'0')} · ${short}</span><b>${title}</b></button>`;rail.append(li)});
+  li.innerHTML=`<button type="button" data-i="${i}"${i===cur?' aria-current="step"':''}${can?'':' disabled'} class="${done.has(id)?'done':''}"><span>${String(i+1).padStart(2,'0')}<em> · ${short}</em></span><b>${title}</b></button>`;rail.append(li)});
  const btns=rail.querySelectorAll('button');if(btns[cur]){const r=btns[cur].getBoundingClientRect(),o=rail.getBoundingClientRect();fill.style.height=Math.max(0,r.top-o.top+4)+'px'}}
 function counts(){S[cur][4].forEach(f=>{if(!f.min)return;const el=document.getElementById('f-'+f.k),c=document.getElementById('f-'+f.k+'-c');if(!el||!c)return;const n=el.value.trim().length;c.textContent=n>=f.min?`${n} ✓`:`${n} / ${f.min} minimum`;c.classList.toggle('ok',n>=f.min)})}
 function show(i,focus=true){cur=i;stages.innerHTML=stageHTML(i);drawRail();counts();persist(false);if(focus){const h=document.getElementById('st');h&&h.focus({preventScroll:true});const top=form.getBoundingClientRect().top+scrollY-120;if(scrollY>top)scrollTo({top,behavior:O1.reduce?'auto':'smooth'})}}
@@ -136,7 +136,7 @@ form.addEventListener('submit',async e=>{e.preventDefault();if(cur!==S.length-1)
  const sections=S.slice(0,-1).map(([,short,,,ff])=>[short,ff.map(f=>[f.label,f.k])]);
  let ok=false,msg='';try{const r=await fetch('/api/apply',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({answers:data,sections})});const j=await r.json().catch(()=>({}));ok=r.ok&&j.ok;msg=j.error||''}catch(err){msg='The application could not reach the server.'}
  res.hidden=false;
- if(ok){O1.Sound.confirm();try{localStorage.removeItem(KEY)}catch(e){}stages.innerHTML=`<section class="stage" aria-labelledby="st"><h2 id="st" tabindex="-1">It's with Nicolas.</h2><p class="why" style="margin:0">If you've cleared the bar, you'll hear from him directly. If you don't hear back, you haven't.</p><p><a class="o-btn" href="index.html">Back to 01ai</a></p></section>`;document.getElementById('st').focus();return}
+ if(ok){O1.Sound.confirm();try{localStorage.removeItem(KEY)}catch(e){}stages.innerHTML=`<section class="stage" aria-labelledby="st"><h2 id="st" tabindex="-1">It's with Nicolas.</h2><p class="why" style="margin:0">If you've cleared the bar, you'll hear from him directly. If you don't hear back, you haven't.</p><p><a class="o-btn" href="home.html">Back to 01ai</a></p></section>`;document.getElementById('st').focus();return}
  O1.Sound.buzz();btn.disabled=false;btn.textContent='Send to Nicolas';
  res.innerHTML=`<p class="o-err" role="alert" style="font-size:15px">${esc(msg||'Sending failed.')} Your answers are safe on this device. You can also copy the whole application and send it to Nicolas yourself.</p><pre id="txt" tabindex="0" aria-label="Your application as text">${esc(asText())}</pre><p style="display:flex;gap:12px;flex-wrap:wrap;margin:0"><button type="button" class="o-btn" id="copy">Copy application</button><button type="button" class="o-btn" id="dl">Download as text</button></p>`;
  document.getElementById('copy').onclick=async ev=>{try{await navigator.clipboard.writeText(asText());ev.target.textContent='Copied'}catch(e){const r=document.createRange();r.selectNodeContents(document.getElementById('txt'));const s=getSelection();s.removeAllRanges();s.addRange(r);ev.target.textContent='Selected: press Ctrl+C'}};
