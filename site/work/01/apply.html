@@ -1,0 +1,147 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>01ai · Apply</title>
+<meta name="description" content="The 01ai application. Long, hard and read by Nicolas himself.">
+<meta name="theme-color" content="#07090C"><link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="01.css">
+<style>
+.intro{padding:150px var(--gut) 40px;display:grid;gap:24px;max-width:1300px}
+.terms{display:flex;flex-wrap:wrap;gap:10px 36px;font:12px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--pt-3)}
+.terms b{color:var(--pt);font-weight:500}
+.app{display:grid;grid-template-columns:260px minmax(0,1fr);gap:clamp(30px,6vw,100px);padding:40px var(--gut) 14vh;max-width:1400px;align-items:start}
+/* the rail: each stage is a node on one trace */
+.rail{position:sticky;top:130px}
+.rail ol{list-style:none;margin:0;padding:0 0 0 26px;position:relative;display:grid;gap:4px}
+.rail ol::before{content:"";position:absolute;left:3px;top:10px;bottom:10px;width:1px;background:var(--line)}
+.rail .fill{position:absolute;left:3px;z-index:1;top:10px;width:1px;background:var(--cyan);box-shadow:0 0 8px var(--cyan);transition:height var(--d-scene) var(--e-route)}
+.rail button{position:relative;display:grid;gap:2px;width:100%;text-align:left;background:none;border:0;padding:8px 0;cursor:pointer;color:var(--pt-3)}
+.rail button::before{content:"";position:absolute;left:-26px;top:14px;width:7px;height:7px;background:var(--bg);border:1px solid var(--line-2)}
+.rail button span{font:11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase}
+.rail button b{font:500 16px var(--f-sans);letter-spacing:-.01em;color:inherit}
+.rail button[aria-current=step]{color:var(--pt)}
+.rail button[aria-current=step]::before{border-color:var(--cyan);background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
+.rail button.done{color:var(--pt-2)}.rail button.done::before{background:var(--green);border-color:var(--green)}
+.rail button:disabled{cursor:not-allowed;opacity:.55}
+.rail .saved{margin:22px 0 0 26px;font:11px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--pt-3)}
+.stage{display:grid;gap:34px}
+.stage h2{font-size:var(--t-h1);line-height:.96;letter-spacing:-.04em;font-weight:500;margin:0}
+.stage .why{margin:-18px 0 0;color:var(--pt-2);max-width:60ch}
+.row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:34px 28px}
+.o-field .meta{display:flex;justify-content:space-between;gap:12px}
+.count{font:11px var(--f-mono);letter-spacing:.08em;color:var(--pt-3);white-space:nowrap}
+.count.ok{color:var(--green)}
+.checks{display:flex;flex-wrap:wrap;gap:8px}
+.checks label{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border:1px solid var(--line-2);border-radius:999px;font:13px var(--f-sans);letter-spacing:0;text-transform:none;color:var(--pt-2);cursor:pointer}
+.checks input{position:absolute;opacity:0;width:1px;height:1px}
+.checks label:has(input:checked){border-color:var(--cyan);color:var(--pt);background:rgba(127,231,247,.06)}
+.checks label:has(input:focus-visible){outline:1.5px solid var(--cyan);outline-offset:3px}
+.oath{display:grid;gap:14px}
+.oath label{display:flex;gap:14px;align-items:flex-start;font:16px/1.5 var(--f-sans);letter-spacing:0;text-transform:none;color:var(--pt-2);cursor:pointer}
+.oath input{width:18px;height:18px;margin-top:3px;accent-color:#7FE7F7;flex:none}
+fieldset{border:0;margin:0;padding:0;display:grid;gap:12px}
+legend{font:11.5px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--pt-2);padding:0;margin-bottom:12px}
+.nav{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;padding-top:20px;border-top:1px solid var(--line)}
+.review{display:grid;gap:26px}
+.review section{display:grid;gap:10px;padding-bottom:20px;border-bottom:1px solid var(--line)}
+.review h3{margin:0;font:12px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--cyan)}
+.review dl{margin:0;display:grid;grid-template-columns:minmax(140px,240px) minmax(0,1fr);gap:8px 24px}
+.review dt{color:var(--pt-3);font-size:14px}.review dd{margin:0;color:var(--pt);font-size:15px;white-space:pre-wrap;overflow-wrap:anywhere}
+.result{display:grid;gap:22px}
+.result pre{margin:0;max-height:320px;overflow:auto;padding:16px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);font:12.5px/1.6 var(--f-mono);color:var(--pt-2);white-space:pre-wrap}
+.hp{position:absolute;left:-9999px}
+@media (max-width:900px){.app{grid-template-columns:1fr}.rail{position:static}.rail ol{grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);padding:0;gap:0}.rail ol::before,.rail .fill{display:none}.rail button{padding:12px 0 0;border-top:2px solid var(--line)}.rail button::before{display:none}.rail button[aria-current=step]{border-top-color:var(--cyan)}.rail button.done{border-top-color:var(--green)}.rail button b{display:none}.rail .saved{margin:12px 0 0}.row{grid-template-columns:1fr}.review dl{grid-template-columns:1fr}}
+</style></head><body>
+<main id="main">
+<section class="intro" aria-labelledby="h">
+ <p class="o-kick mono">Apply</p>
+ <h1 id="h" class="o-display" style="max-width:12ch"><span data-decode-now>Most people won't finish this.</span></h1>
+ <p class="o-lede">Six stages. Every answer is read by Nicolas himself. Short answers are noticed, and so is anything that isn't yours. Take your time: your progress saves on this device as you go.</p>
+ <p class="terms"><span>Stages <b>6</b></span><span>Time <b>45–90 min</b></span><span>Read by <b>Nicolas</b></span></p>
+</section>
+<div class="app">
+ <nav class="rail" aria-label="Application stages"><div style="position:relative"><i class="fill" id="fill" aria-hidden="true"></i><ol id="rail"></ol></div><p class="saved" id="saved" role="status" aria-live="polite"></p></nav>
+ <form id="form" novalidate>
+  <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+  <div id="stages"></div>
+ </form>
+</div>
+</main>
+<footer class="o-foot mono"><span>01ai · a 01 company</span><span><a href="brand.html">Design system</a></span></footer>
+<script src="01.js"></script>
+<script>
+O1.init({page:'apply'});
+(()=>{
+/* The application. Each stage: [id, short, title, why, fields]. Field: {k, label, type, req, min, hint, opts, half} */
+const S=[
+ ['you','You','Who you are.','The basics. We will check every link.',[
+  {k:'name',label:'Full name',type:'text',req:1,half:1,ac:'name'},{k:'email',label:'Email',type:'email',req:1,half:1,ac:'email'},
+  {k:'location',label:'City and country',type:'text',req:1,half:1,ac:'address-level2'},{k:'tz',label:'Time zone you work in',type:'text',req:1,half:1,hint:'For example UTC+1'},
+  {k:'role',label:'What you do now, and where',type:'text',req:1},
+  {k:'links',label:'GitHub, portfolio or anything that shows your work',type:'textarea',req:1,min:20,hint:'One link per line. At least one we can open.'}]],
+ ['proof','Proof','Show us what you have built.','Not what you were part of. What you built.',[
+  {k:'hardest',label:'The hardest system you have ever built. The architecture, the scale, what broke and how you fixed it.',type:'textarea',req:1,min:600},
+  {k:'impossible',label:'Something you shipped that people told you could not be done.',type:'textarea',req:1,min:300},
+  {k:'proud',label:'The piece of code you are proudest of. Link it and tell us why.',type:'textarea',req:1,min:200}]],
+ ['stack','Stack','Your stack.','Be exact. Inflation is easy to spot.',[
+  {k:'langs',label:'Languages you ship production code in',type:'checks',req:1,opts:['TypeScript','Python','Rust','Go','C++','Swift','Kotlin','Java','Elixir','Zig','SQL','CUDA']},
+  {k:'years',label:'Years shipping production software',type:'select',req:1,half:1,opts:['Under 2','2–4','5–7','8–12','13+']},
+  {k:'fleet',label:'Largest number of models or agents you have run in one system',type:'select',req:1,half:1,opts:['1','2–10','11–100','101–1000','1000+']},
+  {k:'agents',label:'Agent frameworks, inference stacks and infrastructure you have used in anger',type:'textarea',req:1,min:150}]],
+ ['think','Thinking','How you think.','No right answers. Plenty of wrong ones.',[
+  {k:'route',label:'A request arrives. You have 1000+ models and 50 milliseconds. Walk us through how you pick the model, and what you do when you are wrong.',type:'textarea',req:1,min:500},
+  {k:'breed',label:'Design an agent that builds better agents. What stops it from going wrong?',type:'textarea',req:1,min:500},
+  {k:'flaw',label:'What is wrong with 01ai, as you see it from the outside?',type:'textarea',req:1,min:200}]],
+ ['commit','Commitment','What you will give.','We work across four continents. The build never stops.',[
+  {k:'hours',label:'Hours a week you can commit',type:'select',req:1,half:1,opts:['Under 20','20–30','30–40','40–60','60+']},
+  {k:'start',label:'Earliest start date',type:'date',req:1,half:1},
+  {k:'whynow',label:'Why you, and why now?',type:'textarea',req:1,min:300},
+  {k:'oath',label:'Before you send',type:'oath',req:1,opts:['Every answer here is my own work, written by me.','I understand the bar is the highest I will ever apply against.','Nicolas can contact me at the email above.']}]],
+ ['review','Review','Read it once more.','This is what Nicolas will read.',[]]
+];
+const KEY='o1-apply-v1',form=document.getElementById('form'),stages=document.getElementById('stages'),rail=document.getElementById('rail'),fill=document.getElementById('fill'),saved=document.getElementById('saved');
+let data={},cur=0,done=new Set();try{const s=JSON.parse(localStorage.getItem(KEY)||'{}');data=s.data||{};cur=Math.min(s.cur||0,S.length-1);(s.done||[]).forEach(x=>done.add(x))}catch(e){}
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function field(f){const id='f-'+f.k,v=data[f.k],req=f.req?' aria-required="true"':'',dsc=`${id}-e${f.hint?' '+id+'-h':''}${f.min?' '+id+'-c':''}`;
+ const hint=f.hint?`<p class="o-hint" id="${id}-h">${f.hint}</p>`:'',err=`<p class="o-err" id="${id}-e" aria-live="polite"></p>`;
+ if(f.type==='checks'||f.type==='oath'){const vs=Array.isArray(v)?v:[];return `<fieldset class="${f.half?'':'full'}" data-k="${f.k}" aria-describedby="${id}-e"><legend>${f.label}</legend><div class="${f.type==='oath'?'oath':'checks'}">${f.opts.map((o,i)=>`<label><input type="checkbox" name="${f.k}" value="${esc(o)}"${vs.includes(o)?' checked':''}> ${o}</label>`).join('')}</div>${err}</fieldset>`}
+ const lab=`<div class="meta"><label for="${id}">${f.label}</label>${f.min?`<span class="count" id="${id}-c"></span>`:''}</div>`;
+ let ctl;if(f.type==='textarea')ctl=`<textarea class="o-textarea" id="${id}" name="${f.k}" rows="${f.min>=500?9:f.min>=200?6:4}"${req} aria-describedby="${dsc}">${esc(v)}</textarea>`;
+ else if(f.type==='select')ctl=`<select class="o-select" id="${id}" name="${f.k}"${req} aria-describedby="${dsc}"><option value="">Choose</option>${f.opts.map(o=>`<option${v===o?' selected':''}>${o}</option>`).join('')}</select>`;
+ else ctl=`<input class="o-input" id="${id}" name="${f.k}" type="${f.type}"${f.ac?` autocomplete="${f.ac}"`:''} value="${esc(v)}"${req} aria-describedby="${dsc}">`;
+ return `<div class="o-field" data-k="${f.k}" style="${f.half?'':'grid-column:1/-1'}">${lab}${ctl}${hint}${err}</div>`}
+function stageHTML(i){const [id,,title,why,fs]=S[i];
+ if(id==='review')return `<section class="stage" aria-labelledby="st"><h2 id="st" tabindex="-1">${title}</h2><p class="why">${why}</p><div class="review">${S.slice(0,-1).map(([,short,t,,ff])=>`<section><h3>${short}</h3><dl>${ff.map(f=>`<dt>${f.label}</dt><dd>${esc(Array.isArray(data[f.k])?data[f.k].join(', '):data[f.k])||'—'}</dd>`).join('')}</dl></section>`).join('')}</div>
+  <div class="nav"><button type="button" class="o-btn" data-go="-1">← Back</button><button type="submit" class="o-btn solid" id="send">Send to Nicolas</button></div><div class="result" id="result" hidden></div></section>`;
+ return `<section class="stage" aria-labelledby="st"><p class="mono" style="color:var(--pt-3);margin:0">Stage ${i+1} of ${S.length}</p><h2 id="st" tabindex="-1">${title}</h2><p class="why">${why}</p><div class="row">${fs.map(field).join('')}</div>
+  <div class="nav">${i?'<button type="button" class="o-btn" data-go="-1">← Back</button>':'<span></span>'}<button type="button" class="o-btn solid" data-go="1">Continue →</button></div></section>`}
+function drawRail(){rail.querySelectorAll('li').forEach(x=>x.remove());S.forEach(([id,short,title],i)=>{const li=document.createElement('li');const can=i<=cur||done.has(S[i-1]?.[0])||i===0;
+  li.innerHTML=`<button type="button" data-i="${i}"${i===cur?' aria-current="step"':''}${can?'':' disabled'} class="${done.has(id)?'done':''}"><span>${String(i+1).padStart(2,'0')} · ${short}</span><b>${title}</b></button>`;rail.append(li)});
+ const btns=rail.querySelectorAll('button');if(btns[cur]){const r=btns[cur].getBoundingClientRect(),o=rail.getBoundingClientRect();fill.style.height=Math.max(0,r.top-o.top+4)+'px'}}
+function counts(){S[cur][4].forEach(f=>{if(!f.min)return;const el=document.getElementById('f-'+f.k),c=document.getElementById('f-'+f.k+'-c');if(!el||!c)return;const n=el.value.trim().length;c.textContent=n>=f.min?`${n} ✓`:`${n} / ${f.min} minimum`;c.classList.toggle('ok',n>=f.min)})}
+function show(i,focus=true){cur=i;stages.innerHTML=stageHTML(i);drawRail();counts();persist(false);if(focus){const h=document.getElementById('st');h&&h.focus({preventScroll:true});const top=form.getBoundingClientRect().top+scrollY-120;if(scrollY>top)scrollTo({top,behavior:O1.reduce?'auto':'smooth'})}}
+function read(){S[cur][4].forEach(f=>{if(f.type==='checks'||f.type==='oath')data[f.k]=[...form.querySelectorAll(`input[name="${f.k}"]:checked`)].map(x=>x.value);else{const el=form.elements[f.k];if(el)data[f.k]=el.value}})}
+let tmr;function persist(say=true){try{localStorage.setItem(KEY,JSON.stringify({data,cur,done:[...done]}));if(say){saved.textContent='Draft saved on this device';clearTimeout(tmr);tmr=setTimeout(()=>saved.textContent='',2200)}}catch(e){}}
+function check(){let first=null;S[cur][4].forEach(f=>{const e=document.getElementById(`f-${f.k}-e`),v=data[f.k];let msg='';
+  if(f.type==='checks'&&f.req&&!(v||[]).length)msg='Pick at least one.';
+  else if(f.type==='oath'&&(v||[]).length<f.opts.length)msg='All three, or this application stops here.';
+  else if(!['checks','oath'].includes(f.type)){const s=String(v||'').trim();if(f.req&&!s)msg='Required.';else if(f.type==='email'&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s))msg='That email will not reach you.';else if(f.min&&s.length<f.min)msg=`Too short. ${f.min-s.length} more characters, at least.`}
+  if(e)e.textContent=msg;const ctl=document.getElementById('f-'+f.k);if(ctl)ctl.setAttribute('aria-invalid',msg?'true':'false');if(msg&&!first)first=ctl||form.querySelector(`input[name="${f.k}"]`)});
+ if(first){first.focus();O1.Sound.deny();return false}return true}
+form.addEventListener('input',()=>{read();counts();persist()});form.addEventListener('change',()=>{read();persist()});
+form.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(!b)return;const d=+b.dataset.go;read();if(d>0){if(!check())return;done.add(S[cur][0]);O1.Sound.confirm()}show(Math.max(0,Math.min(S.length-1,cur+d)))});
+rail.addEventListener('click',e=>{const b=e.target.closest('button[data-i]');if(!b||b.disabled)return;read();show(+b.dataset.i)});
+function asText(){return S.slice(0,-1).map(([,short,,,ff])=>`== ${short} ==\n`+ff.map(f=>`\n${f.label}\n${Array.isArray(data[f.k])?data[f.k].join(', '):(data[f.k]||'')}`).join('\n')).join('\n\n')}
+form.addEventListener('submit',async e=>{e.preventDefault();if(cur!==S.length-1)return;const btn=document.getElementById('send'),res=document.getElementById('result');
+ const missing=S.slice(0,-1).findIndex(st=>!done.has(st[0]));if(missing>-1){show(missing);return}
+ if(form.elements.website.value)return;btn.disabled=true;btn.textContent='Sending…';
+ const sections=S.slice(0,-1).map(([,short,,,ff])=>[short,ff.map(f=>[f.label,f.k])]);
+ let ok=false,msg='';try{const r=await fetch('/api/apply',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({answers:data,sections})});const j=await r.json().catch(()=>({}));ok=r.ok&&j.ok;msg=j.error||''}catch(err){msg='The application could not reach the server.'}
+ res.hidden=false;
+ if(ok){O1.Sound.confirm();try{localStorage.removeItem(KEY)}catch(e){}stages.innerHTML=`<section class="stage" aria-labelledby="st"><h2 id="st" tabindex="-1">It's with Nicolas.</h2><p class="why" style="margin:0">If you've cleared the bar, you'll hear from him directly. If you don't hear back, you haven't.</p><p><a class="o-btn" href="index.html">Back to 01ai</a></p></section>`;document.getElementById('st').focus();return}
+ O1.Sound.buzz();btn.disabled=false;btn.textContent='Send to Nicolas';
+ res.innerHTML=`<p class="o-err" role="alert" style="font-size:15px">${esc(msg||'Sending failed.')} Your answers are safe on this device. You can also copy the whole application and send it to Nicolas yourself.</p><pre id="txt" tabindex="0" aria-label="Your application as text">${esc(asText())}</pre><p style="display:flex;gap:12px;flex-wrap:wrap;margin:0"><button type="button" class="o-btn" id="copy">Copy application</button><button type="button" class="o-btn" id="dl">Download as text</button></p>`;
+ document.getElementById('copy').onclick=async ev=>{try{await navigator.clipboard.writeText(asText());ev.target.textContent='Copied'}catch(e){const r=document.createRange();r.selectNodeContents(document.getElementById('txt'));const s=getSelection();s.removeAllRanges();s.addRange(r);ev.target.textContent='Selected: press Ctrl+C'}};
+ document.getElementById('dl').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([asText()],{type:'text/plain'}));a.download='01ai-application.txt';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)}});
+show(cur,false);
+})();
+</script>
+</body></html>

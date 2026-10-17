@@ -23,7 +23,7 @@
 }
 *{box-sizing:border-box}html,body{margin:0}
 html{background:var(--bg)}
-body{background:var(--bg);color:var(--ink);font:400 var(--t-body)/1.55 var(--f-sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body{overflow-x:clip;background:var(--bg);color:var(--ink);font:400 var(--t-body)/1.55 var(--f-sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 a{color:inherit}button,input,textarea,select{font:inherit;color:inherit}
 ::selection{background:var(--cyan);color:var(--g-950)}
 :focus-visible{outline:1.5px solid var(--cyan);outline-offset:3px}
@@ -94,7 +94,8 @@ a{color:inherit}button,input,textarea,select{font:inherit;color:inherit}
 .o-route.in{opacity:1;transform:none}
 @media (max-width:760px){
  .o-head{flex-wrap:wrap;padding-top:16px;gap:12px}.o-logo img{height:34px}
- .o-status{display:none}.o-nav{gap:14px}.o-nav a.o-hide-sm{display:none}
+ .o-status{display:none}.o-nav{gap:11px;flex-wrap:wrap;justify-content:flex-end}.o-nav a.o-hide-sm{display:none}.o-sound span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+ .o-nav a,.o-sound{font-size:10.5px;letter-spacing:.05em}
  .o-page{padding-top:120px}
 }
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.o-route{opacity:1;transform:none}}

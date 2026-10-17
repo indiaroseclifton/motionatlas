@@ -29,7 +29,7 @@ window.O1=(()=>{
  /* ---------- Routed reveals ---------- */
  function routes(){const io=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;io.unobserve(e.target);e.target.classList.add('in');$$('[data-decode]',e.target).forEach((d,i)=>decode(d,{delay:i*120}))}),{threshold:.18});$$('.o-route').forEach(x=>io.observe(x))}
  /* ---------- Header ---------- */
- const LINKS=[['index.html','Home','home'],['agents.html','Agents','agents'],['integrations.html','Integrations','integrations'],['origin.html','Origin','origin']];
+ const LINKS=[['index.html','Home','home'],['agents.html','Agents','agents'],['integrations.html','Integrations','integrations'],['origin.html','Origin','origin'],['chat.html','Interface','chat']];
  function header(page){const h=document.createElement('header');h.className='o-head';
   h.innerHTML=`<a class="o-logo" href="index.html" aria-label="01ai home"><img src="assets/01ai-wordmark.svg" alt="01ai" width="92" height="44"></a>
   <div class="o-right"><p class="o-status mono" aria-label="Server status: version 1.0, node War Room, uptime 99.999 percent"><i aria-hidden="true"></i>SERVER v1.0 // NODE: WAR ROOM // UPTIME <span data-uptime>99.999</span>%</p>
@@ -37,7 +37,7 @@ window.O1=(()=>{
   document.body.prepend(h);
   const solid=()=>h.classList.toggle('solid',scrollY>40);addEventListener('scroll',solid,{passive:true});solid();
   const skip=document.createElement('a');skip.className='skip';skip.href='#main';skip.textContent='Skip to content';document.body.prepend(skip);
-  if(page!=='apply'){const a=document.createElement('a');a.className='o-apply';a.href='apply.html';a.innerHTML='<i aria-hidden="true"></i>Apply';document.body.append(a)}
+  if(page!=='apply'&&page!=='chat'&&page!=='login'){const a=document.createElement('a');a.className='o-apply';a.href='apply.html';a.innerHTML='<i aria-hidden="true"></i>Apply';document.body.append(a)}
   const sb=$('.o-sound',h);sb.onclick=()=>{Sound.set(!Sound.on);sb.setAttribute('aria-pressed',Sound.on)};
   document.addEventListener('pointerover',e=>{if(e.target.closest('a,button,[data-snd]'))Sound.tick()});
   document.addEventListener('click',e=>{if(e.target.closest('a,button'))Sound.click()});}
