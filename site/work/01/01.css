@@ -1,0 +1,101 @@
+/* 01 design system · tokens, type, motion, base components.
+   Graphite ground, platinum type, cyan-white traces, small green pulses; purple and amber only as rare accents.
+   Motion is "routed": things arrive along a trace, lock into place, decode from 0s and 1s, and numbers tick. */
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap');
+:root{
+ /* graphite */
+ --g-950:#07090C;--g-900:#0B0E12;--g-850:#0F1318;--g-800:#141920;--g-700:#1B222B;--g-600:#252D38;--g-500:#34404F;
+ /* platinum type */
+ --pt:#E7EAEE;--pt-2:#B7BFCA;--pt-3:#8A94A2;
+ /* signal colours */
+ --cyan:#7FE7F7;--cyan-white:#DDFBFF;--cyan-deep:#0A7F94;--green:#3CF29A;--purple:#A98BFF;--amber:#FFB547;--red:#FF6B6B;
+ /* roles */
+ --bg:var(--g-950);--surface:var(--g-900);--raised:var(--g-800);--line:var(--g-600);--line-2:var(--g-500);--ink:var(--pt);--mute:var(--pt-3);--accent:var(--cyan);
+ /* type */
+ --f-sans:'Geist',Inter,system-ui,sans-serif;--f-mono:'Geist Mono',ui-monospace,'SFMono-Regular',monospace;
+ --t-display:clamp(48px,8.4vw,132px);--t-h1:clamp(40px,5.6vw,84px);--t-h2:clamp(28px,3.4vw,48px);--t-h3:22px;--t-body:17px;--t-small:14px;--t-mono:12px;
+ /* motion */
+ --e-lock:cubic-bezier(.2,.9,.1,1);--e-route:cubic-bezier(.6,0,.2,1);--e-tick:steps(6,end);
+ --d-tick:80ms;--d-snap:180ms;--d-route:320ms;--d-scene:900ms;
+ /* space */
+ --gut:max(20px,4.2vw);--r:4px;
+ color-scheme:dark
+}
+*{box-sizing:border-box}html,body{margin:0}
+html{background:var(--bg)}
+body{overflow-x:clip;background:var(--bg);color:var(--ink);font:400 var(--t-body)/1.55 var(--f-sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+a{color:inherit}button,input,textarea,select{font:inherit;color:inherit}
+::selection{background:var(--cyan);color:var(--g-950)}
+:focus-visible{outline:1.5px solid var(--cyan);outline-offset:3px}
+.mono{font-family:var(--f-mono);font-size:var(--t-mono);letter-spacing:.08em;text-transform:uppercase}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip{position:absolute;left:-999px;top:12px;z-index:100;background:var(--pt);color:var(--g-950);padding:8px 12px}.skip:focus{left:12px}
+/* ---------- header ---------- */
+.o-head{position:fixed;inset:0 0 auto;z-index:50;display:flex;align-items:flex-start;gap:24px;padding:22px var(--gut) 0;pointer-events:none}
+.o-head>*{pointer-events:auto}
+.o-head::before{content:"";position:absolute;inset:0 0 -36px;z-index:-1;background:linear-gradient(180deg,rgba(7,9,12,.94),rgba(7,9,12,.7) 62%,rgba(7,9,12,0));opacity:0;transition:opacity var(--d-route) var(--e-lock);pointer-events:none}
+.o-head.solid::before{opacity:1}
+.o-logo{display:block;line-height:0}.o-logo img{height:44px;width:auto}
+.o-right{margin-left:auto;display:grid;justify-items:end;gap:12px}
+.o-status{color:var(--pt-2);white-space:nowrap}
+.o-status i{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);margin-right:8px;box-shadow:0 0 10px var(--green);animation:o-pulse 1.6s var(--e-route) infinite}
+.o-nav{display:flex;align-items:center;gap:22px}
+.o-nav a{text-decoration:none;color:var(--pt-2);font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;padding:6px 0;position:relative}
+.o-nav a:hover,.o-nav a[aria-current=page]{color:var(--pt)}
+.o-nav a[aria-current=page]::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--cyan)}
+.o-nav a.o-login{color:var(--pt-3)}
+.o-sound{display:inline-flex;align-items:center;gap:6px;background:none;border:0;color:var(--pt-3);font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;padding:6px 0}
+.o-sound[aria-pressed=true]{color:var(--cyan)}
+.o-sound svg{width:14px;height:14px}
+@keyframes o-pulse{0%,100%{opacity:1}50%{opacity:.35}}
+/* ---------- apply: small but findable ---------- */
+.o-apply{position:fixed;right:var(--gut);bottom:22px;z-index:50;display:inline-flex;align-items:center;gap:10px;padding:10px 14px 10px 12px;border:1px solid var(--line-2);border-radius:999px;background:rgba(11,14,18,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);text-decoration:none;font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--pt)}
+.o-apply i{width:6px;height:6px;background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
+.o-apply:hover{border-color:var(--cyan)}
+/* ---------- type ---------- */
+.o-display{font-size:var(--t-display);line-height:.92;letter-spacing:-.045em;font-weight:500;margin:0;max-width:11ch;text-wrap:balance}
+.o-h1{font-size:var(--t-h1);line-height:.96;letter-spacing:-.04em;font-weight:500;margin:0;text-wrap:balance}
+.o-h2{font-size:var(--t-h2);line-height:1.02;letter-spacing:-.03em;font-weight:500;margin:0;text-wrap:balance}
+.o-sub{font-family:var(--f-mono);font-size:clamp(13px,1.2vw,16px);letter-spacing:.06em;color:var(--cyan);margin:0}
+.o-lede{font-size:clamp(18px,1.6vw,22px);line-height:1.5;color:var(--pt-2);max-width:52ch;margin:0}
+.o-kick{display:flex;align-items:center;gap:10px;color:var(--pt-3);margin:0}
+.o-kick::before{content:"";width:28px;height:1px;background:var(--cyan)}
+/* ---------- buttons ---------- */
+.o-btn{position:relative;display:inline-flex;align-items:center;gap:10px;min-height:48px;padding:0 22px;border:1px solid var(--line-2);border-radius:var(--r);background:transparent;color:var(--pt);font:500 15px var(--f-sans);letter-spacing:-.005em;text-decoration:none;cursor:pointer;overflow:hidden;transition:border-color var(--d-snap) var(--e-lock)}
+.o-btn::before{content:"";position:absolute;left:0;top:0;height:1px;width:0;background:var(--cyan);transition:width var(--d-route) var(--e-route)}
+.o-btn:hover{border-color:var(--pt-3)}.o-btn:hover::before{width:100%}
+.o-btn.solid{background:var(--pt);color:var(--g-950);border-color:var(--pt)}
+.o-btn.solid:hover{background:var(--cyan-white)}
+.o-btn[disabled]{opacity:.45;cursor:not-allowed}
+/* ---------- frames: corner ticks instead of boxes ---------- */
+.o-frame{position:relative;padding:14px 16px}
+.o-frame::before,.o-frame::after{content:"";position:absolute;width:10px;height:10px;border-color:var(--line-2);border-style:solid;pointer-events:none}
+.o-frame::before{left:0;top:0;border-width:1px 0 0 1px}.o-frame::after{right:0;bottom:0;border-width:0 1px 1px 0}
+.o-label{font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--pt-3);margin:0 0 10px}
+/* ---------- fields ---------- */
+.o-field{display:grid;gap:8px}
+.o-field label{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--pt-2)}
+.o-input,.o-textarea,.o-select{width:100%;min-height:50px;padding:12px 0;border:0;border-bottom:1px solid var(--line-2);background:transparent;color:var(--pt);font:400 18px var(--f-sans);border-radius:0}
+.o-textarea{min-height:120px;resize:vertical;line-height:1.5}
+.o-input:focus,.o-textarea:focus,.o-select:focus{outline:none;border-bottom-color:var(--cyan);box-shadow:0 1px 0 var(--cyan)}
+.o-select option{background:var(--g-900)}
+.o-hint{font-size:13.5px;color:var(--pt-3);margin:0}
+.o-err{font-size:13.5px;color:var(--red);margin:0;min-height:1.2em}
+[aria-invalid=true]{border-bottom-color:var(--red)!important}
+/* ---------- page shell ---------- */
+.o-page{min-height:100vh;padding:150px var(--gut) 120px}
+.o-rule{border:0;border-top:1px solid var(--line);margin:0}
+.o-foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:28px var(--gut) 90px;border-top:1px solid var(--line);color:var(--pt-3)}
+.o-foot a{color:var(--pt-2)}
+/* decode */
+[data-decode]{font-variant-numeric:tabular-nums}
+/* reveal on route */
+.o-route{opacity:0;transform:translateY(14px);transition:opacity var(--d-route) var(--e-lock),transform var(--d-route) var(--e-lock)}
+.o-route.in{opacity:1;transform:none}
+@media (max-width:760px){
+ .o-head{flex-wrap:wrap;padding-top:16px;gap:12px}.o-logo img{height:34px}
+ .o-status{display:none}.o-nav{gap:11px;flex-wrap:wrap;justify-content:flex-end}.o-nav a.o-hide-sm{display:none}.o-sound span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+ .o-nav a,.o-sound{font-size:10.5px;letter-spacing:.05em}
+ .o-page{padding-top:120px}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.o-route{opacity:1;transform:none}}

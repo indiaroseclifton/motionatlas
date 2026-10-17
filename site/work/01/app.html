@@ -1,0 +1,350 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>01ai · Console</title>
+<meta name="description" content="Prototype of the private 01ai console: chat with live routing, runs, the agent fleet, skills, models, connections and settings.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#07090C"><link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="01.css"><link rel="stylesheet" href="01-ui.css">
+<style>
+body{overflow-x:clip}
+.view[hidden]{display:none}
+.vh-title{margin:0;font-size:clamp(28px,3vw,40px);line-height:1;letter-spacing:-.035em;font-weight:500}
+.pagehead{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:14px}
+.pagehead p{margin:6px 0 0;color:var(--pt-2);max-width:60ch;font-size:14.5px}
+.proto-flag{font:500 10.5px var(--f-mono);letter-spacing:.12em;color:var(--amber);text-transform:uppercase}
+/* chat view */
+.chat{display:grid;grid-template-columns:minmax(0,1fr) 300px;min-height:calc(100svh - 52px)}
+.chat .col{display:grid;grid-template-rows:minmax(0,1fr) auto;min-width:0}
+.thread{padding:28px clamp(16px,3vw,48px) 20px;display:grid;align-content:start;gap:38px;overflow:auto}
+.welcome{display:grid;gap:22px;padding-top:6vh;max-width:820px}
+.welcome h1{margin:0;font-size:clamp(38px,5vw,76px);line-height:.94;letter-spacing:-.045em;font-weight:500;max-width:13ch}
+.sugg{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.sugg button{position:relative;display:flex;justify-content:space-between;align-items:center;gap:14px;width:100%;padding:15px 0;border:0;border-bottom:1px solid var(--line);background:none;color:var(--pt-2);font:400 16px var(--f-sans);text-align:left;cursor:pointer}
+.sugg button:hover{color:var(--pt)}.sugg button::after{content:"";position:absolute;left:0;bottom:-1px;height:1px;width:0;background:var(--cyan);transition:width var(--d-route) var(--e-route)}.sugg button:hover::after{width:100%}
+.sugg .u-cap{color:var(--pt-3)}
+.composer{padding:12px clamp(16px,3vw,48px) 18px;border-top:1px solid var(--line);background:var(--g-950);position:sticky;bottom:0}
+.rail{border-left:1px solid var(--line);padding:18px 16px;display:grid;align-content:start;gap:24px;position:sticky;top:52px;height:calc(100svh - 52px);overflow:auto}
+.models li{display:grid;gap:6px;padding:8px 0;border-bottom:1px solid rgba(37,45,56,.6);font:12px var(--f-mono)}
+.models li div{display:flex;justify-content:space-between;color:var(--pt-2)}
+.swarm{display:grid;grid-template-columns:repeat(16,1fr);gap:3px}.swarm i{aspect-ratio:1;background:var(--g-700)}.swarm i.on{background:var(--cyan);box-shadow:0 0 5px rgba(127,231,247,.6)}.swarm i.ok{background:var(--green)}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+/* grid helpers */
+.g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.toolbar .sp{flex:1}
+.helixbox{position:relative;height:150px;overflow:hidden}
+.helixbox canvas{position:absolute;right:10px;top:-10px;width:120px;height:170px;opacity:.55;transform:rotate(-14deg)}
+.skills{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 28px;border-top:1px solid var(--line)}
+.skills li{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
+.skills li .t{display:grid;gap:2px;min-width:0}.skills li .t b{font-weight:500;color:var(--pt)}.skills li .t span{font-size:13px;color:var(--pt-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.skills li .u-switch{margin-left:auto}
+.conns{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));border-top:1px solid var(--line);border-left:1px solid var(--line)}
+.conns li{display:flex;align-items:center;gap:12px;padding:14px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.conns svg.m{width:22px;height:22px;fill:var(--pt-2);flex:none}
+.conns .t{display:grid;min-width:0}.conns .t b{font-weight:500;font-size:14px}.conns .t span{font:500 10.5px var(--f-mono);letter-spacing:.08em;color:var(--pt-3);text-transform:uppercase}
+.conns .u-btn{margin-left:auto}
+.set{display:grid;grid-template-columns:240px minmax(0,1fr);gap:24px;padding:22px 0;border-bottom:1px solid var(--line)}
+.set h3{margin:0;font:500 16px var(--f-sans)}.set p{margin:4px 0 0;color:var(--pt-3);font-size:13.5px}
+.set .ctl{display:grid;gap:14px;align-content:start;max-width:520px}
+.keyrow{display:flex;align-items:center;gap:10px}.keyrow code{font:12.5px var(--f-mono);color:var(--pt-2)}
+.user{display:flex;align-items:center;gap:10px}.user b{font-weight:500;font-size:13.5px}.user span{font-size:12px;color:var(--pt-3)}
+.recent{display:grid;gap:1px}.recent a{display:block;padding:6px 10px;border-radius:3px;color:var(--pt-3);font-size:13px;text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.recent a:hover{background:var(--hover);color:var(--pt)}
+@media (max-width:1200px){.chat{grid-template-columns:minmax(0,1fr)}.rail{display:none}}
+@media (max-width:900px){.g4{grid-template-columns:1fr 1fr}.g3,.g2,.skills{grid-template-columns:1fr}.set{grid-template-columns:1fr;gap:12px}.u-top .hide-sm{display:none}}
+</style></head><body>
+<a class="skip" href="#viewRoot">Skip to content</a>
+<div class="u-app" id="app">
+ <aside class="u-side" aria-label="Console">
+  <a class="brand" href="home.html" aria-label="01ai showcase"><img src="assets/01ai-wordmark.svg" alt="01ai" width="56" height="27"></a>
+  <button class="u-btn solid" type="button" id="newRun" data-icon="plus">New run</button>
+  <nav class="u-nav" aria-label="Console views" id="mainNav">
+   <a href="#chat" data-view="chat" data-icon="chat">Chat</a>
+   <a href="#runs" data-view="runs" data-icon="route">Runs <span class="n" id="nRuns">12</span></a>
+   <a href="#agents" data-view="agents" data-icon="agents">Agents <span class="n" id="nAgents">38,940</span></a>
+   <a href="#skills" data-view="skills" data-icon="skills">Skills</a>
+   <a href="#models" data-view="models" data-icon="models">Models <span class="n">1,042</span></a>
+   <a href="#connections" data-view="connections" data-icon="plug">Connections</a>
+   <a href="#settings" data-view="settings" data-icon="settings">Settings</a>
+  </nav>
+  <div class="sec"><span class="u-cap">Recent</span><div class="recent" id="recent"></div></div>
+  <div class="foot">
+   <span class="u-status"><i class="u-dot live"></i>All systems nominal</span>
+   <div class="user"><span class="u-glyph" data-glyph="Nicolas"></span><div style="display:grid"><b>Nicolas</b><span>Owner · War room</span></div><button class="u-btn ghost icon sm" type="button" data-menu="userMenu" aria-label="Account menu" data-icon="more" style="margin-left:auto"></button></div>
+  </div>
+ </aside>
+ <div class="u-main">
+  <header class="u-top">
+   <button class="u-btn ghost icon u-burger" type="button" aria-label="Open navigation" aria-expanded="false" data-icon="menu"></button>
+   <nav class="u-crumbs" aria-label="Breadcrumb"><a href="#chat">Console</a><span>/</span><b id="crumb">Chat</b></nav>
+   <span class="sp"></span>
+   <span class="proto-flag hide-sm">Prototype · demo data</span>
+   <button class="u-btn sm hide-sm" type="button" id="searchBtn" data-icon="search">Search <kbd>⌘K</kbd></button>
+   <button class="u-btn ghost icon sm" type="button" id="soundBtn" aria-pressed="false" aria-label="Interface sound" data-tip="Sound" data-icon="bell"></button>
+  </header>
+  <div id="viewRoot" tabindex="-1">
+
+  <!-- ============ CHAT ============ -->
+  <section class="view" id="v-chat" aria-labelledby="chatH">
+   <h2 class="vh" id="chatH">Chat</h2>
+   <div class="chat">
+    <div class="col">
+     <div class="thread" id="thread" role="log" aria-live="polite" aria-label="Conversation">
+      <div class="welcome" id="welcome">
+       <p class="u-cap">Good evening, Nicolas · 38,940 agents standing by</p>
+       <h1>Ask for anything. Watch it get done.</h1>
+       <ul class="sugg" id="sugg"></ul>
+      </div>
+     </div>
+     <div class="composer">
+      <form class="u-compose" id="ask">
+       <label class="vh" for="q">Message 01ai</label>
+       <textarea id="q" rows="1" placeholder="Give the agents something hard…"></textarea>
+       <div class="row">
+        <button class="u-btn ghost sm" type="button" data-icon="attach" aria-label="Attach a file" data-tip="Attach"></button>
+        <div class="u-seg" data-seg role="group" aria-label="Mode" id="mode"><button type="button" aria-pressed="true" data-v="swarm">Swarm</button><button type="button" aria-pressed="false" data-v="single">Single agent</button></div>
+        <label class="vh" for="routing">Routing</label><select class="u-select" id="routing" style="width:auto;height:32px"><option>Adaptive routing</option><option>Fastest</option><option>Cheapest</option><option>Pin ORION-4</option></select>
+        <span style="flex:1"></span>
+        <span class="u-cap hide-sm" style="color:var(--pt-3)">Enter to send</span>
+        <button class="u-btn signal sm" type="submit" id="go" data-icon="send">Send</button>
+       </div>
+      </form>
+     </div>
+    </div>
+    <aside class="rail" aria-label="Live route">
+     <div><p class="u-cap" style="margin:0 0 6px">Live route</p><ul class="models u-list" id="models" style="list-style:none;padding:0;margin:0"><li style="border:0;padding:0;color:var(--pt-3);font:13.5px var(--f-sans)">Idle. Every model is waiting on you.</li></ul></div>
+     <div><p class="u-cap" style="margin:0 0 10px">Swarm</p><div class="swarm" id="swarm" aria-hidden="true"></div></div>
+     <div class="kv"><div class="u-stat"><span class="u-cap">Models</span><b id="sm">0</b></div><div class="u-stat"><span class="u-cap">Agents</span><b id="sa">0</b></div><div class="u-stat"><span class="u-cap">Tools</span><b id="st">0</b></div><div class="u-stat"><span class="u-cap">Time</span><b id="stime">0.0s</b></div></div>
+     <div><p class="u-cap" style="margin:0 0 8px">Run log</p><div role="log" aria-label="Run log"><ol class="u-log" id="runlog" style="font-size:11px"></ol></div></div>
+    </aside>
+   </div>
+  </section>
+
+  <!-- ============ RUNS ============ -->
+  <section class="view u-page" id="v-runs" aria-labelledby="runsH" hidden>
+   <div class="pagehead"><div><h2 class="vh-title" id="runsH">Runs</h2><p>Every request, its route and its proof. Select a run to open the full record.</p></div>
+    <div class="toolbar"><div class="u-seg" data-seg role="group" aria-label="Filter runs" id="runFilter"><button type="button" aria-pressed="true" data-v="all">All</button><button type="button" aria-pressed="false" data-v="live">Live</button><button type="button" aria-pressed="false" data-v="done">Done</button><button type="button" aria-pressed="false" data-v="failed">Needs you</button></div></div></div>
+   <div class="g4" id="runStats"></div>
+   <div class="u-table-wrap"><table class="u-table" data-sortable id="runTable"><thead><tr><th data-key>Run</th><th data-key>Status</th><th data-key class="r">Models</th><th data-key class="r">Agents</th><th data-key class="r">Tools</th><th data-key class="r">Time</th><th data-key>Started</th></tr></thead><tbody></tbody></table></div>
+  </section>
+
+  <!-- ============ AGENTS ============ -->
+  <section class="view u-page" id="v-agents" aria-labelledby="agH" hidden>
+   <div class="pagehead"><div><h2 class="vh-title" id="agH">Agents</h2><p>The fleet. It splits, recombines and deploys new agents on its own; you can also spawn one by hand.</p></div>
+    <div class="toolbar"><button class="u-btn" type="button" data-open-dialog="spawnDlg" data-icon="plus">Spawn agent</button></div></div>
+   <div class="g4">
+    <div class="u-frame live helixbox"><p class="u-cap" style="margin:0 0 10px">Generation</p><div class="u-stat"><b id="gen">4,812</b><span class="d" id="genD">Strand stable</span></div><canvas id="helix" aria-hidden="true"></canvas></div>
+    <div class="u-frame"><p class="u-cap" style="margin:0 0 10px">Live now</p><div class="u-stat"><b id="live">38,940</b><span class="d">+212 today</span></div></div>
+    <div class="u-frame"><p class="u-cap" style="margin:0 0 10px">Spawned today</p><div class="u-stat"><b id="spawned">1,206</b><span class="d">by the strand</span></div></div>
+    <div class="u-frame"><p class="u-cap" style="margin:0 0 10px">Failed</p><div class="u-stat"><b>0</b><span class="d">Sentinel holding</span></div></div>
+   </div>
+   <div class="toolbar"><div class="u-affix" style="width:min(320px,100%)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.5 17a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13zM15.5 15.5 20 20"/></svg><label class="vh" for="agQ">Filter agents</label><input class="u-input" id="agQ" placeholder="Filter by name or class"></div><span class="sp"></span><span class="u-cap" id="agCount"></span></div>
+   <div class="u-table-wrap"><table class="u-table" data-sortable id="agTable"><thead><tr><th data-key>Agent</th><th data-key>Class</th><th data-key>Status</th><th data-key class="r">Tasks</th><th data-key class="r">Success</th><th data-key>Born</th><th><span class="vh">Actions</span></th></tr></thead><tbody></tbody></table></div>
+  </section>
+
+  <!-- ============ SKILLS ============ -->
+  <section class="view u-page" id="v-skills" aria-labelledby="skH" hidden>
+   <div class="pagehead"><div><h2 class="vh-title" id="skH">Skills</h2><p>Endless skills, learned, not listed. Switch a skill off and no agent will use it until you switch it back on.</p></div>
+    <div class="toolbar"><div class="u-affix" style="width:min(280px,100%)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.5 17a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13zM15.5 15.5 20 20"/></svg><label class="vh" for="skQ">Search skills</label><input class="u-input" id="skQ" placeholder="Search skills"></div></div></div>
+   <div data-tabs><div class="u-tabs" role="tablist" aria-label="Skill groups" id="skTabs"></div></div>
+   <ul class="skills" id="skList"></ul>
+  </section>
+
+  <!-- ============ MODELS ============ -->
+  <section class="view u-page" id="v-models" aria-labelledby="mdH" hidden>
+   <div class="pagehead"><div><h2 class="vh-title" id="mdH">Models</h2><p>1,042 models online, and more always coming. The router picks per token; you set the policy.</p></div></div>
+   <div class="g3">
+    <div class="u-frame"><p class="u-cap" style="margin:0 0 12px">Routing policy</p><div class="u-seg" data-seg role="group" aria-label="Routing policy" id="policy"><button type="button" aria-pressed="true" data-v="Adaptive">Adaptive</button><button type="button" aria-pressed="false" data-v="Fastest">Fastest</button><button type="button" aria-pressed="false" data-v="Cheapest">Cheapest</button></div><p class="u-help" style="margin-top:10px" id="policyHelp">Best model for each step, every time.</p></div>
+    <div class="u-frame"><div class="u-field"><label class="u-label" for="lat">Latency ceiling · <span id="latO" class="u-num">50</span>ms</label><input class="u-range" type="range" id="lat" min="10" max="500" value="50" data-out="latO"></div></div>
+    <div class="u-frame"><div class="u-field"><label class="u-label" for="bud">Budget per run · $<span id="budO" class="u-num">40</span></label><input class="u-range" type="range" id="bud" min="1" max="500" value="40" data-out="budO"></div></div>
+   </div>
+   <div class="u-table-wrap"><table class="u-table" data-sortable id="mdTable"><thead><tr><th data-key>Model</th><th data-key>Lab</th><th data-key>Best at</th><th data-key class="r">p50 latency</th><th data-key class="r">Share today</th><th data-key>Status</th></tr></thead><tbody></tbody></table></div>
+   <p class="u-help">Model names here are placeholders for the prototype.</p>
+  </section>
+
+  <!-- ============ CONNECTIONS ============ -->
+  <section class="view u-page" id="v-connections" aria-labelledby="cnH" hidden>
+   <div class="pagehead"><div><h2 class="vh-title" id="cnH">Connections</h2><p>Connect a tool once and every agent can read, write and act in it.</p></div>
+    <div class="toolbar"><div class="u-seg" data-seg role="group" aria-label="Show" id="cnFilter"><button type="button" aria-pressed="true" data-v="all">All</button><button type="button" aria-pressed="false" data-v="on">Connected</button><button type="button" aria-pressed="false" data-v="off">Available</button></div></div></div>
+   <ul class="conns" id="conns"></ul>
+   <p class="u-help">Marks from Simple Icons (CC0); each belongs to its owner.</p>
+  </section>
+
+  <!-- ============ SETTINGS ============ -->
+  <section class="view u-page" id="v-settings" aria-labelledby="stH" hidden>
+   <div class="pagehead"><div><h2 class="vh-title" id="stH">Settings</h2><p>How the console looks, sounds and spends.</p></div></div>
+   <div>
+    <div class="set"><div><h3>Profile</h3><p>Shown to your team and in logs.</p></div><div class="ctl"><div class="user"><span class="u-glyph lg" data-glyph="Nicolas"></span><div style="display:grid"><b>Nicolas</b><span>Owner</span></div></div><div class="u-field"><label class="u-label" for="pn">Display name</label><input class="u-input" id="pn" value="Nicolas"></div></div></div>
+    <div class="set"><div><h3>Interface</h3><p>Applies straight away, on this device.</p></div><div class="ctl">
+     <label class="u-switch"><input type="checkbox" role="switch" id="setSound"> Interface sound (ticks, chirps, buzzes)</label>
+     <div class="u-field"><span class="u-label" id="denL">Density</span><div class="u-seg" data-seg role="group" aria-labelledby="denL" id="density"><button type="button" aria-pressed="true" data-v="standard">Standard</button><button type="button" aria-pressed="false" data-v="dense">Dense</button></div></div>
+     <label class="u-switch"><input type="checkbox" role="switch" id="setDecode" checked> Decode new agent names</label></div></div>
+    <div class="set"><div><h3>Spending</h3><p>Hard limits the router will never cross.</p></div><div class="ctl"><label class="u-check"><input type="checkbox" checked> Ask before any run over $200</label><label class="u-check"><input type="checkbox" checked> Email a daily spend summary</label></div></div>
+    <div class="set"><div><h3>API keys</h3><p>For your own scripts. Treat them like passwords.</p></div><div class="ctl" id="keys"></div></div>
+    <div class="set"><div><h3>Danger zone</h3><p>These can't be undone.</p></div><div class="ctl"><div class="toolbar"><button class="u-btn danger" type="button" data-open-dialog="stopAllDlg">Stand down every agent</button></div></div></div>
+   </div>
+  </section>
+  </div>
+ </div>
+</div>
+
+<div class="u-menu" id="userMenu" role="menu" hidden><button role="menuitem" type="button" data-icon="settings" data-go="settings">Settings</button><button role="menuitem" type="button" data-icon="doc" data-href="system.html">Interface system</button><button role="menuitem" type="button" data-icon="home" data-href="home.html">01ai showcase</button><hr><button role="menuitem" type="button" data-icon="logout" data-href="login.html">Sign out</button></div>
+<div class="u-menu" id="agMenu" role="menu" hidden><button role="menuitem" type="button" data-icon="eye" data-act="open">Open</button><button role="menuitem" type="button" data-icon="copy" data-act="clone">Clone</button><button role="menuitem" type="button" data-icon="pause" data-act="pause">Pause</button><hr><button role="menuitem" type="button" data-icon="close" data-act="retire" style="color:#FFB0B0">Retire</button></div>
+
+<dialog class="u-dialog" id="spawnDlg" aria-labelledby="spH"><form method="dialog" id="spawnForm"><div class="hd"><h2 id="spH">Spawn an agent</h2><button class="u-btn ghost icon sm" type="button" data-close-dialog aria-label="Close" data-icon="close"></button></div>
+ <div class="bd"><div class="u-field"><label class="u-label" for="spC">Class</label><select class="u-select" id="spC"><option>Strategist</option><option>Router</option><option>Operator</option><option>Researcher</option><option>Builder</option><option>Analyst</option><option>Negotiator</option><option>Sentinel</option></select></div>
+  <div class="u-field"><label class="u-label" for="spP">Parent strand</label><select class="u-select" id="spP"><option>Best performer this week</option><option>Strategist-04</option><option>Router-11</option></select><p class="u-help">The new agent inherits its parent's skills and routes.</p></div></div>
+ <div class="ft"><button class="u-btn" type="button" data-close-dialog>Cancel</button><button class="u-btn signal" type="submit" value="spawn">Spawn</button></div></form></dialog>
+<dialog class="u-dialog" id="stopAllDlg" aria-labelledby="saH"><div class="hd"><h2 id="saH">Stand down every agent?</h2><button class="u-btn ghost icon sm" type="button" data-close-dialog aria-label="Close" data-icon="close"></button></div><div class="bd"><p style="margin:0">38,940 agents will finish their current step and stop. This is a prototype, so nothing actually stops.</p></div><div class="ft"><button class="u-btn" type="button" data-close-dialog>Keep them running</button><button class="u-btn danger" type="button" data-close-dialog id="stopAllGo">Stand down</button></div></dialog>
+<dialog class="u-dialog" id="connDlg" aria-labelledby="cdH"><div class="hd"><h2 id="cdH">Connect</h2><button class="u-btn ghost icon sm" type="button" data-close-dialog aria-label="Close" data-icon="close"></button></div><div class="bd" id="connBody"></div><div class="ft"><button class="u-btn" type="button" data-close-dialog>Cancel</button><button class="u-btn signal" type="button" id="connGo">Authorise</button></div></dialog>
+<dialog class="u-dialog u-drawer" id="runDrawer" aria-labelledby="rdH"><div class="u-head"><h2 id="rdH">Run</h2><button class="u-btn ghost icon sm" type="button" data-close-dialog aria-label="Close" data-icon="close"></button></div><div id="rdBody" style="padding:16px;display:grid;gap:16px"></div></dialog>
+
+<script src="01.js"></script><script src="01-ui.js"></script><script src="integrations-data.js"></script><script src="dna.js"></script>
+<script>
+(()=>{const $=UI.$,$$=UI.$$,fmt=UI.fmt,reduce=O1.reduce,wait=ms=>new Promise(r=>setTimeout(r,reduce?0:ms)),esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+ const MARK=s=>{const m=(window.O1_INTEGRATIONS||[]).find(i=>i.s===s);return m?`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${m.p}"/></svg>`:''};
+
+ /* ================= router ================= */
+ const VIEWS=['chat','runs','agents','skills','models','connections','settings'],NAMES={chat:'Chat',runs:'Runs',agents:'Agents',skills:'Skills',models:'Models',connections:'Connections',settings:'Settings'};
+ function show(v){if(!VIEWS.includes(v))v='chat';VIEWS.forEach(x=>$('#v-'+x).hidden=x!==v);$$('#mainNav a').forEach(a=>a.toggleAttribute('aria-current',a.dataset.view===v)&&a.setAttribute('aria-current','page'));$('#crumb').textContent=NAMES[v];document.title='01ai · '+NAMES[v];$('#app').classList.remove('nav-open');if(v!=='chat')$('#viewRoot').focus({preventScroll:true});scrollTo(0,0);O1.Sound.tick()}
+ addEventListener('hashchange',()=>show(location.hash.slice(1)));
+
+ /* ================= chat ================= */
+ const FLOWS={
+  launch:{q:'Plan our Q1 launch across every channel',agents:46,route:[['ORION-4','plan'],['HELIX-L','research'],['NOVA-X','copy'],['KESTREL','check']],tools:[['hubspot','HubSpot','read 18,204 contacts, 31 segments'],['notion','Notion','pulled last year\'s post-mortem'],['figma','Figma','found 14 approved frames'],['linear','Linear','created 22 tasks with owners']],
+   body:`<p><strong>The plan is live.</strong> Twelve weeks, five channels, one story, and every task already sits with an owner in Linear.</p><ol><li><strong>Weeks 1–3 · Seed.</strong> Founder thread and three deep dives to the 4,100 contacts who opened everything last quarter.</li><li><strong>Weeks 4–8 · Surge.</strong> Paid social on the two segments that converted 3.2× better, using frames already approved in Figma.</li><li><strong>Weeks 9–12 · Close.</strong> Sequences for 612 accounts showing intent, with the Negotiator drafting every follow-up.</li></ol><p>Last year's weakest channel is cut. It took 31% of budget and drove 4% of pipeline.</p>`},
+  audit:{q:'Audit our codebase and fix what\'s slow',agents:112,route:[['ORION-4','map'],['VANTA-2','profile'],['HELIX-L','code'],['KESTREL','review']],tools:[['github','GitHub','cloned 9 repos, 1.4M lines'],['datadog','Datadog','pulled 30 days of p99 traces'],['sentry','Sentry','matched 212 errors to commits'],['github','GitHub','opened 7 pull requests, all green']],
+   body:`<p><strong>Seven pull requests are open, every one green.</strong> Together they take checkout p99 from 1.84s to 310ms.</p><ol><li><strong>N+1 queries</strong> in the order service: 41 per request became 2.</li><li><strong>An uncached pricing call</strong> hit 9 million times a day, now cached at the edge.</li><li><strong>A 2.3MB bundle</strong> split down to 340KB on first load.</li></ol><p>The Sentinel ran the full suite twice per branch. Nothing regressed.</p>`},
+  invoices:{q:'Find every unpaid invoice and chase it',agents:28,route:[['ORION-4','plan'],['KESTREL','match'],['NOVA-X','write'],['HELIX-L','check']],tools:[['stripe','Stripe','read 12,408 invoices'],['quickbooks','QuickBooks','reconciled the ledger'],['gmail','Gmail','drafted 63 reminders in your voice'],['slack','Slack','flagged 4 accounts to finance']],
+   body:`<p><strong>£184,920 is outstanding across 63 invoices.</strong> Every reminder is drafted, matched and ready to send.</p><ol><li><strong>41 invoices</strong> under 30 days: a polite nudge at 9am in each customer's time zone.</li><li><strong>18 invoices</strong> over 30 days: firmer, with a payment link.</li><li><strong>4 accounts</strong> over 90 days, worth £52,300: escalated to finance in Slack.</li></ol><p>Two "unpaid" invoices were paid by transfer and never matched. The ledger is fixed.</p>`},
+  hire:{q:'Shortlist ten engineers who could pass our application',agents:64,route:[['ORION-4','plan'],['HELIX-L','research'],['KESTREL','score']],tools:[['github','GitHub','read 3,200 public repos'],['linear','Linear','built a scoring board'],['gmail','Gmail','drafted 10 personal invitations']],
+   body:`<p><strong>Ten engineers made it.</strong> Each has shipped production routing or agent infrastructure at scale, and each invitation references their own work.</p><p>Three are already in your network. Two have starred the 01 repositories this month.</p>`}};
+ const generic=q=>({q,agents:24+(Math.random()*60|0),route:[['ORION-4','plan'],['HELIX-L','research'],['NOVA-X','write'],['KESTREL','check']],tools:[['notion','Notion','searched the workspace'],['googledrive','Google Drive','read the relevant files'],['linear','Linear','created follow-up tasks']],
+  body:`<p><strong>Done.</strong> In the live console the agents would now be working on “${esc(q.slice(0,140))}”: planning it, splitting it across the swarm, running every tool it needs and coming back with the result and the proof.</p><p>This prototype plays four scripted runs. Try a suggestion to see a full one.</p>`});
+ $('#sugg').innerHTML=Object.entries(FLOWS).map(([k,f])=>`<li><button type="button" data-flow="${k}"><span>${f.q}</span><span class="u-cap">${f.agents} agents →</span></button></li>`).join('');
+ const thread=$('#thread'),swarm=$('#swarm');swarm.innerHTML='<i></i>'.repeat(96);const cells=[...swarm.children];
+ let busy=false,clock=0,runCount=12;
+ const stat=(m,a,t)=>{$('#sm').textContent=m;$('#sa').textContent=a;$('#st').textContent=t};
+ const rlog=(a,v,cls='')=>{const l=$('#runlog');l.insertAdjacentHTML('beforeend',`<li class="new"><time>[${UI.now()}]</time> <b class="${cls}">${a}</b> ${v}</li>`);while(l.children.length>9)l.firstChild.remove()};
+ async function run(f){if(busy)return;busy=true;$('#go').classList.add('loading');$('#go').disabled=true;$('#welcome')?.remove();
+  thread.insertAdjacentHTML('beforeend',`<div class="u-msg user"><span class="who">Nicolas</span><p>${esc(f.q)}</p></div>`);
+  const a=document.createElement('div');a.className='u-msg';a.innerHTML=`<span class="who"><span class="u-glyph sm">${UI.glyph('01ai')}</span><span class="st">Routing…</span></span><div class="u-route"></div><div class="tools" style="display:grid;gap:4px"></div><div class="body"></div>`;thread.append(a);a.scrollIntoView({block:'end'});
+  const st=$('.st',a),route=$('.u-route',a),tools=$('.tools',a),body=$('.body',a);const t0=performance.now();clearInterval(clock);clock=setInterval(()=>$('#stime').textContent=((performance.now()-t0)/1000).toFixed(1)+'s',100);
+  cells.forEach(c=>c.className='');stat(0,0,0);$('#runlog').innerHTML='';
+  $('#models').innerHTML=f.route.map(([m,r])=>`<li><div><span>${m}</span><span>${r}</span></div><div class="u-meter"><i style="--v:0%"></i></div></li>`).join('');
+  route.innerHTML=f.route.map(([m,r])=>`<span><i aria-hidden="true"></i>${m} ${r}</span>`).join('');
+  for(let i=0;i<f.route.length;i++){await wait(360);route.children[i].classList.add('on');$('#models').children[i].querySelector('i').style.setProperty('--v',(30+Math.random()*70)+'%');stat(i+1,0,0);rlog('ROUTE',`${f.route[i][0]} <em>${f.route[i][1]}</em>`);O1.Sound.tick()}
+  st.textContent=`Spawning ${f.agents} agents…`;const n=Math.min(96,f.agents);for(let i=0;i<n;i++){cells[i].className='on';if(i%6===0){stat(f.route.length,i+1,0);await wait(28)}}stat(f.route.length,f.agents,0);rlog('SPAWN',`<em>${f.agents}</em> agents`);O1.Sound.chirp();
+  st.textContent='Working…';for(let i=0;i<f.tools.length;i++){const [s,name,what]=f.tools[i];await wait(480);tools.insertAdjacentHTML('beforeend',`<div class="u-tool">${MARK(s)}<b>${name}</b> ${what} <em>✓</em></div>`);stat(f.route.length,f.agents,i+1);rlog('TOOL',`${name.toUpperCase()} <em>ok</em>`);O1.Sound.click();a.scrollIntoView({block:'end'})}
+  cells.forEach((c,i)=>{if(c.className)setTimeout(()=>c.className='ok',reduce?0:i*7)});
+  st.textContent='01ai';await wait(250);
+  const tmp=document.createElement('div');tmp.innerHTML=f.body;
+  if(reduce)body.innerHTML=f.body;else{const cur=document.createElement('span');cur.className='u-cursor';
+   async function stream(src,dst){for(const node of [...src.childNodes]){if(node.nodeType===3){const words=node.textContent.split(/(\s+)/),tn=document.createTextNode('');dst.append(tn,cur);for(const w of words){tn.textContent+=w;if(w.trim())await wait(18)}}else{const el=document.createElement(node.tagName);dst.append(el);await stream(node,el)}}}
+   await stream(tmp,body);cur.remove()}
+  clearInterval(clock);const secs=((performance.now()-t0)/1000).toFixed(1);$('#stime').textContent=secs+'s';
+  a.insertAdjacentHTML('beforeend',`<p class="u-cap" style="margin:0">Done in <span style="color:var(--green)">${secs}s</span> · ${f.route.length} models · ${f.agents} agents · ${f.tools.length} tools</p>`);rlog('DONE',`<em>${secs}s</em>`);O1.Sound.confirm();
+  RUNS.unshift({name:f.q,status:'done',models:f.route.length,agents:f.agents,tools:f.tools.length,time:+secs,when:'Just now',flow:f});runCount++;$('#nRuns').textContent=runCount;renderRuns();renderRecent();
+  a.scrollIntoView({block:'end'});busy=false;$('#go').classList.remove('loading');$('#go').disabled=false}
+ $('#sugg').onclick=e=>{const b=e.target.closest('[data-flow]');if(b)run(FLOWS[b.dataset.flow])};
+ const q=$('#q');$('#ask').onsubmit=e=>{e.preventDefault();const v=q.value.trim();if(!v||busy)return;q.value='';q.style.height='auto';
+  const k=/launch|campaign|market/i.test(v)?'launch':/code|slow|perf|bug/i.test(v)?'audit':/invoice|pay|chase/i.test(v)?'invoices':/hire|engineer|recruit|shortlist/i.test(v)?'hire':null;run(k?{...FLOWS[k],q:v}:generic(v))};
+ q.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('#ask').requestSubmit()}});
+ q.addEventListener('input',()=>{q.style.height='auto';q.style.height=Math.min(200,q.scrollHeight)+'px'});
+ function newRun(){location.hash='chat';thread.innerHTML='';const w=document.createElement('div');w.className='welcome';w.id='welcome';w.innerHTML=`<p class="u-cap">New run · 38,940 agents standing by</p><h1>Ask for anything. Watch it get done.</h1><ul class="sugg">${$('#sugg')?$('#sugg').innerHTML:Object.entries(FLOWS).map(([k,f])=>`<li><button type="button" data-flow="${k}"><span>${f.q}</span><span class="u-cap">${f.agents} agents →</span></button></li>`).join('')}</ul>`;thread.append(w);w.querySelector('.sugg').onclick=e=>{const b=e.target.closest('[data-flow]');if(b)run(FLOWS[b.dataset.flow])};q.focus()}
+ $('#newRun').onclick=newRun;
+
+ /* ================= runs ================= */
+ const RUNS=[['Series B data room, full diligence pack','done',5,140,9,22.4,'Today 09:12'],['Competitor teardown: pricing and positioning','done',4,64,6,11.8,'Today 08:40'],['Router latency audit','live',4,96,5,0,'Running'],['Board memo: Q3 numbers','done',3,22,4,6.1,'Yesterday'],['Hiring plan, four hubs','failed',4,48,5,14.0,'Yesterday'],['Pricing model v7','done',5,80,7,18.9,'Mon'],['Investor update draft','done',3,18,3,4.7,'Mon'],['Churn analysis, last 90 days','done',4,52,6,9.3,'Sun'],['Partner outreach, 40 labs','live',3,40,4,0,'Running'],['Security review of new connectors','done',4,36,5,12.2,'Sat'],['Weekly war-room brief','done',3,24,6,5.5,'Fri'],['Office lease comparison','done',2,12,3,3.1,'Thu']].map(r=>({name:r[0],status:r[1],models:r[2],agents:r[3],tools:r[4],time:r[5],when:r[6]}));
+ let runF='all';
+ const SL={done:['live','Done'],live:['busy','Live'],failed:['warn','Needs you']};
+ function renderRuns(){const list=RUNS.filter(r=>runF==='all'||r.status===runF);
+  $('#runTable tbody').innerHTML=list.map((r,i)=>`<tr data-i="${RUNS.indexOf(r)}" tabindex="0" style="cursor:pointer"><td class="t">${esc(r.name)}</td><td><span class="u-status"><i class="u-dot ${SL[r.status][0]}"></i>${SL[r.status][1]}</span></td><td class="r u-num">${r.models}</td><td class="r u-num">${r.agents}</td><td class="r u-num">${r.tools}</td><td class="r u-num" data-v="${r.time}">${r.status==='live'?'—':r.time.toFixed(1)+'s'}</td><td>${r.when}</td></tr>`).join('')||`<tr><td colspan="7"><div class="u-empty"><b>Nothing here.</b><span>No runs match that filter.</span></div></td></tr>`;
+  const done=RUNS.filter(r=>r.status==='done');
+  $('#runStats').innerHTML=[['Runs today',RUNS.length,'+3 since 9am'],['Live now',RUNS.filter(r=>r.status==='live').length,'on schedule'],['Median time',(done.map(r=>r.time).sort((a,b)=>a-b)[done.length>>1]||0).toFixed(1)+'s','−1.2s this week'],['Need you',RUNS.filter(r=>r.status==='failed').length,'1 approval']].map(([k,v,d],i)=>`<div class="u-frame${i===1?' live':''}"><p class="u-cap" style="margin:0 0 10px">${k}</p><div class="u-stat"><b>${v}</b><span class="d${i===3?' down':''}">${d}</span></div></div>`).join('')}
+ $('#runFilter').addEventListener('change',e=>{runF=e.detail;renderRuns()});
+ function openRun(r){$('#rdH').textContent=r.name;const st=SL[r.status];
+  $('#rdBody').innerHTML=`<span class="u-status"><i class="u-dot ${st[0]}"></i>${st[1]} · ${r.when}</span>
+   <div class="kv"><div class="u-stat"><span class="u-cap">Models</span><b>${r.models}</b></div><div class="u-stat"><span class="u-cap">Agents</span><b>${r.agents}</b></div><div class="u-stat"><span class="u-cap">Tools</span><b>${r.tools}</b></div><div class="u-stat"><span class="u-cap">Time</span><b>${r.status==='live'?'—':r.time.toFixed(1)+'s'}</b></div></div>
+   <div class="u-route">${['ORION-4 plan','HELIX-L research','NOVA-X write','KESTREL check'].slice(0,r.models).map(x=>`<span class="on"><i></i>${x}</span>`).join('')}</div>
+   ${r.status==='failed'?`<div class="u-banner warn" role="alert" style="margin:0 -16px"><span class="u-dot warn"></span>Waiting on your approval: the run wants to spend $260, over your $200 limit.</div><div class="toolbar"><button class="u-btn signal sm" type="button" id="approve">Approve $260</button><button class="u-btn sm" type="button" data-close-dialog>Not now</button></div>`:''}
+   <div role="log" aria-label="Run log"><ol class="u-log"><li><time>[09:12:01]</time> ROUTER &gt;&gt; <b>ROUTE</b> [ ORION-4 <em>plan</em> ]</li><li><time>[09:12:02]</time> STRAND &gt;&gt; <b>SPAWN</b> [ <em>${r.agents}</em> agents ]</li><li><time>[09:12:05]</time> OPERATOR &gt;&gt; <b>TOOL CALL</b> [ NOTION <em>ok</em> ]</li>${r.status==='failed'?'<li><time>[09:12:09]</time> SENTINEL &gt;&gt; <span class="w">WAITING</span> [ BUDGET APPROVAL ]</li>':'<li><time>[09:12:14]</time> 01AI &gt;&gt; <b>DONE</b> [ <em>proof attached</em> ]</li>'}</ol></div>`;
+  UI.wire($('#rdBody'));$('#runDrawer').showModal();const ap=$('#approve');if(ap)ap.onclick=()=>{r.status='live';r.when='Running';renderRuns();$('#runDrawer').close();UI.toast('Approved','The run picked up where it stopped.','ok')}}
+ $('#runTable tbody').addEventListener('click',e=>{const tr=e.target.closest('tr[data-i]');if(tr)openRun(RUNS[+tr.dataset.i])});
+ $('#runTable tbody').addEventListener('keydown',e=>{const tr=e.target.closest('tr[data-i]');if(tr&&(e.key==='Enter'||e.key===' ')){e.preventDefault();openRun(RUNS[+tr.dataset.i])}});
+ function renderRecent(){$('#recent').innerHTML=RUNS.slice(0,5).map((r,i)=>`<a href="#runs" data-i="${i}">${esc(r.name)}</a>`).join('')}
+ $('#recent').addEventListener('click',e=>{const a=e.target.closest('a[data-i]');if(a){e.preventDefault();location.hash='runs';setTimeout(()=>openRun(RUNS[+a.dataset.i]),80)}});
+
+ /* ================= agents ================= */
+ const CLASSES=['Strategist','Router','Operator','Researcher','Builder','Analyst','Negotiator','Sentinel'];
+ const AG=Array.from({length:24},(_,i)=>{const c=CLASSES[i%8];const n=`${c}-${String(2+((i*37)%97)).padStart(2,'0')}`;return {name:n,cls:c,status:['live','busy','live','idle','live','warn'][i%6],tasks:200+((i*7919)%90000),succ:(98.6+((i*13)%14)/10).toFixed(1),born:`Gen ${4812-((i*29)%300)}`}});
+ const ST={live:['live','Live'],busy:['busy','Working'],idle:['idle','Idle'],warn:['warn','Waiting'],paused:['idle','Paused']};
+ function renderAgents(){const qv=$('#agQ').value.trim().toLowerCase();const list=AG.filter(a=>!qv||(a.name+' '+a.cls).toLowerCase().includes(qv));
+  $('#agTable tbody').innerHTML=list.map(a=>`<tr><td class="t"><span style="display:inline-flex;gap:10px;align-items:center"><span class="u-glyph sm">${UI.glyph(a.name)}</span><span class="nm">${a.name}</span></span></td><td>${a.cls}</td><td><span class="u-status"><i class="u-dot ${ST[a.status][0]}"></i>${ST[a.status][1]}</span></td><td class="r u-num" data-v="${a.tasks}">${fmt(a.tasks)}</td><td class="r u-num" data-v="${a.succ}">${a.succ}%</td><td>${a.born}</td><td class="r"><button class="u-btn ghost icon sm" type="button" data-agent="${a.name}" aria-label="Actions for ${a.name}">${UI.icon('more')}</button></td></tr>`).join('')||`<tr><td colspan="7"><div class="u-empty"><b>No agents match.</b><span>Try a class name, like Router.</span></div></td></tr>`;
+  $('#agCount').textContent=`${list.length} of ${fmt(38940)} shown`}
+ $('#agQ').oninput=renderAgents;
+ let menuAgent=null;$('#agTable').addEventListener('click',e=>{const b=e.target.closest('[data-agent]');if(!b)return;e.stopPropagation();menuAgent=AG.find(a=>a.name===b.dataset.agent);const m=$('#agMenu');const r=b.getBoundingClientRect();m.hidden=false;m.style.top=(r.bottom+6+scrollY)+'px';m.style.left=Math.max(8,r.right-m.offsetWidth+scrollX)+'px';m.querySelector('button').focus();setTimeout(()=>document.addEventListener('click',()=>m.hidden=true,{once:true}),0)});
+ $('#agMenu').addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b||!menuAgent)return;$('#agMenu').hidden=true;const act=b.dataset.act;
+  if(act==='pause'){menuAgent.status='paused';renderAgents();UI.toast('Paused',menuAgent.name+' will finish its step and wait.')}
+  if(act==='clone'){spawn(menuAgent.cls,menuAgent.name)}
+  if(act==='retire'){AG.splice(AG.indexOf(menuAgent),1);renderAgents();UI.toast('Retired',menuAgent.name+' stood down. Its skills stay in the strand.','warn')}
+  if(act==='open'){UI.toast(menuAgent.name,`${menuAgent.cls} · ${fmt(menuAgent.tasks)} tasks · ${menuAgent.succ}% success`)}});
+ function spawn(cls,parent){const name=`${cls}-${String(10+Math.random()*89|0)}`;AG.unshift({name,cls,status:'live',tasks:0,succ:'100.0',born:'Gen '+(4813)});renderAgents();
+  const n=$('#agTable tbody tr .nm');if(n&&$('#setDecode').checked)O1.decode(n);$('#gen').textContent=fmt(+$('#gen').textContent.replace(/,/g,'')+1);$('#spawned').textContent=fmt(+$('#spawned').textContent.replace(/,/g,'')+1);UI.toast('Agent deployed',`${name} split from ${parent} and went live.`,'ok')}
+ $('#spawnForm').addEventListener('submit',e=>{spawn($('#spC').value,$('#spP').value)});
+ let helix=null;
+
+ /* ================= skills ================= */
+ const SK={Research:['Market sweep','Competitor teardown','Patent search','Regulatory watch','Academic review','Earnings digest'],Build:['Code audit','Refactor at scale','Test generation','Incident triage','Infra cost cut','Migration planner'],Revenue:['Invoice chase','Pricing model','Deal desk','Renewal radar','Contract review','Board pack'],People:['Talent sourcing','Interview loop','Offer letters','Onboarding plan','Org design','Comp benchmarking']};
+ const skState={};let skTab='Research';
+ $('#skTabs').innerHTML=Object.keys(SK).map((k,i)=>`<button role="tab" type="button" aria-selected="${i===0}" tabindex="${i?-1:0}" data-k="${k}">${k} <span class="n">${SK[k].length}</span></button>`).join('');
+ function renderSkills(){const qv=$('#skQ').value.trim().toLowerCase();const groups=qv?Object.keys(SK):[skTab];const items=groups.flatMap(g=>SK[g].map(n=>({g,n}))).filter(x=>!qv||x.n.toLowerCase().includes(qv));
+  $('#skList').innerHTML=items.map(({g,n},i)=>{const id='sk'+g+i,on=skState[n]!==false;return `<li><span class="u-glyph">${UI.glyph(n)}</span><span class="t"><b>${n}</b><span>${g} · used ${fmt(200+((n.length*977)%9000))} times this week</span></span><label class="u-switch"><input type="checkbox" role="switch" data-sk="${n}" ${on?'checked':''} aria-label="${n}"></label></li>`}).join('')||'<li><div class="u-empty"><b>No skill by that name.</b><span>The agents learn new ones most days.</span></div></li>'}
+ $('#skTabs').addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(!b)return;skTab=b.dataset.k;$$('#skTabs [role=tab]').forEach(x=>{x.setAttribute('aria-selected',x===b);x.tabIndex=x===b?0:-1});renderSkills();O1.Sound.tick()});
+ $('#skQ').oninput=renderSkills;$('#skList').addEventListener('change',e=>{const c=e.target.closest('[data-sk]');if(!c)return;skState[c.dataset.sk]=c.checked;UI.toast(c.checked?'Skill on':'Skill off',`${c.dataset.sk} is ${c.checked?'available to':'held back from'} every agent.`,c.checked?'ok':'warn')});
+
+ /* ================= models ================= */
+ const MD=[['ORION-4','Lab A','Planning',212,18.2,'live'],['HELIX-L','Lab B','Research',340,14.9,'live'],['NOVA-X','Lab C','Writing',180,12.4,'live'],['KESTREL','Lab D','Checking',96,11.0,'live'],['VANTA-2','Lab E','Profiling',140,8.3,'live'],['ATLAS-9','Lab A','Code',260,7.7,'live'],['PRISM','Lab F','Vision',410,5.1,'warn'],['EMBER-3','Lab G','Speed',38,4.8,'live'],['SABLE','Lab H','Long context',620,3.9,'live'],['ZEPHYR','Lab B','Translation',150,2.6,'idle']];
+ function renderModels(){$('#mdTable tbody').innerHTML=MD.map(([n,l,b,lat,sh,s])=>`<tr><td class="t"><span style="display:inline-flex;gap:10px;align-items:center"><span class="u-glyph sm">${UI.glyph(n)}</span>${n}</span></td><td>${l}</td><td>${b}</td><td class="r u-num" data-v="${lat}">${lat}ms</td><td class="r" data-v="${sh}"><span style="display:inline-flex;gap:10px;align-items:center"><span class="u-meter" style="width:80px;--v:${sh*5}%"><i></i></span><span class="u-num">${sh}%</span></span></td><td><span class="u-status"><i class="u-dot ${s==='live'?'live':s==='warn'?'warn':'idle'}"></i>${s==='live'?'Online':s==='warn'?'Degraded':'Standby'}</span></td></tr>`).join('')}
+ const PH={Adaptive:'Best model for each step, every time.',Fastest:'Lowest latency that still passes the checks.',Cheapest:'Lowest cost that still passes the checks.'};
+ $('#policy').addEventListener('change',e=>{$('#policyHelp').textContent=PH[e.detail];UI.toast('Routing policy',e.detail+' routing is live for new runs.')});
+
+ /* ================= connections ================= */
+ const CON=new Set(['github','notion','linear','slack','stripe','hubspot','figma','gmail','googledrive','datadog','sentry','quickbooks']);let cnF='all',pending=null;
+ const ALL=(window.O1_INTEGRATIONS||[]).slice(0,40);
+ function renderConns(){const list=ALL.filter(m=>cnF==='all'||(cnF==='on')===CON.has(m.s));
+  $('#conns').innerHTML=list.map(m=>`<li><svg class="m" viewBox="0 0 24 24" aria-hidden="true"><path d="${m.p}"/></svg><span class="t"><b>${m.t}</b><span>${CON.has(m.s)?'<i class="u-dot live" style="width:6px;height:6px;margin-right:6px"></i>Connected':m.c}</span></span>${CON.has(m.s)?`<button class="u-btn ghost sm" type="button" data-dis="${m.s}" aria-label="Disconnect ${m.t}">Disconnect</button>`:`<button class="u-btn sm" type="button" data-con="${m.s}" aria-label="Connect ${m.t}">Connect</button>`}</li>`).join('')}
+ $('#cnFilter').addEventListener('change',e=>{cnF=e.detail;renderConns()});
+ $('#conns').addEventListener('click',e=>{const c=e.target.closest('[data-con]'),d=e.target.closest('[data-dis]');
+  if(c){pending=ALL.find(m=>m.s===c.dataset.con);$('#cdH').textContent='Connect '+pending.t;$('#connBody').innerHTML=`<div style="display:flex;gap:14px;align-items:center"><svg viewBox="0 0 24 24" style="width:34px;height:34px;fill:var(--pt)"><path d="${pending.p}"/></svg><span style="font:500 18px var(--f-sans);color:var(--pt)">${pending.t}</span></div><p style="margin:0">01ai will be able to read, write and act in ${pending.t} on your behalf. You can disconnect at any time.</p><label class="u-check"><input type="checkbox" checked> Every agent may use it</label><label class="u-check"><input type="checkbox"> Ask me before it writes anything</label>`;UI.wire($('#connBody'));$('#connDlg').showModal()}
+  if(d){CON.delete(d.dataset.dis);renderConns();UI.toast('Disconnected','Agents will stop using it straight away.','warn')}});
+ $('#connGo').onclick=async()=>{const b=$('#connGo');b.classList.add('loading');await wait(900);b.classList.remove('loading');$('#connDlg').close();CON.add(pending.s);renderConns();UI.toast('Connected',pending.t+' is wired into every agent.','ok')};
+
+ /* ================= settings ================= */
+ const ss=$('#setSound'),sb=$('#soundBtn');const syncS=()=>{ss.checked=O1.Sound.on;sb.setAttribute('aria-pressed',O1.Sound.on);sb.style.color=O1.Sound.on?'var(--cyan)':''};syncS();
+ ss.onchange=()=>{O1.Sound.set(ss.checked);syncS()};sb.onclick=()=>{O1.Sound.set(!O1.Sound.on);syncS();UI.toast(O1.Sound.on?'Sound on':'Sound off',O1.Sound.on?'Ticks, chirps and buzzes are live.':'The console is silent.')};
+ $('#density').addEventListener('change',e=>{$('#app').classList.toggle('u-dense',e.detail==='dense')});
+ $('#keys').innerHTML=[['War room scripts','01k_live_••••••••3f9a','2 days ago'],['Nightly reports','01k_live_••••••••77c1','Today']].map(([n,k,u])=>`<div class="keyrow"><div style="display:grid;flex:1;min-width:0"><b style="font-weight:500;font-size:14px">${n}</b><code>${k}</code></div><span class="u-cap">${u}</span><button class="u-btn ghost sm" type="button" data-copy>Copy</button></div>`).join('')+'<button class="u-btn sm" type="button" id="newKey" data-icon="plus" style="justify-self:start">New key</button>';
+ $('#keys').addEventListener('click',e=>{if(e.target.closest('[data-copy]'))UI.toast('Copied','Prototype keys are not real.');if(e.target.closest('#newKey'))UI.toast('Key created','Shown once. Store it somewhere safe.','ok')});
+ $('#stopAllGo').onclick=()=>UI.toast('Standing down','Every agent is finishing its step. (Prototype: nothing stopped.)','warn');
+
+ /* ================= menus, palette ================= */
+ $('#userMenu').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;UI.close();if(b.dataset.go)location.hash=b.dataset.go;if(b.dataset.href)location.href=b.dataset.href});
+ UI.palette.set([...VIEWS.map(v=>({label:'Go to '+NAMES[v],icon:{chat:'chat',runs:'route',agents:'agents',skills:'skills',models:'models',connections:'plug',settings:'settings'}[v],group:'View',run:()=>location.hash=v})),
+  {label:'New run',icon:'plus',group:'Action',run:newRun},{label:'Spawn an agent',icon:'agents',group:'Action',run:()=>{location.hash='agents';setTimeout(()=>$('#spawnDlg').showModal(),120)}},{label:'Toggle interface sound',icon:'bell',group:'Action',run:()=>sb.click()},
+  ...Object.values(FLOWS).map(f=>({label:f.q,icon:'bolt',group:'Run',run:()=>{location.hash='chat';setTimeout(()=>run(f),150)}})),
+  {label:'Open the interface system',icon:'doc',group:'Docs',run:()=>location.href='system.html'},{label:'Sign out',icon:'logout',group:'Account',run:()=>location.href='login.html'}]);
+ $('#searchBtn').onclick=()=>UI.palette.open();
+
+ /* ================= live ticks ================= */
+ if(!reduce)setInterval(()=>{const el=$('#nAgents'),v=+el.textContent.replace(/,/g,'')+((Math.random()*30|0)-10);el.textContent=fmt(v);$('#live').textContent=fmt(v)},1600);
+
+ /* ================= boot ================= */
+ renderRuns();renderRecent();renderAgents();renderSkills();renderModels();renderConns();UI.wire();
+ const startHelix=()=>{if(!helix&&!$('#v-agents').hidden){helix=DNA.start($('#helix'),{still:reduce,onSpawn(){$('#gen').textContent=fmt(+$('#gen').textContent.replace(/,/g,'')+1);$('#genD').textContent='Split · recombined · deployed';O1.Sound.chirp()}})}};
+ addEventListener('hashchange',startHelix);
+ show(location.hash.slice(1)||'chat');startHelix();
+ let seen='0';try{seen=sessionStorage.getItem('o1-welcome')||'0';sessionStorage.setItem('o1-welcome','1')}catch(e){}if(seen!=='1'){setTimeout(()=>UI.toast('Welcome back, Nicolas','Press ⌘K (Ctrl+K) to jump anywhere.'),700)}
+})();
+</script>
+</body></html>

@@ -1,0 +1,169 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>01ai · Interface</title>
+<meta name="description" content="The 01ai interface: one question, routed across 1000+ models, run by a swarm of agents, in seconds.">
+<meta name="theme-color" content="#07090C"><link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="01.css">
+<style>
+.app{display:grid;grid-template-columns:230px minmax(0,1fr) 300px;min-height:100vh;min-height:100svh;padding-top:118px}
+.app>*{min-width:0}
+/* left: sessions */
+.left{border-right:1px solid var(--line);padding:24px 20px;display:grid;align-content:start;gap:26px}
+.left .o-btn{width:100%;justify-content:space-between;min-height:42px;font-size:14px}
+.left h2,.right h2{font:11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--pt-3);margin:0 0 10px;font-weight:400}
+.left ul{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.left li a{display:block;padding:7px 0;color:var(--pt-2);text-decoration:none;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.left li a:hover,.left li a[aria-current]{color:var(--pt)}
+.left li a[aria-current]{box-shadow:inset 2px 0 0 var(--cyan);padding-left:10px}
+.left .mini{font:12px/1.8 var(--f-mono);color:var(--pt-3);letter-spacing:.04em}
+.left .mini b{color:var(--green);font-weight:500}
+/* centre: the conversation */
+.centre{display:grid;grid-template-rows:auto minmax(0,1fr) auto;min-height:0}
+.bar{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:center;padding:14px clamp(18px,3vw,40px);border-bottom:1px solid var(--line);font:11px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--pt-3)}
+.bar b{color:var(--pt);font-weight:500}
+.demo{color:var(--amber)}
+.thread{overflow:auto;padding:clamp(24px,4vw,56px) clamp(18px,3vw,40px) 30px;display:grid;align-content:start;gap:42px;max-height:calc(100svh - 118px - 54px - 150px)}
+.empty{display:grid;gap:26px;padding-top:4vh}
+.empty h1{font-size:clamp(40px,5.4vw,84px);line-height:.94;letter-spacing:-.045em;font-weight:500;margin:0;max-width:13ch}
+.sugg{display:grid;gap:0;border-top:1px solid var(--line);max-width:720px}
+.sugg button{display:flex;justify-content:space-between;gap:16px;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:16px 0;color:var(--pt-2);font:400 17px var(--f-sans);cursor:pointer;position:relative}
+.sugg button:hover{color:var(--pt)}.sugg button span{color:var(--pt-3);font:12px var(--f-mono)}
+.sugg button::after{content:"";position:absolute;left:0;bottom:-1px;height:1px;width:0;background:var(--cyan);transition:width var(--d-route) var(--e-route)}
+.sugg button:hover::after{width:100%}
+.u{justify-self:end;max-width:min(620px,90%);font-size:clamp(20px,2vw,26px);line-height:1.3;letter-spacing:-.02em;color:var(--pt);text-align:right;margin:0}
+.u small{display:block;font:11px var(--f-mono);letter-spacing:.1em;color:var(--pt-3);margin-bottom:8px;text-transform:uppercase}
+.a{display:grid;gap:18px;max-width:780px}
+.a .who{display:flex;align-items:center;gap:10px;font:11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--pt-3)}
+.a .who img{height:16px}
+/* the route: models light up along one trace */
+.route{display:flex;flex-wrap:wrap;align-items:center;gap:0;font:12px var(--f-mono);letter-spacing:.06em}
+.route span{display:inline-flex;align-items:center;gap:8px;padding:6px 0;color:var(--pt-3)}
+.route span+span::before{content:"";display:inline-block;width:28px;height:1px;background:var(--line-2);margin:0 10px}
+.route span.on{color:var(--pt)}.route span.on+span::before{background:var(--cyan)}
+.route span i{width:6px;height:6px;background:var(--g-500)}
+.route span.on i{background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+.route span em{font-style:normal;color:var(--pt-3)}
+.tools{list-style:none;margin:0;padding:0;display:grid;gap:6px;font:12.5px/1.5 var(--f-mono);color:var(--pt-2)}
+.tools li{display:flex;align-items:center;gap:10px}
+.tools svg{width:14px;height:14px;fill:var(--pt-2);flex:none}
+.tools b{color:var(--cyan);font-weight:400}.tools em{font-style:normal;color:var(--green)}
+.body{font-size:17px;line-height:1.65;color:var(--pt-2)}
+.body p{margin:0 0 14px}.body strong{color:var(--pt);font-weight:500}
+.body ol{margin:0 0 14px;padding-left:22px}.body li{margin:4px 0}
+.cursor{display:inline-block;width:8px;height:1.05em;background:var(--cyan);vertical-align:-2px;margin-left:2px;animation:o-pulse .9s steps(2) infinite}
+.done{font:11px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--pt-3)}
+.done b{color:var(--green);font-weight:500}
+/* composer */
+.composer{border-top:1px solid var(--line);padding:16px clamp(18px,3vw,40px) 22px;display:grid;gap:12px;background:var(--bg)}
+.composer form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:end}
+.composer textarea{min-height:56px;max-height:180px;padding:14px 0;font-size:18px;resize:none}
+.composer .opts{display:flex;flex-wrap:wrap;gap:8px 22px;font:11px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--pt-3)}
+.composer .opts b{color:var(--pt-2);font-weight:500}
+/* right: live route */
+.right{border-left:1px solid var(--line);padding:24px 22px;display:grid;align-content:start;gap:30px}
+.models{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.models li{display:grid;gap:6px;font:12px var(--f-mono);letter-spacing:.04em;color:var(--pt-2)}
+.models li div{display:flex;justify-content:space-between}
+.models li .b{height:2px;background:var(--g-600)}.models li .b i{display:block;height:100%;width:0;background:var(--cyan);transition:width .5s var(--e-tick)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.stats div{display:grid;gap:4px}
+.stats b{font:500 24px var(--f-mono);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.stats span{font:10.5px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--pt-3)}
+.swarm{display:grid;grid-template-columns:repeat(16,1fr);gap:3px}
+.swarm i{aspect-ratio:1;background:var(--g-700)}
+.swarm i.on{background:var(--cyan);box-shadow:0 0 6px rgba(127,231,247,.6)}
+.swarm i.ok{background:var(--green)}
+.idle{color:var(--pt-3);font-size:14px;margin:0}
+@media (max-width:1180px){.app{grid-template-columns:200px minmax(0,1fr)}.right{display:none}}
+@media (max-width:760px){.composer textarea{font-size:16px}.app{grid-template-columns:1fr;padding-top:104px}.left{display:none}.thread{max-height:none}.composer{position:sticky;bottom:0}}
+</style></head><body>
+<main id="main" class="app">
+ <aside class="left" aria-label="Sessions">
+  <button type="button" class="o-btn" id="new">New session <span aria-hidden="true">+</span></button>
+  <div><h2>Today</h2><ul id="sessions">
+   <li><a href="#" aria-current="true">New session</a></li>
+   <li><a href="#">Series B data room</a></li><li><a href="#">Competitor teardown</a></li><li><a href="#">Router latency audit</a></li>
+  </ul></div>
+  <div><h2>This week</h2><ul><li><a href="#">Hiring plan, four hubs</a></li><li><a href="#">Pricing model v7</a></li><li><a href="#">Board memo draft</a></li></ul></div>
+  <p class="mini">AGENTS ONLINE <b id="online">38,940</b><br>MODELS <b>1,042</b></p>
+ </aside>
+ <section class="centre" aria-label="Conversation">
+  <div class="bar"><span>Model <b>Auto · 1000+ models</b></span><span class="demo">Demo · scripted responses</span></div>
+  <div class="thread" id="thread" role="log" aria-live="polite" aria-label="Conversation">
+   <div class="empty" id="empty">
+    <h1><span data-decode-now>Ask for anything. Watch it get done.</span></h1>
+    <div class="sugg" id="sugg">
+     <button type="button" data-flow="launch">Plan our Q1 launch across every channel <span>→</span></button>
+     <button type="button" data-flow="audit">Audit our codebase and fix what's slow <span>→</span></button>
+     <button type="button" data-flow="invoices">Find every unpaid invoice and chase it <span>→</span></button>
+    </div>
+   </div>
+  </div>
+  <div class="composer">
+   <form id="ask"><div class="o-field"><label for="q" class="vh">Message 01ai</label><textarea class="o-input o-textarea" id="q" rows="1" placeholder="Give them something hard…"></textarea></div><button class="o-btn solid" type="submit" id="go">Send</button></form>
+   <p class="opts"><span>Routing <b>Adaptive</b></span><span>Agents <b>Swarm</b></span><span>Tools <b>All 60+</b></span><span>Enter to send</span></p>
+  </div>
+ </section>
+ <aside class="right" aria-label="Live route">
+  <div><h2>Live route</h2><ul class="models" id="models"><li><p class="idle">Idle. Every model is waiting on you.</p></li></ul></div>
+  <div><h2>Swarm</h2><div class="swarm" id="swarm" aria-hidden="true"></div></div>
+  <div class="stats"><div><span>Models</span><b id="sm">0</b></div><div><span>Agents</span><b id="sa">0</b></div><div><span>Tools</span><b id="st">0</b></div><div><span>Time</span><b id="stime">0.0s</b></div></div>
+ </aside>
+</main>
+<script src="01.js"></script><script src="integrations-data.js"></script>
+<script>
+O1.init({page:'chat'});
+(()=>{const $=id=>document.getElementById(id),wait=ms=>new Promise(r=>setTimeout(r,O1.reduce?0:ms)),esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+ const icon=s=>{const x=(window.O1_INTEGRATIONS||[]).find(i=>i.s===s);return x?`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${x.p}"/></svg>`:''};
+ const FLOWS={
+  launch:{q:'Plan our Q1 launch across every channel',agents:46,route:[['ORION-4','plan'],['HELIX-L','research'],['NOVA-X','copy'],['KESTREL','check']],
+   tools:[['hubspot','HubSpot','read 18,204 contacts, 31 segments'],['notion','Notion','pulled last year\'s launch post-mortem'],['figma','Figma','found 14 approved campaign frames'],['linear','Linear','created 22 launch tasks, assigned owners']],
+   body:`<p><strong>The plan is live.</strong> Twelve weeks, five channels, one story, and every task already sits with an owner in Linear.</p><ol><li><strong>Weeks 1–3 · Seed.</strong> Founder thread and three deep-dive posts to the 4,100 contacts who opened every email last quarter.</li><li><strong>Weeks 4–8 · Surge.</strong> Paid social on the two segments that converted 3.2× better last year, creative pulled from the Figma frames already approved.</li><li><strong>Weeks 9–12 · Close.</strong> Sales sequences for the 612 accounts showing intent, with the Negotiator agent drafting every follow-up.</li></ol><p>I've cut last year's worst-performing channel. It cost 31% of budget and drove 4% of pipeline.</p>`},
+  audit:{q:'Audit our codebase and fix what\'s slow',agents:112,route:[['ORION-4','map'],['VANTA-2','profile'],['HELIX-L','code'],['KESTREL','review']],
+   tools:[['github','GitHub','cloned 9 repos, 1.4M lines'],['datadog','Datadog','pulled 30 days of p99 traces'],['sentry','Sentry','matched 212 errors to commits'],['github','GitHub','opened 7 pull requests, tests passing']],
+   body:`<p><strong>Seven pull requests are open, every one green.</strong> Together they take checkout p99 from 1.84s to 310ms.</p><ol><li><strong>N+1 queries in the order service.</strong> 41 queries per request became 2. Biggest single win.</li><li><strong>An uncached pricing call</strong> on every page view, hit 9 million times a day. Now cached at the edge.</li><li><strong>A 2.3MB bundle</strong> shipped to every visitor. Split, and down to 340KB on first load.</li></ol><p>The Sentinel ran the full suite twice on each branch. Nothing regressed. Merge when ready.</p>`},
+  invoices:{q:'Find every unpaid invoice and chase it',agents:28,route:[['ORION-4','plan'],['KESTREL','match'],['NOVA-X','write'],['HELIX-L','check']],
+   tools:[['stripe','Stripe','read 12,408 invoices'],['quickbooks','QuickBooks','reconciled against the ledger'],['gmail','Gmail','drafted 63 reminders in your voice'],['slack','Slack','flagged 4 accounts to finance']],
+   body:`<p><strong>£184,920 is outstanding across 63 invoices.</strong> Every reminder is drafted, matched to the right contact and ready to send.</p><ol><li><strong>41 invoices</strong> under 30 days late: a polite nudge, sending in batches from 9am in each customer's time zone.</li><li><strong>18 invoices</strong> over 30 days: firmer, with the original invoice and a payment link attached.</li><li><strong>4 accounts</strong> over 90 days, worth £52,300: escalated to finance in Slack with full history.</li></ol><p>Two "unpaid" invoices were paid by bank transfer and never matched. I've fixed the ledger.</p>`}};
+ function generic(q){return {q,agents:24+(Math.random()*60|0),route:[['ORION-4','plan'],['HELIX-L','research'],['NOVA-X','write'],['KESTREL','check']],
+   tools:[['notion','Notion','searched the workspace'],['googledrive','Google Drive','read the relevant files'],['linear','Linear','created follow-up tasks']],
+   body:`<p><strong>Done.</strong> In the full system the agents would now be working on “${esc(q.slice(0,140))}”: planning it, splitting it across the swarm, running every tool it needs and coming back with the result and the proof.</p><p>This preview plays three scripted runs. Try one of the suggestions to see a full one.</p>`}}
+ const thread=$('thread'),swarm=$('swarm');swarm.innerHTML='<i></i>'.repeat(96);const cells=[...swarm.children];
+ let busy=false,t0=0,clock=0;
+ function stats(m,a,t){$('sm').textContent=m;$('sa').textContent=a;$('st').textContent=t}
+ async function run(f){if(busy)return;busy=true;$('go').disabled=true;$('empty')?.remove();
+  thread.insertAdjacentHTML('beforeend',`<p class="u"><small>You</small>${esc(f.q)}</p>`);
+  const a=document.createElement('div');a.className='a';a.innerHTML=`<p class="who"><img src="assets/01ai-wordmark.svg" alt="01ai"> Routing…</p><div class="route"></div><ul class="tools"></ul><div class="body"></div>`;thread.append(a);thread.scrollTop=thread.scrollHeight;
+  const who=a.querySelector('.who'),route=a.querySelector('.route'),tools=a.querySelector('.tools'),body=a.querySelector('.body');
+  t0=performance.now();clearInterval(clock);clock=setInterval(()=>$('stime').textContent=((performance.now()-t0)/1000).toFixed(1)+'s',100);
+  cells.forEach(c=>c.className='');stats(0,0,0);
+  const ml=$('models');ml.innerHTML=f.route.map(([m,r])=>`<li><div><span>${m}</span><span>${r}</span></div><div class="b"><i></i></div></li>`).join('');
+  route.innerHTML=f.route.map(([m,r])=>`<span><i aria-hidden="true"></i>${m} <em>${r}</em></span>`).join('');
+  /* 1. route: each model locks on along the trace */
+  for(let i=0;i<f.route.length;i++){await wait(380);route.children[i].classList.add('on');ml.children[i].querySelector('i').style.width=(30+Math.random()*70)+'%';stats(i+1,0,0);O1.Sound.tick()}
+  /* 2. swarm: agents spawn */
+  who.innerHTML=`<img src="assets/01ai-wordmark.svg" alt="01ai"> Spawning ${f.agents} agents…`;
+  const n=Math.min(cells.length,f.agents);for(let i=0;i<n;i++){cells[i].className='on';if(i%6===0){stats(f.route.length,i+1,0);await wait(30)}}stats(f.route.length,f.agents,0);O1.Sound.chirp();
+  /* 3. tools */
+  who.innerHTML=`<img src="assets/01ai-wordmark.svg" alt="01ai"> Working…`;
+  for(let i=0;i<f.tools.length;i++){const [s,name,what]=f.tools[i];await wait(520);tools.insertAdjacentHTML('beforeend',`<li>${icon(s)}<b>${name}</b> ${what} <em>✓</em></li>`);stats(f.route.length,f.agents,i+1);O1.Sound.click();thread.scrollTop=thread.scrollHeight}
+  cells.forEach((c,i)=>{if(c.className)setTimeout(()=>c.className='ok',O1.reduce?0:i*8)});
+  /* 4. answer streams in, word by word */
+  who.innerHTML=`<img src="assets/01ai-wordmark.svg" alt="01ai">`;await wait(300);
+  const tmp=document.createElement('div');tmp.innerHTML=f.body;body.innerHTML='';
+  if(O1.reduce){body.innerHTML=f.body}else{const cur=document.createElement('span');cur.className='cursor';
+   async function stream(src,dst){for(const node of [...src.childNodes]){if(node.nodeType===3){const words=node.textContent.split(/(\s+)/);const tn=document.createTextNode('');dst.append(tn);dst.append(cur);for(const w of words){tn.textContent+=w;if(w.trim())await wait(22)}}else{const el=document.createElement(node.tagName);dst.append(el);await stream(node,el)}}}
+   await stream(tmp,body);cur.remove()}
+  clearInterval(clock);const secs=((performance.now()-t0)/1000).toFixed(1);$('stime').textContent=secs+'s';
+  a.insertAdjacentHTML('beforeend',`<p class="done">Done in <b>${secs}s</b> · ${f.route.length} models · ${f.agents} agents · ${f.tools.length} tools</p>`);O1.Sound.confirm();
+  thread.scrollTop=thread.scrollHeight;busy=false;$('go').disabled=false}
+ $('sugg').onclick=e=>{const b=e.target.closest('[data-flow]');if(b)run(FLOWS[b.dataset.flow])};
+ const q=$('q');$('ask').onsubmit=e=>{e.preventDefault();const v=q.value.trim();if(!v||busy)return;q.value='';
+  const k=/launch|campaign|market/i.test(v)?'launch':/code|slow|perf|bug/i.test(v)?'audit':/invoice|pay|money|chase/i.test(v)?'invoices':null;
+  run(k?{...FLOWS[k],q:v}:generic(v))};
+ q.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('ask').requestSubmit()}});
+ q.addEventListener('input',()=>{q.style.height='auto';q.style.height=Math.min(180,q.scrollHeight)+'px'});
+ $('new').onclick=()=>location.reload();
+ document.querySelectorAll('.left li a').forEach(a=>a.addEventListener('click',e=>e.preventDefault()));
+ if(!O1.reduce)setInterval(()=>{const o=$('online');o.textContent=(+o.textContent.replace(/,/g,'')+((Math.random()*30|0)-10)).toLocaleString('en-GB')},1500);})();
+</script>
+</body></html>

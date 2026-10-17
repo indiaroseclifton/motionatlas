@@ -1,0 +1,279 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>01 · Interface system</title>
+<meta name="description" content="The 01 interface system: foundations, components, patterns and states for 01ai, 01 Agency and 01 Workspace.">
+<meta name="theme-color" content="#07090C"><link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="01.css"><link rel="stylesheet" href="01-ui.css">
+<style>
+.doc-top{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:20px;height:56px;padding:0 var(--gut);border-bottom:1px solid var(--line);background:rgba(7,9,12,.9);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.doc-top img{height:26px}.doc-top nav{display:flex;gap:18px;margin-left:auto}.doc-top nav a{font:500 12px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--pt-2);text-decoration:none}.doc-top nav a:hover,.doc-top nav a[aria-current=page]{color:var(--pt)}
+.doc{display:grid;grid-template-columns:220px minmax(0,1fr);gap:clamp(24px,4vw,64px);padding:0 var(--gut);max-width:1500px;margin:0 auto}
+.toc{position:sticky;top:76px;align-self:start;max-height:calc(100vh - 96px);overflow:auto;padding:24px 0}
+.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:1px}.toc .grp{margin:16px 0 6px;font:500 10.5px var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--pt-3)}
+.toc a{display:block;padding:5px 10px;border-radius:3px;font-size:13.5px;color:var(--pt-2);text-decoration:none}.toc a:hover{background:var(--hover);color:var(--pt)}.toc a.on{color:var(--pt);box-shadow:inset 2px 0 0 var(--cyan)}
+.hero{padding:9vh 0 6vh;display:grid;gap:22px;border-bottom:1px solid var(--line)}
+.hero h1{font-size:clamp(48px,7.4vw,112px);line-height:.92;letter-spacing:-.045em;font-weight:500;margin:0;max-width:12ch}
+.hero p{margin:0;color:var(--pt-2);font-size:clamp(17px,1.4vw,20px);max-width:62ch}
+.principles{list-style:none;margin:10px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--line)}
+.principles li{padding:20px 22px 22px 0;border-bottom:1px solid var(--line);display:grid;gap:6px}.principles li+li{padding-left:22px;border-left:1px solid var(--line)}.principles li:nth-child(3n+1){padding-left:0;border-left:0}
+.principles b{font:500 18px var(--f-sans);letter-spacing:-.01em}.principles span{color:var(--pt-2);font-size:14.5px}
+section.s{padding:72px 0 0;scroll-margin-top:60px;display:grid;gap:22px}
+.s>header{display:grid;gap:10px}.s h2{margin:0;font-size:clamp(32px,3.6vw,52px);line-height:1;letter-spacing:-.035em;font-weight:500}
+.s .lead{margin:0;color:var(--pt-2);max-width:66ch}
+.s h3{margin:12px 0 0;font:500 12px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--cyan)}
+.spec{border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.spec .ex{padding:28px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;background:radial-gradient(100% 100% at 0 0,#0D1117,#090B0F)}
+.spec .ex.col{display:grid;align-items:start}
+.spec .bar{display:flex;align-items:center;gap:10px;padding:8px 12px;border-top:1px solid var(--line);background:var(--g-950)}
+.spec .bar span{font:500 11px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--pt-3)}
+.spec .bar .u-btn{margin-left:auto}
+.spec pre{margin:0;max-height:260px;overflow:auto;padding:14px 16px;border-top:1px solid var(--line);background:#06080B;font:12px/1.6 var(--f-mono);color:#AEB7C3;white-space:pre}
+.spec pre[hidden]{display:none}
+.rules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 28px;border-top:1px solid var(--line)}
+.rules p{margin:0;padding:12px 0;border-bottom:1px solid var(--line);font-size:14.5px;color:var(--pt-2)}.rules p b{color:var(--pt);font-weight:500}
+.rules .do::before{content:"DO  ";font:500 11px var(--f-mono);color:var(--green)}.rules .dont::before{content:"DON'T  ";font:500 11px var(--f-mono);color:var(--red)}
+.sw{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:18px}
+.sw div{display:grid;gap:4px}.sw i{display:block;height:64px;border-radius:4px;border:1px solid var(--line)}.sw b{font:500 13.5px var(--f-sans)}.sw code{font:12px var(--f-mono);color:var(--pt-2)}.sw small{font:11px var(--f-mono);color:var(--pt-3)}
+.scale{display:grid;gap:0;border-top:1px solid var(--line)}
+.scale div{display:grid;grid-template-columns:110px 90px minmax(0,1fr);gap:20px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.scale code{font:12px var(--f-mono);color:var(--pt-3)}.scale .bx{height:14px;max-width:100%;background:var(--cyan);opacity:.75}.scale div>*{min-width:0}.spec,.spec .ex>*{min-width:0}.spec .ex.col{grid-template-columns:minmax(0,1fr)}
+.icons{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:0;border-top:1px solid var(--line);border-left:1px solid var(--line)}
+.icons div{display:grid;justify-items:center;gap:8px;padding:16px 6px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.icons svg{width:22px;height:22px;color:var(--pt)}.icons span{font:10.5px var(--f-mono);color:var(--pt-3)}
+.glyphs{display:flex;flex-wrap:wrap;gap:10px}
+.density{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.density>div{display:grid;gap:10px;align-content:start}
+.lifecycle{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;border-top:1px solid var(--line)}
+.lifecycle div{padding:18px 16px 18px 0;display:grid;gap:6px;border-bottom:1px solid var(--line)}.lifecycle div+div{padding-left:16px;border-left:1px solid var(--line)}
+.lifecycle b{font:500 12px var(--f-mono);letter-spacing:.1em;color:var(--cyan)}.lifecycle span{font-size:14px;color:var(--pt-2)}
+.protos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.protos{gap:0 28px;border-top:1px solid var(--line)}
+.proto{position:relative;display:grid;gap:8px;padding:22px 0;border-bottom:1px solid var(--line);text-decoration:none}
+.proto::after{content:"";position:absolute;left:0;bottom:-1px;height:1px;width:0;background:var(--cyan);transition:width var(--d-route) var(--e-route)}.proto:hover::after{width:100%}.proto b{font:500 22px var(--f-sans);letter-spacing:-.02em}.proto span{color:var(--pt-2);font-size:14.5px}.proto .u-cap{color:var(--cyan)}
+footer.doc-foot{margin-top:100px;padding:28px var(--gut) 60px;border-top:1px solid var(--line);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;color:var(--pt-3);font:12px var(--f-mono)}
+@media (max-width:1000px){.doc{grid-template-columns:1fr}.toc{display:none}.principles{grid-template-columns:1fr}.principles li+li{padding-left:0;border-left:0}.density,.protos{grid-template-columns:1fr}.lifecycle{grid-template-columns:1fr}.lifecycle div+div{padding-left:0;border-left:0}.rules{grid-template-columns:1fr}}
+@media (max-width:640px){.doc-top nav a:not([aria-current]){display:none}.spec .ex{padding:18px}.scale div{grid-template-columns:90px 70px minmax(0,1fr);gap:10px}}
+</style></head><body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="doc-top"><a href="hub.html" aria-label="01 prototypes hub"><img src="assets/01-mark.svg" alt="01" width="26" height="26"></a><span class="u-cap">Interface system · v1</span>
+ <nav aria-label="01"><a href="hub.html">Hub</a><a href="system.html" aria-current="page">System</a><a href="brand.html">Brand</a><a href="app.html">Console</a><a href="workspace.html">Workspace</a><a href="agency.html">Agency</a></nav></header>
+<div class="doc">
+<nav class="toc" aria-label="On this page"><ol id="toc">
+ <li class="grp">Foundations</li><li><a href="#principles">Principles</a></li><li><a href="#colour">Colour roles</a></li><li><a href="#type">Type</a></li><li><a href="#space">Space &amp; density</a></li><li><a href="#icons">Icons &amp; glyphs</a></li><li><a href="#motion">Motion &amp; sound</a></li>
+ <li class="grp">Components</li><li><a href="#buttons">Buttons</a></li><li><a href="#fields">Fields</a></li><li><a href="#choices">Choices</a></li><li><a href="#tags">Tags &amp; status</a></li><li><a href="#nav">Tabs &amp; navigation</a></li><li><a href="#data">Tables &amp; lists</a></li><li><a href="#metrics">Frames &amp; metrics</a></li><li><a href="#log">Logs</a></li><li><a href="#chat">Chat</a></li><li><a href="#overlays">Overlays</a></li><li><a href="#states">States</a></li>
+ <li class="grp">Patterns</li><li><a href="#shell">App shell</a></li><li><a href="#lifecycle">Agent run</a></li><li><a href="#forms">Forms</a></li><li><a href="#prototypes">Prototypes</a></li>
+</ol></nav>
+<main id="main">
+<section class="hero" id="principles" aria-labelledby="h1">
+ <p class="u-cap">01ai · 01 Agency · 01 Workspace</p>
+ <h1 id="h1"><span data-decode-now>One system. Three volumes.</span></h1>
+ <p>The interface system behind every 01 surface. The showcase plays it loud, the Agency site plays it to sell, and Workspace plays it dense. The tokens, components and motion are the same everywhere; only the density and the volume change.</p>
+ <ol class="principles">
+  <li><b>Hairlines, not boxes.</b><span>Structure comes from 1px lines and corner ticks. A filled card is the exception, never the default.</span></li>
+  <li><b>Signal is scarce.</b><span>Cyan marks the one thing that matters on screen. Green means live. Amber and purple are rare.</span></li>
+  <li><b>Machines speak mono.</b><span>Anything the system says (status, logs, numbers, labels) is in Geist Mono caps. People get Geist.</span></li>
+  <li><b>Arrive along a route.</b><span>Motion travels a trace and locks into place. Nothing floats, bounces or fades for decoration.</span></li>
+  <li><b>Numbers tick.</b><span>Values change in visible steps, with a tick when sound is on. Smooth tweens hide what changed.</span></li>
+  <li><b>Never small, never shy.</b><span>Headlines are huge, left and off-centre. Screens are asymmetric; nothing is mirrored.</span></li>
+ </ol>
+</section>
+
+<section class="s" id="colour" aria-labelledby="c-h"><header><h2 id="c-h">Colour roles</h2><p class="lead">Use roles, not raw values. Contrast is measured against the page (graphite 950).</p></header>
+ <div class="sw" id="sw"></div>
+ <div class="rules"><p class="do">Use <b>cyan</b> for focus, the active route and the primary signal.</p><p class="dont">Use cyan for body text or large fills.</p><p class="do">Use <b>green</b> only for live, healthy or complete.</p><p class="dont">Use green for buttons or decoration.</p><p class="do">Keep <b>amber</b> for warnings and the occasional accent.</p><p class="dont">Put purple and amber on the same screen as decoration.</p></div>
+</section>
+
+<section class="s" id="type" aria-labelledby="t-h"><header><h2 id="t-h">Type</h2><p class="lead">Geist for people, Geist Mono for the machine. Showcase headlines run up to 132px; Workspace runs a tighter scale.</p></header>
+ <div class="scale" id="tscale"></div>
+</section>
+
+<section class="s" id="space" aria-labelledby="s-h"><header><h2 id="s-h">Space &amp; density</h2><p class="lead">A 4px base. Each surface picks a row height: Showcase breathes, Console is standard, Workspace is dense.</p></header>
+ <div class="scale" id="sscale"></div>
+ <div class="density">
+  <div><p class="u-cap">Showcase · row 48</p><ul class="u-list" style="--u-row:48px"><li>Strategist <span class="u-tag cyan" style="margin-left:auto">Live</span></li><li>Router <span class="u-tag" style="margin-left:auto">Idle</span></li></ul></div>
+  <div><p class="u-cap">Console · row 40</p><ul class="u-list"><li>Strategist <span class="u-tag cyan" style="margin-left:auto">Live</span></li><li>Router <span class="u-tag" style="margin-left:auto">Idle</span></li></ul></div>
+  <div class="u-dense"><p class="u-cap">Workspace · row 32</p><ul class="u-list"><li>Strategist <span class="u-tag cyan" style="margin-left:auto">Live</span></li><li>Router <span class="u-tag" style="margin-left:auto">Idle</span></li></ul></div>
+ </div>
+</section>
+
+<section class="s" id="icons" aria-labelledby="i-h"><header><h2 id="i-h">Icons &amp; glyphs</h2><p class="lead">One 24px set, 1.5px stroke, square caps and mitred corners, so they match the hard-edged type. Every agent, model and person also gets a generated glyph: a mirrored 5×5 grid of bits, unique to its name.</p></header>
+ <div class="icons" id="iconGrid"></div>
+ <h3>Glyphs</h3>
+ <div class="glyphs" id="glyphRow"></div>
+</section>
+
+<section class="s" id="motion" aria-labelledby="m-h"><header><h2 id="m-h">Motion &amp; sound</h2><p class="lead">Route, lock, decode and tick. Live demos, easing tokens and the six synthesised sounds are in the <a href="brand.html#motion" style="color:var(--pt)">brand book</a>. In product UI, keep motion under 320ms and never block input.</p></header>
+ <div class="rules"><p class="do">Decode headlines and new agent names once, on arrival.</p><p class="dont">Decode body text, labels or anything the user is reading.</p><p class="do">Tick counters in six steps, and play the tick sound only when sound is on.</p><p class="dont">Animate layout while a person is typing or choosing.</p><p class="do">Make every effect instant under reduced motion.</p><p class="dont">Loop motion in someone's peripheral vision without a pause control.</p></div>
+</section>
+
+<section class="s" id="buttons" aria-labelledby="b-h"><header><h2 id="b-h">Buttons</h2><p class="lead">A cyan trace draws across the top on hover. Platinum (solid) for the one primary action per view; signal for the hero action in a run; line for everything else.</p></header>
+ <div class="spec"><div class="ex" data-code>
+  <button class="u-btn solid" type="button">Run agents</button>
+  <button class="u-btn signal" type="button" data-icon="bolt">Deploy</button>
+  <button class="u-btn" type="button">Secondary</button>
+  <button class="u-btn ghost" type="button">Ghost</button>
+  <button class="u-btn danger" type="button">Stop run</button>
+  <button class="u-btn icon" type="button" aria-label="Settings" data-tip="Settings" data-icon="settings"></button>
+  <button class="u-btn solid loading" type="button" aria-busy="true">Saving</button>
+  <button class="u-btn" type="button" disabled>Disabled</button>
+ </div></div>
+ <div class="spec"><div class="ex" data-code>
+  <button class="u-btn sm" type="button">Small</button>
+  <button class="u-btn" type="button">Default</button>
+  <button class="u-btn lg solid" type="button">Large</button>
+  <div class="u-group" role="group" aria-label="View"><button class="u-btn sm" type="button" data-icon="grid" aria-label="Grid"></button><button class="u-btn sm" type="button" data-icon="tasks" aria-label="List"></button><button class="u-btn sm" type="button" data-icon="chart" aria-label="Chart"></button></div>
+ </div></div>
+</section>
+
+<section class="s" id="fields" aria-labelledby="f-h"><header><h2 id="f-h">Fields</h2><p class="lead">Labels sit above, always visible. Errors sit under the field and say what to do. Showcase forms use the underline style (o-input); product UI uses these boxed fields.</p></header>
+ <div class="spec"><div class="ex col" data-code style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px">
+  <div class="u-field"><label class="u-label" for="f1">Agent name</label><input class="u-input" id="f1" placeholder="Strategist-04"><p class="u-help">Shown in logs and the swarm.</p></div>
+  <div class="u-field"><label class="u-label" for="f2">Search</label><div class="u-affix"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.5 17a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13zM15.5 15.5 20 20"/></svg><input class="u-input" id="f2" placeholder="Agents, models, tools"><kbd>⌘K</kbd></div></div>
+  <div class="u-field"><label class="u-label" for="f3">Routing</label><select class="u-select" id="f3"><option>Adaptive</option><option>Fastest</option><option>Cheapest</option><option>Pinned model</option></select></div>
+  <div class="u-field"><label class="u-label" for="f4">Budget per run</label><input class="u-input" id="f4" value="0" aria-invalid="true" aria-describedby="f4e"><p class="u-error" id="f4e">Set a budget above zero, or turn budgets off.</p></div>
+  <div class="u-field" style="grid-column:1/-1"><label class="u-label" for="f5">Instructions</label><textarea class="u-textarea" id="f5">Plan the launch. Keep every task with an owner.</textarea></div>
+ </div></div>
+</section>
+
+<section class="s" id="choices" aria-labelledby="ch-h"><header><h2 id="ch-h">Choices</h2><p class="lead">Checkboxes and radios for forms, switches for settings that apply at once, a segmented control for 2–4 views, and ranges for continuous values with the number shown.</p></header>
+ <div class="spec"><div class="ex" data-code style="gap:28px">
+  <label class="u-check"><input type="checkbox" checked> Use all tools</label>
+  <label class="u-check"><input type="checkbox"> Ask before spending</label>
+  <label class="u-check"><input type="radio" name="r1" checked> Swarm</label>
+  <label class="u-check"><input type="radio" name="r1"> Single agent</label>
+  <label class="u-switch"><input type="checkbox" role="switch" checked> Interface sound</label>
+  <div class="u-seg" data-seg role="group" aria-label="Range"><button type="button" aria-pressed="true">24h</button><button type="button" aria-pressed="false">7d</button><button type="button" aria-pressed="false">30d</button></div>
+  <div class="u-field" style="min-width:240px"><label class="u-label" for="rg">Swarm size · <span id="rgo" class="u-num">48</span></label><input class="u-range" type="range" id="rg" min="1" max="200" value="48" data-out="rgo"></div>
+ </div></div>
+</section>
+
+<section class="s" id="tags" aria-labelledby="tg-h"><header><h2 id="tg-h">Tags, status &amp; keys</h2></header>
+ <div class="spec"><div class="ex" data-code style="gap:16px">
+  <span class="u-tag">Default</span><span class="u-tag cyan">Routing</span><span class="u-tag green">Live</span><span class="u-tag amber">Review</span><span class="u-tag purple">Experimental</span><span class="u-tag red">Blocked</span>
+  <span class="u-status"><i class="u-dot live"></i>Live</span><span class="u-status"><i class="u-dot busy"></i>Working</span><span class="u-status"><i class="u-dot warn"></i>Waiting</span><span class="u-status"><i class="u-dot err"></i>Failed</span><span class="u-status"><i class="u-dot idle"></i>Idle</span>
+  <span><kbd>⌘</kbd> <kbd>K</kbd></span><span class="u-glyph" data-glyph="AGENT_4821"></span><span class="u-glyph lg" data-glyph="ORION-4"></span>
+ </div></div>
+</section>
+
+<section class="s" id="nav" aria-labelledby="n-h"><header><h2 id="n-h">Tabs &amp; navigation</h2><p class="lead">Tabs underline in cyan and move with arrow keys. Side navigation marks the current page with a 2px cyan edge.</p></header>
+ <div class="spec"><div class="ex col" data-code>
+  <div data-tabs><div class="u-tabs" role="tablist" aria-label="Run"><button role="tab" type="button" aria-selected="true" aria-controls="tp1" id="tb1">Overview</button><button role="tab" type="button" aria-selected="false" aria-controls="tp2" id="tb2" tabindex="-1">Agents <span class="n">48</span></button><button role="tab" type="button" aria-selected="false" aria-controls="tp3" id="tb3" tabindex="-1">Tools <span class="n">6</span></button></div>
+   <div role="tabpanel" id="tp1" aria-labelledby="tb1" style="padding-top:14px;color:var(--pt-2)">Overview panel.</div><div role="tabpanel" id="tp2" aria-labelledby="tb2" hidden style="padding-top:14px;color:var(--pt-2)">48 agents on this run.</div><div role="tabpanel" id="tp3" aria-labelledby="tb3" hidden style="padding-top:14px;color:var(--pt-2)">6 tools connected.</div></div>
+ </div></div>
+ <div class="spec"><div class="ex" data-code style="align-items:start;gap:40px">
+  <nav class="u-nav" aria-label="Example" style="width:220px"><a href="#nav" aria-current="page" data-icon="chat">Chat</a><a href="#nav" data-icon="agents">Agents <span class="n">38,940</span></a><a href="#nav" data-icon="skills">Skills</a><a href="#nav" data-icon="models">Models</a><a href="#nav" data-icon="plug">Connections</a></nav>
+  <nav class="u-crumbs" aria-label="Breadcrumb"><a href="#nav">Console</a><span>/</span><a href="#nav">Agents</a><span>/</span><b>Strategist-04</b></nav>
+ </div></div>
+</section>
+
+<section class="s" id="data" aria-labelledby="d-h"><header><h2 id="d-h">Tables &amp; lists</h2><p class="lead">Hairline rows, mono numbers aligned right, sortable headers. Hover lifts the row a shade; selection uses the signal tint.</p></header>
+ <div class="spec"><div class="ex col" data-code style="padding:0">
+  <div class="u-table-wrap"><table class="u-table" data-sortable><thead><tr><th data-key>Agent</th><th data-key>Class</th><th data-key>Status</th><th data-key class="r">Tasks</th><th data-key class="r">Success</th></tr></thead><tbody>
+   <tr><td class="t"><span style="display:inline-flex;gap:10px;align-items:center"><span class="u-glyph sm" data-glyph="Strategist-04"></span>Strategist-04</span></td><td>Strategist</td><td><span class="u-status"><i class="u-dot live"></i>Live</span></td><td class="r u-num" data-v="1204">1,204</td><td class="r u-num" data-v="99.4">99.4%</td></tr>
+   <tr aria-selected="true"><td class="t"><span style="display:inline-flex;gap:10px;align-items:center"><span class="u-glyph sm" data-glyph="Router-11"></span>Router-11</span></td><td>Router</td><td><span class="u-status"><i class="u-dot busy"></i>Working</span></td><td class="r u-num" data-v="88310">88,310</td><td class="r u-num" data-v="99.9">99.9%</td></tr>
+   <tr><td class="t"><span style="display:inline-flex;gap:10px;align-items:center"><span class="u-glyph sm" data-glyph="Sentinel-02"></span>Sentinel-02</span></td><td>Sentinel</td><td><span class="u-status"><i class="u-dot warn"></i>Waiting</span></td><td class="r u-num" data-v="402">402</td><td class="r u-num" data-v="100">100%</td></tr>
+  </tbody></table></div>
+ </div></div>
+</section>
+
+<section class="s" id="metrics" aria-labelledby="mt-h"><header><h2 id="mt-h">Frames &amp; metrics</h2><p class="lead">Live data gets a corner-tick frame: two ticks, never four walls. The frame turns cyan while its data is updating.</p></header>
+ <div class="spec"><div class="ex" data-code style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;align-items:stretch">
+  <div class="u-frame"><p class="u-cap" style="margin:0 0 10px">Agents live</p><div class="u-stat"><b>38,940</b><span class="d">+212 today</span></div></div>
+  <div class="u-frame live"><p class="u-cap" style="margin:0 0 10px">Router latency</p><div class="u-stat"><b>38ms</b><span class="d">−4ms</span></div><div class="u-meter" style="--v:38%;margin-top:12px"><i></i></div></div>
+  <div class="u-frame"><p class="u-cap" style="margin:0 0 10px">Run progress</p><div class="u-steps"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></div><p class="u-mono u-muted" style="margin:10px 0 0">3 / 5 · TOOLS</p></div>
+  <div class="u-frame"><p class="u-cap" style="margin:0 0 10px">Throughput · 24h</p><div class="u-bars"><i style="height:30%"></i><i style="height:45%"></i><i style="height:60%"></i><i style="height:52%"></i><i style="height:80%"></i><i style="height:72%"></i><i style="height:95%"></i><i style="height:66%"></i></div></div>
+ </div></div>
+</section>
+
+<section class="s" id="log" aria-labelledby="l-h"><header><h2 id="l-h">Logs</h2><p class="lead">The machine's voice. Time in grey, action in cyan, value in green; amber for waits, red for faults. New lines flash once. Wrap streams in role="log".</p></header>
+ <div class="spec"><div class="ex col" data-code>
+  <div role="log" aria-label="Run log" style="width:100%"><ol class="u-log"><li><time>[14:02:11]</time> ROUTER-11 &gt;&gt; <b>ROUTE SWITCH</b> [ MODEL <em>HELIX-L</em> ]</li><li><time>[14:02:12]</time> AGENT_4821 &gt;&gt; <b>TOOL CALL</b> [ STRIPE <em>12,408 rows</em> ]</li><li><time>[14:02:13]</time> SENTINEL-02 &gt;&gt; <span class="w">WAITING</span> [ APPROVAL ]</li><li><time>[14:02:14]</time> AGENT_2210 &gt;&gt; <span class="e">RETRY</span> [ RATE LIMIT 429 ]</li></ol></div>
+ </div></div>
+</section>
+
+<section class="s" id="chat" aria-labelledby="ct-h"><header><h2 id="ct-h">Chat</h2><p class="lead">Your message is set large and right. The answer reads left, with its route, the tools it used, and a closing line of proof. No bubbles.</p></header>
+ <div class="spec"><div class="ex col" data-code style="gap:22px">
+  <div class="u-msg user"><span class="who">You</span><p>Find every unpaid invoice and chase it.</p></div>
+  <div class="u-msg"><span class="who"><span class="u-glyph sm" data-glyph="01ai"></span>01ai</span>
+   <div class="u-route"><span class="on"><i></i>ORION-4 plan</span><span class="on"><i></i>KESTREL match</span><span><i></i>NOVA-X write</span></div>
+   <div class="u-tool"><b>Stripe</b> read 12,408 invoices <em>✓</em></div>
+   <div class="body"><p><strong>£184,920 is outstanding across 63 invoices.</strong> Every reminder is drafted and ready to send.</p></div>
+   <p class="u-cap" style="margin:0">Done in <span style="color:var(--green)">4.1s</span> · 3 models · 28 agents · 2 tools</p></div>
+  <div class="u-compose"><label class="vh" for="cmp">Message</label><textarea id="cmp" rows="1" placeholder="Give the agents something hard…"></textarea><div class="row"><button class="u-btn ghost sm" type="button" data-icon="attach" aria-label="Attach"></button><button class="u-btn ghost sm" type="button" data-icon="skills">Skills</button><span class="u-tag cyan">Swarm</span><span style="flex:1"></span><button class="u-btn signal sm" type="button" data-icon="send">Send</button></div></div>
+ </div></div>
+</section>
+
+<section class="s" id="overlays" aria-labelledby="o-h"><header><h2 id="o-h">Overlays</h2><p class="lead">Dialogs for decisions, drawers for detail, menus for actions on one item, toasts for things that happened, and the command palette (⌘K or Ctrl+K) for everything.</p></header>
+ <div class="spec"><div class="ex" data-code>
+  <button class="u-btn" type="button" data-open-dialog="demoDlg">Open dialog</button>
+  <button class="u-btn" type="button" data-open-dialog="demoDrawer">Open drawer</button>
+  <button class="u-btn" type="button" data-menu="demoMenu" data-icon="more">Actions</button>
+  <button class="u-btn" type="button" id="toastBtn">Show toast</button>
+  <button class="u-btn" type="button" id="palBtn" data-icon="command">Command palette</button>
+  <button class="u-btn ghost" type="button" data-tip="Tooltips name icon buttons">Hover for tooltip</button>
+ </div></div>
+ <dialog class="u-dialog" id="demoDlg" aria-labelledby="dlgH"><div class="hd"><h2 id="dlgH">Stop this run?</h2><button class="u-btn ghost icon sm" type="button" data-close-dialog aria-label="Close" data-icon="close"></button></div><div class="bd"><p style="margin:0">48 agents will finish their current step and stand down. Work already done is kept.</p></div><div class="ft"><button class="u-btn" type="button" data-close-dialog>Keep running</button><button class="u-btn danger" type="button" data-close-dialog>Stop run</button></div></dialog>
+ <dialog class="u-dialog u-drawer" id="demoDrawer" aria-labelledby="drH"><div class="u-head"><h2 id="drH">Strategist-04</h2><button class="u-btn ghost icon sm" type="button" data-close-dialog aria-label="Close" data-icon="close"></button></div><div style="padding:16px;display:grid;gap:14px;color:var(--pt-2)"><span class="u-glyph lg" data-glyph="Strategist-04"></span><p style="margin:0">Reads the whole board and sets the plan. 1,204 tasks, 99.4% success.</p></div></dialog>
+ <div class="u-menu" id="demoMenu" role="menu" hidden><button role="menuitem" type="button" data-icon="eye">Open <kbd>↵</kbd></button><button role="menuitem" type="button" data-icon="copy">Duplicate</button><button role="menuitem" type="button" data-icon="pause">Pause</button><hr><button role="menuitem" type="button" data-icon="close" style="color:#FFB0B0">Retire agent</button></div>
+</section>
+
+<section class="s" id="states" aria-labelledby="st-h"><header><h2 id="st-h">States</h2><p class="lead">Empty states say what will appear and how to start. Loading shows the shape of what's coming. Errors say what happened and what to do next, in the same voice: certain, never cute.</p></header>
+ <div class="spec"><div class="ex col" data-code style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px">
+  <div class="u-frame"><div class="u-empty" style="padding:8px 0"><b>No runs yet.</b><span>Ask for anything and the first run appears here, with its route and proof.</span><button class="u-btn sm solid" type="button">Start a run</button></div></div>
+  <div class="u-frame" role="status" aria-busy="true" aria-label="Loading"><span class="u-skel" style="width:60%"></span><span class="u-skel" style="width:90%;margin-top:10px"></span><span class="u-skel" style="width:75%;margin-top:10px"></span></div>
+  <div class="u-frame" style="display:grid;gap:10px"><div class="u-banner err" role="alert" style="margin:0 calc(-1*var(--u-pad))"><span class="u-dot err"></span>Stripe stopped answering.</div><span class="u-dim" style="font-size:14px">The run paused at step 3. Reconnect Stripe and it picks up where it stopped.</span><button class="u-btn sm" type="button" data-icon="refresh">Reconnect</button></div>
+ </div></div>
+</section>
+
+<section class="s" id="shell" aria-labelledby="sh-h"><header><h2 id="sh-h">App shell</h2><p class="lead">232px side navigation, a 52px sticky top bar with search (⌘K) and status, and a page that scrolls on its own. Under 900px the side navigation becomes a drawer. The Console, Workspace and every future 01 tool use this same shell.</p></header>
+ <div class="rules"><p class="do">Keep one primary action in the top bar per view.</p><p class="dont">Nest more than two levels in the side navigation.</p><p class="do">Show system status (live dot, version) at the foot of the side navigation.</p><p class="dont">Hide search; every view answers to ⌘K.</p></div>
+</section>
+
+<section class="s" id="lifecycle" aria-labelledby="lc-h"><header><h2 id="lc-h">The agent run</h2><p class="lead">Every request moves through the same five visible stages, so people learn to read a run at a glance.</p></header>
+ <div class="lifecycle"><div><b>01 · ROUTE</b><span>Models lock on along a trace, one per role.</span></div><div><b>02 · SPAWN</b><span>The swarm grid lights as agents start.</span></div><div><b>03 · ACT</b><span>Tool calls stream in, each with its tool's mark and a green tick.</span></div><div><b>04 · ANSWER</b><span>The answer streams word by word behind a cyan cursor.</span></div><div><b>05 · PROOF</b><span>One closing line: time, models, agents, tools.</span></div></div>
+</section>
+
+<section class="s" id="forms" aria-labelledby="fm-h"><header><h2 id="fm-h">Forms</h2><p class="lead">Validate on Continue, not on every keystroke. Focus the first problem, write the fix in the error, and keep drafts so nobody loses work. The full pattern is in the 01ai application.</p></header>
+ <div class="rules"><p class="do">Show live counters for minimum lengths.</p><p class="dont">Use placeholder text as the only label.</p><p class="do">Save drafts on the device as people type.</p><p class="dont">Reset a form after an error.</p></div>
+</section>
+
+<section class="s" id="prototypes" aria-labelledby="p-h"><header><h2 id="p-h">Prototypes</h2><p class="lead">Every screen below is built only from this system.</p></header>
+ <div class="protos">
+  <a class="proto" href="home.html"><span class="u-cap">01ai · Showcase</span><b>The public site</b><span>City circuits, agents, integrations, origin, apply and a discreet sign-in.</span></a>
+  <a class="proto" href="app.html"><span class="u-cap">01ai · Console</span><b>The private console</b><span>Chat with live routing, the agent fleet, skills, models, connections and settings.</span></a>
+  <a class="proto" href="workspace.html"><span class="u-cap">01 Workspace</span><b>The HUD</b><span>Operations overview, task board, clients and the inbox, at Workspace density.</span></a>
+  <a class="proto" href="agency.html"><span class="u-cap">01 Agency</span><b>The agency site</b><span>The customer-facing site: services, work, process, engagement and contact.</span></a>
+ </div>
+</section>
+</main></div>
+<footer class="doc-foot"><span>01 interface system · v1</span><span>Tokens: <a href="01.css" style="color:var(--pt-2)">01.css</a> · Components: <a href="01-ui.css" style="color:var(--pt-2)">01-ui.css</a> · <a href="01-ui.js" style="color:var(--pt-2)">01-ui.js</a></span></footer>
+<script src="01.js"></script><script src="01-ui.js"></script>
+<script>
+(()=>{const $=UI.$,$$=UI.$$;
+ /* colour roles */
+ const C=[['Page','--g-950','#07090C'],['Surface','--g-900','#0B0E12'],['Raised','--g-800','#141920'],['Hairline','--g-600','#252D38'],['Hairline strong','--g-500','#34404F'],['Text','--pt','#E7EAEE'],['Text 2','--pt-2','#B7BFCA'],['Text 3','--pt-3','#8A94A2'],['Signal','--cyan','#7FE7F7'],['Signal tint','--cyan-white','#DDFBFF'],['Signal on light','--cyan-deep','#0A7F94'],['Live','--green','#3CF29A'],['Warning','--amber','#FFB547'],['Rare','--purple','#A98BFF'],['Fault','--red','#FF6B6B']];
+ const lum=h=>{const c=[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)/255).map(v=>v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4));return .2126*c[0]+.7152*c[1]+.0722*c[2]},cr=(a,b)=>{const x=lum(a),y=lum(b);return(Math.max(x,y)+.05)/(Math.min(x,y)+.05)};
+ $('#sw').innerHTML=C.map(([n,v,h])=>{const r=cr(h,'#07090C');return `<div><i style="background:${h}"></i><b>${n}</b><code>var(${v})</code><small>${h}${r>1.6?' · '+r.toFixed(1)+':1':''}</small></div>`}).join('');
+ /* type scale */
+ const T=[['Display','48–132','font:500 clamp(36px,5vw,72px)/.92 var(--f-sans);letter-spacing:-.045em','Unyielding.'],['H1','40–84','font:500 clamp(30px,3.6vw,52px)/.96 var(--f-sans);letter-spacing:-.04em','The best agents.'],['H2','28–48','font:500 30px/1 var(--f-sans);letter-spacing:-.03em','Adaptive routing'],['Title','18','font:500 18px var(--f-sans);letter-spacing:-.01em','Strategist-04'],['Body','15–17','font:400 15.5px/1.6 var(--f-sans);color:var(--pt-2)','Reads the whole board and sets the plan.'],['Label','11–12 mono','font:500 11.5px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--pt-2)','Router latency'],['Number','12–44 mono','font:500 28px var(--f-mono);letter-spacing:-.03em','38,940']];
+ $('#tscale').innerHTML=T.map(([n,s,st,t])=>`<div><code>${n}</code><code>${s}</code><span style="${st}">${t}</span></div>`).join('');
+ $('#sscale').innerHTML=[4,8,12,16,24,32,48,64].map((v,i)=>`<div><code>space-${i+1}</code><code>${v}px</code><span class="bx" style="width:${v*3}px"></span></div>`).join('');
+ /* icons and glyphs */
+ const names=['chat','agents','skills','models','plug','settings','search','plus','home','tasks','clients','inbox','chart','bolt','file','doc','play','pause','close','more','arrow','check','warn','user','logout','command','menu','globe','shield','lock','clock','filter','send','attach','mic','sliders','grid','layers','bell','route','spark','copy','refresh','briefcase','calendar','star','eye'];
+ $('#iconGrid').innerHTML=names.map(n=>`<div>${UI.icon(n)}<span>${n}</span></div>`).join('');
+ $('#glyphRow').innerHTML=['Strategist-04','Router-11','Operator-07','Researcher-22','Builder-09','Analyst-03','Negotiator-01','Sentinel-02','ORION-4','HELIX-L','KESTREL','VANTA-2','NOVA-X','Nicolas'].map(n=>`<span style="display:grid;gap:6px;justify-items:center"><span class="u-glyph lg">${UI.glyph(n)}</span><span class="u-mono u-muted" style="font-size:10px">${n}</span></span>`).join('');
+ /* code panels: each example shows its own markup */
+ const esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+ $$('[data-code]').forEach((ex,i)=>{const src=ex.innerHTML.replace(/\n\s*/g,'\n').trim();const bar=document.createElement('div');bar.className='bar';bar.innerHTML=`<span>Markup</span><button class="u-btn ghost sm" type="button" aria-expanded="false">Show code</button><button class="u-btn ghost sm" type="button" style="margin-left:0">Copy</button>`;
+  const pre=document.createElement('pre');pre.hidden=true;pre.tabIndex=0;pre.innerHTML=`<code>${esc(src)}</code>`;ex.after(bar,pre);const [show,copy]=bar.querySelectorAll('button');
+  show.onclick=()=>{pre.hidden=!pre.hidden;show.textContent=pre.hidden?'Show code':'Hide code';show.setAttribute('aria-expanded',!pre.hidden)};
+  copy.onclick=async()=>{try{await navigator.clipboard.writeText(src);UI.toast('Copied','Markup is on your clipboard.','ok')}catch(e){pre.hidden=false;getSelection().selectAllChildren(pre);UI.toast('Selected','Press Ctrl+C to copy.')}}});
+ UI.wire();
+ $('#toastBtn').onclick=()=>UI.toast('Run complete','48 agents · 6 tools · 6.2s','ok');
+ UI.palette.set([{label:'Go to Buttons',icon:'arrow',group:'Section',run:()=>location.hash='buttons'},{label:'Go to Chat',icon:'chat',group:'Section',run:()=>location.hash='chat'},{label:'Go to Overlays',icon:'layers',group:'Section',run:()=>location.hash='overlays'},{label:'Open the Console prototype',icon:'chat',group:'Prototype',run:()=>location.href='app.html'},{label:'Open the Workspace prototype',icon:'grid',group:'Prototype',run:()=>location.href='workspace.html'},{label:'Open the Agency prototype',icon:'briefcase',group:'Prototype',run:()=>location.href='agency.html'},{label:'Open the brand book',icon:'doc',group:'Docs',run:()=>location.href='brand.html'},{label:'Show a toast',icon:'bell',group:'Demo',run:()=>UI.toast('Hello','From the command palette.')}]);
+ $('#palBtn').onclick=()=>UI.palette.open();
+ $$('[data-decode-now]').forEach(d=>O1.decode(d,{delay:200}));
+ /* toc */
+ const links=$$('#toc a');const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id))}),{rootMargin:'-30% 0px -65% 0px'});$$('main section[id]').forEach(s=>io.observe(s));
+})();
+</script>
+</body></html>
