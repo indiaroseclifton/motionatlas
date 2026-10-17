@@ -109,3 +109,18 @@ body.anNav>header .sfHeaderCap{position:static;order:2;margin-left:auto;max-widt
 body.anNav>header .sfHeaderCap:not([hidden])~.aeSearchBtn,body.anNav>header .sfHeaderCap:not([hidden])+.aeSearchBtn{margin-left:10px}
 @media (max-width:1200px){body.anNav>header .sfHeaderCap{display:none}}
 body.anNav>header .anMenu.anHere>summary,body.anNav>header .anMenu.anHere>summary:not(:hover){box-shadow:none;text-decoration:underline;text-decoration-color:#fde68a;text-decoration-thickness:2px;text-underline-offset:7px}
+/* Old header menus paint a white panel; the new menus are dark */
+body.anNav>header .anMenu>div{background:#0d111b!important;border:1px solid rgba(190,210,240,.18);box-shadow:0 24px 60px -20px rgba(0,0,0,.75);right:auto;left:0;width:min(340px,82vw);padding:8px}
+body.anNav>header .anMenu>div a{color:#F2F5FA!important;padding:11px 12px;margin:0}
+body.anNav>header .anMenu>div a:hover,body.anNav>header .anMenu>div a:focus-visible{background:rgba(255,255,255,.08)!important}
+body.anNav>header .anMenu>div a b{color:#F2F5FA;font-size:14.5px}
+body.anNav>header .anMenu>div a span{color:#AEB9CB;font-size:13px}
+body.anNav>header .anMenu>div a.active{background:rgba(253,230,138,.1)!important}
+
+/* Drawer items use line icons; the preview keeps the film's own shape */
+.anGroup a .anIcoBox{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;background:rgba(255,255,255,.05);border:1px solid rgba(190,210,240,.14);color:#dbe3ef}
+.anGroup a[aria-current=page] .anIcoBox{color:#fde68a;border-color:rgba(253,230,138,.45)}
+.anGroup a:hover .anIcoBox,.anGroup a:focus-visible .anIcoBox{color:#fff;border-color:rgba(190,210,240,.32)}
+.anIco{width:20px;height:20px}
+.anPreview{justify-content:center}
+.anFilm{flex:none;width:100%;aspect-ratio:16/10;max-height:58vh}

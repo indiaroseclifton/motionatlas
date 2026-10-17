@@ -16,7 +16,7 @@
   motion:{no:3,name:'Animation studio',family:'Motion',color:'rose',related:['effects','compare','pairings'],h:[1,-3,5,-7,9],
    film:{src:'assets/films/bioluminescent-trails-720.mp4',webm:'assets/films/bioluminescent-trails-720.webm',poster:'assets/films/bioluminescent-trails.jpg',label:'Bioluminescent trails',tone:'dark',to:'.studyRiver'}},
   projects:{no:4,name:'My projects',family:'Studio',color:'gold',related:['inspiration','creations','browse'],h:[1,2,-3],
-   film:{src:'assets/films/particle-tree-720.mp4',webm:'assets/films/particle-tree-720.webm',poster:'assets/films/particle-tree.jpg',label:'Particle tree',tone:'dark',pos:'50% 32%'}},
+   film:{src:'assets/films/jellyfish-720.mp4',webm:'assets/films/jellyfish-720.webm',poster:'assets/films/jellyfish.jpg',label:'Jellyfish drifting in the dark',tone:'dark'}},
   inspiration:{no:5,name:'Inspiration',family:'Studio',color:'gold',related:['projects','references','creations'],h:[1,-4,6],
    film:{src:'assets/films/embroidery-720.mp4',webm:'assets/films/embroidery-720.webm',poster:'assets/films/embroidery.jpg',label:'Embroidery',tone:'light'}},
   creations:{no:6,name:'Your creations',family:'Studio',color:'gold',related:['projects','inspiration'],h:[1,5,-3],
@@ -74,7 +74,10 @@
     title on the left and into the dark section below, plays only while on screen and never under reduced motion */
  function film(page,band,rel,meta){
   const f=meta.film,bg=document.createElement('div');bg.className='aeHeroBg';bg.setAttribute('aria-hidden','true');
-  const mp4First=/^((?!chrome|chromium|android|crios|fxios|edg).)*safari/i.test(navigator.userAgent);const wb=f.webm?`<source src="${f.webm}" type="video/webm">`:'',mp=`<source src="${f.src}" type="video/mp4">`;
+  const mp4First=/^((?!chrome|chromium|android|crios|fxios|edg).)*safari/i.test(navigator.userAgent);
+  /* 1280px cuts on ordinary screens; the 1920px masters where the header is wider than ~1400 device pixels */
+  const big=innerWidth*Math.min(2,devicePixelRatio||1)>1400&&!navigator.connection?.saveData,full=u=>big&&u?u.replace('-720.','.'):u;
+  const wb=f.webm?`<source src="${full(f.webm)}" type="video/webm">`:'',mp=`<source src="${full(f.src)}" type="video/mp4">`;
   bg.innerHTML=`<video muted loop playsinline preload="none" poster="${f.poster}">${mp4First?mp+wb:wb+mp}</video><i></i>`;
   const tg=document.createElement('button');tg.type='button';tg.className='aeHeroToggle';tg.innerHTML='<span aria-hidden="true"></span><b>Pause film</b>';
   const dark=f.tone!=='light';page.prepend(bg);page.append(tg);page.classList.add('aeHasFilm',dark?'aeHeroDark':'aeHeroLight');if(!f.to)page.classList.add('aeHeroFade');
