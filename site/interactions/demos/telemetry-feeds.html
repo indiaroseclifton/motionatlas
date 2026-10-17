@@ -1,0 +1,82 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Telemetry feeds</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07090C;--surface:#0F1318;--line:#252D38;--line-2:#34404F;--ink:#E7EAEE;--ink-2:#B7BFCA;--mute:#8A94A2;--accent:#7FE7F7;--accent-2:#DDFBFF;--live:#3CF29A;--rare:#A98BFF;--warn:#FFB547;--bad:#FF6B6B;--sans:'Geist',system-ui,sans-serif;--mono:'Geist Mono',ui-monospace,monospace;--gut:max(20px,4.2vw);--lock:cubic-bezier(.2,.9,.1,1);--route:cubic-bezier(.6,0,.2,1)}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:400 17px/1.55 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:clip}
+button,input,textarea,select{font:inherit;color:inherit}
+:focus-visible{outline:1.5px solid var(--accent);outline-offset:3px}
+.mono{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.label{font:11px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--mute);margin:0 0 10px}
+.btn{position:relative;display:inline-flex;align-items:center;gap:10px;min-height:46px;padding:0 20px;border:1px solid var(--line-2);border-radius:4px;background:none;color:var(--ink);font:500 15px var(--sans);cursor:pointer;overflow:hidden;text-decoration:none}
+.btn::before{content:"";position:absolute;left:0;top:0;height:1px;width:0;background:var(--accent);transition:width 320ms var(--route)}
+.btn:hover::before{width:100%}.btn.solid{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+main{min-height:100vh;display:grid;align-content:end;gap:30px;padding:60px var(--gut) 50px;background:radial-gradient(80% 60% at 75% 30%,#10202A,transparent 70%)}
+h1{font-size:clamp(40px,6vw,92px);line-height:.94;letter-spacing:-.045em;font-weight:500;margin:0;max-width:12ch}
+.feeds{display:grid;grid-template-columns:1.1fr 1.5fr 1fr;gap:clamp(14px,2vw,28px);max-width:1240px}
+.feeds>*{min-width:0}
+.frame{position:relative;padding:14px 16px;background:linear-gradient(180deg,rgba(11,14,18,.55),rgba(11,14,18,.25))}
+.frame::before,.frame::after{content:"";position:absolute;width:10px;height:10px;border-color:var(--line-2);border-style:solid}
+.frame::before{left:0;top:0;border-width:1px 0 0 1px}.frame::after{right:0;bottom:0;border-width:0 1px 1px 0}
+.spark{width:100%;height:38px;display:block}
+.stats{display:flex;flex-wrap:wrap;gap:14px 22px;margin-top:10px}.stats div{display:grid;gap:2px}
+.stats b{font:500 20px var(--mono);font-variant-numeric:tabular-nums}.stats span{font:11px var(--mono);letter-spacing:.1em;color:var(--mute)}
+.bar{height:2px;background:var(--line);margin-top:6px}.bar i{display:block;height:100%;background:var(--live);transition:width .6s steps(6,end)}
+.log{margin:0;padding:0;list-style:none;font:12px/1.65 var(--mono);color:var(--ink-2);height:100px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end}
+.log li{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.log time{color:var(--mute)}.log b{color:var(--accent);font-weight:400}.log em{font-style:normal;color:var(--live)}
+.models{font:500 44px/1 var(--mono);letter-spacing:-.03em;font-variant-numeric:tabular-nums;margin:0}.models small{display:block;font:11px var(--mono);letter-spacing:.1em;color:var(--mute);margin-top:8px}
+@media (max-width:900px){.feeds{grid-template-columns:1fr 1fr}.feeds .logbox{grid-column:1/-1;order:3}}
+@media (max-width:560px){.feeds{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style></head><body>
+<main>
+ <h1>Live telemetry, under the headline.</h1>
+ <div class="feeds" aria-label="Live system feeds">
+  <div class="frame"><p class="label">// System telemetry</p><canvas class="spark" id="spark" aria-hidden="true"></canvas>
+   <div class="stats"><div><span>CPU LOAD</span><b data-n="cpu">63.2%</b><div class="bar"><i id="cpuBar" style="width:63%"></i></div></div><div><span>MEMORY</span><b data-n="mem">72.7%</b><div class="bar"><i id="memBar" style="width:72%"></i></div></div><div><span>NODES</span><b data-n="nodes">14,288</b></div></div></div>
+  <div class="frame logbox"><p class="label">// Event log</p><div role="log" aria-live="off" aria-label="Event log"><ol class="log" id="log"></ol></div></div>
+  <div class="frame"><p class="label">// Online</p><p class="models"><span id="models">1,042</span><small>AND COUNTING</small></p></div>
+ </div>
+</main>
+<script>
+/* ---------- Change these ---------- */
+window.CONFIG={
+ logLines:7,
+ colours:{line:'rgba(127,231,247,.9)',live:'#3CF29A'},
+ /* Each event: [action, field, () => value]. Lines read: [time] AGENT_1234 >> ACTION [ FIELD value ] */
+ events:[['TASK ALLOCATED','PRIORITY',()=>Math.random()*3|0],['CONTEXT SYNC','DELTA',()=>(Math.random()*4+.5).toFixed(1)+'ms'],['STRATEGY UPDATE','CONFIDENCE',()=>(0.9+Math.random()*.099).toFixed(3)],['EXECUTING','IMPACT',()=>(80+Math.random()*19).toFixed(1)+'%'],['ROUTE SWITCH','MODEL',()=>['ORION','HELIX','KESTREL','VANTA','NOVA'][Math.random()*5|0]],['SKILL ACQUIRED','ID',()=>'SK-'+(10000+Math.random()*89999|0)]]
+};
+</script>
+<script>
+'use strict';
+/* War room feeds: telemetry sparkline, ticking stats, node log, models online.
+   Numbers move in steps (the "tick"), never smooth tweens. Static under reduced motion. */
+window.Feeds=(()=>{
+ const $=id=>document.getElementById(id);let timers=[],raf=0,paused=false;
+ const verbs=window.CONFIG.events||[['TASK ALLOCATED','PRIORITY',()=>Math.random()*3|0],['CONTEXT SYNC','DELTA',()=>(Math.random()*4+.5).toFixed(1)+'ms'],['STRATEGY UPDATE','CONFIDENCE',()=>(0.9+Math.random()*.099).toFixed(3)],['EXECUTING','IMPACT RADIUS',()=>(80+Math.random()*19).toFixed(1)+'%'],['ROUTE SWITCH','MODEL',()=>['ORION-4','HELIX-L','KESTREL','VANTA-2','NOVA-X'][Math.random()*5|0]],['SKILL ACQUIRED','ID',()=>'SK-'+(10000+Math.random()*89999|0)],['EQUILIBRIUM HOLD','DRIFT',()=>(Math.random()*.001).toFixed(4)]];
+ const pad=n=>String(n).padStart(2,'0');
+ function stamp(){const d=new Date();return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`}
+ function line(){const v=verbs[Math.random()*verbs.length|0];const agent=Math.random()<.12?'SYSTEM    ':'AGENT_'+(1000+Math.random()*8999|0);
+  return `<time>[${stamp()}]</time> ${agent} &gt;&gt; <b>${v[0]}</b> [ ${v[1]} <em>${v[2]()}</em> ]`}
+ function log(){const l=$('log');if(!l)return;const li=document.createElement('li');li.innerHTML=line();l.append(li);while(l.children.length>window.CONFIG.logLines)l.firstChild.remove()}
+ const data=Array.from({length:80},(_,i)=>.5+.3*Math.sin(i/5)+.1*Math.random());
+ function spark(){const c=$('spark');if(!c)return;const d=Math.min(2,devicePixelRatio||1),w=c.clientWidth,h=c.clientHeight;if(c.width!==w*d){c.width=w*d;c.height=h*d}const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);x.clearRect(0,0,w,h);
+  x.strokeStyle=window.CONFIG.colours.line;x.lineWidth=1.2;x.beginPath();data.forEach((v,i)=>{const px=i/(data.length-1)*w,py=h-v*h;i?x.lineTo(px,py):x.moveTo(px,py)});x.stroke();
+  x.fillStyle=window.CONFIG.colours.live;const lx=w,ly=h-data[data.length-1]*h;x.fillRect(lx-3,ly-1.5,3,3)}
+ function step(){data.shift();const last=data[data.length-1];data.push(Math.max(.08,Math.min(.95,last+(Math.random()-.5)*.18)));spark()}
+ function stats(){const cpu=55+Math.random()*25,mem=66+Math.random()*12;const set=(k,v)=>{const el=document.querySelector(`[data-n="${k}"]`);if(el)el.textContent=v};
+  set('cpu',cpu.toFixed(1)+'%');set('mem',mem.toFixed(1)+'%');const n=$('cpuBar');if(n)n.style.width=cpu+'%';const m=$('memBar');if(m)m.style.width=mem+'%';
+  const nodes=document.querySelector('[data-n="nodes"]');if(nodes){const v=+nodes.textContent.replace(/,/g,'')+((Math.random()*40|0)-12);nodes.textContent=v.toLocaleString('en-GB')}}
+ function models(){const el=$('models');if(!el)return;if(Math.random()<.25){el.textContent=(+el.textContent.replace(/,/g,'')+1).toLocaleString('en-GB')}}
+ function uptime(){document.querySelectorAll('[data-uptime]').forEach(u=>u.textContent='99.999')}
+ function run(){if(paused)return;timers.push(setInterval(()=>{step()},220),setInterval(()=>{log()},900),setInterval(stats,1200),setInterval(models,2600))}
+ function stop(){timers.forEach(clearInterval);timers=[]}
+ return {start(){for(let i=0;i<6;i++)log();spark();uptime();addEventListener('resize',spark);if(!matchMedia('(prefers-reduced-motion: reduce)').matches)run()},pause(){paused=true;stop()},play(){paused=false;stop();run()}};
+})();
+
+Feeds.start();
+</script>
+</body></html>

@@ -1,0 +1,74 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Routed motion kit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07090C;--surface:#0F1318;--line:#252D38;--line-2:#34404F;--ink:#E7EAEE;--ink-2:#B7BFCA;--mute:#8A94A2;--accent:#7FE7F7;--accent-2:#DDFBFF;--live:#3CF29A;--rare:#A98BFF;--warn:#FFB547;--bad:#FF6B6B;--sans:'Geist',system-ui,sans-serif;--mono:'Geist Mono',ui-monospace,monospace;--gut:max(20px,4.2vw);--lock:cubic-bezier(.2,.9,.1,1);--route:cubic-bezier(.6,0,.2,1)}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:400 17px/1.55 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:clip}
+button,input,textarea,select{font:inherit;color:inherit}
+:focus-visible{outline:1.5px solid var(--accent);outline-offset:3px}
+.mono{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.label{font:11px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--mute);margin:0 0 10px}
+.btn{position:relative;display:inline-flex;align-items:center;gap:10px;min-height:46px;padding:0 20px;border:1px solid var(--line-2);border-radius:4px;background:none;color:var(--ink);font:500 15px var(--sans);cursor:pointer;overflow:hidden;text-decoration:none}
+.btn::before{content:"";position:absolute;left:0;top:0;height:1px;width:0;background:var(--accent);transition:width 320ms var(--route)}
+.btn:hover::before{width:100%}.btn.solid{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+main{padding:70px var(--gut) 80px;display:grid;gap:40px;max-width:1300px}
+h1{font-size:clamp(40px,6vw,92px);line-height:.94;letter-spacing:-.045em;font-weight:500;margin:0;max-width:14ch}
+.intro{color:var(--ink-2);max-width:58ch;margin:0}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(24px,4vw,56px)}
+.demo{display:grid;gap:14px;align-content:start;padding-top:20px;border-top:1px solid var(--line)}
+.demo h2{margin:0;font-size:26px;font-weight:500;letter-spacing:-.02em}.demo p{margin:0;color:var(--ink-2);max-width:46ch}
+code{font:12px var(--mono);color:var(--accent)}
+.stage{position:relative;height:110px;overflow:hidden}
+.trace{position:absolute;left:0;right:0;top:50%;height:1px;background:var(--line)}.trace i{position:absolute;left:0;top:0;height:1px;width:0;background:var(--accent);box-shadow:0 0 8px var(--accent)}
+.chip{position:absolute;top:calc(50% - 22px);left:0;height:44px;padding:0 16px;display:flex;align-items:center;background:#141920;border:1px solid var(--line-2);border-radius:4px;font:12px var(--mono);letter-spacing:.1em;opacity:0}
+.curve{width:100%;height:110px}
+.dec{font:500 clamp(28px,3vw,42px)/1.05 var(--sans);letter-spacing:-.03em;margin:0;min-height:2.1em}
+.num{font:500 clamp(36px,4vw,56px)/1 var(--mono);letter-spacing:-.03em;font-variant-numeric:tabular-nums;margin:0}
+@media (max-width:760px){.grid{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style></head><body>
+<main>
+ <h1>Routed motion: four moves.</h1>
+ <p class="intro">Nothing floats, bounces or fades for decoration. Things travel along a trace, lock into place, resolve out of 0s and 1s, and count in visible steps. Copy the functions you need; each one is a few lines.</p>
+ <div class="grid">
+  <section class="demo" aria-labelledby="r1"><h2 id="r1">Route</h2><p>The line draws first, then the element follows it in and stops hard.</p><div class="stage" aria-hidden="true"><div class="trace"><i id="trI"></i></div><div class="chip" id="chip">AGENT_4821</div></div><button class="btn" type="button" data-run="route">Replay</button></section>
+  <section class="demo" aria-labelledby="r2"><h2 id="r2">Lock</h2><p>Ease <code>cubic-bezier(.2,.9,.1,1)</code>: almost all the travel at once, then a hard settle.</p><svg class="curve" viewBox="0 0 300 110" aria-hidden="true"><path d="M0 110h300M0 0v110" stroke="#252D38"/><path d="M0 110C60 11 30 0 300 0" fill="none" stroke="#7FE7F7" stroke-width="2"/><circle id="dot" cx="0" cy="110" r="5" fill="#DDFBFF"/></svg><button class="btn" type="button" data-run="lock">Replay</button></section>
+  <section class="demo" aria-labelledby="r3"><h2 id="r3">Decode</h2><p>Text resolves left to right out of binary noise. Screen readers get the final text straight away.</p><p class="dec" id="dec">The maximum power stack.</p><button class="btn" type="button" data-run="decode">Replay</button></section>
+  <section class="demo" aria-labelledby="r4"><h2 id="r4">Tick</h2><p>Numbers count in a few visible jumps, <code>steps(6)</code>, never a smooth tween.</p><p class="num" id="num">0</p><button class="btn" type="button" data-run="tick">Replay</button></section>
+ </div>
+</main>
+<script>
+/* ---------- Change these ---------- */
+const CONFIG={noise:'01',msPerChar:14,noiseAhead:8,tickSteps:6,tickEvery:120,lock:'cubic-bezier(.2,.9,.1,1)',route:'cubic-bezier(.6,0,.2,1)'};
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* Decode: call decode(element) on any text element */
+function decode(el,{delay=0}={}){const final=el.dataset.text||el.textContent;el.dataset.text=final;if(reduce){el.textContent=final;return}
+ el.setAttribute('aria-label',final);const chars=[...final],start=performance.now()+delay,N=CONFIG.noise;
+ (function f(now){if(now<start)return requestAnimationFrame(f);const done=Math.floor((now-start)/CONFIG.msPerChar);
+  el.textContent=chars.map((c,k)=>k<done||c===' '?c:(k<done+CONFIG.noiseAhead?N[Math.random()*N.length|0]:'')).join('');
+  if(done<=chars.length)requestAnimationFrame(f);else{el.textContent=final;el.removeAttribute('aria-label')}})(performance.now())}
+
+/* Tick: count an element up to a number in visible steps */
+function tick(el,target){if(reduce){el.textContent=target.toLocaleString('en-GB');return}let v=0;const step=Math.ceil(target/CONFIG.tickSteps);
+ const t=setInterval(()=>{v=Math.min(target,v+step);el.textContent=v.toLocaleString('en-GB');if(v>=target)clearInterval(t)},CONFIG.tickEvery)}
+
+/* Route: draw a trace, then move an element along it */
+function route(line,el,dist){line.style.transition='none';line.style.width='0';el.style.transition='none';el.style.opacity='0';el.style.transform='translateX(0)';void el.offsetWidth;
+ if(reduce){line.style.width='100%';el.style.opacity='1';el.style.transform=`translateX(${dist}px)`;return}
+ line.style.transition=`width 320ms ${CONFIG.route}`;line.style.width='100%';
+ setTimeout(()=>{el.style.transition=`transform 320ms ${CONFIG.lock},opacity 120ms`;el.style.opacity='1';el.style.transform=`translateX(${dist}px)`},200)}
+
+/* Lock: shown here as a dot riding the curve */
+function lockDot(d){if(reduce){d.setAttribute('cx',300);d.setAttribute('cy',0);return}const t0=performance.now(),B=t=>{const u=1-t;return[3*u*u*t*60+3*u*t*t*30+t*t*t*300,110-(3*u*u*t*99+3*u*t*t*110+t*t*t*110)]};
+ (function f(n){const p=Math.min(1,(n-t0)/700),[x,y]=B(p);d.setAttribute('cx',x);d.setAttribute('cy',y);if(p<1)requestAnimationFrame(f)})(t0)}
+
+const run={route:()=>{const c=document.getElementById('chip');route(document.getElementById('trI'),c,c.parentElement.clientWidth-c.offsetWidth)},lock:()=>lockDot(document.getElementById('dot')),decode:()=>decode(document.getElementById('dec')),tick:()=>tick(document.getElementById('num'),1042)};
+document.addEventListener('click',e=>{const b=e.target.closest('[data-run]');if(b)run[b.dataset.run]()});
+const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){io.unobserve(en.target);run[en.target.querySelector('[data-run]').dataset.run]()}}),{threshold:.4});
+document.querySelectorAll('.demo').forEach(d=>io.observe(d));
+</script>
+</body></html>

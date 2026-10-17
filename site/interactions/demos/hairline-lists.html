@@ -1,0 +1,53 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hairline claims and roster</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07090C;--surface:#0F1318;--line:#252D38;--line-2:#34404F;--ink:#E7EAEE;--ink-2:#B7BFCA;--mute:#8A94A2;--accent:#7FE7F7;--accent-2:#DDFBFF;--live:#3CF29A;--rare:#A98BFF;--warn:#FFB547;--bad:#FF6B6B;--sans:'Geist',system-ui,sans-serif;--mono:'Geist Mono',ui-monospace,monospace;--gut:max(20px,4.2vw);--lock:cubic-bezier(.2,.9,.1,1);--route:cubic-bezier(.6,0,.2,1)}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:400 17px/1.55 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:clip}
+button,input,textarea,select{font:inherit;color:inherit}
+:focus-visible{outline:1.5px solid var(--accent);outline-offset:3px}
+.mono{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.label{font:11px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--mute);margin:0 0 10px}
+.btn{position:relative;display:inline-flex;align-items:center;gap:10px;min-height:46px;padding:0 20px;border:1px solid var(--line-2);border-radius:4px;background:none;color:var(--ink);font:500 15px var(--sans);cursor:pointer;overflow:hidden;text-decoration:none}
+.btn::before{content:"";position:absolute;left:0;top:0;height:1px;width:0;background:var(--accent);transition:width 320ms var(--route)}
+.btn:hover::before{width:100%}.btn.solid{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+main{padding:60px var(--gut) 80px;max-width:1400px;display:grid;gap:70px}
+.kick{display:flex;align-items:center;gap:10px;color:var(--mute);margin:0}.kick::before{content:"";width:28px;height:1px;background:var(--accent)}
+h2{font-size:clamp(34px,5vw,76px);line-height:.96;letter-spacing:-.04em;font-weight:500;margin:16px 0 0}
+ol{list-style:none;margin:36px 0 0;padding:0;border-top:1px solid var(--line)}
+.claims li{display:grid;grid-template-columns:5ch minmax(0,1fr) auto;gap:20px;align-items:baseline;padding:clamp(18px,3vh,30px) 0;border-bottom:1px solid var(--line)}
+.claims h3{margin:0;font-size:clamp(30px,4.6vw,68px);line-height:1;letter-spacing:-.04em;font-weight:500}.claims .c{color:var(--accent)}
+.claims p{margin:0;color:var(--mute);font:12px var(--mono);letter-spacing:.1em;text-transform:uppercase;text-align:right}
+.n{color:var(--mute)}
+.roster li{position:relative;display:grid;grid-template-columns:7ch minmax(0,1.1fr) minmax(0,1fr) auto;gap:24px;align-items:baseline;padding:26px 0;border-bottom:1px solid var(--line)}
+.roster li::after{content:"";position:absolute;left:0;bottom:-1px;height:1px;width:0;background:var(--accent);transition:width 320ms var(--route)}.roster li:hover::after,.roster li:focus-within::after{width:100%}
+.roster h3{margin:0;font-size:clamp(28px,3.4vw,52px);line-height:1;letter-spacing:-.04em;font-weight:500}
+.roster p{margin:0;color:var(--ink-2);max-width:44ch}
+.spec{font:12px/1.7 var(--mono);letter-spacing:.06em;color:var(--mute);text-align:right;white-space:nowrap}.spec em{font-style:normal;color:var(--live)}
+.in{opacity:0;transform:translateY(14px);transition:opacity 320ms var(--lock),transform 320ms var(--lock)}.in.on{opacity:1;transform:none}
+@media (max-width:900px){.roster li{grid-template-columns:6ch minmax(0,1fr)}.roster li p,.spec{grid-column:2}.spec{text-align:left;white-space:normal}}
+@media (max-width:560px){.claims li{grid-template-columns:1fr}.claims p{text-align:left}}
+@media (prefers-reduced-motion:reduce){.in{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style></head><body>
+<main>
+ <section aria-labelledby="a"><p class="kick mono">Claims</p><h2 id="a">Nothing else comes close.</h2>
+  <ol class="claims" id="claims"></ol></section>
+ <section aria-labelledby="b"><p class="kick mono">Roster</p><h2 id="b">Eight classes. Zero equals.</h2>
+  <ol class="roster" id="roster"></ol></section>
+</main>
+<script>
+/* ---------- Change these ---------- */
+/* Claims: [statement, small caption]. Wrap words in *stars* to colour them. */
+const CLAIMS=[['The most *powerful* platform.','Full stop'],['*1000+* models. More coming.','Every lab'],['Endless skills.','Learned, not listed'],['Adaptive routing.','Right tool, every time'],['The best agents.','They build the next ones'],['The maximum *stack.*','No ceiling']];
+/* Roster: [code, name, one line, spec lines as [label, value]] */
+const ROSTER=[['AG-01','Strategist','Reads the whole board and sets the plan before you finish the question.',[['Horizon','90 days'],['Replans','Live']]],['AG-02','Router','Picks the right model for every request. You never choose; it already did.',[['Models','1000+'],['Switch','<40ms']]],['AG-03','Operator','Runs every tool, every account and every pipeline at once.',[['Tools','60+'],['Parallel','Unlimited']]],['AG-04','Sentinel','Watches everything else and shuts drift down before it starts.',[['Coverage','100%'],['Drift','0.0000']]]];
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),mark=s=>esc(s).replace(/\*(.+?)\*/g,'<span class="c">$1</span>');
+document.getElementById('claims').innerHTML=CLAIMS.map(([t,c],i)=>`<li class="in"><span class="n mono">${String(i+1).padStart(2,'0')}</span><h3>${mark(t)}</h3><p>${esc(c)}</p></li>`).join('');
+document.getElementById('roster').innerHTML=ROSTER.map(([id,n,d,s])=>`<li class="in" tabindex="0"><span class="n mono">${esc(id)}</span><h3>${esc(n)}</h3><p>${esc(d)}</p><span class="spec">${s.map(([k,v])=>`${esc(k).toUpperCase()} <em>${esc(v).toUpperCase()}</em>`).join('<br>')}</span></li>`).join('');
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){io.unobserve(e.target);e.target.classList.add('on')}}),{threshold:.2});document.querySelectorAll('.in').forEach(x=>io.observe(x));
+</script>
+</body></html>

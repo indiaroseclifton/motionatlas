@@ -60,11 +60,11 @@ const K=[
   voice:['Form follows function.','Less, but better.','Learn by making.'],
   dos:['Build layouts from circles, squares and triangles.','Use primaries in flat blocks.','Set headlines heavy and tight, body light.'],
   donts:['Gradients and shadows.','More than three colours plus black.','Ornament without purpose.']},
- {id:'graphite',no:'09',name:'01 Graphite',tagline:'A motherboard city at night.',mood:'AI, infrastructure, fintech, anything that should feel expensive and alive',
+ {id:'graphite',no:'09',name:'Graphite',tagline:'A motherboard city at night.',mood:'AI, infrastructure, fintech, anything that should feel expensive and alive',
   fonts:{head:"'Geist',system-ui,sans-serif",body:"'Geist',system-ui,sans-serif",css:'family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500'},
   t:{bg:'#07090C',surface:'#0F1318',ink:'#E7EAEE',mute:'#8A94A2',line:'#252D38',accent:'#7FE7F7',onAccent:'#07090C',accent2:'#3CF29A',accent3:'#A98BFF',radius:'4px',shadow:'0 0 0 1px #252D38',glow:'0 0 10px rgba(127,231,247,.55)'},
   bg:'graphite',stroke:{w:1.4,cap:'square'},case:'none',
-  voice:['The most powerful agentic system.','Coordinated. Adaptive. Unyielding.','1000+ models, and more always coming.'],
+  voice:['Built for what comes next.','Coordinated. Adaptive. Unyielding.','Always on. Always learning.'],
   dos:['Set the headline huge, platinum, left-aligned and off-centre.','Let numbers tick in steps; text decodes from 0s and 1s.','Keep cyan for signal and green for "live"; purple and amber stay rare.'],
   donts:['Boxed callout cards: use hairlines and corner ticks instead.','Overhead or symmetrical compositions.','Small headlines, or any "by invitation only" line.']}
 ];
@@ -157,7 +157,7 @@ function mark(k){const t=k.t;switch(k.id){
  case 'deco':return `<g fill="none" stroke="${t.accent}" stroke-width="2"><path d="M32 4 60 32 32 60 4 32z"/><path d="M32 14 50 32 32 50 14 32z"/><path d="M32 4v56M4 32h56"/></g>`;
  case 'blueprint':return `<g fill="none" stroke="#fff" stroke-width="2"><circle cx="32" cy="32" r="22"/><path d="M32 4v56M4 32h56"/></g><circle cx="32" cy="32" r="5" fill="${t.accent}"/>`;
  case 'vaporwave':return `<rect x="6" y="10" width="52" height="44" rx="4" fill="#fff" stroke="${t.ink}" stroke-width="3"/><path d="M6 20h52" stroke="${t.ink}" stroke-width="3"/><circle cx="32" cy="38" r="10" fill="${t.accent}"/>`;
- case 'graphite':return `<rect x="2" y="2" width="60" height="60" rx="8" fill="${t.surface}"/><text x="9" y="44" font-family="Geist,Arial,sans-serif" font-weight="700" font-size="30" fill="${t.ink}" letter-spacing="-1.5">01</text><rect x="49" y="37" width="7" height="7" fill="${t.accent}"/>`;
+ case 'graphite':return `<rect x="2" y="2" width="60" height="60" rx="8" fill="${t.surface}"/><path d="M14 46V30l8-8h28M14 46h22l6-6h8" fill="none" stroke="${t.ink}" stroke-width="3"/><rect x="44" y="18" width="8" height="8" fill="${t.accent}"/>`;
  default:return `<circle cx="20" cy="20" r="16" fill="${t.accent}"/><rect x="34" y="4" width="26" height="26" fill="${t.accent2}"/><path d="M4 60 20 34l16 26z" fill="${t.accent3||'#F5C400'}"/><path d="M38 60V36h22a24 24 0 0 1-22 24z" fill="${t.ink}"/>`}}
 function logo(k,dark){const t=k.t,w=Math.max(260,k.name.length*26+110);const fam=k.fonts.head.split(',')[0].replace(/'/g,'');return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="80" viewBox="0 0 ${w} 80"><rect width="${w}" height="80" fill="${dark?t.bg:'none'}"/><g transform="translate(8 8)">${mark(k)}</g><text x="88" y="50" fill="${t.ink}" font-family="${fam}, sans-serif" font-size="30" letter-spacing="${k.case==='upper'?3:0}">${k.case==='upper'?k.name.toUpperCase():k.name}</text></svg>`}
 function divider(k){const t=k.t;const by={deco:`<path d="M0 12h150M250 12h150" stroke="${t.accent}"/><path d="M200 2l10 10-10 10-10-10z" fill="none" stroke="${t.accent}"/><circle cx="170" cy="12" r="2" fill="${t.accent}"/><circle cx="230" cy="12" r="2" fill="${t.accent}"/>`,brutalist:`<rect y="6" width="400" height="12" fill="${t.ink}"/><rect x="0" y="6" width="120" height="12" fill="${t.accent}"/>`,matrix:`<text x="0" y="17" fill="${t.accent}" font-family="monospace" font-size="14">${'01001101 01000001 01010100 01010010 01001001 01011000'.slice(0,52)}</text>`,blueprint:`<path d="M0 12h400M0 4v16M400 4v16" stroke="#fff"/><text x="185" y="9" fill="${t.accent}" font-family="monospace" font-size="9">400</text>`};

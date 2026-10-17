@@ -1,4 +1,4 @@
-// 01ai application. POST JSON { answers: {key: value}, sections: [[title, [[label, key]]]] } -> emails it to Nicolas.
+// Application endpoint for the shelf's Staged application piece. POST JSON { answers: {key: value}, sections: [[title, [[label, key]]]] } -> emails it.
 // Sends through Resend when RESEND_API_KEY and APPLY_TO are set on the Vercel project (APPLY_FROM optional).
 // Without them it answers 503, and the page offers the visitor a copy of their application instead.
 const send = (res, code, obj) => { res.statusCode = code; res.setHeader('Content-Type', 'application/json'); res.setHeader('Cache-Control', 'no-store'); res.end(JSON.stringify(obj)); };
@@ -13,7 +13,7 @@ const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default async function handler(req, res) {
-  const key = process.env.RESEND_API_KEY, to = process.env.APPLY_TO, from = process.env.APPLY_FROM || '01ai applications <onboarding@resend.dev>';
+  const key = process.env.RESEND_API_KEY, to = process.env.APPLY_TO, from = process.env.APPLY_FROM || 'Applications <onboarding@resend.dev>';
   if (req.method === 'GET') return send(res, 200, { enabled: !!(key && to) });
   if (req.method !== 'POST') return send(res, 405, { error: 'POST only.' });
   if (!key || !to) return send(res, 503, { error: 'The application inbox is not connected on this deployment yet.' });
@@ -35,7 +35,7 @@ export default async function handler(req, res) {
     html += '</div>';
     const r = await fetch('https://api.resend.com/emails', {
       method: 'POST', headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ from, to: to.split(',').map(s => s.trim()), reply_to: email, subject: `01ai application: ${name}`, text, html })
+      body: JSON.stringify({ from, to: to.split(',').map(s => s.trim()), reply_to: email, subject: `New application: ${name}`, text, html })
     });
     if (!r.ok) return send(res, 502, { error: 'The mail service refused the application. Try again in a minute.' });
     return send(res, 200, { ok: true });

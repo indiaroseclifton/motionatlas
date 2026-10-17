@@ -1,0 +1,96 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Binary helix</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07090C;--surface:#0F1318;--line:#252D38;--line-2:#34404F;--ink:#E7EAEE;--ink-2:#B7BFCA;--mute:#8A94A2;--accent:#7FE7F7;--accent-2:#DDFBFF;--live:#3CF29A;--rare:#A98BFF;--warn:#FFB547;--bad:#FF6B6B;--sans:'Geist',system-ui,sans-serif;--mono:'Geist Mono',ui-monospace,monospace;--gut:max(20px,4.2vw);--lock:cubic-bezier(.2,.9,.1,1);--route:cubic-bezier(.6,0,.2,1)}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:400 17px/1.55 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:clip}
+button,input,textarea,select{font:inherit;color:inherit}
+:focus-visible{outline:1.5px solid var(--accent);outline-offset:3px}
+.mono{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.label{font:11px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--mute);margin:0 0 10px}
+.btn{position:relative;display:inline-flex;align-items:center;gap:10px;min-height:46px;padding:0 20px;border:1px solid var(--line-2);border-radius:4px;background:none;color:var(--ink);font:500 15px var(--sans);cursor:pointer;overflow:hidden;text-decoration:none}
+.btn::before{content:"";position:absolute;left:0;top:0;height:1px;width:0;background:var(--accent);transition:width 320ms var(--route)}
+.btn:hover::before{width:100%}.btn.solid{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.box{position:absolute;left:0;right:0;top:0;height:100vh;overflow:hidden;pointer-events:none}
+.strand{position:absolute;right:max(5vw,24px);top:12vh;width:220px;height:min(560px,72vh);opacity:var(--o,.62);transform:rotate(var(--tilt,-14deg));transform-origin:50% 40%}
+main{position:relative;min-height:100vh;display:grid;align-content:center;gap:26px;padding:100px var(--gut) 60px;max-width:1100px}
+h1{font-size:clamp(48px,8vw,124px);line-height:.92;letter-spacing:-.045em;font-weight:500;margin:0;max-width:9ch}
+p.lede{font-size:clamp(18px,1.6vw,22px);color:var(--ink-2);max-width:48ch;margin:0}
+.vitals{display:flex;flex-wrap:wrap;gap:12px 44px}
+.vitals div{display:grid;gap:4px}.vitals b{font:500 clamp(26px,3vw,40px)/1 var(--mono);letter-spacing:-.03em;font-variant-numeric:tabular-nums}.vitals span{font:11px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+.line{font:12px var(--mono);letter-spacing:.08em;color:var(--mute);margin:0;min-height:1.6em}.line b{color:var(--accent);font-weight:400}
+@media (max-width:760px){.strand{width:130px;right:8px;top:18vh;--o:.4}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style></head><body>
+<div class="box" aria-hidden="true"><canvas class="strand" id="strand"></canvas></div>
+<main>
+ <h1>Agents that build agents.</h1>
+ <p class="lede">The strand sits quietly behind the page: small, faint and tilted. Every few seconds it unzips, each half grows a new partner, and one leaves as something new.</p>
+ <div class="vitals"><div><span>Generation</span><b id="gen">4,812</b></div><div><span>Spawned today</span><b id="today">1,206</b></div></div>
+ <div role="status" aria-live="off"><p class="line" id="line">// Strand stable</p></div>
+</main>
+<script>
+/* ---------- Change these ---------- */
+window.CONFIG={
+ pairs:30,            // base pairs in the strand (20 to 40)
+ cycleSeconds:10,     // one split-recombine-spawn cycle
+ strength:.5,         // glyph opacity before the canvas opacity (.3 to .8); keep it a whisper
+ colours:{glyph:'#E7EAEE',rung:'#7FE7F7',signal:'#7FE7F7',live:'#3CF29A'},
+ onSpawn:(id)=>`// Strand split. Recombined. <b>${id}</b> deployed.`
+};
+/* Size, tilt and opacity of the strand itself are in the CSS: .strand {width, height, --tilt, --o} */
+</script>
+<script>
+'use strict';
+/* The strand that makes new agents. A small, faint double helix of 0s and 1s. Every cycle it unzips
+   from the top, each half grows a new partner, and the second strand leaves as a new agent.
+   A whisper, not the centrepiece: keep it small and low-contrast.
+   DNA.start(canvas,{still,onSpawn}) -> {pause,play} */
+window.DNA=(()=>{
+ const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2,clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
+ function start(canvas,{still=false,onSpawn}={}){
+  const x=canvas.getContext('2d');if(!x)return null;
+  const K=window.CONFIG,N=K.pairs,bits=Array.from({length:N},()=>Math.random()<.5?'0':'1'),flip=b=>b==='0'?'1':'0';
+  let w=0,h=0,d=1,raf=0,running=!still,t0=performance.now(),spawned=false,newBits=bits.map(flip);
+  function size(){d=Math.min(2,devicePixelRatio||1);w=canvas.clientWidth;h=canvas.clientHeight;canvas.width=w*d;canvas.height=h*d}
+  size();const ro=new ResizeObserver(()=>{size();if(still)draw(0)});ro.observe(canvas);
+  const CYCLE=K.cycleSeconds;
+  function strand(cx,sign,phase0,alpha,list,gap,top,amp,fs){for(let i=0;i<N;i++){const a=list[i];if(!a)continue;const ph=phase0+i*.56,s=Math.sin(ph),z=Math.cos(ph)*sign;
+    const px=cx+sign*amp*s,py=top+i*gap;const depth=.45+.55*(z*.5+.5);x.globalAlpha=alpha*a.a*depth;x.fillStyle=a.c||K.colours.glyph;x.font=`500 ${Math.round(fs*(.8+.3*depth))}px "Geist Mono",ui-monospace,monospace`;x.fillText(a.b,px,py)}}
+  function draw(time){x.setTransform(d,0,0,d,0,0);x.clearRect(0,0,w,h);x.textAlign='center';x.textBaseline='middle';
+   const fs=w<240?9:11,gap=Math.min(18,(h-60)/N),top=(h-gap*(N-1))/2,amp=Math.min(26,w*.09),cx=w*.42;
+   const c=(time/1000)%CYCLE,phase=time/1000*1.1;
+   const unzip=ease(clamp((c-3)/2)),grow=ease(clamp((c-5)/1.5)),leave=ease(clamp((c-6.5)/2.2)),settle=ease(clamp((c-8.2)/1.2));
+   if(c<3&&spawned){spawned=false;for(let k=0;k<3;k++){const i=Math.random()*N|0;bits[i]=flip(bits[i])}newBits=bits.map(flip)}
+   if(c>6.6&&!spawned){spawned=true;onSpawn&&onSpawn()}
+   const sep=amp*2.6;
+   const cL=cx-sep*unzip*(1-settle),cR=cx+sep*unzip+leave*w*.32;
+   /* rungs: fade as the zipper opens from the top */
+   x.lineWidth=1;for(let i=0;i<N;i++){const local=clamp(unzip*1.6-i/N*.6);const ph=phase+i*.56,s=Math.sin(ph),py=top+i*gap;const ra=(1-local)*.22;if(ra<.01)continue;x.globalAlpha=ra;x.strokeStyle=K.colours.rung;x.beginPath();x.moveTo(cx-amp*s+4,py);x.lineTo(cx+amp*s-4,py);x.stroke()}
+   const A=bits.map((b,i)=>({b,a:1,c:i%9===4?K.colours.signal:null})),B=bits.map((b,i)=>({b:flip(b),a:1,c:i%11===7?K.colours.live:null}));
+   const base=K.strength;
+   /* original pair, drifting apart top-down */
+   const offL=i=>cL+(cx-cL)*(1-clamp(unzip*1.6-i/N*.6)),offR=i=>cR+(cx-cR)*(1-clamp(unzip*1.6-i/N*.6));
+   for(let i=0;i<N;i++){strand(offL(i),1,phase,base,A.map((a,k)=>k===i?a:null),gap,top,amp,fs);strand(offR(i),-1,phase,base*(1-leave*.9),B.map((a,k)=>k===i?a:null),gap,top,amp,fs)}
+   /* new partners decode in, top-down */
+   if(grow>0){const NA=newBits.map((b,i)=>{const g=clamp(grow*1.5-i/N*.5);return g>0?{b:g<1&&Math.random()<.5?(Math.random()<.5?'0':'1'):flip(bits[i]),a:g}:null});
+    strand(cL,-1,phase,base,NA,gap,top,amp,fs);
+    const NB=bits.map((b,i)=>{const g=clamp(grow*1.5-i/N*.5);return g>0?{b,a:g,c:K.colours.signal}:null});strand(cR,1,phase,base*(1-leave*.9),NB,gap,top,amp,fs)}
+   x.globalAlpha=1}
+  function frame(now){draw(now-t0);if(running)raf=requestAnimationFrame(frame)}
+  if(still)draw(1500);else raf=requestAnimationFrame(frame);
+  const vis=()=>{if(document.hidden){cancelAnimationFrame(raf)}else if(running){raf=requestAnimationFrame(frame)}};document.addEventListener('visibilitychange',vis);
+  return {pause(){running=false;cancelAnimationFrame(raf)},play(){if(still||running)return;running=true;raf=requestAnimationFrame(frame)}};
+ }
+ return {start};
+})();
+
+(()=>{const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches,fmt=n=>n.toLocaleString('en-GB'),num=id=>+document.getElementById(id).textContent.replace(/,/g,'');
+ DNA.start(document.getElementById('strand'),{still:reduce,onSpawn(){const id='AGENT_'+(1000+Math.random()*8999|0);
+  document.getElementById('gen').textContent=fmt(num('gen')+1);document.getElementById('today').textContent=fmt(num('today')+1);
+  document.getElementById('line').innerHTML=CONFIG.onSpawn(id)}})})();
+</script>
+</body></html>

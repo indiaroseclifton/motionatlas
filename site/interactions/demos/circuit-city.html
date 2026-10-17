@@ -1,3 +1,53 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Circuit city hero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Change the look here. The 3D scene reads its own colours from CONFIG below. */
+:root{--bg:#07090C;--ink:#E7EAEE;--ink-2:#B7BFCA;--mute:#8A94A2;--accent:#7FE7F7;--live:#3CF29A;--line:#34404F;--sans:'Geist',system-ui,sans-serif;--mono:'Geist Mono',ui-monospace,monospace;--gut:max(20px,4.2vw)}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:400 17px/1.55 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:clip}
+#city{position:fixed;inset:0;width:100%;height:100%;display:block;background:radial-gradient(120% 90% at 70% 60%,#0F1A22,var(--bg) 60%)}
+.scrim{position:fixed;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(7,9,12,.92),rgba(7,9,12,.65) 30%,rgba(7,9,12,.1) 62%,rgba(7,9,12,0) 80%),linear-gradient(0deg,rgba(7,9,12,.85),rgba(7,9,12,0) 34%)}
+header{position:fixed;inset:0 0 auto;z-index:5;display:flex;justify-content:space-between;align-items:flex-start;gap:20px;padding:22px var(--gut)}
+.logo{font:600 30px/1 var(--sans);letter-spacing:-.04em;text-decoration:none;color:var(--ink)}.logo i{display:inline-block;width:.22em;height:.22em;background:var(--accent);margin-left:.06em}
+.status{font:12px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);margin:6px 0 0;text-align:right}
+.status i{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--live);box-shadow:0 0 10px var(--live);margin-right:8px;animation:p 1.6s infinite}
+@keyframes p{50%{opacity:.35}}
+main{position:relative;z-index:2}
+.hero{min-height:100vh;min-height:100svh;display:grid;align-content:center;gap:24px;padding:120px var(--gut) 80px}
+h1{font-size:clamp(48px,8.4vw,132px);line-height:.92;letter-spacing:-.045em;font-weight:500;margin:0;max-width:11ch;text-wrap:balance}
+.sub{font:clamp(13px,1.2vw,16px) var(--mono);letter-spacing:.06em;color:var(--accent);margin:0}
+.more{min-height:100vh;padding:20vh var(--gut);max-width:900px}
+.more h2{font-size:clamp(32px,4vw,60px);line-height:1;letter-spacing:-.04em;font-weight:500;margin:0 0 20px}
+.more p{color:var(--ink-2);max-width:52ch}
+.pause{position:fixed;left:var(--gut);bottom:22px;z-index:6;background:rgba(11,14,18,.7);border:1px solid var(--line);border-radius:999px;color:var(--ink-2);padding:9px 14px;font:12px var(--mono);letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+.pause:focus-visible{outline:1.5px solid var(--accent);outline-offset:3px}
+@media (max-width:640px){.status{display:none}.scrim{background:linear-gradient(0deg,rgba(7,9,12,.92),rgba(7,9,12,.55) 55%,rgba(7,9,12,.35))}}
+@media (prefers-reduced-motion:reduce){.status i{animation:none}}
+</style></head><body>
+<canvas id="city" aria-hidden="true"></canvas><div class="scrim" aria-hidden="true"></div>
+<header><a class="logo" href="#" aria-label="Your logo">Logo<i aria-hidden="true"></i></a><p class="status"><i aria-hidden="true"></i>System online // Node 07 // Uptime 99.98%</p></header>
+<main>
+ <section class="hero"><h1>Your biggest line goes here.</h1><p class="sub">Three words. In mono. In the signal colour.</p></section>
+ <section class="more"><h2>Scroll and the camera moves deeper in.</h2><p>The board is a city: chips are towers, traces are streets and the light running along them is traffic that never stops. The camera stays angled and off-centre, and follows the pointer slightly.</p></section>
+</main>
+<button type="button" class="pause" id="pause" aria-pressed="false">Pause motion</button>
+<script>
+/* ---------- Change these ---------- */
+window.CONFIG={
+ seed:7,                 // a different number gives a different city
+ towers:190,             // chips on the board (60 to 260)
+ traffic:2000,           // points of light moving on the traces (400 to 3000)
+ fog:.019,               // higher hides the far city (.01 to .04)
+ parallax:1,             // how much the camera follows the pointer (0 to 2)
+ scrollDolly:true,       // move the camera deeper as the page scrolls
+ camera:{start:[34,15,40],lookStart:[-6,0,-14],end:[16,7,6],lookEnd:[-26,1,-46]}, // keep it angled, never straight down
+ colours:{background:'#07090C',trace:'#2C8FA0',signal:'#7FE7F7',signalDeep:'#0A7F94',traffic:'#DDFBFF',live:'#3CF29A',rare1:'#A98BFF',rare2:'#FFB547'}
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
 'use strict';
 /* City circuits: a motherboard laid out like a city. Chips are towers, traces are streets, light is
    traffic that never stops. Angled, off-centre camera with pointer parallax; scroll moves the camera
@@ -5,7 +55,7 @@
    CityCircuits.start(canvas,{still}) -> {stop()} */
 window.CityCircuits=(()=>{
  const T=window.THREE;
- const C={bg:0x07090C,board:0x0B0E12,chipTop:0x151A21,chipSide:0x0D1015,edge:0x8E99A8,trace:0x2C8FA0,traceHi:0x7FE7F7,cyanDeep:0x0A7F94,traffic:0xDDFBFF,green:0x3CF29A,purple:0xA98BFF,amber:0xFFB547};
+ const hex=s=>parseInt(String(s).replace('#',''),16);const K=window.CONFIG;const C={bg:hex(K.colours.background),trace:hex(K.colours.trace),traceHi:hex(K.colours.signal),cyanDeep:hex(K.colours.signalDeep),traffic:hex(K.colours.traffic),green:hex(K.colours.live),purple:hex(K.colours.rare1),amber:hex(K.colours.rare2)};
  function rng(seed){let s=seed>>>0;return()=>((s=Math.imul(s^s>>>15,1|s)+0x6D2B79F5,((s^s>>>7)>>>0)%100000)/100000)}
  function canvasTex(w,h,draw){const c=document.createElement('canvas');c.width=w;c.height=h;draw(c.getContext('2d'),w,h);const t=new T.CanvasTexture(c);t.anisotropy=8;return t}
  function boardTexture(r){return canvasTex(2048,2048,(x,w,h)=>{x.fillStyle='#0B0E12';x.fillRect(0,0,w,h);
@@ -26,7 +76,7 @@ window.CityCircuits=(()=>{
   if(!T)return null;
   let renderer;try{renderer=new T.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'})}catch(e){return null}
   const r=rng(seed);renderer.setPixelRatio(Math.min(1.75,devicePixelRatio||1));renderer.setClearColor(C.bg,1);
-  const scene=new T.Scene();scene.fog=new T.FogExp2(C.bg,.019);
+  const scene=new T.Scene();scene.fog=new T.FogExp2(C.bg,K.fog);
   const cam=new T.PerspectiveCamera(42,1,.1,400);
   scene.add(new T.HemisphereLight(0xBFD4E6,0x0A1218,1.1));const key=new T.DirectionalLight(0xE7EEF6,1.3);key.position.set(-30,40,20);scene.add(key);const rim=new T.DirectionalLight(0x7FE7F7,.9);rim.position.set(40,12,-30);scene.add(rim);
   /* board */
@@ -37,7 +87,7 @@ window.CityCircuits=(()=>{
   const labels=['01','AX','NX','Q7','RT','MX','K2','V9','ZE','OS'];
   const edgeMat=new T.LineBasicMaterial({color:0xA8D8E2,transparent:true,opacity:.42});
   const group=new T.Group();scene.add(group);
-  for(let a=0;a<700&&chips.length<190;a++){const fw=1+(r()*2.4|0),fd=1+(r()*2.4|0),cx=(r()*(N-fw)|0)-N/2,cz=(r()*(N-fd)|0)-N/2;let ok=true;
+  for(let a=0;a<K.towers*4&&chips.length<K.towers;a++){const fw=1+(r()*2.4|0),fd=1+(r()*2.4|0),cx=(r()*(N-fw)|0)-N/2,cz=(r()*(N-fd)|0)-N/2;let ok=true;
    for(let i=-1;i<=fw;i++)for(let j=-1;j<=fd;j++)if(occ.has((cx+i)+','+(cz+j)))ok=false;if(!ok)continue;
    for(let i=0;i<fw;i++)for(let j=0;j<fd;j++)occ.add((cx+i)+','+(cz+j));
    const dist=Math.hypot(cx+fw/2-6,cz+fd/2+4);const tall=r()<.22&&dist<22;const h=tall?3.5+r()*(dist<9?11:7):.35+r()*(dist<12?2.6:1.3);
@@ -62,7 +112,7 @@ window.CityCircuits=(()=>{
   /* traffic: light that never stops */
   const seg=rt=>{const p=rt.pts,L=[0];for(let i=1;i<p.length;i++)L.push(L[i-1]+Math.hypot(p[i][0]-p[i-1][0],p[i][1]-p[i-1][1]));rt.len=L;rt.total=L[L.length-1];return rt};routes.forEach(seg);
   const weighted=routes.flatMap(rt=>Array(rt.trunk?8:rt.hi?3:1).fill(rt));
-  const NP=still?1400:2000,cars=[];const pPos=new Float32Array(NP*3),pCol=new Float32Array(NP*3),pSize=new Float32Array(NP);
+  const NP=K.traffic,cars=[];const pPos=new Float32Array(NP*3),pCol=new Float32Array(NP*3),pSize=new Float32Array(NP);
   const cWhite=new T.Color(C.traffic),cGreen=new T.Color(C.green),cPurple=new T.Color(C.purple),cAmber=new T.Color(C.amber),cCyan=new T.Color(C.traceHi);
   for(let i=0;i<NP;i++){const rt=weighted[r()*weighted.length|0];const col=r()<.06?cGreen:r()<.02?cPurple:r()<.015?cAmber:r()<.4?cCyan:cWhite;cars.push({rt,t:r()*rt.total,v:(rt.trunk?9:4)+r()*6,dir:r()<.5?1:-1});pCol.set([col.r,col.g,col.b],i*3);pSize[i]=rt.trunk?1.15:.75+r()*.4}
   const pg=new T.BufferGeometry();pg.setAttribute('position',new T.BufferAttribute(pPos,3));pg.setAttribute('color',new T.BufferAttribute(pCol,3));
@@ -73,7 +123,7 @@ window.CityCircuits=(()=>{
   const lg=new T.BufferGeometry(),lp=new Float32Array(leds.length*3),lc=new Float32Array(leds.length*3);leds.forEach((l,i)=>{lp.set([l[0],l[1],l[2]],i*3);lc.set([l[4].r,l[4].g,l[4].b],i*3)});lg.setAttribute('position',new T.BufferAttribute(lp,3));lg.setAttribute('color',new T.BufferAttribute(lc,3));
   const lm=new T.PointsMaterial({size:.7,map:sprite,vertexColors:true,transparent:true,blending:T.AdditiveBlending,depthWrite:false});const ledPts=new T.Points(lg,lm);scene.add(ledPts);
   /* camera path: angled, deep, off-centre */
-  const camA=new T.Vector3(34,15,40),camB=new T.Vector3(16,7,6),lookA=new T.Vector3(-6,0,-14),lookB=new T.Vector3(-26,1,-46);
+  const camA=new T.Vector3(...K.camera.start),camB=new T.Vector3(...K.camera.end),lookA=new T.Vector3(...K.camera.lookStart),lookB=new T.Vector3(...K.camera.lookEnd);
   let mx=0,my=0,tx=0,ty=0,scroll=0,raf=0,running=true,last=performance.now();
   const onMove=e=>{tx=(e.clientX/innerWidth-.5);ty=(e.clientY/innerHeight-.5)};addEventListener('pointermove',onMove,{passive:true});
   const onScroll=()=>{const max=Math.max(1,document.documentElement.scrollHeight-innerHeight);scroll=Math.min(1,scrollY/max)};addEventListener('scroll',onScroll,{passive:true});onScroll();
@@ -82,7 +132,7 @@ window.CityCircuits=(()=>{
   const tmp=new T.Vector3(),look=new T.Vector3();
   function place(dt){for(let i=0;i<NP;i++){const c=cars[i],rt=c.rt;c.t+=c.v*dt*c.dir;if(c.t>rt.total)c.t-=rt.total;if(c.t<0)c.t+=rt.total;let k=1;while(k<rt.len.length-1&&rt.len[k]<c.t)k++;const a=rt.pts[k-1],b=rt.pts[k],f=(c.t-rt.len[k-1])/((rt.len[k]-rt.len[k-1])||1);pPos[i*3]=a[0]+(b[0]-a[0])*f;pPos[i*3+1]=.12;pPos[i*3+2]=a[1]+(b[1]-a[1])*f}pg.attributes.position.needsUpdate=true}
   function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;mx+=(tx-mx)*.04;my+=(ty-my)*.04;
-   const s=scroll*scroll*(3-2*scroll);tmp.lerpVectors(camA,camB,s);tmp.x+=mx*6;tmp.y+=-my*3;cam.position.copy(tmp);look.lerpVectors(lookA,lookB,s);look.x+=mx*2.5;cam.lookAt(look);
+   const s=K.scrollDolly?scroll*scroll*(3-2*scroll):0;tmp.lerpVectors(camA,camB,s);tmp.x+=mx*6*K.parallax;tmp.y+=-my*3*K.parallax;cam.position.copy(tmp);look.lerpVectors(lookA,lookB,s);look.x+=mx*2.5;cam.lookAt(look);
    if(!still){place(dt);const t=now/1000;for(let i=0;i<leds.length;i++){const on=.35+.65*Math.max(0,Math.sin(t*2.2+leds[i][3]));lc[i*3]=leds[i][4].r*on;lc[i*3+1]=leds[i][4].g*on;lc[i*3+2]=leds[i][4].b*on}lg.attributes.color.needsUpdate=true}
    renderer.render(scene,cam);if(running&&!still)raf=requestAnimationFrame(frame)}
   place(0);
@@ -93,3 +143,10 @@ window.CityCircuits=(()=>{
  }
  return {start};
 })();
+
+(()=>{const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches,pb=document.getElementById('pause');
+ const h=window.CityCircuits&&CityCircuits.start(document.getElementById('city'),{still:reduce,seed:CONFIG.seed});
+ if(!h||reduce){pb.hidden=true;return}
+ pb.onclick=()=>{const p=pb.getAttribute('aria-pressed')!=='true';pb.setAttribute('aria-pressed',p);pb.textContent=p?'Play motion':'Pause motion';p?h.pause():h.play()}})();
+</script>
+</body></html>

@@ -1,0 +1,64 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Status header</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07090C;--surface:#0F1318;--line:#252D38;--line-2:#34404F;--ink:#E7EAEE;--ink-2:#B7BFCA;--mute:#8A94A2;--accent:#7FE7F7;--accent-2:#DDFBFF;--live:#3CF29A;--rare:#A98BFF;--warn:#FFB547;--bad:#FF6B6B;--sans:'Geist',system-ui,sans-serif;--mono:'Geist Mono',ui-monospace,monospace;--gut:max(20px,4.2vw);--lock:cubic-bezier(.2,.9,.1,1);--route:cubic-bezier(.6,0,.2,1)}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:400 17px/1.55 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:clip}
+button,input,textarea,select{font:inherit;color:inherit}
+:focus-visible{outline:1.5px solid var(--accent);outline-offset:3px}
+.mono{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.label{font:11px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--mute);margin:0 0 10px}
+.btn{position:relative;display:inline-flex;align-items:center;gap:10px;min-height:46px;padding:0 20px;border:1px solid var(--line-2);border-radius:4px;background:none;color:var(--ink);font:500 15px var(--sans);cursor:pointer;overflow:hidden;text-decoration:none}
+.btn::before{content:"";position:absolute;left:0;top:0;height:1px;width:0;background:var(--accent);transition:width 320ms var(--route)}
+.btn:hover::before{width:100%}.btn.solid{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.head{position:fixed;inset:0 0 auto;z-index:50;display:flex;align-items:flex-start;gap:24px;padding:22px var(--gut) 0;pointer-events:none}
+.head>*{pointer-events:auto}
+.head::before{content:"";position:absolute;inset:0 0 -36px;z-index:-1;background:linear-gradient(180deg,rgba(7,9,12,.94),rgba(7,9,12,.7) 62%,rgba(7,9,12,0));opacity:0;transition:opacity 320ms var(--lock);pointer-events:none}
+.head.solid::before{opacity:1}
+.skip{position:absolute;left:-999px;top:12px;z-index:100;background:var(--ink);color:var(--bg);padding:8px 12px}.skip:focus{left:12px}
+.logo{font:600 34px/1 var(--sans);letter-spacing:-.05em;text-decoration:none;color:var(--ink)}.logo i{display:inline-block;width:.2em;height:.2em;background:var(--accent);margin-left:.05em}
+.right{margin-left:auto;display:grid;justify-items:end;gap:12px}
+.status{margin:0;color:var(--ink-2);white-space:nowrap}
+.status i{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--live);margin-right:8px;box-shadow:0 0 10px var(--live);animation:pulse 1.6s var(--route) infinite}
+@keyframes pulse{50%{opacity:.35}}
+nav{display:flex;align-items:center;gap:22px}
+nav a{text-decoration:none;color:var(--ink-2);font:12px var(--mono);letter-spacing:.1em;text-transform:uppercase;padding:6px 0;position:relative}
+nav a:hover,nav a[aria-current=page]{color:var(--ink)}nav a[aria-current=page]::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--accent)}
+nav a.login{color:var(--mute)}
+.snd{display:inline-flex;align-items:center;gap:6px;background:none;border:0;color:var(--mute);font:12px var(--mono);letter-spacing:.1em;text-transform:uppercase;cursor:pointer;padding:6px 0}.snd[aria-pressed=true]{color:var(--accent)}
+.apply{position:fixed;right:var(--gut);bottom:22px;z-index:50;display:inline-flex;align-items:center;gap:10px;padding:10px 14px 10px 12px;border:1px solid var(--line-2);border-radius:999px;background:rgba(11,14,18,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);text-decoration:none;font:12px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink)}
+.apply i{width:6px;height:6px;background:var(--accent);box-shadow:0 0 10px var(--accent)}.apply:hover{border-color:var(--accent)}
+main{padding:0 var(--gut)}
+.hero{min-height:100vh;display:grid;align-content:center;gap:24px;background:radial-gradient(80% 60% at 70% 50%,#0F1E28,transparent 70%)}
+h1{font-size:clamp(48px,8.4vw,132px);line-height:.92;letter-spacing:-.045em;font-weight:500;margin:0;max-width:11ch}
+.sub{font:clamp(13px,1.2vw,16px) var(--mono);letter-spacing:.06em;color:var(--accent);margin:0}
+.filler{min-height:120vh;padding-top:10vh;color:var(--ink-2);max-width:56ch;margin:0}
+@media (max-width:760px){.head{flex-wrap:wrap;padding-top:16px;gap:12px}.logo{font-size:28px}.status{display:none}nav{gap:11px;flex-wrap:wrap;justify-content:flex-end}nav a,.snd{font-size:10.5px;letter-spacing:.05em}.snd span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}nav a.hide-sm{display:none}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style></head><body>
+<a class="skip" href="#top">Skip to content</a>
+<header class="head" id="head">
+ <a class="logo" href="#top" aria-label="Home">Logo<i aria-hidden="true"></i></a>
+ <div class="right">
+  <p class="status mono"><i aria-hidden="true"></i><span id="statusText"></span></p>
+  <nav aria-label="Main"><a href="#top" class="hide-sm" aria-current="page">Home</a><a href="#top">Agents</a><a href="#top">Integrations</a><a href="#top">Origin</a>
+   <button type="button" class="snd" aria-pressed="false" aria-label="Interface sound"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M2 6h3l4-3v10L5 10H2z"/><path d="M11.5 5.5a3.5 3.5 0 0 1 0 5M13.5 3.5a6.5 6.5 0 0 1 0 9"/></svg><span>Sound</span></button>
+   <a href="#top" class="login">Login</a></nav>
+ </div>
+</header>
+<main id="top">
+ <section class="hero"><h1>The headline sits big, left and off-centre.</h1><p class="sub">Logo top left. Status line top right. Login discreet. Apply small but findable.</p></section>
+ <p class="filler">Scroll down: once the page moves, the header gains a soft graphite backdrop so the links stay readable over anything. Apply stays pinned bottom right on every page except the application itself.</p>
+</main>
+<a class="apply" href="#top"><i aria-hidden="true"></i>Apply</a>
+<script>
+/* ---------- Change these ---------- */
+const CONFIG={status:'Server v1.0 // Node: War room // Uptime 99.999%',statusLabel:'Server status: version 1.0, node War Room, uptime 99.999 percent'};
+const st=document.getElementById('statusText');st.textContent=CONFIG.status;st.parentElement.setAttribute('aria-label',CONFIG.statusLabel);
+const head=document.getElementById('head'),solid=()=>head.classList.toggle('solid',scrollY>40);addEventListener('scroll',solid,{passive:true});solid();
+const snd=document.querySelector('.snd');snd.onclick=()=>snd.setAttribute('aria-pressed',snd.getAttribute('aria-pressed')!=='true');
+</script>
+</body></html>

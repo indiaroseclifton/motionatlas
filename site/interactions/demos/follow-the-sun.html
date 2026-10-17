@@ -1,0 +1,57 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Follow-the-sun board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07090C;--surface:#0F1318;--line:#252D38;--line-2:#34404F;--ink:#E7EAEE;--ink-2:#B7BFCA;--mute:#8A94A2;--accent:#7FE7F7;--accent-2:#DDFBFF;--live:#3CF29A;--rare:#A98BFF;--warn:#FFB547;--bad:#FF6B6B;--sans:'Geist',system-ui,sans-serif;--mono:'Geist Mono',ui-monospace,monospace;--gut:max(20px,4.2vw);--lock:cubic-bezier(.2,.9,.1,1);--route:cubic-bezier(.6,0,.2,1)}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:400 17px/1.55 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:clip}
+button,input,textarea,select{font:inherit;color:inherit}
+:focus-visible{outline:1.5px solid var(--accent);outline-offset:3px}
+.mono{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.label{font:11px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--mute);margin:0 0 10px}
+.btn{position:relative;display:inline-flex;align-items:center;gap:10px;min-height:46px;padding:0 20px;border:1px solid var(--line-2);border-radius:4px;background:none;color:var(--ink);font:500 15px var(--sans);cursor:pointer;overflow:hidden;text-decoration:none}
+.btn::before{content:"";position:absolute;left:0;top:0;height:1px;width:0;background:var(--accent);transition:width 320ms var(--route)}
+.btn:hover::before{width:100%}.btn.solid{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+main{padding:60px var(--gut) 60px;display:grid;gap:26px;max-width:1300px}
+h1{font-size:clamp(36px,5.4vw,84px);line-height:.95;letter-spacing:-.045em;font-weight:500;margin:0;max-width:14ch}
+.intro{color:var(--ink-2);max-width:56ch;margin:0}
+.board{position:relative;display:grid;gap:14px;margin-top:30px}
+.lane,.hours{display:grid;grid-template-columns:200px minmax(0,1fr);gap:20px;align-items:center}
+.lane p{margin:0;font:12px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2)}.lane p small{display:block;color:var(--mute);font-size:11px;margin-top:3px}
+.track{position:relative;height:26px;border-bottom:1px solid var(--line)}
+.track i{position:absolute;top:8px;height:10px;background:linear-gradient(90deg,rgba(127,231,247,.15),rgba(127,231,247,.55),rgba(127,231,247,.15))}
+.track i.on{background:linear-gradient(90deg,rgba(60,242,154,.25),rgba(60,242,154,.8),rgba(60,242,154,.25));box-shadow:0 0 14px rgba(60,242,154,.35)}
+.hours div{display:flex;justify-content:space-between;font:10.5px var(--mono);color:var(--mute)}
+.now{position:absolute;top:-10px;bottom:22px;width:1px;background:var(--ink);box-shadow:0 0 10px rgba(231,234,238,.6)}
+.now::before{content:attr(data-t);position:absolute;top:-20px;left:6px;font:11px var(--mono);letter-spacing:.08em;white-space:nowrap}
+.cover{font:12px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin:10px 0 0}.cover b{color:var(--live);font-weight:500}
+@media (max-width:760px){.lane,.hours{grid-template-columns:1fr;gap:6px}.hours>span{display:none}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style></head><body>
+<main>
+ <h1>The work never sleeps.</h1>
+ <p class="intro">Each team's working day on a 24-hour board, with a live "now" line. Lanes light green while that team is working, so you can see the hand-offs at a glance.</p>
+ <div class="board" id="board"><div class="hours" aria-hidden="true"><span></span><div><span>00</span><span>06</span><span>12</span><span>18</span><span>24 UTC</span></div></div></div>
+ <p class="cover" id="cover"></p>
+</main>
+<script>
+/* ---------- Change these ---------- */
+const CONFIG={
+ /* name, label shown under it, UTC offset in hours, local start and end hour */
+ teams:[['Team 01','New York','-5',9,19],['Team 02','London','0',9,19],['Team 03','Bengaluru','5.5',9,19],['Team 04','Sydney','10',9,19]],
+ unit:'continents'
+};
+(()=>{const board=document.getElementById('board'),hours=board.firstElementChild,pad=n=>String(n).padStart(2,'0');
+ CONFIG.teams.forEach(([n,place,off,a,b])=>{const o=+off,len=b-a,start=((a-o)%24+24)%24;const seg=(x,y)=>`<i style="left:${x/24*100}%;width:${(y-x)/24*100}%"></i>`;
+  const bars=start+len<=24?seg(start,start+len):seg(start,24)+seg(0,start+len-24);const lane=document.createElement('div');lane.className='lane';
+  lane.innerHTML=`<p>${n}<small>${place} · UTC${o>=0?'+':'−'}${Math.abs(o)} · ${pad(a)}:00–${pad(b)}:00</small></p><div class="track" data-s="${start}" data-l="${len}" role="img" aria-label="${n} works ${pad(a)}:00 to ${pad(b)}:00 local time">${bars}</div>`;board.insertBefore(lane,hours)});
+ const now=document.createElement('div');now.className='now';now.setAttribute('aria-hidden','true');board.append(now);
+ function place(){const d=new Date(),h=d.getUTCHours()+d.getUTCMinutes()/60,tr=board.querySelector('.track'),bl=board.getBoundingClientRect(),tb=tr.getBoundingClientRect();
+  now.style.left=(tb.left-bl.left+h/24*tb.width)+'px';now.dataset.t=`NOW ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())} UTC`;
+  let awake=0,cover=new Set();board.querySelectorAll('.track').forEach(t=>{const s=+t.dataset.s,l=+t.dataset.l,on=((h-s)%24+24)%24<l;if(on)awake++;t.querySelectorAll('i').forEach(i=>i.classList.toggle('on',on));for(let k=0;k<l;k++)cover.add((s+k)%24|0)});
+  document.getElementById('cover').innerHTML=`Coverage <b>${cover.size} / 24</b> hours · ${awake} of ${CONFIG.teams.length} working right now`}
+ place();addEventListener('resize',place);setInterval(place,30000)})();
+</script>
+</body></html>

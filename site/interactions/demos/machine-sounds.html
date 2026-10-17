@@ -1,0 +1,61 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Machine sound kit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07090C;--surface:#0F1318;--line:#252D38;--line-2:#34404F;--ink:#E7EAEE;--ink-2:#B7BFCA;--mute:#8A94A2;--accent:#7FE7F7;--accent-2:#DDFBFF;--live:#3CF29A;--rare:#A98BFF;--warn:#FFB547;--bad:#FF6B6B;--sans:'Geist',system-ui,sans-serif;--mono:'Geist Mono',ui-monospace,monospace;--gut:max(20px,4.2vw);--lock:cubic-bezier(.2,.9,.1,1);--route:cubic-bezier(.6,0,.2,1)}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:400 17px/1.55 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:clip}
+button,input,textarea,select{font:inherit;color:inherit}
+:focus-visible{outline:1.5px solid var(--accent);outline-offset:3px}
+.mono{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.label{font:11px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--mute);margin:0 0 10px}
+.btn{position:relative;display:inline-flex;align-items:center;gap:10px;min-height:46px;padding:0 20px;border:1px solid var(--line-2);border-radius:4px;background:none;color:var(--ink);font:500 15px var(--sans);cursor:pointer;overflow:hidden;text-decoration:none}
+.btn::before{content:"";position:absolute;left:0;top:0;height:1px;width:0;background:var(--accent);transition:width 320ms var(--route)}
+.btn:hover::before{width:100%}.btn.solid{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+main{padding:70px var(--gut) 80px;display:grid;gap:30px;max-width:1000px}
+h1{font-size:clamp(40px,6vw,88px);line-height:.94;letter-spacing:-.045em;font-weight:500;margin:0}
+.intro{color:var(--ink-2);max-width:58ch;margin:0}
+.toggle{justify-self:start;display:inline-flex;align-items:center;gap:10px;padding:10px 16px;border:1px solid var(--line-2);border-radius:999px;background:none;cursor:pointer;font:12px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2)}
+.toggle[aria-pressed=true]{color:var(--accent);border-color:var(--accent)}
+ul{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:20px;align-items:center;padding:16px 0;border-bottom:1px solid var(--line)}
+li b{font:500 20px var(--sans)}li p{margin:2px 0 0;color:var(--ink-2)}li code{font:12px var(--mono);color:var(--mute);white-space:nowrap}
+.play{width:46px;height:46px;border-radius:50%;border:1px solid var(--line-2);background:none;color:var(--ink);cursor:pointer;display:grid;place-items:center}
+.play:hover{border-color:var(--accent);color:var(--accent)}.play svg{width:14px;height:14px}
+.try{display:flex;flex-wrap:wrap;gap:10px}
+@media (max-width:640px){li{grid-template-columns:auto minmax(0,1fr)}li code{grid-column:2}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style></head><body>
+<main>
+ <h1>Machine sounds.</h1>
+ <p class="intro">Six small, precise interface sounds: ticks, buzzes and high pitches, synthesised live with the Web Audio API, so there are no audio files to load. Sound stays off until the visitor turns it on, and the choice is remembered.</p>
+ <button class="toggle" type="button" id="toggle" aria-pressed="false"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M2 6h3l4-3v10L5 10H2z"/><path d="M11.5 5.5a3.5 3.5 0 0 1 0 5M13.5 3.5a6.5 6.5 0 0 1 0 9"/></svg>Interface sound</button>
+ <ul><li><button class="play" type="button" data-snd="tick" aria-label="Play tick"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5v11l9-5.5z" fill="currentColor"/></svg></button><div><b>Tick</b><p>Hover, and every new line in a feed.</p></div><code>NOISE · HP 5.2kHz · 12ms</code></li><li><button class="play" type="button" data-snd="click" aria-label="Play click"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5v11l9-5.5z" fill="currentColor"/></svg></button><div><b>Click</b><p>Any press.</p></div><code>SINE · 2.4kHz · 30ms</code></li><li><button class="play" type="button" data-snd="chirp" aria-label="Play chirp"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5v11l9-5.5z" fill="currentColor"/></svg></button><div><b>Chirp</b><p>Something new arrived.</p></div><code>SINE · 3.2→6.4kHz · 60ms</code></li><li><button class="play" type="button" data-snd="confirm" aria-label="Play confirm"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5v11l9-5.5z" fill="currentColor"/></svg></button><div><b>Confirm</b><p>A step passed, a task done.</p></div><code>SINE · 1.6 + 2.4kHz</code></li><li><button class="play" type="button" data-snd="buzz" aria-label="Play buzz"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5v11l9-5.5z" fill="currentColor"/></svg></button><div><b>Buzz</b><p>Blocked, refused, failed.</p></div><code>SAW · 118Hz · BP 900Hz · 90ms</code></li><li><button class="play" type="button" data-snd="deny" aria-label="Play deny"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5v11l9-5.5z" fill="currentColor"/></svg></button><div><b>Deny</b><p>A field needs fixing.</p></div><code>SQUARE · 220→180Hz · 80ms</code></li></ul>
+ <p class="label">Try them in place</p>
+ <div class="try"><button class="btn" type="button" data-hover-tick>Hover me (tick)</button><button class="btn solid" type="button" id="ok">Submit (confirm)</button><button class="btn" type="button" id="no">Break it (buzz)</button></div>
+</main>
+<script>
+/* Sound kit. Usage: Sound.set(true) after a click, then Sound.tick(), Sound.chirp() ... Change pitches and lengths below. */
+const Sound=(()=>{let ctx=null,on=false;try{on=localStorage.getItem('ui-sound')==='on'}catch(e){}
+ const ac=()=>ctx||(ctx=new (window.AudioContext||window.webkitAudioContext)());
+ function env(g,t,a,d,peak){g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(peak,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+a+d)}
+ function tone(type,f0,f1,dur,peak=.06){if(!on)return;const c=ac(),t=c.currentTime,o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.setValueAtTime(f0,t);if(f1)o.frequency.exponentialRampToValueAtTime(f1,t+dur);env(g,t,.002,dur,peak);o.connect(g).connect(c.destination);o.start(t);o.stop(t+dur+.05)}
+ function noise(dur,hp,peak=.05){if(!on)return;const c=ac(),t=c.currentTime,n=Math.floor(c.sampleRate*dur),b=c.createBuffer(1,n,c.sampleRate),d=b.getChannelData(0);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*(1-i/n);const s=c.createBufferSource();s.buffer=b;const f=c.createBiquadFilter();f.type='highpass';f.frequency.value=hp;const g=c.createGain();env(g,t,.001,dur,peak);s.connect(f).connect(g).connect(c.destination);s.start(t)}
+ return {get on(){return on},
+  set(v){on=v;try{localStorage.setItem('ui-sound',v?'on':'off')}catch(e){}if(v)ac().resume()},
+  tick(){noise(.012,5200,.07)},
+  click(){tone('sine',2400,null,.03,.05)},
+  chirp(){tone('sine',3200,6400,.06,.035)},
+  confirm(){tone('sine',1600,null,.04,.045);setTimeout(()=>tone('sine',2400,null,.05,.045),55)},
+  buzz(){if(!on)return;const c=ac(),t=c.currentTime,o=c.createOscillator(),g=c.createGain(),f=c.createBiquadFilter();o.type='sawtooth';o.frequency.value=118;f.type='bandpass';f.frequency.value=900;f.Q.value=4;env(g,t,.003,.09,.04);o.connect(f).connect(g).connect(c.destination);o.start(t);o.stop(t+.12)},
+  deny(){tone('square',220,180,.08,.025)}}})();
+const tg=document.getElementById('toggle');tg.setAttribute('aria-pressed',Sound.on);
+tg.onclick=()=>{Sound.set(!Sound.on);tg.setAttribute('aria-pressed',Sound.on);Sound.confirm()};
+/* pressing play is a request to hear it, so it switches sound on */
+document.addEventListener('click',e=>{const b=e.target.closest('[data-snd]');if(!b)return;if(!Sound.on){Sound.set(true);tg.setAttribute('aria-pressed','true')}Sound[b.dataset.snd]()});
+document.querySelector('[data-hover-tick]').addEventListener('pointerenter',()=>Sound.tick());
+document.getElementById('ok').onclick=()=>Sound.confirm();document.getElementById('no').onclick=()=>Sound.buzz();
+</script>
+</body></html>

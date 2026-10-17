@@ -1,61 +1,86 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>01ai · Apply</title>
-<meta name="description" content="The 01ai application. Long, hard and read by Nicolas himself.">
-<meta name="theme-color" content="#07090C"><link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="01.css">
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Staged application</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-.intro{padding:150px var(--gut) 40px;display:grid;gap:24px;max-width:1300px}
-.terms{display:flex;flex-wrap:wrap;gap:10px 36px;font:12px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--pt-3)}
-.terms b{color:var(--pt);font-weight:500}
+:root{--bg:#07090C;--surface:#0F1318;--line:#252D38;--line-2:#34404F;--ink:#E7EAEE;--ink-2:#B7BFCA;--mute:#8A94A2;--accent:#7FE7F7;--accent-2:#DDFBFF;--live:#3CF29A;--rare:#A98BFF;--warn:#FFB547;--bad:#FF6B6B;--sans:'Geist',system-ui,sans-serif;--mono:'Geist Mono',ui-monospace,monospace;--gut:max(20px,4.2vw);--lock:cubic-bezier(.2,.9,.1,1);--route:cubic-bezier(.6,0,.2,1)}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:400 17px/1.55 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:clip}
+button,input,textarea,select{font:inherit;color:inherit}
+:focus-visible{outline:1.5px solid var(--accent);outline-offset:3px}
+.mono{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.label{font:11px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--mute);margin:0 0 10px}
+.btn{position:relative;display:inline-flex;align-items:center;gap:10px;min-height:46px;padding:0 20px;border:1px solid var(--line-2);border-radius:4px;background:none;color:var(--ink);font:500 15px var(--sans);cursor:pointer;overflow:hidden;text-decoration:none}
+.btn::before{content:"";position:absolute;left:0;top:0;height:1px;width:0;background:var(--accent);transition:width 320ms var(--route)}
+.btn:hover::before{width:100%}.btn.solid{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.o-btn{position:relative;display:inline-flex;align-items:center;gap:10px;min-height:48px;padding:0 22px;border:1px solid var(--line-2);border-radius:4px;background:transparent;color:var(--ink);font:500 15px var(--sans);text-decoration:none;cursor:pointer;overflow:hidden}
+.o-btn::before{content:"";position:absolute;left:0;top:0;height:1px;width:0;background:var(--accent);transition:width 320ms var(--route)}.o-btn:hover::before{width:100%}
+.o-btn.solid{background:var(--ink);color:var(--bg);border-color:var(--ink)}.o-btn[disabled]{opacity:.45;cursor:not-allowed}
+.o-field{display:grid;gap:8px}.o-field label{font:11.5px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2)}
+.o-input,.o-textarea,.o-select{width:100%;min-height:50px;padding:12px 0;border:0;border-bottom:1px solid var(--line-2);background:transparent;color:var(--ink);font:400 18px var(--sans);border-radius:0}
+.o-textarea{min-height:120px;resize:vertical;line-height:1.5}.o-input:focus,.o-textarea:focus,.o-select:focus{outline:none;border-bottom-color:var(--accent);box-shadow:0 1px 0 var(--accent)}
+.o-select option{background:#0B0E12}.o-hint{font-size:13.5px;color:var(--mute);margin:0}.o-err{font-size:13.5px;color:var(--bad);margin:0;min-height:1.2em}
+[aria-invalid=true]{border-bottom-color:var(--bad)!important}
+@keyframes o-pulse{50%{opacity:.35}}
+.o-display{font-size:clamp(48px,8vw,124px);line-height:.92;letter-spacing:-.045em;font-weight:500;margin:0;text-wrap:balance}
+.o-kick{display:flex;align-items:center;gap:10px;color:var(--mute);margin:0}.o-kick::before{content:"";width:28px;height:1px;background:var(--accent)}
+.o-lede{font-size:clamp(18px,1.6vw,22px);line-height:1.5;color:var(--ink-2);max-width:52ch;margin:0}
+
+.intro{padding:70px var(--gut) 40px;display:grid;gap:24px;max-width:1300px}
+.terms{display:flex;flex-wrap:wrap;gap:10px 36px;font:12px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.terms b{color:var(--ink);font-weight:500}
 .app{display:grid;grid-template-columns:260px minmax(0,1fr);gap:clamp(30px,6vw,100px);padding:40px var(--gut) 14vh;max-width:1400px;align-items:start}
 /* the rail: each stage is a node on one trace */
-.rail{position:sticky;top:130px}
+.rail{position:sticky;top:30px}
 .rail ol{list-style:none;margin:0;padding:0 0 0 26px;position:relative;display:grid;gap:4px}
 .rail ol::before{content:"";position:absolute;left:3px;top:10px;bottom:10px;width:1px;background:var(--line)}
-.rail .fill{position:absolute;left:3px;z-index:1;top:10px;width:1px;background:var(--cyan);box-shadow:0 0 8px var(--cyan);transition:height var(--d-scene) var(--e-route)}
-.rail button{position:relative;display:grid;gap:2px;width:100%;text-align:left;background:none;border:0;padding:8px 0;cursor:pointer;color:var(--pt-3)}
+.rail .fill{position:absolute;left:3px;z-index:1;top:10px;width:1px;background:var(--accent);box-shadow:0 0 8px var(--accent);transition:height 900ms var(--route)}
+.rail button{position:relative;display:grid;gap:2px;width:100%;text-align:left;background:none;border:0;padding:8px 0;cursor:pointer;color:var(--mute)}
 .rail button::before{content:"";position:absolute;left:-26px;top:14px;width:7px;height:7px;background:var(--bg);border:1px solid var(--line-2)}
-.rail button span{font:11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase}.rail button em{font-style:normal}
-.rail button b{font:500 16px var(--f-sans);letter-spacing:-.01em;color:inherit}
-.rail button[aria-current=step]{color:var(--pt)}
-.rail button[aria-current=step]::before{border-color:var(--cyan);background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
-.rail button.done{color:var(--pt-2)}.rail button.done::before{background:var(--green);border-color:var(--green)}
+.rail button span{font:11px var(--mono);letter-spacing:.12em;text-transform:uppercase}.rail button em{font-style:normal}
+.rail button b{font:500 16px var(--sans);letter-spacing:-.01em;color:inherit}
+.rail button[aria-current=step]{color:var(--ink)}
+.rail button[aria-current=step]::before{border-color:var(--accent);background:var(--accent);box-shadow:0 0 10px var(--accent)}
+.rail button.done{color:var(--ink-2)}.rail button.done::before{background:var(--live);border-color:var(--live)}
 .rail button:disabled{cursor:not-allowed;opacity:.55}
-.rail .saved{margin:22px 0 0 26px;font:11px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--pt-3)}
+.rail .saved{margin:22px 0 0 26px;font:11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
 .stage{display:grid;gap:34px}
-.stage h2{font-size:var(--t-h1);line-height:.96;letter-spacing:-.04em;font-weight:500;margin:0}
-.stage .why{margin:-18px 0 0;color:var(--pt-2);max-width:60ch}
+.stage h2{font-size:clamp(40px,5.6vw,84px);line-height:.96;letter-spacing:-.04em;font-weight:500;margin:0}
+.stage .why{margin:-18px 0 0;color:var(--ink-2);max-width:60ch}
 .row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:34px 28px}
 .o-field .meta{display:flex;justify-content:space-between;gap:12px}
-.count{font:11px var(--f-mono);letter-spacing:.08em;color:var(--pt-3);white-space:nowrap}
-.count.ok{color:var(--green)}
+.count{font:11px var(--mono);letter-spacing:.08em;color:var(--mute);white-space:nowrap}
+.count.ok{color:var(--live)}
 .checks{display:flex;flex-wrap:wrap;gap:8px}
-.checks label{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border:1px solid var(--line-2);border-radius:999px;font:13px var(--f-sans);letter-spacing:0;text-transform:none;color:var(--pt-2);cursor:pointer}
+.checks label{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border:1px solid var(--line-2);border-radius:999px;font:13px var(--sans);letter-spacing:0;text-transform:none;color:var(--ink-2);cursor:pointer}
 .checks input{position:absolute;opacity:0;width:1px;height:1px}
-.checks label:has(input:checked){border-color:var(--cyan);color:var(--pt);background:rgba(127,231,247,.06)}
-.checks label:has(input:focus-visible){outline:1.5px solid var(--cyan);outline-offset:3px}
+.checks label:has(input:checked){border-color:var(--accent);color:var(--ink);background:rgba(127,231,247,.06)}
+.checks label:has(input:focus-visible){outline:1.5px solid var(--accent);outline-offset:3px}
 .oath{display:grid;gap:14px}
-.oath label{display:flex;gap:14px;align-items:flex-start;font:16px/1.5 var(--f-sans);letter-spacing:0;text-transform:none;color:var(--pt-2);cursor:pointer}
+.oath label{display:flex;gap:14px;align-items:flex-start;font:16px/1.5 var(--sans);letter-spacing:0;text-transform:none;color:var(--ink-2);cursor:pointer}
 .oath input{width:18px;height:18px;margin-top:3px;accent-color:#7FE7F7;flex:none}
 fieldset{border:0;margin:0;padding:0;display:grid;gap:12px}
-legend{font:11.5px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--pt-2);padding:0;margin-bottom:12px}
+legend{font:11.5px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);padding:0;margin-bottom:12px}
 .nav{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;padding-top:20px;border-top:1px solid var(--line)}
 .review{display:grid;gap:26px}
 .review section{display:grid;gap:10px;padding-bottom:20px;border-bottom:1px solid var(--line)}
-.review h3{margin:0;font:12px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--cyan)}
+.review h3{margin:0;font:12px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
 .review dl{margin:0;display:grid;grid-template-columns:minmax(140px,240px) minmax(0,1fr);gap:8px 24px}
-.review dt{color:var(--pt-3);font-size:14px}.review dd{margin:0;color:var(--pt);font-size:15px;white-space:pre-wrap;overflow-wrap:anywhere}
+.review dt{color:var(--mute);font-size:14px}.review dd{margin:0;color:var(--ink);font-size:15px;white-space:pre-wrap;overflow-wrap:anywhere}
 .result{display:grid;gap:22px}
-.result pre{margin:0;max-height:320px;overflow:auto;padding:16px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);font:12.5px/1.6 var(--f-mono);color:var(--pt-2);white-space:pre-wrap}
+.result pre{margin:0;max-height:320px;overflow:auto;padding:16px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);font:12.5px/1.6 var(--mono);color:var(--ink-2);white-space:pre-wrap}
 .hp{position:absolute;left:-9999px}
-@media (max-width:900px){.app{grid-template-columns:1fr}.rail{position:static}.rail ol{grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);padding:0;gap:0}.rail ol::before,.rail .fill{display:none}.rail button{padding:12px 0 0;border-top:2px solid var(--line)}.rail button::before{display:none}.rail button[aria-current=step]{border-top-color:var(--cyan)}.rail button.done{border-top-color:var(--green)}.rail button b{display:none}.rail button em{display:none}.rail .saved{margin:12px 0 0}.row{grid-template-columns:1fr}.review dl{grid-template-columns:1fr}}
+@media (max-width:900px){.app{grid-template-columns:1fr}.rail{position:static}.rail ol{grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);padding:0;gap:0}.rail ol::before,.rail .fill{display:none}.rail button{padding:12px 0 0;border-top:2px solid var(--line)}.rail button::before{display:none}.rail button[aria-current=step]{border-top-color:var(--accent)}.rail button.done{border-top-color:var(--live)}.rail button b{display:none}.rail button em{display:none}.rail .saved{margin:12px 0 0}.row{grid-template-columns:1fr}.review dl{grid-template-columns:1fr}}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style></head><body>
-<main id="main">
+<main>
 <section class="intro" aria-labelledby="h">
  <p class="o-kick mono">Apply</p>
- <h1 id="h" class="o-display" style="max-width:12ch"><span data-decode-now>Most people won't finish this.</span></h1>
- <p class="o-lede">Six stages. Every answer is read by Nicolas himself. Short answers are noticed, and so is anything that isn't yours. Take your time: your progress saves on this device as you go.</p>
- <p class="terms"><span>Stages <b>6</b></span><span>Time <b>45–90 min</b></span><span>Read by <b>Nicolas</b></span></p>
+ <h1 id="h" class="o-display" style="max-width:12ch">Most people won't finish this.</h1>
+ <p class="o-lede">Six stages. Every answer is read by a person. Short answers are noticed, and so is anything that isn't yours. Take your time: your progress saves on this device as you go.</p>
+ <p class="terms"><span>Stages <b>6</b></span><span>Time <b>45–90 min</b></span><span>Read by <b>A human</b></span></p>
 </section>
 <div class="app">
  <nav class="rail" aria-label="Application stages"><div style="position:relative"><i class="fill" id="fill" aria-hidden="true"></i><ol id="rail"></ol></div><p class="saved" id="saved" role="status" aria-live="polite"></p></nav>
@@ -65,13 +90,22 @@ legend{font:11.5px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;c
  </form>
 </div>
 </main>
-<footer class="o-foot mono"><span>01ai · a 01 company</span><span><a href="brand.html">Design system</a></span></footer>
-<script src="01.js"></script>
 <script>
-O1.init({page:'apply'});
+const O1={reduce:matchMedia('(prefers-reduced-motion: reduce)').matches,Sound:{tick(){},click(){},chirp(){},confirm(){},buzz(){},deny(){}}};
+/* Want sound? Paste the Machine sound kit from the shelf and point O1.Sound at it. */
+/* ---------- Change these ---------- */
+const CONFIG={
+ endpoint:'',                  // where to POST {answers, sections}, e.g. '/api/apply'. Empty = offer the applicant a copy instead
+ draftKey:'application-draft', // drafts autosave on the device under this key
+ sendLabel:'Send application',
+ doneTitle:"It's in.",
+ doneText:"If you've cleared the bar, you'll hear back directly. If you don't hear back, you haven't.",
+ stages:null                   // null = the six stages below; or pass your own in the same shape
+};
+
 (()=>{
 /* The application. Each stage: [id, short, title, why, fields]. Field: {k, label, type, req, min, hint, opts, half} */
-const S=[
+const S=CONFIG.stages||[
  ['you','You','Who you are.','The basics. We will check every link.',[
   {k:'name',label:'Full name',type:'text',req:1,half:1,ac:'name'},{k:'email',label:'Email',type:'email',req:1,half:1,ac:'email'},
   {k:'location',label:'City and country',type:'text',req:1,half:1,ac:'address-level2'},{k:'tz',label:'Time zone you work in',type:'text',req:1,half:1,hint:'For example UTC+1'},
@@ -89,15 +123,15 @@ const S=[
  ['think','Thinking','How you think.','No right answers. Plenty of wrong ones.',[
   {k:'route',label:'A request arrives. You have 1000+ models and 50 milliseconds. Walk us through how you pick the model, and what you do when you are wrong.',type:'textarea',req:1,min:500},
   {k:'breed',label:'Design an agent that builds better agents. What stops it from going wrong?',type:'textarea',req:1,min:500},
-  {k:'flaw',label:'What is wrong with 01ai, as you see it from the outside?',type:'textarea',req:1,min:200}]],
+  {k:'flaw',label:'What is wrong with us, as you see it from the outside?',type:'textarea',req:1,min:200}]],
  ['commit','Commitment','What you will give.','We work across four continents. The build never stops.',[
   {k:'hours',label:'Hours a week you can commit',type:'select',req:1,half:1,opts:['Under 20','20–30','30–40','40–60','60+']},
   {k:'start',label:'Earliest start date',type:'date',req:1,half:1},
   {k:'whynow',label:'Why you, and why now?',type:'textarea',req:1,min:300},
-  {k:'oath',label:'Before you send',type:'oath',req:1,opts:['Every answer here is my own work, written by me.','I understand the bar is the highest I will ever apply against.','Nicolas can contact me at the email above.']}]],
- ['review','Review','Read it once more.','This is what Nicolas will read.',[]]
+  {k:'oath',label:'Before you send',type:'oath',req:1,opts:['Every answer here is my own work, written by me.','I understand the bar is the highest I will ever apply against.','You can contact me at the email above.']}]],
+ ['review','Review','Read it once more.','This is exactly what we will read.',[]]
 ];
-const KEY='o1-apply-v1',form=document.getElementById('form'),stages=document.getElementById('stages'),rail=document.getElementById('rail'),fill=document.getElementById('fill'),saved=document.getElementById('saved');
+const KEY=CONFIG.draftKey,form=document.getElementById('form'),stages=document.getElementById('stages'),rail=document.getElementById('rail'),fill=document.getElementById('fill'),saved=document.getElementById('saved');
 let data={},cur=0,done=new Set();try{const s=JSON.parse(localStorage.getItem(KEY)||'{}');data=s.data||{};cur=Math.min(s.cur||0,S.length-1);(s.done||[]).forEach(x=>done.add(x))}catch(e){}
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function field(f){const id='f-'+f.k,v=data[f.k],req=f.req?' aria-required="true"':'',dsc=`${id}-e${f.hint?' '+id+'-h':''}${f.min?' '+id+'-c':''}`;
@@ -110,8 +144,8 @@ function field(f){const id='f-'+f.k,v=data[f.k],req=f.req?' aria-required="true"
  return `<div class="o-field" data-k="${f.k}" style="${f.half?'':'grid-column:1/-1'}">${lab}${ctl}${hint}${err}</div>`}
 function stageHTML(i){const [id,,title,why,fs]=S[i];
  if(id==='review')return `<section class="stage" aria-labelledby="st"><h2 id="st" tabindex="-1">${title}</h2><p class="why">${why}</p><div class="review">${S.slice(0,-1).map(([,short,t,,ff])=>`<section><h3>${short}</h3><dl>${ff.map(f=>`<dt>${f.label}</dt><dd>${esc(Array.isArray(data[f.k])?data[f.k].join(', '):data[f.k])||'—'}</dd>`).join('')}</dl></section>`).join('')}</div>
-  <div class="nav"><button type="button" class="o-btn" data-go="-1">← Back</button><button type="submit" class="o-btn solid" id="send">Send to Nicolas</button></div><div class="result" id="result" hidden></div></section>`;
- return `<section class="stage" aria-labelledby="st"><p class="mono" style="color:var(--pt-3);margin:0">Stage ${i+1} of ${S.length}</p><h2 id="st" tabindex="-1">${title}</h2><p class="why">${why}</p><div class="row">${fs.map(field).join('')}</div>
+  <div class="nav"><button type="button" class="o-btn" data-go="-1">← Back</button><button type="submit" class="o-btn solid" id="send">${CONFIG.sendLabel}</button></div><div class="result" id="result" hidden></div></section>`;
+ return `<section class="stage" aria-labelledby="st"><p class="mono" style="color:var(--mute);margin:0">Stage ${i+1} of ${S.length}</p><h2 id="st" tabindex="-1">${title}</h2><p class="why">${why}</p><div class="row">${fs.map(field).join('')}</div>
   <div class="nav">${i?'<button type="button" class="o-btn" data-go="-1">← Back</button>':'<span></span>'}<button type="button" class="o-btn solid" data-go="1">Continue →</button></div></section>`}
 function drawRail(){rail.querySelectorAll('li').forEach(x=>x.remove());S.forEach(([id,short,title],i)=>{const li=document.createElement('li');const can=i<=cur||done.has(S[i-1]?.[0])||i===0;
   li.innerHTML=`<button type="button" data-i="${i}"${i===cur?' aria-current="step"':''}${can?'':' disabled'} class="${done.has(id)?'done':''}"><span>${String(i+1).padStart(2,'0')}<em> · ${short}</em></span><b>${title}</b></button>`;rail.append(li)});
@@ -134,13 +168,13 @@ form.addEventListener('submit',async e=>{e.preventDefault();if(cur!==S.length-1)
  const missing=S.slice(0,-1).findIndex(st=>!done.has(st[0]));if(missing>-1){show(missing);return}
  if(form.elements.website.value)return;btn.disabled=true;btn.textContent='Sending…';
  const sections=S.slice(0,-1).map(([,short,,,ff])=>[short,ff.map(f=>[f.label,f.k])]);
- let ok=false,msg='';try{const r=await fetch('/api/apply',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({answers:data,sections})});const j=await r.json().catch(()=>({}));ok=r.ok&&j.ok;msg=j.error||''}catch(err){msg='The application could not reach the server.'}
+ let ok=false,msg='';if(!CONFIG.endpoint){msg='No endpoint is set (CONFIG.endpoint), so nothing was sent.'}else try{const r=await fetch(CONFIG.endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({answers:data,sections})});const j=await r.json().catch(()=>({}));ok=r.ok&&j.ok;msg=j.error||''}catch(err){msg='The application could not reach the server.'}
  res.hidden=false;
- if(ok){O1.Sound.confirm();try{localStorage.removeItem(KEY)}catch(e){}stages.innerHTML=`<section class="stage" aria-labelledby="st"><h2 id="st" tabindex="-1">It's with Nicolas.</h2><p class="why" style="margin:0">If you've cleared the bar, you'll hear from him directly. If you don't hear back, you haven't.</p><p><a class="o-btn" href="home.html">Back to 01ai</a></p></section>`;document.getElementById('st').focus();return}
- O1.Sound.buzz();btn.disabled=false;btn.textContent='Send to Nicolas';
- res.innerHTML=`<p class="o-err" role="alert" style="font-size:15px">${esc(msg||'Sending failed.')} Your answers are safe on this device. You can also copy the whole application and send it to Nicolas yourself.</p><pre id="txt" tabindex="0" aria-label="Your application as text">${esc(asText())}</pre><p style="display:flex;gap:12px;flex-wrap:wrap;margin:0"><button type="button" class="o-btn" id="copy">Copy application</button><button type="button" class="o-btn" id="dl">Download as text</button></p>`;
+ if(ok){O1.Sound.confirm();try{localStorage.removeItem(KEY)}catch(e){}stages.innerHTML=`<section class="stage" aria-labelledby="st"><h2 id="st" tabindex="-1">${CONFIG.doneTitle}</h2><p class="why" style="margin:0">${CONFIG.doneText}</p></section>`;document.getElementById('st').focus();return}
+ O1.Sound.buzz();btn.disabled=false;btn.textContent=CONFIG.sendLabel;
+ res.innerHTML=`<p class="o-err" role="alert" style="font-size:15px">${esc(msg||'Sending failed.')} Your answers are safe on this device. You can also copy the whole application and send it yourself.</p><pre id="txt" tabindex="0" aria-label="Your application as text">${esc(asText())}</pre><p style="display:flex;gap:12px;flex-wrap:wrap;margin:0"><button type="button" class="o-btn" id="copy">Copy application</button><button type="button" class="o-btn" id="dl">Download as text</button></p>`;
  document.getElementById('copy').onclick=async ev=>{try{await navigator.clipboard.writeText(asText());ev.target.textContent='Copied'}catch(e){const r=document.createRange();r.selectNodeContents(document.getElementById('txt'));const s=getSelection();s.removeAllRanges();s.addRange(r);ev.target.textContent='Selected: press Ctrl+C'}};
- document.getElementById('dl').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([asText()],{type:'text/plain'}));a.download='01ai-application.txt';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)}});
+ document.getElementById('dl').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([asText()],{type:'text/plain'}));a.download='application.txt';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)}});
 show(cur,false);
 })();
 </script>
