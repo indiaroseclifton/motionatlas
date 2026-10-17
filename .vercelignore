@@ -1,7 +1,7 @@
 site/original
-film
-docs
-tools
+/film
+/docs
+/tools
 /*.jpg
 /index.html
 /assets
