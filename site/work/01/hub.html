@@ -1,0 +1,66 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>01 · Project Hub</title>
+<meta name="description" content="Everything built for 01ai: twenty home-page directions, the interface system, product prototypes and the first site pages.">
+<meta name="theme-color" content="#07090C"><link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="kit/kit.css">
+<style>
+:root{--f-display:'Geist',system-ui,sans-serif;--f-body:'Geist',system-ui,sans-serif;--f-mono:'Geist Mono',ui-monospace,monospace}
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:max(22px,env(safe-area-inset-top,0px)) var(--gut) 0}
+.top img{width:84px;height:auto;display:block}
+.top p{margin:0;font:11px var(--f-mono);letter-spacing:.12em;color:var(--fg2);text-align:right}
+.top p b{font-weight:400;color:var(--green)}
+main{padding:0 var(--gut) 40px}
+.intro{padding:clamp(48px,10vh,110px) 0 40px;max-width:1100px}
+h1{margin:0;font:600 clamp(44px,6.6vw,108px)/.92 var(--f-display);letter-spacing:-.05em;text-wrap:balance}
+h1 span{color:var(--cyan)}
+.lede{margin:20px 0 0;max-width:58ch;font-size:clamp(16px,1.3vw,19px);color:var(--fg2)}
+.feat{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:28px;align-items:center;padding:28px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);text-decoration:none}
+.feat .mont{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;min-width:0}
+.feat .mont img{width:100%;height:auto;aspect-ratio:16/10;object-fit:cover;display:block;border:1px solid var(--line)}
+.feat h2{margin:0;font:600 clamp(30px,3.4vw,52px)/1 var(--f-display);letter-spacing:-.04em}
+.feat p{margin:12px 0 0;color:var(--fg2)}
+.feat .go{display:inline-block;margin-top:18px;font:12px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--cyan)}
+.feat:hover h2{color:var(--cyan)}
+.kick{margin:64px 0 0;font:12px var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--fg3)}
+.rows{list-style:none;margin:14px 0 0;padding:0;border-top:1px solid var(--line)}
+.rows li{border-bottom:1px solid var(--line)}
+.rows a{display:grid;grid-template-columns:180px minmax(0,1fr) auto;gap:20px;align-items:center;padding:14px 0;text-decoration:none}
+.rows img{width:100%;height:auto;aspect-ratio:16/10;object-fit:cover;display:block;border:1px solid var(--line)}
+.rows b{display:block;font:600 22px/1.15 var(--f-display);letter-spacing:-.02em}
+.rows span{display:block;margin-top:4px;color:var(--fg2);font-size:15px}
+.rows i{font:12px var(--f-mono);font-style:normal;color:var(--fg3);letter-spacing:.08em}
+.rows a:hover b{color:var(--cyan)}
+.rows a:hover i{color:var(--fg)}
+.rows .noimg a{grid-template-columns:minmax(0,1fr) auto}
+.k-foot{padding-bottom:28px}
+@media (max-width:760px){.feat{grid-template-columns:minmax(0,1fr)}.rows a{grid-template-columns:96px minmax(0,1fr)}.rows i{display:none}}
+</style></head>
+<body>
+<div class="top"><img src="assets/01ai-wordmark.svg" alt="01ai" width="416" height="200"><p>SERVER v1.0 // NODE: WAR ROOM // UPTIME <b>99.999%</b></p></div>
+<main>
+<section class="intro" aria-labelledby="h"><h1 id="h">01ai, <span>everything in one place.</span></h1><p class="lede">Twenty home-page directions to choose from, the interface system, three product prototypes and the first pass of the site pages. Start with the directions.</p></section>
+<a class="feat" href="kit/directions.html"><div class="mont" aria-hidden="true"><img src="kit/shots/d01.webp" alt="" width="960" height="600"><img src="kit/shots/d08.webp" alt="" width="960" height="600"><img src="kit/shots/d09.webp" alt="" width="960" height="600"><img src="kit/shots/d17.webp" alt="" width="960" height="600"><img src="kit/shots/d03.webp" alt="" width="960" height="600"><img src="kit/shots/d13.webp" alt="" width="960" height="600"><img src="kit/shots/d10.webp" alt="" width="960" height="600"><img src="kit/shots/d20.webp" alt="" width="960" height="600"></div>
+ <div><h2>20 home-page directions</h2><p>Working home pages, each with its own type, layout, motion and city. Shortlist your favourites, then pick the one the site gets built in.</p><span class="go">Open the directions →</span></div></a>
+<p class="kick">Interface system and prototypes</p>
+<ul class="rows">
+ <li><a href="system.html"><img src="assets/shots/system.webp" alt="" width="1200" height="750"><div><b>Interface system</b><span>Foundations, components with live code, patterns.</span></div><i>system →</i></a></li>
+ <li><a href="app.html"><img src="assets/shots/console.webp" alt="" width="1200" height="750"><div><b>01ai Console</b><span>Chat that spawns agents, runs, models, connections, settings.</span></div><i>prototype →</i></a></li>
+ <li><a href="workspace.html"><img src="assets/shots/workspace.webp" alt="" width="1200" height="750"><div><b>01 Workspace</b><span>Ops overview, task board, clients, agent inbox.</span></div><i>prototype →</i></a></li>
+ <li><a href="agency.html"><img src="assets/shots/agency.webp" alt="" width="1200" height="750"><div><b>01 Agency</b><span>Agency site: services, work, process, brief form.</span></div><i>prototype →</i></a></li>
+</ul>
+<p class="kick">First-pass site pages</p>
+<ul class="rows">
+ <li><a href="home.html"><img src="assets/shots/home.webp" alt="" width="1200" height="750"><div><b>Home</b><span>The original city-circuits home page.</span></div><i>page →</i></a></li>
+ <li><a href="agents.html"><img src="assets/shots/agents.webp" alt="" width="1200" height="750"><div><b>Agents</b><span>The agent lineage, with the DNA helix.</span></div><i>page →</i></a></li>
+ <li><a href="integrations.html"><img src="assets/shots/integrations.webp" alt="" width="1200" height="750"><div><b>Integrations</b><span>The integration wall.</span></div><i>page →</i></a></li>
+ <li><a href="apply.html"><img src="assets/shots/apply.webp" alt="" width="1200" height="750"><div><b>Apply</b><span>The staged application.</span></div><i>page →</i></a></li>
+ <li class="noimg"><a href="origin.html"><div><b>Origin</b><span>The story.</span></div><i>page →</i></a></li>
+ <li class="noimg"><a href="login.html"><div><b>Login</b><span>Discreet sign-in into the console.</span></div><i>page →</i></a></li>
+ <li class="noimg"><a href="chat.html"><div><b>Chat</b><span>The public chat demo.</span></div><i>page →</i></a></li>
+ <li><a href="brand.html"><img src="assets/shots/brand.webp" alt="" width="1200" height="750"><div><b>Brand book</b><span>Logo, colour, type, motion and sound.</span></div><i>brand →</i></a></li>
+</ul>
+</main>
+<footer class="k-foot"><span>01ai · a 01 company</span><span>Project hub</span></footer>
+</body></html>

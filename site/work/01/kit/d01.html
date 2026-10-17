@@ -1,0 +1,51 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>01ai · Direction 01 · Graphite Standard</title>
+<meta name="description" content="01ai home page, direction 01: Graphite Standard.">
+<meta name="theme-color" content="#07090C"><link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="kit.css">
+<style>
+:root{--f-display:'Geist',system-ui,sans-serif;--f-body:'Geist',system-ui,sans-serif;--f-mono:'Geist Mono',ui-monospace,monospace}
+.scrim{position:fixed;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,rgba(7,9,12,.9),rgba(7,9,12,.55) 34%,rgba(7,9,12,0) 68%),linear-gradient(0deg,rgba(7,9,12,.9),rgba(7,9,12,0) 38%)}
+main{position:relative;z-index:2}
+.hero{min-height:100vh;min-height:100svh;display:grid;grid-template-rows:1fr auto;grid-template-columns:minmax(0,1fr);padding:0 var(--gut)}
+.copy{align-self:center;padding-top:120px;display:grid;gap:24px}
+h1{margin:0;font:500 clamp(54px,9vw,148px)/.9 var(--f-display);letter-spacing:-.055em;max-width:10.5ch;text-wrap:balance}
+.sub{margin:0;font:clamp(13px,1.2vw,16px) var(--f-mono);letter-spacing:.06em;color:var(--cyan)}
+.feeds{display:grid;grid-template-columns:1.1fr 1.5fr 1fr;gap:clamp(14px,2vw,26px);padding:0 0 76px;max-width:1240px}
+.feeds>*{min-width:0}
+.fr{position:relative;padding:16px 18px;background:linear-gradient(180deg,rgba(11,14,18,.6),rgba(11,14,18,.25));-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.fr::before,.fr::after{content:"";position:absolute;width:10px;height:10px;border:1px solid var(--fg3)}
+.fr::before{left:0;top:0;border-right:0;border-bottom:0}.fr::after{right:0;bottom:0;border-left:0;border-top:0}
+.lab{margin:0 0 10px;font:11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--fg3)}
+.stats{display:flex;flex-wrap:wrap;gap:12px 22px;margin-top:10px}
+.stats div{display:grid;gap:3px;min-width:7ch}
+.stats span{font:10.5px var(--f-mono);letter-spacing:.1em;color:var(--fg3)}
+.stats b{font:500 19px var(--f-mono);font-variant-numeric:tabular-nums}
+.k-log{height:104px}
+.models{margin:0;font:500 46px/1 var(--f-mono);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.models small{display:block;font:10.5px var(--f-mono);letter-spacing:.1em;color:var(--fg3);margin-top:10px}
+.claims{position:relative;z-index:2;padding:18vh var(--gut) 12vh;max-width:1320px}
+@media (max-width:900px){.feeds{grid-template-columns:1fr 1fr}.feeds .lg{grid-column:1/-1;order:3}}
+@media (max-width:560px){.feeds{grid-template-columns:1fr}.feeds .md{display:none}.scrim{background:linear-gradient(0deg,rgba(7,9,12,.94),rgba(7,9,12,.5) 60%,rgba(7,9,12,.35))}}
+</style></head>
+<body data-dir="01" id="top">
+<canvas class="k-canvas" id="cv" aria-hidden="true"></canvas><div class="scrim" aria-hidden="true"></div>
+<header data-kit="head"></header>
+<main>
+<section class="hero" aria-labelledby="h">
+ <div class="copy"><h1 id="h" data-decode>The most powerful agentic system.</h1><p class="sub" data-decode>Coordinated. Adaptive. Unyielding.</p></div>
+ <div class="feeds" aria-label="War room">
+  <div class="fr"><p class="lab">// System telemetry</p><canvas class="k-sparkc" data-spark="cpu" aria-hidden="true"></canvas>
+   <div class="stats"><div><span>CPU LOAD</span><b data-v="cpu">63.2%</b><div class="k-meter" data-bar="cpu"></div></div><div><span>MEMORY</span><b data-v="mem">72.7%</b><div class="k-meter" data-bar="mem"></div></div><div><span>NODES</span><b data-v="nodes">14,208</b></div></div></div>
+  <div class="fr lg"><p class="lab">// Node log</p><ol class="k-log" data-log="6" aria-label="Node log"></ol></div>
+  <div class="fr md"><p class="lab">// Models online</p><p class="models"><span data-v="models">1,042</span><small>AND MORE ALWAYS COMING</small></p></div>
+ </div>
+</section>
+<section class="claims" data-kit="claims" aria-label="The stack"></section>
+</main>
+<footer data-kit="foot"></footer>
+<script src="../../../vendor/three-r128.min.js"></script><script src="city3d.js"></script><script src="kit.js"></script>
+<script>Kit.init();Kit.city(document.getElementById('cv'),{seed:7});</script>
+</body></html>

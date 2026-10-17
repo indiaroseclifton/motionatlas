@@ -1,0 +1,81 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>01ai · 20 Home-Page Directions</title>
+<meta name="description" content="Twenty working home-page directions for 01ai, all built to the brand brief. Pick one, then the site gets built in it.">
+<meta name="theme-color" content="#07090C"><link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="kit.css">
+<style>
+:root{--f-display:'Geist',system-ui,sans-serif;--f-body:'Geist',system-ui,sans-serif;--f-mono:'Geist Mono',ui-monospace,monospace}
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding:max(22px,env(safe-area-inset-top,0px)) var(--gut) 0}
+.top a{color:var(--fg2);text-decoration:none;font:12px var(--f-mono);letter-spacing:.1em;text-transform:uppercase}
+.top a:hover{color:var(--fg)}
+.top .k-logo{width:76px;color:var(--fg)}
+.intro{padding:clamp(48px,9vh,96px) var(--gut) 32px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:32px 64px;align-items:end}
+.intro>*{min-width:0}
+h1{margin:0;font:600 clamp(44px,6.4vw,104px)/.92 var(--f-display);letter-spacing:-.05em;text-wrap:balance}
+h1 span{color:var(--cyan)}
+.lede{margin:18px 0 0;max-width:56ch;font-size:clamp(16px,1.3vw,18px);color:var(--fg2)}
+.fixed{margin:0;padding:0;list-style:none;border-top:1px solid var(--line);font:12px/1.5 var(--f-mono);color:var(--fg2)}
+.fixed li{display:grid;grid-template-columns:18px minmax(0,1fr);gap:8px;padding:9px 0;border-bottom:1px solid var(--line)}
+.fixed li::before{content:"✓";color:var(--green)}
+.fixed b{color:var(--fg);font-weight:500}
+.bar{position:sticky;top:0;z-index:10;display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;justify-content:space-between;padding:12px var(--gut);background:rgba(7,9,12,.9);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.seg{display:inline-flex;border:1px solid var(--line2);border-radius:999px;padding:2px}
+.seg button{background:none;border:0;color:var(--fg2);font:12px var(--f-mono);letter-spacing:.06em;padding:8px 14px;border-radius:999px;cursor:pointer;min-height:36px}
+.seg button[aria-pressed=true]{background:var(--fg);color:var(--bg)}
+.count{font:12px var(--f-mono);color:var(--fg3);letter-spacing:.06em}
+.grid{list-style:none;margin:0;padding:28px var(--gut) 96px;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,400px),1fr));gap:40px 28px}
+.grid li{display:grid;gap:12px;min-width:0}
+.th{position:relative;display:block;aspect-ratio:16/10;max-width:100%;overflow:hidden;border:1px solid var(--line);background:var(--bg2)}
+.th img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+.th:hover img,.th:focus-visible img{transform:scale(1.03)}
+.th .no{position:absolute;left:0;top:0;padding:6px 10px;background:rgba(7,9,12,.85);font:500 12px var(--f-mono);color:var(--cyan)}
+.meta{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 14px;align-items:start}
+.meta h2{margin:0;font:600 22px/1.15 var(--f-display);letter-spacing:-.02em}
+.meta h2 a{text-decoration:none}
+.meta h2 a:hover{color:var(--cyan)}
+.meta p{grid-column:1/-1;margin:0;color:var(--fg2);font-size:15px;line-height:1.5}
+.tags{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px 14px;margin:2px 0 0;font:11px var(--f-mono);letter-spacing:.06em;color:var(--fg3)}
+.tags span:first-child{color:var(--fg2)}
+.star{background:none;border:1px solid var(--line2);border-radius:999px;color:var(--fg2);font:12px var(--f-mono);padding:0 12px;min-height:36px;cursor:pointer;white-space:nowrap}
+.star[aria-pressed=true]{border-color:var(--amber);color:var(--amber)}
+.empty{padding:0 var(--gut) 80px;color:var(--fg2)}
+.k-foot{padding-bottom:28px}
+@media (max-width:860px){.intro{grid-template-columns:minmax(0,1fr)}}
+</style></head>
+<body id="top">
+<div class="top"><a class="k-logo" href="#top" aria-label="01ai"></a><a href="../hub.html">01 hub →</a></div>
+<main>
+<section class="intro" aria-labelledby="h">
+ <div><h1 id="h">20 home pages. <span>Pick one.</span></h1><p class="lede">Each direction is a working home page with its own type, layout, motion and city treatment. Every one keeps the brief's fixed parts, so the choice is about look and feel only. Shortlist the ones you like; the winner becomes the site.</p></div>
+ <ul class="fixed" aria-label="Kept in every direction">
+  <li><span>Logo <b>top left</b>, status line <b>top right</b></span></li>
+  <li><span>Headline <b>large</b>: “The most powerful agentic system.”</span></li>
+  <li><span>City circuits hero: <b>angled, off-centre, never overhead</b></span></li>
+  <li><span>Live war-room feeds at the bottom</span></li>
+  <li><span>Apply small but findable, Login discreet</span></li>
+  <li><span>Graphite, platinum, cyan; no DNA on the home page</span></li>
+ </ul>
+</section>
+<div class="bar"><div class="seg" role="group" aria-label="Filter directions"><button type="button" data-f="all" aria-pressed="true">All 20</button><button type="button" data-f="3d" aria-pressed="false">3D city</button><button type="button" data-f="2d" aria-pressed="false">2D city</button><button type="button" data-f="star" aria-pressed="false">Shortlist</button></div><p class="count" id="count" role="status" style="margin:0">Showing 20</p></div>
+<ul class="grid" id="grid"></ul>
+<p class="empty" id="empty" hidden>Nothing shortlisted yet. Tap ☆ Shortlist on any direction.</p>
+</main>
+<footer class="k-foot"><span>01ai · a 01 company</span><span>Directions kit · <a href="../system.html">Interface system</a></span></footer>
+<script src="kit.js"></script>
+<script>
+(()=>{const K='o1-kit-shortlist';let star=new Set();try{star=new Set(JSON.parse(localStorage.getItem(K)||'[]'))}catch(e){}
+ const save=()=>{try{localStorage.setItem(K,JSON.stringify([...star]))}catch(e){}};
+ document.querySelector('.top .k-logo').innerHTML='<svg viewBox="0 0 208 100" aria-hidden="true"><path fill="currentColor" d="M31 0H31A31 31 0 0 1 62 31V69A31 31 0 0 1 31 100H31A31 31 0 0 1 0 69V31A31 31 0 0 1 31 0ZM31 17A14 14 0 0 0 17 31V69A14 14 0 0 0 31 83H31A14 14 0 0 0 45 69V31A14 14 0 0 0 31 17ZM76 18 94 0H111V100H94V24L84 34ZM152 38H152A26 26 0 0 1 178 64V74A26 26 0 0 1 152 100H152A26 26 0 0 1 126 74V64A26 26 0 0 1 152 38ZM152 53A10 10 0 0 0 142 63V75A10 10 0 0 0 152 85H152A10 10 0 0 0 162 75V63A10 10 0 0 0 152 53ZM162 38H178V100H162ZM192 38H208V100H192Z"/><path fill="#7FE7F7" d="M192 10H208V26H192Z"/></svg>';
+ const g=document.getElementById('grid');
+ g.innerHTML=Kit.DIRS.map(d=>{const is3=/City3D/.test(d.hero);return `<li data-id="${d.id}" data-k="${is3?'3d':'2d'}"><a class="th" href="${d.href}" tabindex="-1" aria-hidden="true"><img src="shots/d${d.id}.webp" alt="" width="960" height="600" loading="lazy" decoding="async"><span class="no">${d.id}</span></a>
+  <div class="meta"><h2><a href="${d.href}">${d.id} · ${d.name}</a></h2><button type="button" class="star" aria-pressed="${star.has(d.id)}" aria-label="Shortlist ${d.name}">${star.has(d.id)?'★':'☆'} Shortlist</button><p>${d.idea}</p><p class="tags"><span>${d.type}</span><span>${d.hero}</span></p></div></li>`}).join('');
+ let f='all';const cnt=document.getElementById('count'),empty=document.getElementById('empty');
+ function apply(){let n=0;g.querySelectorAll('li').forEach(li=>{const show=f==='all'||(f==='star'?star.has(li.dataset.id):li.dataset.k===f);li.hidden=!show;if(show)n++});cnt.textContent=`Showing ${n}`;empty.hidden=!(f==='star'&&n===0)}
+ document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{f=b.dataset.f;document.querySelectorAll('.seg button').forEach(x=>x.setAttribute('aria-pressed',x===b));apply()});
+ g.addEventListener('click',e=>{const b=e.target.closest('.star');if(!b)return;const id=b.closest('li').dataset.id;star.has(id)?star.delete(id):star.add(id);save();b.setAttribute('aria-pressed',star.has(id));b.textContent=(star.has(id)?'★':'☆')+' Shortlist';if(f==='star')apply()});
+ apply();
+})();
+</script>
+</body></html>

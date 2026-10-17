@@ -1,0 +1,185 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>01 Agency · We build what others can't</title>
+<meta name="description" content="Prototype of 01 Agency: agent systems, products and automation, built on the 01 stack.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#07090C"><link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="01.css"><link rel="stylesheet" href="01-ui.css">
+<style>
+body{overflow-x:clip}
+.top{position:fixed;inset:0 0 auto;z-index:50;display:flex;align-items:center;gap:28px;padding:18px var(--gut);transition:background var(--d-route),padding var(--d-route)}
+.top.solid{background:rgba(7,9,12,.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding-block:12px;border-bottom:1px solid var(--line)}
+.top img{height:34px;width:auto}
+.top nav{display:flex;gap:24px;margin-left:auto}
+.top nav a{font:500 12px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--pt-2);text-decoration:none;position:relative;padding:6px 0}
+.top nav a::after{content:"";position:absolute;left:0;bottom:0;height:1px;width:0;background:var(--cyan);transition:width var(--d-route) var(--e-route)}.top nav a:hover{color:var(--pt)}.top nav a:hover::after{width:100%}
+.proto{position:fixed;right:var(--gut);bottom:16px;z-index:60;font:500 10.5px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--amber);background:rgba(7,9,12,.8);padding:6px 10px;border:1px solid rgba(255,181,71,.3);border-radius:999px}
+/* hero */
+.hero{position:relative;min-height:100vh;min-height:100svh;display:grid;align-content:end;padding:140px var(--gut) 12vh;overflow:hidden}
+.hero canvas{position:absolute;inset:0;width:100%;height:100%;background:#07090C url('assets/city-poster.jpg') center/cover}
+.hero .scrim{position:absolute;inset:0;background:linear-gradient(90deg,rgba(7,9,12,.96),rgba(7,9,12,.82) 42%,rgba(7,9,12,.45) 75%,rgba(7,9,12,.3)),linear-gradient(0deg,rgba(7,9,12,.95),rgba(7,9,12,0) 40%)}
+.hero .in{position:relative;display:grid;gap:26px;max-width:1100px}
+.hero h1{margin:0;font-size:clamp(52px,9vw,148px);line-height:.9;letter-spacing:-.05em;font-weight:500;max-width:10ch}
+.hero p{margin:0;max-width:52ch;font-size:clamp(17px,1.5vw,21px);color:var(--pt-2)}
+.ctas{display:flex;flex-wrap:wrap;gap:12px}
+.proof{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.proof div{padding:30px var(--gut);display:grid;gap:6px;border-left:1px solid var(--line)}.proof div:first-child{border-left:0}
+.proof b{font:500 clamp(36px,4vw,60px)/.9 var(--f-sans);letter-spacing:-.05em}.proof b sup{font-size:.4em;color:var(--cyan);vertical-align:1em}
+.proof span{color:var(--pt-3);font-size:14px;max-width:26ch}
+section.blk{padding:16vh var(--gut) 0;max-width:1500px;margin:0 auto;display:grid;gap:40px}
+.blk>header{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:20px}
+.blk h2{margin:0;font-size:clamp(40px,6vw,96px);line-height:.92;letter-spacing:-.045em;font-weight:500;max-width:12ch}
+.blk>header p{margin:0;max-width:44ch;color:var(--pt-2)}
+/* services accordion */
+.svc{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.svc li{border-bottom:1px solid var(--line)}
+.svc button{position:relative;display:grid;grid-template-columns:6ch minmax(0,1fr) auto;gap:20px;align-items:baseline;width:100%;padding:clamp(20px,3vh,32px) 0;border:0;background:none;text-align:left;cursor:pointer;color:var(--pt)}
+.svc button::after{content:"";position:absolute;left:0;bottom:-1px;height:1px;width:0;background:var(--cyan);transition:width var(--d-route) var(--e-route)}.svc button:hover::after,.svc button[aria-expanded=true]::after{width:100%}
+.svc .n{font:500 12px var(--f-mono);color:var(--pt-3)}
+.svc h3{margin:0;font-size:clamp(28px,3.6vw,56px);line-height:1;letter-spacing:-.04em;font-weight:500}
+.svc .plus{font:300 32px/1 var(--f-sans);color:var(--pt-3);transition:transform var(--d-route) var(--e-lock)}.svc button[aria-expanded=true] .plus{transform:rotate(45deg);color:var(--cyan)}
+.svc .panel{display:grid;grid-template-columns:6ch minmax(0,1fr) minmax(0,1fr);gap:20px;padding:0 0 32px}
+.svc .panel[hidden]{display:none}
+.svc .panel p{margin:0;color:var(--pt-2);max-width:52ch;grid-column:2}
+.svc .panel ul{margin:0;padding:0;list-style:none;display:grid;gap:8px;font:500 12px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--pt-2)}
+.svc .panel ul li{border:0;display:flex;gap:10px}.svc .panel ul li::before{content:"";width:6px;height:6px;background:var(--cyan);margin-top:4px;flex:none}
+/* work */
+.work{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.work li{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) auto;gap:24px;align-items:center;padding:28px 0;border-bottom:1px solid var(--line)}
+.work .m{font:500 clamp(44px,6vw,88px)/.9 var(--f-sans);letter-spacing:-.05em}.work .m small{display:block;font:500 11.5px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--pt-3);margin-top:10px}
+.work .u-tag{justify-self:start}.eng .u-btn{justify-self:start}
+.work h3{margin:0 0 8px;font:500 22px var(--f-sans);letter-spacing:-.02em}.work p{margin:0;color:var(--pt-2);max-width:46ch}
+/* process */
+.process{position:relative}
+.process svg{position:absolute;left:0;right:0;top:30px;width:100%;height:4px;overflow:visible}
+.process line{stroke:var(--line-2);stroke-width:1}.process line.go{stroke:var(--cyan);stroke-dasharray:1000;stroke-dashoffset:var(--o,1000)}
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:20px;position:relative}
+.steps li{display:grid;gap:10px;align-content:start}
+.steps .dot{width:60px;height:60px;display:grid;place-items:center;border:1px solid var(--line-2);border-radius:50%;background:var(--g-950);font:500 13px var(--f-mono);transition:border-color var(--d-route),background var(--d-route),color var(--d-route)}
+.steps li.on .dot{border-color:var(--cyan);background:var(--cyan);color:var(--g-950)}
+.steps h3{margin:0;font:500 20px var(--f-sans)}.steps p{margin:0;color:var(--pt-2);font-size:14.5px}.steps .u-cap{color:var(--pt-3)}
+/* engagements */
+.eng{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--line)}
+.eng>div{padding:28px 28px 28px 0;display:grid;gap:14px;align-content:start;border-bottom:1px solid var(--line)}.eng>div+div{padding-left:28px;border-left:1px solid var(--line)}
+.eng h3{margin:0;font:500 30px var(--f-sans);letter-spacing:-.03em}.eng .len{font:500 12px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--cyan)}
+.eng p{margin:0;color:var(--pt-2)}.eng ul{margin:0;padding:0;list-style:none;display:grid;gap:8px;color:var(--pt-2);font-size:14.5px}.eng ul li::before{content:"→ ";color:var(--cyan)}
+.eng .feat{position:relative}.eng .feat::before{content:"";position:absolute;left:28px;right:0;top:-1px;height:1px;background:var(--cyan)}
+/* contact */
+.contact{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:clamp(30px,6vw,100px);align-items:start}
+.contact form{display:grid;gap:22px}
+.contact .row2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.contact .done{display:grid;gap:14px}
+.direct{display:grid;gap:10px;margin-top:20px;color:var(--pt-2)}.direct a{color:var(--pt)}
+footer{margin-top:16vh;border-top:1px solid var(--line);padding:30px var(--gut) 70px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;color:var(--pt-3);font:12px var(--f-mono)}
+footer a{color:var(--pt-2)}
+.rv{opacity:0;transform:translateY(18px);transition:opacity var(--d-route) var(--e-lock),transform var(--d-route) var(--e-lock)}.rv.in{opacity:1;transform:none}
+@media (max-width:1000px){.top nav{display:none}.proof{grid-template-columns:1fr 1fr}.proof div:nth-child(3){border-left:0}.proof div{border-top:1px solid var(--line)}.work li{grid-template-columns:1fr}.steps{grid-template-columns:1fr 1fr}.process svg{display:none}.eng{grid-template-columns:1fr}.eng>div+div{padding-left:0;border-left:0}.eng .feat::before{left:0}.contact{grid-template-columns:1fr}.svc .panel{grid-template-columns:1fr}.svc .panel p{grid-column:auto}}
+@media (max-width:560px){.contact .row2{grid-template-columns:1fr}.steps{grid-template-columns:1fr}.svc button{grid-template-columns:4ch minmax(0,1fr) auto;gap:12px}}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}}
+</style></head><body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top" id="top"><a href="#main" aria-label="01 Agency home"><img src="assets/01-agency.svg" alt="01 Agency" width="190" height="124"></a>
+ <nav aria-label="01 Agency"><a href="#services">Services</a><a href="#work">Work</a><a href="#process">Process</a><a href="#engage">Engage</a></nav>
+ <a class="u-btn solid" href="#contact">Start a project</a></header>
+<span class="proto">Prototype · 01 Agency</span>
+<main id="main">
+<section class="hero" aria-labelledby="h1">
+ <canvas id="city" aria-hidden="true"></canvas><div class="scrim" aria-hidden="true"></div>
+ <div class="in">
+  <p class="o-kick mono">01 Agency · built on the 01 stack</p>
+  <h1 id="h1"><span data-decode-now>We build what others can't.</span></h1>
+  <p>Agent systems, products and automation for companies that want the most powerful tools on earth working for them. Built by the team behind 01ai.</p>
+  <div class="ctas"><a class="u-btn solid lg" href="#contact">Start a project</a><a class="u-btn lg" href="#work">See the work</a></div>
+ </div>
+</section>
+<div class="proof" aria-label="The team">
+ <div class="rv"><b data-n="100">0<sup>+</sup></b><span>Engineers on the 01 stack</span></div>
+ <div class="rv"><b data-n="4">0</b><span>Continents, so the work never stops</span></div>
+ <div class="rv"><b data-n="3">0<sup>+</sup></b><span>Years building agentic systems</span></div>
+ <div class="rv"><b data-n="1000">0<sup>+</sup></b><span>Models routed for every client</span></div>
+</div>
+
+<section class="blk" id="services" aria-labelledby="svH">
+ <header><h2 id="svH" class="rv">What we build.</h2><p class="rv">Four ways in. Most clients start with one and end up with all four.</p></header>
+ <ol class="svc" id="svc"></ol>
+</section>
+
+<section class="blk" id="work" aria-labelledby="wkH">
+ <header><h2 id="wkH" class="rv">Proof, not promises.</h2><p class="rv">A few recent engagements. Client names are withheld; the numbers are placeholders until approved.</p></header>
+ <ol class="work">
+  <li class="rv"><div><h3>Checkout, rebuilt by agents</h3><p>A swarm profiled 30 days of traces and shipped seven pull requests in one night.</p></div><span class="u-tag cyan">Agent systems</span><p class="m">−82%<small>Checkout latency</small></p></li>
+  <li class="rv"><div><h3>Finance ops on autopilot</h3><p>Invoices reconciled and chased in the customer's own voice, with every reply approved by a person.</p></div><span class="u-tag cyan">Automation</span><p class="m">£1.8m<small>Recovered in 90 days</small></p></li>
+  <li class="rv"><div><h3>A launch in twelve weeks</h3><p>From blank page to a product in market, with an agent team running research, copy and QA.</p></div><span class="u-tag cyan">Products</span><p class="m">12wk<small>Brief to launch</small></p></li>
+ </ol>
+</section>
+
+<section class="blk" id="process" aria-labelledby="prH">
+ <header><h2 id="prH" class="rv">How it runs.</h2><p class="rv">The same route every time, so you always know where your project is.</p></header>
+ <div class="process" id="proc"><svg aria-hidden="true" preserveAspectRatio="none"><line x1="0" y1="0" x2="100%" y2="0"/><line class="go" x1="0" y1="0" x2="100%" y2="0" pathLength="1000"/></svg>
+  <ol class="steps" id="steps">
+   <li><span class="dot">01</span><span class="u-cap">Week 0</span><h3>Brief</h3><p>One call. We leave with the goal, the constraints and how success is measured.</p></li>
+   <li><span class="dot">02</span><span class="u-cap">Week 1</span><h3>Blueprint</h3><p>The system, the agents, the tools they need and a fixed plan.</p></li>
+   <li><span class="dot">03</span><span class="u-cap">Weeks 2–10</span><h3>Build</h3><p>Weekly demos. You see working software, never slides.</p></li>
+   <li><span class="dot">04</span><span class="u-cap">Launch</span><h3>Launch</h3><p>Shipped behind the Sentinel, watched around the clock.</p></li>
+   <li><span class="dot">05</span><span class="u-cap">Ongoing</span><h3>Run</h3><p>It keeps learning. You get it inside 01 Workspace.</p></li>
+  </ol></div>
+</section>
+
+<section class="blk" id="engage" aria-labelledby="enH">
+ <header><h2 id="enH" class="rv">Three ways to work together.</h2><p class="rv">Every engagement is scoped on a call. Pricing is set per project.</p></header>
+ <div class="eng">
+  <div class="rv"><span class="len">2 weeks</span><h3>Sprint</h3><p>One sharp problem, solved and shipped.</p><ul><li>Fixed scope and price</li><li>One agent system in production</li><li>Handover and docs</li></ul><a class="u-btn" href="#contact" data-pick="Sprint">Book a sprint</a></div>
+  <div class="rv feat"><span class="len">8–12 weeks</span><h3>Build</h3><p>A product or platform, end to end.</p><ul><li>Dedicated pod across time zones</li><li>Weekly demos</li><li>Launch and 30 days of run</li></ul><a class="u-btn solid" href="#contact" data-pick="Build">Start a build</a></div>
+  <div class="rv"><span class="len">Ongoing</span><h3>Embedded</h3><p>Your own agent team, run by ours.</p><ul><li>Agents working inside your tools</li><li>01 Workspace access</li><li>Monthly strategy review</li></ul><a class="u-btn" href="#contact" data-pick="Embedded">Talk to us</a></div>
+ </div>
+</section>
+
+<section class="blk" id="contact" aria-labelledby="ctH">
+ <div class="contact">
+  <div><h2 id="ctH" class="rv">Start a project.</h2><p class="rv" style="color:var(--pt-2);margin:20px 0 0;max-width:40ch">Tell us what you want built. A person reads every brief and replies within one working day.</p>
+   <div class="direct rv"><span class="u-cap">Or directly</span><span>hello@01agency.example</span></div></div>
+  <form id="brief" novalidate>
+   <div class="row2"><div class="o-field"><label for="bn">Name</label><input class="o-input" id="bn" autocomplete="name" aria-describedby="bn-e"><p class="o-err" id="bn-e"></p></div>
+    <div class="o-field"><label for="be">Work email</label><input class="o-input" id="be" type="email" autocomplete="email" aria-describedby="be-e"><p class="o-err" id="be-e"></p></div></div>
+   <div class="o-field"><label for="bc">Company</label><input class="o-input" id="bc" autocomplete="organization"></div>
+   <div class="o-field"><label for="bw">What should we build?</label><textarea class="o-textarea" id="bw" aria-describedby="bw-h bw-e" placeholder="The problem, who it's for, and what good looks like."></textarea><p class="o-hint" id="bw-h">A few sentences is plenty.</p><p class="o-err" id="bw-e"></p></div>
+   <div class="row2"><div class="u-field"><span class="u-label" id="engL">Engagement</span><div class="u-seg" data-seg role="group" aria-labelledby="engL" id="engSeg"><button type="button" aria-pressed="false" data-v="Sprint">Sprint</button><button type="button" aria-pressed="true" data-v="Build">Build</button><button type="button" aria-pressed="false" data-v="Embedded">Embedded</button></div></div>
+    <div class="u-field"><label class="u-label" for="bt">Start</label><select class="u-select" id="bt"><option>As soon as possible</option><option>This quarter</option><option>Next quarter</option><option>Just exploring</option></select></div></div>
+   <button class="o-btn solid" type="submit" style="justify-self:start">Send brief</button>
+  </form>
+ </div>
+</section>
+</main>
+<footer><span>01 Agency · a 01 company</span><span><a href="hub.html">All prototypes</a> · <a href="system.html">Interface system</a> · <a href="home.html">01ai</a></span></footer>
+<script src="../../vendor/three-r128.min.js"></script>
+<script src="01.js"></script><script src="01-ui.js"></script><script src="city.js"></script>
+<script>
+(()=>{const $=UI.$,$$=UI.$$,reduce=O1.reduce;
+ /* the same city as 01ai, calmer: heavier scrim, no war-room feed, no sound on hover */
+ const cv=$('#city');const city=window.CityCircuits&&CityCircuits.start(cv,{still:reduce,seed:19});
+ $$('[data-decode-now]').forEach(d=>O1.decode(d,{delay:250}));
+ const top=$('#top');addEventListener('scroll',()=>top.classList.toggle('solid',scrollY>40),{passive:true});
+ /* services */
+ const SV=[['Agent systems','Swarms that plan, act in your tools and report back with proof. Built on 01ai and owned by you.',['Routing across 1000+ models','Custom agent classes','Sentinel monitoring']],
+  ['Products','Web and mobile products designed and engineered end to end, with agents doing the research, QA and copy.',['Design system to launch','Native and web','Analytics wired in']],
+  ['Automation','The repetitive work across finance, sales and ops, handed to agents with a person approving every action that matters.',['Finance and revenue ops','Sales follow-up','Approval flows']],
+  ['Strategy & audits','An honest look at where agents will pay back first, and a plan to get there.',['Two-week audit','Roadmap and costs','Board-ready summary']]];
+ $('#svc').innerHTML=SV.map(([t,d,l],i)=>`<li class="rv"><button type="button" aria-expanded="${i===0}" aria-controls="sp${i}" id="sb${i}"><span class="n">0${i+1}</span><h3>${t}</h3><span class="plus" aria-hidden="true">+</span></button><div class="panel" id="sp${i}" role="region" aria-labelledby="sb${i}"${i?' hidden':''}><span></span><p>${d}</p><ul>${l.map(x=>`<li>${x}</li>`).join('')}</ul></div></li>`).join('');
+ $('#svc').addEventListener('click',e=>{const b=e.target.closest('button[aria-controls]');if(!b)return;const open=b.getAttribute('aria-expanded')==='true';b.setAttribute('aria-expanded',!open);$('#'+b.getAttribute('aria-controls')).hidden=open;O1.Sound.tick()});
+ /* reveals and counters */
+ const io=new IntersectionObserver(es=>es.forEach(en=>{if(!en.isIntersecting)return;io.unobserve(en.target);en.target.classList.add('in');const b=en.target.querySelector('[data-n]');if(b){const end=+b.dataset.n,sup=b.querySelector('sup')?.outerHTML||'';if(reduce){b.innerHTML=UI.fmt(end)+sup;return}let s=0;const t=setInterval(()=>{s++;b.innerHTML=UI.fmt(Math.round(end*s/6))+sup;if(s>=6)clearInterval(t)},90)}}),{threshold:.2});
+ $$('.rv').forEach(x=>io.observe(x));
+ /* process route */
+ const proc=$('#proc'),go=proc.querySelector('.go'),steps=$$('#steps li');
+ const onS=()=>{const r=proc.getBoundingClientRect(),p=Math.min(1,Math.max(0,(innerHeight*.8-r.top)/(innerHeight*.5)));go.style.setProperty('--o',String(1000*(1-p)));steps.forEach((s,i)=>s.classList.toggle('on',p>=i/4-.01))};addEventListener('scroll',()=>requestAnimationFrame(onS),{passive:true});onS();
+ /* engagement picks */
+ $$('[data-pick]').forEach(a=>a.addEventListener('click',()=>{$$('#engSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===a.dataset.pick))}));
+ UI.wire();
+ /* brief form (prototype: nothing is sent) */
+ const f=$('#brief');f.addEventListener('submit',e=>{e.preventDefault();const err=(id,m)=>{$('#'+id+'-e').textContent=m;$('#'+id).setAttribute('aria-invalid',m?'true':'false');return !m};
+  const ok=[err('bn',$('#bn').value.trim()?'':'Tell us your name.'),err('be',/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($('#be').value.trim())?'':'Enter a work email we can reply to.'),err('bw',$('#bw').value.trim().length>=20?'':'A sentence or two, so we can prepare.')];
+  if(ok.includes(false)){O1.Sound.deny();f.querySelector('[aria-invalid=true]').focus();return}
+  const eng=$('#engSeg [aria-pressed=true]').dataset.v;O1.Sound.confirm();
+  f.outerHTML=`<div class="done" role="status" tabindex="-1" id="done"><span class="u-status"><i class="u-dot live"></i>Brief received</span><h3 style="margin:0;font:500 clamp(28px,3vw,44px)/1 var(--f-sans);letter-spacing:-.035em">Thanks, ${$('#bn').value.trim().split(' ')[0].replace(/[<>&"]/g,'')}.</h3><p style="margin:0;color:var(--pt-2);max-width:46ch">A person will read your ${eng.toLowerCase()} brief and reply within one working day. (Prototype: nothing was sent.)</p></div>`;$('#done').focus()});
+})();
+</script>
+</body></html>

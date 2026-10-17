@@ -1,0 +1,46 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>01ai · Direction 07 · Layered Parallax</title>
+<meta name="description" content="01ai home page, direction 07: Layered Parallax.">
+<meta name="theme-color" content="#07090C"><link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300..800&family=Red+Hat+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="kit.css">
+<style>
+:root{--f-display:'Manrope',system-ui,sans-serif;--f-body:'Manrope',system-ui,sans-serif;--f-mono:'Red Hat Mono',ui-monospace,monospace}
+main{position:relative;z-index:2}
+.hero{position:relative;min-height:100vh;min-height:100svh;padding:0 var(--gut)}
+.copy{position:relative;z-index:3;padding-top:clamp(130px,22vh,220px);display:grid;gap:20px}
+h1{margin:0;font:800 clamp(52px,8.8vw,150px)/.88 var(--f-display);letter-spacing:-.06em;max-width:10ch;text-wrap:balance;text-shadow:0 10px 60px rgba(7,9,12,.8)}
+.sub{margin:0;font:500 clamp(13px,1.2vw,16px) var(--f-mono);letter-spacing:.06em;color:var(--cyan)}
+/* floating feeds: each pinned at its own depth, each drifting at its own rate */
+.fl{position:absolute;z-index:3;padding:14px 16px;background:rgba(10,13,17,.62);border:1px solid var(--line);-webkit-backdrop-filter:blur(var(--b,6px));backdrop-filter:blur(var(--b,6px));animation:float var(--d,9s) ease-in-out infinite alternate;min-width:0}
+.fl .lab{margin:0 0 8px;font:10.5px var(--f-mono);letter-spacing:.14em;color:var(--fg3)}
+.f1{right:calc(var(--gut) + 22%);bottom:31%;width:220px;--d:8s}
+.f2{right:var(--gut);bottom:15%;width:min(420px,40vw);--d:11s;--b:10px}
+.f3{right:calc(var(--gut) + 6%);top:24%;width:180px;--d:13s;--b:3px}
+@keyframes float{from{transform:translateY(-8px)}to{transform:translateY(10px)}}
+.big{margin:0;font:800 34px/1 var(--f-display);letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.k-sparkc{height:34px}
+.k-log{height:92px;font-size:11px}
+.pair{display:flex;gap:16px;font:12px var(--f-mono);color:var(--fg3)}.pair b{color:var(--fg);font-weight:500;margin-left:6px}
+.claims{position:relative;z-index:2;padding:18vh var(--gut) 12vh;background:linear-gradient(180deg,transparent,var(--bg) 20%)}
+.claims .k-claims h3{font-weight:800;letter-spacing:-.05em}
+@media (max-width:900px){.f3{display:none}.f1{left:var(--gut);right:auto;bottom:calc(84px + 150px)}.f2{left:var(--gut);right:var(--gut);width:auto;bottom:74px}}
+@media (max-width:560px){.f1{bottom:calc(74px + 140px);width:auto;right:var(--gut)}.f2 .k-log{height:56px}}
+</style></head>
+<body data-dir="07" id="top">
+<canvas class="k-canvas" id="cv" aria-hidden="true"></canvas>
+<header data-kit="head"></header>
+<main>
+<section class="hero" aria-labelledby="h">
+ <div class="copy"><h1 id="h" data-decode>The most powerful agentic system.</h1><p class="sub">Coordinated. Adaptive. Unyielding.</p></div>
+ <div class="fl f3" aria-label="Models online"><p class="lab">MODELS ONLINE</p><p class="big" data-v="models">1,042</p></div>
+ <div class="fl f1" aria-label="Telemetry"><p class="lab">TELEMETRY</p><canvas class="k-sparkc" data-spark="tps" data-fill aria-hidden="true"></canvas><p class="pair"><span>CPU<b data-v="cpu">63.2%</b></span><span>MEM<b data-v="mem">72.7%</b></span></p></div>
+ <div class="fl f2"><p class="lab">NODE LOG</p><ol class="k-log" data-log="5" aria-label="Node log"></ol></div>
+</section>
+<section class="claims" data-kit="claims" aria-label="The stack"></section>
+</main>
+<footer data-kit="foot"></footer>
+<script src="hero2d.js"></script><script src="kit.js"></script>
+<script>Kit.init();Kit.flat('layers',document.getElementById('cv'),{seed:3});</script>
+</body></html>

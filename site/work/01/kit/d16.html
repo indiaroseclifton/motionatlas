@@ -1,0 +1,60 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>01ai · Direction 16 · Glitch Signal</title>
+<meta name="description" content="01ai home page, direction 16: Glitch Signal.">
+<meta name="theme-color" content="#050608"><link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Space+Grotesk:wght@400..700&display=swap">
+<link rel="stylesheet" href="kit.css">
+<style>
+:root{--bg:#050608;--f-display:'Space Mono',ui-monospace,monospace;--f-body:'Space Grotesk',system-ui,sans-serif;--f-mono:'Space Mono',ui-monospace,monospace}
+.k-canvas{animation:jit 6s steps(1) infinite}
+@keyframes jit{0%,93%,100%{transform:none;filter:none}94%{transform:translateX(-6px);filter:hue-rotate(40deg)}95.5%{transform:translateX(4px) skewX(-2deg)}97%{transform:none}}
+.bands{position:fixed;inset:0;z-index:1;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 4px)}
+.bands::after{content:"";position:absolute;left:0;right:0;height:18vh;top:-20vh;background:linear-gradient(180deg,transparent,rgba(127,231,247,.07),rgba(169,139,255,.05),transparent);animation:sweep 7s linear infinite}
+@keyframes sweep{to{top:110vh}}
+.scrim{position:fixed;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,rgba(5,6,8,.9),transparent 58%),linear-gradient(0deg,rgba(5,6,8,.9),transparent 36%)}
+main{position:relative;z-index:2}
+.hero{min-height:100vh;min-height:100svh;display:grid;grid-template-rows:1fr auto;grid-template-columns:minmax(0,1fr);padding:0 var(--gut)}
+.copy{align-self:center;padding-top:120px;display:grid;gap:18px}
+.err{margin:0;font:12px var(--f-mono);color:var(--amber)}
+h1{margin:0;position:relative;font:700 clamp(44px,7.4vw,124px)/.92 var(--f-display);letter-spacing:-.06em;text-transform:uppercase;max-width:11ch;text-wrap:balance}
+.gl{position:relative;display:inline-block}
+.gl::before,.gl::after{content:attr(data-t);position:absolute;inset:0;pointer-events:none}
+.gl::before{color:var(--cyan);transform:translate(-3px,0);clip-path:inset(0 0 65% 0);opacity:.8;animation:g1 4.2s steps(1) infinite}
+.gl::after{color:var(--purple);transform:translate(3px,0);clip-path:inset(55% 0 0 0);opacity:.8;animation:g2 4.2s steps(1) infinite}
+@keyframes g1{0%,88%,100%{transform:translate(0);opacity:0}89%{transform:translate(-5px,-2px);opacity:.85;clip-path:inset(10% 0 60% 0)}91%{transform:translate(4px,1px);clip-path:inset(40% 0 30% 0)}93%{transform:translate(-2px);clip-path:inset(70% 0 5% 0)}}
+@keyframes g2{0%,88%,100%{transform:translate(0);opacity:0}89%{transform:translate(5px,2px);opacity:.85;clip-path:inset(60% 0 10% 0)}91.5%{transform:translate(-4px);clip-path:inset(20% 0 55% 0)}}
+.sub{margin:0;font:400 clamp(13px,1.2vw,16px) var(--f-mono);color:var(--cyan)}
+.sub s{text-decoration:none;color:var(--fg3)}
+.feeds{display:grid;grid-template-columns:repeat(3,minmax(0,.8fr)) minmax(0,1.6fr);gap:clamp(12px,2vw,24px);padding-bottom:72px}
+.col{min-width:0;border-top:1px solid var(--line2);padding-top:10px;display:grid;gap:6px;align-content:start}
+.lab{margin:0;display:flex;justify-content:space-between;gap:8px;font:11px var(--f-mono);color:var(--fg2)}
+.lab b{color:var(--fg);font-weight:700;font-variant-numeric:tabular-nums}
+[data-hex]{font-size:10.5px;line-height:1.5;color:#7B8794}
+.col:nth-child(2) [data-hex]{color:rgba(127,231,247,.75)}
+.k-log{height:94px;font-size:11px}
+.claims{position:relative;z-index:2;padding:18vh var(--gut) 12vh;background:linear-gradient(180deg,transparent,var(--bg) 20%)}
+.claims .k-h2{font-family:var(--f-display);text-transform:uppercase;letter-spacing:-.05em}
+.claims .k-claims h3{font-family:var(--f-body);font-weight:700;letter-spacing:-.04em}
+@media (max-width:900px){.feeds{grid-template-columns:repeat(3,minmax(0,1fr))}.feeds .lg{grid-column:1/-1}}
+@media (max-width:560px){.feeds{grid-template-columns:1fr 1fr}.feeds .c3{display:none}}
+</style></head>
+<body data-dir="16" id="top">
+<canvas class="k-canvas" id="cv" aria-hidden="true"></canvas><div class="bands" aria-hidden="true"></div><div class="scrim" aria-hidden="true"></div>
+<header data-kit="head"></header>
+<main>
+<section class="hero" aria-labelledby="h">
+ <div class="copy"><p class="err">[SIGNAL] interference detected · override: none needed</p><h1 id="h"><span class="gl" data-t="The most powerful agentic system.">The most powerful agentic system.</span></h1><p class="sub">Coordinated. Adaptive. Unyielding. <s>// no ceiling</s></p></div>
+ <div class="feeds" aria-label="War room">
+  <div class="col"><p class="lab"><span>CPU</span><b data-v="cpu">63.2%</b></p><ul data-hex="6" data-cols="6" aria-hidden="true"></ul></div>
+  <div class="col"><p class="lab"><span>NODES</span><b data-v="nodes">14,208</b></p><ul data-hex="6" data-cols="6" aria-hidden="true"></ul></div>
+  <div class="col c3"><p class="lab"><span>MODELS</span><b data-v="models">1,042</b></p><ul data-hex="6" data-cols="6" aria-hidden="true"></ul></div>
+  <div class="col lg"><p class="lab"><span>STREAM</span><span data-clock>00:00:00 UTC</span></p><ol class="k-log" data-log="5" data-fmt="json" aria-label="Node log"></ol></div>
+ </div>
+</section>
+<section class="claims" data-kit="claims" aria-label="The stack"></section>
+</main>
+<footer data-kit="foot"></footer>
+<script src="../../../vendor/three-r128.min.js"></script><script src="city3d.js"></script><script src="kit.js"></script>
+<script>Kit.init();Kit.city(document.getElementById('cv'),{seed:66,mode:'wire',pal:{bg:'#050608',edge:'#9FE9F5',trace:'#3B3F8C',traceHi:'#A98BFF'},fog:.02,traffic:1800,tall:.3,cam:{a:[28,11,34],b:[14,6,4],la:[-6,2,-14],lb:[-26,2,-46]},drift:.09});</script>
+</body></html>

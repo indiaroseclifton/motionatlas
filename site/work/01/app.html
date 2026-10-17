@@ -91,7 +91,7 @@ body{overflow-x:clip}
     <div class="col">
      <div class="thread" id="thread" role="log" aria-live="polite" aria-label="Conversation">
       <div class="welcome" id="welcome">
-       <p class="u-cap">Good evening, Nicolas · 38,940 agents standing by</p>
+       <p class="u-cap"><span class="greet">Good evening</span>, Nicolas · 38,940 agents standing by</p>
        <h1>Ask for anything. Watch it get done.</h1>
        <ul class="sugg" id="sugg"></ul>
       </div>
@@ -199,7 +199,8 @@ body{overflow-x:clip}
 <dialog class="u-dialog" id="connDlg" aria-labelledby="cdH"><div class="hd"><h2 id="cdH">Connect</h2><button class="u-btn ghost icon sm" type="button" data-close-dialog aria-label="Close" data-icon="close"></button></div><div class="bd" id="connBody"></div><div class="ft"><button class="u-btn" type="button" data-close-dialog>Cancel</button><button class="u-btn signal" type="button" id="connGo">Authorise</button></div></dialog>
 <dialog class="u-dialog u-drawer" id="runDrawer" aria-labelledby="rdH"><div class="u-head"><h2 id="rdH">Run</h2><button class="u-btn ghost icon sm" type="button" data-close-dialog aria-label="Close" data-icon="close"></button></div><div id="rdBody" style="padding:16px;display:grid;gap:16px"></div></dialog>
 
-<script src="01.js"></script><script src="01-ui.js"></script><script src="integrations-data.js"></script><script src="dna.js"></script>
+<script src="01.js"></script><script src="01-ui.js"></script>
+<script>document.querySelectorAll('.greet').forEach(g=>{const h=new Date().getHours();g.textContent=h<5?'Still up':h<12?'Good morning':h<18?'Good afternoon':'Good evening'})</script><script src="integrations-data.js"></script><script src="dna.js"></script>
 <script>
 (()=>{const $=UI.$,$$=UI.$$,fmt=UI.fmt,reduce=O1.reduce,wait=ms=>new Promise(r=>setTimeout(r,reduce?0:ms)),esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  const MARK=s=>{const m=(window.O1_INTEGRATIONS||[]).find(i=>i.s===s);return m?`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${m.p}"/></svg>`:''};

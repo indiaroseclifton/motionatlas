@@ -1,0 +1,64 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>01ai · Direction 08 · War Room HUD</title>
+<meta name="description" content="01ai home page, direction 08: War Room HUD.">
+<meta name="theme-color" content="#07090C"><link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Share+Tech+Mono&display=swap">
+<link rel="stylesheet" href="kit.css">
+<style>
+:root{--f-display:'Chakra Petch',system-ui,sans-serif;--f-body:'Chakra Petch',system-ui,sans-serif;--f-mono:'Share Tech Mono',ui-monospace,monospace}
+#hud{position:fixed;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+.scan{position:fixed;inset:0;z-index:1;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(127,231,247,.035) 0 1px,transparent 1px 3px),radial-gradient(130% 100% at 70% 40%,transparent 40%,rgba(7,9,12,.8)),linear-gradient(90deg,rgba(7,9,12,.75),transparent 50%)}
+main{position:relative;z-index:2}
+.hero{min-height:100vh;min-height:100svh;display:grid;grid-template-rows:1fr auto;grid-template-columns:minmax(0,1fr);padding:0 var(--gut)}
+.copy{align-self:center;padding-top:120px;display:grid;gap:18px}
+.tag{margin:0;font:13px var(--f-mono);letter-spacing:.2em;color:var(--amber)}
+.tag::before{content:"▲ ";}
+h1{margin:0;font:700 clamp(48px,8vw,132px)/.9 var(--f-display);letter-spacing:-.03em;text-transform:uppercase;max-width:11ch;text-wrap:balance}
+.sub{margin:0;font:14px var(--f-mono);letter-spacing:.24em;text-transform:uppercase;color:var(--cyan)}
+/* bracketed readouts */
+.ro{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr) minmax(0,.8fr);gap:clamp(16px,2.5vw,36px);padding-bottom:74px;max-width:1260px}
+.br{position:relative;padding:14px 16px;min-width:0;--c:var(--cyan)}
+.br::before,.br::after{content:"";position:absolute;inset:0;pointer-events:none;border:1.5px solid var(--c);clip-path:polygon(0 0,16px 0,16px 1.5px,1.5px 1.5px,1.5px 16px,0 16px,0 calc(100% - 16px),1.5px calc(100% - 16px),1.5px calc(100% - 1.5px),16px calc(100% - 1.5px),16px 100%,0 100%,0 0,100% 0,100% 16px,calc(100% - 1.5px) 16px,calc(100% - 1.5px) 1.5px,calc(100% - 16px) 1.5px,calc(100% - 16px) 0,100% 0,100% 100%,calc(100% - 16px) 100%,calc(100% - 16px) calc(100% - 1.5px),calc(100% - 1.5px) calc(100% - 1.5px),calc(100% - 1.5px) calc(100% - 16px),100% calc(100% - 16px))}
+.br::after{display:none}
+.lab{margin:0 0 10px;font:12px var(--f-mono);letter-spacing:.16em;color:var(--c)}
+.grid{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font:13px var(--f-mono);color:var(--fg3);margin:0}
+.grid b{font-weight:400;color:var(--fg);text-align:right;font-variant-numeric:tabular-nums}
+.k-log{height:96px;font-size:11.5px}
+.big{margin:0;font:700 44px/1 var(--f-display);font-variant-numeric:tabular-nums}
+.amb{--c:var(--amber)}
+.claims{position:relative;z-index:2;padding:18vh var(--gut) 12vh;background:linear-gradient(180deg,transparent,var(--bg) 20%)}
+.claims .k-claims h3{text-transform:uppercase;font-weight:700;letter-spacing:-.02em}
+@media (max-width:900px){.ro{grid-template-columns:1fr 1fr}.ro .lg{grid-column:1/-1;order:3}}
+@media (max-width:560px){.ro{grid-template-columns:1fr}.ro .amb{display:none}}
+</style></head>
+<body data-dir="08" id="top">
+<canvas class="k-canvas" id="cv" aria-hidden="true"></canvas><canvas id="hud" aria-hidden="true"></canvas><div class="scan" aria-hidden="true"></div>
+<header data-kit="head"></header>
+<main>
+<section class="hero" aria-labelledby="h">
+ <div class="copy"><p class="tag">Targets acquired</p><h1 id="h" data-decode>The most powerful agentic system.</h1><p class="sub">Coordinated. Adaptive. Unyielding.</p></div>
+ <div class="ro" aria-label="War room">
+  <div class="br"><p class="lab">SYS // TELEMETRY</p><p class="grid"><span>CPU</span><b data-v="cpu">63.2%</b><span>MEM</span><b data-v="mem">72.7%</b><span>NODES</span><b data-v="nodes">14,208</b><span>LAT</span><b data-v="lat">4.2ms</b></p></div>
+  <div class="br lg"><p class="lab">OPS // NODE LOG</p><ol class="k-log" data-log="5" aria-label="Node log"></ol></div>
+  <div class="br amb"><p class="lab">MDL // ONLINE</p><p class="big" data-v="models">1,042</p></div>
+ </div>
+</section>
+<section class="claims" data-kit="claims" aria-label="The stack"></section>
+</main>
+<footer data-kit="foot"></footer>
+<script src="../../../vendor/three-r128.min.js"></script><script src="city3d.js"></script><script src="kit.js"></script>
+<script>
+Kit.init();
+(()=>{const hud=document.getElementById('hud'),x=hud.getContext('2d');let W,H,d;function size(){d=Math.min(2,devicePixelRatio||1);W=hud.clientWidth;H=hud.clientHeight;hud.width=W*d;hud.height=H*d;x.setTransform(d,0,0,d,0,0)}size();addEventListener('resize',size);
+ let targets=null,lock=0;
+ Kit.city(document.getElementById('cv'),{seed:8,tall:.3,drift:.1,onFrame(api){
+  if(!targets){targets=api.chips.filter(c=>c.h>6).sort((a,b)=>b.h-a.h).slice(0,6).map((c,i)=>({c,id:'T-'+String(i+1).padStart(2,'0'),conf:90+Math.random()*9}))}
+  x.clearRect(0,0,W,H);x.font='11px "Share Tech Mono",monospace';x.lineWidth=1.2;const t=api.t;lock=(t/2.6|0)%targets.length;
+  targets.forEach((g,i)=>{const p=api.project(g.c.x,g.c.h+.4,g.c.z);if(!p.on||p.x<W*.45&&W>900)return;const on=i===lock,s=on?26+Math.sin(t*6)*3:16,col=on?'#FFB547':'rgba(127,231,247,.8)';x.strokeStyle=col;x.fillStyle=col;
+   x.beginPath();[[-1,-1],[1,-1],[1,1],[-1,1]].forEach(([a,b])=>{x.moveTo(p.x+a*s,p.y+b*s-b*s*.45);x.lineTo(p.x+a*s,p.y+b*s);x.lineTo(p.x+a*s-a*s*.45,p.y+b*s)});x.stroke();
+   if(on){x.beginPath();x.moveTo(p.x+s,p.y);x.lineTo(p.x+s+40,p.y-28);x.lineTo(p.x+s+150,p.y-28);x.stroke();x.fillText(`${g.id} LOCK ${(g.conf+Math.sin(t)*.6).toFixed(1)}%`,p.x+s+44,p.y-33);x.fillText(`H ${(g.c.h*12).toFixed(0)}M · AGENTS ${(g.c.h*37|0)}`,p.x+s+44,p.y-14)}
+   else x.fillText(g.id,p.x+s+4,p.y-s)})}});
+})();
+</script>
+</body></html>

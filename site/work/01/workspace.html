@@ -1,0 +1,229 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>01 Workspace</title>
+<meta name="description" content="Prototype of 01 Workspace, the HUD: operations overview, task board, clients and inbox, at Workspace density.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#07090C"><link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="01.css"><link rel="stylesheet" href="01-ui.css">
+<style>
+body{overflow-x:clip}
+.view[hidden]{display:none}
+.vh-title{margin:0;font-size:clamp(24px,2.4vw,32px);line-height:1;letter-spacing:-.03em;font-weight:500}
+.pagehead{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:12px}
+.pagehead p{margin:4px 0 0;color:var(--pt-3);font-size:13.5px}
+.proto-flag{font:500 10.5px var(--f-mono);letter-spacing:.12em;color:var(--amber);text-transform:uppercase}
+.clock{font:500 12px var(--f-mono);letter-spacing:.08em;color:var(--pt-2)}
+.hud{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:12px}
+.hud>*{min-width:0}
+.c3{grid-column:span 3}.c4{grid-column:span 4}.c5{grid-column:span 5}.c6{grid-column:span 6}.c7{grid-column:span 7}.c8{grid-column:span 8}.c12{grid-column:span 12}
+.u-frame{background:rgba(15,19,24,.55)}
+.chart{position:relative;height:180px}
+.chart canvas{width:100%;height:100%;display:block}
+.legend{display:flex;gap:16px;font:500 11px var(--f-mono);letter-spacing:.08em;color:var(--pt-3);text-transform:uppercase}
+.legend i{display:inline-block;width:10px;height:2px;margin-right:6px;vertical-align:3px}
+.sched{list-style:none;margin:0;padding:0}
+.sched li{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid rgba(37,45,56,.6);font-size:13px}
+.sched time{font:500 11.5px var(--f-mono);color:var(--pt-3)}.sched b{font-weight:500;color:var(--pt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sched li.now time{color:var(--cyan)}
+/* board */
+.board{display:grid;grid-template-columns:repeat(4,minmax(240px,1fr));gap:12px;overflow-x:auto;padding-bottom:6px}
+.col{display:grid;grid-template-rows:auto 1fr;gap:8px;min-height:420px;border-top:1px solid var(--line);padding-top:8px}
+.col header{display:flex;align-items:center;gap:8px;font:500 11px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--pt-2)}
+.col header .n{color:var(--pt-3)}
+.drop{display:grid;align-content:start;gap:8px;padding:2px;border-radius:4px;transition:background var(--d-snap)}
+.drop.over{background:rgba(127,231,247,.05);outline:1px dashed rgba(127,231,247,.4)}
+.task{position:relative;display:grid;gap:8px;padding:10px 12px;background:var(--g-900);border:1px solid var(--line);border-radius:4px;cursor:grab;transition:border-color var(--d-snap)}
+.task:hover{border-color:var(--line-2)}.task:focus-visible{outline:none;box-shadow:var(--focus)}
+.task.dragging{opacity:.4}
+.task b{font-weight:500;font-size:13.5px;line-height:1.35}
+.task .meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.task .who{display:flex;gap:-4px}.task .u-glyph{width:18px;height:18px;border:1px solid var(--g-900)}
+.task .bar{height:2px;background:var(--g-700)}.task .bar i{display:block;height:100%;background:var(--cyan);width:var(--p,0%)}
+.task .mv{position:absolute;right:6px;top:6px;display:none;gap:2px}.task:hover .mv,.task:focus-within .mv{display:flex}
+/* inbox */
+.inbox{display:grid;grid-template-columns:340px minmax(0,1fr);border-top:1px solid var(--line);min-height:560px}
+.mlist{border-right:1px solid var(--line);overflow:auto;max-height:70vh}
+.mlist button{display:grid;gap:3px;width:100%;padding:12px 14px;border:0;border-bottom:1px solid rgba(37,45,56,.6);background:none;color:var(--pt-2);text-align:left;cursor:pointer}
+.mlist button:hover{background:var(--hover)}.mlist button[aria-current=true]{background:var(--select);box-shadow:inset 2px 0 0 var(--cyan)}
+.mlist .top{display:flex;justify-content:space-between;gap:10px;font-size:13px}.mlist .top b{color:var(--pt);font-weight:500}.mlist .top time{font:11px var(--f-mono);color:var(--pt-3)}
+.mlist .s{font-size:13px;color:var(--pt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mlist .p{font-size:12.5px;color:var(--pt-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mlist .unread .s::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--cyan);margin-right:8px;vertical-align:2px}
+.mread{padding:18px 22px;display:grid;gap:16px;align-content:start}
+.mread h2{margin:0;font:500 20px var(--f-sans);letter-spacing:-.01em}
+.mread .from{display:flex;gap:10px;align-items:center;font-size:13px;color:var(--pt-3)}.mread .from b{color:var(--pt);font-weight:500}
+.mread .msg{color:var(--pt-2);font-size:14.5px;line-height:1.6;max-width:68ch}
+.draft{border-top:1px solid var(--line);padding-top:14px;display:grid;gap:10px}
+.draft .u-textarea{min-height:140px}
+.ccard{display:grid;gap:4px}
+@media (max-width:1200px){.c3{grid-column:span 6}.c4,.c5,.c7,.c8{grid-column:span 12}.c6{grid-column:span 12}}
+@media (max-width:760px){.c3{grid-column:span 12}.inbox{grid-template-columns:minmax(0,1fr)}.mlist{max-height:300px;border-right:0;border-bottom:1px solid var(--line)}.u-top .hide-sm{display:none}}
+</style></head><body>
+<a class="skip" href="#viewRoot">Skip to content</a>
+<div class="u-app u-dense" id="app">
+ <aside class="u-side" aria-label="Workspace">
+  <a class="brand" href="hub.html" aria-label="01 prototypes hub"><img src="assets/01-workspace.svg" alt="01 Workspace" style="height:30px;width:auto"></a>
+  <div class="u-affix"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.5 17a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13zM15.5 15.5 20 20"/></svg><label class="vh" for="sideSearch">Search</label><input class="u-input" id="sideSearch" placeholder="Search" readonly><kbd>⌘K</kbd></div>
+  <nav class="u-nav" aria-label="Workspace views" id="mainNav">
+   <a href="#overview" data-view="overview" data-icon="grid">Overview</a>
+   <a href="#tasks" data-view="tasks" data-icon="tasks">Tasks <span class="n" id="nTasks"></span></a>
+   <a href="#clients" data-view="clients" data-icon="clients">Clients <span class="n">9</span></a>
+   <a href="#inbox" data-view="inbox" data-icon="inbox">Inbox <span class="n" id="nInbox"></span></a>
+  </nav>
+  <div class="sec"><span class="u-cap">Teams</span><nav class="u-nav" aria-label="Teams"><a href="#overview" data-icon="globe">War room</a><a href="#overview" data-icon="briefcase">Agency delivery</a><a href="#overview" data-icon="chart">Finance</a></nav></div>
+  <div class="foot">
+   <span class="u-status"><i class="u-dot live"></i>Live · 01 v1.0</span>
+   <div style="display:flex;align-items:center;gap:10px"><span class="u-glyph" data-glyph="Nicolas"></span><div style="display:grid"><b style="font-weight:500;font-size:13px">Nicolas</b><span style="font-size:11.5px;color:var(--pt-3)">Owner</span></div><a class="u-btn ghost sm" href="app.html" style="margin-left:auto">Console</a></div>
+  </div>
+ </aside>
+ <div class="u-main">
+  <header class="u-top">
+   <button class="u-btn ghost icon u-burger" type="button" aria-label="Open navigation" aria-expanded="false" data-icon="menu"></button>
+   <nav class="u-crumbs" aria-label="Breadcrumb"><a href="#overview">Workspace</a><span>/</span><b id="crumb">Overview</b></nav>
+   <span class="sp"></span>
+   <span class="proto-flag hide-sm">Prototype · demo data</span>
+   <span class="clock hide-sm" id="clock" aria-label="Local time"></span>
+   <button class="u-btn ghost icon sm" type="button" id="bell" aria-label="Alerts" data-tip="Alerts" data-icon="bell"></button>
+   <button class="u-btn solid sm" type="button" data-open-dialog="newTask" data-icon="plus">New task</button>
+  </header>
+  <div id="viewRoot" tabindex="-1">
+
+  <!-- ============ OVERVIEW ============ -->
+  <section class="view u-page" id="v-overview" aria-labelledby="ovH">
+   <div class="pagehead"><div><h1 class="vh-title" id="ovH"><span class="greet">Good evening</span>, Nicolas.</h1><p id="ovSub">Everything that moved today, in one place.</p></div><div class="u-seg" data-seg role="group" aria-label="Range" id="range"><button type="button" aria-pressed="true" data-v="24h">24h</button><button type="button" aria-pressed="false" data-v="7d">7d</button><button type="button" aria-pressed="false" data-v="30d">30d</button></div></div>
+   <div class="hud">
+    <div class="u-frame live c3"><p class="u-cap" style="margin:0 0 8px">Agents live</p><div class="u-stat"><b id="kA">38,940</b><span class="d">+212 today</span></div><canvas class="u-spark" id="spA" aria-hidden="true" style="margin-top:8px"></canvas></div>
+    <div class="u-frame c3"><p class="u-cap" style="margin:0 0 8px">Tasks done</p><div class="u-stat"><b id="kT">1,206</b><span class="d">+18% vs last</span></div><canvas class="u-spark" id="spT" aria-hidden="true" style="margin-top:8px"></canvas></div>
+    <div class="u-frame c3"><p class="u-cap" style="margin:0 0 8px">Revenue run-rate</p><div class="u-stat"><b id="kR">£4.82m</b><span class="d">+18.4%</span></div><canvas class="u-spark" id="spR" aria-hidden="true" style="margin-top:8px"></canvas></div>
+    <div class="u-frame c3"><p class="u-cap" style="margin:0 0 8px">Needs you</p><div class="u-stat"><b id="kN">3</b><span class="d down">2 approvals · 1 reply</span></div><div class="u-steps" style="margin-top:14px"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i></div></div>
+    <div class="u-frame c8"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px"><p class="u-cap" style="margin:0">Throughput</p><div class="legend"><span><i style="background:var(--cyan)"></i>Agent tasks</span><span><i style="background:var(--green)"></i>Shipped</span></div></div><div class="chart"><canvas id="chart" role="img" aria-label="Throughput chart: agent tasks and shipped work over the selected range"></canvas></div></div>
+    <div class="u-frame c4"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><p class="u-cap" style="margin:0">Today</p><span class="u-tag cyan" id="nextIn">Next in 18m</span></div><ul class="sched" id="sched"></ul></div>
+    <div class="u-frame c7"><p class="u-cap" style="margin:0 0 8px">Live operations</p><div role="log" aria-label="Live operations" aria-live="off"><ol class="u-log" id="ops" style="height:196px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end"></ol></div></div>
+    <div class="u-frame c5"><p class="u-cap" style="margin:0 0 8px">Alerts</p><ul class="u-list" id="alerts" style="--u-pad:0px"></ul></div>
+   </div>
+  </section>
+
+  <!-- ============ TASKS ============ -->
+  <section class="view u-page" id="v-tasks" aria-labelledby="tkH" hidden>
+   <div class="pagehead"><div><h1 class="vh-title" id="tkH">Tasks</h1><p>Drag a task between columns, or use the arrow buttons on it. Agents pick up anything in Queued.</p></div>
+    <div class="u-seg" data-seg role="group" aria-label="Owner" id="owner"><button type="button" aria-pressed="true" data-v="all">Everyone</button><button type="button" aria-pressed="false" data-v="agents">Agents</button><button type="button" aria-pressed="false" data-v="people">People</button></div></div>
+   <div class="board" id="board"></div>
+  </section>
+
+  <!-- ============ CLIENTS ============ -->
+  <section class="view u-page" id="v-clients" aria-labelledby="clH" hidden>
+   <div class="pagehead"><div><h1 class="vh-title" id="clH">Clients</h1><p>Health, revenue and what the agents are doing for each one. Client names are placeholders.</p></div></div>
+   <div class="hud">
+    <div class="u-frame c3"><p class="u-cap" style="margin:0 0 8px">Active clients</p><div class="u-stat"><b>9</b><span class="d">+2 this quarter</span></div></div>
+    <div class="u-frame c3"><p class="u-cap" style="margin:0 0 8px">Monthly recurring</p><div class="u-stat"><b>£402k</b><span class="d">+11%</span></div></div>
+    <div class="u-frame c3"><p class="u-cap" style="margin:0 0 8px">Avg health</p><div class="u-stat"><b>92</b><span class="d">out of 100</span></div></div>
+    <div class="u-frame c3"><p class="u-cap" style="margin:0 0 8px">At risk</p><div class="u-stat"><b>1</b><span class="d down">Northwind · renewal in 21d</span></div></div>
+   </div>
+   <div class="u-table-wrap"><table class="u-table" data-sortable id="clTable"><thead><tr><th data-key>Client</th><th data-key>Stage</th><th data-key>Health</th><th data-key class="r">MRR</th><th data-key class="r">Agents on it</th><th data-key>Next</th></tr></thead><tbody></tbody></table></div>
+  </section>
+
+  <!-- ============ INBOX ============ -->
+  <section class="view u-page" id="v-inbox" aria-labelledby="ibH" hidden>
+   <div class="pagehead"><div><h1 class="vh-title" id="ibH">Inbox</h1><p>Agents read everything first and draft a reply. Nothing goes out until you approve it.</p></div>
+    <div class="u-seg" data-seg role="group" aria-label="Filter inbox" id="ibF"><button type="button" aria-pressed="true" data-v="all">All</button><button type="button" aria-pressed="false" data-v="unread">Unread</button><button type="button" aria-pressed="false" data-v="drafted">Drafted</button></div></div>
+   <div class="inbox"><div class="mlist" id="mlist" role="list" aria-label="Messages"></div><div class="mread" id="mread" aria-live="polite"></div></div>
+  </section>
+  </div>
+ </div>
+</div>
+
+<dialog class="u-dialog" id="newTask" aria-labelledby="ntH"><form method="dialog" id="ntForm" novalidate><div class="hd"><h2 id="ntH">New task</h2><button class="u-btn ghost icon sm" type="button" data-close-dialog aria-label="Close" data-icon="close"></button></div>
+ <div class="bd"><div class="u-field"><label class="u-label" for="ntT">What needs doing</label><input class="u-input" id="ntT" placeholder="Prepare the Northwind renewal pack" aria-describedby="ntE"><p class="u-error" id="ntE" hidden>Give the task a name.</p></div>
+  <div class="u-field"><label class="u-label" for="ntO">Owner</label><select class="u-select" id="ntO"><option value="agents">Agents (swarm)</option><option value="people">A person</option></select></div>
+  <div class="u-field"><label class="u-label" for="ntC">Client</label><select class="u-select" id="ntC"></select></div></div>
+ <div class="ft"><button class="u-btn" type="button" data-close-dialog>Cancel</button><button class="u-btn solid" type="submit" value="add">Add to Queued</button></div></form></dialog>
+<dialog class="u-dialog u-drawer" id="clDrawer" aria-labelledby="cdH"><div class="u-head"><h2 id="cdH">Client</h2><button class="u-btn ghost icon sm" type="button" data-close-dialog aria-label="Close" data-icon="close"></button></div><div id="cdBody" style="padding:16px;display:grid;gap:16px"></div></dialog>
+
+<script src="01.js"></script><script src="01-ui.js"></script>
+<script>document.querySelectorAll('.greet').forEach(g=>{const h=new Date().getHours();g.textContent=h<5?'Still up':h<12?'Good morning':h<18?'Good afternoon':'Good evening'})</script>
+<script>
+(()=>{const $=UI.$,$$=UI.$$,fmt=UI.fmt,reduce=O1.reduce,esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+ const VIEWS=['overview','tasks','clients','inbox'],NM={overview:'Overview',tasks:'Tasks',clients:'Clients',inbox:'Inbox'};
+ function show(v){if(!VIEWS.includes(v))v='overview';VIEWS.forEach(x=>$('#v-'+x).hidden=x!==v);$$('#mainNav a').forEach(a=>{if(a.dataset.view===v)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});$('#crumb').textContent=NM[v];document.title='01 Workspace · '+NM[v];$('#app').classList.remove('nav-open');if(v==='overview')drawChart();O1.Sound.tick()}
+ addEventListener('hashchange',()=>show(location.hash.slice(1)));
+ /* clock */
+ const tick=()=>{const d=new Date();$('#clock').textContent=d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'})+' · '+d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'}).toUpperCase()};tick();setInterval(tick,1000);
+ /* ---------- overview ---------- */
+ const series=(n,base,amp,seed)=>Array.from({length:n},(_,i)=>base+amp*Math.sin(i/2.4+seed)+amp*.5*Math.sin(i/1.1+seed*2)+i*amp*.04);
+ const sp=()=>{UI.spark($('#spA'),series(24,50,8,1));UI.spark($('#spT'),series(24,40,10,2),{color:'#3CF29A'});UI.spark($('#spR'),series(24,30,6,3),{color:'#3CF29A'})};
+ let range='24h';
+ function drawChart(){const c=$('#chart');if(!c.clientWidth)return;const d=Math.min(2,devicePixelRatio||1),w=c.clientWidth,h=c.clientHeight;c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.scale(d,d);
+  const n={'24h':24,'7d':28,'30d':30}[range],a=series(n,60,18,range.length),b=series(n,38,12,range.length+2),mx=Math.max(...a)*1.1;
+  x.strokeStyle='rgba(37,45,56,.7)';x.lineWidth=1;x.font='10px "Geist Mono",monospace';x.fillStyle='#8A94A2';
+  for(let i=0;i<=3;i++){const y=8+(h-26)*i/3;x.beginPath();x.moveTo(30,y);x.lineTo(w,y);x.stroke();x.fillText(String(Math.round(mx*(1-i/3))),0,y+3)}
+  const bw=(w-34)/n;a.forEach((v,i)=>{const bh=(h-26)*v/mx;const g=x.createLinearGradient(0,h-18-bh,0,h-18);g.addColorStop(0,'rgba(127,231,247,.75)');g.addColorStop(1,'rgba(127,231,247,.12)');x.fillStyle=g;x.fillRect(32+i*bw+bw*.2,h-18-bh,bw*.6,bh)});
+  x.beginPath();b.forEach((v,i)=>{const px=32+i*bw+bw/2,py=h-18-(h-26)*v/mx;i?x.lineTo(px,py):x.moveTo(px,py)});x.strokeStyle='#3CF29A';x.lineWidth=1.5;x.stroke();
+  x.fillStyle='#8A94A2';const lab=range==='24h'?['00','06','12','18','24']:range==='7d'?['MON','WED','FRI','SUN']:['W1','W2','W3','W4'];lab.forEach((l,i)=>x.fillText(l,32+(w-40)*i/(lab.length-1)-6,h-4))}
+ $('#range').addEventListener('change',e=>{range=e.detail;drawChart()});addEventListener('resize',()=>{drawChart();sp()});
+ const SCH=[['09:00','War-room stand-up','Done'],['11:30','Northwind renewal review','Done'],['14:00','Agency pitch: Lumen','Done'],['17:30','Investor call','Now'],['19:00','Agents: nightly report','Auto'],['21:00','Deploy window','Auto']];
+ $('#sched').innerHTML=SCH.map(([t,n,s])=>`<li class="${s==='Now'?'now':''}"><time>${t}</time><b>${n}</b><span class="u-tag ${s==='Now'?'cyan':s==='Auto'?'purple':''}">${s}</span></li>`).join('');
+ const OPS=[['ROUTER-11','ROUTE SWITCH','MODEL','HELIX-L'],['AGENT_4821','INVOICE SENT','£','4,200'],['BUILDER-09','PR MERGED','CHECKOUT','−82%'],['ANALYST-03','REPORT READY','PAGES','14'],['NEGOTIATOR-01','TERMS AGREED','DISCOUNT','4%'],['SENTINEL-02','DRIFT CHECK','DRIFT','0.0000'],['OPERATOR-07','LEAD QUALIFIED','SCORE','0.94']];
+ const opsEl=$('#ops');const op=()=>{const o=OPS[Math.random()*OPS.length|0];opsEl.insertAdjacentHTML('beforeend',`<li class="new"><time>[${UI.now()}]</time> ${o[0]} &gt;&gt; <b>${o[1]}</b> [ ${o[2]} <em>${o[3]}</em> ]</li>`);while(opsEl.children.length>11)opsEl.firstChild.remove()};for(let i=0;i<11;i++)op();
+ const AL=[['warn','Spend approval: hiring run wants $260','Approve'],['warn','Northwind renewal in 21 days, health 71','Open'],['live','Deploy window opens at 21:00','Details']];
+ $('#alerts').innerHTML=AL.map(([k,t,b])=>`<li><span class="u-dot ${k}"></span><span style="flex:1;font-size:13px;color:var(--pt-2)">${t}</span><button class="u-btn sm" type="button" data-alert>${b}</button></li>`).join('');
+ $('#alerts').addEventListener('click',e=>{const b=e.target.closest('[data-alert]');if(!b)return;const li=b.closest('li');if(b.textContent==='Approve'){li.remove();setNeed(-1);UI.toast('Approved','The hiring run picked up where it stopped.','ok')}else if(b.textContent==='Open'){location.hash='clients';setTimeout(()=>openClient(CL[2]),120)}else UI.toast('Deploy window','21:00 to 21:30. The Sentinel watches every release.')});
+ const setNeed=d=>{const k=$('#kN');k.textContent=Math.max(0,+k.textContent+d)};
+ if(!reduce){setInterval(op,1400);setInterval(()=>{const a=$('#kA');a.textContent=fmt(+a.textContent.replace(/,/g,'')+((Math.random()*30|0)-10));const t=$('#kT');if(Math.random()<.4)t.textContent=fmt(+t.textContent.replace(/,/g,'')+1)},1600)}
+ /* ---------- tasks ---------- */
+ const COLS=[['queued','Queued'],['working','Agents working'],['review','Needs review'],['done','Done']];
+ let TASKS=[['Northwind renewal pack','queued','agents','Northwind',0],['Q3 board memo, final numbers','working','agents','Internal',62],['Lumen pitch deck, v3','working','people','Lumen',40],['Migrate billing to new ledger','working','agents','Internal',81],['Halcyon onboarding plan','review','agents','Halcyon',100],['Contract redlines: Arbor','review','people','Arbor',100],['Hire: two routing engineers','queued','people','Internal',0],['Weekly war-room brief','done','agents','Internal',100],['Security review: new connectors','done','agents','Internal',100],['Kestrel latency fix','done','agents','Internal',100],['Partner outreach, 40 labs','queued','agents','Internal',0]].map((t,i)=>({id:'t'+i,name:t[0],col:t[1],owner:t[2],client:t[3],p:t[4]}));
+ let ownF='all';
+ function renderBoard(){const list=TASKS.filter(t=>ownF==='all'||t.owner===ownF);
+  $('#board').innerHTML=COLS.map(([k,n],ci)=>{const items=list.filter(t=>t.col===k);return `<section class="col" aria-labelledby="ch-${k}"><header><span class="u-dot ${k==='working'?'busy':k==='review'?'warn':k==='done'?'live':'idle'}"></span><span id="ch-${k}">${n}</span><span class="n">${items.length}</span></header><div class="drop" data-col="${k}" role="list" aria-label="${n}">${items.map(t=>`<article class="task" draggable="true" tabindex="0" role="listitem" data-id="${t.id}" aria-label="${esc(t.name)}, ${n}"><b>${esc(t.name)}</b><div class="meta"><span class="u-tag">${esc(t.client)}</span>${t.owner==='agents'?`<span class="u-tag cyan">Agents</span>`:`<span class="u-tag">Person</span>`}<span style="flex:1"></span><span class="u-glyph">${UI.glyph(t.name)}</span></div>${k==='working'?`<div class="bar"><i style="--p:${t.p}%"></i></div>`:''}<div class="mv">${ci>0?`<button class="u-btn ghost icon sm" type="button" data-mv="-1" aria-label="Move ${esc(t.name)} left">←</button>`:''}${ci<3?`<button class="u-btn ghost icon sm" type="button" data-mv="1" aria-label="Move ${esc(t.name)} right">→</button>`:''}</div></article>`).join('')||'<p class="u-help" style="padding:8px 2px">Drop tasks here.</p>'}</div></section>`}).join('');
+  $('#nTasks').textContent=TASKS.filter(t=>t.col!=='done').length}
+ function move(id,col){const t=TASKS.find(x=>x.id===id);if(!t||t.col===col)return;t.col=col;if(col==='working'&&!t.p)t.p=8;if(col==='done')t.p=100;renderBoard();O1.Sound.click();
+  if(col==='done')UI.toast('Done',t.name,'ok');const el=$(`[data-id="${id}"]`);el&&el.focus()}
+ const board=$('#board');let dragId=null;
+ board.addEventListener('dragstart',e=>{const t=e.target.closest('.task');if(!t)return;dragId=t.dataset.id;t.classList.add('dragging');e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',dragId)});
+ board.addEventListener('dragend',e=>{e.target.closest('.task')?.classList.remove('dragging');$$('.drop.over').forEach(d=>d.classList.remove('over'))});
+ board.addEventListener('dragover',e=>{const d=e.target.closest('.drop');if(!d)return;e.preventDefault();$$('.drop.over').forEach(x=>x!==d&&x.classList.remove('over'));d.classList.add('over')});
+ board.addEventListener('drop',e=>{const d=e.target.closest('.drop');if(!d)return;e.preventDefault();move(e.dataTransfer.getData('text/plain')||dragId,d.dataset.col)});
+ board.addEventListener('click',e=>{const b=e.target.closest('[data-mv]');if(!b)return;const t=TASKS.find(x=>x.id===b.closest('.task').dataset.id);const i=COLS.findIndex(c=>c[0]===t.col)+ +b.dataset.mv;move(t.id,COLS[i][0])});
+ $('#owner').addEventListener('change',e=>{ownF=e.detail;renderBoard()});
+ /* agents advance their work */
+ if(!reduce)setInterval(()=>{let ch=false;TASKS.forEach(t=>{if(t.col==='working'&&t.owner==='agents'){t.p=Math.min(100,t.p+3+Math.random()*6|0);if(t.p>=100){t.col='review';ch=true;UI.toast('Ready for review',t.name)}}});
+  if(!$('#v-tasks').hidden){if(ch)renderBoard();else $$('#board .task').forEach(el=>{const t=TASKS.find(x=>x.id===el.dataset.id);const i=el.querySelector('.bar i');if(i&&t)i.style.setProperty('--p',t.p+'%')})}},2600);
+ /* ---------- clients ---------- */
+ const CL=[['Halcyon','Onboarding',96,48000,120,'Kick-off Thu'],['Lumen','Pitch',88,0,24,'Pitch today 14:00'],['Northwind','Renewal',71,62000,64,'Renewal in 21d'],['Arbor','Active',94,38000,40,'Redlines due Fri'],['Meridian','Active',97,71000,210,'QBR next week'],['Solace','Active',91,22000,18,'Monthly report'],['Vantage','Active',95,54000,96,'New brief in'],['Keystone','Active',93,41000,52,'Invoice sent'],['Orbital','Active',99,66000,140,'Expansion call']].map(r=>({name:r[0],stage:r[1],health:r[2],mrr:r[3],agents:r[4],next:r[5]}));
+ const health=h=>h>=90?'live':h>=80?'busy':'warn';
+ $('#clTable tbody').innerHTML=CL.map((c,i)=>`<tr data-i="${i}" tabindex="0" style="cursor:pointer"><td class="t"><span style="display:inline-flex;gap:10px;align-items:center"><span class="u-glyph sm">${UI.glyph(c.name)}</span>${c.name}</span></td><td>${c.stage}</td><td data-v="${c.health}"><span style="display:inline-flex;gap:8px;align-items:center"><span class="u-dot ${health(c.health)}"></span><span class="u-num">${c.health}</span><span class="u-meter ${c.health<80?'amber':'green'}" style="width:60px;--v:${c.health}%"><i></i></span></span></td><td class="r u-num" data-v="${c.mrr}">${c.mrr?'£'+fmt(c.mrr):'—'}</td><td class="r u-num" data-v="${c.agents}">${c.agents}</td><td>${c.next}</td></tr>`).join('');
+ function openClient(c){$('#cdH').textContent=c.name;$('#cdBody').innerHTML=`<div style="display:flex;gap:12px;align-items:center"><span class="u-glyph lg">${UI.glyph(c.name)}</span><div style="display:grid"><b style="font:500 18px var(--f-sans)">${c.name}</b><span class="u-cap">${c.stage}</span></div></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px"><div class="u-stat"><span class="u-cap">Health</span><b>${c.health}</b></div><div class="u-stat"><span class="u-cap">MRR</span><b>${c.mrr?'£'+fmt(c.mrr):'—'}</b></div><div class="u-stat"><span class="u-cap">Agents on it</span><b>${c.agents}</b></div><div class="u-stat"><span class="u-cap">Next</span><b style="font-size:15px;font-family:var(--f-sans)">${c.next}</b></div></div>
+  ${c.health<80?'<div class="u-banner warn" role="alert" style="margin:0 -16px"><span class="u-dot warn"></span>Usage down 22% in 30 days. The Strategist has drafted a save plan.</div>':''}
+  <p class="u-cap" style="margin:0">Recent</p><div role="log" aria-label="Client activity"><ol class="u-log"><li><time>[09:12]</time> ANALYST &gt;&gt; <b>REPORT</b> [ <em>sent</em> ]</li><li><time>[11:40]</time> OPERATOR &gt;&gt; <b>INVOICE</b> [ <em>paid</em> ]</li><li><time>[14:05]</time> STRATEGIST &gt;&gt; <b>PLAN</b> [ <em>updated</em> ]</li></ol></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="u-btn solid sm" type="button" id="clTask">New task for ${c.name}</button><a class="u-btn sm" href="app.html#chat">Ask the agents</a></div>`;
+  $('#clDrawer').showModal();$('#clTask').onclick=()=>{$('#clDrawer').close();$('#ntC').value=c.name;$('#newTask').showModal()}}
+ $('#clTable tbody').addEventListener('click',e=>{const tr=e.target.closest('tr[data-i]');if(tr)openClient(CL[+tr.dataset.i])});
+ $('#clTable tbody').addEventListener('keydown',e=>{const tr=e.target.closest('tr[data-i]');if(tr&&(e.key==='Enter'||e.key===' ')){e.preventDefault();openClient(CL[+tr.dataset.i])}});
+ $('#ntC').innerHTML='<option>Internal</option>'+CL.map(c=>`<option>${c.name}</option>`).join('');
+ $('#ntForm').addEventListener('submit',e=>{const v=$('#ntT').value.trim();if(!v){e.preventDefault();$('#ntE').hidden=false;$('#ntT').setAttribute('aria-invalid','true');$('#ntT').focus();O1.Sound.deny();return}
+  $('#ntE').hidden=true;$('#ntT').removeAttribute('aria-invalid');TASKS.unshift({id:'t'+Date.now(),name:v,col:'queued',owner:$('#ntO').value,client:$('#ntC').value,p:0});$('#ntT').value='';renderBoard();UI.toast('Task added',v+' is in Queued.','ok');if(location.hash!=='#tasks')location.hash='tasks'});
+ /* ---------- inbox ---------- */
+ const MSG=[['Lumen','Ana Ruiz','Pitch prep: can we see the deck before 2pm?','Hi, quick one before the pitch. Could you send the latest deck so our CFO can skim it? We mostly want the numbers slide and the timeline.','Hi Ana, here is v3 of the deck, with the numbers slide on page 9 and the timeline on page 12. We will walk through both at 2pm. See you then.',true,'14:02'],
+  ['Northwind','Tom Ellery','Renewal: pricing question','Before we renew we need to understand why the platform tier went up. Can you break it down for us?','Hi Tom, the platform tier now includes the Sentinel and unlimited connectors, which you used 3.4× more this year. I have attached a one-page breakdown, and I can offer the old rate for the first quarter while your team moves across.',true,'13:41'],
+  ['Arbor','Legal team','Redlines on the MSA','Please find our redlines attached. Main points are liability caps and the data residency clause.','Thanks. We accept the data residency clause as written. On liability, we propose 12 months of fees rather than 24, in line with your other vendors. Marked-up copy attached.',false,'11:20'],
+  ['Halcyon','Priya Natarajan','Onboarding kick-off','Looking forward to Thursday. Who should we invite from our side?','Hi Priya, we suggest your head of operations, finance lead and one engineer. The agents will have your workspace ready before the call.',false,'Yesterday'],
+  ['Meridian','Sam Cole','QBR agenda','Can you share the agenda for next week?',null,false,'Mon']].map(m=>({client:m[0],from:m[1],subject:m[2],body:m[3],draft:m[4],unread:m[5],when:m[6],sent:false}));
+ let ibF='all',cur=0;
+ function renderList(){const list=MSG.map((m,i)=>({...m,i})).filter(m=>ibF==='all'||(ibF==='unread'?m.unread:m.draft&&!m.sent));
+  $('#mlist').innerHTML=list.map(m=>`<button type="button" role="listitem" data-i="${m.i}" aria-current="${m.i===cur}" class="${m.unread?'unread':''}"><span class="top"><b>${m.from} · ${m.client}</b><time>${m.when}</time></span><span class="s">${esc(m.subject)}</span><span class="p">${m.sent?'✓ Reply sent':m.draft?'Draft ready · '+esc(m.draft.slice(0,60)):'Agents are drafting…'}</span></button>`).join('')||'<div class="u-empty"><b>Inbox zero.</b><span>Nothing matches this filter.</span></div>';
+  $('#nInbox').textContent=MSG.filter(m=>m.unread).length||''}
+ function read(i){cur=i;const m=MSG[i];m.unread=false;renderList();
+  $('#mread').innerHTML=`<div class="from"><span class="u-glyph">${UI.glyph(m.from)}</span><span><b>${m.from}</b> · ${m.client} · ${m.when}</span></div><h2>${esc(m.subject)}</h2><p class="msg">${esc(m.body)}</p>
+   <div class="draft">${m.sent?`<span class="u-status"><i class="u-dot live"></i>Reply sent</span><p class="msg">${esc(m.draft)}</p>`:m.draft?`<div style="display:flex;align-items:center;gap:8px"><span class="u-tag cyan">Agent draft</span><span class="u-help">Written by the Negotiator in your voice. Edit anything.</span></div><label class="vh" for="dr">Reply</label><textarea class="u-textarea" id="dr">${esc(m.draft)}</textarea><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="u-btn solid" type="button" id="send" data-icon="send">Approve &amp; send</button><button class="u-btn" type="button" id="redraft" data-icon="refresh">Redraft</button></div>`:`<div class="u-empty" style="padding:0"><span class="u-skel" style="width:70%"></span><span class="u-skel" style="width:90%"></span><span class="u-help">Agents are drafting a reply…</span></div>`}</div>`;
+  UI.wire($('#mread'));const s=$('#send');if(s)s.onclick=()=>{m.draft=$('#dr').value;m.sent=true;read(i);UI.toast('Sent','Reply to '+m.from+' is on its way.','ok')};
+  const r=$('#redraft');if(r)r.onclick=async()=>{r.classList.add('loading');await new Promise(z=>setTimeout(z,reduce?0:900));m.draft=m.draft.replace(/^Hi/,'Hello').replace(/\.$/,'. Happy to jump on a call if easier.');read(i);UI.toast('Redrafted','A slightly warmer version.')}}
+ $('#mlist').addEventListener('click',e=>{const b=e.target.closest('[data-i]');if(b)read(+b.dataset.i)});
+ $('#ibF').addEventListener('change',e=>{ibF=e.detail;renderList()});
+ setTimeout(()=>{MSG[4].draft='Hi Sam, here is the agenda: results against goals, the agents\' roadmap for your team, and next quarter\'s plan. 45 minutes. Anything you want to add?';if(!$('#v-inbox').hidden&&cur===4)read(4);else renderList()},reduce?0:6000);
+ /* ---------- palette ---------- */
+ UI.palette.set([...VIEWS.map(v=>({label:'Go to '+NM[v],icon:{overview:'grid',tasks:'tasks',clients:'clients',inbox:'inbox'}[v],group:'View',run:()=>location.hash=v})),{label:'New task',icon:'plus',group:'Action',run:()=>$('#newTask').showModal()},...CL.map(c=>({label:'Open '+c.name,icon:'clients',group:'Client',run:()=>{location.hash='clients';setTimeout(()=>openClient(c),100)}})),{label:'Open the 01ai Console',icon:'chat',group:'Switch',run:()=>location.href='app.html'},{label:'Interface system',icon:'doc',group:'Docs',run:()=>location.href='system.html'}]);
+ $('#sideSearch').onclick=()=>UI.palette.open();
+ $('#bell').onclick=()=>{location.hash='overview';setTimeout(()=>$('#alerts').scrollIntoView({block:'center'}),100)};
+ renderBoard();renderList();read(0);UI.wire();show(location.hash.slice(1)||'overview');requestAnimationFrame(()=>{sp();drawChart()});
+})();
+</script>
+</body></html>

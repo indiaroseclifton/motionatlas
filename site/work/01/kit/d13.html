@@ -1,0 +1,61 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>01ai · Direction 13 · Orbit Cam</title>
+<meta name="description" content="01ai home page, direction 13: Orbit Cam.">
+<meta name="theme-color" content="#07090C"><link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@400..800&family=Syne+Mono&display=swap">
+<link rel="stylesheet" href="kit.css">
+<style>
+:root{--f-display:'Syne',system-ui,sans-serif;--f-body:'Syne',system-ui,sans-serif;--f-mono:'Syne Mono',ui-monospace,monospace}
+.scrim{position:fixed;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,rgba(7,9,12,.88),rgba(7,9,12,.2) 55%,transparent),linear-gradient(0deg,rgba(7,9,12,.75),transparent 30%)}
+main{position:relative;z-index:2}
+.hero{min-height:100vh;min-height:100svh;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:24px;padding:0 var(--gut) 70px}
+.copy{align-self:center;padding-top:120px;display:grid;gap:22px}
+h1{margin:0;font:800 clamp(50px,8.4vw,144px)/.86 var(--f-display);letter-spacing:-.05em;max-width:10ch;text-wrap:balance}
+.sub{margin:0;font:400 clamp(14px,1.2vw,17px) var(--f-mono);letter-spacing:.06em;color:var(--cyan)}
+/* dial */
+.dial{position:relative;width:clamp(240px,24vw,320px);aspect-ratio:1;max-width:100%}
+.dial svg{position:absolute;inset:0;width:100%;height:100%}
+.ring{fill:none;stroke:var(--line2)}
+.tk{stroke:var(--fg3)}.tk.m{stroke:var(--fg)}
+.cdl{font:10px 'Syne Mono',monospace;fill:var(--fg2);letter-spacing:.1em}
+#needle{transform-origin:50% 50%}
+#needle line{stroke:var(--cyan);stroke-width:1.5}
+#needle circle{fill:var(--cyan)}
+.in{position:absolute;inset:22%;display:grid;place-content:center;text-align:center;gap:4px}
+.in b{font:800 clamp(28px,2.6vw,38px)/1 var(--f-display);font-variant-numeric:tabular-nums}
+.in span{font:10.5px var(--f-mono);letter-spacing:.14em;color:var(--fg3)}
+.side{display:grid;gap:10px;font:12px var(--f-mono);color:var(--fg3);letter-spacing:.08em;min-width:0}
+.side b{color:var(--fg);font-weight:400;margin-left:8px;font-variant-numeric:tabular-nums}
+.side .k-log{height:60px;font-size:11px;max-width:300px;letter-spacing:0}
+.right{display:flex;gap:28px;align-items:center;min-width:0}
+.claims{position:relative;z-index:2;padding:18vh var(--gut) 12vh;background:linear-gradient(180deg,transparent,var(--bg) 20%)}
+.claims .k-claims h3{font-weight:800;letter-spacing:-.05em}
+@media (max-width:980px){.hero{grid-template-columns:minmax(0,1fr)}.right{justify-content:space-between}}
+@media (max-width:560px){.right{flex-direction:column;align-items:flex-start}.side .k-log{display:none}.dial{width:220px}}
+</style></head>
+<body data-dir="13" id="top">
+<canvas class="k-canvas" id="cv" aria-hidden="true"></canvas><div class="scrim" aria-hidden="true"></div>
+<header data-kit="head"></header>
+<main>
+<section class="hero" aria-labelledby="h">
+ <div class="copy"><h1 id="h" data-decode>The most powerful agentic system.</h1><p class="sub">Coordinated. Adaptive. Unyielding.</p></div>
+ <div class="right" aria-label="War room">
+  <div class="side"><span>CPU<b data-v="cpu">63.2%</b></span><span>MEM<b data-v="mem">72.7%</b></span><span>NODES<b data-v="nodes">14,208</b></span><ol class="k-log" data-log="3" data-fmt="short" aria-label="Node log"></ol></div>
+  <div class="dial"><svg viewBox="0 0 200 200" aria-hidden="true" id="dsvg"><circle class="ring" cx="100" cy="100" r="92"/><circle class="ring" cx="100" cy="100" r="70" stroke-dasharray="2 4"/><g id="ticks"></g><g id="needle"><line x1="100" y1="100" x2="100" y2="14"/><circle cx="100" cy="14" r="3"/></g></svg>
+   <div class="in"><span>BEARING</span><b id="brg">000°</b><span>MODELS <span data-v="models" style="color:var(--fg);letter-spacing:0">1,042</span></span></div></div>
+ </div>
+</section>
+<section class="claims" data-kit="claims" aria-label="The stack"></section>
+</main>
+<footer data-kit="foot"></footer>
+<script src="../../../vendor/three-r128.min.js"></script><script src="city3d.js"></script><script src="kit.js"></script>
+<script>
+Kit.init();
+(()=>{const g=document.getElementById('ticks');let s='';for(let i=0;i<72;i++){const a=i*5*Math.PI/180,m=i%9===0,r1=m?80:85;s+=`<line class="tk${m?' m':''}" x1="${100+Math.sin(a)*r1}" y1="${100-Math.cos(a)*r1}" x2="${100+Math.sin(a)*90}" y2="${100-Math.cos(a)*90}"/>`}
+ ['N','E','S','W'].forEach((c,i)=>{const a=i*Math.PI/2;s+=`<text class="cdl" x="${100+Math.sin(a)*60}" y="${100-Math.cos(a)*60+3.5}" text-anchor="middle">${c}</text>`});g.innerHTML=s;
+ const nd=document.getElementById('needle'),br=document.getElementById('brg');let last=-1;
+ Kit.city(document.getElementById('cv'),{seed:16,tall:.32,orbit:{r:56,h:21,speed:.045,ly:2,cx:6,cz:-4,a0:.6,bob:2},fov:44,onFrame(api){const p=api.camera.position,deg=((Math.atan2(p.x-6,-(p.z+4))*180/Math.PI)+360)%360;nd.style.transform=`rotate(${deg}deg)`;const d=Math.round(deg);if(d!==last){last=d;br.textContent=String(d).padStart(3,'0')+'°'}}});
+})();
+</script>
+</body></html>
