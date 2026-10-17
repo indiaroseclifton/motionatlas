@@ -1,0 +1,16 @@
+{
+  "name": "motionatlas",
+  "private": true,
+  "type": "module",
+  "description": "Visual & Motion Atlas: static site in site/, share API in api/",
+  "scripts": {
+    "dev:share": "SHARE_LOCAL_DIR=.share-dev node tools/share-dev-server.mjs",
+    "vendor:blob": "esbuild tools/blob-client-entry.js --bundle --format=iife --minify --outfile=site/vendor/blob-client.js"
+  },
+  "dependencies": {
+    "@vercel/blob": "2.8.2"
+  },
+  "devDependencies": {
+    "esbuild": "0.24.2"
+  }
+}

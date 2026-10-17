@@ -1,0 +1,32 @@
+/* Project files and sharing (project-share.js) */
+.psShare{margin:22px 0;padding:20px;border:1px solid var(--line,#D9DDE6);border-radius:16px;background:color-mix(in srgb,var(--panel,#fff) 92%,transparent)}
+.psShareHead{display:flex;gap:16px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap}
+.psShare h3{margin:0 0 4px;font-size:18px}
+.psNote{margin:0;color:var(--muted,#5E6476);font-size:14px;max-width:62ch}
+.psShareActions{display:flex;gap:8px;flex-wrap:wrap}
+.psLink{display:grid;gap:6px;margin-top:14px}
+.psLink label{font-size:13px;font-weight:600}
+.psLink>div{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.psLink input{flex:1;min-width:0;min-height:42px;padding:0 12px;border:1px solid var(--line,#D9DDE6);border-radius:10px;background:var(--bg,#F4F5F8);font:13px ui-monospace,monospace;color:inherit}
+.psLink+.psNote{margin-top:10px}
+.psStatus{margin:12px 0 0;min-height:1.4em;font-size:14px;font-weight:500}
+.psFiles h3 span,.psSub span{font-weight:400;opacity:.7}
+.psDrop{display:grid;gap:4px;place-items:center;text-align:center;padding:24px 16px;border:1.5px dashed var(--line,#C7CCD8);border-radius:16px;cursor:pointer;margin:6px 0 16px;transition:border-color .2s,background .2s}
+.psDrop input{position:absolute;width:1px;height:1px;opacity:0}
+.psDrop:focus-within{outline:2px solid currentColor;outline-offset:3px}
+.psDrop b{font-size:16px}
+.psDrop span{font-size:13.5px;color:var(--muted,#5E6476);max-width:46ch}
+.psDrop.psOver,.psDrop:hover{border-color:currentColor;background:rgba(127,127,127,.06)}
+.psGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+.psFile{margin:0;display:grid;border:1px solid var(--line,#D9DDE6);border-radius:12px;overflow:hidden;background:var(--panel,#fff)}
+.psPrev{display:grid;place-items:center;aspect-ratio:4/3;background:#EEF0F4;overflow:hidden;text-decoration:none;color:inherit}
+.psPrev img,.psPrev video{width:100%;height:100%;object-fit:cover}
+.psExt{font:600 15px ui-monospace,monospace;letter-spacing:.08em;color:#4A5163}
+.psFile figcaption{display:grid;gap:2px;padding:9px 10px 10px;font-size:13px}
+.psFile figcaption b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
+.psFile figcaption span{color:var(--muted,#5E6476);font-size:12px}
+.psFile figcaption button{justify-self:start;padding:4px 0;min-height:32px}
+.psEmpty{color:var(--muted,#5E6476);font-size:14px}
+.psSub{margin:22px 0 10px;font-size:15px}
+.psHint{display:block;font-size:12px;color:var(--muted,#5E6476);margin-top:4px;font-weight:400}
+@media (prefers-reduced-motion:reduce){.psDrop{transition:none}}

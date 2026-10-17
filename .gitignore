@@ -1,3 +1,5 @@
 film/.hyperframes/
 film/renders/
 film/node_modules/
+node_modules/
+.share-dev/

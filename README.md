@@ -347,6 +347,28 @@ These are the AI cooking channel's own styles. They come first in every style ro
 - **Validation:** both categorical palettes pass the dataviz validator. Noir's colour-blind ΔE is 9.4. Paper's is 6.3, which is in the floor band and fine with the direct labels these charts use. Status red and green are never reused as series colours.
 - **Plan pack:** the channel plan deck's charts are in `deliverables/channel-plan/`, in both styles.
 
+### Theme kits (`site/theme-kits.html`, `site/kits/themes.js`)
+
+Eight complete kits: **Matrix (01)**, **Synthwave (02)**, **Y2K Chrome (03)**, **Brutalist (04)**, **Art Deco (05)**, **Blueprint (06)**, **Vaporwave (07)** and **Bauhaus (08)**.
+- Each kit is rendered only from its own tokens. It shows a live animated canvas background (with pause, and still under reduced motion), colour swatches with measured contrast, a type pairing, and components: nav, buttons, form, checkbox and toggle, tabs, badges, progress, alert, card and table.
+- **SVG assets** are generated per kit: logo (plain and on its background), mark, seamless pattern tile, divider and twelve icons in the kit's stroke style. There is also a 1920×1080 PNG still of the background.
+- **Download the kit** builds a zip in the browser (a small stored-zip writer, no library). It contains `tokens.css`, `tokens.json`, `background.js` (`startBackground(canvas, still)`), a working `demo.html`, `svg/`, `png/`, `prompt.txt` and a README. You can also copy just the tokens, the AI prompt or `background.js`.
+- Every kit passes axe WCAG A/AA. The page is in the Library drawer under Interface.
+
+### Project files and sharing (`site/project-share.js`, `site/share-client.js`, `site/shared.html`, `api/`)
+
+- **Files:** add images, video, PDFs, fonts, zips or text to a project when you create it or later, by choosing or dropping files (up to 100 MB each). They are kept in this browser in IndexedDB (`atlas-project-files`) and previewed in the project.
+- **Share:** "Create share links" publishes the project's name, brief, decisions, atlas references and notes, plus its files. You get two links:
+  - a **view link** (`/shared#v/<id>`) that opens the project read-only;
+  - an **edit link** (`/shared#e/<id>/<key>`) that lets collaborators change the name, brief and decisions and add or remove files.
+  - The id and key sit after the `#`, so they never reach server logs.
+- "Update shared copy" sends later changes. If someone edited the shared brief since your last update, you are asked whether to use their version or replace it with yours.
+- Files added by collaborators appear under "Added by collaborators". "Stop sharing" deletes the shared copy and its uploaded files.
+- The shared page has **Save to my projects**. With an edit link the saved project stays linked to the shared copy.
+- **Server:** `api/share.js` handles create, read, update and delete. `api/upload.js` issues short-lived Vercel Blob client-upload tokens only to holders of a project's edit key, limited to the allowed file types and 100 MB. Manifests are versioned files (`shares/<id>/m-<time>.json`) so CDN caches are never stale. Edit keys are stored only as SHA-256 hashes, and files are checked to belong to the project.
+- **Setup:** connect a Vercel Blob store to the project (this sets `BLOB_READ_WRITE_TOKEN`), then redeploy. Until then the Share panel says sharing isn't switched on, and files stay local.
+- **Local testing:** `npm run dev:share` serves the site with the real API against `.share-dev/` at http://localhost:8790. It also takes uploads at `/api/upload-local`, which production doesn't have. `npm run vendor:blob` rebuilds `site/vendor/blob-client.js` (the `@vercel/blob` client, Apache-2.0).
+
 ### Navigation (`site/atlas-nav.js`, `atlas-nav.css`)
 
 One slim top bar replaces the two rows of menus: **brand · Library · Make ▾ · Your studio ▾ · Search**.
