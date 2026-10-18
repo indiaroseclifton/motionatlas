@@ -68,10 +68,10 @@ ${markG(k,72,64,1)}<text x="156" y="108" fill="${t.ink}" ${head(k)} font-size="3
 <text ${head(k)} fill="${t.ink}" font-size="${f.size}"${ls(k)}>${tspans(f,72,y0,1.04)}</text>
 <text x="72" y="${y0+f.size*1.04*(f.lines.length-1)+70}" fill="${t.ink}" ${body(k)} font-size="30">${esc(k.tagline)}</text>
 <rect x="72" y="530" width="120" height="8" fill="${t.accent}"/><text x="72" y="580" fill="${t.mute}" ${body(k,600)} font-size="22" letter-spacing="2">KIT ${k.no} · ${esc(k.name.toUpperCase())}</text>`,o)}
-function slide(k,img,o={}){const t=k.t,W=1920,H=1080,f=fit(k,k.voice[0],1500,150),y0=f.lines.length>1?430:520;
+function slide(k,img,o={}){const t=k.t,W=1920,H=1080,f=fit(k,k.voice[0],1500,150),y0=f.lines.length>1?470:540;
  return wrapSVG(k,W,H,`<defs>${patDef(k,'pt')}${scrim(k,'sc')}</defs><rect width="${W}" height="${H}" fill="${t.bg}"/>${img?imgEl(img,W,H):`<rect width="${W}" height="${H}" fill="url(#pt)" opacity=".5"/>`}<rect width="${W}" height="${H}" fill="url(#sc)"/>
 ${markG(k,120,96,1.25)}<text x="224" y="152" fill="${t.ink}" ${head(k)} font-size="38"${ls(k)}>${esc(caseT(k,k.name))}</text>
-<text x="120" y="${y0-90}" fill="${t.mute}" ${body(k,600)} font-size="30" letter-spacing="4">TITLE SLIDE · ${esc(k.mood.split(',')[0].toUpperCase())}</text>
+<text x="120" y="${y0-f.size-24}" fill="${t.mute}" ${body(k,600)} font-size="30" letter-spacing="4">TITLE SLIDE · ${esc(k.mood.split(',')[0].toUpperCase())}</text>
 <text ${head(k)} fill="${t.ink}" font-size="${f.size}"${ls(k)}>${tspans(f,120,y0,1.04)}</text>
 <text x="120" y="${y0+f.size*1.04*(f.lines.length-1)+100}" fill="${t.ink}" ${body(k)} font-size="46">${esc(k.tagline)}</text>
 <rect x="120" y="960" width="1680" height="2" fill="${t.line}"/><rect x="120" y="958" width="160" height="6" fill="${t.accent}"/>
