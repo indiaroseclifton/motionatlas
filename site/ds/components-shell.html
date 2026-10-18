@@ -16,21 +16,21 @@
  <header><h2 id="app-shell">App shell</h2><p class="ds-lead">232px side navigation, a 52px sticky top bar with search and one primary action, and a page that scrolls on its own. Under 900px the side navigation becomes a drawer behind the menu button. Resize your window to see it switch; this example runs in its own frame.</p></header>
  <div class="ds-iframe"><iframe class="ds-frame-demo" src="ex-shell.html" title="Live app shell example" loading="lazy"></iframe></div>
 <pre data-lang="html" data-title="Skeleton">
-<div class="u-app">
-  <aside class="u-side" aria-label="Console">
-    <a class="brand" href="/"><img src="01ai-wordmark.svg" alt="01ai"></a>
-    <div class="sec"><span class="u-cap">Work</span>
-      <nav class="u-nav" aria-label="Work"><a href="/" aria-current="page" data-icon="home">Overview</a></nav></div>
-    <div class="foot"><span class="u-status"><i class="u-dot live"></i>All systems live</span></div>
-  </aside>
-  <div class="u-main">
-    <header class="u-top">
-      <button class="u-btn ghost icon u-burger" type="button" aria-label="Menu" aria-expanded="false" data-icon="menu"></button>
-      <span class="sp"></span><button class="u-btn solid sm" type="button">Run</button>
-    </header>
-    <main class="u-page">…</main>
-  </div>
-</div>
+&lt;div class="u-app">
+  &lt;aside class="u-side" aria-label="Console">
+    &lt;a class="brand" href="/">&lt;img src="01ai-wordmark.svg" alt="01ai">&lt;/a>
+    &lt;div class="sec">&lt;span class="u-cap">Work&lt;/span>
+      &lt;nav class="u-nav" aria-label="Work">&lt;a href="/" aria-current="page" data-icon="home">Overview&lt;/a>&lt;/nav>&lt;/div>
+    &lt;div class="foot">&lt;span class="u-status">&lt;i class="u-dot live">&lt;/i>All systems live&lt;/span>&lt;/div>
+  &lt;/aside>
+  &lt;div class="u-main">
+    &lt;header class="u-top">
+      &lt;button class="u-btn ghost icon u-burger" type="button" aria-label="Menu" aria-expanded="false" data-icon="menu">&lt;/button>
+      &lt;span class="sp">&lt;/span>&lt;button class="u-btn solid sm" type="button">Run&lt;/button>
+    &lt;/header>
+    &lt;main class="u-page">…&lt;/main>
+  &lt;/div>
+&lt;/div>
 </pre>
  <h3>Anatomy</h3>
  <ol class="ds-anat"><li><b>Side</b><span><code>.u-side</code>: sticky, full height, brand, sections, foot with status.</span></li><li><b>Top bar</b><span><code>.u-top</code>: 52px, blurred graphite, burger on small screens.</span></li><li><b>Page</b><span><code>.u-page</code>: single-column grid, 20px gap, children <code>min-width:0</code>.</span></li><li><b>Burger</b><span><code>.u-burger</code>: toggles <code>.nav-open</code> on <code>.u-app</code>.</span></li></ol>

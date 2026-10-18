@@ -126,7 +126,7 @@ body.ds{min-height:100vh;font-size:16px;line-height:1.6}
 .ds-links>a:hover{background:rgba(231,234,238,.025)}.ds-links>a:hover::after{width:100%}
 .ds-links .u-cap{color:var(--cyan)}
 .ds-links b{font:500 20px/1.15 var(--f-sans);letter-spacing:-.02em;color:var(--pt)}
-.ds-links span:not(.u-cap):not(.u-tag){font-size:14px;color:var(--pt-2)}
+.ds-links>a>span:not(.u-cap):not(.pv),.ds-links>div>span:not(.u-cap):not(.pv){font-size:14px;color:var(--pt-2)}
 .ds-links .pv{display:flex;align-items:center;flex-wrap:wrap;gap:8px;min-height:64px;margin-bottom:6px;pointer-events:none}
 .ds-links .pv>*{min-width:0}
 /* figure grid with screenshots */
