@@ -33,8 +33,7 @@
    ['#typography','Fonts & type','Type pairings and scales, ready to use.','light-threads'],
    ['#playground','System playground','Try a system across a landing page, dashboard and phone.','swan-construction'],
    ['#assets','Extracted assets','201 fragments cut from our original mock-ups.','paper-bird'],
-   ['theme-kits.html','Theme kits','Matrix to Graphite: tokens, components, backgrounds and assets.','game-of-life'],
-   ['ds/start.html','01 Design System','The public 01ai system: foundations, components, patterns, downloads.','game-of-life']]},
+   ['theme-kits.html','Theme kits','Matrix to Graphite: tokens, components, backgrounds and assets.','game-of-life']]},
   {name:'Make',items:[
    ['interactions.html','Interactions shelf','Showpieces, scroll stories and sections to copy.','golden-dove'],
    ['page-builder.html','Page builder','Stack sections, pick a style, download one HTML file.','paper-bird'],

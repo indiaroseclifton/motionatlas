@@ -114,7 +114,7 @@ const K=[
 
 const BG={
 swiss(c,t,still){const x=c.getContext('2d');let W,H,d,raf,cw,rh;const C=12,R=8;
- const pick=()=>({c:Math.random()*(C-2)|0,r:Math.random()*(R-1)|0,w:1+(Math.random()*3|0),h:1+(Math.random()*2|0)});
+ const pick=()=>({c:5+(Math.random()*(C-7)|0),r:Math.random()*(R-1)|0,w:1+(Math.random()*3|0),h:1+(Math.random()*2|0)});
  const B=[t.accent,t.ink,t.ink,t.accent2,t.ink,t.accent,'#FFFFFF'].map((col,i)=>{const p=pick();return{a:p,b:p,p:1,hold:Math.random()*3,col,circ:i===0}});
  const ease=v=>v<.5?4*v*v*v:1-Math.pow(-2*v+2,3)/2;
  function size(){d=Math.min(2,devicePixelRatio||1);W=c.width=c.clientWidth*d;H=c.height=c.clientHeight*d;cw=W/C;rh=H/R}
