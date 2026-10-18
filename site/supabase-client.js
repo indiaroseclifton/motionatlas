@@ -75,5 +75,22 @@
   /expired|invalid.*token|otp/i.test(m)?'That code has expired or is not right. Request a new email.':
   /bucket not found/i.test(m)?'File storage is not set up yet. Run supabase/schema.sql in Supabase.':
   /payload too large|exceeded the maximum/i.test(m)?'That file is larger than the storage limit (50 MB).':m);err.code=e&&e.code;err.status=e&&e.status;err.missing=missing(e);return err}
+ /* Sign-in form shared by account.html and the projects page.
+    Email → magic link (and the 6-digit code when the email template includes it) → "check your email". */
+ C.mountSignIn=function(el,{next='',idp='acc'}={}){
+  const e=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const form=()=>{el.innerHTML=`<form class="accForm" novalidate><label for="${idp}Email">Email address</label><div class="accRow"><input id="${idp}Email" type="email" required autocomplete="email" inputmode="email" placeholder="you@example.com" aria-describedby="${idp}Status"><button class="accPrimary" type="submit">Email me a sign-in link</button></div><div class="accAlt" hidden></div><p class="accStatus" id="${idp}Status" role="status" aria-live="polite"></p><p class="accFine">No password needed. New here? The same link creates your account.</p></form>`;
+   const f=el.querySelector('form'),input=f.querySelector('input'),st=f.querySelector('.accStatus');
+   C.providers().then(p=>{if(p.google&&el.contains(f)){const a=f.querySelector('.accAlt');a.hidden=false;a.innerHTML='<button type="button" class="accSecondary" data-acc="google">Continue with Google</button>';a.querySelector('button').onclick=async()=>{try{await C.signInGoogle(next)}catch(err){st.textContent=err.message}}}});
+   f.addEventListener('submit',async ev=>{ev.preventDefault();const email=input.value.trim();if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){st.textContent='Enter a valid email address.';input.setAttribute('aria-invalid','true');input.focus();return}
+    input.removeAttribute('aria-invalid');const b=f.querySelector('button[type=submit]');b.disabled=true;st.textContent='Sending…';
+    try{await C.signInEmail(email,next);sent(email)}catch(err){st.textContent=err.message;b.disabled=false}})};
+  const sent=email=>{el.innerHTML=`<div class="accSent" tabindex="-1"><p class="accTitle">Check your email</p><p>We sent a sign-in link to <b>${e(email)}</b>. Open it in this browser to finish signing in. It can take a minute; check spam if it doesn’t arrive.</p><form class="accCode" novalidate><label for="${idp}Code">Or enter the code from the email</label><div class="accRow"><input id="${idp}Code" inputmode="numeric" autocomplete="one-time-code" maxlength="10" pattern="[0-9]*" aria-describedby="${idp}CodeStatus"><button class="accSecondary" type="submit">Sign in with code</button></div><p class="accStatus" id="${idp}CodeStatus" role="status" aria-live="polite"></p></form><button type="button" class="accLink" data-acc="again">Use a different email</button></div>`;
+   const box=el.querySelector('.accSent');box.focus();
+   el.querySelector('[data-acc=again]').onclick=()=>{form();el.querySelector('input').focus()};
+   const cf=el.querySelector('.accCode'),cs=cf.querySelector('.accStatus');
+   cf.addEventListener('submit',async ev=>{ev.preventDefault();const code=cf.querySelector('input').value.trim();if(!/^\d{6,10}$/.test(code)){cs.textContent='Enter the number from the email.';return}cs.textContent='Checking…';try{await C.verifyCode(email,code);cs.textContent='Signed in.'}catch(err){cs.textContent=err.message}})};
+  form();
+ };
  window.AtlasCloud=C;
 })();
