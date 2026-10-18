@@ -1,0 +1,44 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gooey blob navigation</title>
+<style>
+:root{--bg:#0E0C14;--ink:#F4F1FA;--mute:#A8A1B8;--blob:#B8F25C;--on:#14111C}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg) radial-gradient(70% 60% at 50% 0%,#231C36,transparent);color:var(--ink);font:15px/1.5 system-ui,sans-serif;min-height:100vh;display:grid;place-items:center;padding:28px 16px}
+.wrap{width:min(720px,100%);display:grid;gap:clamp(28px,6vh,56px);justify-items:center;text-align:center}
+.nav{position:relative;background:#1B1726;border-radius:999px;padding:8px;width:100%;max-width:640px;box-shadow:inset 0 0 0 1px #2E2840}
+.goo{position:absolute;inset:8px;filter:url(#gooF);pointer-events:none}
+.goo i{position:absolute;top:0;left:0;height:100%;border-radius:999px;background:var(--blob)}
+.items{position:relative;display:flex}
+.items a{flex:1 1 0;min-width:0;position:relative;z-index:1;text-align:center;padding:15px 4px;border-radius:999px;font:600 14px/1 system-ui;color:var(--mute);text-decoration:none;transition:color .3s;white-space:nowrap}
+.items a[aria-current=page]{color:var(--on)}
+.items a:focus-visible{outline:2px solid var(--blob);outline-offset:3px}
+h1{margin:0;font:400 clamp(44px,9vw,104px)/.95 Georgia,serif;letter-spacing:-.03em;min-height:1em}
+h1 em{color:var(--blob)}
+p{margin:0;color:var(--mute);max-width:46ch}
+@media (max-width:480px){.items a{font-size:12.5px;padding:14px 2px}}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><filter id="gooF"><feGaussianBlur in="SourceGraphic" stdDeviation="7" result="b"/><feColorMatrix in="b" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -9" result="g"/><feComposite in="SourceGraphic" in2="g" operator="atop"/></filter></svg>
+<div class="wrap">
+<nav class="nav" aria-label="Demo sections"><div class="goo" id="goo" aria-hidden="true"><i id="main"></i><i></i><i></i><i></i></div><div class="items" id="items"></div></nav>
+<h1 id="h"><em>Home</em>, sweet home.</h1>
+<p>The highlight is liquid. Choose another section and it pinches off droplets that race ahead, then merge again. Hovering pulls a little bead toward you.</p>
+</div>
+<script>
+const CONFIG=[['Home','<em>Home</em>, sweet home.'],['Work','Selected <em>work</em>.'],['Studio','Inside the <em>studio</em>.'],['Journal','The <em>journal</em>.'],['Contact','Say <em>hello</em>.']];
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const items=document.getElementById('items'),goo=document.getElementById('goo'),h=document.getElementById('h');const B=[...goo.children];
+CONFIG.forEach(([t],i)=>{const a=document.createElement('a');a.href='#'+t.toLowerCase();a.textContent=t;a.onclick=e=>{e.preventDefault();go(i)};a.onpointerenter=()=>bead(i);a.onpointerleave=()=>bead(-1);a.onfocus=()=>bead(i);a.onblur=()=>bead(-1);items.append(a)});
+const A=[...items.children];
+const st=B.map(()=>({x:0,w:0,vx:0,vw:0,tx:0,tw:0,k:.1,y:0,s:1}));let cur=0;
+function geom(i){const a=A[i];return{x:a.offsetLeft,w:a.offsetWidth}}
+function go(i,instant){const g=geom(i);const from=geom(cur);A.forEach((a,j)=>j===i?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'));
+ st[0].tx=g.x;st[0].tw=g.w;st[0].k=.075;
+ [1,2,3].forEach((n,k)=>{const s=st[n];if(!instant&&!reduce&&i!==cur){s.x=from.x+from.w/2-12;s.w=24;s.tx=g.x+g.w/2-(10-k*2);s.tw=20-k*4;s.k=.16-k*.035;s.vx=0;s.vw=0}else{s.tx=g.x+g.w/2-6;s.tw=12}});
+ cur=i;h.innerHTML=CONFIG[i][1];if(instant||reduce)st.forEach((s,k)=>{s.x=s.tx;s.w=s.tw;if(k)s.w=0;s.tw=k?0:s.tw});
+ clearTimeout(go.t);go.t=setTimeout(()=>{[1,2,3].forEach(n=>{const s=st[n];s.tx=g.x+g.w/2-6;s.tw=12})},reduce?0:420)}
+function bead(i){const s=st[3];if(i<0||i===cur||reduce){const g=geom(cur);s.tx=g.x+g.w/2-6;s.tw=12;s.ty=0;return}const g=geom(i),c=geom(cur);const dir=Math.sign(g.x-c.x);s.tx=c.x+(dir>0?c.w-12:-14);s.tw=26;s.k=.14}
+function loop(){st.forEach((s,k)=>{s.vx=(s.vx+(s.tx-s.x)*s.k)*.74;s.vw=(s.vw+(s.tw-s.w)*s.k)*.74;s.x+=s.vx;s.w+=s.vw;const b=B[k];b.style.transform=`translateX(${s.x}px)`;b.style.width=Math.max(0,s.w)+'px';if(k){b.style.top='50%';b.style.height=Math.max(0,s.w)+'px';b.style.marginTop=(-Math.max(0,s.w)/2)+'px'}});requestAnimationFrame(loop)}
+go(0,true);addEventListener('resize',()=>go(cur,true));loop();
+items.addEventListener('keydown',e=>{const i=A.indexOf(document.activeElement);if(i<0)return;if(e.key==='ArrowRight'){e.preventDefault();A[(i+1)%A.length].focus()}if(e.key==='ArrowLeft'){e.preventDefault();A[(i-1+A.length)%A.length].focus()}});
+if(!reduce){let k=0;const t=setInterval(()=>{if(k++>=3||document.hasFocus()&&document.activeElement!==document.body){clearInterval(t);return}go(k%A.length)},1600)}
+</script></body></html>

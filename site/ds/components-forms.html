@@ -1,0 +1,100 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Forms · 01 Design System</title>
+<meta name="description" content="01 form components: field, text input, search affix, select, textarea, checkbox, radio, switch, range slider and segmented control, with validation states, code and accessibility notes.">
+<meta name="theme-color" content="#07090C"><link rel="icon" href="../work/01/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../work/01/01.css"><link rel="stylesheet" href="../work/01/01-ui.css"><link rel="stylesheet" href="ds.css">
+</head><body class="ds" data-page="components-forms">
+<main id="main">
+<header class="ds-hero">
+ <p class="ds-kick">Components · Forms</p>
+ <h1>Labels up. <em>Errors that say what to do.</em></h1>
+ <p class="ds-lede">Every field has a visible label above it, a hint when it needs one, and an error underneath that tells people exactly how to fix it. Product UI uses these boxed fields; the showcase uses the underline <code>o-input</code>.</p>
+ <ul class="ds-meta"><li>Components <b>8</b></li><li>Classes <b>.u-field .u-input .u-check .u-switch .u-range .u-seg</b></li></ul>
+</header>
+
+<section class="ds-sec ds-comp" aria-labelledby="field">
+ <header><h2 id="field">Field</h2><p class="ds-lead">The wrapper that stacks label, control, hint and error with a 6px gap. Every control below lives inside one.</p></header>
+ <div class="ds-ex" data-name="Field anatomy"><div class="ds-stage grid">
+  <div class="u-field"><label class="u-label" for="f1">Agent name</label><input class="u-input" id="f1" placeholder="Strategist-04" aria-describedby="f1h"><p class="u-help" id="f1h">Shown in logs and the swarm.</p></div>
+  <div class="u-field"><label class="u-label" for="f4">Budget per run</label><input class="u-input" id="f4" value="0" aria-invalid="true" aria-describedby="f4e"><p class="u-error" id="f4e">Set a budget above zero, or turn budgets off.</p></div>
+ </div></div>
+ <h3>Anatomy</h3>
+ <ol class="ds-anat"><li><b>Label</b><span><code>.u-label</code>, mono 11.5px caps, always visible.</span></li><li><b>Control</b><span>Input, select, textarea or choice.</span></li><li><b>Hint</b><span><code>.u-help</code>, optional, linked by <code>aria-describedby</code>.</span></li><li><b>Error</b><span><code>.u-error</code>, replaces the hint while invalid.</span></li></ol>
+ <div class="ds-rules"><div class="do"><h4>Do</h4><ul><li>Validate when people press Continue, then focus the first problem.</li><li>Write errors as the fix: "Set a budget above zero".</li><li>Keep drafts on the device so nobody loses work.</li></ul></div><div class="dont"><h4>Don't</h4><ul><li>Use placeholder text as the only label.</li><li>Validate on every keystroke or reset a form after an error.</li><li>Write "Invalid input" or "Required field".</li></ul></div></div>
+ <h3>Accessibility</h3>
+ <ul class="ds-list"><li>Pair <code>&lt;label for&gt;</code> with every control's <code>id</code>.</li><li>Set <code>aria-invalid="true"</code> and point <code>aria-describedby</code> at the error so screen readers read it with the field.</li></ul>
+</section>
+
+<section class="ds-sec ds-comp" aria-labelledby="input">
+ <header><h2 id="input">Text input</h2><p class="ds-lead">36px tall, graphite panel fill, line border that brightens on hover and turns cyan with a soft halo on focus.</p></header>
+ <div class="ds-ex" data-name="Inputs"><div class="ds-stage grid">
+  <div class="u-field"><label class="u-label" for="i1">Default</label><input class="u-input" id="i1" placeholder="Give the agents something hard"></div>
+  <div class="u-field"><label class="u-label" for="i2">Filled</label><input class="u-input" id="i2" value="Plan the launch"></div>
+  <div class="u-field"><label class="u-label" for="i3">Disabled</label><input class="u-input" id="i3" value="Router-11" disabled></div>
+  <div class="u-field"><label class="u-label" for="i4">Number</label><input class="u-input u-num" id="i4" type="number" value="48" min="1" max="200"></div>
+ </div></div>
+</section>
+
+<section class="ds-sec ds-comp" aria-labelledby="affix">
+ <header><h2 id="affix">Search with affix</h2><p class="ds-lead">An input with a leading icon and an optional trailing shortcut key. Every search box in 01 answers to <kbd>⌘</kbd> <kbd>K</kbd>.</p></header>
+ <div class="ds-ex" data-name="Affix"><div class="ds-stage grid">
+  <div class="u-field"><label class="u-label" for="s1">Search</label><div class="u-affix"><span data-icon="search"></span><input class="u-input" id="s1" type="search" placeholder="Agents, models, tools"><kbd>⌘K</kbd></div></div>
+  <div class="u-field"><label class="u-label" for="s2">Filter</label><div class="u-affix"><span data-icon="filter"></span><input class="u-input" id="s2" placeholder="Status, owner, client"></div></div>
+ </div></div>
+</section>
+
+<section class="ds-sec ds-comp" aria-labelledby="select">
+ <header><h2 id="select">Select and textarea</h2><p class="ds-lead">A native select with a drawn chevron, and a textarea that grows vertically. Native controls keep every platform's keyboard and screen reader behaviour for free.</p></header>
+ <div class="ds-ex" data-name="Select and textarea"><div class="ds-stage grid">
+  <div class="u-field"><label class="u-label" for="sel">Routing</label><select class="u-select" id="sel"><option>Adaptive</option><option>Fastest</option><option>Cheapest</option><option>Pinned model</option></select></div>
+  <div class="u-field" style="grid-column:1/-1"><label class="u-label" for="ta">Instructions</label><textarea class="u-textarea" id="ta">Plan the launch. Keep every task with an owner.</textarea></div>
+ </div></div>
+</section>
+
+<section class="ds-sec ds-comp" aria-labelledby="checkbox">
+ <header><h2 id="checkbox">Checkbox and radio</h2><p class="ds-lead">Square checkboxes and round radios that fill cyan when chosen. The whole label is the hit target.</p></header>
+ <div class="ds-ex" data-name="Checkboxes and radios"><div class="ds-stage" style="gap:24px">
+  <label class="u-check"><input type="checkbox" checked> Use all tools</label>
+  <label class="u-check"><input type="checkbox"> Ask before spending</label>
+  <label class="u-check"><input type="checkbox" disabled> Locked by policy</label>
+  <fieldset style="border:0;margin:0;padding:0;display:flex;gap:20px;flex-wrap:wrap"><legend class="u-label" style="margin-bottom:8px">Mode</legend><label class="u-check"><input type="radio" name="mode" checked> Swarm</label><label class="u-check"><input type="radio" name="mode"> Single agent</label></fieldset>
+ </div></div>
+ <ul class="ds-list"><li><kbd>Space</kbd> toggles a checkbox; arrow keys move between radios in a group.</li><li>Group radios in a <code>&lt;fieldset&gt;</code> with a <code>&lt;legend&gt;</code>.</li></ul>
+</section>
+
+<section class="ds-sec ds-comp" aria-labelledby="switch">
+ <header><h2 id="switch">Switch</h2><p class="ds-lead">For settings that apply the instant they change, like sound or live updates. If the change waits for a Save button, use a checkbox.</p></header>
+ <div class="ds-ex" data-name="Switches"><div class="ds-stage" style="gap:28px">
+  <label class="u-switch"><input type="checkbox" role="switch" checked> Interface sound</label>
+  <label class="u-switch"><input type="checkbox" role="switch"> Auto-deploy agents</label>
+ </div></div>
+ <ul class="ds-list"><li>A native checkbox with <code>role="switch"</code>: screen readers announce on and off.</li><li>The thumb travels with <code>--e-lock</code>; under reduced motion it jumps.</li></ul>
+</section>
+
+<section class="ds-sec ds-comp" aria-labelledby="range">
+ <header><h2 id="range">Range</h2><p class="ds-lead">For continuous values. The filled part of the track is cyan, and the current value always shows as a number beside the label.</p></header>
+ <div class="ds-ex" data-name="Range"><div class="ds-stage grid">
+  <div class="u-field"><label class="u-label" for="rg">Swarm size · <output id="rgo" class="u-num" for="rg">48</output></label><input class="u-range" type="range" id="rg" min="1" max="200" value="48" data-out="rgo"></div>
+  <div class="u-field"><label class="u-label" for="rg2">Budget · <output id="rgo2" class="u-num" for="rg2">£40</output></label><input class="u-range" type="range" id="rg2" min="0" max="200" step="5" value="40" data-out="rgo2" data-unit=""></div>
+ </div></div>
+ <h3>API</h3>
+ <ul class="ds-list"><li><code>class="u-range"</code> plus <code>data-out="id"</code> writes the value into that element on input; <code>data-unit</code> appends a unit. Wired by <code>UI.wire()</code>.</li><li>Arrow keys step, <kbd>Page Up</kbd>/<kbd>Page Down</kbd> jump, <kbd>Home</kbd>/<kbd>End</kbd> go to the ends.</li></ul>
+</section>
+
+<section class="ds-sec ds-comp" aria-labelledby="segmented">
+ <header><h2 id="segmented">Segmented control</h2><p class="ds-lead">Two to four mutually exclusive views of the same data, like time ranges. It fires a <code>change</code> event with the chosen value.</p></header>
+ <div class="ds-ex" data-name="Segmented control"><div class="ds-stage">
+  <div class="u-seg" data-seg role="group" aria-label="Range" id="segDemo"><button type="button" aria-pressed="true" data-v="24h">24h</button><button type="button" aria-pressed="false" data-v="7d">7d</button><button type="button" aria-pressed="false" data-v="30d">30d</button></div>
+  <span class="u-mono u-muted" id="segOut">SHOWING 24H</span>
+ </div></div>
+<pre data-lang="js" data-title="Listen for changes">
+document.querySelector('#segDemo').addEventListener('change', e => {
+  console.log(e.detail); // '24h' | '7d' | '30d'
+});
+</pre>
+ <ul class="ds-list"><li>Buttons carry <code>aria-pressed</code>; the group carries <code>role="group"</code> and a label.</li><li>More than four options? Use a select.</li></ul>
+</section>
+</main>
+<script src="../work/01/01.js"></script><script src="../work/01/01-ui.js"></script><script src="search-index.js"></script><script src="ds.js"></script>
+<script>DS.$('#segDemo').addEventListener('change',e=>DS.$('#segOut').textContent='SHOWING '+String(e.detail).toUpperCase());DS.$('#rg2').addEventListener('input',e=>DS.$('#rgo2').textContent='£'+e.target.value);document.addEventListener('ds:ready',()=>DS.$('#rgo2').textContent='£40');</script>
+</body></html>

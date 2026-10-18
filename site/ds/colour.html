@@ -1,0 +1,108 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Colour · 01 Design System</title>
+<meta name="description" content="01 colour: the graphite ramp, platinum type, the cyan signal and rare accents, semantic roles, live WCAG contrast ratios and the rules for using each colour.">
+<meta name="theme-color" content="#07090C"><link rel="icon" href="../work/01/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../work/01/01.css"><link rel="stylesheet" href="../work/01/01-ui.css"><link rel="stylesheet" href="ds.css">
+<style>
+.ramp{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,120px),1fr));border-top:1px solid var(--line);border-left:1px solid var(--line)}
+.ramp button{all:unset;cursor:pointer;display:grid;gap:4px;padding:0 0 14px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);min-width:0}
+.ramp button:focus-visible{outline:1.5px solid var(--cyan);outline-offset:-2px}
+.ramp i{display:block;height:96px;margin-bottom:8px;border-bottom:1px solid var(--line)}
+.ramp b,.ramp code,.ramp small{padding:0 12px}
+.ramp b{font:500 14px var(--f-sans);color:var(--pt)}
+.ramp code{font:12px var(--f-mono)!important;background:none!important;border:0!important;padding:0 12px!important;color:var(--pt-2)!important}
+.ramp small{font:500 11px var(--f-mono);color:var(--pt-3)}
+.balance{display:flex;height:72px;border:1px solid var(--line)}
+.balance i{display:block;min-width:3px}
+.balance-k{display:flex;flex-wrap:wrap;gap:6px 18px;margin:0;padding:0;list-style:none;font:500 11.5px var(--f-mono);letter-spacing:.06em;color:var(--pt-2)}
+.balance-k li{display:flex;align-items:center;gap:8px}.balance-k i{width:10px;height:10px;border:1px solid var(--line-2)}
+.matrix td.cell{font:500 12.5px var(--f-mono);white-space:nowrap}
+.smp{display:inline-block;width:18px;height:10px;margin-right:8px;vertical-align:0;border-radius:2px}
+.matrix td.cell span{display:block;font-size:10.5px;letter-spacing:.06em}
+.pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:16px}
+.pair>div{padding:22px;border:1px solid var(--line);display:grid;gap:8px;min-width:0}
+.pair b{font:500 22px var(--f-sans);letter-spacing:-.02em}
+</style>
+</head><body class="ds" data-page="colour">
+<main id="main">
+<header class="ds-hero">
+ <p class="ds-kick">Foundations · 01</p>
+ <h1>Graphite, platinum, <em>a little light.</em></h1>
+ <p class="ds-lede">Graphite carries almost everything. Platinum is for type. Cyan is the signal, and there is only ever one. Green means live. Purple and amber are rare enough that people notice when they appear.</p>
+ <ul class="ds-meta"><li>Values read live from <b>01.css</b></li><li>Contrast: <b>WCAG 2.2</b></li><li>Select a swatch to copy</li></ul>
+</header>
+
+<section class="ds-sec" aria-labelledby="graphite">
+ <h2 id="graphite">Graphite</h2>
+ <p class="ds-lead">Seven steps from near-black to slate. The page is 950; surfaces step up one at a time. Never skip more than two steps between neighbours, and never use pure black.</p>
+ <div class="ramp" data-ramp="--g-950 --g-900 --g-850 --g-800 --g-700 --g-600 --g-500"></div>
+</section>
+
+<section class="ds-sec" aria-labelledby="platinum">
+ <h2 id="platinum">Platinum</h2>
+ <p class="ds-lead">Three greys for type. Platinum for headings and anything you must read, platinum 2 for body copy, platinum 3 for labels and metadata. All three pass AA on every graphite surface up to 800.</p>
+ <div class="ramp" data-ramp="--pt --pt-2 --pt-3"></div>
+</section>
+
+<section class="ds-sec" aria-labelledby="signal">
+ <h2 id="signal">Signal and accents</h2>
+ <p class="ds-lead">Cyan is the system's voice: focus, the active route, the one action that matters. Cyan white is its hover. Cyan deep is the only cyan allowed on light grounds. Green is reserved for live, healthy and done. Amber warns, red faults, purple marks the experimental.</p>
+ <div class="ramp" data-ramp="--cyan --cyan-white --cyan-deep --green --amber --purple --red"></div>
+</section>
+
+<section class="ds-sec" aria-labelledby="roles">
+ <h2 id="roles">Semantic roles</h2>
+ <p class="ds-lead">Write roles in your CSS, not raw values. Roles are how Workspace and the showcase stay one system: when a surface changes, the role moves and every component follows.</p>
+ <div class="ds-scroll" tabindex="0" role="region" aria-label="Colour roles"><table class="ds-table" id="roleTable"><thead><tr><th scope="col">Role</th><th scope="col">Token</th><th scope="col">Resolves to</th><th scope="col">Use it for</th></tr></thead><tbody></tbody></table></div>
+</section>
+
+<section class="ds-sec" aria-labelledby="contrast">
+ <h2 id="contrast">Contrast, measured live</h2>
+ <p class="ds-lead">Every text colour against every surface, computed in your browser from the values in 01.css right now. AA needs 4.5:1 for body text and 3:1 for text 24px and up or bold 19px and up. Anything marked Fail is decoration only.</p>
+ <div class="ds-scroll" tabindex="0" role="region" aria-label="Contrast matrix"><table class="ds-table matrix" id="matrix"></table></div>
+ <h3>Pairings that always work</h3>
+ <div class="pair" id="pairs"></div>
+</section>
+
+<section class="ds-sec" aria-labelledby="balance">
+ <h2 id="balance">Balance</h2>
+ <p class="ds-lead">On any screen, graphite should cover roughly three quarters of the pixels. If cyan creeps past a tenth, something that is not the signal is wearing its colour.</p>
+ <div class="balance" role="img" aria-label="Colour balance: graphite 72 percent, platinum 17, cyan 7, green 2, purple 1, amber 1"><i style="flex:72;background:var(--g-800)"></i><i style="flex:17;background:var(--pt)"></i><i style="flex:7;background:var(--cyan)"></i><i style="flex:2;background:var(--green)"></i><i style="flex:1;background:var(--purple)"></i><i style="flex:1;background:var(--amber)"></i></div>
+ <ul class="balance-k"><li><i style="background:var(--g-800)"></i>Graphite 72</li><li><i style="background:var(--pt)"></i>Platinum 17</li><li><i style="background:var(--cyan)"></i>Cyan 7</li><li><i style="background:var(--green)"></i>Green 2</li><li><i style="background:var(--purple)"></i>Purple 1</li><li><i style="background:var(--amber)"></i>Amber 1</li></ul>
+</section>
+
+<section class="ds-sec" aria-labelledby="states">
+ <h2 id="states">Colour in states</h2>
+ <p class="ds-lead">Status always pairs colour with a word or a shape, so nobody has to see colour to read state.</p>
+ <div class="ds-ex" data-name="Status colours"><div class="ds-stage">
+  <span class="u-status"><i class="u-dot live"></i>Live</span>
+  <span class="u-status"><i class="u-dot busy"></i>Working</span>
+  <span class="u-status"><i class="u-dot warn"></i>Waiting</span>
+  <span class="u-status"><i class="u-dot err"></i>Failed</span>
+  <span class="u-status"><i class="u-dot idle"></i>Idle</span>
+  <span class="u-tag cyan">Routing</span><span class="u-tag green">Live</span><span class="u-tag amber">Review</span><span class="u-tag purple">Experimental</span><span class="u-tag red">Blocked</span>
+ </div></div>
+</section>
+
+<section class="ds-sec" aria-labelledby="rules">
+ <h2 id="rules">Do and don't</h2>
+ <div class="ds-rules">
+  <div class="do"><h4>Do</h4><ul><li>Use cyan for focus, the active route and the single primary signal on a screen.</li><li>Use green only for live, healthy or complete.</li><li>Keep amber for warnings and the occasional accent in data.</li><li>Pair every status colour with a label or an icon.</li><li>Use cyan deep (#0A7F94) whenever cyan has to sit on platinum or white.</li></ul></div>
+  <div class="dont"><h4>Don't</h4><ul><li>Set body text in cyan, or fill large areas with it.</li><li>Use green for buttons, links or decoration.</li><li>Put purple and amber on the same screen as decoration.</li><li>Use pure black (#000) or pure white (#FFF) anywhere.</li><li>Introduce gradients between signal colours; gradients only fade a colour into graphite.</li></ul></div>
+ </div>
+</section>
+</main>
+<script src="../work/01/01.js"></script><script src="../work/01/01-ui.js"></script><script src="search-index.js"></script><script src="ds.js"></script>
+<script>
+(()=>{const $=DS.$,$$=DS.$$,v=DS.cssVar;
+ const NAMES={'--g-950':'Graphite 950','--g-900':'Graphite 900','--g-850':'Graphite 850','--g-800':'Graphite 800','--g-700':'Graphite 700','--g-600':'Graphite 600','--g-500':'Graphite 500','--pt':'Platinum','--pt-2':'Platinum 2','--pt-3':'Platinum 3','--cyan':'Cyan','--cyan-white':'Cyan white','--cyan-deep':'Cyan deep','--green':'Green','--amber':'Amber','--purple':'Purple','--red':'Red'};
+ $$('[data-ramp]').forEach(r=>{r.innerHTML=r.dataset.ramp.split(' ').map(t=>{const h=v(t).toUpperCase(),c=DS.contrast(h,v('--g-950'));return `<button type="button" data-copy="${h}" data-copy-msg="Copied ${h}" aria-label="${NAMES[t]} ${h}, copy"><i style="background:${h}"></i><b>${NAMES[t]}</b><code>var(${t})</code><small>${h} · ${c.toFixed(2)}:1</small></button>`}).join('')});
+ const ROLES=[['Page','--bg','The page itself, app backgrounds'],['Surface','--surface','Panels, inputs, dialogs'],['Raised','--raised','Hover rows, kbd, glyph tiles'],['Panel','--panel','u-panel and field fills'],['Hairline','--line','Every 1px rule and border'],['Hairline strong','--line-2','Buttons, frame ticks, focus-adjacent edges'],['Ink','--ink','Headings and primary text'],['Muted','--mute','Labels, metadata, timestamps'],['Accent','--accent','Focus ring, active route, the signal'],['Hover','--hover','Row and ghost-button hover tint'],['Selection','--select','Selected rows and current nav item']];
+ $('#roleTable tbody').innerHTML=ROLES.map(([n,t,u])=>{const val=v(t);return `<tr><td>${n}</td><td><code>${t}</code></td><td class="num"><span class="sw" style="background:var(${t})"></span>${DS.esc(val)}</td><td>${u}</td></tr>`}).join('');
+ const FG=['--pt','--pt-2','--pt-3','--cyan','--green','--amber','--purple','--red'],BG=['--g-950','--g-900','--g-850','--g-800','--g-700'];
+ $('#matrix').innerHTML=`<thead><tr><th scope="col">Text on</th>${BG.map(b=>`<th scope="col">${NAMES[b]}</th>`).join('')}</tr></thead><tbody>${FG.map(f=>`<tr><th scope="row" style="color:var(--pt);font:500 13px var(--f-sans);letter-spacing:0;text-transform:none"><i class="smp" style="background:var(${f})"></i>${NAMES[f]}</th>${BG.map(b=>{const r=DS.contrast(v(f),v(b)),g=DS.grade(r);return `<td class="cell" style="background:var(${b});color:var(--pt)"><i class="smp" style="background:var(${f})"></i>${r.toFixed(2)}:1<span class="${g==='Fail'?'ds-fail':g==='AA large'?'ds-large':'ds-pass'}" style="color:var(--pt-2)">${g==='Fail'?'✕ ':'✓ '}${g}</span></td>`}).join('')}</tr>`).join('')}</tbody>`;
+ const P=[['--pt','--g-950','Headlines and body'],['--pt-2','--g-900','Body copy on surfaces'],['--g-950','--pt','Primary button label'],['--g-950','--cyan','Signal button label'],['--cyan-deep','#FFFFFF','Signal on light grounds'],['--green','--g-950','Live states and proof lines']];
+ $('#pairs').innerHTML=P.map(([f,b,u])=>{const fc=f.startsWith('--')?v(f):f,bc=b.startsWith('--')?v(b):b,r=DS.contrast(fc,bc);return `<div style="background:${bc};color:${fc}"><b>${r.toFixed(1)}:1 · ${DS.grade(r)}</b><span style="font:500 12px var(--f-mono);letter-spacing:.06em">${fc.toUpperCase()} ON ${bc.toUpperCase()}</span><span>${u}</span></div>`}).join('');
+})();
+</script>
+</body></html>

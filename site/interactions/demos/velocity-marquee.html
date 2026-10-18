@@ -1,0 +1,47 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Velocity marquee</title>
+<style>
+:root{--bg:#111110;--ink:#F3EFE6;--mute:#A7A196;--acc:#FF6A3D}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,sans-serif;overflow-x:hidden}
+.intro{min-height:44vh;display:grid;align-content:end;padding:28px clamp(16px,5vw,64px) 24px;gap:10px}
+.intro p{margin:0;color:var(--mute);max-width:52ch}
+.intro .k{font:500 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.18em;text-transform:uppercase;color:var(--acc)}
+.band{overflow:hidden;padding:clamp(6px,1.4vw,14px) 0;border-block:1px solid #2B2A27}
+.band+.band{border-top:0}
+.track{display:flex;width:max-content;will-change:transform}
+.track span{font:800 clamp(56px,11vw,168px)/1 system-ui;letter-spacing:-.05em;white-space:nowrap;padding-right:.35em;text-transform:uppercase}
+.track span i{font-style:normal;color:var(--acc)}
+.b2 .track span{color:transparent;-webkit-text-stroke:1.5px var(--ink)}
+.b2{background:#1A1917}
+.ctl{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:22px clamp(16px,5vw,64px)}
+button{font:600 13px/1 system-ui;min-height:44px;padding:0 18px;border-radius:999px;border:1px solid #45433E;background:transparent;color:var(--ink);cursor:pointer}
+button:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+.meter{font:500 12px/1 ui-monospace,Menlo,monospace;color:var(--mute)}
+.spacer{min-height:110vh;padding:40px clamp(16px,5vw,64px);color:var(--mute)}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+</style></head><body>
+<section class="intro"><span class="k">Scroll faster</span><p>Two endless bands of type. They drift on their own, then speed up, reverse and lean into the direction you scroll. Drag them sideways to fling them.</p></section>
+<p class="vh">Services: brand identity, motion design, websites, film, type design.</p>
+<div class="band b1" aria-hidden="true"><div class="track" id="t1"></div></div>
+<div class="band b2" aria-hidden="true"><div class="track" id="t2"></div></div>
+<div class="ctl"><button id="pause" aria-pressed="false">Pause</button><span class="meter" id="meter" aria-hidden="true">velocity 0.0</span></div>
+<div class="spacer"><p>Keep scrolling. The bands are still reacting above you.</p></div>
+<script>
+const CONFIG={rows:[['Brand identity','Motion','Websites','Film'],['Type design','Campaigns','Interfaces','Sound']],base:1.1};
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const T=[document.getElementById('t1'),document.getElementById('t2')];
+T.forEach((t,k)=>{const html=CONFIG.rows[k].map(w=>`<span>${w} <i>✺</i></span>`).join('');t.innerHTML=html+html+html+html});
+const st=T.map((t,k)=>({x:0,dir:k?1:-1,w:0}));
+function measure(){T.forEach((t,k)=>st[k].w=t.scrollWidth/4)}measure();addEventListener('resize',measure);
+let vel=0,sk=0,lastY=scrollY,paused=reduce,drag=null;
+addEventListener('scroll',()=>{const d=scrollY-lastY;lastY=scrollY;vel+=d*.12},{passive:true});
+document.querySelectorAll('.band').forEach((b,k)=>{b.style.touchAction='pan-y';b.addEventListener('pointerdown',e=>{drag={k,x:e.clientX};b.setPointerCapture(e.pointerId)});b.addEventListener('pointermove',e=>{if(!drag)return;const d=e.clientX-drag.x;drag.x=e.clientX;vel+=d*.25*(k?1:-1)*-1});b.addEventListener('pointerup',()=>drag=null);b.addEventListener('pointercancel',()=>drag=null)});
+const meter=document.getElementById('meter');
+function loop(){vel*=.92;vel=Math.max(-60,Math.min(60,vel));sk+=(vel-sk)*.12;
+ st.forEach((s,k)=>{const sp=paused?0:CONFIG.base+Math.abs(vel)*.9;const dir=s.dir*(vel<-.5?-1:1);s.x+=sp*dir;if(s.w){s.x=((s.x%s.w)-s.w)%s.w}T[k].style.transform=`translate3d(${s.x}px,0,0) skewX(${reduce||paused?0:-sk*.6*s.dir}deg)`});
+ meter.textContent='velocity '+vel.toFixed(1);requestAnimationFrame(loop)}
+const pb=document.getElementById('pause');pb.onclick=()=>{paused=!paused;pb.setAttribute('aria-pressed',paused);pb.textContent=paused?'Play':'Pause'};
+if(reduce){pb.textContent='Play';pb.setAttribute('aria-pressed','true')}
+loop();
+</script></body></html>

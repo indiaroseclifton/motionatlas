@@ -1,0 +1,45 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Text scramble headline</title>
+<style>
+:root{--bg:#0B0C0E;--ink:#F2F1EC;--mute:#9A9890;--acc:#D7FF3A}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column;padding:22px clamp(16px,5vw,64px)}
+nav{display:flex;gap:clamp(14px,3vw,34px);flex-wrap:wrap;font:500 12px/1 ui-monospace,Menlo,monospace;letter-spacing:.14em;text-transform:uppercase}
+nav a{color:var(--mute);text-decoration:none;padding:8px 0}nav a:hover,nav a:focus-visible{color:var(--ink)}
+nav a:focus-visible{outline:1px solid var(--acc);outline-offset:4px}
+nav .logo{color:var(--ink);margin-right:auto}
+main{flex:1;display:grid;align-content:center;gap:28px;padding:6vh 0}
+.k{margin:0;font:500 12px/1 ui-monospace,Menlo,monospace;letter-spacing:.18em;text-transform:uppercase;color:var(--acc)}
+h1{margin:0;font:700 clamp(40px,9vw,128px)/.95 system-ui,sans-serif;letter-spacing:-.045em;min-height:1.9em;max-width:14ch}
+h1 .g{color:var(--acc);font-family:ui-monospace,Menlo,monospace;font-weight:400;letter-spacing:-.06em}
+h1 .d{color:#5E5C56}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+button{font:500 13px/1 system-ui;min-height:44px;padding:0 18px;border-radius:999px;border:1px solid #3A3B40;background:transparent;color:var(--ink);cursor:pointer}
+button.p{background:var(--acc);color:#111;border-color:var(--acc)}
+button:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+p.s{margin:0;color:var(--mute);max-width:56ch}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+</style></head><body>
+<nav aria-label="Demo"><a class="logo" href="#" data-scramble>Northwind/Lab</a><a href="#" data-scramble>Work</a><a href="#" data-scramble>Studio</a><a href="#" data-scramble>Contact</a></nav>
+<main>
+<p class="k" data-scramble>// 2026 showreel</p>
+<h1 id="h" aria-live="off"><span class="vh" id="hText"></span><span id="hVis" aria-hidden="true"></span></h1>
+<p class="s">Each letter churns through random glyphs and settles from left to right. Hover or focus the links to scramble them too.</p>
+<div class="row"><button class="p" id="next">Next phrase</button><button id="pause" aria-pressed="false">Pause cycling</button></div>
+</main>
+<script>
+const CONFIG={phrases:['We build things that feel alive.','Interfaces with a pulse.','Motion, made legible.','Quiet code. Loud ideas.'],glyphs:'!<>-_\\/[]{}=+*^?#ABCDEFGHJKLMNPQRSTUVWXYZ0123456789',hold:3400};
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function scramble(el,to,{dur=26,spread=20}={}){const from=el.textContent;const n=Math.max(from.length,to.length);const q=[];for(let i=0;i<n;i++){const s=Math.floor(Math.random()*spread)+i*.6,e=s+Math.floor(Math.random()*dur)+6;q.push({f:from[i]||'',t:to[i]||'',s,e,c:''})}
+ cancelAnimationFrame(el._raf);if(reduce){el.textContent=to;return Promise.resolve()}
+ let fr=0;return new Promise(res=>{const tick=()=>{let out='',done=0;for(const x of q){if(fr>=x.e){done++;out+=esc(x.t)}else if(fr>=x.s){if(!x.c||Math.random()<.28)x.c=CONFIG.glyphs[Math.floor(Math.random()*CONFIG.glyphs.length)];out+=`<span class="g">${esc(x.c)}</span>`}else out+=`<span class="d">${esc(x.f)}</span>`}el.innerHTML=out;if(done===q.length){el.textContent=to;res()}else{fr++;el._raf=requestAnimationFrame(tick)}};tick()})}
+function esc(c){return c.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]))}
+const vis=document.getElementById('hVis'),txt=document.getElementById('hText');let i=0,paused=false,timer;
+function show(k){i=(k+CONFIG.phrases.length)%CONFIG.phrases.length;txt.textContent=CONFIG.phrases[i];scramble(vis,CONFIG.phrases[i],{dur:34,spread:24}).then(schedule)}
+function schedule(){clearTimeout(timer);if(!paused&&!reduce)timer=setTimeout(()=>show(i+1),CONFIG.hold)}
+document.getElementById('next').onclick=()=>{clearTimeout(timer);show(i+1)};
+const pb=document.getElementById('pause');pb.onclick=()=>{paused=!paused;pb.setAttribute('aria-pressed',paused);pb.textContent=paused?'Resume cycling':'Pause cycling';paused?clearTimeout(timer):schedule()};
+if(reduce){paused=true;pb.hidden=true}
+document.querySelectorAll('[data-scramble]').forEach(el=>{const t=el.textContent;if(el.tagName==='A')el.setAttribute('aria-label',t);const run=()=>scramble(el,t,{dur:14,spread:8});el.addEventListener('pointerenter',run);el.addEventListener('focus',run);if(el.tagName==='A')el.addEventListener('click',e=>e.preventDefault())});
+vis.textContent='';show(0);
+</script></body></html>

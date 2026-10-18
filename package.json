@@ -8,6 +8,7 @@
     "vendor:blob": "esbuild tools/blob-client-entry.js --bundle --format=iife --minify --outfile=site/vendor/blob-client.js"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "0.131.0",
     "@vercel/blob": "2.8.2"
   },
   "devDependencies": {

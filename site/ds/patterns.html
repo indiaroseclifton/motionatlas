@@ -1,0 +1,152 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Patterns · 01 Design System</title>
+<meta name="description" content="01 patterns, live: the app shell, the five-stage agent run, forms that validate on Continue and keep drafts, empty, loading and error states, and the war-room feed.">
+<meta name="theme-color" content="#07090C"><link rel="icon" href="../work/01/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../work/01/01.css"><link rel="stylesheet" href="../work/01/01-ui.css"><link rel="stylesheet" href="ds.css">
+<style>
+.life{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border-top:1px solid var(--line)}
+.life div{padding:16px 14px 16px 0;display:grid;gap:6px;border-bottom:1px solid var(--line);min-width:0;transition:opacity var(--d-route)}
+.life div+div{padding-left:14px;border-left:1px solid var(--line)}
+.life b{font:500 12px var(--f-mono);letter-spacing:.1em;color:var(--pt-3)}
+.life span{font-size:13.5px;color:var(--pt-2)}
+.life div.on b{color:var(--cyan)}
+.run{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:24px}
+.run>*{min-width:0;display:grid;gap:14px;align-content:start}
+.swarm{display:grid;grid-template-columns:repeat(16,1fr);gap:3px}
+.swarm i{aspect-ratio:1;background:var(--g-700)}
+.swarm i.on{background:var(--cyan)}.swarm i.ok{background:var(--green)}
+.feedgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.feedgrid>*{min-width:0}
+.feedgrid .wide{grid-column:span 2}
+.states-panel{min-height:190px}
+.form{display:grid;gap:16px;max-width:560px}
+@media (max-width:900px){.life{grid-template-columns:1fr}.life div+div{padding-left:0;border-left:0}.run,.feedgrid{grid-template-columns:1fr}.feedgrid .wide{grid-column:auto}}
+</style>
+</head><body class="ds" data-page="patterns">
+<main id="main">
+<header class="ds-hero">
+ <p class="ds-kick">Patterns</p>
+ <h1>Components, <em>wired together.</em></h1>
+ <p class="ds-lede">How the parts combine into the screens 01 is known for. Every pattern below is running live, built only from the components on this site.</p>
+ <ul class="ds-meta"><li>Patterns <b>5</b></li><li>All live</li></ul>
+</header>
+
+<section class="ds-sec" aria-labelledby="app-shell">
+ <h2 id="app-shell">App shell</h2>
+ <p class="ds-lead">Every 01 tool, from the Console to Workspace, opens into the same frame: navigation on the left, one top bar, a page that scrolls on its own. People learn it once.</p>
+ <div class="ds-iframe"><iframe class="ds-frame-demo" src="ex-shell.html" title="App shell pattern, live" loading="lazy" style="height:440px"></iframe></div>
+ <ul class="ds-list"><li><b>Left</b> is where you are: sections, counts, status at the foot.</li><li><b>Top</b> is what you can do here: breadcrumbs, search, one primary action.</li><li><b>Page</b> is the work: a heading in Geist, then frames for live data and panels for groups.</li></ul>
+ <p><a href="components-shell.html#app-shell">App shell component reference →</a></p>
+</section>
+
+<section class="ds-sec" aria-labelledby="agent-run">
+ <h2 id="agent-run">The agent run</h2>
+ <p class="ds-lead">Every request moves through the same five visible stages, so people learn to read a run at a glance. Press run and watch one go through.</p>
+ <div class="life" id="life"><div><b>01 · ROUTE</b><span>Models lock on along a trace, one per role.</span></div><div><b>02 · SPAWN</b><span>The swarm grid lights as agents start.</span></div><div><b>03 · ACT</b><span>Tool calls stream in, each with a green tick.</span></div><div><b>04 · ANSWER</b><span>The answer streams behind a cyan cursor.</span></div><div><b>05 · PROOF</b><span>One closing line: time, models, agents, tools.</span></div></div>
+ <div class="ds-ex" data-name="Agent run, live" data-code="none"><div class="ds-stage col">
+  <div class="ds-row"><button class="u-btn signal" type="button" id="runBtn" data-icon="play">Run: chase unpaid invoices</button><span class="u-status" id="runState"><i class="u-dot idle"></i>Idle</span></div>
+  <div class="run">
+   <div>
+    <div class="u-route" id="rRoute"><span><i></i>ORION-4 plan</span><span><i></i>KESTREL match</span><span><i></i>NOVA-X write</span></div>
+    <div id="rTools" style="display:grid;gap:6px"></div>
+    <div class="u-msg"><div class="body"><p id="rAns" style="min-height:3.2em"></p></div></div>
+    <p class="u-cap" id="rProof" style="margin:0;min-height:1.2em"></p>
+   </div>
+   <div>
+    <p class="u-cap" style="margin:0">Swarm · <span id="rN" class="u-num">0</span> / 48</p>
+    <div class="swarm" id="rSwarm" aria-hidden="true"></div>
+    <div class="u-steps" id="rSteps" role="img" aria-label="Stage 0 of 5"><i></i><i></i><i></i><i></i><i></i></div>
+    <div role="log" aria-label="Run log"><ol class="u-log" id="rLog"></ol></div>
+   </div>
+  </div>
+ </div></div>
+</section>
+
+<section class="ds-sec" aria-labelledby="forms">
+ <h2 id="forms">Forms</h2>
+ <p class="ds-lead">Validate when people press Continue, not on every keystroke. Focus the first problem, write the fix in the error, play the deny sound if sound is on, and keep a draft on the device so nobody loses work.</p>
+ <div class="ds-ex" data-name="Spawn an agent" data-code="none"><div class="ds-stage col">
+  <form class="form" id="spawnForm" novalidate>
+   <div class="u-field"><label class="u-label" for="pn">Agent name</label><input class="u-input" id="pn" name="name" autocomplete="off" aria-describedby="pnh"><p class="u-help" id="pnh">Letters, numbers and dashes. Shown in logs and the swarm.</p></div>
+   <div class="u-field"><label class="u-label" for="pb">Brief · <span id="pbc" class="u-num">0</span> / 40 minimum</label><textarea class="u-textarea" id="pb" name="brief" aria-describedby="pbh"></textarea><p class="u-help" id="pbh">What should it do first? Be specific.</p></div>
+   <div class="u-field"><label class="u-label" for="pc">Class</label><select class="u-select" id="pc" name="cls"><option value="">Choose a class</option><option>Strategist</option><option>Router</option><option>Builder</option><option>Sentinel</option></select></div>
+   <div class="ds-row"><button class="u-btn solid" type="submit">Continue</button><button class="u-btn ghost" type="button" id="clearDraft">Clear draft</button><span class="u-mono u-muted" id="draftNote"></span></div>
+  </form>
+ </div></div>
+ <div class="ds-rules"><div class="do"><h4>Do</h4><ul><li>Show live counters for minimum lengths.</li><li>Keep the person's input when an error appears.</li></ul></div><div class="dont"><h4>Don't</h4><ul><li>Disable the submit button to signal errors.</li><li>Clear the form after a failed submit.</li></ul></div></div>
+</section>
+
+<section class="ds-sec" aria-labelledby="states">
+ <h2 id="states">Empty, loading and error</h2>
+ <p class="ds-lead">One panel, every state it can be in. Switch between them to compare the copy and the shape.</p>
+ <div class="u-seg" data-seg role="group" aria-label="Panel state" id="stSeg"><button type="button" aria-pressed="false" data-v="empty">Empty</button><button type="button" aria-pressed="true" data-v="loading">Loading</button><button type="button" aria-pressed="false" data-v="error">Error</button><button type="button" aria-pressed="false" data-v="ready">Ready</button></div>
+ <section class="u-panel states-panel" aria-labelledby="stH"><div class="u-head"><h3 id="stH">Runs</h3><span class="u-mono u-muted" id="stTag">LOADING</span></div><div id="stBody"></div></section>
+</section>
+
+<section class="ds-sec" aria-labelledby="war-room">
+ <h2 id="war-room">War-room feed</h2>
+ <p class="ds-lead">Live telemetry, the way the 01ai home page shows it: framed, mono, ticking in steps. Any feed that moves on its own has a pause control.</p>
+ <div class="ds-row"><button class="u-btn sm" type="button" id="feedBtn" aria-pressed="false" data-icon="pause">Pause feed</button></div>
+ <div class="feedgrid">
+  <div class="u-frame live"><p class="u-cap" style="margin:0 0 10px">// Agents live</p><div class="u-stat"><b id="wAg">38,940</b><span class="d" id="wAgD">+212 today</span></div></div>
+  <div class="u-frame"><p class="u-cap" style="margin:0 0 10px">// CPU load</p><div class="u-stat"><b id="wCpu">63.2%</b></div><div class="u-meter" id="wCpuM" style="--v:63%;margin-top:12px"><i></i></div></div>
+  <div class="u-frame"><p class="u-cap" style="margin:0 0 10px">// Tokens / s</p><canvas class="u-spark" id="wSpark" aria-hidden="true"></canvas><p class="u-num u-dim" id="wTps" style="margin:6px 0 0">48,210</p></div>
+  <div class="u-frame wide"><p class="u-cap" style="margin:0 0 10px">// Node log</p><div role="log" aria-label="Node log" aria-live="off"><ol class="u-log" id="wLog"></ol></div></div>
+  <div class="u-frame"><p class="u-cap" style="margin:0 0 10px">// Models online</p><div class="u-stat"><b id="wMod">1,042</b><span class="d">AND MORE ALWAYS COMING</span></div></div>
+ </div>
+</section>
+</main>
+<script src="../work/01/01.js"></script><script src="../work/01/01-ui.js"></script><script src="search-index.js"></script><script src="ds.js"></script>
+<script>
+(()=>{const $=DS.$,$$=DS.$$,R=O1.reduce,S=O1.Sound,wait=ms=>new Promise(r=>setTimeout(r,R?0:ms));
+ /* ---------- agent run ---------- */
+ const sw=$('#rSwarm');sw.innerHTML='<i></i>'.repeat(48);
+ const log=(html)=>{const li=document.createElement('li');li.className='new';li.innerHTML=`<time>[${UI.now()}]</time> ${html}`;$('#rLog').append(li);while($('#rLog').children.length>5)$('#rLog').firstElementChild.remove()};
+ const stage=i=>{$$('#life div').forEach((d,k)=>d.classList.toggle('on',k<=i));$$('#rSteps i').forEach((d,k)=>d.classList.toggle('on',k<=i));$('#rSteps').setAttribute('aria-label',`Stage ${i+1} of 5`)};
+ let busy=false;
+ $('#runBtn').addEventListener('click',async()=>{if(busy)return;busy=true;const b=$('#runBtn');b.classList.add('loading');b.setAttribute('aria-busy','true');
+  $('#rTools').innerHTML='';$('#rAns').textContent='';$('#rProof').textContent='';$('#rLog').innerHTML='';$$('#rRoute span').forEach(s=>s.classList.remove('on'));$$('#rSwarm i').forEach(i=>i.className='');$('#rN').textContent=0;
+  $('#runState').innerHTML='<i class="u-dot busy"></i>Working';const t0=performance.now();
+  stage(0);for(const s of $$('#rRoute span')){await wait(380);s.classList.add('on');S.chirp();log(`ROUTER-11 &gt;&gt; <b>LOCK</b> [ ${s.textContent.split(' ')[0]} ]`)}
+  stage(1);const cells=$$('#rSwarm i');for(let k=0;k<48;k+=4){await wait(45);cells.slice(k,k+4).forEach(c=>c.classList.add('on'));$('#rN').textContent=k+4;S.tick()}log('SWARM &gt;&gt; <b>SPAWN</b> [ <em>48 agents</em> ]');
+  stage(2);for(const [tool,what] of [['Stripe','read 12,408 invoices'],['Gmail','drafted 63 reminders']]){await wait(520);const d=document.createElement('div');d.className='u-tool';d.innerHTML=`<b>${tool}</b> ${what} <em>✓</em>`;$('#rTools').append(d);S.confirm();log(`AGENT_4821 &gt;&gt; <b>TOOL CALL</b> [ ${tool.toUpperCase()} <em>OK</em> ]`)}
+  stage(3);const words='£184,920 is outstanding across 63 invoices. Every reminder is drafted and ready to send.'.split(' ');const p=$('#rAns');for(let k=1;k<=words.length;k++){await wait(55);p.innerHTML=`<strong>${DS.esc(words.slice(0,k).join(' '))}</strong><span class="u-cursor" aria-hidden="true"></span>`}p.innerHTML=`<strong>${DS.esc(words.join(' '))}</strong>`;
+  cells.forEach(c=>c.className='ok');
+  stage(4);const secs=R?'4.1':((performance.now()-t0)/1000).toFixed(1);$('#rProof').innerHTML=`Done in <span style="color:var(--green)">${secs}s</span> · 3 models · 48 agents · 2 tools`;log(`RUN &gt;&gt; <em>COMPLETE</em> [ ${secs}s ]`);
+  $('#runState').innerHTML='<i class="u-dot live"></i>Complete';b.classList.remove('loading');b.removeAttribute('aria-busy');busy=false;UI.toast('Run complete',`48 agents · 2 tools · ${secs}s`,'ok')});
+ /* ---------- form ---------- */
+ const f=$('#spawnForm'),KEY='ds-pattern-draft';
+ try{const d=JSON.parse(localStorage.getItem(KEY)||'null');if(d){f.name.value=d.name||'';f.brief.value=d.brief||'';f.cls.value=d.cls||'';$('#draftNote').textContent='DRAFT RESTORED'}}catch(e){}
+ const cnt=()=>$('#pbc').textContent=f.brief.value.trim().length;cnt();
+ f.addEventListener('input',()=>{cnt();try{localStorage.setItem(KEY,JSON.stringify({name:f.name.value,brief:f.brief.value,cls:f.cls.value}));$('#draftNote').textContent='DRAFT SAVED'}catch(e){}});
+ $('#clearDraft').onclick=()=>{try{localStorage.removeItem(KEY)}catch(e){}f.reset();cnt();clear();$('#draftNote').textContent='DRAFT CLEARED'};
+ const H={name:'pnh',brief:'pbh'};
+ function setErr(el,msg){const id=el.id+'-err';let p=document.getElementById(id);if(msg){if(!p){p=document.createElement('p');p.className='u-error';p.id=id;el.closest('.u-field').append(p)}p.textContent=msg;el.setAttribute('aria-invalid','true');el.setAttribute('aria-describedby',id)}else{p&&p.remove();el.removeAttribute('aria-invalid');el.setAttribute('aria-describedby',H[el.name]||'')}}
+ function clear(){[f.name,f.brief,f.cls].forEach(e=>setErr(e,''))}
+ f.addEventListener('submit',e=>{e.preventDefault();const errs=[];
+  const n=f.name.value.trim();if(!n)errs.push([f.name,'Give the agent a name, like Strategist-05.']);else if(!/^[A-Za-z0-9-]+$/.test(n))errs.push([f.name,'Use letters, numbers and dashes only.']);else setErr(f.name,'');
+  const b=f.brief.value.trim().length;if(b<40)errs.push([f.brief,`Add ${40-b} more character${40-b===1?'':'s'}. Say what it should do first.`]);else setErr(f.brief,'');
+  if(!f.cls.value)errs.push([f.cls,'Choose a class so the router knows where to send it.']);else setErr(f.cls,'');
+  errs.forEach(([el,m])=>setErr(el,m));
+  if(errs.length){S.deny();errs[0][0].focus()}else{S.confirm();UI.toast('Agent spawned',`${n} joined the swarm.`,'ok');try{localStorage.removeItem(KEY)}catch(e){}$('#draftNote').textContent='';f.reset();cnt()}});
+ /* ---------- states ---------- */
+ const ST={empty:['EMPTY','<div class="u-empty"><b>No runs yet.</b><span>Ask for anything and the first run appears here, with its route and proof.</span><button class="u-btn sm solid" type="button">Start a run</button></div>'],
+  loading:['LOADING','<div role="status" aria-busy="true" aria-label="Loading runs" style="padding:var(--u-pad);display:grid;gap:12px"><span class="u-skel" style="width:55%"></span><span class="u-skel" style="width:85%"></span><span class="u-skel" style="width:70%"></span></div>'],
+  error:['PAUSED','<div class="u-banner err" role="alert" style="border-top:0"><span class="u-dot err"></span>Stripe stopped answering.</div><div style="padding:var(--u-pad);display:grid;gap:10px;justify-items:start"><span class="u-dim" style="font-size:14px">The run paused at step 3. Reconnect Stripe and it picks up where it stopped. Nothing was lost.</span><button class="u-btn sm" type="button">Reconnect Stripe</button></div>'],
+  ready:['3 RUNS','<ul class="u-list"><li><span class="u-status"><i class="u-dot live"></i></span>Chase unpaid invoices<span class="u-mono u-muted" style="margin-left:auto">4.1s</span></li><li><span class="u-status"><i class="u-dot busy"></i></span>Plan the Q3 launch<span class="u-mono u-muted" style="margin-left:auto">running</span></li><li><span class="u-status"><i class="u-dot warn"></i></span>Renew the Stripe key<span class="u-mono u-muted" style="margin-left:auto">waiting</span></li></ul>']};
+ const showSt=k=>{$('#stTag').textContent=ST[k][0];$('#stBody').innerHTML=ST[k][1]};showSt('loading');$('#stSeg').addEventListener('change',e=>showSt(e.detail));
+ /* ---------- war room ---------- */
+ let on=!R,ag=38940,cpu=63.2,tps=48210,mods=1042;const sp=[30,34,31,38,36,40,44,41,46,48];
+ const LINES=[()=>`ROUTER-11 &gt;&gt; <b>ROUTE SWITCH</b> [ MODEL <em>HELIX-L</em> ]`,()=>`AGENT_${4000+(Math.random()*999|0)} &gt;&gt; <b>TOOL CALL</b> [ STRIPE <em>${UI.fmt(Math.random()*20000|0)} rows</em> ]`,()=>`SENTINEL-02 &gt;&gt; <span class="w">WAITING</span> [ APPROVAL ]`,()=>`SWARM &gt;&gt; <b>SPLIT</b> [ <em>+${2+(Math.random()*12|0)} agents</em> ]`,()=>`MODEL &gt;&gt; <b>ONLINE</b> [ <em>VANTA-${2+(Math.random()*9|0)}</em> ]`,()=>`AGENT_2210 &gt;&gt; <span class="e">RETRY</span> [ RATE LIMIT 429 ]`];
+ const tickTo=(el,from,to,fmt)=>{if(R){el.textContent=fmt(to);return}let s=0;const st=setInterval(()=>{s++;el.textContent=fmt(from+(to-from)*s/6);if(s>=6)clearInterval(st)},80)};
+ function beat(){if(!on)return;const a0=ag;ag+=Math.random()*40|0;tickTo($('#wAg'),a0,ag,v=>UI.fmt(Math.round(v)));
+  cpu=Math.max(40,Math.min(92,cpu+(Math.random()-.5)*8));$('#wCpu').textContent=cpu.toFixed(1)+'%';$('#wCpuM').style.setProperty('--v',cpu+'%');
+  tps+=(Math.random()-.4)*900|0;sp.push(sp[sp.length-1]+(Math.random()-.4)*5);sp.shift();UI.spark($('#wSpark'),sp);$('#wTps').textContent=UI.fmt(tps);
+  if(Math.random()<.25){const m0=mods;mods++;tickTo($('#wMod'),m0,mods,v=>UI.fmt(Math.round(v)))}
+  const li=document.createElement('li');li.className='new';li.innerHTML=`<time>[${UI.now()}]</time> ${LINES[Math.random()*LINES.length|0]()}`;$('#wLog').prepend(li);while($('#wLog').children.length>5)$('#wLog').lastElementChild.remove();S.tick()}
+ for(let k=0;k<5;k++){const li=document.createElement('li');li.innerHTML=`<time>[${UI.now()}]</time> ${LINES[k]()}`;$('#wLog').append(li)}
+ document.addEventListener('ds:ready',()=>UI.spark($('#wSpark'),sp));setInterval(beat,1400);
+ const fb=$('#feedBtn');const syncF=()=>{fb.setAttribute('aria-pressed',!on);fb.innerHTML=UI.icon(on?'pause':'play')+(on?'Pause feed':'Play feed')};fb.onclick=()=>{on=!on;syncF()};if(R)document.addEventListener('ds:ready',syncF);
+})();
+</script>
+</body></html>

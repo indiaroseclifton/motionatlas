@@ -1,0 +1,103 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Data display · 01 Design System</title>
+<meta name="description" content="01 data display components: sortable table, list, stat, meter, steps, bars, sparkline, log, tag, status dot and identity glyph, with live examples, code and accessibility notes.">
+<meta name="theme-color" content="#07090C"><link rel="icon" href="../work/01/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../work/01/01.css"><link rel="stylesheet" href="../work/01/01-ui.css"><link rel="stylesheet" href="ds.css">
+</head><body class="ds" data-page="components-data">
+<main id="main">
+<header class="ds-hero">
+ <p class="ds-kick">Components · Data display</p>
+ <h1>The proof, <em>in mono.</em></h1>
+ <p class="ds-lede">Numbers are how 01 backs up every claim, so data gets the most careful components in the system: hairline rows, right-aligned tabular figures, meters that step, and a log that reads like the machine thinking out loud.</p>
+ <ul class="ds-meta"><li>Components <b>9</b></li><li>JS <b>sorting, sparkline, glyph</b></li></ul>
+</header>
+
+<section class="ds-sec ds-comp" aria-labelledby="table">
+ <header><h2 id="table">Table</h2><p class="ds-lead">Hairline rows, mono numbers aligned right, sortable headers. Hover lifts the row a shade; selection uses the signal tint. Add <code>data-sortable</code> and <code>data-key</code> to make columns sortable.</p></header>
+ <div class="ds-ex" data-name="Sortable table"><div class="ds-stage flush">
+  <div class="u-table-wrap" tabindex="0" role="region" aria-label="Agents"><table class="u-table" data-sortable><thead><tr><th data-key scope="col">Agent</th><th data-key scope="col">Class</th><th data-key scope="col">Status</th><th data-key scope="col" class="r">Tasks</th><th data-key scope="col" class="r">Success</th></tr></thead><tbody>
+   <tr><td class="t"><span style="display:inline-flex;gap:10px;align-items:center"><span class="u-glyph sm" data-glyph="Strategist-04"></span>Strategist-04</span></td><td>Strategist</td><td><span class="u-status"><i class="u-dot live"></i>Live</span></td><td class="r u-num" data-v="1204">1,204</td><td class="r u-num" data-v="99.4">99.4%</td></tr>
+   <tr aria-selected="true"><td class="t"><span style="display:inline-flex;gap:10px;align-items:center"><span class="u-glyph sm" data-glyph="Router-11"></span>Router-11</span></td><td>Router</td><td><span class="u-status"><i class="u-dot busy"></i>Working</span></td><td class="r u-num" data-v="88310">88,310</td><td class="r u-num" data-v="99.9">99.9%</td></tr>
+   <tr><td class="t"><span style="display:inline-flex;gap:10px;align-items:center"><span class="u-glyph sm" data-glyph="Sentinel-02"></span>Sentinel-02</span></td><td>Sentinel</td><td><span class="u-status"><i class="u-dot warn"></i>Waiting</span></td><td class="r u-num" data-v="402">402</td><td class="r u-num" data-v="100">100%</td></tr>
+   <tr><td class="t"><span style="display:inline-flex;gap:10px;align-items:center"><span class="u-glyph sm" data-glyph="Builder-09"></span>Builder-09</span></td><td>Builder</td><td><span class="u-status"><i class="u-dot idle"></i>Idle</span></td><td class="r u-num" data-v="7720">7,720</td><td class="r u-num" data-v="98.1">98.1%</td></tr>
+  </tbody></table></div>
+ </div></div>
+ <h3>Anatomy</h3>
+ <ol class="ds-anat"><li><b>Header</b><span>Mono 11px caps; sortable headers become buttons with an arrow.</span></li><li><b>Row</b><span>Height <code>--u-row</code>, hairline below, hover tint.</span></li><li><b>Primary cell</b><span><code>td.t</code>: platinum, often with a glyph.</span></li><li><b>Numeric cell</b><span><code>.r .u-num</code>: right-aligned mono; sort uses <code>data-v</code>.</span></li></ol>
+ <div class="ds-rules"><div class="do"><h4>Do</h4><ul><li>Put the raw value in <code>data-v</code> so 88,310 sorts as a number.</li><li>Wrap the table in <code>.u-table-wrap</code> so it scrolls on its own on phones.</li></ul></div><div class="dont"><h4>Don't</h4><ul><li>Zebra-stripe rows or draw vertical lines.</li><li>Centre numbers or mix units in one column.</li></ul></div></div>
+ <h3>Accessibility</h3>
+ <ul class="ds-list"><li>Sort buttons set <code>aria-sort="ascending|descending"</code> on the header.</li><li>Give the scroll wrapper <code>tabindex="0"</code>, <code>role="region"</code> and a label so keyboard users can scroll it.</li></ul>
+</section>
+
+<section class="ds-sec ds-comp" aria-labelledby="list">
+ <header><h2 id="list">List</h2><p class="ds-lead">The same hairline row, without columns: rosters, settings, search results.</p></header>
+ <div class="ds-ex" data-name="List"><div class="ds-stage col">
+  <ul class="u-list"><li><span class="u-glyph" data-glyph="ORION-4"></span><span>ORION-4 <span class="u-muted">· planning</span></span><span class="u-tag cyan" style="margin-left:auto">Routing</span></li><li><span class="u-glyph" data-glyph="HELIX-L"></span><span>HELIX-L <span class="u-muted">· long context</span></span><span class="u-tag" style="margin-left:auto">Idle</span></li><li><span class="u-glyph" data-glyph="KESTREL"></span><span>KESTREL <span class="u-muted">· matching</span></span><span class="u-tag green" style="margin-left:auto">Live</span></li></ul>
+ </div></div>
+</section>
+
+<section class="ds-sec ds-comp" aria-labelledby="stat">
+ <header><h2 id="stat">Stat</h2><p class="ds-lead">A big mono number with a label above and a delta below. The delta is green when the change is good and amber when it is not, whatever its sign.</p></header>
+ <div class="ds-ex" data-name="Stats"><div class="ds-stage grid">
+  <div class="u-frame"><p class="u-cap" style="margin:0 0 10px">Agents live</p><div class="u-stat"><b>38,940</b><span class="d">+212 today</span></div></div>
+  <div class="u-frame"><p class="u-cap" style="margin:0 0 10px">Router latency</p><div class="u-stat"><b>38ms</b><span class="d">−4ms</span></div></div>
+  <div class="u-frame"><p class="u-cap" style="margin:0 0 10px">Spend · 24h</p><div class="u-stat"><b>£1,204</b><span class="d down">+18% on plan</span></div></div>
+ </div></div>
+</section>
+
+<section class="ds-sec ds-comp" aria-labelledby="meter">
+ <header><h2 id="meter">Meter and steps</h2><p class="ds-lead">A 4px meter for a value against a limit, set with <code>--v</code>; steps for a run's stages. Both move in <code>steps(6)</code>, never a smooth tween.</p></header>
+ <div class="ds-ex" data-name="Meters and steps"><div class="ds-stage grid">
+  <div style="display:grid;gap:10px"><span class="u-cap">CPU · 63%</span><div class="u-meter" style="--v:63%" role="meter" aria-valuenow="63" aria-valuemin="0" aria-valuemax="100" aria-label="CPU load"><i></i></div></div>
+  <div style="display:grid;gap:10px"><span class="u-cap">Budget · 82%</span><div class="u-meter amber" style="--v:82%" role="meter" aria-valuenow="82" aria-valuemin="0" aria-valuemax="100" aria-label="Budget used"><i></i></div></div>
+  <div style="display:grid;gap:10px"><span class="u-cap">Health · 100%</span><div class="u-meter green" style="--v:100%" role="meter" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" aria-label="Health"><i></i></div></div>
+  <div style="display:grid;gap:10px"><span class="u-cap" id="stl">Run · 3 of 5</span><div class="u-steps" role="img" aria-labelledby="stl"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></div></div>
+ </div></div>
+ <ul class="ds-list"><li>Meters use <code>role="meter"</code> with <code>aria-valuenow</code>, min, max and a label; steps carry a text equivalent.</li><li>Change <code>--v</code> from script to animate; the transition is already set.</li></ul>
+</section>
+
+<section class="ds-sec ds-comp" aria-labelledby="charts">
+ <header><h2 id="charts">Bars and sparkline</h2><p class="ds-lead">Two micro-charts for frames: a histogram of cyan bars that fade from the floor, and a canvas sparkline drawn by <code>UI.spark()</code>.</p></header>
+ <div class="ds-ex" data-name="Micro charts"><div class="ds-stage grid">
+  <div class="u-frame"><p class="u-cap" style="margin:0 0 10px">Throughput · 24h</p><div class="u-bars" role="img" aria-label="Throughput rising through the day, peaking in the evening"><i style="height:30%"></i><i style="height:45%"></i><i style="height:60%"></i><i style="height:52%"></i><i style="height:80%"></i><i style="height:72%"></i><i style="height:95%"></i><i style="height:66%"></i></div></div>
+  <div class="u-frame"><p class="u-cap" style="margin:0 0 10px">Tokens / s</p><canvas class="u-spark" id="sparkDemo" role="img" aria-label="Tokens per second, trending up"></canvas><p class="u-num u-dim" style="margin:8px 0 0">48,210</p></div>
+ </div></div>
+<pre data-lang="js" data-title="UI.spark(canvas, data, options)">
+UI.spark(document.querySelector('#sparkDemo'), [12,18,15,22,30,28,35,41,38,47], {color: '#7FE7F7', fill: true});
+</pre>
+</section>
+
+<section class="ds-sec ds-comp" aria-labelledby="log">
+ <header><h2 id="log">Log</h2><p class="ds-lead">The machine's voice. Time in grey, action in cyan, value in green; amber for waits, red for faults. New lines flash once.</p></header>
+ <div class="ds-ex" data-name="Log"><div class="ds-stage col">
+  <div role="log" aria-label="Run log"><ol class="u-log"><li><time>[14:02:11]</time> ROUTER-11 &gt;&gt; <b>ROUTE SWITCH</b> [ MODEL <em>HELIX-L</em> ]</li><li><time>[14:02:12]</time> AGENT_4821 &gt;&gt; <b>TOOL CALL</b> [ STRIPE <em>12,408 rows</em> ]</li><li><time>[14:02:13]</time> SENTINEL-02 &gt;&gt; <span class="w">WAITING</span> [ APPROVAL ]</li><li><time>[14:02:14]</time> AGENT_2210 &gt;&gt; <span class="e">RETRY</span> [ RATE LIMIT 429 ]</li></ol></div>
+ </div></div>
+ <ul class="ds-list"><li>Wrap live streams in <code>role="log"</code> so new lines are announced politely.</li><li>Add class <code>new</code> to a fresh line for the one-time flash. Lines truncate with an ellipsis rather than wrap.</li></ul>
+</section>
+
+<section class="ds-sec ds-comp" aria-labelledby="tag">
+ <header><h2 id="tag">Tag</h2><p class="ds-lead">A mono label in a hairline box for categories and short states. Colour variants follow the colour roles.</p></header>
+ <div class="ds-ex" data-name="Tags"><div class="ds-stage">
+  <span class="u-tag">Default</span><span class="u-tag cyan">Routing</span><span class="u-tag green">Live</span><span class="u-tag amber">Review</span><span class="u-tag purple">Experimental</span><span class="u-tag red">Blocked</span>
+ </div></div>
+</section>
+
+<section class="ds-sec ds-comp" aria-labelledby="status">
+ <header><h2 id="status">Status</h2><p class="ds-lead">A dot plus a word. Live pulses green; working glows cyan; the rest are still.</p></header>
+ <div class="ds-ex" data-name="Status"><div class="ds-stage">
+  <span class="u-status"><i class="u-dot live"></i>Live</span><span class="u-status"><i class="u-dot busy"></i>Working</span><span class="u-status"><i class="u-dot warn"></i>Waiting</span><span class="u-status"><i class="u-dot err"></i>Failed</span><span class="u-status"><i class="u-dot idle"></i>Idle</span>
+ </div></div>
+ <ul class="ds-list"><li>The word carries the meaning; the dot is decoration and needs no label of its own.</li></ul>
+</section>
+
+<section class="ds-sec ds-comp" aria-labelledby="glyph">
+ <header><h2 id="glyph">Glyph</h2><p class="ds-lead">The identity mark for anything with a name. Add <code>data-glyph="name"</code> and <code>UI.wire()</code> draws it.</p></header>
+ <div class="ds-ex" data-name="Glyphs"><div class="ds-stage">
+  <span class="u-glyph sm" data-glyph="NOVA-X"></span><span class="u-glyph" data-glyph="NOVA-X"></span><span class="u-glyph lg" data-glyph="NOVA-X"></span><span class="u-glyph lg" data-glyph="Analyst-03"></span><span class="u-glyph lg" data-glyph="Nicolas"></span>
+ </div></div>
+ <p>See <a href="iconography.html#glyphs">Iconography</a> to generate glyphs for any name.</p>
+</section>
+</main>
+<script src="../work/01/01.js"></script><script src="../work/01/01-ui.js"></script><script src="search-index.js"></script><script src="ds.js"></script>
+<script>document.addEventListener('ds:ready',()=>UI.spark(DS.$('#sparkDemo'),[12,18,15,22,30,28,35,41,38,47]));</script>
+</body></html>

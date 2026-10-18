@@ -1,5 +1,7 @@
 'use strict';
-/* Theme kits: tokens, fonts, voice, animated backgrounds and SVG assets for nine themes.
+/* Theme kits, core: the first nine kits, their animated backgrounds and SVG generators, plus the
+   registries (BG, PAT, MARK, DIV) that kits-a.js and kits-b.js extend. brand.js adds the brand
+   generators, the render API and the zip builder.
    Every background is a self-contained function (canvas, tokens, still) -> stop(), so it can be
    exported as-is with Function.prototype.toString(). Every asset is generated as an SVG string. */
 (()=>{
@@ -68,6 +70,21 @@ const K=[
   dos:['Set the headline huge, platinum, left-aligned and off-centre.','Let numbers tick in steps; text decodes from 0s and 1s.','Keep cyan for signal and green for "live"; purple and amber stay rare.'],
   donts:['Boxed callout cards: use hairlines and corner ticks instead.','Overhead or symmetrical compositions.','Small headlines, or any "by invitation only" line.']}
 ];
+const EXTRA={
+ matrix:{feel:'serious',wf:.6,hw:400,scale:1.2,role:'Systems operator'},
+ synthwave:{feel:'playful',wf:.92,hw:700,scale:1.25,role:'Night shift DJ'},
+ chrome:{feel:'playful',wf:1,hw:400,scale:1.25,single:'This kit lives in daylight, so it ships without a dark variant.',role:'Creative director'},
+ brutalist:{feel:'serious',wf:.78,hw:400,scale:1.333,role:'Editor at large'},
+ deco:{feel:'serious',wf:.62,hw:400,scale:1.25,role:'Maître d’hôtel'},
+ blueprint:{feel:'serious',wf:.6,hw:600,scale:1.2,role:'Lead engineer'},
+ vaporwave:{feel:'playful',wf:.66,hw:400,scale:1.25,role:'Mall cartographer'},
+ bauhaus:{feel:'serious',wf:.6,hw:800,scale:1.333,role:'Workshop master'},
+ graphite:{feel:'serious',wf:.58,hw:500,scale:1.25,role:'Founder',
+  alt:{bg:'#E7EAEE',surface:'#F5F7F9',ink:'#07090C',mute:'#4A5361',line:'#C5CBD3',accent:'#7FE7F7',onAccent:'#07090C',accentText:'#0A6573',accent2:'#12804F',accent3:'#6A4FD8',shadow:'0 0 0 1px #C5CBD3',glow:'0 0 0 3px rgba(10,101,115,.35)'}}
+};
+K.forEach(k=>Object.assign(k,EXTRA[k.id]));
+const BGDESC={matrix:'falling columns of green katakana and binary digits that fade as they drop',synth:'a striped neon sun over a perspective grid scrolling towards the viewer',chrome:'slowly drifting chrome bubbles with soft highlights',brutal:'a hard-edged grid of black, orange, blue and white blocks that change one at a time',deco:'gold sunburst rays and concentric arcs rising from the bottom centre',blueprint:'a drafting grid where circles, boxes and dimension lines draw themselves and fade',vapor:'a pastel sky with a striped sunset over a scrolling checkerboard floor',bauhaus:'circles, squares, triangles and quarter-circles in primaries that gently rotate',graphite:'a motherboard city at night: chips, copper routes and points of light travelling the traces'};
+K.forEach(k=>{k.bgDesc=BGDESC[k.bg]});
 
 /* ---------- Animated backgrounds: (canvas, t, still) -> stop() ---------- */
 const BG={
@@ -137,9 +154,10 @@ bauhaus(c,t,still){const x=c.getContext('2d');let W,H,raf,a=0,items=[];const col
 };
 
 /* ---------- SVG assets ---------- */
-const ICONS={home:'M4 11 12 4l8 7M6 9.5V20h12V9.5M10 20v-5h4v5',search:'M10.5 17a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13zM15.5 15.5 20 20',user:'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4.5 20a7.5 7.5 0 0 1 15 0',settings:'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1',heart:'M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.6 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z',arrow:'M4 12h15M13 6l6 6-6 6',play:'M7 5v14l12-7z',download:'M12 4v11M7 10l5 5 5-5M5 20h14',mail:'M3.5 6h17v12h-17zM3.5 6l8.5 7 8.5-7',star:'M12 3.5l2.6 5.5 6 .7-4.4 4.1 1.2 6-5.4-3-5.4 3 1.2-6L3.4 9.7l6-.7z',lock:'M6 11h12v9H6zM8.5 11V8a3.5 3.5 0 0 1 7 0v3',chat:'M4 5h16v11H9l-5 4z'};
-function icon(k,name,size=24){const s=k.stroke;const join=s.cap==='round'?'round':'miter';return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${k.t.ink}" stroke-width="${s.w}" stroke-linecap="${s.cap}" stroke-linejoin="${join}"><path d="${ICONS[name]}"/></svg>`}
-function pattern(k){const t=k.t;switch(k.id){
+const ICONS={check:'M5 12.5l4.5 4.5L19 7.5',plus:'M12 5v14M5 12h14',close:'M6 6l12 12M18 6 6 18',bell:'M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20.5h4',calendar:'M4 6h16v14H4zM4 10h16M8 3.5v4M16 3.5v4',globe:'M12 20.5a8.5 8.5 0 1 0 0-17 8.5 8.5 0 0 0 0 17zM3.5 12h17M12 3.5c2.6 2.4 3.5 5.3 3.5 8.5s-.9 6.1-3.5 8.5c-2.6-2.4-3.5-5.3-3.5-8.5s.9-6.1 3.5-8.5z',home:'M4 11 12 4l8 7M6 9.5V20h12V9.5M10 20v-5h4v5',search:'M10.5 17a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13zM15.5 15.5 20 20',user:'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4.5 20a7.5 7.5 0 0 1 15 0',settings:'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1',heart:'M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.6 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z',arrow:'M4 12h15M13 6l6 6-6 6',play:'M7 5v14l12-7z',download:'M12 4v11M7 10l5 5 5-5M5 20h14',mail:'M3.5 6h17v12h-17zM3.5 6l8.5 7 8.5-7',star:'M12 3.5l2.6 5.5 6 .7-4.4 4.1 1.2 6-5.4-3-5.4 3 1.2-6L3.4 9.7l6-.7z',lock:'M6 11h12v9H6zM8.5 11V8a3.5 3.5 0 0 1 7 0v3',chat:'M4 5h16v11H9l-5 4z'};
+function icon(k,name,size=24,color){const s=k.stroke;const join=s.join||(s.cap==='round'?'round':'miter');return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color||k.t.ink}" stroke-width="${s.w}" stroke-linecap="${s.cap}" stroke-linejoin="${join}"><path d="${ICONS[name]}"/></svg>`}
+const PAT={},MARK={},DIV={};
+function pattern(k){if(PAT[k.id])return PAT[k.id](k.t,k);const t=k.t;switch(k.id){
  case 'matrix':{let s='';const r=n=>((Math.sin(n*12.9898)*43758.5453)%1+1)%1;for(let y=0;y<8;y++)for(let i=0;i<8;i++){const v=r(y*8+i+1);s+=`<text x="${i*10+2}" y="${y*10+9}" fill="${v>.85?t.accent:t.line}" font-family="monospace" font-size="9">${v>.5?1:0}</text>`}return `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80"><rect width="80" height="80" fill="${t.bg}"/>${s}</svg>`}
  case 'synthwave':return `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80"><rect width="80" height="80" fill="${t.bg}"/><path d="M0 40h80M40 0v80" stroke="${t.accent}" stroke-opacity=".5"/><path d="M0 0h80M0 0v80" stroke="${t.accent2}" stroke-opacity=".35"/><circle cx="40" cy="40" r="2" fill="${t.accent2}"/></svg>`;
  case 'chrome':return `<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96"><defs><radialGradient id="b" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#fff"/><stop offset=".5" stop-color="#D6DCE8"/><stop offset=".9" stop-color="#7C869B"/><stop offset="1" stop-color="#7C869B" stop-opacity="0"/></radialGradient></defs><rect width="96" height="96" fill="${t.bg}"/><circle cx="24" cy="24" r="16" fill="url(#b)"/><circle cx="72" cy="66" r="22" fill="url(#b)"/><circle cx="76" cy="16" r="7" fill="url(#b)"/><circle cx="20" cy="78" r="9" fill="url(#b)"/></svg>`;
@@ -149,7 +167,7 @@ function pattern(k){const t=k.t;switch(k.id){
  case 'vaporwave':return `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><rect width="40" height="40" fill="${t.bg}"/><rect width="20" height="20" fill="${t.line}"/><rect x="20" y="20" width="20" height="20" fill="${t.line}"/><path d="M26 6l6 10H20z" fill="${t.accent2}" fill-opacity=".6"/></svg>`;
  case 'graphite':return `<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96"><rect width="96" height="96" fill="${t.bg}"/><g fill="none" stroke-width="1"><path d="M0 24h30l12 12h54M48 0v18l12 12v66M0 72h20l10-10h22" stroke="#2C8FA0" stroke-opacity=".7"/><path d="M72 0v40l-8 8H0" stroke="${t.accent}" stroke-opacity=".55"/></g><rect x="56" y="56" width="22" height="16" fill="${t.surface}" stroke="#A8D8E2" stroke-opacity=".35"/><circle cx="30" cy="24" r="2" fill="${t.accent}"/><circle cx="64" cy="48" r="2" fill="${t.accent2}"/></svg>`;
  default:return `<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96"><rect width="96" height="96" fill="${t.bg}"/><circle cx="24" cy="24" r="18" fill="${t.accent}"/><rect x="54" y="6" width="36" height="36" fill="${t.accent2}"/><path d="M6 90 24 54l18 36z" fill="${t.accent3||'#F5C400'}"/><path d="M54 54h36v36a36 36 0 0 1-36-36z" fill="${t.ink}"/></svg>`}}
-function mark(k){const t=k.t;switch(k.id){
+function mark(k){if(MARK[k.id])return MARK[k.id](k.t,k);const t=k.t;switch(k.id){
  case 'matrix':return `<g fill="none" stroke="${t.accent}" stroke-width="3"><rect x="6" y="6" width="52" height="52"/><path d="M18 22l10 10-10 10M32 44h14"/></g>`;
  case 'synthwave':return `<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE66D"/><stop offset="1" stop-color="${t.accent}"/></linearGradient></defs><circle cx="32" cy="30" r="24" fill="url(#g)"/><path d="M8 36h48M8 42h48M8 48h48" stroke="${t.bg}" stroke-width="3"/>`;
  case 'chrome':return `<defs><radialGradient id="g" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff"/><stop offset=".55" stop-color="#C9D0DE"/><stop offset="1" stop-color="#5D667A"/></radialGradient></defs><path d="M32 4c10 14 26 14 26 28S46 60 32 60 6 46 6 32 22 18 32 4z" fill="url(#g)"/>`;
@@ -159,40 +177,11 @@ function mark(k){const t=k.t;switch(k.id){
  case 'vaporwave':return `<rect x="6" y="10" width="52" height="44" rx="4" fill="#fff" stroke="${t.ink}" stroke-width="3"/><path d="M6 20h52" stroke="${t.ink}" stroke-width="3"/><circle cx="32" cy="38" r="10" fill="${t.accent}"/>`;
  case 'graphite':return `<rect x="2" y="2" width="60" height="60" rx="8" fill="${t.surface}"/><path d="M14 46V30l8-8h28M14 46h22l6-6h8" fill="none" stroke="${t.ink}" stroke-width="3"/><rect x="44" y="18" width="8" height="8" fill="${t.accent}"/>`;
  default:return `<circle cx="20" cy="20" r="16" fill="${t.accent}"/><rect x="34" y="4" width="26" height="26" fill="${t.accent2}"/><path d="M4 60 20 34l16 26z" fill="${t.accent3||'#F5C400'}"/><path d="M38 60V36h22a24 24 0 0 1-22 24z" fill="${t.ink}"/>`}}
-function logo(k,dark){const t=k.t,w=Math.max(260,k.name.length*26+110);const fam=k.fonts.head.split(',')[0].replace(/'/g,'');return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="80" viewBox="0 0 ${w} 80"><rect width="${w}" height="80" fill="${dark?t.bg:'none'}"/><g transform="translate(8 8)">${mark(k)}</g><text x="88" y="50" fill="${t.ink}" font-family="${fam}, sans-serif" font-size="30" letter-spacing="${k.case==='upper'?3:0}">${k.case==='upper'?k.name.toUpperCase():k.name}</text></svg>`}
-function divider(k){const t=k.t;const by={deco:`<path d="M0 12h150M250 12h150" stroke="${t.accent}"/><path d="M200 2l10 10-10 10-10-10z" fill="none" stroke="${t.accent}"/><circle cx="170" cy="12" r="2" fill="${t.accent}"/><circle cx="230" cy="12" r="2" fill="${t.accent}"/>`,brutalist:`<rect y="6" width="400" height="12" fill="${t.ink}"/><rect x="0" y="6" width="120" height="12" fill="${t.accent}"/>`,matrix:`<text x="0" y="17" fill="${t.accent}" font-family="monospace" font-size="14">${'01001101 01000001 01010100 01010010 01001001 01011000'.slice(0,52)}</text>`,blueprint:`<path d="M0 12h400M0 4v16M400 4v16" stroke="#fff"/><text x="185" y="9" fill="${t.accent}" font-family="monospace" font-size="9">400</text>`};
+function headFam(k){return k.fonts.head.replace(/"/g,"'")}
+function nameW(k,size){const n=k.case==='upper'?k.name.toUpperCase():k.name;return n.length*size*(k.wf||.62)*(k.case==='upper'?1.1:1)}
+function logo(k,dark,extra=''){const t=k.t,tw=Math.ceil(nameW(k,30)+(k.case==='upper'?k.name.length*3:0)),w=Math.max(220,88+tw+20);return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="80" viewBox="0 0 ${w} 80">${extra}<rect width="${w}" height="80" fill="${dark?t.bg:'none'}"/><g transform="translate(8 8)">${mark(k)}</g><text x="88" y="50" fill="${t.ink}" font-family="${headFam(k)}" font-weight="${k.hw||400}" font-size="30" letter-spacing="${k.case==='upper'?3:0}">${k.case==='upper'?k.name.toUpperCase():k.name}</text></svg>`}
+function divider(k){if(DIV[k.id])return `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="24" viewBox="0 0 400 24">${DIV[k.id](k.t,k)}</svg>`;const t=k.t;const by={deco:`<path d="M0 12h150M250 12h150" stroke="${t.accent}"/><path d="M200 2l10 10-10 10-10-10z" fill="none" stroke="${t.accent}"/><circle cx="170" cy="12" r="2" fill="${t.accent}"/><circle cx="230" cy="12" r="2" fill="${t.accent}"/>`,brutalist:`<rect y="6" width="400" height="12" fill="${t.ink}"/><rect x="0" y="6" width="120" height="12" fill="${t.accent}"/>`,matrix:`<text x="0" y="17" fill="${t.accent}" font-family="monospace" font-size="14">${'01001101 01000001 01010100 01010010 01001001 01011000'.slice(0,52)}</text>`,blueprint:`<path d="M0 12h400M0 4v16M400 4v16" stroke="#fff"/><text x="185" y="9" fill="${t.accent}" font-family="monospace" font-size="9">400</text>`};
  return `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="24" viewBox="0 0 400 24">${by[k.id]||`<path d="M0 12h400" stroke="${t.accent}" stroke-width="2" stroke-dasharray="${k.id==='bauhaus'?'0':'12 8'}"/><circle cx="200" cy="12" r="6" fill="${t.accent2}"/>`}</svg>`}
-function css(k){const t=k.t;return `/* ${k.name} (${k.no}) theme kit · Visual & Motion Atlas */
-@import url('https://fonts.googleapis.com/css2?${k.fonts.css}&display=swap');
-:root{
-  --bg:${t.bg};
-  --surface:${t.surface};
-  --ink:${t.ink};
-  --mute:${t.mute};
-  --line:${t.line};
-  --accent:${t.accent};
-  --on-accent:${t.onAccent};
-  --accent-2:${t.accent2};${t.accent3?`\n  --accent-3:${t.accent3};`:''}
-  --radius:${t.radius};
-  --shadow:${t.shadow};
-  --glow:${t.glow};
-  --font-head:${k.fonts.head};
-  --font-body:${k.fonts.body};
-  --case:${k.case==='upper'?'uppercase':'none'};
-  --stroke:${k.stroke.w}px;
-}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 var(--font-body)}
-h1,h2,h3{font-family:var(--font-head);text-transform:var(--case);line-height:1.05}
-.btn{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 20px;border:2px solid var(--accent);border-radius:var(--radius);background:var(--accent);color:var(--on-accent);font:600 15px var(--font-body);text-transform:var(--case);cursor:pointer}
-.btn:hover{box-shadow:var(--glow)}
-.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px}
-.field{width:100%;min-height:44px;padding:0 14px;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);font:inherit}
-.field:focus{outline:none;box-shadow:var(--glow);border-color:var(--accent)}
-.badge{display:inline-block;padding:4px 10px;border-radius:999px;border:1px solid var(--accent);color:var(--ink);font-size:12px;text-transform:var(--case)}
-`}
-function json(k){return JSON.stringify({name:k.name,number:k.no,tagline:k.tagline,color:{bg:k.t.bg,surface:k.t.surface,ink:k.t.ink,mute:k.t.mute,line:k.t.line,accent:k.t.accent,onAccent:k.t.onAccent,accent2:k.t.accent2,...(k.t.accent3?{accent3:k.t.accent3}:{})},font:{head:k.fonts.head,body:k.fonts.body,googleFonts:'https://fonts.googleapis.com/css2?'+k.fonts.css+'&display=swap'},radius:k.t.radius,shadow:k.t.shadow,glow:k.t.glow,textCase:k.case,iconStroke:k.stroke},null,2)}
-
 /* ---------- Minimal ZIP writer (stored, no compression) ---------- */
 const CRC=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
 function crc32(b){let c=0xFFFFFFFF;for(let i=0;i<b.length;i++)c=CRC[(c^b[i])&255]^(c>>>8);return(c^0xFFFFFFFF)>>>0}
@@ -205,5 +194,5 @@ function zip(files){const enc=new TextEncoder(),parts=[],central=[];let off=0;co
  const csize=central.reduce((a,x)=>a+x.length,0),e=new DataView(new ArrayBuffer(22));e.setUint32(0,0x06054b50,true);e.setUint16(8,files.length,true);e.setUint16(10,files.length,true);e.setUint32(12,csize,true);e.setUint32(16,off,true);
  return new Blob([...parts,...central,new Uint8Array(e.buffer)],{type:'application/zip'})}
 
-window.ThemeKits={list:K,BG,ICONS,icon,pattern,mark,logo,divider,css,json,zip,crc32};
+window.ThemeKits={list:K,BG,ICONS,PAT,MARK,DIV,icon,pattern,mark,logo,divider,headFam,nameW,zip,crc32};
 })();

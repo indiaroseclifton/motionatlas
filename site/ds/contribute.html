@@ -1,0 +1,71 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Contribute · 01 Design System</title>
+<meta name="description" content="How to propose a new component or change to the 01 Design System: the bar a component must clear, file and naming conventions, the review checklist, and licence notes.">
+<meta name="theme-color" content="#07090C"><link rel="icon" href="../work/01/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../work/01/01.css"><link rel="stylesheet" href="../work/01/01-ui.css"><link rel="stylesheet" href="ds.css">
+<style>
+.flow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border-top:1px solid var(--line)}
+.flow div{padding:18px 16px 20px 0;display:grid;gap:6px;border-bottom:1px solid var(--line);min-width:0;align-content:start}
+.flow div+div{padding-left:16px;border-left:1px solid var(--line)}
+.flow b{font:500 12px var(--f-mono);letter-spacing:.1em;color:var(--cyan)}
+.flow span{font-size:14px;color:var(--pt-2)}
+.checks{display:grid;gap:10px}
+@media (max-width:900px){.flow{grid-template-columns:1fr}.flow div+div{padding-left:0;border-left:0}}
+</style>
+</head><body class="ds" data-page="contribute">
+<main id="main">
+<header class="ds-hero">
+ <p class="ds-kick">Get started · Contribute</p>
+ <h1>Earn your place <em>in the system.</em></h1>
+ <p class="ds-lede">Most ideas should be a pattern, not a component. A new component has to be needed in at least two products, impossible to build from what exists, and as accessible as everything already here.</p>
+ <ul class="ds-meta"><li>Prefix <b>u-</b></li><li>Review <b>design + code + a11y</b></li></ul>
+</header>
+
+<section class="ds-sec" aria-labelledby="process">
+ <h2 id="process">From idea to release</h2>
+ <div class="flow"><div><b>01 · PROPOSE</b><span>Describe the problem, the two places it is needed, and why existing parts fail.</span></div><div><b>02 · PROTOTYPE</b><span>Build it in a real screen using only tokens. Screenshots of both products.</span></div><div><b>03 · REVIEW</b><span>Design, code and accessibility review against the checklist below.</span></div><div><b>04 · DOCUMENT</b><span>A section on its family page: examples, code, anatomy, rules, keyboard.</span></div><div><b>05 · RELEASE</b><span>Minor version bump and a changelog line in the house voice.</span></div></div>
+</section>
+
+<section class="ds-sec" aria-labelledby="checklist">
+ <h2 id="checklist">The review checklist</h2>
+ <p class="ds-lead">Tick your way through before you ask for review. Your ticks stay on this device.</p>
+ <div class="checks" id="checks">
+  <label class="u-check"><input type="checkbox"> Uses only tokens: no raw colours, sizes or durations</label>
+  <label class="u-check"><input type="checkbox"> Class names start with <code>u-</code>; modifiers are bare words (<code>.solid</code>, <code>.sm</code>)</label>
+  <label class="u-check"><input type="checkbox"> Structure from hairlines and corner ticks, never a callout card</label>
+  <label class="u-check"><input type="checkbox"> Works with keyboard alone, with a visible cyan focus ring</label>
+  <label class="u-check"><input type="checkbox"> Correct roles, names and states (aria-pressed, aria-expanded, aria-invalid…)</label>
+  <label class="u-check"><input type="checkbox"> Text passes WCAG AA on every surface it can sit on</label>
+  <label class="u-check"><input type="checkbox"> Instant under prefers-reduced-motion; no motion over 320ms in product UI</label>
+  <label class="u-check"><input type="checkbox"> No horizontal scroll at 390px; text children have min-width: 0</label>
+  <label class="u-check"><input type="checkbox"> Any behaviour wires itself through <code>UI.wire(root)</code> from a data attribute</label>
+  <label class="u-check"><input type="checkbox"> Copy passes the hedge checker on the Voice page</label>
+ </div>
+ <p class="u-mono u-muted" id="ckn" role="status" style="margin:0">0 / 10 DONE</p>
+</section>
+
+<section class="ds-sec" aria-labelledby="conventions">
+ <h2 id="conventions">Conventions</h2>
+<pre data-lang="css" data-title="01-ui.css · a new component">
+/* ---------- meter ring ---------- */
+.u-ring{--v:40%;width:44px;height:44px;border-radius:50%;
+  background:conic-gradient(var(--cyan) var(--v),var(--g-700) 0)}
+.u-ring.green{background:conic-gradient(var(--green) var(--v),var(--g-700) 0)}
+@media (prefers-reduced-motion:reduce){.u-ring{transition:none}}
+</pre>
+ <ul class="ds-list"><li><b>Files.</b> Tokens live in <code>01.css</code>, components in <code>01-ui.css</code>, behaviour in <code>01-ui.js</code>. Nothing else ships.</li><li><b>Documentation.</b> Add a <code>.ds-comp</code> section to the right page in <code>/ds</code>, with an <code>h2</code> id; the sidebar, contents, search index and Code tab pick it up.</li><li><b>Search.</b> Rebuild <code>ds/search-index.js</code> after adding headings (it lists every page's h2 and h3 with an id).</li></ul>
+</section>
+
+<section class="ds-sec" aria-labelledby="licence">
+ <h2 id="licence">Licence</h2>
+ <ul class="ds-list"><li><b>Code.</b> The CSS and JavaScript on this site are published for reference and reuse inside 01 projects. No open-source licence has been granted yet; ask before using them in an unrelated product.</li><li><b>Brand.</b> The 01ai name, wordmark, 01 mark and lockups are trademarks of 01ai and are not licensed for use outside 01 products.</li><li><b>Fonts.</b> Geist and Geist Mono are by Vercel under the SIL Open Font Licence 1.1, free for any use.</li><li><b>Three.js.</b> The City3D engine uses three.js r128 under the MIT licence.</li></ul>
+</section>
+</main>
+<script src="../work/01/01.js"></script><script src="../work/01/01-ui.js"></script><script src="search-index.js"></script><script src="ds.js"></script>
+<script>
+(()=>{const bs=[...document.querySelectorAll('#checks input')],K='ds-contrib-checks';
+ try{const v=JSON.parse(localStorage.getItem(K)||'[]');bs.forEach((b,i)=>b.checked=!!v[i])}catch(e){}
+ const up=()=>{const n=bs.filter(b=>b.checked).length;DS.$('#ckn').textContent=`${n} / ${bs.length} DONE${n===bs.length?' · READY FOR REVIEW':''}`;try{localStorage.setItem(K,JSON.stringify(bs.map(b=>b.checked)))}catch(e){}};
+ bs.forEach(b=>b.onchange=up);up()})();
+</script>
+</body></html>

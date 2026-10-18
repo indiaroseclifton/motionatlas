@@ -1,0 +1,68 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Draggable physics stickers</title>
+<style>
+:root{--bg:#F2EEE6;--ink:#1B1A18;--mute:#5E584E}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;overflow:hidden}
+.board{position:fixed;inset:0;background-image:radial-gradient(#D5CEC0 1.2px,transparent 1.3px);background-size:22px 22px;touch-action:none}
+.head{position:absolute;left:clamp(16px,5vw,56px);top:clamp(18px,6vh,60px);max-width:min(460px,calc(100% - 32px));pointer-events:none}
+.head h1{margin:0 0 8px;font:800 clamp(34px,6vw,72px)/.92 system-ui;letter-spacing:-.05em}
+.head p{margin:0;color:var(--mute);max-width:40ch}
+.ctl{position:absolute;left:clamp(16px,5vw,56px);bottom:20px;display:flex;gap:10px;flex-wrap:wrap}
+.ctl button{font:600 13px/1 system-ui;min-height:44px;padding:0 18px;border-radius:999px;border:2px solid var(--ink);background:var(--bg);color:var(--ink);cursor:pointer}
+.ctl button:focus-visible{outline:3px solid #2D6BFF;outline-offset:2px}
+.s{position:absolute;left:0;top:0;display:grid;place-items:center;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none;filter:drop-shadow(0 6px 8px rgba(40,30,10,.22));will-change:transform}
+.s.drag{cursor:grabbing;filter:drop-shadow(0 18px 18px rgba(40,30,10,.28))}
+.s:focus-visible{outline:3px dashed #2D6BFF;outline-offset:6px;border-radius:50%}
+.s>*{pointer-events:none}
+.round{border-radius:50%;border:5px solid #fff;font:800 15px/1.05 system-ui;text-align:center;letter-spacing:-.01em;padding:10px}
+.pill{border-radius:999px;border:5px solid #fff;font:800 18px/1 system-ui;padding:0 22px;letter-spacing:-.02em}
+.img{border-radius:12px;border:6px solid #fff;overflow:hidden;background:#fff}
+.img img{width:100%;height:100%;object-fit:cover;display:block;border-radius:6px}
+.star svg{width:100%;height:100%}
+</style></head><body>
+<div class="board" id="board" role="application" aria-label="Sticker board. Tab to a sticker, use arrow keys to move it, hold Shift for bigger steps, press Enter to toss it.">
+<div class="head"><h1>Stick it anywhere.</h1><p>Grab a sticker and throw it. They spin, bounce off the edges and knock into each other.</p></div>
+<div class="ctl"><button id="toss">Toss them all</button><button id="tidy">Tidy up</button></div>
+</div>
+<script>
+const CONFIG={stickers:[{k:'round',t:'Made<br>with<br>care',bg:'#D63A16',fg:'#fff',r:58},{k:'pill',t:'New drop!',bg:'#2D6BFF',fg:'#fff',w:150,h:56},{k:'star',bg:'#FFD23F',r:56,t:'★'},{k:'img',src:'origami',w:96,h:120},{k:'round',t:'100%<br>original',bg:'#0E7A4E',fg:'#fff',r:52},{k:'pill',t:'hello 👋',bg:'#1B1A18',fg:'#F2EEE6',w:140,h:54},{k:'img',src:'jellyfish',w:90,h:112},{k:'round',t:'EST.<br>2026',bg:'#C9A7FF',fg:'#1B1A18',r:46}]};
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const B=document.getElementById('board');let W=innerWidth,H=innerHeight;
+const S=CONFIG.stickers.map((c,i)=>{const el=document.createElement('div');el.className='s '+c.k;el.tabIndex=0;el.setAttribute('role','button');
+ let w=c.w||c.r*2,h=c.h||c.r*2;if(W<600){w*=.82;h*=.82}
+ el.style.width=w+'px';el.style.height=h+'px';
+ if(c.k==='round'||c.k==='pill'){el.style.background=c.bg;el.style.color=c.fg;el.innerHTML='<span>'+c.t+'</span>';el.setAttribute('aria-label','Sticker: '+c.t.replace(/<br>/g,' '))}
+ if(c.k==='star'){el.innerHTML=`<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 4l12 30 32 2-25 20 9 32-28-18-28 18 9-32L6 36l32-2z" fill="${c.bg}" stroke="#fff" stroke-width="5" stroke-linejoin="round"/></svg>`;el.setAttribute('aria-label','Sticker: star')}
+ if(c.k==='img'){el.innerHTML=`<img src="../../assets/shelf/${c.src}.webp" alt="">`;el.setAttribute('aria-label','Sticker: photo')}
+ B.append(el);
+ const o={el,w,h,r:Math.max(w,h)/2*.82,x:0,y:0,vx:0,vy:0,a:(Math.random()-.5)*24,va:0,drag:false};home(o,i);return o});
+function home(o,i){const cols=W<600?2:4,cw=(W-40)/cols;o.x=20+cw*(i%cols+.5);o.y=H*(W<600?.5:.56)+Math.floor(i/cols)*(W<600?110:140);o.x=Math.min(W-o.w/2-8,o.x);o.y=Math.min(H-o.h/2-80,o.y)}
+let zTop=10;
+function draw(o){o.el.style.transform=`translate(${o.x-o.w/2}px,${o.y-o.h/2}px) rotate(${o.a}deg)${o.drag?' scale(1.08)':''}`}
+let raf=0;function kick(){if(!raf)raf=requestAnimationFrame(step)}
+function step(){raf=0;let moving=false;
+ for(const o of S){if(o.drag){draw(o);moving=true;continue}
+  if(reduce){o.vx=o.vy=o.va=0}
+  o.x+=o.vx;o.y+=o.vy;o.a+=o.va;o.vx*=.975;o.vy*=.975;o.va*=.96;
+  if(o.x<o.w/2){o.x=o.w/2;o.vx=Math.abs(o.vx)*.7;o.va+=o.vy*.2}if(o.x>W-o.w/2){o.x=W-o.w/2;o.vx=-Math.abs(o.vx)*.7;o.va-=o.vy*.2}
+  if(o.y<o.h/2){o.y=o.h/2;o.vy=Math.abs(o.vy)*.7;o.va-=o.vx*.2}if(o.y>H-o.h/2){o.y=H-o.h/2;o.vy=-Math.abs(o.vy)*.7;o.va+=o.vx*.2}
+  if(Math.abs(o.vx)+Math.abs(o.vy)+Math.abs(o.va)>.05)moving=true}
+ for(let i=0;i<S.length;i++)for(let j=i+1;j<S.length;j++){const a=S[i],b=S[j],dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy)||1,m=a.r+b.r;if(d<m){const nx=dx/d,ny=dy/d,push=(m-d)/2;
+  if(!a.drag){a.x-=nx*push;a.y-=ny*push}if(!b.drag){b.x+=nx*push;b.y+=ny*push}
+  const rv=(b.vx-a.vx)*nx+(b.vy-a.vy)*ny;if(rv<0&&!reduce){const imp=-rv*.9;if(!a.drag){a.vx-=nx*imp;a.vy-=ny*imp;a.va+=(Math.random()-.5)*2}if(!b.drag){b.vx+=nx*imp;b.vy+=ny*imp;b.va+=(Math.random()-.5)*2}}moving=true}}
+ S.forEach(draw);if(moving)kick()}
+let cur=null,lx=0,ly=0,lt=0,ox=0,oy=0;
+B.addEventListener('pointerdown',e=>{const el=e.target.closest('.s');if(!el)return;cur=S.find(o=>o.el===el);cur.drag=true;el.classList.add('drag');el.style.zIndex=++zTop;el.setPointerCapture(e.pointerId);ox=e.clientX-cur.x;oy=e.clientY-cur.y;lx=e.clientX;ly=e.clientY;lt=performance.now();cur.vx=cur.vy=0;kick()});
+B.addEventListener('pointermove',e=>{if(!cur)return;const t=performance.now(),dt=Math.max(8,t-lt);cur.vx=(e.clientX-lx)/dt*16;cur.vy=(e.clientY-ly)/dt*16;lx=e.clientX;ly=e.clientY;lt=t;cur.x=e.clientX-ox;cur.y=e.clientY-oy;cur.a+=cur.vx*.15});
+const end=()=>{if(!cur)return;cur.drag=false;cur.el.classList.remove('drag');cur.va=cur.vx*.6;if(performance.now()-lt>80){cur.vx=cur.vy=0}cur=null;kick()};
+B.addEventListener('pointerup',end);B.addEventListener('pointercancel',end);
+B.addEventListener('keydown',e=>{const o=S.find(o=>o.el===document.activeElement);if(!o)return;const d=e.shiftKey?48:12;const m={ArrowLeft:[-d,0],ArrowRight:[d,0],ArrowUp:[0,-d],ArrowDown:[0,d]}[e.key];
+ if(m){e.preventDefault();o.x+=m[0];o.y+=m[1];o.el.style.zIndex=++zTop;kick()}
+ if(e.key==='Enter'||e.key===' '){e.preventDefault();toss(o)}});
+function toss(o){if(reduce){o.x=o.w/2+Math.random()*(W-o.w);o.y=o.h/2+Math.random()*(H-o.h)}else{const a=Math.random()*Math.PI*2;o.vx=Math.cos(a)*22;o.vy=Math.sin(a)*22;o.va=(Math.random()-.5)*30}kick()}
+document.getElementById('toss').onclick=()=>S.forEach(toss);
+document.getElementById('tidy').onclick=()=>{S.forEach((o,i)=>{o.vx=o.vy=o.va=0;home(o,i);o.a=(Math.random()-.5)*16});kick()};
+addEventListener('resize',()=>{W=innerWidth;H=innerHeight;kick()});
+S.forEach(draw);kick();
+</script></body></html>

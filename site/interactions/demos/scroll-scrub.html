@@ -1,0 +1,72 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Scroll-scrubbed product reveal</title>
+<style>
+:root{--bg:#0A0B0F;--ink:#F1F2F5;--mute:#A0A4B0;--acc:#7CC8FF;--w:min(250px,52vw)}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,sans-serif}
+.scrub{position:relative;height:460vh}
+.sticky{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);align-items:center;padding:0 clamp(16px,6vw,90px);background:radial-gradient(60% 70% at 70% 50%,#1A2233,transparent 70%)}
+.copy{position:relative;min-height:240px}
+.step{position:absolute;inset:0 0 auto 0;opacity:0;transform:translateY(16px);transition:opacity .45s,transform .45s cubic-bezier(.2,.8,.2,1)}
+.step.on{opacity:1;transform:none}
+.step .k{font:500 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.18em;text-transform:uppercase;color:var(--acc);margin:0 0 14px}
+.step h2{margin:0 0 12px;font:600 clamp(32px,4.6vw,64px)/1 system-ui;letter-spacing:-.04em}
+.step p{margin:0;color:var(--mute);max-width:38ch}
+.scene{height:100%;display:grid;place-items:center;perspective:1400px}
+.dev{position:relative;width:var(--w);aspect-ratio:9/17;transform-style:preserve-3d}
+.layer{position:absolute;inset:0;border-radius:calc(var(--w)*.16);transform-style:preserve-3d}
+.shell{background:linear-gradient(150deg,#3A4150,#151820 60%);box-shadow:0 40px 80px -20px rgba(0,0,0,.8),inset 0 0 0 1px rgba(255,255,255,.08)}
+.board{inset:6%;border-radius:calc(var(--w)*.11);background:#0E3B2E;background-image:linear-gradient(rgba(124,255,200,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(124,255,200,.12) 1px,transparent 1px);background-size:14px 14px;box-shadow:inset 0 0 0 1px rgba(124,255,200,.3)}
+.board i{position:absolute;background:#1C1F24;border-radius:4px;box-shadow:inset 0 0 0 1px #3d4350}
+.board i:nth-child(1){left:18%;top:12%;width:64%;height:18%}
+.board i:nth-child(2){left:18%;top:36%;width:28%;height:14%;background:#2C2416}
+.board i:nth-child(3){left:54%;top:36%;width:28%;height:14%}
+.board i:nth-child(4){left:14%;top:58%;width:72%;height:30%;background:linear-gradient(#5d6575,#2a2f3a);border-radius:10px}
+.screen{inset:3.5%;border-radius:calc(var(--w)*.13);overflow:hidden;background:#000}
+.screen img{width:100%;height:100%;object-fit:cover;opacity:var(--lit,.15);transition:opacity .3s}
+.glass{background:linear-gradient(125deg,rgba(255,255,255,.22),rgba(255,255,255,0) 40%,rgba(255,255,255,.06) 70%,rgba(255,255,255,0));box-shadow:inset 0 0 0 1px rgba(255,255,255,.25)}
+.tag{position:absolute;left:100%;top:50%;margin-left:14px;white-space:nowrap;font:500 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);opacity:var(--tag,0);transform:translateZ(1px)}
+.tag::before{content:"";display:inline-block;width:28px;height:1px;background:var(--acc);vertical-align:middle;margin-right:8px}
+.rail{position:absolute;right:clamp(12px,3vw,32px);top:50%;transform:translateY(-50%);display:grid;gap:10px}
+.rail button{width:12px;height:12px;padding:0;border-radius:50%;border:1px solid #6E7380;background:transparent;cursor:pointer}
+.rail button[aria-current=step]{background:var(--acc);border-color:var(--acc)}
+.rail button:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+.bar{position:absolute;left:0;bottom:0;height:3px;background:var(--acc);width:calc(var(--p,0)*100%)}
+.after{min-height:70vh;display:grid;place-items:center;text-align:center;padding:40px 16px}
+.after h2{font:600 clamp(28px,4vw,48px)/1.05 system-ui;letter-spacing:-.03em;margin:0 0 10px}
+.after p{color:var(--mute);margin:0}
+@media (max-width:760px){.sticky{grid-template-columns:1fr;grid-template-rows:1fr auto;padding-bottom:34px}.copy{order:2;min-height:190px}.scene{order:1}.tag{display:none}:root{--w:min(190px,46vw)}}
+@media (prefers-reduced-motion:reduce){.scrub{height:auto}.sticky{position:relative;height:auto;min-height:100vh;padding-block:40px}.copy{min-height:0;display:grid;gap:26px}.step{position:static;opacity:1;transform:none;transition:none}.rail,.bar{display:none}}
+</style></head><body>
+<section class="scrub" id="scrub" aria-label="Product reveal">
+<div class="sticky" id="sticky">
+ <div class="copy" id="copy"></div>
+ <div class="scene" aria-hidden="true"><div class="dev" id="dev">
+  <div class="layer shell"><span class="tag">Aluminium shell</span></div>
+  <div class="layer board"><i></i><i></i><i></i><i></i><span class="tag">Logic board</span></div>
+  <div class="layer screen"><img src="../../assets/shelf/nebula.webp" alt=""><span class="tag">OLED panel</span></div>
+  <div class="layer glass"><span class="tag">Sapphire glass</span></div>
+ </div></div>
+ <nav class="rail" id="rail" aria-label="Jump to step"></nav>
+ <div class="bar" aria-hidden="true"></div>
+</div>
+</section>
+<section class="after"><div><h2>Now in four finishes.</h2><p>Scroll back up to run it in reverse.</p></div></section>
+<script>
+const CONFIG={steps:[['01 · Meet','Halo One','A pocket display with nothing to hide. Scroll to take it apart.'],['02 · Turn','Four layers deep','The whole device tips back so you can see how it stacks.'],['03 · Explode','Every part, in order','Glass, panel, board and shell separate on a single scroll value.'],['04 · Light','Then it wakes up','The panel powers on as the parts come back together.']]};
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const sc=document.getElementById('scrub'),dev=document.getElementById('dev'),copy=document.getElementById('copy'),rail=document.getElementById('rail'),st=document.getElementById('sticky');
+const L=[...dev.children];
+CONFIG.steps.forEach(([k,h,p],i)=>{const d=document.createElement('div');d.className='step';d.innerHTML=`<p class="k">${k}</p><h2>${h}</h2><p>${p}</p>`;copy.append(d);
+ const b=document.createElement('button');b.setAttribute('aria-label','Step '+(i+1)+': '+h);b.onclick=()=>{const top=sc.offsetTop+(sc.offsetHeight-innerHeight)*(i+.5)/CONFIG.steps.length;scrollTo({top,behavior:reduce?'auto':'smooth'})};rail.append(b)});
+const S=[...copy.children],B=[...rail.children];
+const cl=(v,a=0,b=1)=>Math.min(b,Math.max(a,v)),ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2,seg=(p,a,b)=>ease(cl((p-a)/(b-a)));
+let last=-1;
+function frame(p){const tilt=seg(p,.06,.3)-seg(p,.8,.97),gap=seg(p,.3,.55)-seg(p,.8,.95),lit=seg(p,.72,.9);
+ dev.style.transform=`rotateX(${tilt*56}deg) rotateZ(${-tilt*34}deg) translateY(${tilt*-4}%) scale(${1-tilt*.08})`;
+ L.forEach((l,i)=>{l.style.transform=`translateZ(${i*(4+gap*95)}px)`;l.style.setProperty('--tag',gap)});
+ dev.style.setProperty('--lit',.15+lit*.85);st.style.setProperty('--p',p);
+ const k=Math.min(S.length-1,Math.floor(p*S.length*.999));if(k!==last){S.forEach((s,i)=>{s.classList.toggle('on',i===k);s.setAttribute('aria-hidden',i!==k)});B.forEach((b,i)=>{if(i===k)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current')});last=k}}
+if(reduce){frame(.5);S.forEach(s=>{s.classList.add('on');s.removeAttribute('aria-hidden')})}
+else{let raf=0;const on=()=>{raf=0;const r=sc.getBoundingClientRect();frame(cl(-r.top/(sc.offsetHeight-innerHeight)))};addEventListener('scroll',()=>{if(!raf)raf=requestAnimationFrame(on)},{passive:true});addEventListener('resize',on);on()}
+</script></body></html>

@@ -1,0 +1,57 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Liquid tab indicator</title>
+<style>
+:root{--bg:#EFECE6;--ink:#17161A;--mute:#5A564F;--track:#E1DCD3;--pill:#17161A;--on:#F6F3EC;--ease:cubic-bezier(.2,.8,.2,1)}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,sans-serif;min-height:100vh;display:grid;place-items:center;padding:28px 16px}
+.wrap{width:min(760px,100%);display:grid;gap:26px}
+.k{font:500 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);margin:0}
+.tabs{position:relative;display:flex;background:var(--track);border-radius:999px;padding:6px;isolation:isolate}
+.tabs button{position:relative;z-index:1;flex:1 1 0;min-width:0;border:0;background:none;padding:13px 8px;border-radius:999px;font:600 14px/1 system-ui;color:var(--mute);cursor:pointer;transition:color .35s;white-space:nowrap}
+.tabs button[aria-selected=true]{color:var(--on)}
+.tabs button:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.blob{position:absolute;z-index:0;top:6px;bottom:6px;left:0;width:0;background:var(--pill);border-radius:999px;will-change:transform,width}
+.line{position:relative;display:flex;gap:4px;border-bottom:1px solid #CFC8BC}
+.line button{flex:0 0 auto;border:0;background:none;padding:12px 12px 14px;font:500 14px/1 system-ui;color:var(--mute);cursor:pointer}
+.line button[aria-selected=true]{color:var(--ink)}
+.line button:focus-visible{outline:2px solid var(--ink);outline-offset:-2px;border-radius:6px}
+.ink{position:absolute;left:0;bottom:-1px;height:3px;border-radius:3px;background:#C2461E;width:0}
+.panel{display:grid;grid-template-columns:minmax(0,1fr) 180px;gap:24px;align-items:center;background:#FBF9F5;border-radius:22px;padding:clamp(20px,4vw,34px);box-shadow:0 20px 40px -28px rgba(40,30,10,.45)}
+.panel h2{margin:0 0 8px;font:400 clamp(30px,5vw,46px)/1 Georgia,serif;letter-spacing:-.02em}
+.panel p{margin:0;color:var(--mute);max-width:42ch}
+.panel img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:14px}
+.panel[hidden]{display:none}
+.panel.in{animation:in .5s var(--ease)}
+@keyframes in{from{opacity:0;transform:translateY(10px)}}
+@media (max-width:560px){.panel{grid-template-columns:1fr}.panel img{aspect-ratio:16/9}.tabs button{font-size:13px}}
+@media (prefers-reduced-motion:reduce){.panel.in{animation:none}}
+</style></head><body>
+<div class="wrap">
+<p class="k">Pill tabs</p>
+<div class="tabs" role="tablist" aria-label="Studio sections" id="t1"><span class="blob" aria-hidden="true"></span></div>
+<div id="panels"></div>
+<p class="k">Underline tabs</p>
+<div class="line" role="tablist" aria-label="Sort journal" id="t2"><span class="ink" aria-hidden="true"></span></div>
+</div>
+<script>
+const CONFIG={tabs:[['Overview','A small studio for big ideas','We make identities, films and sites for people who care how things feel.','origami'],['Materials','Paper, glass and light','Everything starts on the bench: real materials, photographed close.','soap'],['Process','Slow first, then fast','Two weeks of looking, then a sprint of making. No surprises at the end.','threads'],['Journal','Notes from the bench','Short essays on craft, colour and the odd failed experiment.','amber']],line:['Newest','Popular','Longest read','Staff picks']};
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function liquid(list,mark,opts){
+  const btns=[...list.querySelectorAll('[role=tab]')];let L=0,R=0,vL=0,vR=0,tl=0,tr=0,raf=0,first=true;
+  function target(b){tl=b.offsetLeft;tr=b.offsetLeft+b.offsetWidth;if(first||reduce){L=tl;R=tr;first=false;draw();return}if(!raf)raf=requestAnimationFrame(step)}
+  function draw(){mark.style.transform=`translateX(${L}px)`;mark.style.width=Math.max(0,R-L)+'px';if(opts.squash){const stretch=(R-L)/Math.max(1,tr-tl);mark.style.borderRadius='999px';mark.style.scale=`1 ${Math.max(.72,1/Math.sqrt(Math.max(1,stretch)))}`}}
+  function step(){const right=tl>L||tr>R;const kL=right?.07:.2,kR=right?.2:.07;vL=(vL+(tl-L)*kL)*.72;vR=(vR+(tr-R)*kR)*.72;L+=vL;R+=vR;draw();if(Math.abs(tl-L)+Math.abs(tr-R)+Math.abs(vL)+Math.abs(vR)>.3)raf=requestAnimationFrame(step);else{L=tl;R=tr;draw();raf=0}}
+  function select(b,focus){btns.forEach(x=>{const on=x===b;x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1});if(focus)b.focus();target(b);opts.onSelect&&opts.onSelect(btns.indexOf(b))}
+  btns.forEach(b=>b.addEventListener('click',()=>select(b)));
+  list.addEventListener('keydown',e=>{const i=btns.indexOf(document.activeElement);if(i<0)return;let j=null;if(e.key==='ArrowRight')j=(i+1)%btns.length;if(e.key==='ArrowLeft')j=(i-1+btns.length)%btns.length;if(e.key==='Home')j=0;if(e.key==='End')j=btns.length-1;if(j!==null){e.preventDefault();select(btns[j],true)}});
+  addEventListener('resize',()=>{first=true;target(btns.find(b=>b.getAttribute('aria-selected')==='true'))});
+  select(btns[0]);
+}
+const t1=document.getElementById('t1'),panels=document.getElementById('panels');
+CONFIG.tabs.forEach(([name,h,p,img],i)=>{const b=document.createElement('button');b.setAttribute('role','tab');b.id='tab'+i;b.setAttribute('aria-controls','p'+i);b.textContent=name;t1.append(b);
+ const s=document.createElement('section');s.className='panel';s.id='p'+i;s.setAttribute('role','tabpanel');s.setAttribute('aria-labelledby','tab'+i);s.tabIndex=0;s.hidden=i>0;s.innerHTML=`<div><h2>${h}</h2><p>${p}</p></div><img src="../../assets/shelf/${img}.webp" alt="">`;panels.append(s)});
+liquid(t1,t1.querySelector('.blob'),{squash:true,onSelect:i=>{[...panels.children].forEach((s,j)=>{s.hidden=j!==i;if(j===i){s.classList.remove('in');void s.offsetWidth;s.classList.add('in')}})}});
+const t2=document.getElementById('t2');
+CONFIG.line.forEach(n=>{const b=document.createElement('button');b.setAttribute('role','tab');b.textContent=n;t2.append(b)});
+liquid(t2,t2.querySelector('.ink'),{});
+</script></body></html>

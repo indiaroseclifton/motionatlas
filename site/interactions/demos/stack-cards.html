@@ -1,0 +1,35 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sticky stacking cards</title>
+<style>
+:root{--bg:#F3F0EA;--ink:#191714;--mute:#5E584D}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,sans-serif}
+.intro{min-height:52vh;display:grid;align-content:end;padding:40px clamp(16px,6vw,90px) 30px}
+.intro .k{font:500 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.18em;text-transform:uppercase;color:#9A3412;margin:0 0 12px}
+.intro h1{margin:0 0 10px;font:400 clamp(40px,7vw,96px)/.95 Georgia,serif;letter-spacing:-.03em}
+.intro p{margin:0;color:var(--mute);max-width:50ch}
+.stack{padding:0 clamp(16px,6vw,90px) 30vh;display:grid;gap:5vh}
+.card{position:sticky;top:calc(10vh + var(--i)*22px);min-height:min(66vh,560px);border-radius:26px;padding:clamp(22px,4vw,44px);display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:clamp(18px,4vw,48px);align-items:center;transform-origin:50% 0;box-shadow:0 -10px 40px -24px rgba(30,20,10,.45);will-change:transform}
+.card .n{font:500 12px/1 ui-monospace,Menlo,monospace;letter-spacing:.16em;margin:0 0 16px}
+.card h2{margin:0 0 12px;font:400 clamp(30px,4.4vw,60px)/1 Georgia,serif;letter-spacing:-.025em}
+.card p{margin:0;max-width:40ch;font-size:16px}
+.card img{width:100%;height:100%;max-height:52vh;aspect-ratio:4/5;object-fit:cover;border-radius:16px}
+.card .dim{position:absolute;inset:0;border-radius:inherit;background:#000;opacity:0;pointer-events:none}
+.end{min-height:60vh;display:grid;place-items:center;text-align:center;padding:40px 16px}
+.end h2{font:400 clamp(28px,4vw,48px)/1 Georgia,serif;margin:0}
+@media (max-width:720px){.card{grid-template-columns:1fr;top:calc(6vh + var(--i)*14px);min-height:0}.card img{aspect-ratio:16/10;max-height:32vh}}
+@media (prefers-reduced-motion:reduce){.card{transform:none!important}.card .dim{opacity:0!important}}
+</style></head><body>
+<section class="intro"><p class="k">How we work</p><h1>Five steps, stacked.</h1><p>Scroll down. Each step pins near the top and the next one slides over it, while the ones underneath shrink back and darken like a deck being dealt.</p></section>
+<section class="stack" id="stack" aria-label="Process"></section>
+<section class="end"><h2>That’s the whole process.</h2></section>
+<script>
+const CONFIG=[['01','Listen','Two weeks of interviews, walks and reading before we draw anything.','#E8DCC8','#191714','sand'],['02','Look','Moodboards from real materials, photographed close and in daylight.','#1F2A24','#EEF3EE','tree'],['03','Make','Three directions, built far enough to feel, not just to see.','#C9D7F2','#121A2E','origami'],['04','Test','Real people, real screens, and notes we actually act on.','#2A1730','#F6ECF8','bloom'],['05','Ship','Files, guides and a launch day we stay around for.','#F4C27A','#20160A','amber']];
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const st=document.getElementById('stack');
+CONFIG.forEach(([n,t,p,bg,fg,img],i)=>{const a=document.createElement('article');a.className='card';a.style.setProperty('--i',i);a.style.background=bg;a.style.color=fg;a.innerHTML=`<div><p class="n">Step ${n} / 05</p><h2>${t}</h2><p>${p}</p></div><img src="../../assets/shelf/${img}.webp" alt=""><div class="dim"></div>`;st.append(a)});
+const C=[...st.children];
+function update(){if(reduce)return;const T=C.map(c=>c.getBoundingClientRect().top),span=innerHeight*.7;C.forEach((c,i)=>{let sum=0;for(let j=i+1;j<C.length;j++)sum+=Math.max(0,Math.min(1,1-(T[j]-T[i])/span));sum=Math.min(sum,3);
+ c.style.transform=`scale(${1-sum*.045})`;c.querySelector('.dim').style.opacity=Math.min(.5,sum*.16)})}
+addEventListener('scroll',()=>requestAnimationFrame(update),{passive:true});addEventListener('resize',update);update();
+</script></body></html>

@@ -1,0 +1,1 @@
+window.DS_INDEX=[];

@@ -1,0 +1,60 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Elastic rubber-band slider</title>
+<style>
+:root{--bg:#F1F2EE;--ink:#151613;--mute:#5B5E55;--card:#FFFFFF;--acc:#2E6BFF;--hair:#DFE1DA}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;min-height:100vh;display:grid;place-items:center;padding:30px 16px}
+.wrap{width:min(640px,100%);display:grid;gap:18px}
+h1{margin:0;font:650 clamp(30px,4.4vw,48px)/1.02 system-ui;letter-spacing:-.04em}
+.lede{margin:0 0 6px;color:var(--mute)}
+.card{background:var(--card);border:1px solid var(--hair);border-radius:22px;padding:22px 24px 26px;display:grid;gap:16px}
+.head{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.head b{font-weight:600}
+.head output{font:650 28px/1 system-ui;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.track{position:relative;height:48px;touch-action:none;cursor:pointer;outline:none}
+.rail{position:absolute;left:0;right:0;top:50%;height:10px;margin-top:-5px;border-radius:999px;background:#E6E8E1;transform-origin:var(--o,left) center}
+.fillb{position:absolute;left:0;top:0;bottom:0;border-radius:999px;background:var(--acc)}
+.ticks{position:absolute;left:12px;right:12px;top:50%;margin-top:12px;display:flex;justify-content:space-between;pointer-events:none}
+.ticks i{width:2px;height:6px;border-radius:2px;background:#C9CCC2}
+.thumb{position:absolute;top:50%;left:0;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;background:#fff;box-shadow:0 0 0 2px var(--acc),0 6px 14px -4px rgba(20,40,120,.45);transition:box-shadow .2s}
+.bubble{position:absolute;left:50%;bottom:40px;transform:translateX(-50%) rotate(var(--tilt,0deg));transform-origin:50% 130%;background:var(--ink);color:#fff;font:600 12px/1 ui-monospace,Menlo,monospace;padding:7px 9px;border-radius:8px;white-space:nowrap;opacity:0;transition:opacity .2s}
+.bubble::after{content:"";position:absolute;left:50%;top:100%;margin-left:-5px;border:5px solid transparent;border-top-color:var(--ink)}
+.track.act .bubble,.track:focus-visible .bubble{opacity:1}
+.track:focus-visible .thumb{box-shadow:0 0 0 2px var(--acc),0 0 0 6px rgba(46,107,255,.3)}
+.temp .fillb{background:linear-gradient(90deg,#3A8DFF,#FFB020,#FF4D2E)}
+.temp .thumb{box-shadow:0 0 0 2px var(--ink),0 6px 14px -4px rgba(0,0,0,.4)}
+.temp .track:focus-visible .thumb{box-shadow:0 0 0 2px var(--ink),0 0 0 6px rgba(0,0,0,.2)}
+</style></head><body>
+<div class="wrap">
+<h1>Sliders with a little give.</h1>
+<p class="lede">Drag past either end and the track stretches like rubber, then snaps back when you let go. The value bubble leans with your speed. Arrow keys, Page Up and Down, Home and End all work.</p>
+<div class="card" data-min="0" data-max="100" data-step="1" data-val="62" data-unit="%" data-label="Volume"></div>
+<div class="card temp" data-min="16" data-max="28" data-step="0.5" data-val="21" data-unit="°C" data-label="Thermostat"></div>
+</div>
+<script>
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+document.querySelectorAll('.card').forEach(card=>{const min=+card.dataset.min,max=+card.dataset.max,stepv=+card.dataset.step,unit=card.dataset.unit,label=card.dataset.label;let v=+card.dataset.val;
+ const id='l'+Math.random().toString(36).slice(2,7);
+ card.innerHTML=`<div class="head"><b id="${id}">${label}</b><output aria-hidden="true"></output></div><div class="track" role="slider" tabindex="0" aria-labelledby="${id}" aria-valuemin="${min}" aria-valuemax="${max}"><div class="rail"><div class="fillb"></div></div><div class="ticks" aria-hidden="true">${'<i></i>'.repeat(11)}</div><div class="thumb" aria-hidden="true"><span class="bubble"></span></div></div>`;
+ const tr=card.querySelector('.track'),rail=card.querySelector('.rail'),fill=card.querySelector('.fillb'),th=card.querySelector('.thumb'),bub=card.querySelector('.bubble'),out=card.querySelector('output');
+ let over=0,overV=0,tilt=0,lastX=0,lastT=0,drag=false,shown=v,sv=0,raf=0;
+ const fmt=n=>(stepv<1?n.toFixed(1):Math.round(n))+unit;
+ function set(n){v=Math.min(max,Math.max(min,Math.round(n/stepv)*stepv));tr.setAttribute('aria-valuenow',v);tr.setAttribute('aria-valuetext',fmt(v));out.textContent=fmt(v);kick()}
+ function kick(){if(!raf)raf=requestAnimationFrame(step)}
+ function step(){raf=0;const W=tr.clientWidth;if(reduce){shown=v}else{sv=(sv+(v-shown)*.25)*.65;shown+=sv}
+  if(!drag){overV=(overV+(0-over)*.2)*.6;over+=overV}tilt*=.85;
+  const frac=(shown-min)/(max-min);const stretch=Math.abs(over)/W;rail.style.setProperty('--o',over<0?'right':'left');rail.style.transform=`scaleX(${1+stretch}) scaleY(${1-Math.min(.45,stretch*2.2)})`;
+  const tx=(over<0?over:0)+frac*W+(over>0?over:0);rail.style.translate=over<0?`${0}px 0`:'0 0';
+  fill.style.width=frac*100+'%';th.style.transform=`translateX(${frac*W+over}px)`;bub.style.setProperty('--tilt',Math.max(-25,Math.min(25,tilt))+'deg');bub.textContent=fmt(v);
+  if(Math.abs(over)>.3||Math.abs(overV)>.3||Math.abs(v-shown)>.01||Math.abs(tilt)>.3||drag)kick()}
+ function at(e){const r=tr.getBoundingClientRect();const x=e.clientX-r.left;const raw=x/r.width;
+  if(raw<0){const d=-x;over=-Math.sqrt(d)*5.5;set(min)}else if(raw>1){const d=x-r.width;over=Math.sqrt(d)*5.5;set(max)}else{over=0;set(min+raw*(max-min))}
+  const t=performance.now();tilt+=(e.clientX-lastX)/Math.max(8,t-lastT)*-6;lastX=e.clientX;lastT=t}
+ tr.addEventListener('pointerdown',e=>{drag=true;tr.classList.add('act');tr.setPointerCapture(e.pointerId);lastX=e.clientX;lastT=performance.now();at(e)});
+ tr.addEventListener('pointermove',e=>{if(drag)at(e)});
+ const end=()=>{drag=false;tr.classList.remove('act');kick()};tr.addEventListener('pointerup',end);tr.addEventListener('pointercancel',end);
+ tr.addEventListener('keydown',e=>{const big=(max-min)/10;const m={ArrowRight:stepv,ArrowUp:stepv,ArrowLeft:-stepv,ArrowDown:-stepv,PageUp:big,PageDown:-big}[e.key];
+  if(m!==undefined){e.preventDefault();const nv=v+m;if(nv>max||nv<min){if(!reduce){overV+=Math.sign(m)*9}}tilt+=m>0?-8:8;set(nv)}
+  if(e.key==='Home'){e.preventDefault();set(min)}if(e.key==='End'){e.preventDefault();set(max)}});
+ addEventListener('resize',kick);set(v)});
+</script></body></html>

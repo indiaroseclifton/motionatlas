@@ -1,0 +1,45 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kinetic needle grid</title>
+<style>
+:root{--bg:#EEEBE3;--ink:#16150F;--mute:#5C584D;--acc:#E0401B}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;overflow:hidden}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;outline:none}
+canvas:focus-visible{box-shadow:inset 0 0 0 3px var(--acc)}
+.card{position:fixed;left:clamp(16px,4vw,48px);bottom:clamp(16px,4vw,48px);max-width:min(420px,calc(100% - 32px));background:rgba(238,235,227,.92);border:1px solid #D6D0C2;border-radius:18px;padding:18px 20px;backdrop-filter:blur(6px)}
+h1{margin:0 0 6px;font:800 clamp(28px,4vw,46px)/.95 system-ui;letter-spacing:-.05em}
+p{margin:0 0 12px;color:var(--mute);font-size:14px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+button{font:600 13px/1 system-ui;min-height:40px;padding:0 14px;border-radius:999px;border:1.5px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer}
+button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+</style></head><body>
+<canvas id="c" tabindex="0" role="img" aria-label="A field of needles that turn to face a point. Focus it and use the arrow keys to move the point, Enter to send a wave."></canvas>
+<div class="card"><h1>Iron filings.</h1><p>Hundreds of needles turn to face your pointer and stretch as you get close. Click or tap to send a ripple through the field. On a keyboard, focus the field and steer with the arrow keys.</p>
+<div class="row"><button data-m="face" aria-pressed="true">Face</button><button data-m="flow" aria-pressed="false">Orbit</button><button data-m="away" aria-pressed="false">Repel</button></div></div>
+<script>
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const c=document.getElementById('c'),x=c.getContext('2d');let W,H,dpr,N=[],gap;
+let px=0,py=0,tx=0,ty=0,user=false,mode='face',waves=[];
+function size(){dpr=Math.min(2,devicePixelRatio||1);W=innerWidth;H=innerHeight;c.width=W*dpr;c.height=H*dpr;x.setTransform(dpr,0,0,dpr,0,0);gap=W<600?24:30;N=[];for(let y=gap/2;y<H;y+=gap)for(let X=gap/2;X<W;X+=gap)N.push({x:X,y,a:0,l:.3});if(!user){tx=px=W*.62;ty=py=H*.4}}
+addEventListener('resize',size);size();
+c.addEventListener('pointermove',e=>{user=true;tx=e.clientX;ty=e.clientY});
+c.addEventListener('pointerdown',e=>{user=true;tx=e.clientX;ty=e.clientY;waves.push({x:e.clientX,y:e.clientY,r:0})});
+c.addEventListener('keydown',e=>{const s=e.shiftKey?80:30,m={ArrowLeft:[-s,0],ArrowRight:[s,0],ArrowUp:[0,-s],ArrowDown:[0,s]}[e.key];if(m){e.preventDefault();user=true;tx=Math.max(0,Math.min(W,tx+m[0]));ty=Math.max(0,Math.min(H,ty+m[1]))}if(e.key==='Enter'||e.key===' '){e.preventDefault();waves.push({x:tx,y:ty,r:0})}});
+document.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{mode=b.dataset.m;document.querySelectorAll('[data-m]').forEach(o=>o.setAttribute('aria-pressed',o===b))});
+let t0=performance.now();
+function draw(now){const t=(now-t0)/1000;if(!user&&!reduce){tx=W*(.55+.25*Math.cos(t*.5));ty=H*(.42+.22*Math.sin(t*.8))}
+ const k=reduce?1:.12;px+=(tx-px)*k;py+=(ty-py)*k;x.clearRect(0,0,W,H);const D=Math.hypot(W,H);
+ waves.forEach(w=>w.r+=reduce?D:9);waves=waves.filter(w=>w.r<D);
+ x.lineCap='round';
+ for(const n of N){const dx=px-n.x,dy=py-n.y,d=Math.hypot(dx,dy);let a=Math.atan2(dy,dx);if(mode==='away')a+=Math.PI;if(mode==='flow')a+=Math.PI/2;
+  let boost=0;for(const w of waves){const q=Math.abs(Math.hypot(n.x-w.x,n.y-w.y)-w.r);if(q<40)boost+=(1-q/40)*(1-w.r/D)}
+  let da=((a-n.a+Math.PI*3)%(Math.PI*2))-Math.PI;n.a+=reduce?da:da*.2+boost*.4;
+  const L=Math.max(.18,1-d/(D*.45))+boost*.8;n.l+=(L-n.l)*(reduce?1:.15);
+  const len=gap*.42*n.l,cs=Math.cos(n.a)*len,sn=Math.sin(n.a)*len;
+  x.strokeStyle=boost>.15||d<gap*3?'#E0401B':'#16150F';x.lineWidth=1.2+n.l*1.6;x.globalAlpha=.35+n.l*.65;
+  x.beginPath();x.moveTo(n.x-cs,n.y-sn);x.lineTo(n.x+cs,n.y+sn);x.stroke()}
+ x.globalAlpha=1;x.fillStyle='#E0401B';x.beginPath();x.arc(px,py,5,0,7);x.fill();
+ requestAnimationFrame(draw)}
+requestAnimationFrame(draw);
+</script></body></html>
