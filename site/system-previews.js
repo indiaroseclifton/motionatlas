@@ -445,7 +445,7 @@
  function derived(t){const bg=t.background,sf=t.surface,ink=t.ink,ac=t.accent;
   const mute=safe(mix(ink,sf,.45),ink,[sf,bg]);
   return `--sx-mute:${mute};--sx-acc:${safe(ac,ink,[sf,mix(ac,sf,.82)])};--sx-acc-bg:${safe(ac,ink,[bg])};--sx-artbg:${mix(ac,sf,.82)};--sx-art2:${mix(ac,ink,.45)};--sx-art3:${mix(ac,'#ffffff',.55)};--sx-bgline:${mix(ac,sf,.82)}`;}
- function render(e,inert){const f=S[e.id];if(!f)return null;const vars=(window.AtlasExpansion?.variables?AtlasExpansion.variables(e.tokens):'')+';'+derived(e.tokens);
+ function render(e,inert){const f=S[e.id];if(!f)return null;const vars=((window.AtlasExpansion?.variables?AtlasExpansion.variables(e.tokens):'')+';'+derived(e.tokens)).replace(/"/g,"'");
   const F={D40:'Inter:wght@400;600;700',D43:'Inter:wght@400;600;700',D48:'Inter:wght@400;600;700',D41:'Red+Hat+Display:wght@500;700&family=Red+Hat+Text:wght@400;500',D44:'Roboto:wght@400;500;700',D46:'Manrope:wght@400;600;700',D47:'Space+Grotesk:wght@500;700'};if(F[e.id])loadFont(F[e.id]);
   if(e.id==='D35')loadFont('Source+Sans+3:wght@400;600;700');if(e.id==='D36')loadFont('Public+Sans:wght@400;600;700');
   if(e.id==='D03')loadFont('IBM+Plex+Sans:wght@400;500;600');if(e.id==='D06')loadFont('Playfair+Display:ital,wght@0,600;1,400&family=Source+Serif+4:ital,wght@0,400;1,400');if(e.id==='D08')loadFont('JetBrains+Mono:wght@400;600');

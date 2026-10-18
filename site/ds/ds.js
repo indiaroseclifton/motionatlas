@@ -151,5 +151,5 @@ window.DS=(()=>{
   $$('[data-copy]').forEach(b=>{if(!b.onclick)b.onclick=()=>copy(b.dataset.copy,b.dataset.copyMsg||'Copied')});
   document.dispatchEvent(new CustomEvent('ds:ready'))}
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else setTimeout(init);
- return {VERSION,HOST,NAV,FLAT,$,$$,esc,copy,save,zip,zipBytes,crc32,fetchText,fetchBytes,rgb,lum,contrast,grade,cssVar,tokens,tokensCSS,tokensJSON,iconNames,iconSVG,hl,dedent,toast,search};
+ return {VERSION,HOST,NAV,FLAT,$,$$,esc,copy,save,zip,zipBytes,crc32,fetchText,fetchBytes,rgb,lum,contrast,grade,cssVar,tokens,tokensCSS,tokensJSON,iconNames,iconSVG,hl,dedent,codeBlock,toast,search};
 })();

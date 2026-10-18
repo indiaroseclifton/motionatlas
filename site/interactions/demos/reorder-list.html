@@ -1,0 +1,61 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Drag to reorder list</title>
+<style>
+:root{--bg:#F4F1EA;--ink:#1A1915;--mute:#5E5A50;--card:#FFFDF8;--hair:#E2DCCF;--acc:#2F6B4F}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;min-height:100vh;display:grid;place-items:center;padding:30px 16px}
+.wrap{width:min(560px,100%)}
+h1{margin:0 0 6px;font:400 clamp(32px,4.6vw,50px)/1 Georgia,serif;letter-spacing:-.02em}
+.lede{margin:0 0 20px;color:var(--mute)}
+ol{list-style:none;margin:0;padding:0;position:relative}
+li{position:relative;display:grid;grid-template-columns:auto 34px 1fr auto;gap:12px;align-items:center;background:var(--card);border:1px solid var(--hair);border-radius:16px;padding:12px 14px 12px 8px;margin-bottom:10px;transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .2s;user-select:none}
+li.lift{z-index:2;transition:box-shadow .2s;box-shadow:0 24px 40px -18px rgba(40,30,10,.45);border-color:#CFC6B4}
+li.kb{outline:2px dashed var(--acc);outline-offset:2px}
+.h{width:40px;height:44px;border:0;background:none;color:var(--mute);border-radius:10px;cursor:grab;touch-action:none;display:grid;place-items:center}
+.h:active{cursor:grabbing}
+.h:focus-visible{outline:2px solid var(--acc);outline-offset:0}
+.h svg{width:18px;height:18px}
+.n{width:34px;height:34px;border-radius:50%;background:#EDE7DA;display:grid;place-items:center;font:600 13px/1 ui-monospace,Menlo,monospace}
+li b{display:block;font-weight:600}
+li span{color:var(--mute);font-size:13px}
+.tag{font:600 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--acc);background:#E3EFE7;padding:6px 8px;border-radius:999px}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media (max-width:420px){.tag{display:none}li{grid-template-columns:auto 34px 1fr}}
+@media (prefers-reduced-motion:reduce){li{transition:none}}
+</style></head><body>
+<div class="wrap">
+<h1>Today, in order.</h1>
+<p class="lede">Drag a row by its handle and the others slide out of the way. On a keyboard, focus a handle, press Space to pick it up, move it with the arrow keys, Space to drop, or Escape to put it back.</p>
+<p class="vh" id="help">Press Space to pick up. While picked up, use Up and Down arrows to move, Space to drop, Escape to cancel.</p>
+<ol id="list"></ol>
+<p class="vh" id="live" aria-live="assertive"></p>
+</div>
+<script>
+const CONFIG=[['Review the type specimens','15 min','Design'],['Call the print shop','10 min','Ops'],['Draft the launch email','45 min','Copy'],['Colour-correct hero photos','1 hr','Design'],['Lunch, away from the desk','45 min','Life'],['Ship the pricing page','2 hr','Build']];
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const list=document.getElementById('list'),live=document.getElementById('live');
+CONFIG.forEach(([t,d,g])=>{const li=document.createElement('li');li.innerHTML=`<button class="h" aria-describedby="help" aria-label="Move: ${t}"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></button><span class="n" aria-hidden="true"></span><div><b>${t}</b><span>${d}</span></div><span class="tag">${g}</span>`;li.dataset.t=t;list.append(li)});
+const items=()=>[...list.children];
+function number(){items().forEach((li,i)=>li.querySelector('.n').textContent=i+1)}number();
+function flip(mutate){const L=items(),first=new Map(L.map(l=>[l,l.getBoundingClientRect().top]));mutate();if(reduce)return;L.forEach(l=>{const d=first.get(l)-l.getBoundingClientRect().top;if(d){l.style.transition='none';l.style.transform=`translateY(${d}px)`;void l.offsetWidth;l.style.transition='';l.style.transform=''}})}
+// pointer drag
+let drag=null;
+list.addEventListener('pointerdown',e=>{const h=e.target.closest('.h');if(!h||e.button>0)return;e.preventDefault();const li=h.closest('li');h.setPointerCapture(e.pointerId);
+ drag={li,h,y0:e.clientY,start:items().indexOf(li),off:0};li.classList.add('lift')});
+list.addEventListener('pointermove',e=>{if(!drag)return;const {li}=drag;let dy=e.clientY-drag.y0;li.style.transition='none';li.style.transform=`translateY(${dy}px) scale(1.02)`;
+ const r=li.getBoundingClientRect(),mid=r.top+r.height/2;const L=items(),i=L.indexOf(li);
+ const prev=L[i-1],next=L[i+1];
+ if(next&&mid>next.getBoundingClientRect().top+next.offsetHeight/2){const before=li.getBoundingClientRect().top;flip(()=>list.insertBefore(next,li));const after=li.getBoundingClientRect().top;drag.y0+=after-before;li.style.transform=`translateY(${e.clientY-drag.y0}px) scale(1.02)`}
+ else if(prev&&mid<prev.getBoundingClientRect().top+prev.offsetHeight/2){const before=li.getBoundingClientRect().top;flip(()=>list.insertBefore(li,prev));const after=li.getBoundingClientRect().top;drag.y0+=after-before;li.style.transform=`translateY(${e.clientY-drag.y0}px) scale(1.02)`}});
+const drop=()=>{if(!drag)return;const {li}=drag;li.classList.remove('lift');li.style.transition='';li.style.transform='';const i=items().indexOf(li);if(i!==drag.start)live.textContent=`${li.dataset.t} moved to position ${i+1} of ${items().length}.`;number();drag=null};
+list.addEventListener('pointerup',drop);list.addEventListener('pointercancel',drop);
+// keyboard
+let kb=null;
+list.addEventListener('keydown',e=>{const h=e.target.closest('.h');if(!h)return;const li=h.closest('li');
+ if(e.key===' '||e.key==='Enter'){e.preventDefault();if(!kb){kb={li,start:items().indexOf(li)};li.classList.add('kb','lift');live.textContent=`Picked up ${li.dataset.t}. Position ${kb.start+1} of ${items().length}.`}else{li.classList.remove('kb','lift');live.textContent=`Dropped ${li.dataset.t} at position ${items().indexOf(li)+1}.`;kb=null;number()}return}
+ if(!kb)return;
+ if(e.key==='ArrowUp'||e.key==='ArrowDown'){e.preventDefault();const L=items(),i=L.indexOf(li);const j=e.key==='ArrowUp'?i-1:i+1;if(j<0||j>=L.length)return;flip(()=>{if(j<i)list.insertBefore(li,L[j]);else list.insertBefore(L[j],li)});h.focus();number();live.textContent=`Position ${j+1} of ${L.length}.`}
+ if(e.key==='Escape'){e.preventDefault();const L=items();flip(()=>{list.insertBefore(li,L.filter(x=>x!==li)[kb.start]||null)});li.classList.remove('kb','lift');h.focus();number();live.textContent=`Cancelled. ${li.dataset.t} is back at position ${kb.start+1}.`;kb=null}});
+list.addEventListener('focusout',e=>{if(kb&&!list.contains(e.relatedTarget)){kb.li.classList.remove('kb','lift');kb=null;number()}});
+if(!reduce)setTimeout(()=>{const L=items();flip(()=>list.insertBefore(L[4],L[1]));number();setTimeout(()=>{const M=items();flip(()=>list.insertBefore(M[1],M[5]));number()},1500)},900);
+</script></body></html>

@@ -1,0 +1,55 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Press-and-hold confirm</title>
+<style>
+:root{--bg:#0F0F12;--ink:#F3F2EF;--mute:#A3A2AA;--red:#FF4D4D;--green:#3DDC84;--T:1300ms}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;min-height:100vh;display:grid;place-items:center;padding:28px 16px}
+.wrap{width:min(560px,100%);display:grid;gap:22px;justify-items:center;text-align:center}
+.file{display:flex;align-items:center;gap:14px;width:100%;background:#17171C;border:1px solid #2A2A31;border-radius:16px;padding:14px;text-align:left;transition:opacity .4s,transform .5s cubic-bezier(.2,.8,.2,1)}
+.file img{width:54px;height:54px;border-radius:10px;object-fit:cover}
+.file b{display:block}.file span{color:var(--mute);font-size:13px}
+.file.gone{opacity:.25;transform:scale(.96)}
+h1{margin:0;font:650 clamp(28px,4.4vw,44px)/1.05 system-ui;letter-spacing:-.035em}
+p{margin:0;color:var(--mute);max-width:44ch}
+.hold{position:relative;overflow:hidden;isolation:isolate;min-width:260px;min-height:60px;padding:0 28px;border-radius:999px;border:1.5px solid var(--red);background:transparent;color:var(--red);font:650 16px/1 system-ui;cursor:pointer;user-select:none;-webkit-user-select:none;touch-action:manipulation;transition:transform .2s cubic-bezier(.2,.8,.2,1),border-color .3s,color .3s}
+.hold .fill{position:absolute;inset:0;background:var(--red);transform-origin:left;transform:scaleX(var(--p,0));z-index:-1}
+.hold.pressing{transform:scale(.97)}
+.hold.pressing .lab,.hold.done .lab{color:#160606}
+.hold .lab{display:inline-flex;align-items:center;gap:10px;transition:color .2s}
+.hold.done{border-color:var(--green);color:#06160D}
+.hold.done .fill{background:var(--green)}
+.hold:focus-visible{outline:2px solid #fff;outline-offset:4px}
+.hold.shake{animation:sh .4s}
+@keyframes sh{20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+.hold svg{width:20px;height:20px}
+.undo{font:600 13px/1 system-ui;min-height:40px;padding:0 16px;border-radius:999px;border:1px solid #3A3A42;background:transparent;color:var(--ink);cursor:pointer}
+.undo:focus-visible{outline:2px solid #fff;outline-offset:3px}
+.spark{position:fixed;width:7px;height:7px;border-radius:2px;pointer-events:none}
+@media (prefers-reduced-motion:reduce){.hold,.file{transition:none}.hold.shake{animation:none}}
+</style></head><body>
+<div class="wrap">
+<h1>Some things deserve a pause.</h1>
+<p>To delete, press and hold. Let go early and it drains back. Keyboard users hold Space or Enter. A single quick click explains what to do instead of deleting.</p>
+<div class="file" id="file"><img src="../../assets/shelf/statue.webp" alt=""><div><b>Final_campaign_v12.psd</b><span>2.4 GB · edited 3 minutes ago</span></div></div>
+<button class="hold" id="hold" aria-describedby="hint"><span class="fill" aria-hidden="true"></span><span class="lab" id="lab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>Hold to delete</span></button>
+<p id="hint" role="status">Press and hold for about a second.</p>
+<button class="undo" id="undo" hidden>Undo</button>
+</div>
+<script>
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const b=document.getElementById('hold'),lab=document.getElementById('lab'),hint=document.getElementById('hint'),file=document.getElementById('file'),undo=document.getElementById('undo');
+const T=1300;let p=0,holding=false,done=false,last=0,raf=0,downAt=0;
+const ICON=lab.querySelector('svg').outerHTML;
+function frame(t){const dt=t-last;last=t;if(holding)p=Math.min(1,p+dt/T);else p=Math.max(0,p-dt/(reduce?1:350));b.style.setProperty('--p',p);
+ if(p>=1&&!done)complete();if(holding||(p>0&&!done))raf=requestAnimationFrame(frame);else raf=0}
+function start(){if(done)return;holding=true;downAt=performance.now();b.classList.add('pressing');hint.textContent='Keep holding…';if(!raf){last=performance.now();raf=requestAnimationFrame(frame)}}
+function stop(){if(!holding)return;holding=false;b.classList.remove('pressing');if(done)return;if(performance.now()-downAt<250){hint.textContent='Hold the button down to delete. A tap is not enough.';if(!reduce){b.classList.remove('shake');void b.offsetWidth;b.classList.add('shake')}}else hint.textContent='Let go too early. Nothing was deleted.'}
+function complete(){done=true;holding=false;b.classList.remove('pressing');b.classList.add('done');lab.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Deleted';hint.textContent='File deleted. You can undo this for a few seconds.';file.classList.add('gone');undo.hidden=false;if(!reduce)burst()}
+function burst(){const r=b.getBoundingClientRect();for(let i=0;i<18;i++){const s=document.createElement('i');s.className='spark';s.style.background=i%2?'#3DDC84':'#F3F2EF';s.style.left=r.left+r.width/2+'px';s.style.top=r.top+r.height/2+'px';document.body.append(s);const a=Math.random()*Math.PI*2,d=60+Math.random()*90;s.animate([{transform:'translate(0,0) rotate(0)',opacity:1},{transform:`translate(${Math.cos(a)*d}px,${Math.sin(a)*d-30}px) rotate(${Math.random()*540}deg)`,opacity:0}],{duration:800+Math.random()*300,easing:'cubic-bezier(.2,.8,.2,1)'}).onfinish=()=>s.remove()}}
+b.addEventListener('pointerdown',e=>{if(e.button>0)return;b.setPointerCapture(e.pointerId);start()});
+['pointerup','pointercancel'].forEach(ev=>b.addEventListener(ev,stop));
+b.addEventListener('keydown',e=>{if((e.key===' '||e.key==='Enter')){e.preventDefault();if(!e.repeat)start()}});
+b.addEventListener('keyup',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();stop()}});
+b.addEventListener('blur',stop);b.addEventListener('contextmenu',e=>e.preventDefault());
+undo.onclick=()=>{done=false;p=0;b.style.setProperty('--p',0);b.classList.remove('done');lab.innerHTML=ICON+'Hold to delete';file.classList.remove('gone');undo.hidden=true;hint.textContent='Restored. Nothing was deleted.';b.focus()};
+</script></body></html>

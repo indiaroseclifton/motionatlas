@@ -1,0 +1,54 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Magnifier lens</title>
+<style>
+:root{--bg:#0E0D0C;--ink:#F2EEE6;--mute:#A8A195;--acc:#E9C46A;--L:190px}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;min-height:100vh;display:grid;place-items:center;padding:26px 16px}
+.wrap{width:min(1040px,100%);display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:clamp(20px,4vw,52px);align-items:center}
+.pic{position:relative;aspect-ratio:4/5;max-height:86vh;border-radius:16px;overflow:hidden;cursor:none;touch-action:none;outline:none;justify-self:center;width:100%;max-width:640px}
+.pic>img{width:100%;height:100%;object-fit:cover;display:block}
+.pic:focus-visible{box-shadow:0 0 0 3px var(--acc)}
+.lens{position:absolute;left:0;top:0;width:var(--L);height:var(--L);margin:calc(var(--L)/-2);border-radius:50%;pointer-events:none;background-repeat:no-repeat;box-shadow:0 0 0 3px rgba(255,255,255,.9),0 20px 40px rgba(0,0,0,.55),inset 0 0 30px rgba(0,0,0,.35);opacity:0;transform:scale(.6);transition:opacity .25s,transform .35s cubic-bezier(.2,1.3,.4,1)}
+.pic.on .lens{opacity:1;transform:scale(1)}
+.lens::after{content:attr(data-z);position:absolute;left:50%;bottom:-30px;transform:translateX(-50%);font:600 11px/1 ui-monospace,Menlo,monospace;color:#111;background:var(--acc);padding:5px 8px;border-radius:999px}
+h1{margin:0 0 10px;font:400 clamp(30px,4vw,48px)/1 Georgia,serif;letter-spacing:-.02em}
+.side p{margin:0 0 16px;color:var(--mute)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+button{font:600 13px/1 system-ui;min-height:44px;min-width:44px;padding:0 14px;border-radius:999px;border:1px solid #3A3631;background:transparent;color:var(--ink);cursor:pointer}
+button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.thumbs{display:flex;gap:8px;margin-top:16px}
+.thumbs button{padding:0;width:56px;height:70px;border-radius:8px;overflow:hidden;border:2px solid transparent}
+.thumbs button[aria-pressed=true]{border-color:var(--acc)}
+.thumbs img{width:100%;height:100%;object-fit:cover;display:block}
+@media (max-width:760px){.wrap{grid-template-columns:1fr}.side{order:-1}:root{--L:140px}.pic{aspect-ratio:4/4.6}}
+@media (prefers-reduced-motion:reduce){.lens{transition:opacity .15s;transform:none!important}}
+</style></head><body>
+<div class="wrap">
+<div class="pic" id="pic" tabindex="0" role="img" aria-label="Embroidery close-up. Focus and use arrow keys to move the magnifier, plus and minus to zoom."><img id="img" src="../../assets/shelf/embroidery.webp" alt=""><div class="lens" id="lens" data-z="2.5×"></div></div>
+<div class="side"><h1>Look closer.</h1><p>Move over the picture and a lens follows you. Scroll the wheel, pinch or press + and − to change the zoom. On a phone the lens floats above your finger so it never hides what you are looking at.</p>
+<div class="row"><button id="out" aria-label="Zoom out">−</button><button id="in" aria-label="Zoom in">+</button><button id="tog" aria-pressed="false">Show lens</button></div>
+<div class="thumbs" id="thumbs" role="group" aria-label="Choose picture"></div></div>
+</div>
+<script>
+const CONFIG=[['embroidery','Embroidery close-up'],['threads','Thread study'],['erosion','Eroded canyon'],['sand','Sand ripples']];
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const pic=document.getElementById('pic'),img=document.getElementById('img'),lens=document.getElementById('lens');
+let z=2.5,lx=.5,ly=.5,cx=.5,cy=.5,on=false,touchOff=0;
+function bg(){lens.style.backgroundImage=`url("${img.src}")`}
+function draw(){const r=pic.getBoundingClientRect(),L=lens.offsetWidth;const X=cx*r.width,Y=cy*r.height-touchOff;lens.style.left=X+'px';lens.style.top=Y+'px';
+ lens.style.backgroundSize=`${r.width*z}px ${r.height*z}px`;lens.style.backgroundPosition=`${-(cx*r.width*z-L/2)}px ${-(cy*r.height*z-L/2)}px`;lens.dataset.z=z.toFixed(1)+'×'}
+function loop(){const k=reduce?1:.25;cx+=(lx-cx)*k;cy+=(ly-cy)*k;draw();requestAnimationFrame(loop)}
+function show(v){on=v;pic.classList.toggle('on',v);document.getElementById('tog').setAttribute('aria-pressed',v);document.getElementById('tog').textContent=v?'Hide lens':'Show lens'}
+function setZ(v){z=Math.max(1.5,Math.min(5,v))}
+pic.addEventListener('pointermove',e=>{const r=pic.getBoundingClientRect();lx=(e.clientX-r.left)/r.width;ly=(e.clientY-r.top)/r.height;touchOff=e.pointerType==='touch'?lens.offsetWidth*.75:0;if(!on)show(true)});
+pic.addEventListener('pointerdown',e=>{pic.setPointerCapture(e.pointerId);const r=pic.getBoundingClientRect();lx=cx=(e.clientX-r.left)/r.width;ly=cy=(e.clientY-r.top)/r.height;touchOff=e.pointerType==='touch'?lens.offsetWidth*.75:0;show(true)});
+pic.addEventListener('pointerleave',e=>{if(e.pointerType!=='touch')show(false)});
+pic.addEventListener('pointerup',e=>{if(e.pointerType==='touch')show(false)});
+pic.addEventListener('wheel',e=>{if(!on)return;e.preventDefault();setZ(z-e.deltaY*.004)},{passive:false});
+pic.addEventListener('focus',()=>show(true));pic.addEventListener('blur',()=>show(false));
+pic.addEventListener('keydown',e=>{const s=e.shiftKey?.1:.03,m={ArrowLeft:[-s,0],ArrowRight:[s,0],ArrowUp:[0,-s],ArrowDown:[0,s]}[e.key];if(m){e.preventDefault();lx=Math.max(0,Math.min(1,lx+m[0]));ly=Math.max(0,Math.min(1,ly+m[1]))}if(e.key==='+'||e.key==='='){e.preventDefault();setZ(z+.5)}if(e.key==='-'){e.preventDefault();setZ(z-.5)}if(e.key==='Escape')show(false)});
+document.getElementById('in').onclick=()=>{setZ(z+.5);show(true)};document.getElementById('out').onclick=()=>{setZ(z-.5);show(true)};document.getElementById('tog').onclick=()=>show(!on);
+const th=document.getElementById('thumbs');CONFIG.forEach(([f,t],i)=>{const b=document.createElement('button');b.setAttribute('aria-pressed',i===0);b.setAttribute('aria-label',t);b.innerHTML=`<img src="../../assets/shelf/${f}.webp" alt="">`;b.onclick=()=>{img.src=`../../assets/shelf/${f}.webp`;pic.setAttribute('aria-label',t+'. Focus and use arrow keys to move the magnifier, plus and minus to zoom.');bg();[...th.children].forEach(x=>x.setAttribute('aria-pressed',x===b))};th.append(b)});
+bg();loop();
+if(!reduce){show(true);let t=0;const intro=()=>{t+=.012;if(t<2.6){lx=.5+Math.cos(t*2.2)*.22;ly=.45+Math.sin(t*2.2)*.2;requestAnimationFrame(intro)}};intro()}
+</script></body></html>
