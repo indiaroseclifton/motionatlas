@@ -1,0 +1,97 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Iconography · 01 Design System</title>
+<meta name="description" content="The 01 icon set: one 24px grid, 1.5px stroke, square caps and mitred corners. Search every icon, copy its SVG, and generate binary identity glyphs for agents, models and people.">
+<meta name="theme-color" content="#07090C"><link rel="icon" href="../work/01/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../work/01/01.css"><link rel="stylesheet" href="../work/01/01-ui.css"><link rel="stylesheet" href="ds.css">
+<style>
+.ictools{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:end}
+.ictools .u-field{flex:1 1 260px}
+.icons{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));border-top:1px solid var(--line);border-left:1px solid var(--line)}
+.icons button{all:unset;box-sizing:border-box;cursor:pointer;display:grid;justify-items:center;gap:10px;padding:20px 6px 14px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);color:var(--pt);min-width:0}
+.icons button[hidden]{display:none}
+.icons button:hover{background:var(--hover)}
+.icons button:focus-visible{outline:1.5px solid var(--cyan);outline-offset:-2px}
+.icons svg{width:var(--is,24px);height:var(--is,24px)}
+.icons span{font:11px var(--f-mono);color:var(--pt-3);max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.icons button:hover span{color:var(--cyan)}
+.grid-demo{display:flex;flex-wrap:wrap;gap:28px;align-items:center}
+.grid-demo figure{margin:0;display:grid;gap:8px;justify-items:start}
+.grid-demo .g{width:144px;height:144px;color:var(--pt);background-image:linear-gradient(var(--g-700) 1px,transparent 1px),linear-gradient(90deg,var(--g-700) 1px,transparent 1px);background-size:6px 6px;border:1px solid var(--line-2);display:grid;place-items:center}
+.grid-demo .g svg{width:144px;height:144px}
+.glyphs{display:flex;flex-wrap:wrap;gap:18px}
+.glyphs span{display:grid;gap:6px;justify-items:center}
+.gl-out{display:flex;flex-wrap:wrap;gap:20px;align-items:center}
+.gl-out .u-glyph{width:96px;height:96px}
+</style>
+</head><body class="ds" data-page="iconography">
+<main id="main">
+<header class="ds-hero">
+ <p class="ds-kick">Foundations · 06</p>
+ <h1>Hard edges, <em>every one.</em></h1>
+ <p class="ds-lede">One 24px set with a 1.5px stroke, square caps and mitred corners, so icons match the hard-edged type. Every icon is drawn from a single path, rendered by <code>UI.icon(name)</code>, and inherits <code>currentColor</code>.</p>
+ <ul class="ds-meta"><li>Icons <b id="icCount">0</b></li><li>Grid <b>24px</b></li><li>Stroke <b>1.5px square</b></li></ul>
+</header>
+
+<section class="ds-sec" aria-labelledby="set">
+ <h2 id="set">The set</h2>
+ <p class="ds-lead">Select an icon to copy its SVG. The grid is generated from the icon table inside 01-ui.js, so a new icon appears here the moment it ships.</p>
+ <div class="ictools">
+  <div class="u-field"><label class="u-label" for="icq">Filter icons</label><div class="u-affix"><span data-icon="search"></span><input class="u-input" id="icq" type="search" placeholder="Try chat, agents, lock" autocomplete="off"></div></div>
+  <div class="u-field"><span class="u-label" id="szl">Preview size</span><div class="u-seg" data-seg role="group" aria-labelledby="szl" id="sz"><button type="button" aria-pressed="false" data-v="16">16</button><button type="button" aria-pressed="false" data-v="20">20</button><button type="button" aria-pressed="true" data-v="24">24</button><button type="button" aria-pressed="false" data-v="32">32</button></div></div>
+  <div class="u-seg" data-seg role="group" aria-label="Copy format" id="fmt"><button type="button" aria-pressed="true" data-v="svg">SVG</button><button type="button" aria-pressed="false" data-v="js">UI.icon()</button></div>
+ </div>
+ <p class="vh" role="status" aria-live="polite" id="icStatus"></p>
+ <div class="icons" id="icons"></div>
+</section>
+
+<section class="ds-sec" aria-labelledby="construction">
+ <h2 id="construction">Construction</h2>
+ <p class="ds-lead">Draw on the 24px grid with a 2px safe area. Strokes only, no fills, no rounded joins. If an icon needs more than one idea, it is two icons.</p>
+ <div class="grid-demo" id="gridDemo"></div>
+ <ul class="ds-list"><li><b>Size</b> 16px in dense rows and buttons, 20px in navigation, 24px stand-alone. Scale by the box; stroke stays 1.5.</li><li><b>Colour</b> platinum 3 at rest, platinum on hover, cyan when current. Never green or amber unless the icon is the status.</li><li><b>Meaning</b> icon-only buttons always carry an <code>aria-label</code> and a <code>data-tip</code> tooltip.</li></ul>
+</section>
+
+<section class="ds-sec" aria-labelledby="usage">
+ <h2 id="usage">Usage</h2>
+<pre data-lang="html" data-title="Declarative">
+<button class="u-btn" type="button" data-icon="bolt">Deploy</button>
+<button class="u-btn icon" type="button" data-icon="settings" aria-label="Settings" data-tip="Settings"></button>
+</pre>
+<pre data-lang="js" data-title="Script">
+el.innerHTML = UI.icon('agents');           // inline SVG string, aria-hidden
+el.innerHTML = UI.icon('chart', 'my-class'); // with a class
+</pre>
+</section>
+
+<section class="ds-sec" aria-labelledby="glyphs">
+ <h2 id="glyphs">Identity glyphs</h2>
+ <p class="ds-lead">Every agent, model and person gets a glyph: a mirrored 5×5 grid of bits, hashed from its name, so the same name always draws the same mark. Type a name to generate one.</p>
+ <div class="u-field" style="max-width:420px"><label class="u-label" for="gq">Name</label><input class="u-input" id="gq" value="Strategist-04" autocomplete="off"></div>
+ <div class="gl-out"><span class="u-glyph" id="glOut"></span><span class="u-glyph lg" id="glOut2"></span><span class="u-glyph" id="glOut3"></span><button class="u-btn sm" type="button" id="glCopy" data-icon="copy">Copy SVG</button></div>
+ <h3>The fleet</h3>
+ <div class="glyphs" id="fleet"></div>
+</section>
+
+<section class="ds-sec" aria-labelledby="rules">
+ <h2 id="rules">Do and don't</h2>
+ <div class="ds-rules">
+  <div class="do"><h4>Do</h4><ul><li>Pair icons with a text label wherever space allows.</li><li>Use the glyph, not a stock avatar, for anything the system spawned.</li><li>Keep icons the same colour as their label.</li></ul></div>
+  <div class="dont"><h4>Don't</h4><ul><li>Mix in icons from another set, or round their corners.</li><li>Fill icons, add duotone, or put them in coloured circles.</li><li>Use an icon alone for a destructive action.</li></ul></div>
+ </div>
+</section>
+</main>
+<script src="../work/01/01.js"></script><script src="../work/01/01-ui.js"></script><script src="search-index.js"></script><script src="ds.js"></script>
+<script>
+(async()=>{const $=DS.$;let fmt='svg';const names=await DS.iconNames();$('#icCount').textContent=names.length;
+ const grid=$('#icons');grid.innerHTML=names.map(n=>`<button type="button" data-n="${n}" aria-label="${n} icon, copy">${UI.icon(n)}<span>${n}</span></button>`).join('');
+ grid.onclick=e=>{const b=e.target.closest('button');if(!b)return;const n=b.dataset.n;DS.copy(fmt==='svg'?DS.iconSVG(n):`UI.icon('${n}')`,`Copied ${n}`)};
+ $('#icq').oninput=e=>{const q=e.target.value.trim().toLowerCase();let c=0;grid.querySelectorAll('button').forEach(b=>{const on=!q||b.dataset.n.includes(q);b.hidden=!on;if(on)c++});$('#icStatus').textContent=`${c} icon${c===1?'':'s'}`};
+ $('#sz').addEventListener('change',e=>grid.style.setProperty('--is',e.detail+'px'));
+ $('#fmt').addEventListener('change',e=>fmt=e.detail);
+ $('#gridDemo').innerHTML=['agents','route','shield'].map(n=>`<figure><span class="g" aria-hidden="true">${UI.icon(n)}</span><figcaption class="u-cap">${n} · 24 grid</figcaption></figure>`).join('');
+ const gq=$('#gq'),g=()=>{const s=gq.value||' ';['#glOut','#glOut2','#glOut3'].forEach(i=>$(i).innerHTML=UI.glyph(s))};gq.oninput=g;g();
+ $('#glCopy').onclick=()=>DS.copy(UI.glyph(gq.value||' ').replace('<svg ','<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" ').replace(' aria-hidden="true"',''),'Glyph copied');
+ $('#fleet').innerHTML=['Strategist-04','Router-11','Operator-07','Researcher-22','Builder-09','Analyst-03','Negotiator-01','Sentinel-02','ORION-4','HELIX-L','KESTREL','VANTA-2','NOVA-X','AGENT_4821'].map(n=>`<span><span class="u-glyph lg">${UI.glyph(n)}</span><span class="u-mono u-muted" style="font-size:10.5px">${n}</span></span>`).join('');
+})();
+</script>
+</body></html>

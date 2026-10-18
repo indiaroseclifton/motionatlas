@@ -1,0 +1,62 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Image comparison slider</title>
+<style>
+:root{--bg:#0D0D0F;--ink:#F1EFEA;--mute:#A09C94;--acc:#FFD166}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;min-height:100vh;display:grid;place-items:center;padding:28px 16px}
+.wrap{width:min(1000px,100%);display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:clamp(18px,4vw,48px);align-items:center}
+h1{margin:0 0 10px;font:400 clamp(30px,4vw,48px)/1.02 Georgia,serif;letter-spacing:-.02em}
+.side p{margin:0 0 16px;color:var(--mute)}
+.seg{display:inline-flex;border:1px solid #3B3A37;border-radius:999px;padding:4px;gap:4px}
+.seg button{border:0;background:none;color:var(--mute);font:600 12px/1 system-ui;padding:10px 14px;border-radius:999px;cursor:pointer;min-height:36px}
+.seg button[aria-pressed=true]{background:var(--ink);color:#111}
+.seg button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.cmp{position:relative;aspect-ratio:4/5;max-height:82vh;width:100%;border-radius:18px;overflow:hidden;touch-action:none;user-select:none;cursor:ew-resize;background:#000;--p:50%}
+.cmp.v{cursor:ns-resize}
+.cmp img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+.cmp .before{filter:grayscale(1) contrast(.82) brightness(1.08) sepia(.15)}
+.cmp .after{clip-path:inset(0 0 0 var(--p))}
+.cmp.v .after{clip-path:inset(var(--p) 0 0 0)}
+.lab{position:absolute;top:14px;font:600 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.14em;text-transform:uppercase;background:rgba(0,0,0,.6);padding:8px 10px;border-radius:999px;transition:opacity .25s}
+.lab.l{left:14px}.lab.r{right:14px}
+.cmp.v .lab.l{top:14px}.cmp.v .lab.r{top:auto;bottom:14px;right:14px}
+.hd{position:absolute;top:0;bottom:0;left:var(--p);width:0;outline:none}
+.hd::before{content:"";position:absolute;top:0;bottom:0;left:-1px;width:2px;background:#fff;box-shadow:0 0 12px rgba(0,0,0,.5)}
+.cmp.v .hd{top:var(--p);bottom:auto;left:0;right:0;width:auto;height:0}
+.cmp.v .hd::before{left:0;right:0;top:-1px;bottom:auto;width:auto;height:2px}
+.knob{position:absolute;left:0;top:50%;width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;background:#fff;color:#111;display:grid;place-items:center;box-shadow:0 8px 24px rgba(0,0,0,.45);transition:transform .2s cubic-bezier(.2,.8,.2,1)}
+.cmp.v .knob{left:50%;top:0}
+.cmp.v .knob svg{transform:rotate(90deg)}
+.cmp.drag .knob{transform:scale(1.12)}
+.hd:focus-visible .knob{box-shadow:0 0 0 3px var(--acc),0 8px 24px rgba(0,0,0,.45)}
+.val{font:500 12px/1 ui-monospace,Menlo,monospace;color:var(--mute);margin-top:14px}
+@media (max-width:720px){.wrap{grid-template-columns:1fr}.side{order:-1}.cmp{aspect-ratio:4/4.4}}
+@media (prefers-reduced-motion:reduce){.knob,.lab{transition:none}}
+</style></head><body>
+<div class="wrap">
+<div class="cmp" id="cmp">
+ <img class="before" src="../../assets/shelf/lighthouse.webp" alt="The lighthouse photo before grading: flat and grey.">
+ <img class="after" src="../../assets/shelf/lighthouse.webp" alt="The same photo after grading: full colour.">
+ <span class="lab l" aria-hidden="true">Raw</span><span class="lab r" aria-hidden="true">Graded</span>
+ <div class="hd" id="hd" role="slider" tabindex="0" aria-label="Comparison position" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" aria-valuetext="50% graded"><span class="knob" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l-6 6 6 6M15 6l6 6-6 6"/></svg></span></div>
+</div>
+<div class="side"><h1>Before, after, and everything between.</h1><p>Drag anywhere on the photo, or tap to jump. With the handle focused, arrow keys move it in small steps, Page Up and Down in big ones.</p>
+<div class="seg" role="group" aria-label="Split direction"><button aria-pressed="true" data-o="h">Side by side</button><button aria-pressed="false" data-o="v">Top and bottom</button></div>
+<p class="val" id="val" aria-hidden="true">50% graded</p></div>
+</div>
+<script>
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const c=document.getElementById('cmp'),hd=document.getElementById('hd'),val=document.getElementById('val'),labs=c.querySelectorAll('.lab');
+let p=50,target=50,raf=0,vert=false,drag=false;
+function set(v){p=Math.max(0,Math.min(100,v));c.style.setProperty('--p',p+'%');const r=Math.round(100-p);hd.setAttribute('aria-valuenow',Math.round(p));hd.setAttribute('aria-valuetext',r+'% graded');val.textContent=r+'% graded';labs[0].style.opacity=p<12?0:1;labs[1].style.opacity=p>88?0:1}
+function glide(v){target=Math.max(0,Math.min(100,v));if(reduce){set(target);return}if(!raf)raf=requestAnimationFrame(function s(){p+=(target-p)*.18;set(p);if(Math.abs(target-p)>.05)raf=requestAnimationFrame(s);else{set(target);raf=0}})}
+function pos(e){const r=c.getBoundingClientRect();return vert?(e.clientY-r.top)/r.height*100:(e.clientX-r.left)/r.width*100}
+c.addEventListener('pointerdown',e=>{drag=true;c.classList.add('drag');c.setPointerCapture(e.pointerId);glide(pos(e));hd.focus({preventScroll:true})});
+c.addEventListener('pointermove',e=>{if(drag){cancelAnimationFrame(raf);raf=0;set(pos(e))}});
+const up=()=>{drag=false;c.classList.remove('drag')};c.addEventListener('pointerup',up);c.addEventListener('pointercancel',up);
+hd.addEventListener('keydown',e=>{const m={ArrowLeft:-2,ArrowDown:2,ArrowRight:2,ArrowUp:-2,PageUp:-10,PageDown:10}[e.key];if(vert&&(e.key==='ArrowDown'||e.key==='ArrowUp'))e.preventDefault();
+ if(m!==undefined){e.preventDefault();glide(target+(e.key.startsWith('Arrow')?m:m))}if(e.key==='Home'){e.preventDefault();glide(0)}if(e.key==='End'){e.preventDefault();glide(100)}});
+document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{vert=b.dataset.o==='v';c.classList.toggle('v',vert);hd.setAttribute('aria-orientation',vert?'vertical':'horizontal');document.querySelectorAll('.seg button').forEach(x=>x.setAttribute('aria-pressed',x===b))});
+set(50);
+if(!reduce){let t=0;const intro=()=>{t+=.02;if(t<Math.PI*2&&!drag){set(50+Math.sin(t)*22);requestAnimationFrame(intro)}else if(!drag){target=50;set(50)}};setTimeout(()=>requestAnimationFrame(intro),500)}
+</script></body></html>

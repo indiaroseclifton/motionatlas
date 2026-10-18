@@ -1,0 +1,90 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Logo · 01 Design System</title>
+<meta name="description" content="The 01ai wordmark, the 01 mark and the Agency and Workspace lockups: construction, clear space, minimum sizes, colour versions, misuse, and SVG downloads.">
+<meta name="theme-color" content="#07090C"><link rel="icon" href="../work/01/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../work/01/01.css"><link rel="stylesheet" href="../work/01/01-ui.css"><link rel="stylesheet" href="ds.css">
+<style>
+.plates{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+.plates figure{margin:0;display:grid;gap:10px;min-width:0}
+.plate{position:relative;display:grid;place-items:center;min-height:260px;padding:40px;border:1px solid var(--line);background:var(--g-950)}
+.plate.light{background:#E7EAEE;border-color:#E7EAEE}
+.plate img{max-width:100%;height:auto}
+.plates figcaption{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 14px}
+.plates figcaption span{font-size:14px;color:var(--pt-2)}
+.clear{position:relative;display:inline-block;padding:36px;outline:1px dashed rgba(127,231,247,.5);outline-offset:0}
+.clear::before{content:"x";position:absolute;left:12px;top:50%;transform:translateY(-50%);font:500 12px var(--f-mono);color:var(--cyan)}
+.clear::after{content:"x";position:absolute;top:10px;left:50%;transform:translateX(-50%);font:500 12px var(--f-mono);color:var(--cyan)}
+.clear img{display:block;outline:1px solid rgba(127,231,247,.25)}
+.sizes{display:flex;flex-wrap:wrap;align-items:flex-end;gap:28px;padding:28px;border:1px solid var(--line)}
+.sizes figure{margin:0;display:grid;gap:8px;justify-items:start}
+.misuse{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,200px),1fr));gap:18px}
+.misuse figure{margin:0;display:grid;gap:8px}
+.misuse .p{position:relative;display:grid;place-items:center;height:140px;border:1px solid var(--line);background:var(--g-950);overflow:hidden}
+.misuse .p::after{content:"";position:absolute;inset:0;background:linear-gradient(to top right,transparent calc(50% - 1px),rgba(255,107,107,.7) 50%,transparent calc(50% + 1px))}
+.misuse img{height:48px;width:auto}
+.misuse figcaption{font-size:14px;color:var(--pt-2)}
+@media (max-width:760px){.plates{grid-template-columns:1fr}}
+</style>
+</head><body class="ds" data-page="logo">
+<main id="main">
+<header class="ds-hero">
+ <p class="ds-kick">Foundations · 09</p>
+ <h1>Read it at <em>a glance.</em></h1>
+ <p class="ds-lede">A heavy, geometric wordmark built from the same rounded-rectangle forms as the digits it spells. The dot of the i is the only colour: a cyan signal, always on. The mark is "01." in a graphite tile, and its full stop is the same signal.</p>
+ <ul class="ds-meta"><li>Wordmark <b>01ai</b></li><li>Mark <b>01.</b></li><li>Minimum <b>24px tall</b></li></ul>
+</header>
+
+<section class="ds-sec" aria-labelledby="versions">
+ <h2 id="versions">Versions</h2>
+ <div class="plates">
+  <figure><div class="plate"><img src="../work/01/assets/01ai-wordmark.svg" alt="01ai wordmark, platinum on graphite" width="260" height="125"></div><figcaption><span>Primary, on graphite. Use this almost everywhere.</span><a class="u-btn sm" href="../work/01/assets/01ai-wordmark.svg" download data-icon="file">SVG</a></figcaption></figure>
+  <figure><div class="plate light"><img src="../work/01/assets/01ai-wordmark-dark.svg" alt="01ai wordmark, graphite on platinum" width="260" height="125"></div><figcaption><span>Reverse, on platinum or white. The dot becomes cyan deep for contrast.</span><a class="u-btn sm" href="../work/01/assets/01ai-wordmark-dark.svg" download data-icon="file">SVG</a></figcaption></figure>
+  <figure><div class="plate"><img src="../work/01/assets/01-mark.svg" alt="01 mark: 01 with a cyan full stop in a graphite tile" width="128" height="128"></div><figcaption><span>The 01 mark: app icons, favicons, avatars, social.</span><a class="u-btn sm" href="../work/01/assets/01-mark.svg" download data-icon="file">SVG</a></figcaption></figure>
+  <figure><div class="plate" style="gap:28px"><img src="../work/01/assets/01-agency.svg" alt="01 Agency lockup" width="260" height="81"><img src="../work/01/assets/01-workspace.svg" alt="01 Workspace lockup" width="300" height="81"></div><figcaption><span>Family lockups: mark plus name in Geist 500, same spacing.</span><span class="ds-row"><a class="u-btn sm" href="../work/01/assets/01-agency.svg" download data-icon="file">Agency</a><a class="u-btn sm" href="../work/01/assets/01-workspace.svg" download data-icon="file">Workspace</a></span></figcaption></figure>
+ </div>
+</section>
+
+<section class="ds-sec" aria-labelledby="clearspace">
+ <h2 id="clearspace">Clear space</h2>
+ <p class="ds-lead">Keep a margin of x on every side, where x is the width of the stem of the 1. Nothing (type, edges, other logos) enters that space.</p>
+ <div><span class="clear"><img src="../work/01/assets/01ai-wordmark.svg" alt="01ai wordmark with clear space marked" width="208" height="100"></span></div>
+</section>
+
+<section class="ds-sec" aria-labelledby="size">
+ <h2 id="size">Minimum size</h2>
+ <p class="ds-lead">24px tall on screen for the wordmark, 16px for the mark. Below that the counters close up and the dot disappears; use the mark instead.</p>
+ <div class="sizes">
+  <figure><img src="../work/01/assets/01ai-wordmark.svg" alt="Wordmark at 64px" height="64" width="133"><figcaption class="u-cap">64px · hero</figcaption></figure>
+  <figure><img src="../work/01/assets/01ai-wordmark.svg" alt="Wordmark at 44px" height="44" width="92"><figcaption class="u-cap">44px · header</figcaption></figure>
+  <figure><img src="../work/01/assets/01ai-wordmark.svg" alt="Wordmark at 24px" height="24" width="50"><figcaption class="u-cap">24px · minimum</figcaption></figure>
+  <figure><img src="../work/01/assets/01-mark.svg" alt="Mark at 16px" height="16" width="16"><figcaption class="u-cap">16px · mark minimum</figcaption></figure>
+ </div>
+</section>
+
+<section class="ds-sec" aria-labelledby="misuse">
+ <h2 id="misuse">Misuse</h2>
+ <p class="ds-lead">The logo was rebuilt to be readable at a glance. Each of these undoes that.</p>
+ <div class="misuse">
+  <figure><div class="p"><img src="../work/01/assets/01ai-wordmark.svg" alt="" style="transform:scaleX(1.5)"></div><figcaption>Stretch or squash it.</figcaption></figure>
+  <figure><div class="p"><img src="../work/01/assets/01ai-wordmark.svg" alt="" style="filter:drop-shadow(0 0 14px #7FE7F7) drop-shadow(0 0 4px #A98BFF)"></div><figcaption>Add glows, shadows or effects.</figcaption></figure>
+  <figure><div class="p" style="background:url(../work/01/assets/city-poster.jpg) center/cover"><img src="../work/01/assets/01ai-wordmark.svg" alt="" style="opacity:.5"></div><figcaption>Set it on a busy image.</figcaption></figure>
+  <figure><div class="p"><img src="../work/01/assets/01ai-wordmark.svg" alt="" style="height:12px"></div><figcaption>Use it under 24px.</figcaption></figure>
+  <figure><div class="p"><img src="../work/01/assets/01ai-wordmark.svg" alt="" style="transform:rotate(-12deg)"></div><figcaption>Rotate or angle it.</figcaption></figure>
+  <figure><div class="p"><img src="../work/01/assets/01ai-wordmark.svg" alt="" style="filter:hue-rotate(160deg) saturate(3)"></div><figcaption>Recolour the signal dot.</figcaption></figure>
+  <figure><div class="p"><img src="../work/01/assets/01ai-wordmark.svg" alt="" style="height:30px;letter-spacing:4px;transform:skewX(-14deg)"></div><figcaption>Italicise or skew it.</figcaption></figure>
+  <figure><div class="p" style="background:#FFB547"><img src="../work/01/assets/01ai-wordmark.svg" alt=""></div><figcaption>Place it on a signal colour.</figcaption></figure>
+ </div>
+</section>
+
+<section class="ds-sec" aria-labelledby="code">
+ <h2 id="code">In code</h2>
+<pre data-lang="html" data-title="Header logo">
+<a class="o-logo" href="/" aria-label="01ai home">
+  <img src="https://motionatlas-ten.vercel.app/work/01/assets/01ai-wordmark.svg" alt="01ai" width="92" height="44">
+</a>
+<link rel="icon" href="https://motionatlas-ten.vercel.app/work/01/assets/favicon.svg" type="image/svg+xml">
+</pre>
+</section>
+</main>
+<script src="../work/01/01.js"></script><script src="../work/01/01-ui.js"></script><script src="search-index.js"></script><script src="ds.js"></script>
+</body></html>

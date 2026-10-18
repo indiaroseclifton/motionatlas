@@ -1,0 +1,50 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rotating 3D text cylinder</title>
+<style>
+:root{--bg:#07070A;--ink:#F4F2EE;--mute:#9C99A4;--acc:#FF4F8B;--fs:clamp(42px,7vw,92px)}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;display:grid;place-items:center;overflow:hidden;padding:20px 16px}
+.wrap{position:relative;width:min(1100px,100%);display:grid;justify-items:center;gap:22px}
+.line{display:flex;align-items:center;gap:.28em;font:800 var(--fs)/1 system-ui;letter-spacing:-.05em;position:relative;z-index:1;flex-wrap:nowrap;white-space:nowrap}
+.drum{position:relative;height:2.9em;margin:-.9em 0;width:var(--dw,6ch);perspective:1000px;-webkit-mask:linear-gradient(transparent 12%,rgba(0,0,0,.35) 30%,#000 40%,#000 60%,rgba(0,0,0,.35) 70%,transparent 88%);mask:linear-gradient(transparent 12%,rgba(0,0,0,.35) 30%,#000 40%,#000 60%,rgba(0,0,0,.35) 70%,transparent 88%);touch-action:none;cursor:grab;outline:none;border-radius:.12em}
+.drum:focus-visible{outline:none}.drum:focus-visible .cyl{outline:3px solid var(--acc);outline-offset:4px;border-radius:6px}
+.drum .cyl{position:absolute;left:0;right:0;top:.9em;height:1.1em;transform-style:preserve-3d}
+.drum .w{position:absolute;left:0;top:0;height:1.1em;line-height:1.1em;backface-visibility:hidden;color:var(--acc);white-space:nowrap}
+
+p{margin:0;color:var(--mute);text-align:center;max-width:52ch;position:relative;z-index:1}
+.ctl{display:flex;gap:10px;position:relative;z-index:1}
+button{font:600 13px/1 system-ui;min-height:44px;min-width:44px;padding:0 16px;border-radius:999px;border:1px solid #34323B;background:#111016;color:var(--ink);cursor:pointer}
+button:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media (max-width:560px){.line{flex-direction:column;gap:.5em}.drum{width:var(--dw)}}
+</style></head><body>
+<div class="wrap">
+<h1 class="line"><span>We design</span><span class="drum" id="drum" role="spinbutton" tabindex="0" aria-label="We design" aria-valuemin="1"><span class="cyl" id="cyl" aria-hidden="true"></span></span></h1>
+<p>A word drum: twelve words on the faces of a cylinder. Drag it up or down, use the mouse wheel or the arrow keys, or let it turn on its own.</p>
+<div class="ctl"><button id="up" aria-label="Previous word">↑</button><button id="pause" aria-pressed="false">Pause</button><button id="down" aria-label="Next word">↓</button></div>
+<p class="vh" id="live" aria-live="polite"></p>
+</div>
+<script>
+const CONFIG={words:['brands','websites','identities','films','type','products','motion','packaging','systems','campaigns','spaces','stories'],every:2200};
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const cyl=document.getElementById('cyl'),drum=document.getElementById('drum'),N=CONFIG.words.length,step=360/N;
+drum.setAttribute('aria-valuemax',N);
+const W=CONFIG.words.map((w,i)=>{const s=document.createElement('span');s.className='w';s.textContent=w;cyl.append(s);return s});
+let R=0;function size(){const fs=parseFloat(getComputedStyle(drum).fontSize);const h=fs*1.1;R=h/2/Math.tan(Math.PI/N);const mw=Math.max(...W.map(s=>s.offsetWidth));drum.style.setProperty('--dw',mw+'px');W.forEach((s,i)=>s.style.transform=`rotateX(${-i*step}deg) translateZ(${R}px)`);place()}
+let ang=0,vel=0,target=0,paused=reduce;
+function idx(){return((Math.round(target/step)%N)+N)%N}
+function place(){cyl.style.transform=`translateZ(${-R}px) rotateX(${ang}deg)`;W.forEach((s,i)=>{let d=((i*step-ang)%360+540)%360-180;s.style.opacity=Math.abs(d)<65?1:0})}
+function to(k){target=Math.round(k)*step;const i=idx();drum.setAttribute('aria-valuenow',i+1);drum.setAttribute('aria-valuetext',CONFIG.words[i]);drum.setAttribute('aria-label','We design '+CONFIG.words[i]);if(reduce){ang=target;place()}}
+let dragY=null,startAng=0;
+drum.addEventListener('pointerdown',e=>{dragY=e.clientY;startAng=ang;drum.setPointerCapture(e.pointerId);drum.style.cursor='grabbing'});
+drum.addEventListener('pointermove',e=>{if(dragY===null)return;ang=startAng+(e.clientY-dragY)*.5;target=ang;place()});
+const end=()=>{if(dragY===null)return;dragY=null;drum.style.cursor='';to(ang/step);bump()};drum.addEventListener('pointerup',end);drum.addEventListener('pointercancel',end);
+drum.addEventListener('wheel',e=>{e.preventDefault();to(target/step+(e.deltaY>0?1:-1));bump()},{passive:false});
+drum.addEventListener('keydown',e=>{const m={ArrowDown:1,ArrowUp:-1,PageDown:3,PageUp:-3}[e.key];if(m){e.preventDefault();to(target/step+m);bump()}if(e.key==='Home'){e.preventDefault();to(Math.floor(target/step/N)*N);bump()}});
+document.getElementById('up').onclick=()=>{to(target/step-1);bump()};document.getElementById('down').onclick=()=>{to(target/step+1);bump()};
+const live=document.getElementById('live');function bump(){clearTimeout(bump.t);bump.t=setTimeout(()=>live.textContent='We design '+CONFIG.words[idx()],400)}
+const pb=document.getElementById('pause');pb.onclick=()=>{paused=!paused;pb.setAttribute('aria-pressed',paused);pb.textContent=paused?'Play':'Pause'};if(reduce){pb.textContent='Play';pb.setAttribute('aria-pressed','true')}
+setInterval(()=>{if(!paused&&dragY===null&&document.activeElement!==drum)to(target/step+1)},CONFIG.every);
+function loop(){if(dragY===null&&!reduce){vel=(vel+(target-ang)*.08)*.72;ang+=vel;place()}requestAnimationFrame(loop)}
+size();to(0);addEventListener('resize',size);loop();
+</script></body></html>

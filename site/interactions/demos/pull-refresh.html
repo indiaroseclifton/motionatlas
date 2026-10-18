@@ -1,0 +1,65 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Elastic pull-to-refresh</title>
+<style>
+:root{--bg:#E9EEF2;--ink:#14181F;--mute:#56606E;--card:#FFFFFF;--acc:#3557E8}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;min-height:100vh;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:clamp(20px,6vw,90px);padding:24px clamp(16px,7vw,110px)}
+.side h1{margin:0 0 10px;font:650 clamp(30px,4.2vw,50px)/1.02 system-ui;letter-spacing:-.04em;max-width:13ch}
+.side p{margin:0 0 18px;color:var(--mute);max-width:44ch}
+.phone{width:min(360px,100%);height:min(720px,88vh);border-radius:44px;background:#0D0F14;padding:10px;box-shadow:0 40px 70px -40px rgba(10,20,40,.6)}
+.screen{position:relative;height:100%;border-radius:36px;overflow:hidden;background:#F6F7F9;display:flex;flex-direction:column}
+.bar{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 10px;background:#F6F7F9;position:relative;z-index:2}
+.bar h2{margin:0;font:700 22px/1 system-ui;letter-spacing:-.03em}
+.bar button,.side button{font:600 13px/1 system-ui;min-height:40px;padding:0 14px;border-radius:999px;border:0;background:var(--ink);color:#fff;cursor:pointer}
+button:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+.feed{position:relative;flex:1;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;outline:none}
+.feed:focus-visible{box-shadow:inset 0 0 0 2px var(--acc)}
+.pull{position:absolute;left:0;right:0;top:0;height:0;display:grid;place-items:center;overflow:visible;pointer-events:none}
+.ring{width:38px;height:38px;margin-top:-48px;opacity:0}
+.ring circle{fill:none;stroke-width:3.2;stroke-linecap:round}
+.ring .tr{stroke:#D4D9E2}.ring .pr{stroke:var(--acc);transform:rotate(-90deg);transform-origin:50% 50%}
+.ring.spin{animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.msg{position:absolute;top:-22px;font:600 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);opacity:0;white-space:nowrap}
+.list{list-style:none;margin:0;padding:6px 14px 20px;display:grid;gap:10px;will-change:transform}
+.it{display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:center;background:var(--card);border-radius:18px;padding:12px;box-shadow:0 1px 2px rgba(10,20,40,.06)}
+.it img{width:44px;height:44px;border-radius:12px;object-fit:cover}
+.it b{display:block;font-size:14px}
+.it span{color:var(--mute);font-size:13px}
+.it.new{animation:nw .6s cubic-bezier(.2,.8,.2,1) both}
+@keyframes nw{from{opacity:0;transform:translateY(-14px) scale(.96)}}
+.stamp{font:500 11px/1 ui-monospace,Menlo,monospace;color:var(--mute);text-align:center;padding:4px 0 2px}
+@media (max-width:760px){body{grid-template-columns:1fr;padding:18px 16px}.side{text-align:left}.phone{margin:0 auto;height:76vh}}
+@media (prefers-reduced-motion:reduce){.it.new{animation:none}.ring.spin{animation-duration:2.4s}}
+</style></head><body>
+<div class="side"><h1>Pull. Stretch. Let go.</h1><p>Drag the feed down from the top. It resists like rubber, the ring fills as you pull, and past the line it refreshes when you let go. The Refresh button does the same for keyboards and screen readers.</p></div>
+<div class="phone"><div class="screen">
+ <div class="bar"><h2>Inbox</h2><button id="rf">Refresh</button></div>
+ <div class="feed" id="feed" tabindex="0" aria-label="Inbox messages">
+  <div class="pull" aria-hidden="true"><svg class="ring" id="ring" viewBox="0 0 40 40"><circle class="tr" cx="20" cy="20" r="16"/><circle class="pr" id="pr" cx="20" cy="20" r="16" stroke-dasharray="100.5" stroke-dashoffset="100.5"/></svg><span class="msg" id="msg">Pull to refresh</span></div>
+  <ul class="list" id="list"></ul>
+ </div>
+ <p class="stamp" id="stamp" role="status">Updated just now</p>
+</div></div>
+<script>
+const CONFIG={threshold:90,max:150,items:[['Studio Fold','Proofs for the autumn catalogue are in.','origami'],['Harbour Lights','Your booking for Friday is confirmed.','lighthouse'],['Ada Moreno','Can we try the headline in italic?','bloom'],['Field Notes','Week 42: what the sand remembers.','sand'],['Night Owl Press','Your print order has shipped.','owl'],['Amber Lab','Three new colourways ready to review.','amber'],['Smoke & Mirror','Moodboard updated with 12 images.','smoke']],fresh:[['Jelly Bureau','New: a tidepool series just landed.','jellyfish'],['Threadwork','Embroidery samples photographed.','threads'],['Sumi Studio','Ink tests from this morning.','sumi'],['Nebula FM','Tonight’s mix is live.','nebula']]};
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const feed=document.getElementById('feed'),list=document.getElementById('list'),ring=document.getElementById('ring'),pr=document.getElementById('pr'),msg=document.getElementById('msg'),stamp=document.getElementById('stamp');
+const row=([t,s,i],fresh)=>{const li=document.createElement('li');li.className='it'+(fresh?' new':'');li.innerHTML=`<img src="../../assets/shelf/${i}.webp" alt=""><div><b>${t}</b><span>${s}</span></div>`;return li};
+CONFIG.items.forEach(x=>list.append(row(x)));
+let y=0,start=null,busy=false,f=0,mins=0;
+const rubber=d=>CONFIG.max*(1-Math.exp(-d/CONFIG.max/1.1));
+function show(d){y=d;list.style.transform=`translateY(${d}px)`;const k=Math.min(1,d/CONFIG.threshold);ring.style.opacity=Math.min(1,d/40);ring.style.marginTop=(d*.55-48)+'px';msg.style.opacity=busy?0:Math.min(1,d/60);msg.style.top=(d*.55-60)+'px';pr.style.strokeDashoffset=100.5*(1-(busy?.75:k));msg.textContent=k>=1?'Release to refresh':'Pull to refresh'}
+function settle(to,cb){if(reduce){show(to);cb&&cb();return}const s=y,t0=performance.now();(function a(t){const p=Math.min(1,(t-t0)/380),e=1-Math.pow(1-p,3);show(s+(to-s)*e);if(p<1)requestAnimationFrame(a);else cb&&cb()})(t0)}
+function refresh(){if(busy)return;busy=true;settle(64);ring.classList.add('spin');stamp.textContent='Refreshing…';setTimeout(()=>{const x=CONFIG.fresh[f++%CONFIG.fresh.length];list.prepend(row(x,true));ring.classList.remove('spin');settle(0,()=>{busy=false});stamp.textContent='1 new message · from '+x[0]},reduce?500:1300)}
+feed.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'||busy||feed.scrollTop>0||e.button>0)return;start=e.clientY;feed.setPointerCapture(e.pointerId)});
+feed.addEventListener('pointermove',e=>{if(e.pointerType==='touch'||start===null)return;move(e.clientY-start)});
+function move(d){if(d>0)show(rubber(d));else show(0)}
+const end=()=>{if(start===null)return;start=null;if(y>=CONFIG.threshold*.98)refresh();else settle(0)};feed.addEventListener('pointerup',e=>{if(e.pointerType!=='touch')end()});
+feed.addEventListener('touchstart',e=>{if(busy||feed.scrollTop>0)return;start=e.touches[0].clientY},{passive:true});
+feed.addEventListener('touchmove',e=>{if(start===null)return;const d=e.touches[0].clientY-start;if(d>0){e.preventDefault();move(d)}else if(y===0){start=null}else move(d)},{passive:false});
+feed.addEventListener('touchend',end);feed.addEventListener('touchcancel',end);
+document.getElementById('rf').onclick=refresh;
+feed.addEventListener('keydown',e=>{if((e.key==='r'||e.key==='R')&&!e.metaKey&&!e.ctrlKey){e.preventDefault();refresh()}});
+if(!reduce)setTimeout(()=>{if(y||busy)return;let t0=performance.now();(function a(t){const p=Math.min(1,(t-t0)/900);show(rubber(Math.sin(p*Math.PI)*CONFIG.threshold*1.3));if(p<1&&start===null)requestAnimationFrame(a);else if(start===null)show(0)})(t0)},900);
+</script></body></html>

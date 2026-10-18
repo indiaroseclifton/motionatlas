@@ -1,0 +1,53 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Morphing icon toggles</title>
+<style>
+:root{--bg:#F3F1EC;--ink:#1A1917;--mute:#5F5A52;--tile:#FFFFFF;--acc:#E4572E}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;min-height:100vh;display:grid;place-items:center;padding:32px 16px}
+.wrap{width:min(860px,100%)}
+h1{margin:0 0 6px;font:400 clamp(30px,4.4vw,48px)/1.05 Georgia,serif;letter-spacing:-.02em}
+.lede{margin:0 0 26px;color:var(--mute);max-width:54ch}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.tile{background:var(--tile);border-radius:20px;padding:22px 18px 16px;display:grid;justify-items:center;gap:12px;box-shadow:0 14px 30px -24px rgba(40,30,10,.5)}
+.tile button{width:84px;height:84px;border-radius:50%;border:0;background:var(--ink);color:#fff;display:grid;place-items:center;cursor:pointer;transition:background .3s,transform .2s cubic-bezier(.2,.8,.2,1)}
+.tile button:active{transform:scale(.94)}
+.tile button[aria-pressed=true]{background:var(--acc)}
+.tile button:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
+.tile svg{width:38px;height:38px;overflow:visible}
+.tile .cap{font:500 11px/1.3 ui-monospace,Menlo,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);text-align:center}
+.heart path{transform-origin:12px 13px;transition:fill .25s}
+.heart[aria-pressed=true] path{fill:currentColor}
+.heart.pop path{animation:pop .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes pop{30%{transform:scale(.7)}65%{transform:scale(1.22)}}
+.spark{position:absolute;width:6px;height:6px;border-radius:50%;background:var(--acc);pointer-events:none}
+@media (max-width:620px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.tile button{width:72px;height:72px}}
+@media (prefers-reduced-motion:reduce){.heart.pop path{animation:none}.tile button{transition:none}}
+</style></head><body>
+<div class="wrap">
+<h1>Icons that change their mind.</h1>
+<p class="lede">Each toggle morphs one shape into another instead of swapping images: the points of the path glide to their new places on a spring. They are real toggle buttons, so screen readers hear the state.</p>
+<div class="grid" id="grid"></div>
+</div>
+<script>
+const CONFIG=[
+ {label:'Play',on:'Pause',a:'M7 4.5L12.5 8L12.5 16L7 19.5ZM12.5 8L19 12L19 12L12.5 16Z',b:'M6 4.5L10 4.5L10 19.5L6 19.5ZM14 4.5L18 4.5L18 19.5L14 19.5Z',fill:1},
+ {label:'Open menu',on:'Close menu',a:'M4 6L20 6M4 12L20 12M4 18L20 18',b:'M5.5 5.5L18.5 18.5M12 12L12 12M5.5 18.5L18.5 5.5'},
+ {label:'Add to list',on:'Added',a:'M12 5L12 19M5 12L19 12',b:'M4.5 12.5L9.5 17.5M9.5 17.5L19.5 6.5'},
+ {label:'Mute',on:'Unmute',a:'M15 9Q17 12 15 15M18 6Q22 12 18 18',b:'M15 9Q18 12 21 15M21 9Q18 12 15 15',base:'M3 9L7 9L11 5L11 19L7 15L3 15Z'},
+ {label:'Expand',on:'Collapse',a:'M14 4L20 4L20 10M10 20L4 20L4 14',b:'M20 10L14 10L14 4M4 14L10 14L10 20'},
+ {label:'Like',on:'Liked',heart:1}];
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const num=/-?\d*\.?\d+/g;
+function morph(path,from,to){const A=from.match(num).map(Number),B=to.match(num).map(Number),tpl=to.split(num);cancelAnimationFrame(path._r);
+ if(reduce){path.setAttribute('d',to);return}let x=0,v=0;const step=()=>{v=(v+(1-x)*.16)*.7;x+=v;const d=tpl.map((s,i)=>s+(i<A.length?+(A[i]+(B[i]-A[i])*x).toFixed(2):'')).join('');path.setAttribute('d',d);if(Math.abs(1-x)+Math.abs(v)>.001)path._r=requestAnimationFrame(step);else path.setAttribute('d',to)};step()}
+const g=document.getElementById('grid');
+CONFIG.forEach(c=>{const t=document.createElement('div');t.className='tile';const b=document.createElement('button');b.setAttribute('aria-pressed','false');b.setAttribute('aria-label',c.label);
+ if(c.heart){b.className='heart';b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5S3.5 15.2 3.5 9.2A4.4 4.4 0 0 1 12 7.3a4.4 4.4 0 0 1 8.5 1.9c0 6-8.5 11.3-8.5 11.3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>'}
+ else b.innerHTML=`<svg viewBox="0 0 24 24" aria-hidden="true">${c.base?`<path d="${c.base}" fill="currentColor"/>`:''}<path class="m" d="${c.a}" ${c.fill?'fill="currentColor"':'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"'}/></svg>`;
+ const cap=document.createElement('span');cap.className='cap';cap.textContent=c.label;
+ b.onclick=()=>{const on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',on);cap.textContent=on?c.on:c.label;
+  if(c.heart){b.classList.remove('pop');void b.offsetWidth;b.classList.add('pop');if(on&&!reduce)burst(b);return}
+  const p=b.querySelector('.m');morph(p,p.getAttribute('d'),on?c.b:c.a)};
+ t.append(b,cap);g.append(t)});
+function burst(b){const r=b.getBoundingClientRect();for(let i=0;i<10;i++){const s=document.createElement('i');s.className='spark';const a=i/10*Math.PI*2,d=48+Math.random()*16;s.style.left=r.left+r.width/2-3+scrollX+'px';s.style.top=r.top+r.height/2-3+scrollY+'px';document.body.append(s);s.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:`translate(${Math.cos(a)*d}px,${Math.sin(a)*d}px) scale(.2)`,opacity:0}],{duration:600,easing:'cubic-bezier(.2,.8,.2,1)'}).onfinish=()=>s.remove()}}
+</script></body></html>

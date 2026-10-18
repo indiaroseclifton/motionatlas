@@ -1,0 +1,52 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Typewriter terminal</title>
+<style>
+:root{--bg:#0A0D0B;--ink:#D8F5E0;--mute:#8FA898;--g:#5CFF9D;--y:#FFD866;--r:#FF7A7A;--b:#7AC7FF}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg) radial-gradient(80% 60% at 50% 20%,#11201A,transparent);color:var(--ink);font:15px/1.5 system-ui,sans-serif;min-height:100vh;display:grid;place-items:center;padding:24px 16px}
+.term{width:min(860px,100%);height:min(560px,84vh);background:#0D1210;border:1px solid #1F2D26;border-radius:14px;box-shadow:0 40px 80px -40px #000,0 0 0 1px #000;display:flex;flex-direction:column;overflow:hidden}
+.bar{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid #1F2D26;background:#101714}
+.bar i{width:12px;height:12px;border-radius:50%;background:#2E3B34}
+.bar i:nth-child(1){background:#FF5F57}.bar i:nth-child(2){background:#FEBC2E}.bar i:nth-child(3){background:#28C840}
+.bar span{margin-left:10px;font:500 12px/1 ui-monospace,Menlo,monospace;color:var(--mute)}
+.bar button{margin-left:auto;font:500 12px/1 ui-monospace,Menlo,monospace;color:var(--ink);background:transparent;border:1px solid #2A3A32;border-radius:6px;padding:7px 10px;cursor:pointer}
+.bar button:focus-visible{outline:2px solid var(--g);outline-offset:2px}
+.out{flex:1;overflow-y:auto;padding:16px 18px;font:14px/1.6 ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word;outline:none}
+.out:focus-visible{box-shadow:inset 0 0 0 2px #2A5A3E}
+.out .c{color:var(--g)}.out .p{color:var(--b)}.out .y{color:var(--y)}.out .r{color:var(--r)}.out .m{color:var(--mute)}
+.cur{display:inline-block;width:.6em;height:1.15em;vertical-align:-.2em;background:var(--g);animation:bl 1s steps(1) 6}
+@keyframes bl{50%{opacity:0}}
+form{display:flex;align-items:center;gap:8px;padding:10px 18px 14px;border-top:1px solid #1F2D26;font:14px/1 ui-monospace,Menlo,monospace}
+form label{color:var(--b)}
+form input{flex:1;min-width:0;background:transparent;border:0;color:var(--ink);font:inherit;padding:8px 0;caret-color:var(--g)}
+form input:focus{outline:none}
+form:focus-within{box-shadow:inset 0 2px 0 #2A5A3E}
+@media (max-width:520px){.out{font-size:12.5px;padding:12px}}
+@media (prefers-reduced-motion:reduce){.cur{animation:none}}
+</style></head><body>
+<div class="term">
+<div class="bar" aria-hidden="false"><i></i><i></i><i></i><span>atlas — zsh — 80×24</span><button id="replay">Replay</button></div>
+<div class="out" id="out" role="log" aria-label="Terminal output" tabindex="0"></div>
+<form id="f" autocomplete="off"><label for="cmd">~ $</label><input id="cmd" placeholder="type help and press Enter" spellcheck="false"></form>
+</div>
+<script>
+const CONFIG={script:[['cmd','npx create-atlas@latest my-site'],['out','<span class="m">Need to install the following packages:</span>\n  create-atlas@4.2.0'],['wait',380],['bar','Downloading template'],['out','<span class="c">✔</span> Template <span class="y">editorial</span> copied'],['out','<span class="c">✔</span> 214 packages installed in 3.1s'],['cmd','cd my-site && npm run dev'],['out','\n  <span class="c">ATLAS</span> v4.2.0  ready in <span class="y">412 ms</span>\n\n  ➜  Local:   <span class="p">http://localhost:5173/</span>\n  ➜  Network: use <span class="m">--host</span> to expose\n']],
+ commands:{help:'Commands: <span class="y">help</span>, <span class="y">ls</span>, <span class="y">whoami</span>, <span class="y">date</span>, <span class="y">clear</span>, <span class="y">replay</span>',ls:'<span class="p">assets/</span>  <span class="p">pages/</span>  atlas.config.js  package.json  README.md',whoami:'a curious visitor',date:()=>new Date().toString()}};
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const out=document.getElementById('out');let run=0;
+const sleep=ms=>new Promise(r=>setTimeout(r,reduce?0:ms));
+function line(html){const d=document.createElement('div');d.innerHTML=html;out.append(d);out.scrollTop=out.scrollHeight;return d}
+function cursor(el){document.querySelectorAll('.out .cur').forEach(c=>c.remove());const c=document.createElement('span');c.className='cur';c.setAttribute('aria-hidden','true');el.append(c)}
+async function typeCmd(text,id){const d=line('<span class="p">~ $</span> ');const t=document.createElement('span');d.append(t);cursor(d);if(reduce){t.textContent=text;return}
+ for(const ch of text){if(id!==run)return;t.textContent+=ch;out.scrollTop=out.scrollHeight;await sleep(ch===' '?90:28+Math.random()*70)}await sleep(260)}
+async function bar(label,id){const d=line('');for(let i=0;i<=24;i++){if(id!==run)return;d.innerHTML=`<span class="m">${label}</span> [<span class="c">${'█'.repeat(i)}</span>${'·'.repeat(24-i)}] ${Math.round(i/24*100)}%`;await sleep(40+Math.random()*50)}}
+async function play(){const id=++run;out.innerHTML='';out.setAttribute('aria-live','off');for(const [k,v] of CONFIG.script){if(id!==run)return;if(k==='cmd')await typeCmd(v,id);else if(k==='out'){line(v);await sleep(160)}else if(k==='wait')await sleep(v);else if(k==='bar')await bar(v,id)}
+ if(id===run){const d=line('<span class="p">~ $</span> ');cursor(d);out.setAttribute('aria-live','polite')}}
+document.getElementById('replay').onclick=play;
+document.getElementById('f').addEventListener('submit',async e=>{e.preventDefault();const inp=document.getElementById('cmd'),v=inp.value.trim();inp.value='';if(!v)return;run++;out.setAttribute('aria-live','polite');
+ out.querySelectorAll('.cur').forEach(c=>c.remove());const last=out.lastElementChild;if(last&&last.textContent.trim()==='~ $')last.remove();
+ line('<span class="p">~ $</span> '+v.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])));const c=CONFIG.commands[v];
+ if(v==='clear'){out.innerHTML=''}else if(v==='replay'){play();return}else if(c){line(typeof c==='function'?c():c)}else line(`<span class="r">zsh: command not found:</span> ${v.split(' ')[0].replace(/[&<>]/g,'')}`);
+ cursor(line('<span class="p">~ $</span> '))});
+play();
+</script></body></html>
