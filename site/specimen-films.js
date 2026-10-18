@@ -97,6 +97,8 @@
  let hd;
  function headerFilm(){
   const header=document.querySelector('body>header');if(!header)return;
+  /* the header band film is retired: pages keep one hero film, the menu stays a plain translucent bar */
+  header.querySelectorAll('.sfHeaderFilm,.sfHeaderCap').forEach(n=>n.remove());return;
   const page=location.hash.replace('#','').split('?')[0]||'home';const e=get(PAGE_FILM[page]);
   if(!hd){hd=document.createElement('div');hd.className='sfHeaderFilm';hd.setAttribute('aria-hidden','true');header.prepend(hd);
    const cap=document.createElement('button');cap.type='button';cap.className='sfHeaderCap';header.append(cap);hd.cap=cap;
