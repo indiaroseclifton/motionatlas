@@ -1,0 +1,55 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dot-matrix clock</title>
+<style>
+:root{--bg:#090A0C;--ink:#ECEDEF;--mute:#9A9EA8;--led:#FF5B2E}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;display:grid;place-items:center;overflow:hidden;padding:20px 16px}
+.wrap{width:min(1100px,100%);display:grid;gap:18px;justify-items:center;text-align:center}
+.k{margin:0;font:500 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.2em;text-transform:uppercase;color:var(--mute)}
+canvas{width:100%;display:block;touch-action:none;border-radius:16px;outline:none}
+canvas:focus-visible{box-shadow:0 0 0 2px var(--led)}
+.row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+button{font:600 13px/1 system-ui;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid #2E3138;background:transparent;color:var(--ink);cursor:pointer}
+button[aria-pressed=true]{background:var(--ink);color:#111}
+button:focus-visible{outline:2px solid var(--led);outline-offset:3px}
+p.s{margin:0;color:var(--mute);max-width:52ch}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+</style></head><body>
+<div class="wrap">
+<p class="k" id="date">Local time</p>
+<canvas id="c" role="img" aria-label="Dot-matrix clock" tabindex="0"></canvas>
+<p class="vh" id="tm"></p>
+<p class="s">Every digit is drawn with dots on a 5×7 grid. When a digit changes, its dots fly to their new places. Move your pointer or finger across to push them around.</p>
+<div class="row"><button id="h24" aria-pressed="true">24-hour</button><button id="sec" aria-pressed="true">Seconds</button><button data-c="#FF5B2E" aria-label="Orange LEDs">●</button><button data-c="#58F0A4" aria-label="Green LEDs">●</button><button data-c="#7FB8FF" aria-label="Blue LEDs">●</button></div>
+</div>
+<script>
+const F={'0':['01110','10001','10011','10101','11001','10001','01110'],'1':['00100','01100','00100','00100','00100','00100','01110'],'2':['01110','10001','00001','00010','00100','01000','11111'],'3':['11111','00010','00100','00010','00001','10001','01110'],'4':['00010','00110','01010','10010','11111','00010','00010'],'5':['11111','10000','11110','00001','00001','10001','01110'],'6':['00110','01000','10000','11110','10001','10001','01110'],'7':['11111','00001','00010','00100','01000','01000','01000'],'8':['01110','10001','10001','01110','10001','10001','01110'],'9':['01110','10001','10001','01111','00001','00010','01100'],':':['0','0','1','0','1','0','0'],' ':['0','0','0','0','0','0','0'],'A':['01110','10001','10001','11111','10001','10001','10001'],'P':['11110','10001','10001','11110','10000','10000','10000'],'M':['10001','11011','10101','10101','10001','10001','10001']};
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const c=document.getElementById('c'),x=c.getContext('2d');let h24=true,showSec=true,led='#FF5B2E';
+let D=[],cell=10,W=0,H=0,dpr=1,px=-1e4,py=-1e4,str='';
+function text(){const d=new Date();let h=d.getHours();let suf='';if(!h24){suf=h<12?' AM':' PM';h=h%12||12}const p=n=>String(n).padStart(2,'0');return p(h)+':'+p(d.getMinutes())+(showSec?':'+p(d.getSeconds()):'')+(h24?'':suf)}
+function cols(s){return[...s].reduce((a,ch)=>a+(F[ch]?F[ch][0].length:5)+1,0)-1}
+let S=[];
+function size(){dpr=Math.min(2,devicePixelRatio||1);const w=c.clientWidth;const n=cols(text());cell=Math.min(28,w/(n+4));W=w;H=cell*11;c.width=W*dpr;c.height=H*dpr;c.style.height=H+'px';x.setTransform(dpr,0,0,dpr,0,0);str='';S.forEach(sl=>sl.ch=null);tick()}
+function tick(){const s=text();if(s===str)return;str=s;const n=cols(s),ox=(W-n*cell)/2+cell/2,oy=2*cell+cell/2;let cx=0;
+ [...s].forEach((ch,i)=>{const g=F[ch]||F[' '];const sl=S[i]||(S[i]={ch:null,dots:[]});if(sl.ch!==ch||sl.cx!==cx){sl.ch=ch;sl.cx=cx;const T=[];for(let r=0;r<7;r++)for(let k=0;k<g[r].length;k++)if(g[r][k]==='1')T.push([cx+k,r]);
+   while(sl.dots.length<T.length)sl.dots.push({x:ox+(cx+2)*cell,y:oy+3*cell+(Math.random()-.5)*cell,vx:(Math.random()-.5)*8,vy:(Math.random()-.5)*8,a:0});
+   const order=T.map((t,j)=>j).sort(()=>Math.random()-.5);
+   sl.dots.forEach((d,j)=>{if(j<T.length){const t=T[order[j]];d.tx=ox+t[0]*cell;d.ty=oy+t[1]*cell;d.on=1}else{d.on=0;d.tx=d.x;d.ty=d.y}if(reduce){d.x=d.tx;d.y=d.ty}})}
+  cx+=g[0].length+1});
+ S.slice(s.length).forEach(sl=>{sl.ch=null;sl.dots.forEach(d=>d.on=0)});D=S.flatMap(sl=>sl.dots);
+ document.getElementById('tm').textContent='The time is '+s;c.setAttribute('aria-label','Dot-matrix clock showing '+s);
+ const dd=new Date();document.getElementById('date').textContent=dd.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})}
+function draw(){x.clearRect(0,0,W,H);const n=cols(str),ox=(W-n*cell)/2+cell/2,oy=2*cell+cell/2;
+ x.fillStyle='rgba(255,255,255,.05)';for(let r=0;r<7;r++)for(let k=0;k<n;k++){x.beginPath();x.arc(ox+k*cell,oy+r*cell,cell*.32,0,7);x.fill()}
+ x.fillStyle=led;x.shadowColor=led;x.shadowBlur=cell*.6;
+ D.forEach(d=>{if(!reduce){const dx=d.x-px,dy=d.y-py,dist=Math.hypot(dx,dy),R=cell*4;if(dist<R){const f=(1-dist/R)*3.2;d.vx+=dx/dist*f;d.vy+=dy/dist*f}d.vx=(d.vx+(d.tx-d.x)*.07)*.78;d.vy=(d.vy+(d.ty-d.y)*.07)*.78;d.x+=d.vx;d.y+=d.vy}d.a+=((d.on?1:0)-d.a)*.15;if(d.a<.02)return;x.globalAlpha=d.a;x.beginPath();x.arc(d.x,d.y,cell*.36,0,7);x.fill()});
+ x.globalAlpha=1;x.shadowBlur=0;requestAnimationFrame(draw)}
+c.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect();px=e.clientX-r.left;py=e.clientY-r.top});c.addEventListener('pointerleave',()=>{px=py=-1e4});
+c.addEventListener('pointerdown',e=>{const r=c.getBoundingClientRect();px=e.clientX-r.left;py=e.clientY-r.top});c.addEventListener('pointerup',e=>{if(e.pointerType==='touch')px=py=-1e4});
+c.addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();D.forEach(d=>{d.vx+=(Math.random()-.5)*40;d.vy+=(Math.random()-.5)*40})}});
+const hb=document.getElementById('h24'),sb=document.getElementById('sec');
+hb.onclick=()=>{h24=!h24;hb.setAttribute('aria-pressed',h24);size()};sb.onclick=()=>{showSec=!showSec;sb.setAttribute('aria-pressed',showSec);size()};
+document.querySelectorAll('[data-c]').forEach(b=>{b.style.color=b.dataset.c;b.onclick=()=>{led=b.dataset.c}});
+addEventListener('resize',size);size();setInterval(tick,250);draw();
+</script></body></html>

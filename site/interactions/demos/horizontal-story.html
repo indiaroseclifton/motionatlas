@@ -1,0 +1,56 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Horizontal scroll story</title>
+<style>
+:root{--bg:#F1ECE2;--ink:#1D1A16;--mute:#5E574C;--acc:#B5452A}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,sans-serif}
+.story{position:relative}
+.pin{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;gap:16px;padding:16px clamp(16px,4vw,48px);border-bottom:1px solid #D8D0C1;flex-wrap:wrap}
+.top b{font:600 13px/1 ui-monospace,Menlo,monospace;letter-spacing:.14em;text-transform:uppercase}
+.chap{display:flex;gap:4px;margin-left:auto;flex-wrap:wrap}
+.chap button{font:500 12px/1 ui-monospace,Menlo,monospace;letter-spacing:.06em;color:var(--mute);background:none;border:0;padding:8px 10px;border-radius:999px;cursor:pointer}
+.chap button[aria-current=step]{background:var(--ink);color:var(--bg)}
+.chap button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.prog{height:3px;background:#D8D0C1}.prog i{display:block;height:100%;background:var(--acc);width:calc(var(--p,0)*100%)}
+.strip{flex:1;display:flex;align-items:stretch;will-change:transform}
+.panel{flex:0 0 auto;width:min(86vw,1100px);height:100%;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(18px,4vw,56px);align-items:center;padding:clamp(20px,5vh,60px) clamp(16px,4vw,56px);border-right:1px solid #D8D0C1}
+.panel.intro{width:min(70vw,820px);grid-template-columns:1fr}
+.panel .n{font:500 12px/1 ui-monospace,Menlo,monospace;letter-spacing:.16em;color:var(--acc);margin:0 0 14px}
+.panel h2{margin:0 0 14px;font:400 clamp(34px,5.4vw,84px)/.95 Georgia,serif;letter-spacing:-.03em}
+.panel p{margin:0;color:var(--mute);max-width:40ch}
+.ph{position:relative;height:min(70vh,560px);border-radius:14px;overflow:hidden;background:#000}
+.ph img{position:absolute;top:0;left:-15%;width:130%;height:100%;object-fit:cover;will-change:transform}
+.big{font:400 clamp(70px,14vw,220px)/.85 Georgia,serif;letter-spacing:-.05em;margin:0}
+.panel .big{color:var(--ink)}.big em{color:var(--acc)}
+.end{min-height:60vh;display:grid;place-items:center;text-align:center;padding:40px 16px}
+.end h2{font:400 clamp(30px,4vw,52px)/1 Georgia,serif;margin:0 0 8px}
+.end p{color:var(--mute);margin:0}
+@media (max-width:760px){.panel{width:88vw;grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr);align-content:start}.ph{height:auto;min-height:180px;height:100%}.panel.intro{width:88vw}.chap{display:none}}
+@media (prefers-reduced-motion:reduce){.story{height:auto!important}.pin{position:static;height:auto}.strip{flex-direction:column;transform:none!important}.panel,.panel.intro{width:100%;border-right:0;border-bottom:1px solid #D8D0C1}.ph{height:50vh}.ph img{transform:none!important}.prog,.chap{display:none}}
+</style></head><body>
+<section class="story" id="story" aria-label="The river, a story in five chapters">
+<div class="pin">
+ <div class="top"><b>The Long River</b><nav class="chap" id="chap" aria-label="Chapters"></nav></div>
+ <div class="prog" aria-hidden="true"><i id="bar"></i></div>
+ <div class="strip" id="strip">
+  <div class="panel intro"><div><p class="n">A story in five chapters</p><p class="big">The long <em>river</em>.</p><p style="margin-top:18px">Scroll down and the page moves sideways. Each photograph drifts inside its frame a little slower than the page.</p></div></div>
+ </div>
+</div>
+</section>
+<section class="end"><div><h2>The end of the line.</h2><p>Scroll back up to travel upstream.</p></div></section>
+<script>
+const CONFIG=[['I','Source','It starts as snowmelt under a ridge, colder than anything you have touched.','tree'],['II','Gorge','Then it finds a crack and makes a canyon of it, one grain at a time.','erosion'],['III','Delta','Slow now, it spreads into a hundred silver threads.','threads'],['IV','Sea','And finally it forgets its name, and the tide takes over.','soap']];
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const strip=document.getElementById('strip'),story=document.getElementById('story'),chap=document.getElementById('chap'),bar=document.getElementById('bar');
+CONFIG.forEach(([n,t,p,img],i)=>{const s=document.createElement('article');s.className='panel';s.innerHTML=`<div><p class="n">Chapter ${n}</p><h2>${t}</h2><p>${p}</p></div><div class="ph"><img src="../../assets/shelf/${img}.webp" alt="${t}"></div>`;strip.append(s);
+ const b=document.createElement('button');b.textContent=n+' · '+t;b.onclick=()=>jump(i+1);chap.append(b)});
+const P=[...strip.children],B=[...chap.children],IM=[...strip.querySelectorAll('.ph img')];
+let dist=0;
+function size(){if(reduce)return;dist=strip.scrollWidth-innerWidth;story.style.height=(dist+innerHeight)+'px';update()}
+function jump(i){const x=P[i].offsetLeft;scrollTo({top:story.offsetTop+Math.min(dist,x),behavior:reduce?'auto':'smooth'})}
+function update(){const y=Math.min(dist,Math.max(0,scrollY-story.offsetTop));strip.style.transform=`translate3d(${-y}px,0,0)`;story.style.setProperty('--p',dist?y/dist:0);bar.parentNode.style.setProperty('--p',dist?y/dist:0);
+ IM.forEach(im=>{const r=im.parentNode.getBoundingClientRect();const c=(r.left+r.width/2-innerWidth/2)/innerWidth;im.style.transform=`translateX(${c*-12}%)`});
+ let k=-1;P.forEach((p,i)=>{if(i&&p.offsetLeft-y<innerWidth*.5)k=i-1});B.forEach((b,i)=>i===k?b.setAttribute('aria-current','step'):b.removeAttribute('aria-current'))}
+if(!reduce){addEventListener('scroll',()=>requestAnimationFrame(update),{passive:true});addEventListener('resize',size);addEventListener('load',size);size()}
+</script></body></html>

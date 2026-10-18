@@ -1,0 +1,73 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Shell &amp; layout · 01 Design System</title>
+<meta name="description" content="01 shell and layout components: the app shell with side navigation and sticky top bar, corner-tick frames, panels with headers, dividers, grids and the dense modifier.">
+<meta name="theme-color" content="#07090C"><link rel="icon" href="../work/01/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../work/01/01.css"><link rel="stylesheet" href="../work/01/01-ui.css"><link rel="stylesheet" href="ds.css">
+</head><body class="ds" data-page="components-shell">
+<main id="main">
+<header class="ds-hero">
+ <p class="ds-kick">Components · Shell &amp; layout</p>
+ <h1>Two ticks, <em>not four walls.</em></h1>
+ <p class="ds-lede">The app shell every 01 tool shares, and the few containers that structure a page inside it. Live data gets a corner-tick frame; groups get a panel; everything else is space and a hairline.</p>
+ <ul class="ds-meta"><li>Components <b>5</b></li><li>Classes <b>.u-app .u-frame .u-panel .u-head .u-hr .u-grid .u-dense</b></li></ul>
+</header>
+
+<section class="ds-sec ds-comp" aria-labelledby="app-shell">
+ <header><h2 id="app-shell">App shell</h2><p class="ds-lead">232px side navigation, a 52px sticky top bar with search and one primary action, and a page that scrolls on its own. Under 900px the side navigation becomes a drawer behind the menu button. Resize your window to see it switch; this example runs in its own frame.</p></header>
+ <div class="ds-iframe"><iframe class="ds-frame-demo" src="ex-shell.html" title="Live app shell example" loading="lazy"></iframe></div>
+<pre data-lang="html" data-title="Skeleton">
+<div class="u-app">
+  <aside class="u-side" aria-label="Console">
+    <a class="brand" href="/"><img src="01ai-wordmark.svg" alt="01ai"></a>
+    <div class="sec"><span class="u-cap">Work</span>
+      <nav class="u-nav" aria-label="Work"><a href="/" aria-current="page" data-icon="home">Overview</a></nav></div>
+    <div class="foot"><span class="u-status"><i class="u-dot live"></i>All systems live</span></div>
+  </aside>
+  <div class="u-main">
+    <header class="u-top">
+      <button class="u-btn ghost icon u-burger" type="button" aria-label="Menu" aria-expanded="false" data-icon="menu"></button>
+      <span class="sp"></span><button class="u-btn solid sm" type="button">Run</button>
+    </header>
+    <main class="u-page">…</main>
+  </div>
+</div>
+</pre>
+ <h3>Anatomy</h3>
+ <ol class="ds-anat"><li><b>Side</b><span><code>.u-side</code>: sticky, full height, brand, sections, foot with status.</span></li><li><b>Top bar</b><span><code>.u-top</code>: 52px, blurred graphite, burger on small screens.</span></li><li><b>Page</b><span><code>.u-page</code>: single-column grid, 20px gap, children <code>min-width:0</code>.</span></li><li><b>Burger</b><span><code>.u-burger</code>: toggles <code>.nav-open</code> on <code>.u-app</code>.</span></li></ol>
+ <div class="ds-rules"><div class="do"><h4>Do</h4><ul><li>Keep one primary action in the top bar per view.</li><li>Show system status at the foot of the side navigation.</li></ul></div><div class="dont"><h4>Don't</h4><ul><li>Nest more than two levels in the side navigation.</li><li>Hide search; every view answers to <kbd>⌘</kbd> <kbd>K</kbd>.</li></ul></div></div>
+</section>
+
+<section class="ds-sec ds-comp" aria-labelledby="frame">
+ <header><h2 id="frame">Frame</h2><p class="ds-lead">Two corner ticks around live data. Add <code>.live</code> while the data inside is updating and the ticks turn cyan.</p></header>
+ <div class="ds-ex" data-name="Frames"><div class="ds-stage grid">
+  <div class="u-frame"><p class="u-cap" style="margin:0 0 10px">// Models online</p><p style="margin:0;font:500 34px var(--f-mono);letter-spacing:-.03em">1,042</p></div>
+  <div class="u-frame live"><p class="u-cap" style="margin:0 0 10px">// Updating</p><p style="margin:0;font:500 34px var(--f-mono);letter-spacing:-.03em">48,210<span class="u-cursor" aria-hidden="true"></span></p></div>
+ </div></div>
+ <ul class="ds-list"><li>Frames are for live data only. Static content never gets a frame, and never four walls.</li></ul>
+</section>
+
+<section class="ds-sec ds-comp" aria-labelledby="panel">
+ <header><h2 id="panel">Panel and head</h2><p class="ds-lead">The one filled container, for a group of controls or a list that belongs together. The head carries a mono title and up to two actions.</p></header>
+ <div class="ds-ex" data-name="Panel"><div class="ds-stage col">
+  <section class="u-panel" aria-labelledby="pnl"><div class="u-head"><h3 id="pnl">Connections</h3><button class="u-btn ghost sm" type="button" data-icon="plus">Connect</button></div><ul class="u-list"><li><span class="u-status"><i class="u-dot live"></i>Stripe</span><span class="u-mono u-muted" style="margin-left:auto">12,408 rows</span></li><li><span class="u-status"><i class="u-dot live"></i>Slack</span><span class="u-mono u-muted" style="margin-left:auto">48 channels</span></li><li><span class="u-status"><i class="u-dot err"></i>Gmail</span><button class="u-btn sm" type="button" style="margin-left:auto">Reconnect</button></li></ul></section>
+ </div></div>
+</section>
+
+<section class="ds-sec ds-comp" aria-labelledby="divider">
+ <header><h2 id="divider">Divider and grid</h2><p class="ds-lead"><code>.u-hr</code> is the hairline. <code>.u-grid</code> is a 16px-gap grid you set columns on.</p></header>
+ <div class="ds-ex" data-name="Divider and grid"><div class="ds-stage col">
+  <div class="u-grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr))"><span class="u-cap">Column one</span><span class="u-cap">Column two</span><span class="u-cap">Column three</span></div>
+  <hr class="u-hr">
+  <p class="u-dim" style="margin:0">Everything below the hairline is the next group.</p>
+ </div></div>
+</section>
+
+<section class="ds-sec ds-comp" aria-labelledby="dense">
+ <header><h2 id="dense">Dense modifier</h2><p class="ds-lead">Add <code>.u-dense</code> to any container and every row inside drops from 40px to 32px with tighter padding. Workspace sets it on the whole app.</p></header>
+ <div class="ds-ex" data-name="Dense"><div class="ds-stage col">
+  <div class="u-dense"><ul class="u-list"><li>Brief the client <span class="u-tag amber" style="margin-left:auto">Today</span></li><li>Ship the landing page <span class="u-tag cyan" style="margin-left:auto">Agents</span></li><li>Invoice Q3 <span class="u-tag green" style="margin-left:auto">Done</span></li></ul></div>
+ </div></div>
+</section>
+</main>
+<script src="../work/01/01.js"></script><script src="../work/01/01-ui.js"></script><script src="search-index.js"></script><script src="ds.js"></script>
+</body></html>
