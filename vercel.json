@@ -49,6 +49,16 @@
       "source": "/work/01/",
       "destination": "/work/01/hub",
       "permanent": false
+    },
+    {
+      "source": "/ds",
+      "destination": "/ds/start",
+      "permanent": false
+    },
+    {
+      "source": "/ds/",
+      "destination": "/ds/start",
+      "permanent": false
     }
   ]
 }
