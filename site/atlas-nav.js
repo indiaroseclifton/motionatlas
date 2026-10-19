@@ -28,7 +28,7 @@
    ['particle-studio.html','Particle studio','Turn any picture into moving particles.','particle-tree']]},
   {name:'Interface',items:[
    ['#systems','Design systems','Thirty-two complete visual worlds and real open-source systems.','game-of-life'],
-   ['#ux','UI components','Forty components, every state, in every style.','light-mesh'],
+   ['#ux','UI components','Sixty-four components, every state, in every style.','light-mesh'],
    ['#icons','Icon families','Outline, solid, pixel, colour and 3D icon sets.','sketchbook-horse'],
    ['#typography','Fonts & type','Type pairings and scales, ready to use.','light-threads'],
    ['#playground','System playground','Try a system across a landing page, dashboard and phone.','swan-construction'],
