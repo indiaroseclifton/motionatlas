@@ -25,7 +25,7 @@ const PLAY_SVG='<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
 PB.extraBase=`.x-head{max-width:760px;margin:0 0 28px}.x-head .h{font-size:clamp(32px,4.4vw,56px);margin:10px 0 12px}.x-intro{color:var(--mute);margin:0;font-size:17px}
 .x-missing{padding:24px;border:1px dashed var(--line);border-radius:var(--radius);color:var(--mute);text-align:center;margin:0}
 .x-ctrl{position:absolute;right:14px;top:14px;width:44px;height:44px;border-radius:50%;border:0;background:color-mix(in srgb,var(--surface) 82%,transparent);color:var(--ink);cursor:pointer;display:grid;place-items:center;z-index:3}.x-ctrl svg{width:16px;height:16px}
-.vh{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;white-space:nowrap!important}`;
+.vh{position:absolute!important;left:0;top:0;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;white-space:nowrap!important}`;
 /* Pause/play for any [data-x-anim] host: calls host.__stop/__start. Shared runtime. */
 const PAUSE_RT=`window.__xPause=function(host,start){var b=host.querySelector('.x-ctrl'),stop=null,on=false;var R=matchMedia('(prefers-reduced-motion: reduce)').matches;
 function set(p){if(stop){stop();stop=null}stop=start(!p);on=p;b.innerHTML=p?${JSON.stringify(PAUSE_SVG)}:${JSON.stringify(PLAY_SVG)};b.setAttribute('aria-label',p?'Pause background':'Play background')}

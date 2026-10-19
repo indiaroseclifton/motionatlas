@@ -331,7 +331,7 @@ MORE = [
 .row{display:flex;gap:10px;flex-wrap:wrap}''',
   '<section class="kh"><p class="k">{{kicker}}</p><h1 class="h">{{lead}}<br><span class="roll" aria-hidden="true">{{each:words}}<span>{{0}}</span>{{/each}}</span><span class="sr" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">{{words}}</span></h1><p>{{intro}}</p><div class="row"><a class="btn p" href="#">{{b1}}</a><a class="btn" href="#">{{b2}}</a></div></section>',
   NOHASH_M + r'''const W=[...root.querySelectorAll('.roll span')];if(!W.length)return;let i=0;W[0].classList.add('on');
-const box=root.querySelector('.roll');const fit=()=>{box.style.width='';box.style.width=Math.min(box.parentNode.clientWidth,Math.ceil(Math.max(...W.map(w=>w.scrollWidth))))+'px'};fit();if(document.fonts)document.fonts.ready.then(fit);addEventListener('resize',fit);
+
 if(matchMedia('(prefers-reduced-motion: reduce)').matches||W.length<2)return;
 setInterval(()=>{const a=W[i];i=(i+1)%W.length;const b=W[i];a.classList.remove('on');a.classList.add('out');b.classList.remove('out');b.style.transition='none';b.style.transform='translateY(105%)';b.offsetWidth;b.style.transition='';b.style.transform='';b.classList.add('on');setTimeout(()=>a.classList.remove('out'),750)},2200);''',
   [('kicker', 'Kicker', 'text', 'Independent design studio'), ('lead', 'Fixed words', 'text', 'We design brands that feel'), ('words', 'Rolling words', 'list', 'patient\nprecise\nwarm\nunmistakable'), ('intro', 'Intro', 'long', 'Identity, packaging and websites for food, craft and hospitality companies who care how things are made.'), ('b1', 'Main button', 'text', 'See our work'), ('b2', 'Second button', 'text', 'Start a project')],
@@ -455,7 +455,7 @@ N.forEach(el=>{const t=el.textContent,m=t.match(/[\d.,]+/);if(!m)return;const ta
 
  ('compare', 'Comparison table', 'Sell', 'A feature-by-feature table of you against the usual alternative, with ticks and crosses.', '''
 .cmp h2{font-size:clamp(32px,4.4vw,56px);margin:10px 0 30px;max-width:18ch}
-.tw{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface)}
+.tw{position:relative;overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface)}
 table{width:100%;border-collapse:collapse;min-width:520px;font-size:15px}
 th,td{padding:16px 18px;text-align:left;border-bottom:1px solid var(--line)}
 tbody tr:last-child th,tbody tr:last-child td{border-bottom:0}
@@ -463,7 +463,7 @@ thead th{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(
 thead th.us{color:var(--accent-ink,var(--accent))}
 td{text-align:center;width:22%}thead th:not(:first-child){text-align:center}
 td.us{background:color-mix(in srgb,var(--accent) 8%,transparent)}
-.y,.n{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%}
+.y,.n{position:relative;display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%}
 .y{background:var(--accent);color:var(--on-accent)}.n{background:color-mix(in srgb,var(--mute) 22%,transparent);color:var(--mute)}
 .y svg,.n svg{width:14px;height:14px}''',
   '<section class="wrap cmp"><p class="k">{{kicker}}</p><h2 class="h">{{heading}}</h2><div class="tw" tabindex="0" role="region" aria-label="{{heading}}"><table><thead><tr><th scope="col">Feature</th><th scope="col" class="us">{{brand}}</th><th scope="col">{{them}}</th></tr></thead><tbody>{{each:rows}}<tr><th scope="row">{{0}}</th><td class="us">{{t1}}</td><td>{{t2}}</td></tr>{{/each}}</tbody></table></div></section>', '',
