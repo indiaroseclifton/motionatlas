@@ -325,13 +325,13 @@ MORE = [
 .kh{max-width:1180px;margin:0 auto;padding:clamp(80px,16vh,170px) max(16px,4vw) clamp(56px,10vh,110px);display:grid;gap:26px}
 .kh h1{font-size:clamp(46px,9vw,140px);margin:0;line-height:.98}
 .roll{display:inline-grid;vertical-align:bottom;overflow:hidden;height:1.06em;color:var(--accent-ink,var(--accent))}
-.roll span{grid-area:1/1;transform:translateY(105%);transition:transform .7s cubic-bezier(.7,0,.2,1)}
+.roll span{grid-area:1/1;white-space:nowrap;transform:translateY(105%);transition:transform .7s cubic-bezier(.7,0,.2,1)}
 .roll span.on{transform:none}.roll span.out{transform:translateY(-105%)}
 .kh p{margin:0;max-width:48ch;color:var(--mute);font-size:clamp(16px,1.6vw,20px)}
 .row{display:flex;gap:10px;flex-wrap:wrap}''',
   '<section class="kh"><p class="k">{{kicker}}</p><h1 class="h">{{lead}}<br><span class="roll" aria-hidden="true">{{each:words}}<span>{{0}}</span>{{/each}}</span><span class="sr" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">{{words}}</span></h1><p>{{intro}}</p><div class="row"><a class="btn p" href="#">{{b1}}</a><a class="btn" href="#">{{b2}}</a></div></section>',
   NOHASH_M + r'''const W=[...root.querySelectorAll('.roll span')];if(!W.length)return;let i=0;W[0].classList.add('on');
-const box=root.querySelector('.roll');box.style.width=Math.max(...W.map(w=>w.getBoundingClientRect().width))+'px';
+const box=root.querySelector('.roll');const fit=()=>{box.style.width='';box.style.width=Math.min(box.parentNode.clientWidth,Math.ceil(Math.max(...W.map(w=>w.scrollWidth))))+'px'};fit();if(document.fonts)document.fonts.ready.then(fit);addEventListener('resize',fit);
 if(matchMedia('(prefers-reduced-motion: reduce)').matches||W.length<2)return;
 setInterval(()=>{const a=W[i];i=(i+1)%W.length;const b=W[i];a.classList.remove('on');a.classList.add('out');b.classList.remove('out');b.style.transition='none';b.style.transform='translateY(105%)';b.offsetWidth;b.style.transition='';b.style.transform='';b.classList.add('on');setTimeout(()=>a.classList.remove('out'),750)},2200);''',
   [('kicker', 'Kicker', 'text', 'Independent design studio'), ('lead', 'Fixed words', 'text', 'We design brands that feel'), ('words', 'Rolling words', 'list', 'patient\nprecise\nwarm\nunmistakable'), ('intro', 'Intro', 'long', 'Identity, packaging and websites for food, craft and hospitality companies who care how things are made.'), ('b1', 'Main button', 'text', 'See our work'), ('b2', 'Second button', 'text', 'Start a project')],
@@ -420,7 +420,7 @@ s.parentNode.addEventListener('pointerleave',()=>{r.style.transform=''});''',
  ('stats', 'Stats band', 'Proof', 'Four big numbers that count up when they come into view.', '''
 .sb{border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .sb ul{list-style:none;margin:0 auto;padding:clamp(40px,8vh,80px) max(16px,4vw);max-width:1180px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}
-.sb b{display:block;font-family:var(--head);font-weight:var(--hw);font-style:var(--hs);letter-spacing:var(--track);font-size:clamp(40px,5.6vw,76px);line-height:1;font-variant-numeric:tabular-nums}
+.sb li{min-width:0}.sb b{display:block;font-family:var(--head);font-weight:var(--hw);font-style:var(--hs);letter-spacing:var(--track);font-size:clamp(32px,4.4vw,64px);line-height:1.05;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 .sb span{color:var(--mute);font-size:15px}
 @media (max-width:760px){.sb ul{grid-template-columns:1fr 1fr}}''',
   '<section class="sb" aria-label="{{label}}"><ul>{{each:stats}}<li><b data-n>{{0}}</b><span>{{1}}</span></li>{{/each}}</ul></section>',
@@ -436,7 +436,7 @@ N.forEach(el=>{const t=el.textContent,m=t.match(/[\d.,]+/);if(!m)return;const ta
 .q svg{width:44px;height:44px;color:var(--accent-ink,var(--accent))}
 .q blockquote{margin:0;font-family:var(--head);font-weight:var(--hw);font-style:var(--hs);letter-spacing:var(--track);font-size:clamp(28px,4vw,52px);line-height:1.15;text-wrap:balance}
 .who{display:flex;align-items:center;gap:14px;text-align:left}
-.av{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:var(--on-accent);font-weight:600;font-size:18px}
+.who .av{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:var(--on-accent);font-weight:600;font-size:18px}
 .who b{display:block}.who span{color:var(--mute);font-size:14px}''',
   '<figure class="q"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.5 6C6.5 7.2 4.5 9.8 4.5 13.4V18h6v-6H7.6c.2-1.9 1.3-3.3 3.1-4.1zm9 0c-3 1.2-5 3.8-5 7.4V18h6v-6h-2.9c.2-1.9 1.3-3.3 3.1-4.1z"/></svg><blockquote>{{quote}}</blockquote><figcaption class="who"><span class="av" aria-hidden="true">{{initials}}</span><span><b>{{name}}</b><span>{{role}}</span></span></figcaption></figure>', '',
   [('quote', 'Quote', 'long', 'We stopped arguing about what’s for dinner. That alone was worth it; the shopping list is a bonus.'), ('name', 'Name', 'text', 'Priya Raman'), ('role', 'Role', 'text', 'Parent of three, Bristol'), ('initials', 'Initials', 'text', 'PR')],
@@ -507,7 +507,7 @@ td.us{background:color-mix(in srgb,var(--accent) 8%,transparent)}
 .tm .intro{color:var(--mute);max-width:56ch;margin:0 0 40px}
 .tm ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
 .tm li{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px;display:grid;gap:6px}
-.av{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font-family:var(--head);font-size:24px;margin-bottom:8px;color:var(--on-accent);background:linear-gradient(140deg,var(--accent),color-mix(in srgb,var(--accent) 45%,var(--ink)))}
+.tm .av{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font-family:var(--head);font-size:24px;margin-bottom:8px;color:var(--on-accent);background:linear-gradient(140deg,var(--accent),color-mix(in srgb,var(--accent) 45%,var(--ink)))}
 .tm li:nth-child(3n+2) .av{background:linear-gradient(140deg,color-mix(in srgb,var(--accent) 55%,var(--ink)),var(--accent))}
 .tm b{font-size:17px}.tm span{color:var(--accent-ink,var(--accent));font-size:14px;font-weight:500}.tm p{margin:4px 0 0;color:var(--mute);font-size:15px}''',
   '<section class="wrap tm"><p class="k">{{kicker}}</p><h2 class="h">{{heading}}</h2><p class="intro">{{intro}}</p><ul>{{each:people}}<li><span class="av" aria-hidden="true">{{i0}}</span><b>{{0}}</b><span>{{1}}</span><p>{{2}}</p></li>{{/each}}</ul></section>', '',
@@ -623,7 +623,7 @@ f.onsubmit=e=>{e.preventDefault();const ok=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(i.v
 .ig ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;text-align:left}
 .ig li{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;display:grid;gap:4px;transition:border-color .2s,transform .2s}
 .ig li:hover{border-color:var(--accent);transform:translateY(-2px)}
-.mono{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;font-weight:700;background:color-mix(in srgb,var(--accent) 18%,var(--surface));color:var(--accent-ink,var(--accent));margin-bottom:8px}
+.ig .mono{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;font-weight:700;background:color-mix(in srgb,var(--accent) 18%,var(--surface));color:var(--accent-ink,var(--accent));margin-bottom:8px}
 .ig b{font-size:16px}.ig span{color:var(--mute);font-size:14px}''',
   '<section class="wrap ig"><p class="k">{{kicker}}</p><h2 class="h">{{heading}}</h2><p class="intro">{{intro}}</p><ul>{{each:tools}}<li><span class="mono" aria-hidden="true">{{i0}}</span><b>{{0}}</b><span>{{1}}</span></li>{{/each}}</ul></section>', '',
   [('kicker', 'Kicker', 'text', 'Integrations'), ('heading', 'Headline', 'text', 'Plays nicely with your kitchen.'), ('intro', 'Intro', 'long', 'Send lists to the shops you already use, and pull recipes in from anywhere.'),

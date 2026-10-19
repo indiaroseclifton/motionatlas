@@ -114,3 +114,4 @@
 /* The atlas theme restyles h3/label inside main unless an ancestor opts out; .dvPage is that opt-out,
    so headings and labels here use the kit's own type. */
 .kitView label{color:var(--k-ink);font-size:15px}
+@media(max-width:560px){.kSw{grid-template-columns:repeat(2,minmax(0,1fr))}.kChip i{height:44px}.kitTiles{grid-template-columns:1fr}}

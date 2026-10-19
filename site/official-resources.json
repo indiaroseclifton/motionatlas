@@ -1477,7 +1477,8 @@
       "checked": "2026-10-13",
       "previewLabel": "Atlas visual index",
       "licence": "BSD-3-Clause code · icons and fonts licensed separately",
-      "repo": "https://github.com/salesforce-ux/design-system"
+      "repo": "https://github.com/salesforce-ux/design-system",
+      "atlasPreset": "D37"
     },
     {
       "id": "spectrum",
@@ -1770,6 +1771,378 @@
       "checked": "2026-10-13",
       "previewLabel": "Atlas visual index",
       "licence": "Brand terms · not open source"
+    },
+    {
+      "id": "antd",
+      "name": "Ant Design",
+      "company": "Ant Group",
+      "summary": "An enterprise-class React design language with seed, map and alias tokens.",
+      "url": "https://ant.design/",
+      "color": "#e6f4ff",
+      "topics": [
+        "Admin UI",
+        "Design tokens",
+        "React"
+      ],
+      "resources": [
+        {
+          "title": "Ant Design",
+          "url": "https://ant.design/",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": ""
+        },
+        {
+          "title": "Customize theme (tokens)",
+          "url": "https://ant.design/docs/react/customize-theme",
+          "kind": "Guide",
+          "category": "Design tokens",
+          "note": ""
+        },
+        {
+          "title": "Components overview",
+          "url": "https://ant.design/components/overview",
+          "kind": "Guide",
+          "category": "Components",
+          "note": ""
+        },
+        {
+          "title": "Ant Design on GitHub",
+          "url": "https://github.com/ant-design/ant-design",
+          "kind": "Code",
+          "category": "Code & implementation",
+          "note": ""
+        }
+      ],
+      "kind": "Design system",
+      "preset": null,
+      "checked": "2026-10-19",
+      "previewLabel": "Atlas visual index",
+      "licence": "MIT",
+      "repo": "https://github.com/ant-design/ant-design",
+      "atlasPreset": "D38"
+    },
+    {
+      "id": "bootstrap",
+      "name": "Bootstrap",
+      "company": "The Bootstrap team",
+      "summary": "The open-source front-end toolkit: Sass variables, utilities, a grid and components.",
+      "url": "https://getbootstrap.com/",
+      "color": "#efe9fb",
+      "topics": [
+        "Web toolkit",
+        "Sass variables",
+        "Utilities"
+      ],
+      "resources": [
+        {
+          "title": "Bootstrap docs",
+          "url": "https://getbootstrap.com/docs/5.3/getting-started/introduction/",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": ""
+        },
+        {
+          "title": "Sass customization",
+          "url": "https://getbootstrap.com/docs/5.3/customize/sass/",
+          "kind": "Guide",
+          "category": "Design tokens",
+          "note": ""
+        },
+        {
+          "title": "CSS variables",
+          "url": "https://getbootstrap.com/docs/5.3/customize/css-variables/",
+          "kind": "Guide",
+          "category": "Design tokens",
+          "note": ""
+        },
+        {
+          "title": "Bootstrap on GitHub",
+          "url": "https://github.com/twbs/bootstrap",
+          "kind": "Code",
+          "category": "Code & implementation",
+          "note": ""
+        }
+      ],
+      "kind": "Design system",
+      "preset": null,
+      "checked": "2026-10-19",
+      "previewLabel": "Atlas visual index",
+      "licence": "MIT",
+      "repo": "https://github.com/twbs/bootstrap",
+      "atlasPreset": "D39"
+    },
+    {
+      "id": "pajamas",
+      "name": "Pajamas",
+      "company": "GitLab",
+      "summary": "GitLab’s design system: foundations, design tokens and the GitLab UI component library.",
+      "url": "https://design.gitlab.com/",
+      "color": "#ececef",
+      "topics": [
+        "DevOps",
+        "Design tokens",
+        "Vue"
+      ],
+      "resources": [
+        {
+          "title": "Pajamas",
+          "url": "https://design.gitlab.com/",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": ""
+        },
+        {
+          "title": "Design tokens",
+          "url": "https://design.gitlab.com/product-foundations/design-tokens",
+          "kind": "Guide",
+          "category": "Design tokens",
+          "note": ""
+        },
+        {
+          "title": "GitLab UI",
+          "url": "https://gitlab.com/gitlab-org/gitlab-ui",
+          "kind": "Code",
+          "category": "Code & implementation",
+          "note": ""
+        }
+      ],
+      "kind": "Design system",
+      "preset": null,
+      "checked": "2026-10-19",
+      "previewLabel": "Atlas visual index",
+      "licence": "MIT",
+      "repo": "https://gitlab.com/gitlab-org/gitlab-ui",
+      "atlasPreset": "D40"
+    },
+    {
+      "id": "patternfly",
+      "name": "PatternFly",
+      "company": "Red Hat",
+      "summary": "An open-source design system for enterprise and hybrid-cloud products.",
+      "url": "https://www.patternfly.org/",
+      "color": "#e7f1fa",
+      "topics": [
+        "Infrastructure",
+        "Design tokens",
+        "React"
+      ],
+      "resources": [
+        {
+          "title": "PatternFly",
+          "url": "https://www.patternfly.org/",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": ""
+        },
+        {
+          "title": "Design tokens",
+          "url": "https://www.patternfly.org/tokens/about-tokens",
+          "kind": "Guide",
+          "category": "Design tokens",
+          "note": ""
+        },
+        {
+          "title": "PatternFly on GitHub",
+          "url": "https://github.com/patternfly/patternfly",
+          "kind": "Code",
+          "category": "Code & implementation",
+          "note": ""
+        },
+        {
+          "title": "Red Hat fonts",
+          "url": "https://github.com/RedHatOfficial/RedHatFont",
+          "kind": "Font",
+          "category": "Typography",
+          "note": ""
+        }
+      ],
+      "kind": "Design system",
+      "preset": null,
+      "checked": "2026-10-19",
+      "previewLabel": "Atlas visual index",
+      "licence": "MIT · Red Hat fonts OFL",
+      "repo": "https://github.com/patternfly/patternfly",
+      "atlasPreset": "D41"
+    },
+    {
+      "id": "ionic",
+      "name": "Ionic Framework",
+      "company": "Ionic",
+      "summary": "A cross-platform UI toolkit with platform-adaptive components and theme variables.",
+      "url": "https://ionicframework.com/docs",
+      "color": "#e8eeff",
+      "topics": [
+        "Mobile",
+        "Theming",
+        "Web components"
+      ],
+      "resources": [
+        {
+          "title": "Ionic docs",
+          "url": "https://ionicframework.com/docs",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": ""
+        },
+        {
+          "title": "Theming: colours",
+          "url": "https://ionicframework.com/docs/theming/colors",
+          "kind": "Guide",
+          "category": "Design tokens",
+          "note": ""
+        },
+        {
+          "title": "Components",
+          "url": "https://ionicframework.com/docs/components",
+          "kind": "Guide",
+          "category": "Components",
+          "note": ""
+        },
+        {
+          "title": "Ionic on GitHub",
+          "url": "https://github.com/ionic-team/ionic-framework",
+          "kind": "Code",
+          "category": "Code & implementation",
+          "note": ""
+        }
+      ],
+      "kind": "Design system",
+      "preset": null,
+      "checked": "2026-10-19",
+      "previewLabel": "Atlas visual index",
+      "licence": "MIT",
+      "repo": "https://github.com/ionic-team/ionic-framework",
+      "atlasPreset": "D42"
+    },
+    {
+      "id": "paste",
+      "name": "Paste",
+      "company": "Twilio",
+      "summary": "Twilio’s accessible design system for communications products, with published tokens.",
+      "url": "https://paste.twilio.design/",
+      "color": "#e8f1fd",
+      "topics": [
+        "Communications",
+        "Accessibility",
+        "React"
+      ],
+      "resources": [
+        {
+          "title": "Paste",
+          "url": "https://paste.twilio.design/",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": ""
+        },
+        {
+          "title": "Design tokens",
+          "url": "https://paste.twilio.design/tokens",
+          "kind": "Guide",
+          "category": "Design tokens",
+          "note": ""
+        },
+        {
+          "title": "Paste on GitHub",
+          "url": "https://github.com/twilio-labs/paste",
+          "kind": "Code",
+          "category": "Code & implementation",
+          "note": ""
+        }
+      ],
+      "kind": "Design system",
+      "preset": null,
+      "checked": "2026-10-19",
+      "previewLabel": "Atlas visual index",
+      "licence": "MIT",
+      "repo": "https://github.com/twilio-labs/paste",
+      "atlasPreset": "D43"
+    },
+    {
+      "id": "canvas",
+      "name": "Canvas Design System",
+      "company": "Workday",
+      "summary": "Workday’s design system: Canvas Kit components and Canvas Tokens.",
+      "url": "https://canvas.workday.com/",
+      "color": "#e6f1fc",
+      "topics": [
+        "Workplace",
+        "Design tokens",
+        "React"
+      ],
+      "resources": [
+        {
+          "title": "Canvas",
+          "url": "https://canvas.workday.com/",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": ""
+        },
+        {
+          "title": "Canvas Kit on GitHub",
+          "url": "https://github.com/Workday/canvas-kit",
+          "kind": "Code",
+          "category": "Code & implementation",
+          "note": ""
+        },
+        {
+          "title": "Canvas Tokens on GitHub",
+          "url": "https://github.com/Workday/canvas-tokens",
+          "kind": "Code",
+          "category": "Design tokens",
+          "note": ""
+        }
+      ],
+      "kind": "Design system",
+      "preset": null,
+      "checked": "2026-10-19",
+      "previewLabel": "Atlas visual index",
+      "licence": "Apache 2.0",
+      "repo": "https://github.com/Workday/canvas-kit",
+      "atlasPreset": "D44"
+    },
+    {
+      "id": "mantine",
+      "name": "Mantine",
+      "company": "Mantine",
+      "summary": "A fully featured React components library with a configurable default theme.",
+      "url": "https://mantine.dev/",
+      "color": "#e7f5ff",
+      "topics": [
+        "React",
+        "Theming",
+        "Hooks"
+      ],
+      "resources": [
+        {
+          "title": "Mantine",
+          "url": "https://mantine.dev/",
+          "kind": "Guide",
+          "category": "Foundations",
+          "note": ""
+        },
+        {
+          "title": "Default theme",
+          "url": "https://mantine.dev/theming/default-theme/",
+          "kind": "Guide",
+          "category": "Design tokens",
+          "note": ""
+        },
+        {
+          "title": "Mantine on GitHub",
+          "url": "https://github.com/mantinedev/mantine",
+          "kind": "Code",
+          "category": "Code & implementation",
+          "note": ""
+        }
+      ],
+      "kind": "Design system",
+      "preset": null,
+      "checked": "2026-10-19",
+      "previewLabel": "Atlas visual index",
+      "licence": "MIT",
+      "repo": "https://github.com/mantinedev/mantine",
+      "atlasPreset": "D45"
     }
   ]
 }

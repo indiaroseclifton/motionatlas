@@ -1,147 +1,71 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Page builder · Visual & Motion Atlas</title>
-<meta name="description" content="Stack a film hero, features, proof, pricing and a footer, pick one of four styles, write your own words, then download the page as one HTML file or copy an AI prompt for it.">
+<meta name="description" content="Build a whole web page from 40+ sections, 64 UI components, the interactions shelf, live backgrounds, icon families and theme-kit assets. Pick any of 140 styles, then export one HTML file or a ZIP.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap">
-<style>
-:root{--bg:#F4F5F8;--panel:#FFFFFF;--ink:#1C1F2A;--mute:#5E6476;--hair:#E1E4EC;--soft:#F7F8FB;--accent:#5B2DFF;--accent-ink:#FFFFFF;color-scheme:light}
-*{box-sizing:border-box}html,body{margin:0;height:100%}
-body{background:var(--bg);color:var(--ink);font:14px/1.5 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
-button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}
-:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.app{display:grid;grid-template-columns:minmax(320px,390px) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);height:100vh;height:100dvh}
-header{grid-column:1/-1;display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:10px max(18px,env(safe-area-inset-right)) 10px max(18px,env(safe-area-inset-left));background:var(--panel);border-bottom:1px solid var(--hair)}
-.brandline{display:flex;align-items:baseline;gap:12px;min-width:0}
-.brandline a{font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);text-decoration:none;white-space:nowrap}
-.brandline a:hover{color:var(--ink)}
-.brandline h1{margin:0;font:500 26px/1 'Cormorant Garamond',Georgia,serif;font-style:italic;white-space:nowrap}
-.exports{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
-.btn{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 13px;border-radius:10px;border:1px solid var(--hair);background:var(--panel);font-weight:500;font-size:13px;text-decoration:none;color:var(--ink)}
-.btn:hover{background:var(--soft)}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
-.btn.small{min-height:30px;padding:0 9px;font-size:12px}
-.side{background:var(--panel);border-right:1px solid var(--hair);overflow:auto;min-height:0}
-.sec{padding:16px 18px;border-bottom:1px solid var(--hair);display:grid;gap:10px}
-.sec h2{margin:0;font:600 11px/1 Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
-label.f{display:grid;gap:5px;font-size:12.5px;font-weight:500}
-label.f input,label.f textarea,label.f select,.addrow select{width:100%;min-height:36px;padding:7px 10px;border:1px solid var(--hair);border-radius:9px;background:var(--panel)}
-label.f textarea{min-height:68px;resize:vertical}
-.chips{display:flex;flex-wrap:wrap;gap:6px}
-.chip{min-height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--hair);background:var(--panel);font-size:12.5px;font-weight:500;display:inline-flex;align-items:center;gap:7px}
-.chip[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
-.chip i{width:12px;height:12px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
-.list{display:grid;gap:8px}
-.blk{border:1px solid var(--hair);border-radius:12px;background:var(--panel)}
-.blk.open{border-color:#C9C2FF;box-shadow:0 6px 20px -14px rgba(91,45,255,.5)}
-.bh{display:flex;align-items:center;gap:6px;padding:6px 6px 6px 12px}
-.bh .name{flex:1;min-width:0;text-align:left;border:0;background:none;padding:6px 0;display:grid;gap:1px}
-.bh .name b{font-weight:600;font-size:13.5px}
-.bh .name small{color:var(--mute);font-size:11.5px}
-.ib{width:30px;height:30px;border-radius:8px;border:1px solid var(--hair);background:var(--panel);display:grid;place-items:center;font-size:14px;line-height:1}
-.ib:disabled{opacity:.35;cursor:default}
-.bb{padding:4px 12px 14px;display:grid;gap:10px}
-.addrow{display:flex;gap:6px}
-.addrow select{flex:1}
-.hint{color:var(--mute);font-size:12.5px;margin:0}
-.stage{display:flex;flex-direction:column;min-height:0;min-width:0}
-.bar{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--hair);background:var(--soft);flex-wrap:wrap}
-.seg{display:inline-flex;padding:3px;border:1px solid var(--hair);border-radius:10px;background:var(--panel)}
-.seg button{border:0;background:transparent;border-radius:7px;padding:5px 10px;font-size:12.5px;font-weight:500;min-height:28px}
-.seg button[aria-pressed=true]{background:var(--ink);color:#fff}
-.status{margin-left:auto;color:var(--mute);font-size:12.5px}
-.frameWrap{flex:1;min-height:0;display:flex;justify-content:center;background:repeating-conic-gradient(#ECEEF3 0 25%,#F4F5F8 0 50%) 0 0/20px 20px;overflow:auto}
-.frameWrap iframe{width:100%;height:100%;border:0;background:#fff;transition:width .25s}
-.frameWrap.phone{padding:16px 0}
-.frameWrap.phone iframe{width:390px;max-width:100%;border-radius:24px;box-shadow:0 0 0 10px #1C1F2A,0 30px 60px -20px rgba(0,0,0,.4)}
-.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:999px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:100}
-.toast.on{opacity:1}
-.undo{display:none}.undo.on{display:inline-flex}
-@media (max-width:900px){.app{grid-template-columns:1fr;grid-template-rows:auto auto auto;height:auto}.side{border-right:0;border-bottom:1px solid var(--hair);max-height:none}.stage{height:80vh}.exports{margin-left:0}}
-@media (prefers-reduced-motion:reduce){.frameWrap iframe{transition:none}}
-</style></head><body>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="builder/builder.css">
+</head><body data-pane="page">
 <div class="app">
 <header><div class="brandline"><a href="interactions.html">← Interactions shelf</a><h1>Page builder</h1></div>
-<div class="exports"><button class="btn primary" id="dl">Download HTML</button><button class="btn" id="copyHtml">Copy HTML</button><button class="btn" id="copyPrompt">Copy AI prompt</button></div></header>
-<aside class="side" aria-label="Page settings">
-<section class="sec"><h2>Start from</h2><div class="chips" id="tpls"></div><button class="btn small undo" id="undo">Undo: bring back my page</button></section>
-<section class="sec"><h2>Page</h2>
-<label class="f">Brand name<input id="brand" maxlength="40"></label>
-<label class="f">Browser tab title<input id="ptitle" maxlength="80"></label>
-<div><p class="hint" style="margin:0 0 6px">Style</p><div class="chips" id="styles" role="group" aria-label="Style"></div></div></section>
-<section class="sec"><h2>Sections, top to bottom</h2><div class="list" id="list"></div>
-<div class="addrow"><label for="addSel" style="position:absolute;left:-9999px">Add a section</label><select id="addSel"></select><button class="btn" id="addBtn">Add</button></div>
-<p class="hint">Each section can appear once. Select a section's name to edit its words; the preview jumps to it.</p></section>
-<section class="sec"><h2>About the export</h2><p class="hint">The download is one HTML file with only the style you chose. Films and images load from this site, so it works as soon as you open it; swap in your own files before you publish. Forms and buttons are placeholders and send nothing.</p></section>
+ <div class="tools">
+  <button class="btn" id="undoBtn" type="button" aria-keyshortcuts="Control+Z" disabled>↶ Undo</button><button class="btn" id="redoBtn" type="button" aria-keyshortcuts="Control+Shift+Z" disabled>↷ Redo</button>
+  <details class="menu" id="exportMenu"><summary class="btn primary">Export ▾</summary><div class="mlist" role="group" aria-label="Export">
+   <button type="button" id="dlHtml"><span>Download HTML</span><small>One file: styles, scripts and demos inlined</small></button>
+   <button type="button" id="dlZip"><span>Download ZIP</span><small>index.html + assets folder + images</small></button>
+   <button type="button" id="copyHtml"><span>Copy HTML</span><small>The single-file version</small></button>
+   <button type="button" id="openTab"><span>Open in a new tab</span><small>Exactly what the download contains</small></button>
+   <button type="button" id="copyPrompt"><span>Copy AI prompt</span><small>Style, sections and words, for any AI tool</small></button>
+  </div></details>
+ </div></header>
+<nav class="panes" aria-label="Builder panes"><div class="seg" id="panes" role="group" aria-label="Show"><button type="button" data-p="lib" aria-pressed="false">Library</button><button type="button" data-p="page" aria-pressed="true">Page</button><button type="button" data-p="preview" aria-pressed="false">Preview</button></div></nav>
+<aside class="lib" aria-label="Library">
+ <div class="phead"><h2>Library</h2><label class="vh" for="libSearch">Search the library</label><input class="search" id="libSearch" type="search" placeholder="Search sections, components, media…" autocomplete="off">
+  <div role="tablist" id="ltabs" aria-label="Library"></div></div>
+ <div class="scroll" id="libScroll"><div id="libList" role="tabpanel"></div><p class="hint" style="margin-top:12px">Press Add, or drag a card onto the page outline or the preview.</p></div>
 </aside>
-<main class="stage"><div class="bar"><div class="seg" role="group" aria-label="Preview width"><button id="wDesk" aria-pressed="true">Desktop</button><button id="wPhone" aria-pressed="false">Phone</button></div><a class="btn small" id="openTab" href="#" target="_blank" rel="noopener">Open preview in a new tab ↗</a><span class="status" id="status" role="status"></span></div>
-<div class="frameWrap" id="wrap"><iframe id="pv" title="Live preview of your page"></iframe></div></main>
+<main class="stage" aria-label="Preview"><div class="bar"><div class="seg" id="widths" role="group" aria-label="Preview width"></div><span class="status" id="status" role="status"></span></div>
+ <div class="frameWrap" id="wrap"><iframe id="pv" title="Live preview of your page"></iframe></div></main>
+<aside class="right" aria-label="Page settings">
+ <div class="phead"><div role="tablist" id="rtabs" aria-label="Page settings"></div></div>
+ <div class="scroll">
+  <section class="rpanel" id="rp-page" role="tabpanel" aria-labelledby="rt-page">
+   <div class="sec"><div class="f"><label for="brand">Brand name</label><input id="brand" maxlength="40"></div><div class="f"><label for="ptitle">Browser tab title</label><input id="ptitle" maxlength="80"></div></div>
+   <h3 class="vh">Sections, top to bottom</h3><ol id="ol" aria-label="Sections, top to bottom"></ol>
+   <p class="hint" style="margin-top:10px">Select a section to edit its words; the preview jumps to it, and clicking the preview selects a section. Drag rows to reorder, or focus a name and press Alt + ↑ / ↓.</p>
+  </section>
+  <section class="rpanel" id="rp-style" role="tabpanel" aria-labelledby="rt-style" hidden>
+   <div class="sec"><div class="styleNow" id="styleNow"></div>
+    <div class="f"><label for="pairSel">Type pairing</label><select id="pairSel"></select></div></div>
+   <div class="f"><label for="styleSearch">Find a style</label><input class="search" id="styleSearch" type="search" placeholder="Name, mood or font" autocomplete="off"></div>
+   <div class="gchips" id="skinds" role="group" aria-label="Style source" style="margin-top:8px"></div>
+   <p class="lcount" id="styleCount"></p><ul id="styleList"></ul>
+  </section>
+  <section class="rpanel" id="rp-ai" role="tabpanel" aria-labelledby="rt-ai" hidden>
+   <div class="sec"><p class="aistate" id="aiState" role="status">Checking…</p>
+    <div class="f"><label for="aiBrief">Describe the page</label><textarea id="aiBrief" rows="5" maxlength="1300" placeholder="A landing page for a weekend pottery school in Leeds: classes, prices, the teachers, a gallery and a booking form. Warm and calm."></textarea></div>
+    <label class="check"><input type="checkbox" id="aiKeep"> Improve my current page instead of starting over</label>
+    <button class="btn primary" id="aiGo" type="button" disabled>Generate page</button><p id="aiOut" role="status"></p></div>
+   <p class="hint">The AI chooses sections and a style from this library and writes every word. Each section also has “Rewrite with AI”. Undo always brings your previous version back.</p>
+  </section>
+  <section class="rpanel" id="rp-pages" role="tabpanel" aria-labelledby="rt-pages" hidden>
+   <div class="sec"><div class="f"><label for="pname">This page’s name</label><input id="pname" maxlength="60"></div><button class="btn" id="newPage" type="button">New blank page</button></div>
+   <div class="sec"><h3>Start from a template</h3><ul id="tplList"></ul></div>
+   <h3 class="hint" style="margin:0 0 6px">Saved in this browser</h3><ul id="pageList"></ul>
+  </section>
+ </div>
+</aside>
 </div>
+<datalist id="pbImages"></datalist>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="builder/blocks.js"></script>
-<script>
-(()=>{
-const LIB=window.PB_LIB,SITE='https://motionatlas-ten.vercel.app/',KEY='atlas-page-builder';
-const B=Object.fromEntries(LIB.blocks.map(b=>[b.id,b]));
-const SWATCH={noir:['#16120F','#E2A24A'],paper:['#F6F0E6','#9A5B12'],studio:['#F4F5F8','#5B2DFF'],signal:['#05070B','#7CF0FF']};
-const STYLE_DESC={noir:'Kitchen noir: warm charcoal background #16120F, surfaces #211B16, cream text #F3EADB, muted #B3A592, saffron accent #E2A24A, Fraunces for headings and DM Sans for text, 14px radius',
- paper:'Kitchen paper: cream background #F6F0E6, surfaces #FFFBF4, ink #231C15, muted #6A5D4E, caramel accent #9A5B12 with white button text, Fraunces for headings and DM Sans for text, 14px radius',
- studio:'Studio: cool light grey #F4F5F8, white surfaces, ink #1C1F2A, muted #5E6476, violet accent #5B2DFF, italic Cormorant Garamond headings and Inter text, 16px radius',
- signal:'Signal: near-black #05070B, panels #0C1119, text #EAF0F8, muted #93A0B4, cyan accent #7CF0FF with dark button text, Space Grotesk headings and Inter text, 18px radius'};
-const T=(brand,style,title,blocks)=>({brand,style,title,blocks:blocks.map(x=>typeof x==='string'?{id:x,vals:{}}:{id:x[0],vals:x[1]})});
-const TEMPLATES={
- 'Recipe channel':T('Saffron','noir','Saffron · recipes filmed like still lifes',['nav','hero-film','statement','sec-bento','sec-testimonials','sec-pricing','sec-faq','sec-cta','sec-footer']),
- 'Product launch':T('Signal','signal','Signal · find the signal in every call',[['nav',{l1:'Product',l2:'Customers',l3:'Pricing',cta:'Start free'}],['hero-film',{film:'light-threads',kicker:'Version 3 is out',heading:'Find the signal in every call.',intro:'Signal listens to customer calls, pulls out what people asked for and threads it into your roadmap.',b1:'Start free',b2:'See how it works'}],['sec-logos',{kicker:'Trusted by',heading:'Product teams in 31 countries.'}],['sec-bento',{kicker:'Product',heading:'Every conversation, untangled.',intro:'Transcripts, themes and quotes in one place, linked to the moment someone said it.',lead:'Themes that grow on their own',leadText:'Requests branch into themes as calls come in.'}],['sec-pricing',{kicker:'Pricing',heading:'Start small. Listen more.',intro:'Every plan includes transcripts and quotes. Change or cancel at any time.',p1:'Starter',p2:'Team',p3:'Enterprise'}],['sec-faq',{heading:'Before you start listening.',button:'Talk to us'}],['sec-cta',{film:'particle-tree',kicker:'Start this week',heading:'Hear it before it’s loud.',intro:'Connect your calendar and Signal joins your next customer call.',b1:'Start free',b2:'Book a demo'}],['sec-footer',{news:'One insight, every Friday.'}]]),
- 'Studio portfolio':T('Fold','studio','Fold · paper sculpture studio',[['nav',{l1:'Work',l2:'Studio',l3:'Contact',cta:'Commission'}],'hero-split',['statement',{kicker:'How we work',text:'Every piece starts as a single sheet. We cut, score and fold by hand, then light it like a film set, so the shadows do half the work.'}],['sec-logos',{kicker:'Made for',heading:'Shop windows, book covers and film titles.'}],['sec-testimonials',{kicker:'Clients',heading:'Patient, precise and slightly obsessed with paper weight.'}],['sec-contact',{heading:'Tell us about the piece.',intro:'A short note is plenty. We reply within two working days with questions and a rough timeline.',email:'studio@example.com',address:'Unit 4, Mill Yard, Bristol'}],['sec-footer',{news:'A new piece, once a month.'}]])
-};
-let state=load()||clone(TEMPLATES['Recipe channel']),open=null,prev=null;
-function clone(x){return JSON.parse(JSON.stringify(x))}
-function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.blocks&&s.blocks.every(b=>B[b.id]))return s}catch(e){}return null}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
-const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const val=(blk,k)=>{const f=B[blk.id].fields.find(f=>f.k===k);return blk.vals[k]!=null?blk.vals[k]:f?f.def:''};
-function fill(str,blk,A){return str.replace(/\{\{(\w+)\}\}/g,(m,k)=>k==='A'?A:k==='brand'?esc(state.brand||'Brand'):esc(val(blk,k)))}
-function compose(exportMode){const A=exportMode?SITE+'assets/':new URL('assets/',location.href).href;const st=LIB.styles[state.style];
- const css=':root{'+st.vars+'}\n'+LIB.base+state.blocks.map(b=>B[b.id].css).join('\n');
- const body=state.blocks.map(b=>'<div class="b-'+b.id+'" id="'+b.id+'">'+fill(B[b.id].html,b,A)+'</div>').join('\n');
- const js=state.blocks.map(b=>'(()=>{const root=document.querySelector(".b-'+b.id+'");'+fill(B[b.id].js,b,A)+'})();').join('\n');
- return '<!doctype html>\n<html lang="en" data-style="'+state.style+'"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">\n<title>'+esc(state.title||state.brand)+'</title>\n<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link rel="stylesheet" href="https://fonts.googleapis.com/css2?'+st.fonts+'&display=swap">\n<!-- Built with the Visual & Motion Atlas page builder. Style: '+st.name+'. -->\n<style>\n'+css+'\n</style></head><body>\n'+body+'\n<script>\n'+js+'\n<\/script></body></html>\n'}
-const pv=document.getElementById('pv');let tmr=0,lastY=0,jump=null;
-function render(){clearTimeout(tmr);tmr=setTimeout(()=>{try{lastY=pv.contentWindow.scrollY||0}catch(e){}pv.srcdoc=compose(false);save();document.getElementById('status').textContent=state.blocks.length+' sections · '+LIB.styles[state.style].name},180)}
-pv.addEventListener('load',()=>{try{const w=pv.contentWindow;if(jump){const el=w.document.getElementById(jump);if(el)el.scrollIntoView();jump=null}else w.scrollTo(0,lastY)}catch(e){}});
-function ui(){document.getElementById('brand').value=state.brand;document.getElementById('ptitle').value=state.title;
- document.querySelectorAll('#styles button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.s===state.style));
- const list=document.getElementById('list');list.innerHTML='';
- state.blocks.forEach((blk,i)=>{const d=B[blk.id];const el=document.createElement('div');el.className='blk'+(open===blk.id?' open':'');
-  el.innerHTML='<div class="bh"><button class="name" aria-expanded="'+(open===blk.id)+'"><b>'+esc(d.name)+'</b><small>'+esc(d.group)+'</small></button><button class="ib" data-a="up" aria-label="Move '+esc(d.name)+' up"'+(i?'':' disabled')+'>↑</button><button class="ib" data-a="down" aria-label="Move '+esc(d.name)+' down"'+(i<state.blocks.length-1?'':' disabled')+'>↓</button><button class="ib" data-a="rm" aria-label="Remove '+esc(d.name)+'">✕</button></div>';
-  if(open===blk.id){const bb=document.createElement('div');bb.className='bb';bb.innerHTML='<p class="hint">'+esc(d.desc)+'</p>';
-   d.fields.forEach(f=>{const l=document.createElement('label');l.className='f';l.textContent=f.label;let inp;
-    if(f.type==='film'){inp=document.createElement('select');LIB.films.forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n.replace(/-/g,' ');inp.append(o)})}else if(f.type==='long'){inp=document.createElement('textarea')}else{inp=document.createElement('input')}
-    inp.value=val(blk,f.k);inp.oninput=()=>{blk.vals[f.k]=inp.value;render()};l.append(inp);bb.append(l)});
-   if(!d.fields.length)bb.insertAdjacentHTML('beforeend','<p class="hint">This section uses the brand name and has no other words to edit.</p>');el.append(bb)}
-  el.querySelector('.name').onclick=()=>{open=open===blk.id?null:blk.id;if(open){jump=blk.id;try{const t=pv.contentWindow.document.getElementById(blk.id);if(t){t.scrollIntoView({behavior:'smooth'});jump=null}}catch(e){}}ui()};
-  el.querySelectorAll('.ib').forEach(b=>b.onclick=()=>{const a=b.dataset.a;if(a==='rm'){state.blocks.splice(i,1);if(open===blk.id)open=null}else{const j=a==='up'?i-1:i+1;[state.blocks[i],state.blocks[j]]=[state.blocks[j],state.blocks[i]]}ui();render();const again=document.querySelectorAll('#list .blk')[a==='rm'?Math.min(i,state.blocks.length-1):(a==='up'?i-1:i+1)];if(again){const q=again.querySelector(a==='rm'?'.name':'[data-a="'+a+'"]:not(:disabled)')||again.querySelector('.name');q&&q.focus()}});
-  list.append(el)});
- const sel=document.getElementById('addSel');sel.innerHTML='';const used=new Set(state.blocks.map(b=>b.id));
- LIB.blocks.filter(b=>!used.has(b.id)).forEach(b=>{const o=document.createElement('option');o.value=b.id;o.textContent=b.name+' · '+b.group;sel.append(o)});
- sel.disabled=document.getElementById('addBtn').disabled=!sel.options.length;if(!sel.options.length){const o=document.createElement('option');o.textContent='Every section is on the page';sel.append(o)}}
-Object.keys(LIB.styles).forEach(k=>{const b=document.createElement('button');b.className='chip';b.dataset.s=k;b.innerHTML='<i style="background:linear-gradient(135deg,'+SWATCH[k][0]+' 50%,'+SWATCH[k][1]+' 50%)"></i>'+LIB.styles[k].name;b.onclick=()=>{state.style=k;ui();render()};document.getElementById('styles').append(b)});
-Object.keys(TEMPLATES).forEach(k=>{const b=document.createElement('button');b.className='chip';b.textContent=k;b.onclick=()=>{prev=clone(state);state=clone(TEMPLATES[k]);open=null;lastY=0;document.getElementById('undo').classList.add('on');ui();render();say('Started from '+k)};document.getElementById('tpls').append(b)});
-document.getElementById('undo').onclick=()=>{if(!prev)return;state=prev;prev=null;document.getElementById('undo').classList.remove('on');ui();render();say('Your page is back')};
-document.getElementById('brand').oninput=e=>{state.brand=e.target.value;render()};
-document.getElementById('ptitle').oninput=e=>{state.title=e.target.value;render()};
-document.getElementById('addBtn').onclick=()=>{const id=document.getElementById('addSel').value;if(!B[id])return;const footer=state.blocks.findIndex(b=>b.id==='sec-footer');const at=B[id].group==='Top'?(id==='nav'?0:(state.blocks[0]&&state.blocks[0].id==='nav'?1:0)):(footer>=0?footer:state.blocks.length);state.blocks.splice(at,0,{id,vals:{}});open=id;jump=id;ui();render()};
-const wrap=document.getElementById('wrap');
-document.getElementById('wDesk').onclick=()=>{wrap.classList.remove('phone');document.getElementById('wDesk').setAttribute('aria-pressed',true);document.getElementById('wPhone').setAttribute('aria-pressed',false)};
-document.getElementById('wPhone').onclick=()=>{wrap.classList.add('phone');document.getElementById('wPhone').setAttribute('aria-pressed',true);document.getElementById('wDesk').setAttribute('aria-pressed',false)};
-document.getElementById('openTab').onclick=e=>{e.preventDefault();const u=URL.createObjectURL(new Blob([compose(true)],{type:'text/html'}));window.open(u,'_blank','noopener');setTimeout(()=>URL.revokeObjectURL(u),60000)};
-const toast=document.getElementById('toast');function say(m){toast.textContent=m;toast.classList.add('on');clearTimeout(say.t);say.t=setTimeout(()=>toast.classList.remove('on'),1900)}
-async function copy(t,m){try{await navigator.clipboard.writeText(t);say(m)}catch(e){const ta=document.createElement('textarea');ta.value=t;document.body.append(ta);ta.select();try{document.execCommand('copy');say(m)}catch(_){say('Copy failed')}ta.remove()}}
-const slug=()=>(state.brand||'page').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'page';
-document.getElementById('dl').onclick=()=>{const u=URL.createObjectURL(new Blob([compose(true)],{type:'text/html'}));const a=document.createElement('a');a.href=u;a.download=slug()+'.html';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),3000);say('Downloading '+slug()+'.html')};
-document.getElementById('copyHtml').onclick=()=>copy(compose(true),'HTML copied');
-document.getElementById('copyPrompt').onclick=()=>{const lines=state.blocks.map((b,i)=>{const d=B[b.id];const words=d.fields.filter(f=>f.type!=='film').map(f=>f.label.toLowerCase()+' “'+val(b,f.k)+'”').join('; ');const film=d.fields.find(f=>f.type==='film');
-  return (i+1)+'. '+d.name+'. '+d.prompt+(film?' Background film: '+SITE+'assets/films/'+val(b,'film')+'-720.mp4 (poster '+SITE+'assets/films/'+val(b,'film')+'.jpg).':'')+(words?' Words: '+words+'.':'')});
- copy('Build a one-page website for “'+(state.brand||'my brand')+'” as a single HTML file with no libraries (Google Fonts are fine).\n\nStyle: '+STYLE_DESC[state.style]+'.\n\nSections, top to bottom:\n'+lines.join('\n')+'\n\nThroughout: lay out at phone width as well as desktop, make every control keyboard-accessible with visible focus, keep text contrast at WCAG AA, pause or calm all motion under prefers-reduced-motion, give looping videos a pause button, and make forms show a confirmation without sending anything.','Prompt copied')};
-ui();render();
-})();
-</script></body></html>
+<script src="builder/blocks.js" defer></script>
+<script src="kits/themes.js" defer></script><script src="kits/kits-a.js" defer></script><script src="kits/kits-b.js" defer></script><script src="kits/brand.js" defer></script>
+<script src="atlas-themes.js" defer></script>
+<script src="component-lab.js" defer></script>
+<script src="interactions/manifest.js" defer></script>
+<script src="backgrounds.js" defer></script>
+<script src="builder/zip.js" defer></script>
+<script src="builder/styles.js" defer></script>
+<script src="builder/extras.js" defer></script>
+<script src="builder/app.js" defer></script>
+</body></html>

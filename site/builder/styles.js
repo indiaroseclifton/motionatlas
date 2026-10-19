@@ -36,7 +36,7 @@ function varsFrom(t){ // t: {bg,surface,ink,mute,line,accent,onAccent,accentInk,
 function tokensComplete(c){ // fill in derived colours so every style passes AA for text
  const bg=c.bg,surface=c.surface||mix(bg,lum(bg)<.2?'#FFFFFF':'#000000',.04);
  const ink=ensure(c.ink||best(bg),[bg,surface],7);
- const mute=ensure(c.mute||mix(ink,bg,.38),[bg,surface],4.6);
+ const mute=ensure(c.mute||mix(ink,bg,.38),[bg,surface],5.2);
  const line=c.line||mix(ink,bg,.82);
  const accent=c.accent||ink;
  const onAccent=c.onAccent&&ratio(c.onAccent,accent)>=4.5?c.onAccent:best(accent);

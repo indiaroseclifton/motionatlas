@@ -712,8 +712,8 @@
 .systemSample.systemIdentity.sp-D45 .sp-mtbadge.gray{background:#e9ecef;color:#343a40}.systemSample.systemIdentity.sp-D45 .sp-mtbadge.blue{background:#d0ebff;color:#1864ab}.systemSample.systemIdentity.sp-D45 .sp-mtbadge.teal{background:#c3fae8;color:#087f5b}.systemSample.systemIdentity.sp-D45 .sp-mtbadge.light{background:#e7f5ff;color:#1864ab}
 .systemSample.systemIdentity.sp-D45 .sp-mtprog{height:.4em;border-radius:1em;background:#e9ecef;overflow:hidden}.systemSample.systemIdentity.sp-D45 .sp-mtprog i{display:block;height:100%;background:var(--sys-accent)}
 .systemSample.systemIdentity.sp-D45 .sp-mtfoot{display:flex;align-items:center}.systemSample.systemIdentity.sp-D45 .sp-mtfoot em{margin-left:auto;font-size:.8em;color:#495057}
-.systemSample.systemIdentity.sp-D45 .sp-mtav{display:grid;place-items:center;width:1.8em;height:1.8em;border-radius:50%;background:#ffe3e3;color:#c92a2a;font-size:.7em;font-weight:700;border:2px solid #fff}
-.systemSample.systemIdentity.sp-D45 .sp-mtav.b{background:#d3f9d8;color:#2b8a3e;margin-left:-.5em}
+.systemSample.systemIdentity.sp-D45 .sp-mtav{display:grid;place-items:center;width:2.6em;height:2.6em;flex:none;border-radius:50%;background:#ffe3e3;color:#c92a2a;font-size:.7em;font-weight:700;border:2px solid #fff}
+.systemSample.systemIdentity.sp-D45 .sp-mtav.b{background:#d3f9d8;color:#1b5e20;margin-left:-.5em}
 @container (max-width:560px){.systemSample.systemIdentity.sp-D38 .sp-ant,.systemSample.systemIdentity.sp-D40 .sp-gl{grid-template-columns:1fr}.systemSample.systemIdentity.sp-D38 .sp-asider,.systemSample.systemIdentity.sp-D40 .sp-glside,.systemSample.systemIdentity.sp-D41 .sp-pfnav,.systemSample.systemIdentity.sp-D43 .sp-pside,.systemSample.systemIdentity.sp-D43 .sp-plist{display:none}.systemSample.systemIdentity.sp-D41 .sp-pfb{grid-template-columns:1fr}.systemSample.systemIdentity.sp-D43 .sp-paste{grid-template-columns:1fr}.systemSample.systemIdentity.sp-D39 .sp-bcards,.systemSample.systemIdentity.sp-D45 .sp-mtcols{grid-template-columns:1fr 1fr}}
 @media(prefers-reduced-motion:reduce){.sp .sx-cur{animation:none}}
 .sp .sx-money small,.sp .sx small{display:inline}
