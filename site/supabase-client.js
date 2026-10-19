@@ -49,7 +49,8 @@
   schema(force){
    if(force)schemaP=null;
    return schemaP||(schemaP=C.load().then(async c=>{
-    const {error}=await c.from('projects').select('id',{head:true,count:'exact'}).limit(1);
+    const {error,status}=await c.from('projects').select('id').limit(1);
+    if(!error&&status===404)return 'missing';
     if(!error)return 'ok';
     if(missing(error))return 'missing';
     schemaP=null;console.warn('Supabase:',error.message);return 'error';

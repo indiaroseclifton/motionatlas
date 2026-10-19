@@ -1,0 +1,53 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sign in · Visual &amp; Motion Atlas</title>
+<meta name="description" content="Sign in to keep your atlas projects in your account and open them on any device.">
+<meta name="robots" content="noindex"><meta name="theme-color" content="#F4F5F8">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;1,400&family=Manrope:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="projects-hub.css">
+<style>
+:root{--bg:#F4F5F8;--ink:#14161C;--muted:#4F5566;--line:#D9DDE6;--panel:#fff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Manrope,system-ui,sans-serif}
+a{color:inherit}
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:20px 16px;max-width:1080px;margin:0 auto}
+.top a{font-weight:600;font-size:14px;text-decoration:none}
+.top a:hover{text-decoration:underline}
+main{max-width:1080px;margin:0 auto;padding:clamp(24px,8vh,90px) 16px 64px}
+h1{margin:0;font:400 clamp(44px,8vw,88px)/.95 'Cormorant Garamond',Georgia,serif;letter-spacing:-.02em}
+.lede{margin:18px 0 32px;max-width:56ch;color:var(--muted);font-size:18px}
+.card{padding:clamp(20px,4vw,36px);background:var(--panel);border:1px solid var(--line);border-radius:20px;max-width:640px}
+.who{margin:0 0 16px;font-size:18px}
+.acts{display:flex;flex-wrap:wrap;gap:10px}
+.acts a{display:inline-flex;align-items:center;min-height:46px;padding:0 20px;border-radius:999px;background:var(--ink);color:#fff;font-weight:600;text-decoration:none}
+.note{margin:16px 0 0;font-size:14px;color:var(--muted)}
+ul.why{margin:28px 0 0;padding:0 0 0 18px;color:var(--muted);max-width:60ch}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+</style></head>
+<body>
+<header class="top"><a href="atlas.html#home">Visual &amp; Motion Atlas</a><a href="atlas.html#projects">My projects →</a></header>
+<main id="main">
+<h1>Your account.</h1>
+<p class="lede">Sign in to keep your projects and their hubs in your account, open them on any device and give a hub a public page. Without an account, projects stay in this browser.</p>
+<div class="card" id="box" aria-live="polite"><p>Checking your sign-in…</p></div>
+<ul class="why"><li>We email you a link; there’s no password to remember.</li><li>Your projects are private unless you turn on a hub’s public page.</li></ul>
+</main>
+<script src="supabase-client.js"></script>
+<script>
+(()=>{const box=document.getElementById('box'),C=window.AtlasCloud;
+ const q=new URLSearchParams(location.search);const raw=q.get('next')||'';
+ /* only same-site destinations */
+ const next=/^[\w./-]*(#[\w?=&.-]*)?$/.test(raw)&&!raw.startsWith('//')?raw:'';
+ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ let shown='';
+ function paint(){const u=C.user;const key=u?'in:'+u.id:'out';if(key===shown)return;shown=key;
+  if(!u){C.mountSignIn(box,{next:next||'atlas.html#projects'});const err=q.get('error_description');if(err)box.querySelector('.accStatus').textContent='That sign-in link didn’t work: '+err+'. Request a new one.';return}
+  box.innerHTML=`<p class="who">Signed in as <b>${esc(u.email||'you')}</b>.</p><div class="acts"><a href="${esc(next||'atlas.html#projects')}">Go to my projects</a><button type="button" class="accSecondary" id="out">Sign out</button></div><p class="note" id="st" role="status"></p>`;
+  document.getElementById('out').onclick=async()=>{await C.signOut();document.getElementById('st')&&(document.getElementById('st').textContent='Signed out.')};
+  /* arriving from an email link: tidy the URL and carry on to the projects page */
+  if(q.has('code')){history.replaceState(null,'',location.pathname+(next?'?next='+encodeURIComponent(next):''));document.getElementById('st').textContent='You’re signed in. Taking you to your projects…';setTimeout(()=>{location.href=next||'atlas.html#projects'},1200)}}
+ C.onChange(paint);
+ C.load().then(paint).catch(e=>{box.innerHTML='<p>'+esc(e.message)+'</p>'});
+})();
+</script>
+</body></html>
