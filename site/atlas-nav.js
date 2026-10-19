@@ -16,18 +16,18 @@
    ['#compare','Compare styles','Two styles side by side on the same subject.','ferrofluid'],
    ['#references','Sources & credits','Original works, research, licences and credits.','smoke-plume']]},
   {name:'Visual',items:[
-   ['#art','Art styles','Thirty-six art styles with museum references.','suminagashi'],
+   ['#art','Art styles','Sixty art styles, from museum references to procedural specimen films.','suminagashi'],
    ['#cinema','Film looks','Cinematic directions translated into original scenes.','pixel-sorting'],
    ['#backgrounds','Backgrounds','Generate gradients, light and grain; export 4K or a loop.','petal-swirl'],
    ['#vases','Vase studies','One vase, forty treatments, to read a style quickly.','sand-drawing'],
    ['#pairings','Style pairings','Styles that work together, and why.','lion-phoenix']]},
   {name:'Motion',items:[
    ['#motion','Animation studio','Live studies, films, simulations and an easing lab.','bioluminescent-trails'],
-   ['#effects','Landing effects','Scroll and hover effects you can copy.','soap-film'],
+   ['#effects','Landing effects','Scroll and hover effects you can copy.','light-ribbons'],
    ['#showcase','Showcase reels','Motion templates for portfolios and launches.','golden-figure'],
    ['particle-studio.html','Particle studio','Turn any picture into moving particles.','particle-tree']]},
   {name:'Interface',items:[
-   ['#systems','Design systems','Thirty-two complete visual worlds and real open-source systems.','game-of-life'],
+   ['#systems','Design systems','Forty-eight complete visual worlds and real open-source systems.','game-of-life'],
    ['#ux','UI components','Sixty-four components, every state, in every style.','light-mesh'],
    ['#icons','Icon families','Outline, solid, pixel, colour and 3D icon sets.','sketchbook-horse'],
    ['icons.html','Icon library','3,768 searchable icons in 13 families, with full packs.','sketchbook-horse'],

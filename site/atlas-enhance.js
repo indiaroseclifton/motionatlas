@@ -36,7 +36,7 @@
   pairings:{no:15,name:'Style pairings',family:'Motion',color:'rose',related:['systems','motion','typography'],h:[1,2,-5],
    film:{src:'assets/films/lion-phoenix-720.mp4',webm:'assets/films/lion-phoenix-720.webm',poster:'assets/films/lion-phoenix-1280.webp',label:'Lion to phoenix',tone:'dark'}},
   effects:{no:16,name:'Landing effects',family:'Motion',color:'rose',related:['motion','ux','playground'],h:[1,-3,2,-6],
-   film:{src:'assets/films/soap-film-720.mp4',webm:'assets/films/soap-film-720.webm',poster:'assets/films/soap-film-1280.webp',label:'Soap film',tone:'dark'}},
+   film:{src:'assets/films/light-ribbons-720.mp4',webm:'assets/films/light-ribbons-720.webm',poster:'assets/films/light-ribbons-1280.webp',label:'Light ribbons',tone:'dark'}},
   compare:{no:17,name:'Comparison desk',family:'Motion',color:'rose',related:['art','systems','vases'],h:[1,3,-6],
    film:{src:'assets/films/ferrofluid-720.mp4',webm:'assets/films/ferrofluid-720.webm',poster:'assets/films/ferrofluid-1280.webp',label:'Ferrofluid',tone:'dark'}},
   references:{no:18,name:'Sources & credits',family:'Studio',color:'gold',related:['browse','systems','typography'],h:[1,-2,4],
