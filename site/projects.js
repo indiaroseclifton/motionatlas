@@ -26,7 +26,7 @@ const ProjectAtlas={items:[],active:null,undo:null,
  /* ---------------- Project hubs (projects-hub.js draws them) ---------------- */
  view:'list',
  isUUID(id){return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id||'');},
- setupHub(){const ws=$('#projects .projectWorkspace');if(!ws||$('#projectHub'))return;
+ setupHub(){const ws=$('#projects .projectWorkspace');if(!ws||$('#projectHub')||!window.ProjectHub)return;
   ws.insertAdjacentHTML('beforebegin','<div id="projectAccount" class="projectAccount" aria-live="polite"></div>');
   ws.insertAdjacentHTML('afterend','<div id="projectHub" hidden></div>');
   $('#newProjectForm').insertAdjacentHTML('afterend',`<form id="templateProjectForm" class="projectTemplateForm"><h2>Start from a template</h2><label>Template<select id="templateProjectKind">${(window.ProjectHub?.TEMPLATES||[]).map(t=>`<option value="${t.id}">${esc(t.name)}</option>`).join('')}</select></label><p id="templateProjectDesc" class="projectTemplateDesc"></p><label>Project or client name<input id="templateProjectName" required maxlength="100" placeholder="Acme launch"></label><label>Brief (optional)<textarea id="templateProjectBrief" rows="3" maxlength="4000" placeholder="Who is it for, what should it do, how should it feel?"></textarea></label><button class="primary" type="submit">Create from template</button></form>`);
