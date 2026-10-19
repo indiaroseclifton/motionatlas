@@ -588,6 +588,7 @@ const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)go(chs.
 .band div{display:inline-block;animation:slide calc(var(--fx-duration)*40) linear infinite}@keyframes slide{to{transform:translateX(-50%)}}`,
   js:`const h=document.querySelector('.kin');const text=h.textContent;h.textContent='';[...text].forEach((c,i)=>{const s=document.createElement('span');s.setAttribute('aria-hidden','true');if(c===' ')s.className='sp';s.textContent=c;s.style.animationDelay=(i*FX.d*.04)+'ms';h.append(s);});
 if(FX.R){document.querySelector('video').removeAttribute('autoplay');document.querySelector('video').pause();}`},
+
  ];
 
  // A few scripts declare their image path last; move that declaration to the top so it exists before use.

@@ -16,10 +16,10 @@
  const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  const cat=()=>typeof catalogue!=='undefined'?catalogue:[];
  const get=id=>cat().find(e=>e.id===id);
- const filmed=()=>cat().filter(e=>e.film);
+ const filmed=()=>cat().filter(e=>e.film&&!/^[RF]/.test(e.id));
  const isStudy=id=>/^M\d\d$/.test(id)||(window.LiveSims?.ids||[]).includes(id);
  const play=v=>{const p=v.play();if(p)p.catch(()=>{});};
- const video=(f,{auto=!still(),cls='',label=''}={})=>`<video class="${cls}" ${auto?'autoplay':''} muted loop playsinline preload="${auto?'auto':'none'}" poster="${f.poster}" ${label?`aria-label="${esc(label)}"`:'aria-hidden="true"'}><source src="${f.src}" type="video/mp4"></video>`;
+ const video=(f,{auto=!still(),cls='',label=''}={})=>`<video class="${cls}" ${auto?'autoplay':''} muted loop playsinline preload="${auto?'auto':'none'}" poster="${f.poster}" ${label?`aria-label="${esc(label)}"`:'aria-hidden="true"'}>${f.webm?`<source src="${f.webm}" type="video/webm">`:''}<source src="${f.src}" type="video/mp4"></video>`;
  const pauseIcon='<svg viewBox="0 0 10 10" aria-hidden="true"><rect x="1.5" y="1" width="2.5" height="8" fill="currentColor"/><rect x="6" y="1" width="2.5" height="8" fill="currentColor"/></svg>';
  const playIcon='<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 1l7 4-7 4z" fill="currentColor"/></svg>';
  function toggleBtn(btn,v){const sync=()=>{const on=!v.paused;btn.innerHTML=(on?pauseIcon:playIcon)+`<span>${on?'Pause':'Play'} film</span>`;btn.setAttribute('aria-pressed',String(on));};v.addEventListener('play',sync);v.addEventListener('pause',sync);btn.onclick=()=>v.paused?play(v):v.pause();sync();}
@@ -62,7 +62,7 @@
  /* ---------- 2. Catalogue cards ---------- */
  const finePointer=matchMedia('(hover:hover) and (pointer:fine)');
  function decorateCards(){
-  document.querySelectorAll('#grid .cataloguecard:not([data-sf])').forEach(card=>{
+  document.querySelectorAll('#grid .cataloguecard:not([data-sf]),#artGrid .artcard:not([data-sf]),#cinemaGrid .cataloguecard:not([data-sf])').forEach(card=>{
    card.dataset.sf='1';const id=card.querySelector('[data-open]')?.dataset.open;const e=id&&get(id);if(!e)return;
    const mediaBtn=card.querySelector('.cardmedia');
    if(e.isNew&&e.id[0]==='A'){const code=card.querySelector('.cardcode span:last-child');if(code)code.textContent=e.film?'Specimen film':'New specimen';}
