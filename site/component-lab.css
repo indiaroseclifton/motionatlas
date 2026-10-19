@@ -67,8 +67,11 @@
 /* C41+ in catalogue cards and the detail view: map design-system tokens (--sys-*) onto component tokens (--cl-*). */
 .clSys{--cl-bg:var(--sys-bg,#f4f6f9);--cl-surface:var(--sys-surface,#fff);--cl-text:var(--sys-ink,#17212c);--cl-muted:color-mix(in srgb,var(--cl-text) 68%,var(--cl-surface));--cl-line:color-mix(in srgb,var(--cl-text) 20%,transparent);--cl-accent:var(--sys-accent,#2260dd);--cl-on-accent:var(--sys-buttontext,#fff);--cl-danger:color-mix(in srgb,#c62828 78%,var(--cl-text));--cl-success:color-mix(in srgb,#15803d 80%,var(--cl-text));--cl-warn:color-mix(in srgb,#b45309 80%,var(--cl-text));--cl-radius:var(--sys-radius,12px);--cl-radius-sm:min(var(--sys-radius,12px),10px);--cl-bw:1px;--cl-shadow:0 1px 2px rgb(0 0 0 / .06),0 6px 18px rgb(0 0 0 / .07);--cl-font:var(--sys-font,system-ui),system-ui,sans-serif;--cl-display:var(--sys-font,system-ui),system-ui,sans-serif;--cl-weight:650;--cl-glass:none;--cl-pad:10px 18px;--cl-h:44px;--cl-gap:14px;--cl-accent-grad:var(--cl-accent);color:var(--cl-text)}
 .componentPlate.clThumb{position:relative;display:block;padding:0}
-.clThumbIn{position:absolute;left:50%;top:50%;width:460px;display:grid;justify-items:center;transform:translate(-50%,-50%) scale(tan(atan2(86cqi,460px)));pointer-events:none}
+.clThumbIn{--tw:360px;position:absolute;left:50%;top:50%;width:var(--tw);display:grid;justify-items:center;transform:translate(-50%,-50%) scale(tan(atan2(90cqi,var(--tw))));pointer-events:none}
 .clDemo{display:grid;gap:10px;min-width:0}
 .clDemoStage{display:flex;justify-content:center;align-items:flex-start;padding:24px 16px;min-height:240px;border-radius:14px;background:var(--cl-bg);border:1px solid var(--cl-line);overflow-x:auto}
 .clDemoHint{margin:0;font:11px/1.5 var(--f-mono,ui-monospace,monospace);color:var(--text-dim,#4a5466)}
 @media(prefers-reduced-motion:reduce){.clSys *{animation:none!important;transition:none!important}}
+
+/* every specimen fits its cell; wide ones scroll inside themselves */
+.clab-cellbody>*,.clab-livebox>*{min-width:0;max-width:100%}
