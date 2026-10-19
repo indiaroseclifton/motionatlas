@@ -1,624 +1,338 @@
-# Visual and Motion Atlas — hero
+# Visual & Motion Atlas
 
-`index.html` is the landing-page hero. It plays the *Genesis* film full-bleed behind the
-copy and syncs the plate index (I Harmonics, II Specimens, III Dimension, IV Biosphere)
-to the video's playhead. Clicking a plate seeks to it; "Watch the film" hides the copy.
-Reduced-motion visitors get a still poster and a play button.
+A field guide to how images move, and a toolkit for building with what it shows. It's a static
+site (`site/`) with a few serverless functions (`api/`), deployed by Vercel from `main`.
 
-## The film (`film/`)
+The library holds:
 
-A HyperFrames project holding a hero cut of the uploaded *Genesis* composition: the same
-Fourier-epicycle and Three.js engine, with the baked captions, telemetry, audio and mouse
-orbit removed, and a 1.2s fade to the void so the 40s loop seams cleanly.
+| What | Count | Where it lives |
+| --- | --- | --- |
+| Catalogue entries (styles, art, animation, motion, components, effects, systems, films) | 337 | `site/catalogue.json` + `site/expansion.json` |
+| Theme kits | 48 | `site/kits/` |
+| Atlas design systems | 48 (D01–D48) | `site/expansion.json`, `systems.js`, `system-previews.js`, `system-kits.js` |
+| UI components | 64 (C01–C64) | `site/component-lab.js` |
+| Interactions | 70 | `site/interactions/` |
+| Landing effects | 37 (L01–L37) | `site/effects-lab.js`, `site/expansion.json` |
+| Atlas themes (component lab skins) | 22 | `site/atlas-themes.js` |
+| Page-builder sections / styles | 44 / 144 | `site/builder/` |
 
-```bash
-cd film
-npx hyperframes check
-npx hyperframes render --quality looks --output renders/genesis-hero.mp4
+If you change one of these, update the numbers in this table, the page `<meta name="description">`
+tags and the few hard-coded labels (`atlas.html` noscript and catalogue rail, `home.js`,
+`atlas-share.js`, `page-builder.html`). Most counts on the atlas itself are computed at runtime.
+
+Live: https://motionatlas-ten.vercel.app (`/` rewrites to `/atlas`).
+
+---
+
+## Directory map
+
+```
+api/                     Vercel serverless functions
+  ai.js                  page-builder AI (Claude Haiku 5.5)
+  share.js, upload.js    project sharing (Vercel Blob)
+  apply.js               "Staged application" form → email via Resend
+  _lib/                  shared helpers for share/upload
+site/                    everything that is served (outputDirectory in vercel.json)
+  atlas.html             the atlas: one page, sections after the # (see below)
+  app.js, app.css        catalogue core: routing, grid, detail view, compare, vases
+  catalogue.json         144 original entries (A, S, M, E, W prefixes)
+  expansion.json         193 more entries (C, D, L, R, F) + source references
+  atlas-*.js/.css        nav, enhance (plate bands, header films, search), share, explore, tours, refine
+  lazy-bg.js             holds catalogue card images back until they scroll near (load it first)
+  kits/                  theme kits (theme-kits.html)
+  ds/                    the 01 Design System docs site
+  interactions/          interactions shelf: manifest.js + demos/*.html
+  builder/               page builder (page-builder.html)
+  system-components/     live HTML/CSS components for systems D21–D32
+  dataviz/               flowchart studio, diagram studio, chart style guides
+  studies/               live WebGL particle studies (lion, whale, butterfly, bird/fox)
+  supabase-client.js     accounts (window.AtlasCloud)
+  projects*.js, account.html, p.html, shared.html   My projects, sign-in, public hubs, shared links
+  icons/, fonts/, vendor/, assets/                  static assets (films in assets/films/)
+  work/djinyc/           a client mock-up (served at /work/djinyc/home)
+  work/01/               a personal project. Its assets are used by ds/, but keep it OUT of the atlas nav
+  original/              backups of files from the first mirror; not linked
+  sw.js                  service worker (bump the cache name on every deploy)
+supabase/schema.sql      tables, policies and storage bucket for My projects
+tools/                   generators and helper scripts (see each section)
+film/                    HyperFrames source for the Genesis hero film
+index.html               the original stand-alone landing hero (not deployed; site/ is)
+docs/, deliverables/     research notes, audit, exported charts
+vercel.json              cleanUrls, rewrites, redirects, cache headers
 ```
 
-Web encodes in `assets/` were made from that master:
-
-| File | Use | Settings |
-| --- | --- | --- |
-| `genesis-hero-1080.mp4` | desktop | H.264, 2-pass 2.6 Mbps, faststart |
-| `genesis-hero-720.mp4` | ≤900px screens | H.264, 2-pass 1.1 Mbps, faststart |
-| `genesis-hero.webm` | browsers without H.264 | VP9, 2-pass 1.8 Mbps, 1600w |
-| `genesis-poster.jpg` | still / reduced motion | frame at 34s |
-
-Serve over a host that supports HTTP range requests so plate seeking works.
-
-## Live site home page (`site/`)
-
-`site/` is a copy of https://visual-motion-atlas.indiaroseclifton.chatgpt.site/atlas whose home
-page is now the Visual & Motion Atlas landing page above (same hero, film, plate index, type and
-palette), with the rest of the home page restyled to match. Only these files changed:
-
-- `site/home.js`, `site/home.css` (the previous versions are in `site/original/`)
-- `site/assets/atlas-hero-1080.mp4`, `atlas-hero-720.mp4`, `atlas-hero.webm`, `atlas-hero-poster.jpg`
-
-To ship it, upload those files to the live site. Other pages are untouched; the landing styles
-only apply while the home page is showing (`body.cinemaMode`).
-
-Home page, top to bottom:
-
-- **Hero**: the landing page as built: "Visual & Motion Atlas" with the iridescent *Motion*,
-  plate eyebrow that follows the film, "Open the atlas" (goes to the catalogue), "Watch the film"
-  (hides the copy and header; Esc returns), the Fourier formula, and the four-plate index with
-  progress bars, timecode and pause. The site's main nav is restyled to match the landing nav.
-- **Browse the atlas** index row.
-- **Design systems**, **Animation studio**, **Specimens** and **My projects** sections, each
-  labelled in mono with its plate colour, serif headings with an italic second line, and plate
-  captions set like the hero's plate index. The animation section draws a live five-harmonic
-  Fourier rose instead of the old rotating rings.
-
-### Every other page
-
-Home stays the dark cinema plate. The other 18 pages are light paper under a dark header band
-that carries the film across the site.
-
-**`site/atlas-theme.css`** (generated by `tools/build-atlas-theme.py`; edit the script, not the CSS)
-
-- Cool paper ground, white panels with soft shadows, serif page titles, mono labels, Manrope
-  body text, and plate colours deepened for contrast on white (mint for systems, rose for
-  motion, gold for studio pages, ice for the rest).
-- Dark header band with the globe mark (it turns on hover), main nav and the library row.
-- Pill buttons that lift and pick up the plate colour on hover, fields with a plate-colour focus
-  ring, card images that lift and zoom slowly on hover.
-- Specimens (UI kits, dashboards, demos, previews) keep their own design; its `SPEC` list names them.
-
-**`site/atlas-enhance.js` + `site/atlas-enhance.css`** (new features; no existing script changed)
-
-- **Plate band** above every page title: "Plate 03 · Motion · of 18" and a live Fourier pen
-  tracing that page's own curve in its plate colour. Pages with buttons beside the title get a
-  compact drawing next to the label instead.
-- **Pairs well with**: three or four related sections under each intro, so every page leads on.
-- **Search the atlas**: button in the header, or ⌘K / Ctrl+K / `/` anywhere. Searches all 18 pages
-  and all 266 catalogue entries; arrow keys move, Enter opens (entries open in their detail view
-  or design-system hub), Esc closes.
-- **Motion**: page title, intro and links rise in on each page; catalogue cards and other grids
-  ease in as they scroll into view (including ones added by "Show more" or filters); a
-  four-colour reading-progress line runs along the bottom of the header; a back-to-top button
-  appears after a screen and a half.
-- Reduced-motion users get the finished drawings and no entrance or scroll animation.
-
-### Audit plan, all six phases (`docs/audit-and-roadmap.html`)
-
-1. **Crisp and fast.** Hero video re-encoded for the site (1080/720 MP4, WebM, poster). Fonts
-   subset to WOFF2 (19 KB). Home paints first and starts the catalogue only when idle. Plate
-   images load lazily. Raster component fragments never upscale past their source width.
-2. **Native component lab** (`#ux`): 40 components (C01–C40) built in HTML/CSS from 20 theme
-   token sets (`atlas-themes.js`), so they stay sharp at any size. Each one has theme,
-   light/dark, density, label and icon controls, a state matrix, and code export for HTML,
-   CSS, React and tokens, plus accessibility and usage notes. Links look like
-   `#ux?component=C30&theme=S16`.
-3. **Landing effects lab** (`#effects`): 37 effects (L01–L37, 19 new). Each runs live in a
-   sandboxed frame you can switch between desktop, tablet and phone, with controls for
-   intensity, duration and easing, a reduced-motion check, and "Get the code" (full page,
-   HTML, CSS or JS). Links look like `#effects?fx=L25`.
-4. **Motion studio 2.0** (`#motion`):
-   - An easing lab with a draggable bezier editor and spring physics that exports CSS
-     `linear()`, plus presets, a side-by-side compare, a share link, and code for CSS, WAAPI,
-     GSAP and Motion.
-   - Saved motion tokens.
-   - Real-time WebGL shaders for 12 studies.
-   - "Record clip" saves a WebM.
-5. **Eight new styles** (S13–S20): liquid glass, aurora mesh, claymorphism, editorial
-   maximalism, anti-design, solarpunk, terminal and zine/riso. Each has a native catalogue
-   tile, a studio-dashboard treatment in the detail view and Compare, and links to its
-   component-lab skin and its paired effect. The catalogue then had 230 entries (266 after the additions below).
-6. **New features:**
-   - **Find a direction**: a five-question finder in the header that recommends a style,
-     type, motion and effect, then lets you copy the brief.
-   - **Compare anything**: any two entries side by side on `#compare`, with differences
-     highlighted.
-   - **Project exports**: a moodboard PNG, plus design tokens as CSS or JSON.
-   - **Recently viewed**: recent entries appear in search.
-   - **Offline**: a service worker (`sw.js`) caches the site for offline use.
-
-### Specimen films and renders (October 2026 package)
-
-Your package of 11 films, 68 renders and a style list is merged in with
-`tools/add-specimens.py`. It is safe to re-run:
-`python3 -I tools/add-specimens.py site/catalogue.json`.
-
-- **34 new Animation art entries.** Codes A41–A81 keep your numbering. Your A21–A40 entries
-  clashed with existing atlas IDs; the ones that were new became **A83–A88** (shadow puppet,
-  Lorenz attractor, hydraulic erosion, cross-stitch, stained glass, metaballs). Each entry has
-  the full brief: use, motion recipe, build route, things to avoid, test, checks, cues and
-  three prompts.
-- **Renders of styles the atlas already had** (voxel, origami, sand, flow fields, op-art,
-  pinscreen, riso and others) were added to those entries as extra stills, not duplicated.
-- **Films.** All 11 were re-encoded as seamless 14-second loops (`assets/films/*.mp4`, about
-  2.5 MB each, with a poster `.jpg`). Each one plays in its entry's detail view, with a strip
-  of stills underneath.
-- **`specimen-films.js` + `specimen-films.css`** add:
-  - **Home: specimen reel.** A full-bleed section after the animation studio that continues
-    the hero's plate index (Plates V–XV). It crossfades between the films every 7 seconds.
-    You can pick a plate, pause the reel or open the entry. It only loads near the screen.
-  - **Animation studio: film library.** All 11 films; hover or focus to play, click to open.
-  - **Header plate films.** Inner pages carry a quiet, page-specific film behind the dark
-    navigation band (motion: Lissajous, effects: ferrofluid, catalogue: suminagashi and so
-    on), with a caption that opens the entry.
-  - **Catalogue cards.** A "Film" badge, and the film plays while you hover or focus a card.
-- **Four new hero effects** in the effects lab, all using the films:
-  - **L31 Film reel hero:** crossfading films with a plate index.
-  - **L32 Scroll-scrubbed film:** scrolling draws and rewinds the Lissajous pen. It uses a
-    keyframe-dense encode, `assets/films/lissajous-scrub.mp4`.
-  - **L33 Film in type:** the film plays inside giant letters that dissolve as you scroll.
-  - **L34 Hover film cards.**
-- Reduced motion and Save-Data get posters only, and nothing plays until clicked. Every film is
-  muted and pauses when it is off screen or the tab is hidden.
-
-### Live simulations, new styles, hero templates, sharing and SEO
-
-- **Live simulations** (`live-sims.js` + `live-sims.css`). Five entries run as real, adjustable
-  simulations in the animation studio, each with its own sliders and "Show reference image":
-  - **A84 Lorenz attractor:** RK4, with σ, ρ and β sliders; drag to turn the view.
-  - **A76 Double pendulum:** RK4, with a "chaos twin" released 0.001° away that visibly diverges.
-  - **A78 Reaction-diffusion:** Gray-Scott, with feed and kill rates and four pattern presets;
-    draw on the stage to seed.
-  - **A88 Metaballs:** an inverse-square field; the pointer adds a blob.
-  - **A49 Ferrofluid:** a stylised spike lattice; the pointer steers the magnet.
-
-  They follow Play/Pause, Speed and Reduced motion, and "Record clip" records them.
-- **Two new visual styles from your plates: S21 Cyanotype and S22 Botanical plate.** Both have
-  full themes (light and dark) in the component lab, native catalogue tiles, the shared
-  dashboard mock-up, finder scoring and paired effects. Styles go from 20 to 22, and the
-  catalogue from 264 to 266 entries.
-- **Hero templates L35–L37** in the effects lab, built on your films:
-  - **L35 Split-screen film hero:** hover a side and it opens up.
-  - **L36 Scroll story with film:** chapters scroll past a pinned film that changes with each one.
-  - **L37 Looping film with type:** letter-by-letter type and a keyword band over a dimmed loop.
-- **Film prompts** for the 25 new entries that still have no film are in
-  `docs/film-prompts.md`, matched to your existing films. To add a finished clip, run
-  `tools/add-film.sh A41 path/to/A41.mp4`. It encodes the loop and poster and adds the film to
-  the entry, its catalogue card and the film library.
-- **Sharing** (`atlas-share.js` + `atlas-share.css`):
-  - Every entry now has a link (`atlas#browse?entry=A53`), and the address bar updates while
-    an entry is open.
-  - "Share this direction" in any entry makes a 1200 × 630 card image to share, save, or copy
-    the link from.
-  - Page titles and descriptions follow the section and the open entry.
-- **Email sign-up** on the home page ("Get the next plates"). It is **not connected yet**: set
-  `ATLAS_SIGNUP.endpoint` at the top of `atlas-share.js` to a form endpoint that accepts a POST
-  with an `email` field, such as a Formspree form (`https://formspree.io/f/yourid`) or Buttondown
-  (`https://buttondown.com/api/emails/embed-subscribe/yourname`). Until then the form says
-  sign-ups open soon and sends nothing.
-- **SEO.** `atlas.html` has a new title and description, plus a canonical link, Open Graph and
-  Twitter cards with `assets/og-atlas.jpg`, structured data (JSON-LD), a favicon and a
-  `<noscript>` summary. `robots.txt` and `sitemap.xml` sit next to `atlas.html`. The atlas is
-  a single page whose sections live after the `#`, so search engines see one page; the
-  sitemap lists that one URL.
-
-### Explore by feel, guided tours and four more live simulations
-
-- **Explore by feel** (`atlas-explore.js` + `atlas-explore.css`). The catalogue has a row of
-  feel chips with live counts: Liquid & metal, Pen & line, Generative, Print & paper,
-  Light & glow, Handmade, Glass & soft, Digital & retro.
-  - "Has film" and "Live study" toggles combine with any feel.
-  - Search understands feel words ("liquid", "pen", "print", "glow", "handmade") and
-    matches whole words, so "pen" no longer finds "open".
-  - Filters are shareable links, such as `#browse?feel=liquid&film=1`.
-  - Every entry's detail view shows its feels as links.
-  - Feels come from keyword rules plus hand-picked overrides in `OVERRIDE` at the top of the file.
-- **Guided tours** (`atlas-tours.js` + `atlas-tours.css`; new page `#tours`, linked in the header
-  and from a teaser row on the home page). There are six tours: Liquid & metal, Lines & machines,
-  Print & paper, Living systems, Light & glow and By hand.
-  - Each tour has nine stops that mix specimen films, live simulations, visual styles and
-    landing effects, with a line on why each stop is there.
-  - Stop buttons open the entry, play the live study, open the effect or try a style in the
-    component lab.
-  - A tour can be shared as a link (`#tours?t=lines`) or saved as a 1200 × 630 tour card, ready
-    to post.
-  - Edit the `TOURS` list at the top of the file to change or add tours.
-- **Four more live simulations**, nine in total:
-  - **A81 Flocking (boids):** separation, alignment and cohesion; attract with the pointer, or
-    hold to scatter.
-  - **A32 Flow field:** curl-noise particles; click to drop a vortex.
-  - **A56 Harmonograph:** damped pendulums drawing on paper, with ratio presets, detune, phase
-    and damping.
-  - **A26 Cellular automata:** Life, HighLife, Day & Night, Seeds, Maze and Coral; draw to add
-    cells.
-
-### Open-source design systems, museum references and credits
-
-- **Four open-source systems (D33–D36)**: Primer, GOV.UK Frontend, Adobe Spectrum and USWDS, each
-  shown as a product screen built from the project's published tokens (`site/system-previews.js`,
-  `.css`). They sit beside the original 32 systems, which are unchanged. Filter with
-  "Open-source systems" on the Design systems page. Each hub shows a source and licence note.
-- **Official resources**: every collection now lists its licence and source repository, and the
-  cover shows the matching atlas screen or, when there is none, the publisher index card rather
-  than an unrelated system.
-- **Museum references**: 44 public-domain works from The Met Open Access (CC0) appear under 22 art
-  styles, on the Art styles workbench and in each style's detail view
-  (`site/art-references.json`, `art-references.js`, images in `site/assets/art-refs/`).
-- **Credits & licences**: a table of every outside source on the Source library page, linked
-  from the footer.
-
-### Sharper images
-
-- Catalogue pictures used to be cropped from shared contact sheets (362–627 px per tile). Each tile
-  is now its own file in `site/assets/tiles/`, upscaled 4× with Real-ESRGAN, with an 800 px copy
-  for standard screens and a 1400 px copy for retina (`imageHTML` in `site/app.js` picks the tile).
-- The landing-effect source images in `site/assets/fx/` and the Glass Garden backdrop were
-  upscaled 2× the same way.
-
-### Background generator (`#backgrounds`)
-
-- `site/backgrounds.js` and `backgrounds.css`: sixteen procedural families (Mesh, Liquid, Aurora, Swirl,
-  Iridescent, Horizon, Portal, Orbs, Grain, ASCII, Caustics, Contours, Halftone, Op lines, Cells, Silk) drawn by one WebGL
-  fragment shader, with 80 named presets in 16 collections. The six newest collections are Pool Light, Survey Lines, Riso Dots,
-  Op Lines, Stained Cells and Silk Folds. Palette, scale, distortion, softness, grain, motion and seed are editable.
-- Exports: 4K and HD PNG at six aspect ratios, a 6-second seamless loop (WebM), a CSS approximation,
-  standalone live code that reproduces the exact image, and a shareable link (`#backgrounds?bg=…`).
-
-### Audit fixes and Showcase reels
-
-- **Navigation**: the library row is now Visual (art, film looks, backgrounds, vase studies, style
-  pairings, compare), Motion (animation studio, landing effects, showcase reels) and Interface
-  (design systems, UI components, icons, fonts & type, playground, extracted assets), plus
-  Sources & credits. Only the menu holding the current page is highlighted.
-- **Resolution**: home plates, the 201 extracted fragments (display and PNG download) and share cards
-  now use the upscaled tiles; museum works are 1400 px; film posters are 1920 px.
-- **Assets page** shows 24 fragments at a time. **Your creations** explains that publishing needs the
-  atlas server, which the static site does not run.
-- **Showcase reels** (`#showcase`, `site/showcase.js`, `showcase.css`): eight motion templates (Rise,
-  Rolodex, Comet, Deck, Marquee, Carousel, Folio, Spotlight) for presenting your own images or the atlas
-  mockups, four formats, generated backgrounds, and 1080p video export.
-- The 12 older film clips are upscaled to twice their size: 1920 × 1288 (Lissajous scrub 1440 × 968).
-  - **Method:** Real-ESRGAN from half-size frames.
-  - **Encoding:** H.264 at quality setting 28, capped at 4 Mbit/s, which gives 2.4–7.6 MB per clip.
-  - **Lissajous scrub:** keeps a keyframe every 8 frames so it scrubs smoothly.
-- Genesis (home hero scene 07) stays at its 1600 × 900 source. It's already fairly sharp, and an upscale would roughly double the file size for a scene few visitors open. The upscaling script can be rerun if that changes.
-- **Upscaled films:** the lion-to-phoenix and jellyfish films are now 1080p.
-  - **Model:** Real-ESRGAN `realesr-general-x4v3`, run on CPU with PyTorch. Near-black tiles are skipped.
-  - **Lion:** upscaled from half-size frames, which gave the crispest grain.
-  - **Jellyfish:** upscaled from full-size frames.
-  - **Phones:** each film has a `-720.mp4` cut made from the upscaled frames, served below 900 px.
-
-### Chart style guides (`site/chart-styles.html`, `site/dataviz/charts.js`)
-
-A style guide per style (the same seventeen styles as the flowchart studio, board styles first). Each guide contains:
-- **Palette:** computed and validated with the dataviz method's checks rather than eyeballed. Categorical colours come in a fixed order (first three distinct in every pair, neighbours distinct, lightness band, chroma floor, colour-blind and normal-vision separation), plus a one-hue sequential ramp, a diverging pair with a grey middle, reserved status colours, and surfaces and ink.
-- **Type and mark specs:** bars at most 24px thick with 4px rounded data ends, 2px lines, ringed markers, hairline grids, sparing direct labels.
-- **A dashboard composition:** KPI row, trend, comparison, table, donut.
-- **The chart library:** thirteen forms telling one story (KPI tiles, line, area, ranked bars, current vs previous, stacked columns, donut, table with sparklines, heatmap, sankey, roadmap timeline, goal meter, funnel).
-  - Every chart has a hover readout (a crosshair on time series), keyboard focus, a data-table twin and Copy SVG.
-- **Exports:** tokens as JSON, CSS variables, and the whole guide as a standalone HTML page with fonts embedded.
-
-Palettes live in `dataviz/styles.js` (`DVChartPalettes`, with the validation results). Clay, sketch, neo-brutalist and risograph sit in the colour-blind floor band (ΔE 6–8), so their charts always carry direct labels.
-
-### Flowchart studio (`site/flowchart-studio.html`, `site/dataviz/`)
-
-Write a flowchart as text and get a clean, consistent diagram in eight layouts and seventeen styles.
-- **Visual editor** (`dataviz/flow-editor.js`): build a chart without writing any syntax. The Steps panel opens in Visual mode, where each stage is a card holding its steps.
-  - Each step has a status dot (click to cycle have / don't have / partial / key), an editable name and a details panel. The panel holds the note, the kind (step, decision, start, data, input/output, sub-process), the stage, and a "Goes to" list of connections with optional labels and line styles.
-  - **Enter** in a step name adds the next step and wires it into the chain. "+ Yes / No after" inserts a decision with both branches. Deleting a step joins its neighbours back up.
-  - Clicking a step in the preview opens it in the editor, in any diagram type.
-  - Every change is written back as Mermaid, so the Code tab, share links and exports stay in sync both ways.
-- **Input:** the flowchart subset of Mermaid, which most tools and AI assistants export. That covers shapes, labelled branches, dashed and thick links, subgraphs, and `:::have` / `:::dont` / `:::partial` / `:::accent` status. A plain list of steps also works: lines ending in "?" become decisions, and indented `Yes: step` lines become branches.
-- **Layout** (`dataviz/flow.js`, no libraries):
-  - Ranks with loops set aside, crossing-reducing ordering, and isotonic placement so lines run straight.
-  - Right-angle routing with every connector on its own track; loops run round the outside, dashed in the accent colour.
-  - Stage outlines follow their own steps row by row, so stages never overlap.
-  - Swimlane mode turns top-level subgraphs into lanes.
-- **Diagram types** (`dataviz/flowtypes.js`): the same source can be drawn as eight different layouts, not just re-skinned. The studio scores your content and marks the best fit.
-  - **Flow:** the layered flowchart above, for short processes with decisions.
-  - **Step list:** every step numbered in reading order on one rail. Branches and loops are written as routes on the step ("→ 21", "↺ back to 12"), so no line crosses the page. Best for long processes.
-  - **Stage columns:** one column per subgraph with a progress bar. Steps stack inside; skips become chips; loops are drawn once each under the columns.
-  - **Cycle:** stages round a ring, read clockwise. The closing arc is the feedback loop; other loops are written on the card they leave from.
-  - **Decision tree:** plain runs of steps fold into one card, and every decision opens a branch. Lone inputs become "←" chips on the step they feed.
-  - **Capability map:** have / don't-have per stage, with an overall bar. No connectors.
-  - **Swimlanes:** the flow layout with subgraphs as owner lanes.
-  - **Mind map:** stages and steps as branches, for an overview without order.
-- **Styles** (`dataviz/styles.js`): six drawn from the Pinterest board (Workflow canvas, Soft neumorphic, Frosted glass, Calm sage, Lilac flow, Soft clay 3D) and eleven from research (Swiss editorial, Tufte, newsroom grey, design-system SaaS, monochrome developer, hand-drawn, pastel diagramming, blueprint, dark glass, neo-brutalist, risograph).
-- **Pre-flight:** notes on what the layout did, plus warnings for unlabelled branches, several starts, crowded ranks and oversized charts.
-- **Exports:** SVG and HTML with the fonts embedded, PNG at 2×, a share link (the chart is encoded in the URL), and a style guide. The style guide is a one-page flowchart design system for the chosen look: your chart, colour tokens, type roles, shapes, status, geometry, and dos and don'ts.
-- **Examples** (`dataviz/examples.js`): creative review, sign-up, release pipeline (lanes), and the AI cooking-channel workflow, both cleaned up and as first drawn. Finished exports of the channel chart are in `deliverables/channel-flowchart/`.
-- **Research notes:** `docs/dataviz-research.md`.
-
-### Animation studio header film (`site/atlas-enhance.js`, `atlas-enhance.css`)
-
-The Animation studio header now has a film behind it, like the home hero: **Bioluminescent trails**, as 1280px WebM and MP4 cuts.
-- It runs full width from under the site header to the dark "Live studies" section, fading into the title on the left and into that section at the bottom, and the header text turns light over it.
-- It plays only while on screen and only on that page, never under reduced motion, and has a pause/play button.
-- Any page can take one by adding a `film` entry to its record in `PAGES`.
-- Eighteen pages now have one, in one of two tones:
-  - **Dark** (`tone:'dark'`): Animation studio (Bioluminescent trails), Landing effects (Soap film), Comparison desk (Ferrofluid), Style pairings (Lion to phoenix) and Design systems (Game of Life). The header turns dark, the text turns light, and the film fades into the page below.
-  - **Light** (`tone:'light'`): Catalogue (Hydraulic erosion), Art styles (Suminagashi), Film looks (Pixel sorting), Vase studies (Sand drawing) and Inspiration (Embroidery). The film washes into the page colour behind dark text.
-  - **Your films:** Fonts & type (Light threads), My projects (Particle tree), Your creations (Pigment bloom) and Sources & credits (Smoke plume), all dark; System playground (Swan construction, dark); Icon families (Sketchbook horse), Extracted assets (Paper bird) and UI components (Light mesh), all light.
-    - **Studio films in the catalogue:** all twelve of your films are catalogue entries W01–W12 in a new **Studio films** collection, with 3:2 thumbnails in `assets/films/thumbs/`. Like the specimen films they get the Film badge, hover previews, a film in the detail view, three production prompts (video, still, interface), search and the "Has film" filter. They use a `W` prefix so the vase grid and motion lab, which assume `A` entries, are untouched.
-    - **Safari:** Safari can stall on VP9 WebM without falling back, so it is served H.264 first (header films, studies strip, home reel). Copyable demos and builder blocks list MP4 first for everyone.
-    - The Live studies strip also gained Drawn in gold leaf, the swan, the horse, Petals in a slow vortex and the paper bird. The "Pairs well with" links stay in the header above the strip.
-    - They're upscaled from the 1168 × 784 originals with Real-ESRGAN (`realesr-general-x4v3`, half-size frames, near-black tiles skipped) to 1920 px, with seamless 15 s loops.
-    - Bitrates are capped (H.264 ≤ 6 Mbit/s; VP9 3 Mbit/s full size, 1.6 Mbit/s for the 1280px cuts), which keeps fine glowing detail from ballooning WebM sizes.
-    - The same four also join the Animation studio's "Live studies & films" strip.
-- **Strip and home hero cleanup:** the live lion-to-phoenix and stardust bird-to-fox studies are gone from the strip and the home hero picker. The lion film is the stronger version, and the bird study fell short of its reference. Their study pages stay in `site/studies/` for direct links.
-  - Each uses a 1280px `-720` WebM/MP4 cut. Tool pages (UI components, icons, playground, assets, projects, creations, sources) stay without one.
-
-### Channel brand styles: Kitchen noir and Kitchen paper (`site/dataviz/styles.js`)
-
-These are the AI cooking channel's own styles. They come first in every style row, under "Your brand", in the flowchart studio, the diagram studio and the chart style guides.
-- **Kitchen noir** (dark, for video and slides):
-  - Warm charcoal `#16120F`, cream type `#F3EADB` and a saffron accent `#E2A24A`.
-  - Fraunces for headlines, DM Sans for text, and a light film grain.
-- **Kitchen paper** (light, for documents and print): recipe-card cream `#F6F0E6`, ink-brown type, and the saffron deepened to caramel `#B9741C`.
-- **Validation:** both categorical palettes pass the dataviz validator. Noir's colour-blind ΔE is 9.4. Paper's is 6.3, which is in the floor band and fine with the direct labels these charts use. Status red and green are never reused as series colours.
-- **Plan pack:** the channel plan deck's charts are in `deliverables/channel-plan/`, in both styles.
-
-### Theme kits (`site/theme-kits.html`, `site/kits/themes.js`)
-
-Eight complete kits: **Matrix (01)**, **Synthwave (02)**, **Y2K Chrome (03)**, **Brutalist (04)**, **Art Deco (05)**, **Blueprint (06)**, **Vaporwave (07)** and **Bauhaus (08)**.
-- Each kit is rendered only from its own tokens. It shows a live animated canvas background (with pause, and still under reduced motion), colour swatches with measured contrast, a type pairing, and components: nav, buttons, form, checkbox and toggle, tabs, badges, progress, alert, card and table.
-- **SVG assets** are generated per kit: logo (plain and on its background), mark, seamless pattern tile, divider and twelve icons in the kit's stroke style. There is also a 1920×1080 PNG still of the background.
-- **Download the kit** builds a zip in the browser (a small stored-zip writer, no library). It contains `tokens.css`, `tokens.json`, `background.js` (`startBackground(canvas, still)`), a working `demo.html`, `svg/`, `png/`, `prompt.txt` and a README. You can also copy just the tokens, the AI prompt or `background.js`.
-- Every kit passes axe WCAG A/AA. The page is in the Library drawer under Interface.
-
-### Signal & data pieces (`site/interactions/demos/`, `api/apply.js`)
-
-Eleven pieces on the Interactions shelf for building a powerful AI or infrastructure site yourself. Each is one HTML file with a `CONFIG` block at the top for colours, copy and data, and each has a build prompt on the shelf:
-
-- Status header with discreet login
-- Circuit city hero (3D, three.js r128 from cdnjs)
-- Binary helix
-- Live telemetry feeds
-- Routed motion kit (route, lock, decode, tick)
-- Machine sound kit
-- Integration logo wall (Simple Icons, CC0)
-- Follow-the-sun board
-- Hairline claims and roster
-- Long staged application
-- Agent console
-
-The staged application can POST to `/api/apply`, which emails it through Resend once `RESEND_API_KEY` and `APPLY_TO` are set on the Vercel project. Theme kit 09, Graphite, holds the matching tokens and backgrounds.
-
-### Project files and sharing (`site/project-share.js`, `site/share-client.js`, `site/shared.html`, `api/`)
-
-- **Files:** add images, video, PDFs, fonts, zips or text to a project when you create it or later, by choosing or dropping files (up to 100 MB each). They are kept in this browser in IndexedDB (`atlas-project-files`) and previewed in the project.
-- **Share:** "Create share links" publishes the project's name, brief, decisions, atlas references and notes, plus its files. You get two links:
-  - a **view link** (`/shared#v/<id>`) that opens the project read-only;
-  - an **edit link** (`/shared#e/<id>/<key>`) that lets collaborators change the name, brief and decisions and add or remove files.
-  - The id and key sit after the `#`, so they never reach server logs.
-- "Update shared copy" sends later changes. If someone edited the shared brief since your last update, you are asked whether to use their version or replace it with yours.
-- Files added by collaborators appear under "Added by collaborators". "Stop sharing" deletes the shared copy and its uploaded files.
-- The shared page has **Save to my projects**. With an edit link the saved project stays linked to the shared copy.
-- **Server:** `api/share.js` handles create, read, update and delete. `api/upload.js` issues short-lived Vercel Blob client-upload tokens only to holders of a project's edit key, limited to the allowed file types and 100 MB. Manifests are versioned files (`shares/<id>/m-<time>.json`) so CDN caches are never stale. Edit keys are stored only as SHA-256 hashes, and files are checked to belong to the project.
-- **Setup:** connect a Vercel Blob store to the project (this sets `BLOB_READ_WRITE_TOKEN`), then redeploy. Until then the Share panel says sharing isn't switched on, and files stay local.
-- **Local testing:** `npm run dev:share` serves the site with the real API against `.share-dev/` at http://localhost:8790. It also takes uploads at `/api/upload-local`, which production doesn't have. `npm run vendor:blob` rebuilds `site/vendor/blob-client.js` (the `@vercel/blob` client, Apache-2.0).
-
-### Navigation (`site/atlas-nav.js`, `atlas-nav.css`)
-
-One slim top bar replaces the two rows of menus: **brand · Library · Make ▾ · Your studio ▾ · Search**.
-- **Library** opens a left drawer (a modal dialog: focus moves in, Escape or the backdrop closes it). Every section sits in one of six plain groups: Explore, Visual, Motion, Interface, Make and Your studio. Each item has a 40px film thumbnail and a one-line purpose, and the current page is marked.
-  - On wide screens, hovering or focusing an item plays that section's film in a framed preview beside the list (posters only under reduced motion).
-  - Quick actions at the top: **Search everything** and **Find a direction**, which reuse the existing palette and finder.
-- **Make** and **Your studio** are short dropdowns with a description per link; on phones they live in the drawer only.
-- **Page trail:** `Atlas / Group / Page`. The group name is a button that opens the drawer at that group.
-- **Catalogue on phones:** the collections rail becomes a left drawer opened by a "Collection: …" button, which shows the active collection and how many other filters are on. Choosing a collection closes it.
-- The old menus stay in the DOM, hidden, because several modules hook into them. The new bar reuses the `navGroup` open/close behaviour. Thumbnails are in `assets/films/mini/`.
-
-### Page builder (`site/page-builder.html`, `site/builder/`, `tools/blocks.py`)
-
-Build a whole page from the atlas library, pick any style, write your own words (or let the AI), then export.
-- **Layout:** library on the left, live preview in the middle, page settings on the right (Page, Style, AI, Pages). On phones a Library / Page / Preview switch shows one pane at a time. Preview widths: desktop, tablet (820) and phone (390). Clicking a section in the preview selects it.
-- **Library tabs** (all searchable, every card has **Add** and can be dragged onto the outline or the preview):
-  - **Sections:** 43 native blocks plus a type specimen, filterable by group: navigation (bar, centred with phone menu, announcement), heroes (film, split, centred, kinetic type, 3D card stack, video showcase), features (bento, grid, alternating rows, how it works, tabs, integrations), proof (testimonial wall, featured quote, stats that count up, logo marquee, logo wall, press quotes), selling (pricing with toggle, pricing tiers, comparison table), story (statement, timeline, team, case study, text marquee), content (gallery with lightbox, article list, text block, full-width image, FAQ, spacer) and endings (film CTA, CTA band, newsletter, contact form, contact options, app download, wordmark footer, column footer). Real default copy throughout; list fields take one row per line with parts split by `|`.
-  - **Components:** all UI components from `component-lab.js` (C01–C64), each dropped into a section wrapper, themed by the page style through the `--cl-*` variables, and interactive in the export (the component script is inlined in the HTML, or `assets/component-lab.js` in the ZIP).
-  - **Interactions:** every shelf demo in `interactions/manifest.js` (sections excluded), with live thumbnails mounted only while visible. Embedded as a frame; the HTML export inlines the demo as `srcdoc`, the ZIP adds `interactions/<id>.html`.
-  - **Media & backgrounds:** the 80 generated backgrounds from `backgrounds.js` as a live-shader hero, band or strip (the shader is read from that file; a CSS gradient stands in if it can't be), the 22 atlas films as film bands, the landing-effect clips (L-entries in `expansion.json`) and the library images.
-  - **Icons:** builder glyphs, the icon families in `site/icons/`, and every theme kit's icon set, as an editable icon feature row.
-  - **Kit assets:** for any theme kit, its animated background hero (the kit's own canvas code, exported as-is, with pause and reduced-motion still), logo, mark, pattern band, divider, icon set and palette, plus "use as page style" and the kit ZIP.
-- **Styles (144):** the four builder styles, all 48 theme kits, the 48 atlas design systems (D01–D48 tokens) and the 22 atlas themes in light and dark, each mapped onto the builder variables (`--bg --surface --ink --mute --line --accent --on-accent --accent-ink --head --body --hw --radius --track --case`; muted text and accent text are nudged to pass AA). Search, filter by source and swatches. A **type pairing** (15, from the Fonts & type page) can replace any style's fonts.
-- **Editing:** per-section fields (text, paragraphs, lists, films, images from the library or any URL, and pickers for components, demos, backgrounds, kits and icon families), duplicate, remove, ↑/↓ buttons, drag and drop, and Alt + ↑/↓ on a section name. **Undo/redo** (buttons, Ctrl/⌘ + Z, Ctrl/⌘ + Shift + Z) covers every change, including AI edits and template swaps.
-- **Pages:** several pages saved in this browser (open, duplicate, delete, rename), five templates (recipe channel, product launch, studio portfolio, neon launch on a theme kit, app on a design system). The old single-page save is migrated.
-- **AI:** "Generate page from brief" (optionally improving the current page) and "Rewrite with AI" on each section, through `api/ai.js` (contract unchanged: the catalogue sends list fields as `key[parts]`, style ids as `id|name`). When `/api/ai?status` says the key isn't set, or on a local copy (add `?ai=1` to try it locally), the panel explains why and the rest of the builder is unaffected.
-- **Export:** **Download HTML** (one file: CSS, scripts, component behaviours and interaction demos inlined; images and films load from the live site), **Download ZIP** (`index.html`, `assets/page.css`, `assets/page.js`, the images it uses, component script and demo files; films still stream), **Copy HTML**, **Open in a new tab** and **Copy AI prompt**.
-- Code: `builder/blocks.js` is generated (`python3 tools/blocks.py`) from the eight `sec-*` sections and the `MORE` list in `tools/sections_src.py`; `builder/styles.js` is the style registry, `builder/extras.js` the code-drawn library blocks, `builder/app.js` the UI and `builder/zip.js` a copy of the kits' stored-zip writer. Every library source is feature-detected and read-only. Block CSS is scoped under `.b-<id>`, so any block can appear more than once.
-- QA: builder UI passes axe WCAG A/AA at 1440 and 390 with no horizontal scroll; a page with every section and several live components passes axe in the export with Signal, a theme kit and a design system.
-
-### Interactions shelf (`site/interactions.html`, `site/interactions/`)
-
-Seventeen original showpiece interactions, each one self-contained HTML file with no libraries in `interactions/demos/`, listed in `interactions/manifest.js`. The pieces are: fanned card deck, arc carousel, 3D ring carousel, image tunnel, particle globe, clothesline gallery, folder tabs, hover list with cursor image, expanding panels, dial slider, swipe quote deck, halo magnetic button, watching-eyes button, parallax tilt row, zoom-through reveal, scroll index and flowing line mesh.
-
-- The grid mounts live previews only while they are on screen. A filter separates the types.
-- Opening a piece shows a full-size demo with **Copy HTML**, **Download**, **Open full screen**, notes on how it works and what it suits, and an **AI build prompt** for recreating it in another stack.
-- Copied code rewrites `../../assets/` to the live site, so it runs as soon as it is pasted.
-- Demo images are 640×800 crops in `assets/shelf/`.
-- Every piece supports the keyboard, works at phone width, respects reduced motion and passes axe WCAG A/AA.
-- The ideas follow familiar interaction-gallery patterns; the designs, names and code are our own.
-- `#<id>` deep-links straight to a piece, including when only the hash changes.
-- **Search** filters by name, description, category, uses and how it works, alongside the type chips.
-- **Use your own images:** pick up to eight photos in a piece's panel. They're shrunk to 1200 px JPEG, and a small script in the preview and in the copied or downloaded file swaps each demo picture for one of yours as it appears. The panel only shows for pieces that use pictures.
-- The home page has a **Build with it** section linking the shelf and the page builder, and both are in the home index and the Interface menu.
-- **Scroll stories:** four full one-page sites built around the atlas films, each one HTML file (`interactions/demos/story-*.html`):
-  - **Tidewater** (coastal hotel): a film hero that zooms as you scroll, words that light up as you read, rooms scrolled sideways inside a pinned section, a night itinerary beside a pinned film, and a booking form.
-  - **Gilt** (gold-leaf atelier): the film shows through the brand name using a multiply-blended mask, then three chapters cross-fade between the golden dove, the gold figure and the lion.
-  - **Field Notes** (research studio): the marbling film opens from a small circle, counters run, and a pinned plate swaps image with each note.
-  - **Signal** (product launch): a film hero, a bento grid that assembles in sequence, counting stats, a gradient-edged plan and a film close.
-  - Off-screen films load lazily and pause, and every story respects reduced motion.
-- **Sections:** eight page blocks (`interactions/demos/sec-*.html`): pricing with a billing toggle, bento feature grid, scrolling testimonial wall, FAQ accordion, contact form with inline validation, big wordmark footer, logo marquee and a film call-to-action banner.
-  - Each file carries four styles as CSS variables on `[data-style]`: Kitchen noir, Kitchen paper, Studio and Signal.
-  - A small switcher changes the style. `#paper` (and so on) in the URL picks one, and the shelf previews show a mix.
-  - The paper accent is darkened to `#9A5B12` here so white button text passes AA.
-
-### Diagram studio (`site/diagram-studio.html`, `site/dataviz/diagrams.js`)
-
-For charts that are not a process. It uses the same seventeen styles and the same drawing kit as the flowchart layouts, so a style looks the same everywhere. Each kind has a form editor rather than a syntax:
-- **Roadmap:** workstreams × periods. Items have a from/to and a status (planned, in progress, done, at risk). Overlapping items stack into extra rows. There are milestones and a "today" marker.
-- **Org chart:** one person per line (`Name — Role [Team]`), indented under who they report to. Teams take a colour from their top-level lead. A team of more than three people with no reports stacks in a column, and "Open role" draws a dashed vacancy.
-- **Journey map:** stages × doing / touchpoints / thinking / feeling / pain points / opportunities. Feeling is a −2…+2 slider drawn as a curve with faces.
-- **Comparison matrix:** options × criteria with group headings. Cells take yes / no / partial (drawn as icons) or any text, and one option can be marked as recommended.
-- The starter content is themed on the AI cooking channel. `#roadmap`, `#org`, `#journey` and `#matrix` deep-link to a kind. Edits persist locally.
-
-### Motion and export (`site/dataviz/reveal.js`, `site/dataviz/export.js`, `site/vendor/`)
-- **Build-up animation:** FlowReveal reads the geometry of the rendered SVG, so it works for every layout and style without touching the renderers.
-  - Heading, lanes and group boxes are there from the start.
-  - Cards fade up in reading order, with their labels and icons.
-  - Connectors draw on just before the card they lead to, and loops come last.
-  - Reading order depends on the layout: top-down, left-right, by column, by row, clockwise round a cycle, or outward from the centre of a mind map.
-- **Play** runs it in the preview at slow, normal or fast speed.
-- **Video** encodes in the browser with WebCodecs: H.264 MP4 where the browser has an encoder (Chrome, Edge, Safari), otherwise VP9 WebM. Muxing uses vendored `mp4-muxer` / `webm-muxer` (MIT).
-- **GIF** uses vendored `gifenc` (MIT), with one palette taken from the finished chart so colours don't flicker, and repeated frames merged.
-- `DVExport` also holds the shared font embedding and PNG export used by both studios.
-
-### Flowchart templates and style guide
-- **Templates** (`site/dataviz/templates.js`): twelve real processes. The list is content pipeline, client onboarding, creative approval, hiring, launch readiness, support triage, sprint, order fulfilment, campaign plan, newsletter, bug lifecycle and brand project. Each is paired with the layout that suits it and previewed live in the current style.
-- **Style guide download:** now includes a "Diagram types" section with the user's chart drawn in all eight layouts, each with "use when" and "avoid when" guidance. Click a preview to see it full size.
-
-### Live design-system components (`site/system-components/`)
-
-The 90 UI components from the twelve custom systems (D21–D32) are real HTML and CSS, not screenshot crops.
-- `render.js` renders each component in its own shadow root, so the atlas theme never leaks in, and with no backdrop of its own. Cards scale it to fit; the detail view shows it at full size.
-- `D21.js` … `D32.js` hold each system's fonts (Google Fonts), shared CSS and components, with small scripts for working states: tabs, toggles, players, menus. Images they use are in `img/`.
-- `integrate.js` swaps the fragments for live components on cards, system hubs, catalogue tiles and the inspector, loading a system's file only when it scrolls near. "Copy code" and "Download HTML" give a standalone snippet; the original crop stays in the inspector under "Original mockup crop".
-- `preview.html?sys=D22` shows one system's components on their own for checking.
-
-### Animation studio: live simulations and UI motion (`site/ui-motion.js`)
-
-The old 2D sketch viewer (A01–A40 drawn on a canvas, plus the M-series demos) is retired and hidden. In its place, one dark band:
-- **Live simulations:** the nine real simulations (ferrofluid, Lorenz, double pendulum, flow field, cellular automata, reaction-diffusion, metaballs, bioluminescent swarm, harmonograph) on a clean stage, with Pause, Full screen and Tune.
-- **UI motion:** twenty interaction cards (M01–M20). Each plays itself while on screen and hands over to the pointer on hover or tap. "Slow motion" plays them at quarter speed, and "Copy code" gives a standalone snippet with the same behaviour.
-- Old links (`#motion?id=…`, tours, "Play the study") now go to the matching card or simulation. A-series entries without a simulation open their entry, with its film.
-
-### Animation studio river
-
-- `site/studio-river.js` and `studio-river.css` replace the old click-to-play box: the live studies and films sit in one dark band across the full width of the page.
-  - **Blending:** the band fades out of the page background at the top and back in at the bottom. Each piece has feathered (masked) edges and no frame.
-  - **Playback:** pieces play as they scroll into view and pause as they leave. There's one "Pause the motion" control for the whole band. With reduced motion on, nothing autoplays.
-  - **Performance:** live studies load as they approach and are released once well out of view, so only two or three WebGL contexts exist at a time.
-- Order: the whale (a full-width stage it glides across), lion to phoenix (live), the lion film, the butterfly (live), the jellyfish film and bird to fox. (The golden lattice study has been retired.)
-
-### Performance and low-power mode
-
-- **Loading:**
-  - The home hero waits until the home page is showing, so landing on another page never pulls the jellyfish film.
-  - The Genesis poster and video load only when Genesis is chosen.
-  - Each device downloads one video source. Phones get the 720p MP4 (with WebM as a fallback if MP4 can't play); larger screens get WebM, then MP4.
-  - The river creates films and studies only as they come within 40% of a screen of view.
-- **Low-power mode** (`window.AtlasMotion` in `hero-scenes.js`):
-  - **Triggers:** Data Saver, no WebGL, WebGL rendered in software, or 2 GB of memory or less.
-  - **Effect:** the hero drops its live scenes, and the river shows each live study's source still with a "Show live motion" opt-in (`localStorage atlasMotion`; `?fullmotion` overrides). With Data Saver on, films don't autoplay.
-- **Adaptive sharpness** (`studyAdapt` in `studies/hero-mode.js`): a study that runs slower than about 30 ms a frame steps its pixel ratio down (2 → 1.5 → 1 → 0.75). It never steps back up.
-- **Measured locally:** the jellyfish starts playing in about 1–1.7 s, and the home page transfers about 4 MB on desktop.
-- **Share card:** `assets/og-atlas.jpg` now shows the jellyfish, and the canonical, Open Graph, sitemap and robots URLs point to https://motionatlas-ten.vercel.app.
-
-### Particle studio
-
-- `site/particle-studio.html` is a standalone tool, linked from the Motion menu and the Animation studio river. You drop in any picture, or use the lion, whale, butterfly and phoenix samples.
-  - **Motions:** breathe, glide across, flap, dissolve (into a spiral galaxy and back), or morph into a second picture.
-  - **Look:** particle count, grain size, brightness, glow layer, threshold, palette (from the picture, gold, ice, champagne, rose, violet or a custom tint), bokeh, speed and background, including transparent.
-- Pictures are read and scaled in the browser; nothing is uploaded.
-- **Export:** "Download as HTML" or "Copy the HTML" gives one self-contained file. The picture is embedded as a data URI and the engine is inlined; the file needs only three.js r128 from cdnjs. A typical export is about 120 KB.
-- `site/particle-engine.js` is the shared engine (`ParticleEngine.create(container, options)`).
-  - **Sampling:** grains are weighted by brightness and fine detail, with the frame edges feathered.
-  - **Shared motion:** the grains and the glow layer run the same GLSL motion.
-  - **Behaviour:** it pauses on `*:pause` messages and when the tab is hidden, and holds a still frame for reduced motion.
-
-### "Use it on your site" kits
-
-- Every piece in the Animation studio river has a collapsed kit panel (`studio-river.js`, styles in `studio-river.css`).
-  - **Live studies:** speed, particle count and starting mode, plus transparent background and feathered edges. The `<iframe>` snippet updates as the settings change, and there's a preview link.
-  - **Films:** a `<video>` snippet with the 720p, WebM and MP4 sources, with feathered edges optional.
-  - **Prompts:** each panel carries the prompt behind the piece. The lion's is the original Gemini prompt; the others are labelled as suggested prompts to recreate the source.
-- Study URL settings (`site/studies/hero-mode.js`):
-  - `?speed=0.25–3`
-  - `?density=0.2–1.5` (lion, whale and butterfly)
-  - `?mode=` loop/lion/phoenix, glide/swim, flutter/rest or loop/bird/fox
-  - `?controls=0`
-  - `?bg=transparent`
-- Snippets use the clean URLs the live site serves. Vercel sends no frame-blocking headers, so the iframes work on other sites.
-- The river is excluded from the site theme's form-control rules (`atlas-theme.css`), so its controls keep the dark style.
-
-### Whale and butterfly (live studies)
-
-- **`site/studies/whale-glide.html`:** about 52k blue grains sampled from the studio's whale still (`assets/studies/whale-source.jpg`, masked to the whale and its dust).
-  - **Motion:** a travelling wave from head to fluke that grows towards the tail, sweeping pectoral fins, and a wake shed mostly from the tail half.
-  - **Glide:** it glides fully across the screen every 24 s. "Swim in place" holds it centred.
-- **`site/studies/butterfly.html`:** grains sampled from a wings-open frame of the butterfly film (`assets/studies/butterfly-source.jpg`).
-  - **Motion:** every wing grain turns about the body axis, so the wings fold up out of the page. It flies a slow figure-of-eight and sheds glitter.
-  - **Shared code:** the motion is written once in GLSL and once in JS, so the shed dust leaves from where the creature really is.
-- Both studies use the hero mode and `study:ready` handshake, and are also home hero scenes 05 and 06.
-
-### Home hero scenes
-
-- `site/hero-scenes.js` (styles at the end of `site/home.css`) lets the home hero show seven scenes:
-  1. the jellyfish film (the default)
-  2. the lion-to-phoenix film
-  3. the live lion-to-phoenix study
-  4. stardust bird to fox
-  5. the whale (live)
-  6. the butterfly (live)
-  7. Genesis, with its four plates
-- Each scene tints the title's italic word and the eyebrow to its own light: gold, blue, champagne or violet-amber.
-- A row of thin marks in the hero's foot switches scenes. It shows the scene name and previews a name on hover. The choice is remembered per visitor in `localStorage` under `vmaHeroScene2`. The key was renamed when the jellyfish became the default, so earlier choices reset to it.
-- A new scene loads behind the current one and crossfades in over 1.6 s, only once it is drawing. Live studies post `study:ready` to say so, with a 4 s fallback.
-- Live studies load with `?hero` (`site/studies/hero-mode.js`). In that mode they hide their controls and drop their background so they sit on the hero's dark background.
-- **Desktop:** scenes sit right of the copy with a feathered left edge, and the title's italic word warms to gold.
-- **Genesis only:** the plate index and timecode appear only while Genesis plays.
-- **Shared behaviour:** Pause, "Watch the film/scene", leaving the page and reduced motion all apply to whichever scene is showing.
-
-### Lion to phoenix (live study)
-
-- `site/studies/lion-phoenix.html` is an 8-second loop: the lion holds, then transforms, then the phoenix holds, then it returns.
-  - **Lion:** about 80k particles are sampled from `assets/studies/lion-source.jpg`. That file is the studio's own golden-dust lion reference. The sampling is weighted by brightness and fine detail, and the frame edges are feathered.
-  - **Phoenix:** sampled the same way from a frame of the studio's film (`assets/studies/phoenix-source.jpg`, the frame at 7.4 s). A procedural painting stands in if that frame can't load.
-  - **Motion:** the GPU does a staggered morph in which the mane leaves first. On the way, the dust is pulled into a four-armed logarithmic spiral galaxy, as in the film. The mane moves in the wind, and the phoenix beats its wings.
-  - **Layout:** fits the full width on phones.
-  - **Messages:** answers any `*:pause` or `*:play` message.
-- The film itself is in `assets/films/lion-phoenix.{mp4,webm,jpg}`:
-  - 720p, about 4 MB, with the audio dropped.
-  - The last 0.6 s crossfades into the first frames, so the loop has no visible seam.
-- The Animation studio shows every live study and film in the river (`studio-river.js`).
-
-### Stardust: bird to fox (live study)
-
-- `site/studies/stardust-bird-fox.html`: about 39k additive particles form a golden bird with wings raised
-  in a V, which dissolves and re-forms as a running fox on a 16 s loop. It also has a dust trail, bokeh,
-  and modes for the bird alone and the fox alone. The dust is scattered over two real animated models,
-  hosted locally in `site/assets/models/`: the three.js examples stork (wing-flap morph targets, MIT) and
-  the Khronos glTF sample fox (skinned run cycle, CC BY 4.0, credited on the Sources page). It loads them
-  with `site/vendor/GLTFLoader-r128.js`; if they fail to load, it falls back to procedural shapes. It answers `stardust:` and `lattice:` pause and play messages.
-- Shown in the Animation studio river (`studio-river.js`).
-
-### What to upload
-
-Upload the contents of `site/` except `site/original/` (backups of the live files). The files
-that are new or changed against the live site are:
-
-- **Pages and data:** `atlas.html`, `catalogue.json`
-- **Changed scripts and styles:** `app.js`, `app.css`, `home.js`, `home.css`, `kits.js`, `extracted.js`,
-  `extracted.css`, `previews.js`
-- **New scripts and styles:**
-  - `atlas-theme.css`, `atlas-enhance.css`, `atlas-enhance.js`
-  - `atlas-themes.js`, `component-lab.js`, `component-lab.css`
-  - `effects-lab.js`, `effects-lab.css`
-  - `motion-lab.js`, `motion-lab.css`
-  - `new-styles.js`, `new-styles.css`
-  - `atlas-features.js`, `atlas-features.css`
-  - `specimen-films.js`, `specimen-films.css`
-  - `live-sims.js`, `live-sims.css`, `atlas-share.js`, `atlas-share.css`
-  - `atlas-explore.js`, `atlas-explore.css`, `atlas-tours.js`, `atlas-tours.css`
-- **Service worker:** `sw.js`, at the site root next to `atlas.html`
-- **SEO files:** `robots.txt` and `sitemap.xml`, at the site root, plus `assets/og-atlas.jpg` and `assets/favicon.svg`
-- **Assets:**
-  - `assets/atlas-hero-1080.mp4`, `assets/atlas-hero-720.mp4`, `assets/atlas-hero.webm`,
-    `assets/atlas-hero-poster.jpg`
-  - the whole `assets/fx/` folder
-  - the whole `assets/films/` and `assets/specimens/` folders (about 38 MB in total)
-  - `fonts/*.woff2`
-
-The other images under `assets/` and `icons/` were mirrored from the live site and are
-already there.
-
-### Checking it locally
-
-Serve `site/` with `npx http-server -p 8770 site` and open `/atlas.html#home`.
-
-At 1440 px and 390 px, all 19 routes load with no script errors and no sideways scroll. An
-axe WCAG 2 A/AA scan finds no violations on home, catalogue, systems, motion, effects, UX,
-type, projects, inspiration, vases, compare or art. Every theme's button text meets 4.5:1
-contrast in both modes.
-
-`sw.js` is now on cache `atlas-v4`. Raise it again (`atlas-v5`) on each later deploy so
-returning visitors pick up the new files at once.
+### The atlas (`site/atlas.html`)
+
+One HTML page. Each section is a `<section class="page" id="…">` shown by `route()` in `app.js`
+from the hash: `#home`, `#browse` (catalogue), `#motion` (animation studio), `#effects`, `#ux`
+(component lab), `#systems`, `#icons`, `#typography`, `#art`, `#cinema`, `#vases`, `#pairings`,
+`#compare`, `#inspiration`, `#playground`, `#projects`, `#tours`, `#backgrounds`, `#showcase`,
+`#references`, `#assets`, `#creations`. Deep links carry a query after the hash, for example
+`#browse?entry=A53`, `#ux?component=C30&theme=S16`, `#effects?fx=L25`, `#systems?id=D22`,
+`#browse?feel=liquid&film=1`, `#tours?t=lines`, `#backgrounds?bg=…`.
+
+Scripts are plain globals loaded in order at the end of `atlas.html`; feature modules hook into
+`app.js` and each other, so keep the order when adding one. `atlas-theme.css` is generated by
+`tools/build-atlas-theme.py` (edit the script, not the CSS).
+
+Inner pages get a plate band, "Pairs well with" links and, for most, a looping header film.
+These are set per page in `PAGES` at the top of `atlas-enhance.js` (film, poster, tone). Header
+films start after the page has loaded and only play while on screen. Posters are 1280px WebP
+(`assets/films/*-1280.webp`).
+
+---
+
+## Theme kits (`site/theme-kits.html`, `site/kits/`)
+
+48 complete brand kits, Matrix (01) to Chambers (48). Each one has colour scales with contrast
+grades, light and dark tokens, a type scale, components, a live animated canvas background, logo,
+mark, pattern, divider, icons, a social card, slide, email header, business cards, favicon and
+guidelines. Each kit downloads as a ZIP with CSS, SCSS, JSON and Tailwind tokens.
+`theme-kits.html#<kit id>` opens a kit.
+
+| File | Role |
+| --- | --- |
+| `kits/themes.js` | Kits 01–09, their backgrounds and SVG generators; creates `window.ThemeKits` with the registries `list`, `BG`, `ICONS`, `PAT`, `MARK`, `DIV` and the zip writer |
+| `kits/kits-a.js` | Kits 10–24 (same shape), pushed into `ThemeKits.list` and the registries |
+| `kits/kits-b.js` | Kits 25–48 |
+| `kits/brand.js` | Brand layer: colour maths, `scales`, `modes`, `typeScale`, exports (`css`, `scss`, `json`, `tailwind`), brand applications (`og`, `slide`, `email`, `favicon`, `cardFront`, `cardBack`, `clearspace`), `files(k)` and `zipKit(k)` |
+| `kits/render.js` | `ThemeKits.render(kit, el, {say, playing})`, `miniCard`, `mountStill`, `loadFonts`, `vars`, `save`, `copy` |
+| `kits/kits.css` | Kit page styles |
+
+Load order is always `themes.js`, `kits-a.js`, `kits-b.js`, `brand.js`, `render.js`. The page
+builder loads the same files to offer kits as styles and asset blocks.
+
+**Add a kit:** append an object to `K` in `kits/kits-b.js` (or a new file loaded after it) with
+`id`, `no`, `name`, `tagline`, `mood`, `feel`, `fonts` (`head`, `body`, Google Fonts `css`
+query), tokens `t` (`bg surface ink mute line accent onAccent accent2 radius shadow glow`),
+`bg` (key of a background function), `stroke`, `case`, `bgDesc`, `voice`, `dos` and `donts`.
+Add its background to `BG` as `(canvas, tokens, still) => stop()` (self-contained, because it is
+exported with `Function.prototype.toString()`), plus `PAT`, `MARK` and `DIV` generators that
+return SVG strings. Check the contrast labels on the page and run axe. Then update the counts
+(the theme-kits meta description says "Forty-eight").
+
+## Design systems D01–D48
+
+Every atlas design system is a catalogue entry in `expansion.json` (`group: "Design systems"`,
+with `tokens` and `rule`) and has a hub on `#systems`. Sets: D01–D32 originals and mock-up
+derived systems, D33–D36 and the other open-source interpretations built from published tokens
+(Primer, GOV.UK, Spectrum, USWDS, Lightning, Ant, Bootstrap, Pajamas, PatternFly, Ionic, Paste,
+Canvas, Mantine), and the newer originals up to D48.
+
+| File | Role |
+| --- | --- |
+| `systems.js` | `SystemAtlas`: hub tabs, specs for the earlier systems, `#systems?id=` links |
+| `system-previews.js` / `.css` | `SystemPreviews`: an original product screen for each system, coloured from `--sys-*` tokens; `SPECS` and `SOURCES` for the later systems |
+| `system-kits.js` / `.css` | `SystemKits`: each system as a downloadable kit (token bar, Kit tab with animated background, scales, component sheet, logo/icons/pattern, voice, dos and don'ts), the Cards/Kits toggle and collection filters, credits for open-source sources |
+| `system-components/` | Live HTML/CSS components for D21–D32 (`D21.js`…`D32.js`, rendered in shadow roots by `render.js`, swapped in by `integrate.js`); check one with `system-components/preview.html?sys=D22` |
+
+**Add a system:** copy the D48 entry in `expansion.json` with a new id, add its spec and screen in
+`system-previews.js`, add its kit row (background family, voice lines, do, don't) next to `D48`
+in `system-kits.js`, and a credit line if it interprets someone else's system. Update the counts.
+
+## The 01 Design System docs (`site/ds/`)
+
+A separate documentation site for 01 (graphite and platinum, routed motion, machine sound, 44
+`u-` components in 8 families, patterns, templates, kits). `/ds` redirects to `/ds/start`.
+
+- `ds.js` builds the shared chrome, search, live example frames and code blocks. Pages load
+  `../work/01/01.js` and `../work/01/01-ui.js` first, which is why `work/01` must stay deployed.
+- `kitview.js` renders a 01 kit in the theme-kit format (used by `kits.html` and `resources.html`).
+- `search-index.js` is generated. After adding or renaming headings, run
+  `node site/ds/tools/build-search-index.mjs` from the repo root. It reads every `h2`/`h3` with
+  an `id` in `site/ds/*.html`.
+
+## UI components (`#ux`, `site/component-lab.js`)
+
+64 native HTML/CSS components (C41–C64 fully interactive), each shown in every state, in any of
+the 22 atlas themes (`atlas-themes.js`), light or dark, comfortable or compact, with HTML, CSS,
+React and token export plus accessibility notes. Components are objects in `component-lab.js`
+(`id`, `name`, `v`, `html`, `css`, `a11y`, `live`) exposed as `ComponentLab.components`; each also
+has a catalogue entry (`C..`) in `expansion.json`. The page builder lists them automatically.
+
+## Interactions shelf (`site/interactions.html`, `site/interactions/`)
+
+70 original pieces, each one self-contained HTML file in `interactions/demos/` with no
+libraries (the circuit-city hero uses three.js from cdnjs). The shelf mounts live previews only
+while they're on screen. Each piece has Copy HTML, Download, full screen, notes and an AI build
+prompt, and `interactions.html#<id>` opens it. Copied code rewrites `../../assets/` to the live
+site.
+
+**Add one:** put `interactions/demos/<id>.html` in place (keyboard support, phone width,
+`prefers-reduced-motion`, axe clean), then add an entry to `window.INTERACTIONS` in
+`interactions/manifest.js`:
+
+```js
+{id:'my-piece', t:'Title', cat:'Cards', tone:'dark', d:'One-line description.',
+ how:'How it works.', use:'What it suits.', p:'AI build prompt…', added:'2026-10'}
+```
+
+`cat` is one of the existing categories (Cards, Carousels, Scroll, Canvas, Galleries, Navigation,
+Lists, Controls, Buttons, Type, Feedback, Scroll stories, Sections, Signal & data). `added` marks
+it New. `hash` picks a style for `sec-*` pieces. The page builder picks it up automatically
+(sections excluded). Update the count in the `interactions.html` meta description and `home.js`.
+
+## Page builder (`site/page-builder.html`, `site/builder/`)
+
+Build a page from the library, choose a style, write or generate copy, export.
+
+- **Library:** 44 sections, all 64 components, the interactions, backgrounds, films, effects,
+  images, icon families and theme-kit assets.
+- **Styles (144):** 4 builder styles, 48 theme kits, 48 design systems, and 22 atlas themes in
+  light and dark.
+- **Pages, templates and undo:** pages are saved in this browser, there are five templates, and
+  undo covers every change.
+- **Export:** one HTML file, a ZIP, copied HTML, or an AI prompt.
+
+| File | Role |
+| --- | --- |
+| `builder/blocks.js` | **Generated.** Run `python3 tools/blocks.py`; it reads `tools/sections_src.py` (`HEAD`, the eight `S` sections, `MORE`) and also writes `interactions/demos/sec-*.html` |
+| `builder/styles.js` | Style registry, mapping every source onto the builder variables |
+| `builder/extras.js` | Code-drawn library blocks (components, interactions, media, icons, kit assets) |
+| `builder/app.js` | UI, editing, pages, AI panel, export |
+| `builder/zip.js` | Stored-zip writer (same as the kits') |
+
+Block CSS is scoped under `.b-<id>`, so a block can appear more than once. Edit sections in
+`tools/sections_src.py`, never in `blocks.js`.
+
+## My projects and accounts (Supabase)
+
+Projects live in the browser by default. Signing in syncs them to Supabase so they open on any
+device, and a project can be made public as a hub page.
+
+| File | Role |
+| --- | --- |
+| `site/supabase-client.js` | `window.AtlasCloud`: loads supabase-js on demand, email magic link / one-time code, Google (only if enabled), `projects.*` and `files.*` |
+| `site/projects.js`, `projects-hub.js` | My projects (`#projects`) and the project hub renderer (`ProjectHub.render`) |
+| `site/account.html` | Sign-in page; also the auth redirect target |
+| `site/p.html` | Public hub: `/p?id=<project id>` (only for projects marked public) |
+| `supabase/schema.sql` | `profiles`, `projects` (data in `jsonb`), private `project-files` bucket (50 MB per file), row-level security |
+
+**Setup**
+
+1. In Supabase, open **SQL Editor → New query**, paste all of `supabase/schema.sql` and run it.
+   It is safe to run again.
+2. In **Authentication → URL Configuration**, set **Site URL** to
+   `https://motionatlas-ten.vercel.app` and add redirect URLs for `https://motionatlas-ten.vercel.app/account`
+   and `/account.html` (plus `http://localhost:8772/account.html` for local testing).
+   Sign-in links come back to `account.html?next=…`.
+3. Optional: enable Google under **Authentication → Providers**. The button only shows when it's on.
+4. The project URL and **publishable** key are in `supabase-client.js`. That key is meant for
+   browsers, and row-level security protects the data. **Never put the service-role key in
+   `site/`** or anywhere the browser can load it.
+
+Separate from accounts, **share links** (`/shared#v/<id>`, `/shared#e/<id>/<key>`) use
+`api/share.js` and `api/upload.js` with Vercel Blob. Connect a Blob store (sets
+`BLOB_READ_WRITE_TOKEN`) and redeploy. To test locally, run `npm run dev:share` (port 8790,
+stores in `.share-dev/`).
+
+## AI endpoint (`api/ai.js`)
+
+The page builder's "Generate page from brief" and "Rewrite with AI", and the project hubs'
+"Generate with AI", call this function. It runs on **Claude Haiku 5.5**, and the key never
+reaches the browser.
+
+- **Key:** set `ANTHROPIC_API_KEY` in the Vercel project's environment variables, then redeploy.
+- **Status:** `GET /api/ai?status` returns `{enabled, model}`. The UI uses it to explain when AI
+  is off. Locally there is no function, so add `?ai=1` to the builder URL to try the panel.
+- **Request:** `POST /api/ai` with JSON
+  `{mode: 'page'|'section', brief, catalog: [{id, name, group, fields}], styles: [ids], current?}`.
+  It returns `{page: {title, brand, style, blocks: [{id, fields}], note}, usage}`. Only ids from
+  the catalogue and styles you send come back.
+- **Limits:** `AI_HOURLY_LIMIT` per IP per hour (default 20) and `AI_DAILY_LIMIT` requests per day
+  (default 500, resets at midnight UTC). Both are counted in memory per warm instance, so they
+  are soft caps. Input sizes are capped (brief 1,500 characters, 160 sections, 200 styles, 64 KB
+  body).
+- **Errors:** 503 if the key is missing or invalid, 429 when a limit is hit, and 422 if the
+  model refuses.
+
+Other functions: `api/apply.js` emails the Staged application piece through Resend once
+`RESEND_API_KEY` and `APPLY_TO` are set (`APPLY_FROM` is optional). Without them it returns 503
+and the page offers the visitor a copy instead.
+
+## Service worker (`site/sw.js`)
+
+Caches the atlas shell for offline use and refreshes it in the background; video is never cached.
+It's registered from `atlas-features.js` on https and localhost. **On every deploy, bump `CACHE`**
+(for example `atlas-v75` → `atlas-v76`) so returning visitors get the new files immediately.
+If you add a core atlas file, add it to `SHELL`.
+
+## Performance notes
+
+- Catalogue, art, system and study cards are `div.sheet-image` backgrounds. `lazy-bg.js` holds
+  them back until they're within a screen of view, and at phone width it uses the 800px tile.
+  Keep it loaded before the scripts that render grids.
+- The catalogue section is not `active` in the HTML; `route()` shows the right page, so hidden
+  grids never download their images.
+- Header films use `preload="none"`, start after `load`, play only when visible, and on wide
+  screens use the 1920px master only where it exists (`NO_FULL_WEBM` in `atlas-enhance.js`).
+- The home hero downloads one source per device. Phones get the 720p MP4, with the 720p WebM as
+  a fallback.
+- The page builder warms its icon cache when idle. Interactions previews mount only while visible.
+- Measured at 390px with 10 Mbps / 40 ms throttling (local server, uncompressed): the heaviest
+  atlas sections went from 6–15 MB and 170–210 requests to about 3–6 MB and 120 requests. Vercel
+  serves text compressed, so real transfers are smaller.
+
+## Local development
+
+```bash
+cd site && python3 -m http.server 8772     # then open http://localhost:8772/atlas.html#home
+npm install                                # only needed for the API functions / share dev server
+npm run dev:share                          # site + real share API on http://localhost:8790
+python3 tools/blocks.py                    # rebuild builder/blocks.js and sec-* demos
+node site/ds/tools/build-search-index.mjs  # rebuild the ds search index
+python3 tools/build-atlas-theme.py         # regenerate atlas-theme.css
+python3 -I tools/add-specimens.py site/catalogue.json   # merge a specimen package (safe to re-run)
+tools/add-film.sh A41 path/to/A41.mp4      # encode a film loop + poster and attach it to an entry
+npm run vendor:blob                        # rebuild site/vendor/blob-client.js
+```
+
+The Python server doesn't do Vercel's clean URLs, so use `.html` paths locally (`/ds/start.html`,
+`/p.html?id=…`). The serverless functions only run on Vercel (or through `npm run dev:share` for
+sharing).
+
+### Before pushing: the gate
+
+A Playwright check (`gate.mjs`, kept outside the repo; run it with `node gate.mjs` while the local
+server runs on 8772) loads `atlas.html#motion`, `#projects`, `#systems`, `#ux`, `theme-kits.html`,
+`interactions.html`, `page-builder.html` and `ds/start.html` at 1440px and fails on any page error
+or console error. It must pass. Also check, at 1440px and 390px, that nothing scrolls sideways
+(`document.documentElement.scrollWidth <= innerWidth`) and that axe (WCAG 2 A/AA) reports no
+serious or critical issues on the pages you touched.
+
+## Deploying
+
+Push to `main` and Vercel deploys `site/` with `api/` as functions (`vercel.json`: no build step,
+`cleanUrls`, `/` → `/atlas`, redirects for `/ds`, `/work/01`, `/work/djinyc`, a week of caching on
+`/assets/*`, and `no-cache` on `/sw.js`). Checklist:
+
+1. Bump `CACHE` in `site/sw.js`.
+2. Run the gate.
+3. Set or confirm the env vars: `ANTHROPIC_API_KEY` (and the optional `AI_HOURLY_LIMIT`,
+   `AI_DAILY_LIMIT`), `BLOB_READ_WRITE_TOKEN` for sharing, and `RESEND_API_KEY` / `APPLY_TO` for
+   the application form.
+
+## Feature notes
+
+Short notes on parts of the atlas that are easy to miss:
+
+- **Catalogue** (`#browse`): collections rail (a drawer on phones), feel chips and "Has film" /
+  "Live study" filters (`atlas-explore.js`, rules and `OVERRIDE` at the top), share links and
+  1200 × 630 share cards (`atlas-share.js`), and Compare (`#compare`). Search is ⌘K / Ctrl+K / `/`.
+- **Animation studio** (`#motion`): the studio river of live studies and films (`studio-river.js`),
+  nine live simulations (`live-sims.js`), twenty UI motion cards M01–M20 (`ui-motion.js`), and the
+  easing lab (`motion-lab.js`).
+- **Guided tours** (`#tours`, `atlas-tours.js`): edit `TOURS` at the top of the file.
+- **Background generator** (`#backgrounds`, `backgrounds.js`): one WebGL shader with 16 families and
+  80 presets, with PNG, loop, CSS and code export.
+- **Showcase reels** (`#showcase`, `showcase.js`): eight motion templates with 1080p export.
+- **Studios:** flowchart, diagram, chart style guides and the particle studio (`dataviz/`,
+  `*-studio.html`, `chart-styles.html`, `particle-engine.js`). The dataviz tools share nineteen styles (`dataviz/styles.js`), the channel's Kitchen noir and Kitchen paper first.
+- **Low-power mode** (`window.AtlasMotion` in `hero-scenes.js`): Data Saver, no or software WebGL,
+  or ≤ 2 GB of memory turn off live hero scenes. Use `?fullmotion` to override.
+- **Email sign-up** on home is not connected. Set `ATLAS_SIGNUP.endpoint` in `atlas-share.js`.
+- **Your creations** (`#creations`) needs a publisher server this deployment doesn't run, so it
+  shows an explanation instead. It only tries the API if `window.ATLAS_PUBLISHER` is set.
+- **Films:** web encodes are in `site/assets/films/` (1920px masters, `-720` cuts for phones,
+  posters). The Genesis hero source is the HyperFrames project in `film/`
+  (`npx hyperframes render`).
