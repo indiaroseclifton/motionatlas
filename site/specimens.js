@@ -1,6 +1,6 @@
 'use strict';
 const SpecimenAtlas={
- icon(name='house',family='regular'){return `<img class="libraryIcon" src="icons/${family}/${name}.${family==='fluent-3d'?'png':'svg'}" alt="" aria-hidden="true">`;},
+ icon(name='house',family='regular'){return `<img class="libraryIcon" loading="lazy" decoding="async" src="icons/${family}/${name}.${family==='fluent-3d'?'png':'svg'}" alt="" aria-hidden="true">`;},
  thumbnail(e){const n=Number(e.id.slice(1)),pill=(t,c='')=>`<span class="specPill ${c}">${t}</span>`,row=t=>`<div class="specRow">${t}</div>`,field=(label,value,c='')=>`<div class="specField ${c}"><small>${label}</small><span>${value}</span></div>`,icon=(name)=>this.icon(name);let h='';
  const names=['Save changes','Preview','Delete'];
  if(n===1)h=`<div class="specStack">${names.map((t,i)=>pill(t,['strong','','danger'][i])).join('')}</div>`;

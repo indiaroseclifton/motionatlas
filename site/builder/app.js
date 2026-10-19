@@ -360,7 +360,8 @@ function imagesList(){$('#pbImages').innerHTML=LIB.images.map(i=>`<option value=
 /* ---------- async sources (read-only) ---------- */
 PB.loadIcon=(fam,file)=>{const k=fam+'/'+file;if(PB.loadIcon.p[k])return;PB.loadIcon.p[k]=fetch('icons/'+fam+'/'+file).then(r=>r.ok?r.text():'').then(t=>{t=t.replace(/<script[\s\S]*?<\/script>/gi,'').replace(/\son\w+="[^"]*"/gi,'').replace(/<\?xml[^>]*>/,'').trim();
  if(t.startsWith('<svg')){PB.iconCache[k]=t.replace('<svg ','<svg aria-hidden="true" width="28" height="28" ');clearTimeout(PB.loadIcon.t);PB.loadIcon.t=setTimeout(()=>{render();if(ltab==='icons')library()},120)}}).catch(()=>{})};PB.loadIcon.p={};
-Object.entries(LIB.iconFiles).forEach(([f,list])=>list.filter(x=>x.endsWith('.svg')).forEach(x=>PB.loadIcon(f,x)));
+/* warm the icon cache once the page is idle (sections still load their own icons on demand) */
+{const warm=()=>Object.entries(LIB.iconFiles).forEach(([f,list])=>list.filter(x=>x.endsWith('.svg')).forEach(x=>PB.loadIcon(f,x)));const idle=()=>(window.requestIdleCallback||setTimeout)(warm,{timeout:4000});if(document.readyState==='complete')setTimeout(idle,2500);else addEventListener('load',()=>setTimeout(idle,2500),{once:true});}
 fetch('expansion.json').then(r=>r.json()).then(j=>{const E=j.entries||[];PB.designSystems=E.filter(e=>/^D\d+/.test(e.id)&&e.tokens);PB.effects=E.filter(e=>/^L\d+/.test(e.id)&&e.film&&e.film.src);PB.styles.build();if(!PB.styles.has(page.style))page.style='studio';styles();status();if(ltab==='media')library();render()}).catch(()=>{});
 fetch('backgrounds.js').then(r=>r.text()).then(t=>{const m=t.match(/const FRAG=`([\s\S]*?)`;/);if(m&&/void main/.test(m[1])){PB.bgFrag=m[1];render();if(ltab==='media')library()}}).catch(()=>{});
 

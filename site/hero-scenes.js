@@ -18,15 +18,15 @@ window.AtlasMotion=window.AtlasMotion||(()=>{
  const small=()=>matchMedia('(max-width: 900px)').matches;
  // one download per device: the 720p cut on small screens (WebM only if MP4 can't play), WebM then MP4 elsewhere
  /* Safari can stall on VP9 WebM without falling back, so it gets H.264 first */const safari=/^((?!chrome|chromium|android|crios|fxios|edg).)*safari/i.test(navigator.userAgent);
- const sources=s=>small()&&s.small?`<source src="${s.small}" type="video/mp4"><source src="${s.webm}" type="video/webm">`:safari?`<source src="${s.src}" type="video/mp4"><source src="${s.webm}" type="video/webm">`:`<source src="${s.webm}" type="video/webm"><source src="${s.src}" type="video/mp4">`;
+ const sources=s=>small()&&s.small?`<source src="${s.small}" type="video/mp4"><source src="${s.smallWebm||s.webm}" type="video/webm">`:safari?`<source src="${s.src}" type="video/mp4"><source src="${s.webm}" type="video/webm">`:`<source src="${s.webm}" type="video/webm"><source src="${s.src}" type="video/mp4">`;
  return {lite,saveData,noGL,sources,setFull(on){try{localStorage.setItem('atlasMotion',on?'full':'lite');}catch{}}};
 })();
 (()=>{
  const H=window.HomeAtlas;if(!H||!H.hero)return;
  const M=window.AtlasMotion;
  const SCENES_ALL=[
-  {id:'jelly',name:'Jellyfish',label:'Jellyfish, film',kind:'video',src:'assets/films/jellyfish.mp4',small:'assets/films/jellyfish-720.mp4',webm:'assets/films/jellyfish.webm',poster:'assets/films/jellyfish.jpg',tint:['#f3eaff','#c7b6ff','#ffb98a','#e9d8ff'],eye:'#d6c4ff'},
-  {id:'lionfilm',name:'Lion to phoenix',label:'Lion to phoenix, film',kind:'video',src:'assets/films/lion-phoenix.mp4',small:'assets/films/lion-phoenix-720.mp4',webm:'assets/films/lion-phoenix.webm',poster:'assets/films/lion-phoenix.jpg'},
+  {id:'jelly',name:'Jellyfish',label:'Jellyfish, film',kind:'video',src:'assets/films/jellyfish.mp4',small:'assets/films/jellyfish-720.mp4',smallWebm:'assets/films/jellyfish-720.webm',webm:'assets/films/jellyfish.webm',poster:'assets/films/jellyfish.jpg',tint:['#f3eaff','#c7b6ff','#ffb98a','#e9d8ff'],eye:'#d6c4ff'},
+  {id:'lionfilm',name:'Lion to phoenix',label:'Lion to phoenix, film',kind:'video',src:'assets/films/lion-phoenix.mp4',small:'assets/films/lion-phoenix-720.mp4',smallWebm:'assets/films/lion-phoenix-720.webm',webm:'assets/films/lion-phoenix.webm',poster:'assets/films/lion-phoenix.jpg'},
   {id:'whale',name:'Whale',label:'Whale gliding, live particles',kind:'live',src:'studies/whale-glide.html?hero',tint:['#e3f0ff','#6fb0ff','#2f6dff','#a9d4ff'],eye:'#8fc2ff'},
   {id:'butterfly',name:'Butterfly',label:'Glitter butterfly, live particles',kind:'live',src:'studies/butterfly.html?hero',tint:['#fffaf0','#f3e2c0','#d9b98a','#fff1d8'],eye:'#f0dcb4'},
   {id:'genesis',name:'Genesis',label:'Genesis, the atlas film in four plates',kind:'genesis'}];

@@ -30,6 +30,7 @@
    ['#systems','Design systems','Thirty-two complete visual worlds and real open-source systems.','game-of-life'],
    ['#ux','UI components','Sixty-four components, every state, in every style.','light-mesh'],
    ['#icons','Icon families','Outline, solid, pixel, colour and 3D icon sets.','sketchbook-horse'],
+   ['icons.html','Icon library','3,768 searchable icons in 13 families, with full packs.','sketchbook-horse'],
    ['#typography','Fonts & type','Type pairings and scales, ready to use.','light-threads'],
    ['#playground','System playground','Try a system across a landing page, dashboard and phone.','swan-construction'],
    ['#assets','Extracted assets','201 fragments cut from our original mock-ups.','paper-bird'],

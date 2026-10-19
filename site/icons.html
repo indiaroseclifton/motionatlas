@@ -1,0 +1,143 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Icon library · Visual &amp; Motion Atlas</title>
+<meta name="description" content="3,768 open-source icons in 13 families (Phosphor in six weights, Heroicons, Lucide, Tabler, Pixelarticons, OpenMoji and Fluent 3D emoji). Search by name or meaning, set size and colour, copy SVG or JSX, and download each family as a licensed ZIP.">
+<meta name="theme-color" content="#02040b"><link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,400&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{--wall:#f2f4f7;--panel:#fff;--text:#0d1220;--dim:#4a5466;--hair:#d9dee6;--hair-hi:#b9c1cd;--void:#02040b;--hd-ink:#eef2f8;--hd-dim:#a8b3c7;--accent:#047857;--accent-hi:#6ee7b7;--focus:#0369a1;
+ --f-display:"Cormorant Garamond",Garamond,"Times New Roman",serif;--f-body:"Manrope","Segoe UI",system-ui,sans-serif;--f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;--gutter:clamp(16px,4.5vw,72px);color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--wall);color:var(--text);font:15px/1.55 var(--f-body);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.skip{position:absolute;left:-999px;top:8px;z-index:60;background:#fff;padding:8px 12px;border-radius:8px}.skip:focus{left:12px}
+.vh{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+/* header band */
+.band{background:#151922;color:var(--hd-ink);display:flex;align-items:center;flex-wrap:wrap;gap:10px 22px;padding:14px var(--gutter);border-bottom:1px solid rgba(190,210,240,.18)}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;font:500 11px/1.3 var(--f-mono);letter-spacing:.24em;text-transform:uppercase}
+.brand svg{width:28px;height:28px;flex:none}
+.band nav{margin-left:auto;display:flex;flex-wrap:wrap;gap:4px 18px;font-size:13.5px}
+.band nav a{color:var(--hd-dim);text-decoration:none;padding:6px 0}.band nav a:hover{color:var(--hd-ink)}
+.band nav a[aria-current]{color:var(--hd-ink)}
+.wrap{max-width:1440px;margin:0 auto;padding:0 var(--gutter)}
+.trail{font:500 11px/1 var(--f-mono);letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin:22px 0 0}
+.trail a{text-decoration-color:var(--hair-hi);text-underline-offset:4px}
+.hero{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:20px 48px;align-items:end;padding:clamp(26px,5vh,54px) 0 22px}
+.kicker{font:500 11px/1 var(--f-mono);letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin:0 0 16px;display:flex;align-items:center;gap:12px}
+.kicker::before{content:"";width:36px;height:1px;background:currentColor}
+h1{margin:0;font:300 clamp(46px,6.4vw,96px)/.92 var(--f-display);letter-spacing:-.02em;text-wrap:balance}
+.lede{margin:0;color:var(--dim);max-width:60ch;font-size:16px}
+.lede b{color:var(--text);font-weight:600}
+/* family cards */
+.fams{display:grid;grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:8px;margin:6px 0 18px;padding:0;list-style:none}
+.fam{width:100%;display:grid;grid-template-columns:auto 1fr;align-items:center;gap:2px 10px;text-align:left;padding:10px 12px;border:1px solid var(--hair);border-radius:12px;background:var(--panel);cursor:pointer;min-height:58px}
+.fam:hover{border-color:var(--hair-hi)}
+.fam[aria-pressed=true]{border-color:var(--text);box-shadow:inset 0 0 0 1px var(--text)}
+.fam .fi{grid-row:span 2;width:28px;height:28px;display:grid;place-items:center}
+.fam .fi svg,.fam .fi img{width:26px;height:26px}
+.fam b{font-weight:600;font-size:13.5px;line-height:1.2}
+.fam small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font:500 10.5px/1.2 var(--f-mono);letter-spacing:.08em;color:var(--dim);text-transform:uppercase}
+/* toolbar */
+.tools{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--wall) 92%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--hair);margin:0 calc(-1 * var(--gutter));padding:10px var(--gutter)}
+.toolrow{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px}
+.field{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--dim)}
+.field input[type=search],.field select{min-height:42px;border:1px solid var(--hair-hi);border-radius:10px;background:var(--panel);padding:0 12px;color:var(--text)}
+.search{flex:1 1 260px;max-width:440px}.search input{flex:1;min-width:0}
+.famsel{display:none}
+.field input[type=range]{width:120px;accent-color:var(--text)}
+.field output{font:500 12px var(--f-mono);min-width:38px;color:var(--text)}
+.field input[type=color]{width:42px;height:34px;padding:2px;border:1px solid var(--hair-hi);border-radius:8px;background:var(--panel);cursor:pointer}
+.check{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--dim);cursor:pointer}
+.check input{width:16px;height:16px;accent-color:var(--text)}
+.field[aria-disabled=true],.check[aria-disabled=true]{opacity:.45}
+.count{margin-left:auto;font:500 11.5px/1 var(--f-mono);letter-spacing:.08em;color:var(--dim);text-transform:uppercase}
+/* family strip */
+.strip{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;padding:18px 0 14px}
+.strip h2{margin:0;font:400 clamp(28px,3vw,40px)/1 var(--f-display)}
+.strip p{margin:0;color:var(--dim);font-size:14px;flex:1 1 280px}
+.strip .lic{font:500 11px/1.4 var(--f-mono);letter-spacing:.06em;color:var(--dim);flex-basis:100%}
+.strip .lic a{color:var(--text)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:0 16px;border-radius:10px;border:1px solid var(--text);background:var(--text);color:#fff;font-weight:600;font-size:14px;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn.ghost{background:var(--panel);color:var(--text);border-color:var(--hair-hi)}
+.btn:hover{filter:brightness(1.15)}.btn.ghost:hover{border-color:var(--text);filter:none}
+.btn svg{width:16px;height:16px}
+/* browser */
+.browser{display:grid;grid-template-columns:minmax(0,1fr);gap:24px;align-items:start;padding-bottom:60px}
+.browser.has-detail{grid-template-columns:minmax(0,1fr) 340px}
+.grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(calc(var(--is,32px) + 64px),1fr));gap:8px;color:var(--ink,#0d1220)}
+.grid li{display:grid}
+.ic{display:grid;justify-items:center;align-content:center;gap:10px;min-height:calc(var(--is,32px) + 66px);padding:14px 6px 10px;border:1px solid transparent;border-radius:12px;background:var(--panel);cursor:pointer;color:inherit;contain:content}
+.ic:hover{border-color:var(--hair-hi)}
+.ic[aria-current=true]{border-color:var(--text);box-shadow:inset 0 0 0 1px var(--text)}
+.ic svg,.ic img{width:var(--is,32px);height:var(--is,32px);display:block}
+.ic span{font:500 10.5px/1.25 var(--f-mono);color:var(--dim);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center}
+.more{grid-column:1/-1;display:flex;justify-content:center;padding:10px}
+.empty{grid-column:1/-1;padding:40px 10px;text-align:center;color:var(--dim)}
+.loading{grid-column:1/-1;padding:40px 10px;text-align:center;color:var(--dim);font:500 12px var(--f-mono);letter-spacing:.1em;text-transform:uppercase}
+/* detail */
+.detail{position:sticky;top:84px;background:var(--panel);border:1px solid var(--hair);border-radius:16px;padding:18px;display:grid;gap:14px}
+.detail[hidden]{display:none}
+.dhead{display:flex;align-items:start;justify-content:space-between;gap:10px}
+.dhead h2{margin:0;font:400 30px/1.05 var(--f-display);word-break:break-word}
+.dhead p{margin:4px 0 0;font:500 11px/1.3 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.x{flex:none;width:38px;height:38px;border-radius:10px;border:1px solid var(--hair-hi);background:var(--panel);display:grid;place-items:center;cursor:pointer}
+.x svg{width:16px;height:16px}
+.stage{display:grid;place-items:center;min-height:170px;border-radius:12px;background:repeating-conic-gradient(#eef1f5 0 25%,#fff 0 50%) 0 0/16px 16px;border:1px solid var(--hair)}
+.stage svg,.stage img{width:min(var(--ds,96px),140px);height:min(var(--ds,96px),140px)}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.acts .btn{min-height:40px;font-size:13.5px;padding:0 10px}
+.acts .wide{grid-column:1/-1}
+.kw{display:flex;flex-wrap:wrap;gap:6px}
+.kw button{border:1px solid var(--hair);background:var(--wall);border-radius:999px;padding:3px 10px;font-size:12px;cursor:pointer;color:var(--dim)}
+.kw button:hover{color:var(--text);border-color:var(--hair-hi)}
+.dl{margin:0;font-size:12.5px;color:var(--dim)}
+.code{margin:0;max-height:140px;overflow:auto;background:#0f1320;color:#dbe4f3;border-radius:10px;padding:10px 12px;font:12px/1.5 var(--f-mono);white-space:pre-wrap;word-break:break-all}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(8px);background:#0d1220;color:#fff;padding:10px 16px;border-radius:999px;font-size:13.5px;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:100;max-width:calc(100vw - 32px)}
+.toast.on{opacity:1;transform:translateX(-50%)}
+.foot{border-top:1px solid var(--hair);padding:22px 0 40px;color:var(--dim);font-size:13px}
+.foot a{color:var(--text)}
+@media (max-width:1100px){.browser.has-detail{grid-template-columns:minmax(0,1fr) 300px}}
+@media (max-width:900px){.hero{grid-template-columns:1fr}
+ .browser.has-detail{grid-template-columns:minmax(0,1fr)}
+ .detail{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:40;border-radius:18px 18px 0 0;max-height:min(78vh,620px);overflow:auto;box-shadow:0 -12px 40px rgba(13,18,32,.22);padding:16px 16px calc(16px + env(safe-area-inset-bottom))}
+ .stage{min-height:120px}}
+@media (max-width:700px){.tools{position:static}.fams{display:none}.famsel{display:flex;flex:1 1 100%}.famsel select{flex:1;min-width:0}
+ .search{flex-basis:100%;max-width:none}.count{margin-left:0;flex-basis:100%}.band nav{margin-left:0}
+ .grid{grid-template-columns:repeat(auto-fill,minmax(calc(var(--is,32px) + 46px),1fr));gap:6px}
+ .ic{padding:12px 4px 8px}}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+</style></head><body>
+<a class="skip" href="#grid">Skip to the icons</a>
+<header class="band">
+ <a class="brand" href="atlas.html" aria-label="Visual and Motion Atlas home"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><circle cx="16" cy="16" r="13"/><ellipse cx="16" cy="16" rx="13" ry="5.5"/><path d="M16 3c5 5 5 21 0 26M16 3c-5 5-5 21 0 26"/></svg><span>Visual &amp; Motion<br>Atlas / Icon library</span></a>
+ <nav aria-label="Related"><a href="atlas.html#icons">Icon families</a><a href="atlas.html#ux">UI components</a><a href="theme-kits.html">Theme kits</a><a href="page-builder.html">Page builder</a><a href="icons.html" aria-current="page">Icon library</a></nav>
+</header>
+<main id="main" class="wrap">
+ <p class="trail"><a href="atlas.html">Atlas</a> / <a href="atlas.html#icons">Interface</a> / Icon library</p>
+ <section class="hero" aria-labelledby="ttl">
+  <div><p class="kicker">Plate 08 · Icon library</p><h1 id="ttl">Every icon, searchable.</h1></div>
+  <p class="lede"><b id="total">3,768</b> open-source icons in <b>13 families</b>: Phosphor in six weights, Heroicons outline and solid, Lucide, Tabler, Pixelarticons, OpenMoji colour pictograms and Fluent 3D emoji. Search by name or meaning, set the size and colour, then copy the SVG, the JSX or the name, or download it. Each family downloads as one ZIP with its licence.</p>
+ </section>
+ <ul class="fams" id="fams" aria-label="Icon families"></ul>
+ <div class="tools" role="search" aria-label="Find icons">
+  <div class="toolrow">
+   <label class="field famsel">Family <select id="famSel"></select></label>
+   <label class="field search"><span class="vh">Search icons</span><input id="q" type="search" placeholder="Search names and meanings: arrow, mail, upload…  ( / )" autocomplete="off" spellcheck="false"></label>
+   <label class="field">Size <input id="size" type="range" min="16" max="64" step="4" value="32"><output id="sizeOut" for="size">32 px</output></label>
+   <label class="field" id="colourField">Colour <input id="colour" type="color" value="#0d1220"></label>
+   <label class="check" id="bakeField"><input id="bake" type="checkbox"> Use this colour in copies</label>
+   <p class="count" id="count" role="status" aria-live="polite"></p>
+  </div>
+ </div>
+ <div class="strip" id="strip"></div>
+ <div class="browser">
+  <ul class="grid" id="grid" aria-label="Icons" aria-describedby="gridHelp"></ul>
+  <aside class="detail" id="detail" aria-labelledby="dName" hidden></aside>
+ </div>
+ <p class="vh" id="gridHelp">Arrow keys move between icons. Enter opens copy and download options.</p>
+ <footer class="foot"><p>Icons belong to their authors and are used under their licences: MIT (Phosphor, Heroicons, Tabler, Pixelarticons, Fluent Emoji), ISC (Lucide) and CC BY-SA 4.0 (OpenMoji, attribution required). <a href="icons/LICENSES.txt">Credits &amp; licences</a> · <a href="icons/index.json">index.json</a> · Built with <code>tools/icons.py</code>.</p></footer>
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="icons-browser.js" defer></script>
+</body></html>

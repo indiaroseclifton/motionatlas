@@ -1,4 +1,17 @@
-Phosphor Icons core 2.1.1 / MIT / https://phosphoricons.com
+Icon credits and licences
+=========================
+
+Every icon in site/icons/ comes from one of the open-source projects below. The full sets
+(icons/sets/, icons/packs/<family>.zip) and the 13-icon specimens (icons/<family>/,
+icons/packs/<family>-specimens.zip) are covered by the same licence as their family.
+Each family pack also carries its own LICENSE.txt.
+
+------------------------------------------------------------------------
+Phosphor  (thin, light, regular, bold, fill, duotone)
+Source: @phosphor-icons/core@2.1.1
+Project: https://phosphoricons.com
+Licence: MIT
+
 MIT License
 
 Copyright (c) 2023 Phosphor Icons
@@ -21,8 +34,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+------------------------------------------------------------------------
+Heroicons  (hero-outline, hero-solid)
+Source: heroicons@2.2.0
+Project: https://heroicons.com
+Licence: MIT
 
-hero-outline / heroicons
 MIT License
 
 Copyright (c) Tailwind Labs, Inc.
@@ -45,32 +62,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+------------------------------------------------------------------------
+Lucide  (lucide)
+Source: lucide-static@1.59.0
+Project: https://lucide.dev
+Licence: ISC
 
-hero-solid / heroicons
-MIT License
-
-Copyright (c) Tailwind Labs, Inc.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-
-lucide / lucide-static
 ISC License
 
 Copyright (c) 2026 Lucide Icons and Contributors
@@ -115,8 +112,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+------------------------------------------------------------------------
+Tabler  (tabler)
+Source: @tabler/icons@3.49.0
+Project: https://tabler.io/icons
+Licence: MIT
 
-tabler / @tabler-icons
 MIT License
 
 Copyright (c) 2020-2026 Paweł Kuna
@@ -139,8 +140,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+------------------------------------------------------------------------
+Pixelarticons  (pixel)
+Source: pixelarticons@2.4.2
+Project: https://pixelarticons.com
+Licence: MIT
 
-Pixelarticons / MIT / https://pixelarticons.com
 MIT License
 
 Copyright (c) 2019 Gerrit Halfmann
@@ -163,9 +168,15 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+------------------------------------------------------------------------
+OpenMoji  (openmoji)
+Source: openmoji@17.0.0
+Project: https://openmoji.org
+Licence: CC BY-SA 4.0
+All emojis designed by OpenMoji, the open-source emoji and icon project. License: CC BY-SA 4.0.
+Attribution: OpenMoji (https://openmoji.org), CC BY-SA 4.0. SVGs here are minified (whitespace, comments
+and unused ids removed; no visual change). Adapted versions stay under CC BY-SA 4.0.
 
-OpenMoji / CC BY-SA 4.0 / https://github.com/hfg-gmuend/openmoji
-Original, unmodified SVG specimens by OpenMoji contributors.
 Attribution-ShareAlike 4.0 International
 
 =======================================================================
@@ -594,10 +605,14 @@ public licenses.
 
 Creative Commons may be contacted at creativecommons.org.
 
+------------------------------------------------------------------------
+Fluent Emoji  (fluent-3d)
+Source: microsoft/fluentui-emoji (GitHub, main branch)
+Project: https://github.com/microsoft/fluentui-emoji
+Licence: MIT
+PNG renders resized to 192 px from the 3D style of Microsoft Fluent Emoji.
 
-Microsoft Fluent Emoji / MIT / https://github.com/microsoft/fluentui-emoji
-PNG specimens resized to 192 px.
-    MIT License
+MIT License
 
     Copyright (c) Microsoft Corporation.
 
@@ -618,3 +633,4 @@ PNG specimens resized to 192 px.
     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE
+
