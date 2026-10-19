@@ -623,7 +623,7 @@ f.onsubmit=e=>{e.preventDefault();const ok=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(i.v
 .ig ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;text-align:left}
 .ig li{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;display:grid;gap:4px;transition:border-color .2s,transform .2s}
 .ig li:hover{border-color:var(--accent);transform:translateY(-2px)}
-.ig .mono{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;font-weight:700;background:color-mix(in srgb,var(--accent) 18%,var(--surface));color:var(--accent-ink,var(--accent));margin-bottom:8px}
+.ig .mono{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;font-weight:700;background:color-mix(in srgb,var(--accent) 16%,var(--surface));color:var(--ink);margin-bottom:8px}
 .ig b{font-size:16px}.ig span{color:var(--mute);font-size:14px}''',
   '<section class="wrap ig"><p class="k">{{kicker}}</p><h2 class="h">{{heading}}</h2><p class="intro">{{intro}}</p><ul>{{each:tools}}<li><span class="mono" aria-hidden="true">{{i0}}</span><b>{{0}}</b><span>{{1}}</span></li>{{/each}}</ul></section>', '',
   [('kicker', 'Kicker', 'text', 'Integrations'), ('heading', 'Headline', 'text', 'Plays nicely with your kitchen.'), ('intro', 'Intro', 'long', 'Send lists to the shops you already use, and pull recipes in from anywhere.'),

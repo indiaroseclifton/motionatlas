@@ -56,7 +56,7 @@ export default async function handler(req, res) {
     const b = await body(req);
     const brief = str(b.brief, 1500).trim(); if (!brief) return send(res, 400, { error: 'Describe the page you want first.' });
     const catalog = (Array.isArray(b.catalog) ? b.catalog : []).slice(0, 160).map(s => ({ id: str(s.id, 40), name: str(s.name, 60), group: str(s.group, 30), fields: (Array.isArray(s.fields) ? s.fields : []).slice(0, 16).map(f => str(f, 30)) }));
-    const styles = (Array.isArray(b.styles) ? b.styles : []).slice(0, 80).map(s => str(s, 40));
+    const styles = (Array.isArray(b.styles) ? b.styles : []).slice(0, 200).map(s => str(s, 40));
     if (!catalog.length) return send(res, 400, { error: 'No sections were sent.' });
     const ids = new Set(catalog.map(s => s.id));
     const mode = b.mode === 'section' ? 'section' : 'page';
