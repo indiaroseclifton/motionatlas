@@ -17,7 +17,7 @@ a{color:inherit}
 
 /* header: logo top left, status top right, small apply, discreet login */
 .k-head{position:absolute;top:0;left:0;right:0;z-index:20;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:14px 24px;padding:max(22px,env(safe-area-inset-top,0px)) var(--gut) 0}
-.k-logo{display:block;color:var(--fg);width:var(--logo-w,88px);flex:none}
+.k-logo{display:block;color:var(--fg);width:var(--logo-w,112px);flex:none}
 .k-logo svg{display:block;width:100%;height:auto}
 .k-right{display:grid;justify-items:end;gap:12px;min-width:0}
 .k-status{margin:0;font:11px/1.5 var(--f-mono);letter-spacing:.12em;color:var(--fg2);text-align:right}

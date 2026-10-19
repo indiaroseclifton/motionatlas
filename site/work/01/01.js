@@ -31,7 +31,7 @@ window.O1=(()=>{
  /* ---------- Header ---------- */
  const LINKS=[['home.html','Home','home'],['agents.html','Agents','agents'],['integrations.html','Integrations','integrations'],['origin.html','Origin','origin'],['chat.html','Interface','chat']];
  function header(page){const h=document.createElement('header');h.className='o-head';
-  h.innerHTML=`<a class="o-logo" href="home.html" aria-label="01ai home"><img src="assets/01ai-wordmark.svg" alt="01ai" width="92" height="44"></a>
+  h.innerHTML=`<a class="o-logo" href="home.html" aria-label="01ai home"><img src="assets/01ai-wordmark.svg" alt="01ai" width="92" height="29"></a>
   <div class="o-right"><p class="o-status mono" aria-label="Server status: version 1.0, node War Room, uptime 99.999 percent"><i aria-hidden="true"></i>SERVER v1.0 // NODE: WAR ROOM // UPTIME <span data-uptime>99.999</span>%</p>
   <nav class="o-nav" aria-label="01ai">${LINKS.map(([href,label,id])=>`<a href="${href}"${id===page?' aria-current="page"':''}${id==='home'?' class="o-hide-sm"':''}>${label}</a>`).join('')}<button type="button" class="o-sound" aria-pressed="${Sound.on}" aria-label="Interface sound"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M2 6h3l4-3v10L5 10H2z"/><path d="M11.5 5.5a3.5 3.5 0 0 1 0 5M13.5 3.5a6.5 6.5 0 0 1 0 9"/></svg><span>Sound</span></button><a href="login.html" class="o-login"${page==='login'?' aria-current="page"':''}>Login</a></nav></div>`;
   document.body.prepend(h);

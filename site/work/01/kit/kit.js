@@ -27,10 +27,13 @@ window.Kit=(()=>{
   ['17','Kinetic Type','The headline is the window: the city shows only through the letters.','Archivo Black · Archivo','City3D through type'],
   ['18','Minimal Signal','Fog, one trace lighting end to end, and a lot of graphite. Light weight type.','Geist Light · Geist Mono','City3D route'],
   ['19','Swarm Lights','Agents as lights flocking between towers. Feeds as a soft ledger.','Plus Jakarta Sans · Geist Mono','Hero2D swarm'],
-  ['20','Command Deck','The home page is the console: panels docked over the city and a live command line.','JetBrains Mono · Geist','City3D + console']
+  ['20','Command Deck','The home page is the console: panels docked over the city and a live command line.','JetBrains Mono · Geist','City3D + console'],
+  ['21','Sphere','Dark space. A cracked sphere opens on the core, annotated live; scarcity headline, ticking stats, a mono tab bar.','Source Serif 4 · Geist Mono','Film · sphere'],
+  ['22','Capsule','Light concrete hall. An exploded capsule with the 01ai core, a typing headline and the same scarcity block.','Geist Mono · Source Serif 4','Film · capsule'],
+  ['23','Stack','The exploded server tower: stacked boards joined by light pillars, orbit rings on the top chip.','Geist · Geist Mono','Film · stack']
  ].map(([id,name,idea,type,hero])=>({id,name,idea,type,hero,href:'d'+id+'.html'}));
 
- const LOGO=`<svg viewBox="0 0 208 100" role="img" aria-label="01ai"><path fill="currentColor" d="M31 0H31A31 31 0 0 1 62 31V69A31 31 0 0 1 31 100H31A31 31 0 0 1 0 69V31A31 31 0 0 1 31 0ZM31 17A14 14 0 0 0 17 31V69A14 14 0 0 0 31 83H31A14 14 0 0 0 45 69V31A14 14 0 0 0 31 17ZM76 18 94 0H111V100H94V24L84 34ZM152 38H152A26 26 0 0 1 178 64V74A26 26 0 0 1 152 100H152A26 26 0 0 1 126 74V64A26 26 0 0 1 152 38ZM152 53A10 10 0 0 0 142 63V75A10 10 0 0 0 152 85H152A10 10 0 0 0 162 75V63A10 10 0 0 0 152 53ZM162 38H178V100H162ZM192 38H208V100H192Z"/><path style="fill:var(--k-dot,#7FE7F7)" d="M192 10H208V26H192Z"/></svg>`;
+ const LOGO=`<svg viewBox="44 -726 2328 742" role="img" aria-label="01ai"><path fill="currentColor" d="M44 -354Q44 -471 75.0 -554.5Q106 -638 164.0 -682.0Q222 -726 300 -726Q378 -726 436.0 -682.0Q494 -638 525.0 -554.5Q556 -471 556 -354Q556 -237 525.0 -154.0Q494 -71 436.0 -27.5Q378 16 300 16Q222 16 164.0 -27.5Q106 -71 75.0 -154.0Q44 -237 44 -354ZM428 -354Q428 -432 414 -491L225 -134Q255 -96 300 -96Q361 -96 394.5 -163.5Q428 -231 428 -354ZM186 -219 375 -576Q345 -614 300 -614Q239 -614 205.5 -546.0Q172 -478 172 -354Q172 -277 186 -219Z M648 -111H866V-483H684V-584H770Q831 -584 857.5 -612.5Q884 -641 884 -710H988V-111H1152V0H648Z M1248 -142Q1248 -206 1290.0 -244.5Q1332 -283 1409 -299L1575 -334Q1575 -442 1481 -442Q1396 -442 1379 -366L1257 -374Q1272 -454 1331.0 -501.0Q1390 -548 1481 -548Q1583 -548 1638.5 -490.0Q1694 -432 1694 -326V-137Q1694 -117 1702.0 -109.5Q1710 -102 1728 -102H1756V0Q1740 4 1707 4Q1610 4 1590 -79Q1572 -38 1529.0 -13.0Q1486 12 1431 12Q1381 12 1339.0 -6.5Q1297 -25 1272.5 -60.0Q1248 -95 1248 -142ZM1575 -206V-243L1442 -216Q1406 -209 1389.0 -192.5Q1372 -176 1372 -150Q1372 -121 1391.0 -104.5Q1410 -88 1446 -88Q1505 -88 1540.0 -120.0Q1575 -152 1575 -206Z M1868 -102H2076V-434H1878V-536H2194V-102H2372V0H1868ZM2071 -714H2193V-604H2071Z"/></svg>`;
  const HEAD=`<a class="k-logo" href="#top">${LOGO}</a>
 <div class="k-right"><p class="k-status">SERVER v1.0 <i>//</i> NODE: WAR ROOM <i>//</i> UPTIME <b>99.999%</b></p>
 <nav class="k-nav" aria-label="Primary"><a class="k-sec" href="../agents.html">Agents</a><a class="k-sec" href="../integrations.html">Integrations</a><a class="k-sec" href="../origin.html">Origin</a><a class="k-login" href="../login.html">Login</a><a class="k-apply" href="../apply.html">Apply</a></nav></div>`;
@@ -82,21 +85,23 @@ window.Kit=(()=>{
  function city(cv,o={}){const h=window.City3D&&City3D.start(cv,{still:reduce,...o});if(!h)cv.classList.add('k-fallback');heroes.push(h);hero=h;return h}
  function flat(kind,cv,o={}){const h=window.Hero2D&&Hero2D[kind](cv,o);heroes.push(h);hero=h;return h}
 
+ /* film hero: a muted looping video that pauses with the review bar and never plays under reduced motion */
+ function film(v){if(!v)return null;const h={pause(){v.pause()},play(){if(!reduce&&!paused){const p=v.play();p&&p.catch(()=>{})}}};if(reduce){v.removeAttribute('autoplay');v.pause()}heroes.push(h);hero=h;return h}
  function init(){
   const cur=document.body.dataset.dir;
   $$('[data-kit=head]').forEach(h=>{h.classList.add('k-head');h.innerHTML=HEAD});
   $$('[data-kit=claims]').forEach(s=>{s.innerHTML=`<p class="k-kick">The stack</p><h2 class="k-h2">Nothing else comes close.</h2><ol class="k-claims">${CLAIMS.map(([h,p],i)=>`<li><span class="k-n">${pad(i+1)}</span><h3>${h}</h3><p>${p}</p></li>`).join('')}</ol>`});
-  $$('[data-kit=foot]').forEach(f=>{f.classList.add('k-foot');f.innerHTML=`<span>01ai · a 01 company</span><span>Direction ${cur} of 20 · <a href="directions.html">All directions</a></span>`});
+  $$('[data-kit=foot]').forEach(f=>{f.classList.add('k-foot');f.innerHTML=`<span>01ai · a 01 company</span><span>Direction ${cur} of ${DIRS.length} · <a href="directions.html">All directions</a></span>`});
   $$('[data-gauge]').forEach(g=>g.insertAdjacentHTML('afterbegin','<svg class="k-g" viewBox="0 0 100 100" aria-hidden="true"><circle class="k-g-off" cx="50" cy="50" r="40"/><circle class="k-g-on" cx="50" cy="50" r="40" stroke-dasharray="251.3" stroke-dashoffset="251.3"/></svg>'));
   $$('[data-bars]').forEach(b=>{b.innerHTML='<i></i>'.repeat(+b.dataset.n||24)});
   $$('[data-ticker]').forEach(t=>{const kind=t.dataset.ticker;const items=kind==='names'?Array.from({length:40},(_,i)=>'Company '+pad(i+1)):Array.from({length:14},()=>line('short'));const row=items.map(n=>`<span class="k-ti">${n}</span>`).join('');t.innerHTML=`<div class="k-track">${row}<span aria-hidden="true" style="display:contents">${row}</span></div>`});
   $$('[data-split]').forEach(split);$$('[data-decode]').forEach(e=>decode(e));$$('[data-count]').forEach(count);
   for(let i=0;i<9;i++)logs();hex();clock();paint();sparks();addEventListener('resize',sparks);
   /* review bar */
-  const i=DIRS.findIndex(d=>d.id===cur);if(i>-1){const d=DIRS[i],p=DIRS[(i+19)%20],n=DIRS[(i+1)%20];
-   document.body.insertAdjacentHTML('beforeend',`<nav class="k-bar" aria-label="Design directions"><a href="${p.href}" aria-label="Previous direction: ${p.name}">‹</a><a class="k-now" href="directions.html"><b>${d.id}</b><span>/20 · ${d.name}</span></a><a href="${n.href}" aria-label="Next direction: ${n.name}">›</a><button type="button" class="k-pause" aria-pressed="false">Pause</button></nav>`);
+  const i=DIRS.findIndex(d=>d.id===cur);if(i>-1){const d=DIRS[i],p=DIRS[(i+DIRS.length-1)%DIRS.length],n=DIRS[(i+1)%DIRS.length];
+   document.body.insertAdjacentHTML('beforeend',`<nav class="k-bar" aria-label="Design directions"><a href="${p.href}" aria-label="Previous direction: ${p.name}">‹</a><a class="k-now" href="directions.html"><b>${d.id}</b><span>/${DIRS.length} · ${d.name}</span></a><a href="${n.href}" aria-label="Next direction: ${n.name}">›</a><button type="button" class="k-pause" aria-pressed="false">Pause</button></nav>`);
    const b=document.querySelector('.k-pause');if(reduce)b.hidden=true;else b.onclick=()=>setPaused(!paused)}
   document.addEventListener('visibilitychange',()=>{if(paused)return;document.hidden?stopT():run()});
   run()}
- return {DIRS,S,hist,on,init,city,flat,decode,split,reduce,get hero(){return hero},fmt:FMT,norm:NORM,line};
+ return {DIRS,S,hist,on,init,city,flat,film,decode,split,reduce,get hero(){return hero},fmt:FMT,norm:NORM,line};
 })();
