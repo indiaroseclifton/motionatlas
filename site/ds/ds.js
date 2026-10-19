@@ -13,9 +13,9 @@ window.DS=(()=>{
   ['Get started',[['start','Overview'],['resources','Downloads & kit'],['changelog','Changelog'],['contribute','Contribute']]],
   ['Foundations',[['colour','Colour'],['type','Typography'],['layout','Layout & space'],['motion','Motion'],['sound','Sound'],['iconography','Iconography'],['illustration','Illustration'],['voice','Voice & tone'],['logo','Logo']]],
   ['Components',[['components','All components'],['components-buttons','Buttons'],['components-forms','Forms'],['components-data','Data display'],['components-feedback','Feedback'],['components-navigation','Navigation'],['components-overlays','Overlays'],['components-chat','Chat'],['components-shell','Shell & layout']]],
-  ['Patterns & kits',[['patterns','Patterns'],['templates','Templates'],['directions','Home directions'],['kits','Direction kits']]]
+  ['Patterns & kits',[['patterns','Patterns'],['templates','Templates'],['directions','Home directions'],['kits','Direction kits'],['brand-kit','Brand Kit v2 ↗','../work/01/brand-kit.html']]]
  ];
- const FLAT=NAV.flatMap(([g,items])=>items.map(([id,label])=>({id,label,group:g,href:id+'.html'})));
+ const FLAT=NAV.flatMap(([g,items])=>items.map(([id,label,href])=>({id,label,group:g,href:href||id+'.html'})));
  const page=document.body.dataset.page||'';
  const I=n=>window.UI?UI.icon(n):'';
  /* ---------- small helpers ---------- */
@@ -97,7 +97,7 @@ window.DS=(()=>{
   <button class="ds-search-btn" type="button" aria-haspopup="dialog" aria-label="Search the design system">${I('search')}<span>Search the system</span><kbd>/</kbd></button>
   <nav class="ds-toplinks" aria-label="Quick links"><a href="components.html"${/^components/.test(page)?' aria-current="page"':''}>Components</a><a href="resources.html"${page==='resources'?' aria-current="page"':''}>Download</a><a href="../work/01/hub.html">Prototypes</a></nav>`;
   const side=document.createElement('nav');side.className='ds-side';side.id='ds-side';side.setAttribute('aria-label','Design system');
-  side.innerHTML=NAV.map(([g,items])=>`<div class="ds-grp"><p class="ds-grp-h">${esc(g)}</p><ul>${items.map(([id,label])=>`<li><a href="${id}.html"${id===page?' aria-current="page"':''}>${esc(label)}</a></li>`).join('')}</ul></div>`).join('')+
+  side.innerHTML=NAV.map(([g,items])=>`<div class="ds-grp"><p class="ds-grp-h">${esc(g)}</p><ul>${items.map(([id,label,href])=>`<li><a href="${href||id+'.html'}"${id===page?' aria-current="page"':''}>${esc(label)}</a></li>`).join('')}</ul></div>`).join('')+
    `<div class="ds-side-foot"><span>01 DESIGN SYSTEM · ${VERSION}</span><a href="../work/01/brand.html">Brand book</a><a href="../atlas.html">Visual &amp; Motion Atlas</a></div>`;
   const shell=document.createElement('div');shell.className='ds-shell';const body=document.createElement('div');body.className='ds-body';
   const toc=document.createElement('aside');toc.className='ds-toc';toc.setAttribute('aria-label','On this page');

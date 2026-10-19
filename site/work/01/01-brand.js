@@ -39,8 +39,9 @@ window.B01=(()=>{
  function tick(el){if(el._b)return;el._b=1;let v=+el.dataset.tick;el.textContent=fmt(v);if(reduce)return;const rate=+el.dataset.rate||2;let vis=true;seen(el,on=>vis=on,0);
   setInterval(()=>{if(!vis||document.hidden||Math.random()>.55)return;const from=v;v+=Math.max(1,Math.round(Math.random()*rate))*(el.dataset.drift&&Math.random()<.35?-1:1);let s=0;const t=setInterval(()=>{s++;el.textContent=fmt(from+(v-from)*s/6);if(s>=6)clearInterval(t)},80)},2200)}
  /* ---------- typing headline ---------- */
- function typing(el){if(el._b)return;el._b=1;const text=el.dataset.text||el.textContent.trim();el.setAttribute('aria-label',text);
-  const out=document.createElement('span');out.setAttribute('aria-hidden','true');const caret=document.createElement('span');caret.className='b-caret';caret.setAttribute('aria-hidden','true');el.textContent='';el.append(out,caret);
+ function typing(el){if(el._b)return;el._b=1;const text=el.dataset.text||el.textContent.trim();
+  const sr=document.createElement('span');sr.className='b-vh';sr.textContent=text;
+  const out=document.createElement('span');out.setAttribute('aria-hidden','true');const caret=document.createElement('span');caret.className='b-caret';caret.setAttribute('aria-hidden','true');el.textContent='';el.append(sr,out,caret);
   if(reduce){out.textContent=text;return}let i=0;seen(el,(on,io)=>{if(!on)return;io&&io.disconnect();const t=setInterval(()=>{i++;out.textContent=text.slice(0,i);if(i>=text.length)clearInterval(t)},+el.dataset.speed||55)},.4)}
  /* ---------- mono tab bar ---------- */
  function tabbar(bar){if(bar._b)return;bar._b=1;const bs=$$('.b-tabs button[data-cap]',bar),rail=bar.querySelector('.b-rail'),cap=bar.querySelector('.b-cap'),pb=bar.querySelector('.b-tp');const iv=+bar.dataset.interval||4200;

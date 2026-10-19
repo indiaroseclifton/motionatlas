@@ -12,7 +12,7 @@ window.KitView=(()=>{
  function vars(k){const c=k.c;return `--bg:${c.bg};--g-950:${c.bg};--g-900:${c.surface};--panel:${c.surface};--g-850:${c.raised};--g-800:${c.raised};--pt:${c.ink};--pt-2:${c.ink2};--pt-3:${c.mute};--cyan:${c.accent};--cyan-white:${c.accentHi||c.accent};--f-sans:${k.fonts.body};--f-mono:${k.fonts.mono};--kv-display:${k.fonts.display}`}
  function label(r){return r>=7?'AAA text':r>=4.5?'AA text':r>=3?'Large text / UI':'Decoration only'}
  let n=0;
- function render(k,el){const id='kv'+(++n),c=k.c,stops=[];
+ function render(k,el){const id='kv'+(++n),c=k.c,stops=[];el.style.setProperty('--kv-display',k.fonts.display);
   const sw=k.colors.map(([nm,hex,role])=>{const r=DS.contrast(hex,c.bg);return `<button class="kv-chip" type="button" data-copy="${E(hex)}" data-copy-msg="Copied ${E(hex)}"><i style="background:${E(hex)}"></i><span><b>${E(nm)}</b><code>${E(hex.toUpperCase())}</code><small>${hex.toLowerCase()===c.bg.toLowerCase()?'Base':r.toFixed(1)+':1 · '+label(r)}</small><small>${E(role)}</small></span></button>`}).join('');
   const word=wordmark(c.ink,c.accent),mk=mark(c.surface,c.ink,c.accent,c.line);
   el.innerHTML=`
@@ -30,7 +30,7 @@ window.KitView=(()=>{
   <section class="kv-sec" aria-labelledby="${id}c"><h2 id="${id}c">Colour</h2><p class="ds-lead">Select a swatch to copy it. Contrast is measured against this kit's background, ${E(c.bg.toUpperCase())}.</p><div class="kv-chips">${sw}</div></section>
   <section class="kv-sec" aria-labelledby="${id}t"><h2 id="${id}t">Type</h2><p class="ds-lead">${E(k.fonts.names.display)} for display${k.fonts.names.body!==k.fonts.names.display?`, ${E(k.fonts.names.body)} for reading`:''}, ${E(k.fonts.names.mono)} for the machine.</p>
    <div class="kv-type" style="${vars(k)}">
-    <div class="kv-tbox"><p class="kv-display" style="font-size:clamp(40px,6vw,88px);line-height:.92;margin:0">Unyielding.</p><small>${E(k.fonts.names.display)} · display</small></div>
+    <div class="kv-tbox"><p class="kv-display" style="font-size:clamp(34px,4vw,60px);line-height:.95;margin:0;overflow-wrap:anywhere">Unyielding.</p><small>${E(k.fonts.names.display)} · display</small></div>
     <div class="kv-tbox"><p style="font:400 19px/1.5 var(--f-sans);color:var(--pt);margin:0">Coordinated. Adaptive. Unyielding. Connect once, and from then on the agents read it, write to it and act in it on your behalf.</p><small>${E(k.fonts.names.body)} · body</small></div>
     <div class="kv-tbox"><p style="font:500 13px/1.7 var(--f-mono);letter-spacing:.08em;color:var(--pt-2);margin:0">SERVER v1.0 // NODE: WAR ROOM // UPTIME 99.999%<br>CPU LOAD 63.2% · MODELS 1,042 · 0123456789</p><small>${E(k.fonts.names.mono)} · mono</small></div>
    </div>
@@ -52,7 +52,7 @@ window.KitView=(()=>{
     <div class="u-frame kv-wide"><p class="u-cap" style="margin:0 0 10px">// Node log</p><div role="log" aria-label="Node log" aria-live="off"><ol class="u-log" data-kvlog></ol></div></div>
     <div class="u-frame"><p class="u-cap" style="margin:0 0 10px">// Models online</p><p class="kv-display" style="margin:0;font-size:44px;line-height:1;color:var(--pt)" data-kvv="models">1,042</p><p class="u-mono u-muted" style="margin:6px 0 0">AND MORE ALWAYS COMING</p></div>
    </div>
-   ${k.hooks&&k.hooks.length?`<ul class="ds-list">${k.hooks.map(h=>`<li>${h}</li>`).join('')}</ul>`:''}
+   ${k.hooks&&k.hooks.length?`<p class="ds-row">${k.hooks.map(h=>`<span class="u-tag">${h}</span>`).join('')}</p>`:''}
   </section>
   <section class="kv-sec" aria-labelledby="${id}a"><h2 id="${id}a">Assets</h2><p class="ds-lead">Vector, generated for this kit's colours. Download one, or everything in the ZIP.</p>
    <div class="kv-assets">

@@ -247,7 +247,7 @@ body.ds{min-height:100vh;font-size:16px;line-height:1.6}
 .kv-chip small{font:500 10.5px var(--f-mono);letter-spacing:.04em;color:var(--pt-3)}
 .kv-type,.kv-sheet,.kv-feeds,.kv-scale{background:var(--bg);color:var(--pt);border:1px solid var(--line);border-radius:var(--u-r-lg)}
 .kv-type{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
-.kv-tbox{display:grid;gap:14px;align-content:space-between;padding:22px;min-width:0}
+.kv-tbox{display:grid;gap:14px;align-content:space-between;padding:22px;min-width:0;overflow:hidden}
 .kv-tbox+.kv-tbox{border-left:1px solid var(--line)}
 .kv-tbox small{font:500 11px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--pt-3)}
 .kv-scale{display:grid;padding:4px 22px}

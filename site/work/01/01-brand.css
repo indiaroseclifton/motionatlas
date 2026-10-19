@@ -38,6 +38,7 @@
 .b-req{justify-self:start;font:500 clamp(15px,1.3vw,18px) var(--b-mono);color:var(--b-ink);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:6px;text-decoration-color:var(--b-line2);transition:text-decoration-color .18s}
 .b-req:hover,.b-req:focus-visible{text-decoration-color:var(--b-accent)}
 /* ---------- typing headline ---------- */
+.b-vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .b-typing{margin:0;font:500 clamp(30px,3.6vw,54px)/1.12 var(--b-mono);letter-spacing:-.02em;color:var(--b-ink);text-wrap:balance}
 .b-typing .b-caret{display:inline-block;width:.55em;height:.08em;margin-left:.06em;background:currentColor;vertical-align:baseline;animation:b-blink 1s steps(2) infinite}
 @keyframes b-blink{50%{opacity:0}}

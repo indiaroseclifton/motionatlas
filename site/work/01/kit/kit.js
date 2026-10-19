@@ -99,7 +99,7 @@ window.Kit=(()=>{
   for(let i=0;i<9;i++)logs();hex();clock();paint();sparks();addEventListener('resize',sparks);
   /* review bar */
   const i=DIRS.findIndex(d=>d.id===cur);if(i>-1){const d=DIRS[i],p=DIRS[(i+DIRS.length-1)%DIRS.length],n=DIRS[(i+1)%DIRS.length];
-   document.body.insertAdjacentHTML('beforeend',`<nav class="k-bar" aria-label="Design directions"><a href="${p.href}" aria-label="Previous direction: ${p.name}">‹</a><a class="k-now" href="directions.html"><b>${d.id}</b><span>/${DIRS.length} · ${d.name}</span></a><a href="${n.href}" aria-label="Next direction: ${n.name}">›</a><button type="button" class="k-pause" aria-pressed="false">Pause</button></nav>`);
+   document.body.insertAdjacentHTML('beforeend',`<nav class="k-bar" aria-label="Design directions"><a href="${p.href}" aria-label="Previous direction: ${p.name}">‹</a><a class="k-now" href="directions.html" data-total="${DIRS.length}"><b>${d.id}</b><span>/${DIRS.length} · ${d.name}</span></a><a href="${n.href}" aria-label="Next direction: ${n.name}">›</a><button type="button" class="k-pause" aria-pressed="false">Pause</button></nav>`);
    const b=document.querySelector('.k-pause');if(reduce)b.hidden=true;else b.onclick=()=>setPaused(!paused)}
   document.addEventListener('visibilitychange',()=>{if(paused)return;document.hidden?stopT():run()});
   run()}

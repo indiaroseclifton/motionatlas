@@ -1,0 +1,93 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>01ai · Direction 22 · Capsule</title>
+<meta name="description" content="01ai home page, direction 22: Capsule. A bright concrete hall, an exploded black capsule with the 01ai core, a typing headline and the scarcity block, in the light concrete mode.">
+<meta name="theme-color" content="#ECEEF0"><link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="kit.css"><link rel="stylesheet" href="../01-brand.css">
+<style>
+:root{--bg:#ECEEF0;--bg2:#F6F7F8;--fg:#0B0E12;--fg2:#2E3540;--fg3:#525B67;--line:rgba(11,14,18,.14);--line2:rgba(11,14,18,.3);--cyan:#06606F;--cyan-w:#0B0E12;--green:#0B7A45;
+ --f-display:'Geist Mono',ui-monospace,monospace;--f-body:'Geist',system-ui,sans-serif;--f-mono:'Geist Mono',ui-monospace,monospace;color-scheme:light}
+body{background:#ECEEF0}
+::selection{background:#0B0E12;color:#ECEEF0}
+.hero{position:relative;height:100vh;height:100svh;min-height:680px;overflow:hidden;container-type:size}
+.stage{position:absolute;left:50%;top:50%;width:max(100cqw,177.78cqh);aspect-ratio:16/9;transform:translate(-50%,-50%)}
+.stage .b-film{position:absolute;inset:0;aspect-ratio:auto;background-color:#ECEEF0}
+.veil{position:absolute;inset:0;z-index:1;pointer-events:none;background:
+ linear-gradient(90deg,rgba(236,238,240,.97) 0,rgba(236,238,240,.92) 26%,rgba(236,238,240,0) 37%),
+ linear-gradient(270deg,rgba(236,238,240,.97) 0,rgba(236,238,240,.93) 31%,rgba(236,238,240,0) 41%),
+ linear-gradient(180deg,rgba(236,238,240,.96) 0,rgba(236,238,240,0) 14%),
+ linear-gradient(0deg,rgba(236,238,240,.98) 0,rgba(236,238,240,.9) 11%,rgba(236,238,240,0) 24%)}
+.stage .masks{position:absolute;inset:0;z-index:1;pointer-events:none}.stage .masks i{position:absolute;background:var(--mk);box-shadow:0 0 22px 14px var(--mk);border-radius:14px}
+.stage .b-annos{z-index:2;--b-anno:rgba(11,14,18,.7)}
+.lead{position:absolute;z-index:3;left:var(--gut);top:50%;transform:translateY(-50%);width:min(440px,30vw);display:grid;gap:18px}
+.lead .k{margin:0;font:500 12px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--fg3)}
+.side{position:absolute;z-index:3;right:var(--gut);top:50%;transform:translateY(-54%);width:min(440px,30vw)}
+.side h2{font-weight:500!important}
+.bottom{position:absolute;z-index:3;left:var(--gut);right:var(--gut);bottom:60px}
+.feeds{position:relative;z-index:2;display:grid;grid-template-columns:1.1fr 1.5fr 1fr;gap:clamp(14px,2vw,26px);padding:56px var(--gut) 24px;max-width:1320px}
+.feeds>*{min-width:0}
+.fr{position:relative;padding:16px 18px;background:#F6F7F8}
+.fr::before,.fr::after{content:"";position:absolute;width:10px;height:10px;border:1px solid var(--fg3)}
+.fr::before{left:0;top:0;border-right:0;border-bottom:0}.fr::after{right:0;bottom:0;border-left:0;border-top:0}
+.lab{margin:0 0 10px;font:11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--fg3)}
+.stats{display:flex;flex-wrap:wrap;gap:12px 22px;margin-top:10px}.stats div{display:grid;gap:3px;min-width:7ch}.stats span{font:10.5px var(--f-mono);letter-spacing:.1em;color:var(--fg3)}.stats b{font:500 19px var(--f-mono);font-variant-numeric:tabular-nums}
+.k-sparkc{color:#0B0E12}
+.k-log{height:104px}
+.models{margin:0;font:500 46px/1 var(--f-mono);letter-spacing:-.03em;font-variant-numeric:tabular-nums}.models small{display:block;font:10.5px var(--f-mono);letter-spacing:.1em;color:var(--fg3);margin-top:10px}
+.claims{position:relative;z-index:2;padding:12vh var(--gut) 12vh;max-width:1320px}
+@media (max-width:900px){
+ .stage .masks i{box-shadow:0 0 10px 6px var(--mk)}
+ .hero{height:auto;min-height:0;container-type:normal;display:grid}
+ .stage{position:relative;left:auto;top:auto;transform:none;width:100%}
+ .stage .b-annos{display:none}
+ .veil{background:linear-gradient(180deg,rgba(236,238,240,.9),rgba(236,238,240,0) 30%,rgba(236,238,240,0) 70%,rgba(236,238,240,.95))}
+ .lead,.side,.bottom{position:relative;inset:auto;transform:none;width:auto;margin:0 var(--gut);z-index:3}
+ .lead{order:-2;margin-top:120px}.stage{order:-1;margin-top:20px}.side{order:1;margin-top:24px}.bottom{order:2;margin:24px var(--gut) 0}
+ .feeds{grid-template-columns:1fr}.feeds .md{display:none}
+}
+</style></head>
+<body data-dir="22" id="top" class="b-concrete">
+<header data-kit="head"></header>
+<main>
+<section class="hero" aria-labelledby="h">
+ <div class="stage">
+  <div class="b-film" data-film="capsule" data-base="../films/" data-label="An exploded black capsule with the 01ai core, in a white concrete hall"></div>
+  <div class="masks" aria-hidden="true" style="--mk:#ECEEF0"><i style="left:1%;top:1%;width:14%;height:12%"></i><i style="left:58%;top:1%;width:40%;height:11%"></i><i style="left:3%;top:27%;width:30%;height:41%"></i><i style="left:18%;top:22%;width:16%;height:8%"></i><i style="left:25%;top:58%;width:8%;height:8%"></i><i style="left:66%;top:60%;width:8%;height:8%"></i><i style="left:69%;top:18%;width:29%;height:48%"></i><i style="left:15%;top:88%;width:70%;height:10%"></i></div>
+  <div class="veil" aria-hidden="true"></div>
+  <div class="b-annos" aria-hidden="true">
+   <span data-anno data-at="40,34" data-to="34,24" data-side="left">Intelligence Core<small>One core, every model</small></span>
+   <span data-anno data-at="45,62" data-to="35,72" data-side="left">Memory<small>Persistent state</small></span>
+   <span data-anno data-at="56,58" data-to="64,70" data-side="right">Execution<small>Tools, live</small></span>
+  </div>
+ </div>
+ <div class="lead"><p class="k">01ai · The most powerful agentic system</p><h1 id="h" class="b-typing" data-text="The Most Powerful Thing Mankind Has Ever Known">The Most Powerful Thing Mankind Has Ever Known</h1></div>
+ <div class="side b-status">
+  <h2>01ai is not available.</h2>
+  <dl class="b-stats"><div><dt>Applications</dt><dd data-tick="14832" data-rate="3">14,832</dd></div><div><dt>Active Users</dt><dd data-tick="311" data-rate="1" data-drift="1">311</dd></div></dl>
+  <a class="b-req" href="../apply.html">Request access</a>
+ </div>
+ <div class="bottom b-tabbar" data-interval="4200">
+  <div class="b-tabs" role="group" aria-label="What is inside">
+   <button type="button" aria-pressed="true" data-cap="1000+ models, routed per token. More always coming.">Models</button>
+   <button type="button" aria-pressed="false" data-cap="It updated again while you read this.">Updates</button>
+   <button type="button" aria-pressed="false" data-cap="Connect once. Every agent reads, writes and acts in it.">Connections</button>
+   <button type="button" aria-pressed="false" data-cap="Coordinated. Adaptive. Unyielding. They build the next ones.">Bots / Agents</button>
+   <button type="button" aria-pressed="false" data-cap="Executed, not suggested.">Tools and execution</button>
+   <button type="button" class="b-tp">Pause</button>
+  </div>
+  <div class="b-rail" aria-hidden="true"><i></i></div>
+  <p class="b-cap"></p>
+ </div>
+</section>
+<div class="feeds" aria-label="War room">
+ <div class="fr"><p class="lab">// System telemetry</p><canvas class="k-sparkc" data-spark="cpu" aria-hidden="true"></canvas>
+  <div class="stats"><div><span>CPU LOAD</span><b data-v="cpu">63.2%</b><div class="k-meter" data-bar="cpu"></div></div><div><span>MEMORY</span><b data-v="mem">72.7%</b><div class="k-meter" data-bar="mem"></div></div><div><span>NODES</span><b data-v="nodes">14,208</b></div></div></div>
+ <div class="fr lg"><p class="lab">// Node log</p><ol class="k-log" data-log="6" aria-label="Node log"></ol></div>
+ <div class="fr md"><p class="lab">// Models online</p><p class="models"><span data-v="models">1,042</span><small>AND MORE ALWAYS COMING</small></p></div>
+</div>
+<section class="claims" data-kit="claims" aria-label="The stack"></section>
+</main>
+<footer data-kit="foot"></footer>
+<script src="kit.js"></script><script src="../01-brand.js"></script>
+<script>Kit.init();B01.init();Kit.film(document.querySelector('.b-film').b01);</script>
+</body></html>
