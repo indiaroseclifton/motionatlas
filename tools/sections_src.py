@@ -262,3 +262,458 @@ function st(p){if(p){v.play().catch(()=>{});pv.innerHTML=pause;pv.setAttribute('
 if(reduce){v.removeAttribute('autoplay');st(false)}pv.onclick=()=>st(v.paused);''')
 
 # Built into demos and the page builder by tools/blocks.py
+
+
+# ---------------------------------------------------------------------------------------------
+# MORE: page-builder-only sections (no standalone demo). Same format as tools/blocks.py NEW:
+# (id, name, group, description, css, html, js, fields, prompt)
+# Field types: text, long, film, image (a path under assets/), list (one row per line, cells split by " | ").
+# In html, {{each:key}}…{{/each}} repeats for every row of a list field; inside it {{0}}, {{1}}… are the
+# cells, {{n}} is the 1-based row number and {{g0}} draws the glyph named in cell 0.
+# ---------------------------------------------------------------------------------------------
+NOHASH_M = "root.querySelectorAll('a[href=\"#\"]').forEach(a=>a.onclick=e=>e.preventDefault());"
+REVEAL_JS = r'''const R=matchMedia('(prefers-reduced-motion: reduce)').matches;const items=root.querySelectorAll('[data-rv]');
+if(R||!('IntersectionObserver' in window)){items.forEach(x=>x.classList.add('in'))}else{const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.15});items.forEach(x=>io.observe(x))}'''
+REVEAL_CSS = '[data-rv]{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.8,.2,1)}[data-rv].in{opacity:1;transform:none}'
+FILMV = '<video autoplay muted loop playsinline poster="{{A}}films/{{film}}.jpg"><source src="{{A}}films/{{film}}-720.mp4" type="video/mp4"><source src="{{A}}films/{{film}}-720.webm" type="video/webm"></video>'
+FILM_CTRL_CSS = '.ctrl{position:absolute;right:14px;top:14px;width:44px;height:44px;border-radius:50%;border:0;background:color-mix(in srgb,var(--surface) 82%,transparent);color:var(--ink);cursor:pointer;display:grid;place-items:center;z-index:3}.ctrl svg{width:16px;height:16px}'
+FILM_CTRL = '<button class="ctrl" aria-label="Pause film"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="3" y="2" width="3.5" height="12" rx="1"/><rect x="9.5" y="2" width="3.5" height="12" rx="1"/></svg></button>'
+FILM_JS = r'''root.querySelectorAll('.ctrl').forEach(b=>{const v=b.parentNode.querySelector('video');if(!v)return;const pause=b.innerHTML,play='<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>';
+const st=p=>{if(p){v.play().catch(()=>{});b.innerHTML=pause;b.setAttribute('aria-label','Pause film')}else{v.pause();b.innerHTML=play;b.setAttribute('aria-label','Play film')}};
+if(matchMedia('(prefers-reduced-motion: reduce)').matches){v.removeAttribute('autoplay');st(false)}b.onclick=()=>st(v.paused)});'''
+
+MORE = [
+ ('announce', 'Announcement bar', 'Navigation', 'A slim accent strip above everything with one line of news and a link.', '''
+.ann{background:var(--accent);color:var(--on-accent);text-align:center;font-size:14px;font-weight:500;padding:9px 16px}
+.ann a{color:inherit;font-weight:600;margin-left:8px;text-underline-offset:3px}''',
+  '<div class="ann" role="note">{{text}}<a href="#">{{link}} →</a></div>', NOHASH_M,
+  [('text', 'Message', 'text', 'Spring menu is live: twelve new recipes, filmed this month.'), ('link', 'Link text', 'text', 'See what’s new')],
+  'A slim full-width bar in the accent colour with one centred line of news and an underlined link.'),
+
+ ('nav-center', 'Centred navigation', 'Navigation', 'Brand in the middle, links either side, and a menu button that opens a panel on phones.', '''
+.bar{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.in{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:20px;padding:12px max(16px,4vw)}
+.l,.r{display:flex;gap:22px;font-size:15px}.r{justify-content:flex-end;align-items:center}
+.l a,.r a:not(.btn){text-decoration:none;color:var(--mute)}.l a:hover,.r a:not(.btn):hover{color:var(--ink)}
+.logo{font-family:var(--head);font-weight:var(--hw);font-style:var(--hs);font-size:28px;letter-spacing:var(--track);text-decoration:none;text-align:center}
+.menu{display:none;width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--surface);cursor:pointer;place-items:center}
+.menu svg{width:20px;height:20px}
+.panel{display:none;padding:8px max(16px,4vw) 18px;border-top:1px solid var(--line)}
+.panel a{display:block;padding:12px 0;text-decoration:none;border-bottom:1px solid var(--line)}
+.panel.open{display:block}
+@media (max-width:760px){.in{grid-template-columns:auto 1fr auto}.l,.r a:not(.btn){display:none}.menu{display:grid}.logo{text-align:left}.r .btn{display:none}}''',
+  '<header class="bar"><div class="in"><nav class="l" aria-label="Primary"><a href="#">{{l1}}</a><a href="#">{{l2}}</a></nav><a class="logo" href="#">{{brand}}</a><div class="r"><a href="#">{{l3}}</a><a class="btn p" href="#">{{cta}}</a><button class="menu" aria-expanded="false" aria-label="Open menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></div></div><nav class="panel" aria-label="Menu"><a href="#">{{l1}}</a><a href="#">{{l2}}</a><a href="#">{{l3}}</a><a href="#">{{cta}}</a></nav></header>',
+  NOHASH_M + "const m=root.querySelector('.menu'),p=root.querySelector('.panel');m.onclick=()=>{const o=m.getAttribute('aria-expanded')!=='true';m.setAttribute('aria-expanded',o);m.setAttribute('aria-label',o?'Close menu':'Open menu');p.classList.toggle('open',o)};",
+  [('l1', 'Link 1', 'text', 'Work'), ('l2', 'Link 2', 'text', 'Studio'), ('l3', 'Link 3', 'text', 'Journal'), ('cta', 'Button', 'text', 'Get in touch')],
+  'A sticky three-column header: two links on the left, the brand name centred in the heading font, a link and accent button on the right; on phones a menu button toggles a stacked link panel.'),
+
+ ('hero-center', 'Centred hero', 'Heroes', 'A centred headline with a news pill, two buttons and a row of faces with a line of proof.', '''
+.hc{max-width:980px;margin:0 auto;text-align:center;padding:clamp(72px,14vh,150px) max(16px,4vw) clamp(56px,10vh,110px);display:grid;justify-items:center;gap:22px}
+.pill{display:inline-flex;gap:10px;align-items:center;padding:6px 14px 6px 6px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:14px;text-decoration:none}
+.pill b{background:var(--accent);color:var(--on-accent);border-radius:999px;padding:3px 10px;font-size:12px}
+.hc h1{font-size:clamp(44px,7.6vw,104px);margin:0}
+.hc p.l{margin:0;max-width:52ch;color:var(--mute);font-size:clamp(16px,1.6vw,20px)}
+.row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.proof{display:flex;align-items:center;gap:12px;color:var(--mute);font-size:14px;flex-wrap:wrap;justify-content:center}
+.faces{display:flex}.faces i{width:34px;height:34px;border-radius:50%;border:2px solid var(--bg);margin-left:-8px;background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 30%,var(--surface)))}
+.faces i:nth-child(2){background:linear-gradient(135deg,var(--mute),var(--surface))}.faces i:nth-child(3){background:linear-gradient(135deg,var(--ink),var(--accent))}.faces i:first-child{margin-left:0}''',
+  '<section class="hc"><a class="pill" href="#"><b>{{badge}}</b>{{news}}</a><h1 class="h">{{heading}}</h1><p class="l">{{intro}}</p><div class="row"><a class="btn p" href="#">{{b1}}</a><a class="btn" href="#">{{b2}}</a></div><p class="proof"><span class="faces" aria-hidden="true"><i></i><i></i><i></i></span>{{proof}}</p></section>',
+  NOHASH_M, [('badge', 'Pill label', 'text', 'New'), ('news', 'Pill text', 'text', 'Shared shopping lists are here'), ('heading', 'Headline', 'text', 'Dinner, planned in the time it takes to boil water.'), ('intro', 'Intro', 'long', 'Pick three recipes, and the week’s shopping list writes itself, sorted by aisle and scaled to how many you’re feeding.'), ('b1', 'Main button', 'text', 'Plan this week'), ('b2', 'Second button', 'text', 'See a sample week'), ('proof', 'Proof line', 'text', 'Used by 48,000 home cooks every Sunday')],
+  'A centred hero: a pill link with a small accent badge, a very large balanced headline, a muted intro, two buttons and a proof line beside three overlapping round avatars.'),
+
+ ('hero-kinetic', 'Kinetic type hero', 'Heroes', 'A huge headline whose last word cycles through a list, rolling up like a split-flap.', '''
+.kh{max-width:1180px;margin:0 auto;padding:clamp(80px,16vh,170px) max(16px,4vw) clamp(56px,10vh,110px);display:grid;gap:26px}
+.kh h1{font-size:clamp(46px,9vw,140px);margin:0;line-height:.98}
+.roll{display:inline-grid;vertical-align:bottom;overflow:hidden;height:1.06em;color:var(--accent-ink,var(--accent))}
+.roll span{grid-area:1/1;transform:translateY(105%);transition:transform .7s cubic-bezier(.7,0,.2,1)}
+.roll span.on{transform:none}.roll span.out{transform:translateY(-105%)}
+.kh p{margin:0;max-width:48ch;color:var(--mute);font-size:clamp(16px,1.6vw,20px)}
+.row{display:flex;gap:10px;flex-wrap:wrap}''',
+  '<section class="kh"><p class="k">{{kicker}}</p><h1 class="h">{{lead}}<br><span class="roll" aria-hidden="true">{{each:words}}<span>{{0}}</span>{{/each}}</span><span class="sr" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">{{words}}</span></h1><p>{{intro}}</p><div class="row"><a class="btn p" href="#">{{b1}}</a><a class="btn" href="#">{{b2}}</a></div></section>',
+  NOHASH_M + r'''const W=[...root.querySelectorAll('.roll span')];if(!W.length)return;let i=0;W[0].classList.add('on');
+const box=root.querySelector('.roll');box.style.width=Math.max(...W.map(w=>w.getBoundingClientRect().width))+'px';
+if(matchMedia('(prefers-reduced-motion: reduce)').matches||W.length<2)return;
+setInterval(()=>{const a=W[i];i=(i+1)%W.length;const b=W[i];a.classList.remove('on');a.classList.add('out');b.classList.remove('out');b.style.transition='none';b.style.transform='translateY(105%)';b.offsetWidth;b.style.transition='';b.style.transform='';b.classList.add('on');setTimeout(()=>a.classList.remove('out'),750)},2200);''',
+  [('kicker', 'Kicker', 'text', 'Independent design studio'), ('lead', 'Fixed words', 'text', 'We design brands that feel'), ('words', 'Rolling words', 'list', 'patient\nprecise\nwarm\nunmistakable'), ('intro', 'Intro', 'long', 'Identity, packaging and websites for food, craft and hospitality companies who care how things are made.'), ('b1', 'Main button', 'text', 'See our work'), ('b2', 'Second button', 'text', 'Start a project')],
+  'A left-aligned hero with an enormous headline whose final word rolls vertically through a list every two seconds (slot-machine style, overflow hidden, accent colour); static first word under reduced motion; the full word list is available to screen readers.'),
+
+ ('hero-3d', '3D card stack hero', 'Heroes', 'Copy on the left, three image cards fanned in 3D on the right that tilt towards the pointer.', '''
+.h3{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,5vw,64px);align-items:center;max-width:1180px;margin:0 auto;padding:clamp(56px,12vh,130px) max(16px,4vw)}
+.h3 h1{font-size:clamp(42px,6.4vw,90px);margin:12px 0 18px}
+.h3 p.l{color:var(--mute);font-size:18px;max-width:42ch;margin:0 0 26px}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.stage{perspective:1200px;height:clamp(340px,44vw,520px);position:relative}
+.rig{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .25s ease-out;transform:rotateY(-18deg) rotateX(8deg)}
+.card{position:absolute;width:56%;aspect-ratio:4/5;top:8%;left:22%;border-radius:calc(var(--radius) * 1.3);overflow:hidden;box-shadow:0 40px 70px -30px rgba(0,0,0,.6);border:1px solid var(--line);background:var(--surface)}
+.card img{width:100%;height:100%;object-fit:cover;display:block}
+.card:nth-child(1){transform:translateZ(-120px) translateX(-34%) rotate(-8deg)}
+.card:nth-child(2){transform:translateZ(-40px) translateX(30%) rotate(6deg)}
+.card:nth-child(3){transform:translateZ(60px)}
+@media (max-width:820px){.h3{grid-template-columns:1fr}.stage{height:380px}}''',
+  '<section class="h3"><div><p class="k">{{kicker}}</p><h1 class="h">{{heading}}</h1><p class="l">{{intro}}</p><div class="row"><a class="btn p" href="#">{{b1}}</a><a class="btn" href="#">{{b2}}</a></div></div><div class="stage" aria-hidden="true"><div class="rig"><div class="card"><img src="{{A}}{{img1}}" alt="" loading="lazy"></div><div class="card"><img src="{{A}}{{img2}}" alt="" loading="lazy"></div><div class="card"><img src="{{A}}{{img3}}" alt="" loading="lazy"></div></div></div></section>',
+  NOHASH_M + r'''if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const s=root.querySelector('.stage'),r=root.querySelector('.rig');
+s.parentNode.addEventListener('pointermove',e=>{const b=s.getBoundingClientRect(),x=(e.clientX-b.left)/b.width-.5,y=(e.clientY-b.top)/b.height-.5;r.style.transform=`rotateY(${-18+x*22}deg) rotateX(${8-y*16}deg)`});
+s.parentNode.addEventListener('pointerleave',()=>{r.style.transform=''});''',
+  [('kicker', 'Kicker', 'text', 'Collection 04'), ('heading', 'Headline', 'text', 'Objects with a little weather in them.'), ('intro', 'Intro', 'long', 'Glazes that pool, crackle and run. Every piece is thrown, fired and photographed in our Leeds studio.'), ('b1', 'Main button', 'text', 'Shop the collection'), ('b2', 'Second button', 'text', 'Visit the studio'), ('img1', 'Back card image', 'image', 'shelf/sand.webp'), ('img2', 'Middle card image', 'image', 'shelf/amber.webp'), ('img3', 'Front card image', 'image', 'shelf/owl.webp')],
+  'A two-column hero: copy and buttons on the left; on the right three 4:5 image cards layered in CSS 3D (preserve-3d, translateZ offsets, slight rotations) inside a perspective stage that tilts towards the pointer and rests when it leaves; still under reduced motion.'),
+
+ ('hero-video', 'Video showcase hero', 'Heroes', 'A centred headline above a large rounded film frame, like a product reveal.', '''
+.hv{max-width:1180px;margin:0 auto;padding:clamp(64px,12vh,130px) max(16px,4vw) clamp(40px,8vh,80px);display:grid;gap:22px;justify-items:center;text-align:center}
+.hv h1{font-size:clamp(40px,6.6vw,92px);margin:0;max-width:16ch}
+.hv p.l{margin:0;max-width:54ch;color:var(--mute);font-size:18px}
+.row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.frame{position:relative;width:100%;margin-top:18px;aspect-ratio:16/9;border-radius:calc(var(--radius) * 2);overflow:hidden;background:var(--surface);border:1px solid var(--line);box-shadow:0 50px 100px -50px rgba(0,0,0,.6)}
+.frame video{width:100%;height:100%;object-fit:cover;display:block}
+''' + FILM_CTRL_CSS,
+  '<section class="hv"><p class="k">{{kicker}}</p><h1 class="h">{{heading}}</h1><p class="l">{{intro}}</p><div class="row"><a class="btn p" href="#">{{b1}}</a><a class="btn" href="#">{{b2}}</a></div><div class="frame">' + FILMV + FILM_CTRL + '</div></section>',
+  NOHASH_M + FILM_JS,
+  [('film', 'Film', 'film', 'light-mesh'), ('kicker', 'Kicker', 'text', 'Meet Loom 2'), ('heading', 'Headline', 'text', 'Every thread of the project, in one view.'), ('intro', 'Intro', 'long', 'Loom gathers briefs, files and feedback into a single timeline, so nobody asks where the latest version is.'), ('b1', 'Main button', 'text', 'Try it free'), ('b2', 'Second button', 'text', 'Watch the tour')],
+  'A centred hero with kicker, headline, intro and two buttons, followed by a full-width 16:9 rounded frame playing a muted looping film with a pause button and a long soft shadow.'),
+
+ ('feature-grid', 'Feature grid', 'Features', 'Six features in a three-column grid, each with an icon, a title and a sentence.', '''
+.fg h2{font-size:clamp(34px,4.6vw,60px);margin:10px 0 14px;max-width:18ch}
+.fg .intro{color:var(--mute);max-width:56ch;margin:0 0 40px;font-size:17px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;list-style:none;margin:0;padding:0}
+.grid li{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px;display:grid;gap:10px;align-content:start}
+.ico{width:44px;height:44px;border-radius:calc(var(--radius) * .7);display:grid;place-items:center;background:color-mix(in srgb,var(--accent) 16%,var(--surface));color:var(--accent-ink,var(--accent))}
+.ico svg{width:22px;height:22px}
+.grid h3{margin:4px 0 0;font-size:18px}.grid p{margin:0;color:var(--mute);font-size:15px}
+@media (max-width:860px){.grid{grid-template-columns:1fr 1fr}}@media (max-width:560px){.grid{grid-template-columns:1fr}}
+''' + REVEAL_CSS,
+  '<section class="wrap fg"><p class="k">{{kicker}}</p><h2 class="h">{{heading}}</h2><p class="intro">{{intro}}</p><ul class="grid">{{each:items}}<li data-rv><span class="ico" aria-hidden="true">{{g0}}</span><h3>{{1}}</h3><p>{{2}}</p></li>{{/each}}</ul></section>',
+  REVEAL_JS,
+  [('kicker', 'Kicker', 'text', 'Features'), ('heading', 'Headline', 'text', 'Small tools that save whole evenings.'), ('intro', 'Intro', 'long', 'Everything here came from a request in our community forum, and most of it took one afternoon to build.'),
+   ('items', 'Features (icon | title | text)', 'list', 'clock | Cook-time planner | Tells you when to start each dish so everything lands on the table together.\nlist | Aisle-sorted lists | Your shopping list follows the layout of the shop you pick.\nusers | Shared kitchens | Plan with the people you live with; changes appear on every phone.\nscale | Scale any recipe | Feeding two or twelve, quantities and timings adjust as you type.\nleaf | Seasonal swaps | Out-of-season ingredient? We suggest one that’s cheaper this week.\nbell | Gentle reminders | A nudge to defrost, soak or marinate the night before.')],
+  'A section heading and intro over a three-column grid of six feature cards (two columns on tablets, one on phones), each with an icon in a soft accent tile, a bold title and one muted sentence; cards fade up as they enter the viewport.'),
+
+ ('feature-rows', 'Alternating features', 'Features', 'Three image-and-text rows that alternate sides, for explaining a product step by step.', '''
+.fr{display:grid;gap:clamp(48px,8vw,96px)}
+.fr h2{font-size:clamp(34px,4.6vw,60px);margin:10px 0 0;max-width:18ch}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,5vw,72px);align-items:center}
+.row:nth-of-type(even) .pic{order:2}
+.pic{aspect-ratio:5/4;border-radius:calc(var(--radius) * 1.4);overflow:hidden;background:var(--surface);border:1px solid var(--line)}
+.pic img{width:100%;height:100%;object-fit:cover;display:block}
+.row h3{font-family:var(--head);font-weight:var(--hw);font-style:var(--hs);letter-spacing:var(--track);font-size:clamp(26px,3vw,38px);line-height:1.1;margin:8px 0 12px}
+.row p{margin:0;color:var(--mute);font-size:17px;max-width:44ch}
+.num{font-size:13px;font-weight:600;color:var(--accent-ink,var(--accent))}
+@media (max-width:760px){.row{grid-template-columns:1fr}.row:nth-of-type(even) .pic{order:0}}
+''' + REVEAL_CSS,
+  '<section class="wrap fr"><div><p class="k">{{kicker}}</p><h2 class="h">{{heading}}</h2></div>{{each:rows}}<div class="row" data-rv><div class="pic"><img src="{{A}}{{2}}" alt="" loading="lazy"></div><div><span class="num">0{{n}}</span><h3>{{0}}</h3><p>{{1}}</p></div></div>{{/each}}</section>',
+  REVEAL_JS,
+  [('kicker', 'Kicker', 'text', 'How it’s made'), ('heading', 'Headline', 'text', 'From a sketch to your shelf in three weeks.'),
+   ('rows', 'Rows (title | text | image)', 'list', 'Drawn by hand | Every piece starts as a pencil drawing at full size, pinned to the studio wall for a few days before we commit. | shelf/sumi.webp\nThrown and trimmed | Bodies are thrown on the wheel, left to firm overnight, then trimmed so the foot and rim feel right in the hand. | shelf/sand.webp\nGlazed and fired twice | A bisque firing, then glaze and a slow second firing to 1260°C. The kiln decides the last ten per cent. | shelf/amber.webp')],
+  'A sequence of two-column rows, image and text alternating sides each row (stacked on phones), each with a small accent step number, a serif subheading and a muted paragraph; rows fade up on scroll.'),
+
+ ('steps', 'How it works', 'Features', 'Three or four numbered steps joined by a line, for showing a simple process.', '''
+.st h2{font-size:clamp(34px,4.6vw,60px);margin:10px 0 40px;max-width:18ch}
+.st ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:22px;counter-reset:s;position:relative}
+.st li{counter-increment:s;position:relative;padding-top:64px}
+.st li::before{content:counter(s);position:absolute;top:0;left:0;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:var(--on-accent);font-weight:600;z-index:1}
+.st li::after{content:"";position:absolute;top:23px;left:56px;right:-12px;height:1px;background:var(--line)}
+.st li:last-child::after{display:none}
+.st h3{margin:0 0 8px;font-size:19px}.st p{margin:0;color:var(--mute)}''',
+  '<section class="wrap st"><p class="k">{{kicker}}</p><h2 class="h">{{heading}}</h2><ol>{{each:steps}}<li><h3>{{0}}</h3><p>{{1}}</p></li>{{/each}}</ol></section>', '',
+  [('kicker', 'Kicker', 'text', 'How it works'), ('heading', 'Headline', 'text', 'Three steps, then dinner.'),
+   ('steps', 'Steps (title | text)', 'list', 'Pick your recipes | Choose three to five dishes from this week’s menu, or add your own.\nGet one list | We merge the ingredients, remove what you already have and sort by aisle.\nCook in order | Each evening opens with what to start first, timed to your oven.')],
+  'A heading over three or four columns of steps, each with a filled accent circle holding its number, joined by a thin horizontal line, then a bold title and a muted sentence.'),
+
+ ('stats', 'Stats band', 'Proof', 'Four big numbers that count up when they come into view.', '''
+.sb{border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.sb ul{list-style:none;margin:0 auto;padding:clamp(40px,8vh,80px) max(16px,4vw);max-width:1180px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}
+.sb b{display:block;font-family:var(--head);font-weight:var(--hw);font-style:var(--hs);letter-spacing:var(--track);font-size:clamp(40px,5.6vw,76px);line-height:1;font-variant-numeric:tabular-nums}
+.sb span{color:var(--mute);font-size:15px}
+@media (max-width:760px){.sb ul{grid-template-columns:1fr 1fr}}''',
+  '<section class="sb" aria-label="{{label}}"><ul>{{each:stats}}<li><b data-n>{{0}}</b><span>{{1}}</span></li>{{/each}}</ul></section>',
+  r'''const N=[...root.querySelectorAll('[data-n]')];if(matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window))return;
+N.forEach(el=>{const t=el.textContent,m=t.match(/[\d.,]+/);if(!m)return;const target=parseFloat(m[0].replace(/,/g,'')),dec=(m[0].split('.')[1]||'').length,comma=m[0].includes(',');
+ const fmt=v=>t.replace(m[0],comma?v.toLocaleString('en',{minimumFractionDigits:dec,maximumFractionDigits:dec}):v.toFixed(dec));el.textContent=fmt(0);
+ const io=new IntersectionObserver(es=>{if(!es[0].isIntersecting)return;io.disconnect();const t0=performance.now();const f=n=>{const p=Math.min(1,(n-t0)/1400),e=1-Math.pow(1-p,3);el.textContent=fmt(target*e);if(p<1)requestAnimationFrame(f);else el.textContent=t};requestAnimationFrame(f)});io.observe(el)});''',
+  [('label', 'Section label (for screen readers)', 'text', 'In numbers'), ('stats', 'Stats (number | label)', 'list', '48,000 | cooks plan with us every week\n3.2 | hours saved per household, per week\n1,200 | recipes, each filmed and tested\n31 | countries with a Sunday list')],
+  'A full-width band between two hairlines with four (two on phones) large tabular numbers in the heading font that count up from zero with an ease-out when scrolled into view, each over a muted label.'),
+
+ ('quote', 'Featured quote', 'Proof', 'One large testimonial with the person’s name, role and an initial avatar.', '''
+.q{max-width:980px;margin:0 auto;padding:clamp(72px,14vh,140px) max(16px,4vw);text-align:center;display:grid;gap:28px;justify-items:center}
+.q svg{width:44px;height:44px;color:var(--accent-ink,var(--accent))}
+.q blockquote{margin:0;font-family:var(--head);font-weight:var(--hw);font-style:var(--hs);letter-spacing:var(--track);font-size:clamp(28px,4vw,52px);line-height:1.15;text-wrap:balance}
+.who{display:flex;align-items:center;gap:14px;text-align:left}
+.av{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:var(--on-accent);font-weight:600;font-size:18px}
+.who b{display:block}.who span{color:var(--mute);font-size:14px}''',
+  '<figure class="q"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.5 6C6.5 7.2 4.5 9.8 4.5 13.4V18h6v-6H7.6c.2-1.9 1.3-3.3 3.1-4.1zm9 0c-3 1.2-5 3.8-5 7.4V18h6v-6h-2.9c.2-1.9 1.3-3.3 3.1-4.1z"/></svg><blockquote>{{quote}}</blockquote><figcaption class="who"><span class="av" aria-hidden="true">{{initials}}</span><span><b>{{name}}</b><span>{{role}}</span></span></figcaption></figure>', '',
+  [('quote', 'Quote', 'long', 'We stopped arguing about what’s for dinner. That alone was worth it; the shopping list is a bonus.'), ('name', 'Name', 'text', 'Priya Raman'), ('role', 'Role', 'text', 'Parent of three, Bristol'), ('initials', 'Initials', 'text', 'PR')],
+  'A centred testimonial: an accent quotation mark, one very large balanced serif quote, then a caption with a round accent avatar holding initials, the name in bold and the role muted.'),
+
+ ('logo-grid', 'Logo wall', 'Proof', 'A still grid of customer wordmarks, each set in a different type treatment.', '''
+.lg{text-align:center}
+.lg p.k{margin:0 0 26px}
+.lg ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));border-top:1px solid var(--line);border-left:1px solid var(--line)}
+.lg li{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:30px 12px;display:grid;place-items:center;font-size:20px;color:var(--mute);min-height:96px}
+.lg li:nth-child(4n+1){font-family:var(--head);font-style:italic}.lg li:nth-child(4n+2){font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:15px}
+.lg li:nth-child(4n+3){font-family:ui-monospace,monospace;font-size:17px}.lg li:nth-child(4n){font-weight:600;letter-spacing:-.04em;font-size:22px}''',
+  '<section class="wrap lg"><p class="k">{{kicker}}</p><ul>{{each:logos}}<li>{{0}}</li>{{/each}}</ul></section>', '',
+  [('kicker', 'Kicker', 'text', 'Stocked by'), ('logos', 'Names (one per line)', 'list', 'Larder & Co\nNORTHFIELD\nfieldnotes.\nOrchard Hall\nTinsmith\nGREEN ROOM\nmarket.st\nHalden')],
+  'A centred kicker over a ruled grid of customer names set as wordmarks in four alternating type treatments (italic serif, spaced capitals, monospace, tight bold) in the muted colour.'),
+
+ ('compare', 'Comparison table', 'Sell', 'A feature-by-feature table of you against the usual alternative, with ticks and crosses.', '''
+.cmp h2{font-size:clamp(32px,4.4vw,56px);margin:10px 0 30px;max-width:18ch}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface)}
+table{width:100%;border-collapse:collapse;min-width:520px;font-size:15px}
+th,td{padding:16px 18px;text-align:left;border-bottom:1px solid var(--line)}
+tbody tr:last-child th,tbody tr:last-child td{border-bottom:0}
+thead th{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);font-weight:600}
+thead th.us{color:var(--accent-ink,var(--accent))}
+td{text-align:center;width:22%}thead th:not(:first-child){text-align:center}
+td.us{background:color-mix(in srgb,var(--accent) 8%,transparent)}
+.y,.n{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%}
+.y{background:var(--accent);color:var(--on-accent)}.n{background:color-mix(in srgb,var(--mute) 22%,transparent);color:var(--mute)}
+.y svg,.n svg{width:14px;height:14px}''',
+  '<section class="wrap cmp"><p class="k">{{kicker}}</p><h2 class="h">{{heading}}</h2><div class="tw" tabindex="0" role="region" aria-label="{{heading}}"><table><thead><tr><th scope="col">Feature</th><th scope="col" class="us">{{brand}}</th><th scope="col">{{them}}</th></tr></thead><tbody>{{each:rows}}<tr><th scope="row">{{0}}</th><td class="us">{{t1}}</td><td>{{t2}}</td></tr>{{/each}}</tbody></table></div></section>', '',
+  [('kicker', 'Kicker', 'text', 'Compare'), ('heading', 'Headline', 'text', 'Why cooks switch from spreadsheets.'), ('them', 'Alternative’s name', 'text', 'Spreadsheet'),
+   ('rows', 'Rows (feature | us yes/no | them yes/no)', 'list', 'Shopping list sorted by aisle | yes | no\nScales recipes for any number | yes | no\nShared with your household | yes | yes\nCooking timeline for each night | yes | no\nWorks offline in the shop | yes | yes\nSeasonal ingredient swaps | yes | no')],
+  'A comparison table in a rounded scrollable card: a column for the feature, a highlighted column for the brand and one for the alternative; cells show a filled accent tick or a muted cross with screen-reader text.'),
+
+ ('pricing-tiers', 'Pricing tiers', 'Sell', 'Two or three plans written as rows you edit, with one plan highlighted.', '''
+.pt{text-align:center}
+.pt h2{font-size:clamp(34px,4.6vw,60px);margin:10px auto 14px;max-width:18ch}
+.pt .intro{color:var(--mute);max-width:52ch;margin:0 auto 44px}
+.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;text-align:left;align-items:start}
+.plan{background:var(--surface);border:1px solid var(--line);border-radius:calc(var(--radius) * 1.2);padding:28px;display:grid;gap:14px}
+.plan:nth-child(2){border-color:var(--accent);box-shadow:0 30px 60px -36px color-mix(in srgb,var(--accent) 70%,transparent)}
+.plan h3{margin:0;font-size:18px}.price{font-family:var(--head);font-weight:var(--hw);font-style:var(--hs);font-size:48px;line-height:1;letter-spacing:var(--track)}
+.price small{font-family:var(--body);font-size:15px;color:var(--mute);font-style:normal}
+.plan p{margin:0;color:var(--mute);font-size:15px}
+.plan ul{margin:6px 0 8px;padding:0;list-style:none;display:grid;gap:8px;font-size:15px}
+.plan li{display:flex;gap:10px}.plan li::before{content:"";flex:0 0 16px;height:16px;margin-top:4px;border-radius:50%;background:color-mix(in srgb,var(--accent) 22%,transparent);box-shadow:inset 0 0 0 4px var(--surface),inset 0 0 0 8px var(--accent)}
+.plan .btn{width:100%}.plan:nth-child(2) .btn{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}''',
+  '<section class="wrap pt"><p class="k">{{kicker}}</p><h2 class="h">{{heading}}</h2><p class="intro">{{intro}}</p><div class="plans">{{each:plans}}<article class="plan"><h3>{{0}}</h3><div class="price">{{1}} <small>{{2}}</small></div><p>{{3}}</p><ul>{{list4}}</ul><a class="btn" href="#">{{5}}</a></article>{{/each}}</div></section>', NOHASH_M,
+  [('kicker', 'Kicker', 'text', 'Plans'), ('heading', 'Headline', 'text', 'Simple prices, cancel any week.'), ('intro', 'Intro', 'long', 'Every plan includes the full recipe library. Pay monthly or save two months by paying yearly.'),
+   ('plans', 'Plans (name | price | period | note | features; split; by; semicolons | button)', 'list', 'Solo | £0 | free forever | For one cook trying it out. | 3 recipes a week; Shopping list; Cook timeline | Start free\nHousehold | £6 | a month | For a home of up to six people. | Unlimited recipes; Shared lists; Seasonal swaps; Offline mode | Choose Household\nKitchen | £18 | a month | For cafés and cookery schools. | Everything in Household; 10 cooks; Costing per portion; Priority help | Talk to us')],
+  'A centred heading over a row of plan cards (any number, wrapping), each with a name, a big price in the heading font with a small period, a note, a ticked feature list and a full-width button; the second plan has an accent border, glow and filled button.'),
+
+ ('timeline', 'Timeline', 'Story', 'Milestones down a vertical line, revealed as you scroll. Good for a company story or a roadmap.', '''
+.tl h2{font-size:clamp(34px,4.6vw,60px);margin:10px 0 40px;max-width:18ch}
+.tl ol{list-style:none;margin:0;padding:0 0 0 28px;position:relative;display:grid;gap:34px;max-width:760px}
+.tl ol::before{content:"";position:absolute;left:6px;top:6px;bottom:6px;width:2px;background:var(--line)}
+.tl li{position:relative}.tl li::before{content:"";position:absolute;left:-28px;top:6px;width:14px;height:14px;border-radius:50%;background:var(--bg);border:3px solid var(--accent)}
+.tl time{font-size:13px;font-weight:600;letter-spacing:.1em;color:var(--accent-ink,var(--accent))}
+.tl h3{margin:4px 0 6px;font-size:20px}.tl p{margin:0;color:var(--mute)}
+''' + REVEAL_CSS,
+  '<section class="wrap tl"><p class="k">{{kicker}}</p><h2 class="h">{{heading}}</h2><ol>{{each:events}}<li data-rv><time>{{0}}</time><h3>{{1}}</h3><p>{{2}}</p></li>{{/each}}</ol></section>', REVEAL_JS,
+  [('kicker', 'Kicker', 'text', 'Our story'), ('heading', 'Headline', 'text', 'Eight years, one kitchen table.'),
+   ('events', 'Events (date | title | text)', 'list', '2018 | A list on the fridge | Two flatmates start writing the week’s meals on a whiteboard and photographing it for the shop.\n2020 | The first app | Four hundred friends of friends use a scrappy web version through the first lockdown.\n2023 | Filmed recipes | We build a small studio and start filming every recipe in one take.\n2026 | Shared kitchens | Households plan together, and the list updates on every phone in real time.')],
+  'A vertical timeline: a thin line down the left with an accent ring at each milestone, a small accent date, a bold title and a muted paragraph; milestones fade up as they scroll in.'),
+
+ ('team', 'Team', 'Story', 'People in a grid with an initial avatar, name, role and one line about them.', '''
+.tm h2{font-size:clamp(34px,4.6vw,60px);margin:10px 0 14px;max-width:18ch}
+.tm .intro{color:var(--mute);max-width:56ch;margin:0 0 40px}
+.tm ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+.tm li{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px;display:grid;gap:6px}
+.av{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font-family:var(--head);font-size:24px;margin-bottom:8px;color:var(--on-accent);background:linear-gradient(140deg,var(--accent),color-mix(in srgb,var(--accent) 45%,var(--ink)))}
+.tm li:nth-child(3n+2) .av{background:linear-gradient(140deg,color-mix(in srgb,var(--accent) 55%,var(--ink)),var(--accent))}
+.tm b{font-size:17px}.tm span{color:var(--accent-ink,var(--accent));font-size:14px;font-weight:500}.tm p{margin:4px 0 0;color:var(--mute);font-size:15px}''',
+  '<section class="wrap tm"><p class="k">{{kicker}}</p><h2 class="h">{{heading}}</h2><p class="intro">{{intro}}</p><ul>{{each:people}}<li><span class="av" aria-hidden="true">{{i0}}</span><b>{{0}}</b><span>{{1}}</span><p>{{2}}</p></li>{{/each}}</ul></section>', '',
+  [('kicker', 'Kicker', 'text', 'The team'), ('heading', 'Headline', 'text', 'Eleven people, mostly in aprons.'), ('intro', 'Intro', 'long', 'Cooks, engineers and one very patient food stylist, split between London and Lisbon.'),
+   ('people', 'People (name | role | line)', 'list', 'Maya Okafor | Head of food | Ran a supper club for six years; tests every recipe twice.\nTom Becker | Engineering | Built the first version on a train to Glasgow.\nInês Duarte | Film and photography | Lights every dish like a Dutch still life.\nSam Whitlock | Community | Reads every message in the forum, usually before breakfast.')],
+  'A heading and intro over a responsive grid of person cards: a round gradient avatar with initials, name, an accent role and one muted line.'),
+
+ ('gallery', 'Masonry gallery', 'Content', 'Images in a masonry layout; select one to view it large with its caption.', '''
+.gl h2{font-size:clamp(34px,4.6vw,60px);margin:10px 0 30px;max-width:18ch}
+.cols{columns:3 260px;column-gap:14px}
+.cols button{display:block;width:100%;margin:0 0 14px;padding:0;border:0;border-radius:var(--radius);overflow:hidden;cursor:zoom-in;background:var(--surface);break-inside:avoid;position:relative}
+.cols img{width:100%;display:block;transition:transform .5s}
+.cols button:nth-child(3n+1) img{aspect-ratio:4/5;object-fit:cover}.cols button:nth-child(3n+2) img{aspect-ratio:1;object-fit:cover}.cols button:nth-child(3n) img{aspect-ratio:3/4;object-fit:cover}
+.cols button:hover img{transform:scale(1.04)}
+.cols span{position:absolute;left:10px;bottom:10px;right:10px;text-align:left;font-size:13px;color:#fff;text-shadow:0 1px 8px rgba(0,0,0,.7)}
+dialog{border:0;padding:0;background:transparent;max-width:min(92vw,900px);color:#fff}
+dialog::backdrop{background:rgba(0,0,0,.82)}
+dialog img{max-width:100%;max-height:80vh;display:block;border-radius:var(--radius)}
+dialog p{margin:10px 0 0;text-align:center}
+dialog button{position:absolute;top:8px;right:8px;width:44px;height:44px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;font-size:20px;cursor:pointer}''',
+  '<section class="wrap gl"><p class="k">{{kicker}}</p><h2 class="h">{{heading}}</h2><div class="cols">{{each:images}}<button type="button" aria-label="View larger: {{1}}"><img src="{{A}}{{0}}" alt="{{1}}" loading="lazy"><span aria-hidden="true">{{1}}</span></button>{{/each}}</div><dialog aria-label="Image viewer"><img alt=""><p></p><button type="button" aria-label="Close">×</button></dialog></section>',
+  r'''const d=root.querySelector('dialog');if(!d.showModal)return;const im=d.querySelector('img'),cap=d.querySelector('p');
+root.querySelectorAll('.cols button').forEach(b=>b.onclick=()=>{const i=b.querySelector('img');im.src=i.src;im.alt=i.alt;cap.textContent=i.alt;d.showModal()});
+d.querySelector('button').onclick=()=>d.close();d.onclick=e=>{if(e.target===d)d.close()};''',
+  [('kicker', 'Kicker', 'text', 'Gallery'), ('heading', 'Headline', 'text', 'From the studio this season.'),
+   ('images', 'Images (image | caption)', 'list', 'shelf/amber.webp | Amber glaze, second firing\nshelf/owl.webp | Owl, cut from one sheet\nshelf/sumi.webp | Ink study on washi\nshelf/sand.webp | Sand drawing at low tide\nshelf/tree.webp | Particle tree, still from the film\nshelf/lighthouse.webp | Lighthouse at blue hour\nshelf/origami.webp | Folded crane series\nshelf/bloom.webp | Pigment bloom in water\nshelf/statue.webp | Plaster cast, museum store')],
+  'A masonry gallery using CSS columns with mixed image ratios and captions over the image; each image is a button that opens a native dialog lightbox with the large image and its caption, closable with Escape, the × button or a backdrop click.'),
+
+ ('blog', 'Article list', 'Content', 'Three article cards with an image, a tag, a date and a headline.', '''
+.bl .top{display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap;margin-bottom:30px}
+.bl h2{font-size:clamp(34px,4.6vw,60px);margin:10px 0 0;max-width:18ch}
+.bl ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+.bl a.card{display:grid;gap:12px;text-decoration:none}
+.pic{aspect-ratio:16/10;border-radius:var(--radius);overflow:hidden;background:var(--surface)}
+.pic img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s}
+a.card:hover img{transform:scale(1.04)}
+.meta{display:flex;gap:10px;font-size:13px;color:var(--mute)}.meta b{color:var(--accent-ink,var(--accent));font-weight:600}
+.bl h3{margin:0;font-size:21px;line-height:1.25}a.card:hover h3{text-decoration:underline;text-underline-offset:4px}''',
+  '<section class="wrap bl"><div class="top"><div><p class="k">{{kicker}}</p><h2 class="h">{{heading}}</h2></div><a class="btn" href="#">{{button}}</a></div><ul>{{each:posts}}<li><a class="card" href="#"><span class="pic"><img src="{{A}}{{3}}" alt="" loading="lazy"></span><span class="meta"><b>{{0}}</b><span>{{1}}</span></span><h3>{{2}}</h3></a></li>{{/each}}</ul></section>', NOHASH_M,
+  [('kicker', 'Kicker', 'text', 'Journal'), ('heading', 'Headline', 'text', 'Notes from the kitchen.'), ('button', 'Button', 'text', 'All articles'),
+   ('posts', 'Posts (tag | date | title | image)', 'list', 'Technique | 12 March | Why we rest every steak for exactly as long as it cooked | films/smoke-plume.jpg\nSeasonal | 4 March | Forced rhubarb, and four things to do with it this month | films/pigment-bloom.jpg\nBehind the scenes | 26 Feb | How we film steam without a smoke machine | films/light-threads.jpg')],
+  'A section header with a button on the right, then a responsive row of article cards: a 16:10 image that zooms slightly on hover, an accent tag and a date, and a two-line headline that underlines on hover.'),
+
+ ('case-study', 'Case study', 'Story', 'A project write-up: a big image, the client and three results, then challenge and approach.', '''
+.cs .pic{aspect-ratio:21/9;border-radius:calc(var(--radius) * 1.5);overflow:hidden;background:var(--surface);margin:24px 0 36px}
+.cs .pic img{width:100%;height:100%;object-fit:cover;display:block}
+.cs h2{font-size:clamp(34px,4.8vw,64px);margin:10px 0 0;max-width:20ch}
+.res{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;list-style:none;margin:0 0 40px;padding:0}
+.res li{border-top:2px solid var(--accent);padding-top:14px}.res b{display:block;font-family:var(--head);font-weight:var(--hw);font-style:var(--hs);font-size:clamp(34px,4vw,52px);line-height:1}.res span{color:var(--mute);font-size:15px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,5vw,64px)}.two h3{margin:0 0 8px;font-size:15px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}.two p{margin:0;font-size:17px}
+@media (max-width:720px){.res,.two{grid-template-columns:1fr}}''',
+  '<section class="wrap cs"><p class="k">{{client}}</p><h2 class="h">{{heading}}</h2><div class="pic"><img src="{{A}}{{img}}" alt="{{alt}}" loading="lazy"></div><ul class="res">{{each:results}}<li><b>{{0}}</b><span>{{1}}</span></li>{{/each}}</ul><div class="two"><div><h3>The challenge</h3><p>{{challenge}}</p></div><div><h3>What we did</h3><p>{{approach}}</p></div></div></section>', '',
+  [('client', 'Client', 'text', 'Case study · Orchard Hall'), ('heading', 'Headline', 'text', 'A cider house that finally looks like its cider.'), ('img', 'Image', 'image', 'films/golden-figure.jpg'), ('alt', 'Image description', 'text', 'A golden figure lit against a dark background'),
+   ('results', 'Results (number | label)', 'list', '+64% | online orders in the first quarter\n3 | new stockists in London\n12 days | from brief to launch'),
+   ('challenge', 'Challenge', 'long', 'Orchard Hall’s labels changed every season, and the website was a template nobody liked. Buyers didn’t recognise the bottles on shelf.'),
+   ('approach', 'Approach', 'long', 'We drew one engraved mark from the original 1890s press, built a label system around it and rebuilt the shop in a fortnight.')],
+  'A case study section: client kicker, large headline, a 21:9 rounded image, three results each with an accent top rule, a big number and a muted label, then two columns for the challenge and the approach.'),
+
+ ('cta-band', 'Call-to-action band', 'Endings', 'A full-width accent band with a headline and one button.', '''
+.cb{background:var(--accent);color:var(--on-accent)}
+.cb .in{max-width:1180px;margin:0 auto;padding:clamp(48px,9vh,90px) max(16px,4vw);display:flex;gap:24px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.cb h2{margin:0;font-size:clamp(30px,4.4vw,56px);max-width:20ch}
+.cb .btn{background:var(--on-accent);color:var(--accent);border-color:var(--on-accent);min-height:52px;padding:0 26px}''',
+  '<section class="cb"><div class="in"><h2 class="h">{{heading}}</h2><a class="btn" href="#">{{button}}</a></div></section>', NOHASH_M,
+  [('heading', 'Headline', 'text', 'Next Sunday, let the list write itself.'), ('button', 'Button', 'text', 'Start free')],
+  'A full-width band in the accent colour with a large headline on the left and a reversed button (accent text on the on-accent colour) on the right, wrapping on phones.'),
+
+ ('newsletter', 'Newsletter signup', 'Endings', 'An email form in a card, with inline validation and a thank-you message.', '''
+.nl .card{background:var(--surface);border:1px solid var(--line);border-radius:calc(var(--radius) * 1.5);padding:clamp(28px,5vw,56px);display:grid;grid-template-columns:1.1fr 1fr;gap:clamp(20px,4vw,48px);align-items:center}
+.nl h2{margin:10px 0 10px;font-size:clamp(30px,4vw,50px)}.nl p{margin:0;color:var(--mute)}
+form{display:grid;gap:10px}.f{display:flex;gap:8px;flex-wrap:wrap}
+label{font-size:14px;font-weight:500}
+input{flex:1 1 220px;min-height:48px;padding:0 14px;border-radius:calc(var(--radius) * .7);border:1px solid var(--line);background:var(--bg)}
+input[aria-invalid=true]{border-color:#C2410C}
+.msg{min-height:1.4em;font-size:14px;color:var(--mute)}.msg.err{color:color-mix(in srgb,#E5484D 70%,var(--ink))}
+small{color:var(--mute);font-size:13px}
+@media (max-width:760px){.nl .card{grid-template-columns:1fr}}''',
+  '<section class="wrap nl"><div class="card"><div><p class="k">{{kicker}}</p><h2 class="h">{{heading}}</h2><p>{{intro}}</p></div><form novalidate><label for="nl-email">Email address</label><div class="f"><input id="nl-email" type="email" autocomplete="email" placeholder="you@example.com" aria-describedby="nl-msg"><button class="btn p" type="submit">{{button}}</button></div><p class="msg" id="nl-msg" role="status"></p><small>{{small}}</small></form></div></section>',
+  r'''const f=root.querySelector('form'),i=f.querySelector('input'),m=f.querySelector('.msg');const uid=root.id||'nl';i.id=uid+'-email';f.querySelector('label').htmlFor=i.id;m.id=uid+'-msg';i.setAttribute('aria-describedby',m.id);
+f.onsubmit=e=>{e.preventDefault();const ok=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(i.value.trim());i.setAttribute('aria-invalid',!ok);m.classList.toggle('err',!ok);m.textContent=ok?'Thanks. Check your inbox to confirm (this demo sends nothing).':'Enter an email address like name@example.com.';if(ok)f.reset()};''',
+  [('kicker', 'Kicker', 'text', 'Newsletter'), ('heading', 'Headline', 'text', 'One recipe, every Sunday morning.'), ('intro', 'Intro', 'long', 'A seasonal dish, the shopping list and the film, in one short email. No adverts, ever.'), ('button', 'Button', 'text', 'Subscribe'), ('small', 'Small print', 'text', 'Unsubscribe with one click. We never share your address.')],
+  'A rounded card with copy on the left and an email form on the right: visible label, input and button on one row, inline validation with a specific error message, a success message in a live region, and small print.'),
+
+ ('contact-cards', 'Contact options', 'Endings', 'Three ways to reach you, each in a card with an icon, details and a link.', '''
+.cc h2{font-size:clamp(34px,4.6vw,60px);margin:10px 0 30px;max-width:18ch}
+.cc ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+.cc li{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px;display:grid;gap:8px}
+.ico{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:var(--on-accent);margin-bottom:6px}.ico svg{width:20px;height:20px}
+.cc h3{margin:0;font-size:18px}.cc p{margin:0;color:var(--mute)}.cc a{font-weight:600;color:var(--accent-ink,var(--accent));text-underline-offset:3px}''',
+  '<section class="wrap cc"><p class="k">{{kicker}}</p><h2 class="h">{{heading}}</h2><ul>{{each:ways}}<li><span class="ico" aria-hidden="true">{{g0}}</span><h3>{{1}}</h3><p>{{2}}</p><a href="#">{{3}}</a></li>{{/each}}</ul></section>', NOHASH_M,
+  [('kicker', 'Kicker', 'text', 'Contact'), ('heading', 'Headline', 'text', 'Talk to a real person.'),
+   ('ways', 'Ways (icon | title | text | link)', 'list', 'mail | Email | We answer within one working day, usually sooner. | hello@example.com\nphone | Phone | Weekdays 9 to 5, UK time. Ask for the kitchen. | +44 20 7946 0321\npin | Visit | 14 Market Row, London E8. Coffee is on us. | Get directions')],
+  'A heading over three contact cards, each with a round accent icon, a title, a muted line and an accent link.'),
+
+ ('app-download', 'App download', 'Endings', 'A phone mock-up showing a film, beside the pitch and two store buttons.', '''
+.ad{display:grid;grid-template-columns:1fr auto;gap:clamp(28px,6vw,80px);align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:calc(var(--radius) * 2);padding:clamp(28px,6vw,72px);overflow:hidden}
+.ad h2{font-size:clamp(32px,4.4vw,58px);margin:10px 0 14px;max-width:16ch}.ad p{color:var(--mute);margin:0 0 24px;max-width:44ch}
+.stores{display:flex;gap:10px;flex-wrap:wrap}
+.store{display:inline-flex;align-items:center;gap:10px;min-height:54px;padding:0 18px;border-radius:12px;background:var(--ink);color:var(--bg);text-decoration:none;font-size:12px;line-height:1.1}
+.store b{display:block;font-size:17px}.store svg{width:24px;height:24px}
+.phone{position:relative;width:min(250px,60vw);aspect-ratio:9/19;border-radius:40px;padding:10px;background:var(--ink);box-shadow:0 40px 80px -30px rgba(0,0,0,.6);margin:-10px 0 -120px}
+.phone video{width:100%;height:100%;object-fit:cover;border-radius:32px;display:block}
+.phone::before{content:"";position:absolute;top:18px;left:50%;width:70px;height:20px;border-radius:12px;background:var(--ink);transform:translateX(-50%);z-index:2}
+@media (max-width:760px){.ad{grid-template-columns:1fr}.phone{margin:0 auto -120px}}
+''' + FILM_CTRL_CSS.replace('right:14px;top:14px', 'right:18px;top:44px'),
+  '<section class="wrap"><div class="ad"><div><p class="k">{{kicker}}</p><h2 class="h">{{heading}}</h2><p>{{intro}}</p><div class="stores"><a class="store" href="#"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.4 12.6c0-2.5 2-3.6 2.1-3.7-1.2-1.7-3-1.9-3.6-2-1.5-.2-3 .9-3.7.9-.8 0-2-.9-3.2-.8-1.7 0-3.2 1-4 2.4-1.7 3-.4 7.4 1.2 9.8.8 1.2 1.8 2.5 3 2.4 1.2 0 1.7-.8 3.1-.8 1.5 0 1.9.8 3.2.8 1.3 0 2.2-1.2 3-2.4.9-1.4 1.3-2.7 1.3-2.8 0 0-2.4-1-2.4-3.8zM14 5.2c.7-.8 1.1-1.9 1-3-1 0-2.1.7-2.8 1.5-.6.7-1.2 1.8-1 2.9 1 .1 2.1-.6 2.8-1.4z"/></svg><span>Download on the<b>App Store</b></span></a><a class="store" href="#"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 2.8v18.4c0 .4.4.7.8.5l15.9-9.2c.4-.2.4-.8 0-1L4.8 2.3c-.4-.2-.8.1-.8.5z"/></svg><span>Get it on<b>Google Play</b></span></a></div></div><div class="phone">' + FILMV + FILM_CTRL + '</div></div></section>',
+  NOHASH_M + FILM_JS,
+  [('film', 'Film on the screen', 'film', 'jellyfish'), ('kicker', 'Kicker', 'text', 'On your phone'), ('heading', 'Headline', 'text', 'Your list, in your pocket, in the shop.'), ('intro', 'Intro', 'long', 'Works offline in the aisles, ticks things off as you go and tells the rest of the house what you’ve already bought.')],
+  'A rounded surface card with the pitch and App Store / Google Play buttons on the left and a CSS phone mock-up on the right (dark bezel, notch) playing a looping film that hangs off the bottom edge.'),
+
+ ('integrations', 'Integrations grid', 'Features', 'Tiles for the tools you connect to, each with a monogram, a name and a line.', '''
+.ig{text-align:center}.ig h2{font-size:clamp(34px,4.6vw,60px);margin:10px auto 14px;max-width:18ch}.ig .intro{color:var(--mute);max-width:52ch;margin:0 auto 36px}
+.ig ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;text-align:left}
+.ig li{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;display:grid;gap:4px;transition:border-color .2s,transform .2s}
+.ig li:hover{border-color:var(--accent);transform:translateY(-2px)}
+.mono{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;font-weight:700;background:color-mix(in srgb,var(--accent) 18%,var(--surface));color:var(--accent-ink,var(--accent));margin-bottom:8px}
+.ig b{font-size:16px}.ig span{color:var(--mute);font-size:14px}''',
+  '<section class="wrap ig"><p class="k">{{kicker}}</p><h2 class="h">{{heading}}</h2><p class="intro">{{intro}}</p><ul>{{each:tools}}<li><span class="mono" aria-hidden="true">{{i0}}</span><b>{{0}}</b><span>{{1}}</span></li>{{/each}}</ul></section>', '',
+  [('kicker', 'Kicker', 'text', 'Integrations'), ('heading', 'Headline', 'text', 'Plays nicely with your kitchen.'), ('intro', 'Intro', 'long', 'Send lists to the shops you already use, and pull recipes in from anywhere.'),
+   ('tools', 'Tools (name | line)', 'list', 'Ocado | Send the list straight to your basket\nTesco | Match items to your usual brands\nNotion | Keep a family recipe book\nGoogle Calendar | Put each dinner on the calendar\nAlexa | Add things by voice while you cook\nPaprika | Import your saved recipes\nSlack | Share the menu with the house\nApple Reminders | Sync the list both ways')],
+  'A centred heading over a grid of small integration tiles, each with a monogram in a soft accent square, a name and a muted line, lifting slightly with an accent border on hover.'),
+
+ ('tabs', 'Tabbed features', 'Features', 'Accessible tabs that switch a panel of text and an image, for features that need a closer look.', '''
+.tb h2{font-size:clamp(34px,4.6vw,60px);margin:10px 0 28px;max-width:18ch}
+[role=tablist]{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:22px}
+[role=tab]{min-height:44px;padding:0 18px;border-radius:999px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-weight:500}
+[role=tab][aria-selected=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+[role=tabpanel]{display:grid;grid-template-columns:1fr 1.2fr;gap:clamp(20px,4vw,56px);align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:calc(var(--radius) * 1.4);padding:clamp(18px,3vw,36px)}
+[role=tabpanel][hidden]{display:none}
+[role=tabpanel] h3{font-family:var(--head);font-weight:var(--hw);font-style:var(--hs);font-size:clamp(26px,3vw,38px);margin:0 0 10px;line-height:1.1}
+[role=tabpanel] p{margin:0;color:var(--mute);font-size:17px}
+.pic{aspect-ratio:4/3;border-radius:var(--radius);overflow:hidden;background:var(--bg)}.pic img{width:100%;height:100%;object-fit:cover;display:block}
+@media (max-width:760px){[role=tabpanel]{grid-template-columns:1fr}}''',
+  '<section class="wrap tb"><p class="k">{{kicker}}</p><h2 class="h">{{heading}}</h2><div role="tablist" aria-label="{{heading}}">{{each:tabs}}<button role="tab" type="button">{{0}}</button>{{/each}}</div>{{each:tabs}}<div role="tabpanel" tabindex="0"><div><h3>{{1}}</h3><p>{{2}}</p></div><div class="pic"><img src="{{A}}{{3}}" alt="" loading="lazy"></div></div>{{/each}}</section>',
+  r'''const T=[...root.querySelectorAll('[role=tab]')],P=[...root.querySelectorAll('[role=tabpanel]')];const id=root.id||'tb';
+T.forEach((t,i)=>{t.id=id+'-t'+i;P[i].id=id+'-p'+i;t.setAttribute('aria-controls',P[i].id);P[i].setAttribute('aria-labelledby',t.id)});
+const pick=(i,f)=>{T.forEach((t,k)=>{t.setAttribute('aria-selected',k===i);t.tabIndex=k===i?0:-1;P[k].hidden=k!==i});if(f)T[i].focus()};pick(0);
+T.forEach((t,i)=>{t.onclick=()=>pick(i);t.onkeydown=e=>{const n=T.length;let j=null;if(e.key==='ArrowRight')j=(i+1)%n;else if(e.key==='ArrowLeft')j=(i-1+n)%n;else if(e.key==='Home')j=0;else if(e.key==='End')j=n-1;if(j!=null){e.preventDefault();pick(j,true)}}});''',
+  [('kicker', 'Kicker', 'text', 'A closer look'), ('heading', 'Headline', 'text', 'Built for the way you actually cook.'),
+   ('tabs', 'Tabs (tab | title | text | image)', 'list', 'Plan | A week on one screen | Drag recipes onto nights, and see the prep for tomorrow before you go to bed. | shelf/threads.webp\nShop | A list that follows the shop | Pick your supermarket and the list reorders itself to match the aisles. | shelf/sand.webp\nCook | Timings that line up | Each dish gets a start time so the rice, the fish and the greens finish together. | shelf/smoke.webp')],
+  'A heading over pill tabs (WAI-ARIA tabs with arrow-key, Home and End support) that switch a rounded panel holding a serif subheading, a paragraph and a 4:3 image.'),
+
+ ('marquee', 'Text marquee', 'Story', 'Huge words sliding across the page in a seamless loop, with a pause button.', '''
+.mq{overflow:hidden;padding:clamp(28px,6vh,60px) 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);position:relative}
+.track{display:flex;width:max-content;animation:mq 30s linear infinite}
+.track span{font-family:var(--head);font-weight:var(--hw);font-style:var(--hs);letter-spacing:var(--track);font-size:clamp(48px,9vw,130px);line-height:1;white-space:nowrap;padding-right:.4em}
+.track span:nth-child(even){color:transparent;-webkit-text-stroke:1.5px var(--ink)}
+.track span i{font-style:normal;color:var(--accent);padding:0 .3em}
+.mq.paused .track{animation-play-state:paused}
+.pz{position:absolute;right:12px;bottom:8px;min-height:36px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:13px;cursor:pointer}
+@keyframes mq{to{transform:translateX(-50%)}}''',
+  '<section class="mq" aria-label="{{words}}"><div class="track" aria-hidden="true">{{each:words}}<span>{{0}}<i>✦</i></span>{{/each}}{{each:words}}<span>{{0}}<i>✦</i></span>{{/each}}</div><button class="pz" type="button" aria-pressed="false">Pause</button></section>',
+  r'''const s=root.querySelector('.mq'),b=root.querySelector('.pz');const set=p=>{s.classList.toggle('paused',p);b.setAttribute('aria-pressed',p);b.textContent=p?'Play':'Pause'};b.onclick=()=>set(!s.classList.contains('paused'));if(matchMedia('(prefers-reduced-motion: reduce)').matches)set(true);''',
+  [('words', 'Words (one per line)', 'list', 'Seasonal\nSlow-cooked\nShared\nFilmed in one take')],
+  'A full-width band of very large words in the heading font, alternating solid and outlined, separated by accent stars, sliding left in a seamless CSS loop with a Pause button; paused under reduced motion.'),
+
+ ('press', 'Press quotes', 'Proof', 'Three short quotes from publications, each with the outlet’s name.', '''
+.pr ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(18px,3vw,40px)}
+.pr li{display:grid;gap:14px;align-content:start;border-left:2px solid var(--accent);padding-left:18px}
+.pr q{font-family:var(--head);font-weight:var(--hw);font-style:var(--hs);font-size:clamp(20px,2.2vw,28px);line-height:1.2;letter-spacing:var(--track)}
+.pr b{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+@media (max-width:760px){.pr ul{grid-template-columns:1fr}}''',
+  '<section class="wrap pr" aria-label="{{label}}"><ul>{{each:quotes}}<li><q>{{0}}</q><b>{{1}}</b></li>{{/each}}</ul></section>', '',
+  [('label', 'Section label (for screen readers)', 'text', 'What the press said'),
+   ('quotes', 'Quotes (quote | outlet)', 'list', 'The calmest cooking videos on the internet. | The Weekend Paper\nFinally, a meal planner that understands leftovers. | Kitchen Monthly\nQuietly brilliant, and beautifully filmed. | Food & Design Review')],
+  'Three press quotes side by side (stacked on phones), each with an accent left rule, the quote in the heading font and the publication in small spaced capitals.'),
+
+ ('rich-text', 'Text block', 'Content', 'A heading and a few paragraphs at a comfortable reading width, for about pages and policies.', '''
+.rt{max-width:720px;margin:0 auto;padding:clamp(56px,10vh,100px) max(16px,4vw)}
+.rt h2{font-size:clamp(32px,4.2vw,52px);margin:10px 0 22px}
+.rt .body p{margin:0 0 1.1em;font-size:18px;line-height:1.7}.rt .body p:first-child::first-letter{font-family:var(--head);float:left;font-size:3.4em;line-height:.9;padding:4px 10px 0 0;color:var(--accent-ink,var(--accent))}''',
+  '<section class="rt"><p class="k">{{kicker}}</p><h2 class="h">{{heading}}</h2><div class="body">{{each:paras}}<p>{{0}}</p>{{/each}}</div></section>', '',
+  [('kicker', 'Kicker', 'text', 'About'), ('heading', 'Headline', 'text', 'We started with one dish a week.'),
+   ('paras', 'Paragraphs (one per line)', 'list', 'In 2018 two flatmates decided to cook properly four nights a week. It lasted nine days. The problem wasn’t time or skill; it was the forty small decisions between wanting dinner and having the ingredients in the house.\nSo we wrote them down: what to cook, what to buy, what to start first. The whiteboard became a spreadsheet, the spreadsheet became an app, and the app now plans dinner for forty-eight thousand households.\nWe still cook every recipe in our own kitchen before it goes out, and we still argue about how much garlic is too much.')],
+  'A narrow, centred text section: kicker, heading and paragraphs at a comfortable 18px reading size, with a large accent drop cap on the first paragraph.'),
+
+ ('image-full', 'Full-width image', 'Content', 'One wide image with a caption, as a pause between sections.', '''
+.fi{margin:0;padding:clamp(24px,5vh,56px) max(16px,4vw)}
+.fi .pic{max-width:1400px;margin:0 auto;aspect-ratio:21/9;border-radius:calc(var(--radius) * 1.5);overflow:hidden;background:var(--surface)}
+.fi img{width:100%;height:100%;object-fit:cover;display:block}
+.fi figcaption{max-width:1400px;margin:12px auto 0;color:var(--mute);font-size:14px}''',
+  '<figure class="fi"><div class="pic"><img src="{{A}}{{img}}" alt="{{alt}}" loading="lazy"></div><figcaption>{{caption}}</figcaption></figure>', '',
+  [('img', 'Image', 'image', 'films/suminagashi.jpg'), ('alt', 'Image description', 'text', 'Ink rings spreading across still water'), ('caption', 'Caption', 'text', 'Suminagashi, ink floated on water, from our spring studio session.')],
+  'A full-width 21:9 rounded image with a small muted caption beneath.'),
+
+ ('spacer', 'Spacer and divider', 'Content', 'Breathing room between sections, with an optional line or ornament.', '''
+.sp{display:grid;place-items:center;padding:clamp(24px,6vh,64px) max(16px,4vw)}
+.sp hr{width:min(1180px,100%);border:0;height:1px;background:var(--line);margin:0}
+.sp p{margin:0;color:var(--accent);letter-spacing:.6em;font-size:14px}''',
+  '<div class="sp" aria-hidden="true">{{ornament}}<hr></div>', r'''const p=root.querySelector('.sp');const t=p.firstChild;if(t&&t.nodeType===3&&t.textContent.trim()){const e=document.createElement('p');e.textContent=t.textContent;t.replaceWith(e);root.querySelector('hr').remove()}''',
+  [('ornament', 'Ornament (leave empty for a line)', 'text', '')],
+  'A spacer with a hairline across the content width, or a small centred accent ornament instead of the line.'),
+
+ ('footer-columns', 'Column footer', 'Endings', 'Brand and a line, four link columns, social links and a legal row.', '''
+.ft{border-top:1px solid var(--line);margin-top:clamp(40px,8vh,80px)}
+.ft .in{max-width:1180px;margin:0 auto;padding:clamp(48px,8vh,80px) max(16px,4vw) 28px;display:grid;grid-template-columns:1.4fr repeat(3,1fr);gap:32px}
+.ft .logo{font-family:var(--head);font-weight:var(--hw);font-style:var(--hs);font-size:30px;letter-spacing:var(--track);margin:0 0 10px}
+.ft p{margin:0;color:var(--mute);max-width:32ch;font-size:15px}
+.ft h3{margin:0 0 12px;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);font-weight:600}
+.ft ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}.ft ul a{text-decoration:none;font-size:15px}.ft ul a:hover{text-decoration:underline}
+.legal{max-width:1180px;margin:0 auto;padding:18px max(16px,4vw) 32px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;color:var(--mute);font-size:13px;border-top:1px solid var(--line)}
+.soc{display:flex;gap:10px}.soc a{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center}.soc svg{width:18px;height:18px}
+@media (max-width:760px){.ft .in{grid-template-columns:1fr 1fr}.ft .in>div:first-child{grid-column:1/-1}}''',
+  '<footer class="ft"><div class="in"><div><p class="logo">{{brand}}</p><p>{{line}}</p></div><div><h3>{{c1}}</h3><ul>{{each:links1}}<li><a href="#">{{0}}</a></li>{{/each}}</ul></div><div><h3>{{c2}}</h3><ul>{{each:links2}}<li><a href="#">{{0}}</a></li>{{/each}}</ul></div><div><h3>{{c3}}</h3><ul>{{each:links3}}<li><a href="#">{{0}}</a></li>{{/each}}</ul></div></div><div class="legal"><span>© 2026 {{brand}}. {{legal}}</span><span class="soc"><a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r=".8" fill="currentColor"/></svg></a><a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="2.5" y="5.5" width="19" height="13" rx="4"/><path d="M10 9.5v5l4.5-2.5z" fill="currentColor"/></svg></a><a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 9h3v10H5zM6.5 4.5a1.8 1.8 0 1 1 0 3.6 1.8 1.8 0 0 1 0-3.6zM10 9h2.9v1.4c.4-.8 1.5-1.6 3-1.6 3.1 0 3.6 2 3.6 4.6V19h-3v-4.9c0-1.2 0-2.6-1.6-2.6s-1.9 1.2-1.9 2.5v5H10z"/></svg></a></span></div></footer>', NOHASH_M,
+  [('line', 'Line under the brand', 'text', 'Seasonal recipes, filmed in one take, planned in one list.'), ('c1', 'Column 1 heading', 'text', 'Product'), ('links1', 'Column 1 links', 'list', 'Meal planner\nShopping list\nRecipes\nPricing'),
+   ('c2', 'Column 2 heading', 'text', 'Company'), ('links2', 'Column 2 links', 'list', 'About\nJournal\nCareers\nPress'), ('c3', 'Column 3 heading', 'text', 'Help'), ('links3', 'Column 3 links', 'list', 'Questions\nContact\nPrivacy\nTerms'),
+   ('legal', 'Legal line', 'text', 'Made in London and Lisbon.')],
+  'A footer with the brand and a line on the left, three link columns, then a legal row with the copyright and three round outlined social icon links.'),
+]

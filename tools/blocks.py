@@ -15,7 +15,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = os.path.join(ROOT, 'site')
 ns = {}
 exec(open(os.path.join(ROOT, 'tools', 'sections_src.py')).read(), ns)
-HEAD, S = ns['HEAD'], ns['S']
+HEAD, S, MORE = ns['HEAD'], ns['S'], ns.get('MORE', [])
 
 # ---- styles and shared base, lifted from the demo head ----
 head_css = HEAD.split('<style>')[1].split('{css}')[0].replace('{{', '{').replace('}}', '}')
@@ -154,8 +154,9 @@ FIELDS = {
  'sec-logos': [('kicker', 'Kicker', 'text', 'Trusted by'), ('heading', 'Headline', 'text', 'Cooks, chefs and food brands in 31 countries.')],
  'sec-cta': [('film', 'Film', 'film', 'pigment-bloom'), ('kicker', 'Kicker', 'text', 'Start this week'), ('heading', 'Headline', 'text', 'Your first episode is one recipe away.'), ('intro', 'Intro', 'long', 'Bring a dish you love. We’ll handle the chef, the shots and the colour.'), ('b1', 'Main button', 'text', 'Start free'), ('b2', 'Second button', 'text', 'Watch a sample')],
 }
-GROUP = {'sec-pricing': 'Sell', 'sec-bento': 'Explain', 'sec-testimonials': 'Proof', 'sec-faq': 'Explain', 'sec-contact': 'End',
-         'sec-footer': 'End', 'sec-logos': 'Proof', 'sec-cta': 'End'}
+GROUP = {'sec-pricing': 'Sell', 'sec-bento': 'Features', 'sec-testimonials': 'Proof', 'sec-faq': 'Content', 'sec-contact': 'Endings',
+         'sec-footer': 'Endings', 'sec-logos': 'Proof', 'sec-cta': 'Endings'}
+NEW_GROUP = {'nav': 'Navigation', 'hero-film': 'Heroes', 'hero-split': 'Heroes', 'statement': 'Story'}
 NAMES = {'sec-pricing': 'Pricing', 'sec-bento': 'Bento features', 'sec-testimonials': 'Testimonial wall', 'sec-faq': 'FAQ',
          'sec-contact': 'Contact form', 'sec-footer': 'Wordmark footer', 'sec-logos': 'Logo marquee', 'sec-cta': 'Film call to action'}
 PROMPTS = {
@@ -175,7 +176,8 @@ def fix_assets(x):
 
 
 blocks = []
-for bid, name, group, desc, css, html, js, fields, prompt in NEW:
+for bid, name, group, desc, css, html, js, fields, prompt in NEW + MORE:
+    group = NEW_GROUP.get(bid, group)
     blocks.append({'id': bid, 'name': name, 'group': group, 'desc': desc, 'css': scope(css, 'b-' + bid), 'html': html,
                    'js': js, 'fields': [{'k': k, 'label': l, 'type': t, 'def': d} for k, l, t, d in fields], 'prompt': prompt})
 
@@ -200,11 +202,46 @@ for sid, (title, css, body, js) in S.items():
                    'js': jsx, 'fields': flds, 'prompt': PROMPTS[sid]})
 
 for b in blocks:
-    missing = [f['k'] for f in b['fields'] if '{{' + f['k'] + '}}' not in b['html']]
+    missing = [f['k'] for f in b['fields'] if '{{' + f['k'] + '}}' not in b['html'] and '{{each:' + f['k'] + '}}' not in b['html']]
     assert not missing, (b['id'], missing)
 
+# Where a block belongs when added: navigation on top, heroes after it, footers last
+PLACE = {'Navigation': 'top', 'Heroes': 'hero'}
+for b in blocks:
+    if b['group'] in PLACE:
+        b['place'] = PLACE[b['group']]
+    if b['id'] in ('sec-footer', 'footer-columns'):
+        b['place'] = 'end'
+
+# Small stroke glyphs for feature lists ({{g0}} in a list row)
+GLYPHS = {
+ 'spark': 'M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6', 'clock': 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2',
+ 'list': 'M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01', 'users': 'M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zM2.5 20c.8-3.5 3.3-5.5 6.5-5.5s5.7 2 6.5 5.5M16 4.5a3.5 3.5 0 0 1 0 6.5M18 14.8c1.8.7 3 2.4 3.5 5.2',
+ 'scale': 'M12 4v16M5 20h14M6 8h12M6 8l-3 6a3 3 0 0 0 6 0zM18 8l-3 6a3 3 0 0 0 6 0z', 'leaf': 'M5 19c0-8 5-14 15-15-1 10-7 15-15 15zM5 19l8-8',
+ 'bell': 'M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 20a2 2 0 0 0 4 0', 'mail': 'M3.5 6h17v12h-17zM3.5 6l8.5 7 8.5-7', 'phone': 'M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a1 1 0 0 1-1 1A16 16 0 0 1 4 5a1 1 0 0 1 1-1z',
+ 'pin': 'M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21zM12 12a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z', 'star': 'm12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3l-5.6 2.9 1.1-6.2L3 9.6l6.2-.9z',
+ 'heart': 'M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z', 'shield': 'M12 3 4.5 6v5.5c0 4.6 3.2 8.2 7.5 9.5 4.3-1.3 7.5-4.9 7.5-9.5V6zM9 12l2 2 4-4',
+ 'bolt': 'M13 2 4 14h7l-1 8 9-12h-7z', 'chart': 'M4 20V10M10 20V4M16 20v-7M22 20H2', 'globe': 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM3 12h18M12 3c2.6 2.5 3.6 5.5 3.6 9s-1 6.5-3.6 9c-2.6-2.5-3.6-5.5-3.6-9s1-6.5 3.6-9z',
+ 'camera': 'M4 7h3l2-2.5h6L17 7h3v12H4zM12 16.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z', 'chat': 'M4 5h16v11H9l-5 4z', 'lock': 'M6 11h12v9H6zM8.5 11V8a3.5 3.5 0 0 1 7 0v3',
+ 'check': 'm5 12.5 4.5 4.5L19 7.5', 'gift': 'M4 10h16v10H4zM3 7h18v3H3zM12 7v13M12 7c-1.5-3-5-3.5-5-1.2S10 7 12 7zM12 7c1.5-3 5-3.5 5-1.2S14 7 12 7z', 'cloud': 'M7 18a4.5 4.5 0 0 1-.6-9A6 6 0 0 1 18 9.5a4.3 4.3 0 0 1-.5 8.5z',
+ 'code': 'm8 7-5 5 5 5M16 7l5 5-5 5M13.5 4l-3 16', 'search': 'M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM16 16l4.5 4.5', 'home': 'M4 11 12 4l8 7v9h-5v-6H9v6H4z',
+ 'calendar': 'M4 5.5h16v15H4zM4 10h16M8.5 3v4M15.5 3v4', 'film': 'M4 4h16v16H4zM8 4v16M16 4v16M4 8h4M4 12h4M4 16h4M16 8h4M16 12h4M16 16h4', 'music': 'M9 18V5l11-2v13M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM20 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0z',
+}
+IMAGES = ['shelf/' + f for f in sorted(os.listdir(os.path.join(SITE, 'assets', 'shelf'))) if f.endswith('.webp')] + ['films/' + f + '.jpg' for f in FILMS]
+ICON_FILES = {}
+for fam in sorted(os.listdir(os.path.join(SITE, 'icons'))):
+    d = os.path.join(SITE, 'icons', fam)
+    if os.path.isdir(d):
+        ICON_FILES[fam] = sorted(f for f in os.listdir(d) if f.endswith(('.svg', '.png')))
+# Type pairings, from the Fonts & type page (InspirationAtlas.pairs in site/inspiration.js)
+PAIRS = [['Editorial contrast', 'Playfair Display', 'Inter'], ['Quiet literary', 'Cormorant Garamond', 'DM Sans'], ['Reading first', 'Lora', 'Inter'],
+         ['Geometric clarity', 'Outfit', 'DM Sans'], ['Technical warmth', 'Space Grotesk', 'Inter'], ['Data and narrative', 'Inter', 'IBM Plex Mono'],
+         ['Modern product', 'Manrope', 'Inter'], ['Classic information', 'Libre Baskerville', 'DM Sans'], ['Single-family system', 'Inter', 'Inter'],
+         ['Soft dimensional', 'Outfit', 'Manrope'], ['Expressive editorial', 'Playfair Display', 'Space Grotesk'], ['Swiss grotesk', 'Inter Tight', 'Hanken Grotesk'],
+         ['Fraunces and DM Sans', 'Fraunces', 'DM Sans'], ['Bold display', 'Archivo Black', 'Archivo'], ['Mono terminal', 'JetBrains Mono', 'IBM Plex Sans']]
+
 lib = {'styles': {k: {'name': STYLE_NAMES[k], 'vars': STYLES[k], 'fonts': FONTS[k]} for k in STYLE_NAMES},
-       'base': BASE, 'films': FILMS, 'blocks': blocks}
+       'base': BASE, 'films': FILMS, 'blocks': blocks, 'glyphs': GLYPHS, 'images': IMAGES, 'iconFiles': ICON_FILES, 'pairs': PAIRS}
 os.makedirs(os.path.join(SITE, 'builder'), exist_ok=True)
 with open(os.path.join(SITE, 'builder', 'blocks.js'), 'w') as fh:
     fh.write('/* Generated by tools/blocks.py from tools/sections_src.py. Edit those, then run: python3 tools/blocks.py */\n')
