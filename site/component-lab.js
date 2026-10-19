@@ -40,7 +40,8 @@
 .cl-btn.icon{width:var(--cl-h);padding:0}
 .cl-spin{width:14px;height:14px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;animation:cl-spin .8s linear infinite}
 @keyframes cl-spin{to{transform:rotate(1turn)}}
-.cl-field{display:grid;gap:6px;min-width:0}
+.cl-field{display:grid;grid-template-columns:minmax(0,1fr);gap:6px;min-width:0}
+.cl-root .cl-bare{width:0;min-width:0;flex:1 1 0}
 .cl-label{font-size:13px;font-weight:600;color:var(--cl-text)}
 .cl-input{width:100%;min-height:var(--cl-h);padding:var(--cl-pad);font:400 15px/1.3 var(--cl-font);color:var(--cl-text);background:var(--cl-surface);border:max(1px,var(--cl-bw)) solid var(--cl-line);border-radius:var(--cl-radius-sm);box-shadow:var(--cl-shadow);-webkit-backdrop-filter:var(--cl-glass);backdrop-filter:var(--cl-glass);outline:0;display:flex;align-items:center;gap:8px}
 .cl-input:hover,.is-hover .cl-input{border-color:var(--cl-muted)}
@@ -99,7 +100,7 @@
   a11y:{role:'slider (native <input type=range>)',keys:['← →: step','Page Up / Down: big step','Home / End: limits'],notes:'Always show the current value as text, plus the limits. Provide a number input for exact values.',wcag:['2.1.1 Keyboard','2.5.7 Dragging movements']}},
  {id:'C11',name:'Date pickers',v:V('default:Closed','open:Open','error:Error','disabled:Disabled'),
   html:v=>`<div class="is-${v}" style="max-width:300px;position:relative">${field('Launch date',`<div class="cl-input"><input class="cl-bare" value="${v==='error'?'31/02/2027':'14/11/2026'}" ${v==='disabled'?'disabled':''} aria-invalid="${v==='error'}"><button type="button" class="cl-btn icon" style="min-height:30px;width:30px;box-shadow:none" aria-label="Choose date">${ic('cal')}</button></div>${v==='open'?`<div class="cl-pop cl-surface">${cal(14)}</div>`:''}`,'DD/MM/YYYY',v==='error'?'February has 28 days in 2027. Choose a date up to 28/02.':'')}</div>`,
-  css:'.cl-bare{border:0;background:none;outline:0;font:inherit;color:inherit;flex:1;min-width:0}.cl-pop{position:absolute;top:calc(100% - 18px);left:0;padding:12px;z-index:2;width:280px}',
+  css:'.cl-bare{border:0;background:none;outline:0;font:inherit;color:inherit;flex:1;min-width:0}.cl-pop{position:absolute;top:calc(100% - 18px);left:0;padding:12px;z-index:2;width:min(280px,100%)}',
   a11y:{role:'text input + dialog with a grid',keys:['Type the date','Enter / Space on button: open calendar','Arrows: move by day / week','Esc: close'],notes:'Typing must always work; the calendar is a shortcut. Show the expected format.',wcag:['3.3.2 Labels or instructions','2.1.1 Keyboard']}},
  {id:'C12',name:'Calendar grids',v:V('default:Selected day','range:Range','focus:Keyboard focus'),
   html:v=>`<div class="cl-surface" style="padding:14px;max-width:300px">${cal(14,v)}</div>`,

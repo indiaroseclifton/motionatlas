@@ -74,4 +74,4 @@
 @media(prefers-reduced-motion:reduce){.clSys *{animation:none!important;transition:none!important}}
 
 /* every specimen fits its cell; wide ones scroll inside themselves */
-.clab-cellbody>*,.clab-livebox>*{min-width:0;max-width:100%}
+.clab-cellbody>*,.clab-livebox>*{min-width:0;max-width:100%!important}
