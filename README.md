@@ -22,6 +22,20 @@ tags and the few hard-coded labels (`atlas.html` noscript and catalogue rail, `h
 
 Live: https://motionatlas-ten.vercel.app (`/` rewrites to `/atlas`).
 
+## Flowchart studio (canvas)
+
+`site/flowchart-studio.html` is a live canvas, not a single picture. Every element is its own piece you can drag, and a double-click (or double-tap) opens a side panel to edit it and its connections.
+
+- **One canvas.** Starting from a template, adding an element or combining another diagram puts separate elements on the same canvas. Positions are saved with the chart and travel in share links.
+- **Start from** lists diagram templates (one per type, plus combinations). **Examples** is the gallery of pre-made workflows.
+- **14 diagram types.** Flow, step list, stage columns, cycle, decision tree, capability map, swimlanes, mind map, and six more in a dropdown: sequence, entity relationship, state machine, org chart, timeline, customer journey. Several types can share one canvas (`dataviz/presets.js`).
+- **Kinds.** Each kind has its own icon, subtle colour and box shape, and one fixed size (`KIND` in `dataviz/flow.js`). Kinds are written in the source as `:::status.kind`, for example `a[Stripe]:::none.mod_external`.
+- **Connection modules** (internal, external, flow) hold details and run a plain rule check: does it exist, is it needed, what must happen, how to improve it. No AI is called.
+- **Health dots.** Green, amber or red dot on every element with a hover note (in and out counts). A glyph rides with the colour.
+- **Flow motion.** Connections animate in the direction they flow (both ways for `<-->`). Off under reduced motion.
+- **Fixed layout** keeps the original one-picture view and its build-up video and GIF export.
+- Files: `dataviz/flow.js` (engine, kinds, free placement, routing), `dataviz/presets.js` (layouts, templates), `dataviz/canvas.js` (canvas controller and panel).
+
 ---
 
 ## Directory map
