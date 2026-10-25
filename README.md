@@ -34,7 +34,11 @@ Live: https://motionatlas-ten.vercel.app (`/` rewrites to `/atlas`).
 - **Health dots.** Green, amber or red dot on every element with a hover note (in and out counts). A glyph rides with the colour.
 - **Flow motion.** Connections animate in the direction they flow (both ways for `<-->`). Off under reduced motion.
 - **Fixed layout** keeps the original one-picture view and its build-up video and GIF export.
-- Files: `dataviz/flow.js` (engine, kinds, free placement, routing), `dataviz/presets.js` (layouts, templates), `dataviz/canvas.js` (canvas controller and panel).
+- **Layout.** A slim header (name, look, share, export), a tool rail on the left (Add, Templates, Workspace, Assist, Diagram settings), a bottom dock (undo, redo, zoom, level of detail, flow motion, shortcuts), and an element panel on the right that opens when you select or double-click something. The Diagram settings panel (Chart, Steps, Layout, Checks) is closed until asked for.
+- **Mouse and keyboard.** Click selects; Shift-click or Shift-drag selects several; drag moves; drag from a round handle to connect (drop on empty space to add a connected element); select a line and drag an end to reconnect or drop it on nothing to disconnect; right-click or press and hold for a menu; double-click empty space adds an element. Copy, cut, paste, duplicate, select all, undo and redo, Delete, arrows to nudge, Tab to move between elements, 0 to fit, + and - to zoom, ? for the full list.
+- **Workers.** A worker is an element that does a job. Adding one shows the workflow it runs; setting "How many" shows one lane of that workflow per worker. Elements can also record what they kick-start (saved with the chart).
+- **Workspace feeds.** Where the host serves `/_01/feeds/index.json` (the 01 Design Suite) a Workspace button loads a model of a client's workspace onto the canvas. This site serves none, so the button stays hidden.
+- Files: `dataviz/flow.js` (engine, kinds, free placement, routing), `dataviz/presets.js` (layouts, templates, workers), `dataviz/canvas.js` (canvas controller, history, clipboard, menus, panel).
 
 ---
 

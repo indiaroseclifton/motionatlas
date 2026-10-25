@@ -9,19 +9,11 @@
 body{background:var(--bg);color:var(--ink);font:14px/1.5 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 a{color:inherit}button,select,input,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
-.app{display:grid;grid-template-columns:minmax(320px,380px) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);height:100vh;height:100dvh}
-header{grid-column:1/-1;display:flex;align-items:center;gap:16px;padding:12px max(18px,env(safe-area-inset-right)) 12px max(18px,env(safe-area-inset-left));background:var(--panel);border-bottom:1px solid var(--hair)}
-.brand{display:flex;align-items:baseline;gap:12px;min-width:0}
-.brand a{font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);text-decoration:none;white-space:nowrap}
-.brand a:hover{color:var(--ink)}
-.brand h1{margin:0;font:500 26px/1 'Cormorant Garamond',Georgia,serif;font-style:italic;letter-spacing:-.01em;white-space:nowrap}
-.exports{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
 .btn{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 13px;border-radius:10px;border:1px solid var(--hair);background:var(--panel);font-weight:500;font-size:13px;transition:border-color .15s,background .15s,box-shadow .15s}
 .btn:hover{border-color:#CBD0DB;background:var(--soft)}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);box-shadow:0 6px 16px -8px var(--accent)}
 .btn.primary:hover{background:#4A1FF0}
 .btn:focus-visible,.chip:focus-visible,.seg button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.side{background:var(--panel);border-right:1px solid var(--hair);display:flex;flex-direction:column;min-height:0;overflow:auto}
 .sec{padding:16px 18px;border-bottom:1px solid var(--hair);display:grid;gap:10px}
 .sec h2{margin:0;font:600 11px/1 Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);display:flex;justify-content:space-between;align-items:center}
 .sec h2 small{font:500 11px Inter;letter-spacing:0;text-transform:none;color:var(--mute)}
@@ -43,14 +35,7 @@ textarea{font-variant-ligatures:none;font-feature-settings:"calt" 0,"liga" 0;wid
 .cheat dd{margin:0;color:var(--mute)}
 details.help summary{cursor:pointer;font-size:12.5px;color:var(--mute);list-style:none}
 details.help summary::before{content:'+ ';}details.help[open] summary::before{content:'– '}
-.main{display:grid;grid-template-rows:auto minmax(0,1fr);min-width:0;min-height:0}
-.styles{display:flex;gap:6px;overflow-x:auto;padding:12px 18px;border-bottom:1px solid var(--hair);background:var(--panel);scrollbar-width:thin;align-items:center}
-.styles .lbl{flex:none;font:600 10.5px Inter;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);padding:0 6px 0 2px}
-.styles .lbl:not(:first-child){margin-left:10px;padding-left:14px;border-left:1px solid var(--hair)}
 [hidden]{display:none!important}
-.startrow{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px;align-items:center;min-width:0}.startrow select{max-width:100%;min-width:0}
-.tplbtn{border:1px solid var(--accent);color:var(--accent);background:var(--panel);border-radius:9px;min-height:34px;padding:0 12px;font-size:12.5px;font-weight:600;cursor:pointer}
-.tplbtn:hover{background:var(--accent);color:#fff}
 #tpl{border:0;padding:0;border-radius:18px;width:min(1120px,calc(100vw - 32px));max-height:calc(100vh - 48px);box-shadow:0 30px 80px -20px rgba(20,24,40,.45);background:var(--bg)}
 #tpl::backdrop{background:rgba(20,24,40,.45)}
 .tpl-in{padding:22px clamp(16px,3vw,28px) 28px}
@@ -122,31 +107,12 @@ details.help summary::before{content:'+ ';}details.help[open] summary::before{co
 .chip[aria-pressed=true]{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
 .sw{width:26px;height:26px;border-radius:50%;position:relative;border:1px solid rgba(0,0,0,.08);overflow:hidden;flex:none}
 .sw i{position:absolute;right:3px;bottom:3px;width:11px;height:11px;border-radius:3px}
-.stage{position:relative;overflow:hidden;background:#EDEFF4;background-image:radial-gradient(#D6DAE3 1px,transparent 1px);background-size:18px 18px;cursor:grab;touch-action:none}
-.stage.drag{cursor:grabbing}
-.paper{position:absolute;left:0;top:0;transform-origin:0 0;box-shadow:0 30px 60px -30px rgba(20,24,40,.35),0 0 0 1px rgba(20,24,40,.06);border-radius:10px;overflow:hidden;line-height:0}
-.paper svg{display:block}
-.motion{position:absolute;left:16px;bottom:16px;display:flex;gap:4px;align-items:center;padding:4px;border-radius:12px;background:var(--panel);box-shadow:var(--shadow);border:1px solid var(--hair);max-width:calc(100% - 260px);flex-wrap:wrap}
-.motion button{border:0;background:none;min-height:32px;padding:0 10px;border-radius:8px;font-weight:600;font-size:12.5px;color:var(--ink);cursor:pointer}
-.motion button:hover:not(:disabled){background:var(--soft)}.motion button:disabled{opacity:.45;cursor:default}
-.motion .mv-play{display:inline-flex;align-items:center;gap:6px;background:var(--ink);color:#fff}.motion .mv-play:hover:not(:disabled){background:#000}
-.motion .mv-play svg{width:12px;height:12px}
-.motion select{border:0;background:var(--soft);border-radius:8px;min-height:32px;padding:0 6px;font-size:12px}
-.motion output{font:500 11.5px 'JetBrains Mono',monospace;color:var(--mute);padding:0 6px}
-.motion output:empty{display:none}
-@media(max-width:700px){.motion{max-width:calc(100% - 32px);bottom:64px}}
-.zoom{position:absolute;right:16px;bottom:16px;display:flex;gap:4px;padding:4px;border-radius:12px;background:var(--panel);box-shadow:var(--shadow);border:1px solid var(--hair)}
-.zoom button{border:0;background:none;min-width:34px;height:32px;border-radius:8px;font-weight:600;color:var(--ink)}
-.zoom button:hover{background:var(--soft)}
-.zoom output{min-width:46px;text-align:center;align-self:center;font:500 12px 'JetBrains Mono',monospace;color:var(--mute)}
 .styleinfo{font-size:12.5px;line-height:1.5}
 .styleinfo b{display:block;font-size:13px;margin-bottom:2px}.styleinfo span{color:var(--mute)}
 .toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);opacity:0;padding:10px 16px;border-radius:10px;background:var(--ink);color:#fff;font-size:13px;transition:opacity .2s,transform .2s;pointer-events:none;z-index:9}
 .toast.on{opacity:1;transform:translate(-50%,0)}
-@media (max-width:900px){.app{grid-template-columns:1fr;grid-template-rows:auto auto auto;height:auto}header{order:0}.main{order:1}.side{order:2}.side{border-right:0;overflow:visible}.main{grid-template-rows:auto 70vh}.exports .btn span{display:none}.brand h1{font-size:22px}header{flex-wrap:wrap}.exports{margin-left:0;width:100%;justify-content:flex-start}}
 
 /* pickers: colour and design as dropdowns */
-.pickers{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:10px 18px;border-bottom:1px solid var(--hair);background:var(--panel)}
 .dd{position:relative}
 .dd>button{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0 12px 0 8px;border:1px solid var(--hair);border-radius:12px;background:var(--panel);font-size:13px;font-weight:500;text-align:left}
 .dd>button:hover{border-color:#CBD0DB}.dd>button[aria-expanded=true]{border-color:var(--ink)}
@@ -171,11 +137,6 @@ details.help summary::before{content:'+ ';}details.help[open] summary::before{co
 .paper[data-lod=far] .fc-note,.paper[data-lod=far] .fc-l{display:none}
 .paper[data-lod=map] .fc-n text,.paper[data-lod=map] .fc-note,.paper[data-lod=map] .fc-l,.paper[data-lod=map] .fc-g text{display:none}
 .paper.noflow .fc-flow{display:none}
-.cvbar{position:absolute;left:16px;top:16px;z-index:5;display:flex;gap:6px;align-items:center;flex-wrap:wrap;max-width:calc(100% - 32px);padding:4px;border-radius:12px;background:var(--panel);box-shadow:var(--shadow);border:1px solid var(--hair)}
-.cvbar .sep{width:1px;align-self:stretch;background:var(--hair);margin:4px 2px}.cvbar select{min-width:132px;flex:none}.cvbar #feedSel{min-width:168px}.cvbar select,.cvbar button{min-height:36px;border:0;border-radius:8px;background:var(--soft);padding:0 10px;font-size:12.5px;font-weight:600;color:var(--ink)}
-.cvbar button:hover,.cvbar select:hover{background:#ECEEF4}
-.cvbar button[aria-pressed=true]{background:var(--ink);color:#fff}
-.cvbar .seg{background:none;border:0;padding:0}
 /* health dots, with a glyph so colour is never the only signal */
 .ih{display:inline-grid;place-items:center;width:15px;height:15px;border-radius:50%;color:#fff;font:700 9px/1 Inter,sans-serif;vertical-align:-2px;margin-left:4px;flex:none}
 .ih[data-h=ok]{background:#16A34A}.ih[data-h=ok]::after{content:'✓'}
@@ -215,44 +176,141 @@ details.help summary::before{content:'+ ';}details.help[open] summary::before{co
 @media (pointer:coarse){.cvbar select,.cvbar button{min-height:44px}.seg button{min-height:44px}}
 ul.cl{list-style:none;margin:0;padding:0;display:grid;gap:6px}ul.cl:empty{display:none}.cl li{display:grid;grid-template-columns:1fr minmax(0,1.3fr) 44px;gap:8px;align-items:center;font-size:12.5px}.cl li small{display:block;color:var(--mute);font-size:11px}.cl li select{min-width:0;min-height:40px}.cl .fe-ic{width:44px;height:44px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ---- layout: slim header, canvas first, tool rail, bottom dock, settings panel on demand ---- */
+body{overflow:hidden}
+.app{display:grid;grid-template-rows:auto minmax(0,1fr);height:100vh;height:100dvh}
+.top{display:flex;align-items:center;gap:6px 14px;flex-wrap:wrap;padding:8px 16px;background:var(--panel);border-bottom:1px solid var(--hair);min-height:60px}
+.back{font:500 12px/1 'JetBrains Mono',monospace;color:var(--mute);text-decoration:none;white-space:nowrap;padding:12px 0}
+.back:hover{color:var(--ink)}
+.wm{margin:0;font:500 26px/1 'Cormorant Garamond',Georgia,serif;font-style:italic;letter-spacing:-.01em;white-space:nowrap}
+.doc-title{flex:1 1 180px;max-width:360px;min-width:0;min-height:44px;border:1px solid transparent;border-radius:10px;padding:0 12px;background:none;font:600 15px Inter,sans-serif;color:var(--ink)}
+.doc-title:hover{border-color:var(--hair)}.doc-title:focus{border-color:var(--accent);background:#fff;outline:none;box-shadow:0 0 0 3px rgba(91,45,255,.12)}
+.top-r{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 16px;border-radius:11px;border:1px solid var(--hair);background:var(--panel);font-weight:600;font-size:13px;transition:border-color .15s,background .15s}
+.btn:hover{border-color:#CBD0DB;background:var(--soft)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}.btn.primary:hover{background:#4A1FF0}
+.btn:focus-visible,.seg button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible,.rail button:focus-visible,.dock button:focus-visible,.fly button:focus-visible,.mnu button:focus-visible,.ptabs button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mwrap{position:relative}
+.mnu{position:absolute;z-index:40;top:calc(100% + 6px);right:0;min-width:220px;padding:6px;background:var(--panel);border:1px solid var(--hair);border-radius:14px;box-shadow:var(--shadow);animation:ddin .16s cubic-bezier(.2,.8,.2,1)}
+.mnu.up{top:auto;bottom:calc(100% + 8px);right:auto;left:50%;transform:translateX(-50%)}
+.mnu button,.mnu a{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:44px;padding:0 12px;border:0;background:none;border-radius:9px;font-size:13px;text-align:left;text-decoration:none;color:var(--ink)}
+.mnu button:hover,.mnu a:hover{background:var(--soft)}.mnu button[aria-checked=true]{font-weight:700}.mnu small{color:var(--mute);font-size:11.5px}
+.mnu hr{border:0;border-top:1px solid var(--hair);margin:4px 2px}
+.work{position:relative;min-height:0;display:flex}
+.stage{position:relative;overflow:hidden;flex:1 1 0;min-width:0;background:#EDEFF4;cursor:grab;touch-action:none}
+.stage:focus{outline:none}.stage.drag{cursor:grabbing}
+.paper{position:absolute;left:0;top:0;transform-origin:0 0;box-shadow:0 30px 60px -30px rgba(20,24,40,.35),0 0 0 1px rgba(20,24,40,.06);border-radius:10px;overflow:hidden;line-height:0}
+.paper svg{display:block}
+.mq{position:absolute;z-index:4;border:1.5px solid var(--accent);background:rgba(91,45,255,.08);border-radius:4px;pointer-events:none}
+/* tool rail */
+.rail{position:absolute;left:12px;top:12px;z-index:7;display:flex;flex-direction:column;gap:2px;padding:6px;background:var(--panel);border:1px solid var(--hair);border-radius:16px;box-shadow:var(--shadow)}
+.rail button{position:relative;width:44px;height:44px;border:0;background:none;border-radius:11px;display:grid;place-items:center;color:#4A5063}
+.rail button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.rail button:hover{background:var(--soft);color:var(--ink)}
+.rail button[aria-pressed=true],.rail button[aria-expanded=true]{background:#ECE8FF;color:var(--accent)}
+.rail hr{width:24px;border:0;border-top:1px solid var(--hair);margin:4px auto}
+@media (hover:hover) and (pointer:fine){.rail button::after{content:attr(data-tip);position:absolute;left:calc(100% + 10px);top:50%;transform:translateY(-50%);padding:6px 10px;border-radius:8px;background:var(--ink);color:#fff;font:500 12px Inter,sans-serif;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .12s}
+ .rail button:hover::after,.rail button:focus-visible::after{opacity:1}}
+/* flyout opened from the rail */
+.fly{position:absolute;z-index:8;left:76px;top:12px;width:min(340px,calc(100% - 92px));max-height:calc(100% - 24px);overflow:auto;padding:8px;background:var(--panel);border:1px solid var(--hair);border-radius:16px;box-shadow:0 24px 60px -24px rgba(20,24,40,.45);animation:inspin .18s cubic-bezier(.2,.8,.2,1)}
+.fly-h{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 6px 8px 10px}
+.fly-h b{font-size:14px}.fly-h button{width:44px;height:44px;border:0;background:none;border-radius:10px;font-size:22px;color:var(--mute)}.fly-h button:hover{background:var(--soft)}
+.fly .seg{width:100%;display:flex}.fly .seg button{flex:1;min-height:40px}
+.fly-sec{margin:10px 8px 4px;font:600 12px/1.2 Inter,sans-serif;color:var(--mute)}
+.fly-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:2px 2px 4px}
+.fly-it{display:flex;align-items:center;gap:10px;min-height:52px;padding:6px 10px 6px 8px;border:1px solid var(--hair);background:var(--panel);border-radius:12px;text-align:left;font-size:13px;font-weight:600;line-height:1.25}
+.fly-it:hover{border-color:#CBD0DB;background:var(--soft)}
+.fly-it .ic{flex:none;width:34px;height:34px;border-radius:9px;display:grid;place-items:center;background:var(--soft)}
+.fly-it .ic svg{width:20px;height:20px}
+.fly-it small{display:block;font-weight:400;color:var(--mute);font-size:11.5px;margin-top:1px}
+.fly-list{display:grid;gap:6px;padding:2px 2px 4px}.fly-list .fly-it{width:100%}
+.fly-note{margin:8px 10px 6px;font-size:12px;line-height:1.5;color:var(--mute)}
+.fly-foot{padding:6px 2px 2px}.fly-foot .btn{width:100%;justify-content:center}
+.swrow{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:56px;padding:8px 12px;border:1px solid var(--hair);background:var(--panel);border-radius:12px;text-align:left;font-size:13px;font-weight:600}
+.swrow small{display:block;font-weight:400;color:var(--mute);font-size:11.5px;max-width:200px}
+.swrow i{flex:none;width:38px;height:22px;border-radius:999px;background:#CBD0DB;position:relative;transition:background .15s}
+.swrow i::after{content:'';position:absolute;left:3px;top:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .15s}
+.swrow[aria-checked=true] i{background:var(--accent)}.swrow[aria-checked=true] i::after{transform:translateX(16px)}
+/* bottom dock: history, zoom, view */
+.dock{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:5;display:flex;align-items:center;gap:2px;padding:4px;background:var(--panel);border:1px solid var(--hair);border-radius:14px;box-shadow:var(--shadow);max-width:calc(100% - 24px)}
+.dock button{min-width:40px;height:40px;padding:0 8px;border:0;background:none;border-radius:10px;font-weight:600;font-size:13px;color:var(--ink);display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.dock button svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.dock button:hover:not(:disabled){background:var(--soft)}.dock button:disabled{opacity:.35;cursor:default}
+.dock button[aria-pressed=true]{background:#ECE8FF;color:var(--accent)}
+.dock output{min-width:48px;text-align:center;font:500 12px 'JetBrains Mono',monospace;color:var(--mute)}
+.dock .sep{width:1px;height:24px;background:var(--hair);margin:0 4px}
+/* settings panel, docked on the left, on demand */
+.panel{flex:none;width:344px;display:flex;flex-direction:column;min-height:0;background:var(--panel);border-right:1px solid var(--hair)}
+.ph2{display:flex;align-items:center;justify-content:space-between;padding:8px 8px 0 16px}.ph2 b{font-size:14px}
+.ph2 button{width:44px;height:44px;border:0;background:none;border-radius:10px;font-size:22px;color:var(--mute)}.ph2 button:hover{background:var(--soft)}
+.ptabs{display:flex;gap:2px;padding:4px 12px 0;border-bottom:1px solid var(--hair)}
+.ptabs button{min-height:44px;padding:0 12px;border:0;background:none;border-bottom:2px solid transparent;font-size:13px;font-weight:600;color:var(--mute)}
+.ptabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--accent)}
+.pbody{overflow:auto;padding:16px;display:grid;gap:16px;align-content:start;min-height:0;flex:1}
+.ptab[hidden]{display:none}
+.ptab{display:grid;gap:16px;align-content:start}
+.grp{display:grid;gap:10px}.grp>h2{margin:0;font:600 13px/1.2 Inter,sans-serif;color:var(--ink);display:flex;justify-content:space-between;align-items:baseline}.grp>h2 small{font:400 12px Inter;color:var(--mute)}
+.empty{position:absolute;inset:0;z-index:3;display:grid;place-items:center;pointer-events:none}
+.empty>div{pointer-events:auto;max-width:360px;padding:22px;text-align:center;background:var(--panel);border:1px solid var(--hair);border-radius:18px;box-shadow:var(--shadow);display:grid;gap:10px;justify-items:center}
+.empty b{font-size:16px}.empty p{margin:0;font-size:13px;color:var(--mute);line-height:1.5}.empty .row{justify-content:center}
+.cmenu{position:fixed;z-index:60;min-width:230px;max-width:280px;max-height:min(70vh,520px);overflow:auto;padding:6px;background:var(--panel);border:1px solid var(--hair);border-radius:14px;box-shadow:0 24px 60px -24px rgba(20,24,40,.5);animation:ddin .12s ease-out}
+.cmenu button{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;min-height:44px;padding:0 12px;border:0;background:none;border-radius:9px;font-size:13px;text-align:left}
+.cmenu button:hover:not(:disabled),.cmenu button:focus-visible{background:var(--soft)}.cmenu button:disabled{opacity:.4}
+.cmenu kbd,.keys kbd{font:500 11.5px 'JetBrains Mono',monospace;color:var(--mute)}
+.cm-sep{padding:10px 12px 4px;font:600 11.5px Inter,sans-serif;color:var(--mute)}
+#keys{border:0;padding:0;border-radius:18px;width:min(560px,calc(100vw - 32px));box-shadow:0 30px 80px -20px rgba(20,24,40,.45)}#keys::backdrop{background:rgba(20,24,40,.45)}
+.keys{padding:20px 22px 24px;display:grid;gap:14px}.keys h2{margin:0;font-size:18px}.keys dl{margin:0;display:grid;grid-template-columns:1fr auto;gap:2px 20px;font-size:13px}.keys dt{padding:8px 0;border-bottom:1px solid var(--hair)}.keys dd{margin:0;padding:8px 0;border-bottom:1px solid var(--hair);text-align:right}
+@media (max-width:900px){
+ .top{padding:6px 12px}.wm{font-size:22px}.doc-title{flex-basis:100%;max-width:none;order:5}
+ .panel{position:absolute;z-index:9;left:0;right:0;bottom:0;width:auto;height:min(64%,560px);border-right:0;border-top:1px solid var(--hair);border-radius:18px 18px 0 0;box-shadow:0 -20px 50px -24px rgba(20,24,40,.4)}
+ .rail{flex-direction:row;left:8px;top:8px;max-width:calc(100% - 16px);overflow-x:auto}.rail hr{display:none}
+ .fly{left:8px;top:68px;width:calc(100% - 16px);max-height:calc(100% - 84px)}
+ .dock{bottom:10px}.dock .lbl{display:none}
+}
+@media (pointer:coarse){.dock button{min-width:44px;height:44px}input[type=text],select,.opt .seg button{min-height:44px}}
+@media (max-width:560px){.hs,#zVal,#keysBtn,.dock .sep{display:none}.top{gap:2px 8px}.top-r{margin-left:auto}.doc-title{order:5}.btn{padding:0 12px}.dock{gap:0}}
+.pickers{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.top-r .dd:last-child .dd-list{left:auto;right:0}
+@media (prefers-reduced-motion:reduce){.mnu,.fly,.cmenu{animation:none}}
 </style></head>
 <body>
 <div class="app">
- <header>
-  <div class="brand"><a href="atlas.html#systems" aria-label="Back to the Visual & Motion Atlas">← Atlas</a><h1>Flowchart studio</h1></div>
-  <div class="exports" role="group" aria-label="Export">
-   <a class="btn" href="diagram-studio.html" style="text-decoration:none">Diagram studio</a><a class="btn" href="chart-styles.html" style="text-decoration:none">Chart styles</a>
-   <button class="btn" id="exSvg" title="Download SVG">SVG <span>file</span></button>
-   <button class="btn" id="exPng" title="Download PNG at 2×">PNG <span>2×</span></button>
-   <button class="btn" id="exCopy" title="Copy SVG markup">Copy <span>SVG</span></button>
-   <button class="btn" id="exHtml" title="Download a standalone HTML page">HTML</button>
-   <button class="btn" id="exShare" title="Copy a link to this chart">Share <span>link</span></button>
-   <button class="btn primary" id="exGuide" title="Download a style guide for this look">Style guide</button>
+ <header class="top">
+  <a class="back" href="atlas.html#systems" aria-label="Back to the Visual and Motion Atlas">← <span class="hs">Atlas</span></a>
+  <h1 class="wm">Flowchart studio</h1>
+  <input type="text" id="title" class="doc-title" placeholder="Name this chart" aria-label="Chart name" autocomplete="off">
+  <div class="top-r">
+   <div class="pickers" id="pickers" role="group" aria-label="Colour and design"></div>
+   <button class="btn" id="exShare" title="Copy a link to this chart">Share link</button>
+   <div class="mwrap"><button class="btn primary" id="exportBtn" aria-haspopup="menu" aria-expanded="false">Export</button>
+    <div class="mnu" id="exportMenu" role="menu" hidden>
+     <button role="menuitem" id="exSvg">SVG file<small>keeps the motion</small></button>
+     <button role="menuitem" id="exPng">PNG<small>2× size</small></button>
+     <button role="menuitem" id="exCopy">Copy SVG</button>
+     <button role="menuitem" id="exHtml">Web page</button>
+     <button role="menuitem" id="exGuide">Style guide</button>
+     <hr><a role="menuitem" href="diagram-studio.html">Diagram studio</a><a role="menuitem" href="chart-styles.html">Chart styles</a>
+    </div></div>
   </div>
  </header>
- <aside class="side">
-  <div class="sec">
-   <h2>Chart <small class="startrow"><button type="button" class="tplbtn" id="tplOpen">Examples</button><select id="example" aria-label="Start from a template"><option value="">Start from…</option></select></small></h2>
-   <label class="field">Title<input type="text" id="title" placeholder="Optional title"></label>
-   <label class="field">Subtitle<input type="text" id="subtitle" placeholder="Optional one-line subtitle"></label>
-  </div>
-  <div class="sec">
-   <h2>Diagram type <small>layout, not looks</small></h2>
-   <div class="types" id="types" role="group" aria-label="Diagram type"></div>
-   <label class="field">More diagram types<select id="moreTypes" aria-label="More diagram types"></select></label>
-   <label class="field">Combine another diagram on this canvas<select id="addDiagram" aria-label="Add another diagram"></select></label>
-   <ul class="cl" id="clusters"></ul>
-   <p class="why" id="why"></p>
-  </div>
-  <div class="sec">
-   <h2>Style</h2>
-   <div class="styleinfo" id="styleinfo"></div>
-  </div>
-  <div class="sec">
-   <h2>Steps <span class="seg" id="mode" role="group" aria-label="Editor"><button type="button" data-v="visual" aria-pressed="true">Visual</button><button type="button" data-v="code" aria-pressed="false">Code</button></span></h2>
-   <div id="visual" class="fe" aria-label="Visual step editor"></div>
-   <p class="fe-hint" id="feHint">Click a step in the chart to edit it. Enter in a step name adds the next step.</p>
-   <div id="codeWrap" hidden>
+ <div class="work">
+  <aside class="panel" id="panel" hidden aria-label="Diagram settings">
+   <div class="ph2"><b>Diagram</b><button type="button" id="panelClose" aria-label="Close diagram settings">×</button></div>
+   <div class="ptabs" role="tablist" aria-label="Diagram settings"><button role="tab" data-tab="chart" aria-selected="true">Chart</button><button role="tab" data-tab="steps" aria-selected="false">Steps</button><button role="tab" data-tab="layout" aria-selected="false">Layout</button><button role="tab" data-tab="checks" aria-selected="false">Checks</button></div>
+   <div class="pbody">
+    <section class="ptab" data-tab="chart" role="tabpanel">
+     <label class="field">Subtitle<input type="text" id="subtitle" placeholder="One line under the title, optional"></label>
+     <div class="grp"><h2>Diagram type <small>how the elements are arranged</small></h2>
+      <div class="types" id="types" role="group" aria-label="Diagram type"></div>
+      <label class="field">More diagram types<select id="moreTypes" aria-label="More diagram types"></select></label>
+      <p class="why" id="why"></p></div>
+     <div class="grp"><h2>Diagrams on this canvas</h2><ul class="cl" id="clusters"></ul><p class="fe-hint">Add another diagram from Templates on the left.</p></div>
+    </section>
+    <section class="ptab" data-tab="steps" role="tabpanel" hidden>
+     <div class="grp"><h2>Steps <span class="seg" id="mode" role="group" aria-label="Editor"><button type="button" data-v="visual" aria-pressed="true">Visual</button><button type="button" data-v="code" aria-pressed="false">Code</button></span></h2>
+      <div id="visual" class="fe" aria-label="Visual step editor"></div>
+      <p class="fe-hint" id="feHint">Click an element in the chart to edit it. Enter in a step name adds the next step.</p>
+      <div id="codeWrap" hidden>
    <textarea id="src" spellcheck="false" aria-label="Flowchart source" autocapitalize="off" autocomplete="off"></textarea>
    <details class="help"><summary>Syntax in one minute</summary>
     <dl class="cheat">
@@ -272,35 +330,58 @@ ul.cl{list-style:none;margin:0;padding:0;display:grid;gap:6px}ul.cl:empty{displa
     </dl>
     <p style="margin:8px 0 0;font-size:12px;color:var(--mute)">Or write one step per line. Lines ending in “?” become decisions, and indented <code>Yes: step</code> lines become branches.</p>
    </details>
+     </div>
+     </div>
+    </section>
+    <section class="ptab" data-tab="layout" role="tabpanel" hidden>
+     <div class="grp"><h2>View</h2><div class="seg" id="viewSeg" role="group" aria-label="View"><button type="button" data-v="canvas" aria-pressed="true">Canvas</button><button type="button" data-v="classic" aria-pressed="false" title="The original fixed layout, one picture">Fixed picture</button></div>
+      <button type="button" class="btn" id="tidy">Lay everything out again</button></div>
+     <div class="grp" data-flowonly><h2>Arrangement <small>flow and swimlanes</small></h2>
+      <div class="opt">Direction<div class="seg" id="dir"><button data-v="TB" aria-pressed="true">Top → down</button><button data-v="LR" aria-pressed="false">Left → right</button></div></div>
+      <div class="opt" hidden>Groups<div class="seg" id="lanes"><button data-v="0" aria-pressed="true">Boxes</button><button data-v="1" aria-pressed="false">Swimlanes</button></div></div>
+      <div class="opt">Spacing<div class="seg" id="spacing"><button data-v="compact" aria-pressed="false">Tight</button><button data-v="comfortable" aria-pressed="true">Even</button><button data-v="airy" aria-pressed="false">Airy</button></div></div>
+      <div class="opt">Decisions<div class="seg" id="decision"><button data-v="badge" aria-pressed="true">Badge</button><button data-v="diamond" aria-pressed="false">Diamond</button></div></div>
+      <div class="opt">Legend<div class="seg" id="legend"><button data-v="1" aria-pressed="true">Show</button><button data-v="0" aria-pressed="false">Hide</button></div></div></div>
+    </section>
+    <section class="ptab" data-tab="checks" role="tabpanel" hidden>
+     <div class="grp"><h2>Pre-flight</h2><ul class="notes" id="notes" aria-live="polite"></ul></div>
+     <div class="grp"><h2>This look</h2><div class="styleinfo" id="styleinfo"></div></div>
+    </section>
    </div>
-  </div>
-  <div class="sec" data-flowonly>
-   <h2>Layout <small>flow and swimlanes</small></h2>
-   <div class="opt">Direction<div class="seg" id="dir"><button data-v="TB" aria-pressed="true">Top → down</button><button data-v="LR" aria-pressed="false">Left → right</button></div></div>
-   <div class="opt" hidden>Groups<div class="seg" id="lanes"><button data-v="0" aria-pressed="true">Boxes</button><button data-v="1" aria-pressed="false">Swimlanes</button></div></div>
-   <div class="opt">Spacing<div class="seg" id="spacing"><button data-v="compact" aria-pressed="false">Tight</button><button data-v="comfortable" aria-pressed="true">Even</button><button data-v="airy" aria-pressed="false">Airy</button></div></div>
-   <div class="opt">Decisions<div class="seg" id="decision"><button data-v="badge" aria-pressed="true">Badge</button><button data-v="diamond" aria-pressed="false">Diamond</button></div></div>
-   <div class="opt">Legend<div class="seg" id="legend"><button data-v="1" aria-pressed="true">Show</button><button data-v="0" aria-pressed="false">Hide</button></div></div>
-  </div>
-  <div class="sec">
-   <h2>Pre-flight</h2>
-   <ul class="notes" id="notes" aria-live="polite"></ul>
-  </div>
- </aside>
- <main class="main">
-  <div class="pickers" id="pickers" role="group" aria-label="Colour and design"></div>
-  <div class="stage" id="stage" aria-label="Flowchart preview. Drag to pan, use the zoom buttons or Ctrl and scroll to zoom.">
+  </aside>
+  <main class="stage" id="stage" aria-label="Chart canvas. Drag empty space to pan, scroll with Ctrl to zoom. Press the question mark for keyboard shortcuts.">
    <div class="paper" id="paper"></div>
-   <div class="cvbar" id="cvbar" role="toolbar" aria-label="Canvas tools"><select id="addKind" aria-label="Add an element"></select><select id="feedSel" aria-label="Load a workspace feed onto the canvas" hidden></select><button type="button" id="motionTgl" aria-pressed="true" title="Show the direction each connection flows">Flow motion</button><button type="button" id="tidy" title="Lay everything out again">Tidy up</button><span class="sep" aria-hidden="true"></span><button type="button" id="aiCheck" aria-pressed="false" title="Let AI judge whether each connection exists and is needed">AI check</button><button type="button" id="aiSuggest" aria-pressed="false" title="Let AI suggest how to make each connection better">AI suggest</button><span class="sep" aria-hidden="true"></span><span class="seg" id="viewSeg" role="group" aria-label="View"><button type="button" data-v="canvas" aria-pressed="true">Canvas</button><button type="button" data-v="classic" aria-pressed="false" title="The original fixed layout, one picture">Fixed layout</button></span></div>
+   <div class="empty" id="empty" hidden><div><b>An empty canvas</b><p>Start from a template, or double-click anywhere to add your first element.</p><div class="row"><button type="button" class="btn primary" id="emptyTpl">Start from a template</button><button type="button" class="btn" id="emptyAdd">Add an element</button></div></div></div>
+   <nav class="rail" id="rail" aria-label="Canvas tools">
+    <button type="button" data-fly="add" data-canvas aria-expanded="false" aria-haspopup="true" data-tip="Add elements and workers" aria-label="Add elements and workers"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+    <button type="button" data-fly="templates" aria-expanded="false" aria-haspopup="true" data-tip="Templates" aria-label="Templates"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h7v6H4zM13 5h7v6h-7zM4 13h7v6H4zM13 13h7v6h-7z"/></svg></button>
+    <button type="button" data-fly="workspace" data-canvas aria-expanded="false" aria-haspopup="true" data-tip="Workspace" aria-label="Workspace feeds" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V9l8-5 8 5v11M9 20v-6h6v6"/></svg></button>
+    <button type="button" data-fly="assist" data-canvas aria-expanded="false" aria-haspopup="true" data-tip="Assist" aria-label="Assist"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg></button>
+    <hr>
+    <button type="button" id="panelBtn" aria-pressed="false" data-tip="Diagram settings" aria-label="Diagram settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9M15 4v6M9 14v6"/></svg></button>
+   </nav>
+   <div class="fly" id="fly" hidden role="dialog" aria-label="Tool"></div>
    <aside class="insp" id="insp" hidden aria-label="Element details"></aside>
    <div class="motion" role="group" aria-label="Animation"><button type="button" id="mvPlay" class="mv-play" aria-label="Play the build-up animation"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg><span>Play</span></button>
     <select id="mvSpeed" aria-label="Animation speed"><option value="0.6">Slow</option><option value="1" selected>Normal</option><option value="1.6">Fast</option></select>
     <button type="button" id="mvVideo" title="Download the build-up as a video">Video</button><button type="button" id="mvGif" title="Download the build-up as an animated GIF">GIF</button><output id="mvProg" aria-live="polite"></output></div>
-   <div class="zoom"><button id="zOut" aria-label="Zoom out">−</button><output id="zVal">100%</output><button id="zIn" aria-label="Zoom in">+</button><button id="zFit" aria-label="Fit to screen">Fit</button></div>
-  </div>
- </main>
+   <div class="dock" id="dock" role="toolbar" aria-label="History, zoom and view">
+    <button type="button" id="undoBtn" data-canvas aria-label="Undo" title="Undo" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5M4 9h10a6 6 0 010 12h-3"/></svg></button>
+    <button type="button" id="redoBtn" data-canvas aria-label="Redo" title="Redo" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 14l5-5-5-5M20 9H10a6 6 0 000 12h3"/></svg></button>
+    <span class="sep" data-canvas aria-hidden="true"></span>
+    <button id="zOut" aria-label="Zoom out">−</button><output id="zVal">100%</output><button id="zIn" aria-label="Zoom in">+</button><button id="zFit" aria-label="Fit to screen">Fit</button>
+    <span class="sep" data-canvas aria-hidden="true"></span>
+    <div class="mwrap" data-canvas><button type="button" id="viewBtn" aria-haspopup="menu" aria-expanded="false" aria-label="Level of detail" title="Level of detail"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 15a3 3 0 100-6 3 3 0 000 6z"/></svg><span class="lbl" id="viewLbl">Auto</span></button>
+     <div class="mnu up" id="viewMenu" role="menu" hidden><button role="menuitemradio" data-lod="auto" aria-checked="true">Auto<small>by zoom</small></button><button role="menuitemradio" data-lod="detail" aria-checked="false">Detail<small>everything</small></button><button role="menuitemradio" data-lod="overview" aria-checked="false">Overview<small>names only</small></button><button role="menuitemradio" data-lod="map" aria-checked="false">Map<small>shapes only</small></button></div></div>
+    <button type="button" id="motionTgl" data-canvas aria-pressed="true" aria-label="Flow motion" title="Show which way each connection flows"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h14M13 7l5 5-5 5"/></svg></button>
+    <button type="button" id="keysBtn" aria-label="Keyboard shortcuts" title="Keyboard shortcuts">?</button>
+   </div>
+  </main>
+ </div>
 </div>
 <div class="toast" id="toast" role="status"></div>
+<dialog id="keys" aria-labelledby="keysT"><div class="keys"><div style="display:flex;justify-content:space-between;align-items:center"><h2 id="keysT">Keyboard and mouse</h2><button type="button" class="fe-ic" id="keysClose" aria-label="Close" style="width:44px;height:44px">×</button></div>
+<dl id="keysList"></dl></div></dialog>
 <dialog id="tpl" aria-labelledby="tplTitle"><div class="tpl-in">
  <div class="tpl-head"><div><h2 id="tplTitle">Examples</h2><p>Real processes to learn from, each drawn in the layout that suits it. To start your own diagram, use Start from.</p></div><button type="button" class="fe-ic" id="tplClose" aria-label="Close templates">×</button></div>
  <div class="tpl-cats" id="tplCats" role="group" aria-label="Filter templates"></div>
@@ -327,7 +408,7 @@ if(!(window.FlowEngine&&FlowEngine.KIND&&window.FlowPresets&&window.FlowCanvas&&
  return;}
 try{sessionStorage.removeItem('fcs-reload');}catch{}
 const store={get(k){try{return localStorage.getItem('fcs:'+k);}catch{return null;}},set(k,v){try{localStorage.setItem('fcs:'+k,v);}catch{}}};
-const S={ai:{check:store.get('aiCheck')==='1',suggest:store.get('aiSuggest')==='1'},view:store.get('view')||'canvas',motion:store.get('motion')!=='0',type:store.get('type')||'auto',style:store.get('style')||'workflow',dir:'TB',lanes:'0',spacing:'comfortable',decision:'badge',legend:'1',zoom:1,x:0,y:0,last:null};
+const S={lod:store.get('lod')||'auto',ai:{check:store.get('aiCheck')==='1',suggest:store.get('aiSuggest')==='1'},view:store.get('view')||'canvas',motion:store.get('motion')!=='0',type:store.get('type')||'auto',style:store.get('style')||'workflow',dir:'TB',lanes:'0',spacing:'comfortable',decision:'badge',legend:'1',zoom:1,x:0,y:0,last:null};
 const toast=m=>{const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),1800);};
 
 /* plain step lists become Mermaid */
@@ -380,8 +461,6 @@ $('clusters').onclick=e=>{const b=e.target.closest('[data-rm]');if(b)cv.removeCl
 
 /* start from: templates are diagrams. Examples are pre-made workflows, kept in their own gallery. */
 const TPL=FlowPresets.TEMPLATES,COMBO=FlowPresets.COMBOS;
-$('example').innerHTML+=`<optgroup label="Diagram types">${TPL.map(x=>`<option value="${x.id}">${x.name}</option>`).join('')}</optgroup><optgroup label="Combinations">${COMBO.map(x=>`<option value="${x.id}">${x.name}</option>`).join('')}</optgroup>`;
-$('addDiagram').innerHTML='<option value="">Add another diagram…</option>'+TPL.filter(x=>x.id!=='blank').map(x=>`<option value="${x.id}">${x.name}</option>`).join('');
 const ALL=FlowExamples.map(x=>({...x,cat:'Examples'})).concat(FlowTemplates);
 function loadChart(x){$('src').value=x.src;$('title').value=x.title||x.name;$('subtitle').value=x.subtitle||'';
  S.type=x.type||(x.id==='release'?'swimlanes':'auto');store.set('type',S.type);setSeg('dir',/flowchart\s+LR/.test(x.src)?'LR':'TB');cv.reset();cv.store();if(S.mode==='visual')editor.load(x.src);render(true);}
@@ -393,13 +472,11 @@ function drawTemplates(){const cats=['All',...new Set(ALL.map(x=>x.cat))];
  const st=DVStyle(S.style);$('tplGrid').innerHTML=ALL.filter(x=>tplCat==='All'||x.cat===tplCat).map((x,i)=>{let svg='';const ty=x.type||(x.id==='release'?'swimlanes':FlowTypes.suggest(FlowEngine.parse(x.src))[0].id);
   try{svg=FlowTypes.render(ty,x.src,st,{title:x.title||x.name,id:'tp'+i,showLegend:false}).svg;}catch{}
   const nm=(FlowTypes.TYPES.find(t=>t.id===ty)||{}).name||'';return `<button type="button" class="tpl-card" data-tpl="${x.id}"><span class="tpl-thumb" aria-hidden="true">${svg}</span><span class="tpl-meta"><b>${x.name}</b><span>${x.cat} · ${nm}</span></span></button>`;}).join('');}
-$('tplOpen').onclick=()=>{drawTemplates();$('tpl').showModal();};
+function openExamples(){drawTemplates();$('tpl').showModal();}
 $('tplClose').onclick=()=>$('tpl').close();
 $('tpl').addEventListener('click',e=>{if(e.target===$('tpl'))$('tpl').close();});
 $('tplCats').onclick=e=>{const b=e.target.closest('[data-cat]');if(!b)return;tplCat=b.dataset.cat;drawTemplates();};
 $('tplGrid').onclick=e=>{const b=e.target.closest('[data-tpl]');if(!b)return;const x=ALL.find(y=>y.id===b.dataset.tpl);$('tpl').close();loadChart(x);toast(`Loaded “${x.name}”`);};
-$('example').onchange=e=>{const x=[...TPL,...COMBO].find(y=>y.id===e.target.value);e.target.value='';if(!x)return;loadTemplate(x);toast(`Started from “${x.name}”`);};
-$('addDiagram').onchange=e=>{const x=TPL.find(y=>y.id===e.target.value);e.target.value='';if(!x)return;if(S.view!=='canvas'){S.view='canvas';syncView();render(true);}cv.addDiagram(x);toast(`Added “${x.name}” to the canvas`);};
 const editor=FlowEditor.mount($('visual'),{set(src){$('src').value=src;later();}});
 S.mode=store.get('mode')||'visual';
 function setMode(m){S.mode=m;store.set('mode',m);$('mode').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===m)));
@@ -434,29 +511,87 @@ function renderCanvas(fit,fast){const st=DVStyle(S.style);stopPlay();
  if(!fast&&S.mode==='visual')editor.load(source());
  let r;try{r=cv.draw();}catch(err){console.error(err);$('notes').innerHTML=`<li class="warn">Could not read that: ${String(err.message||err).replace(/</g,'&lt;')}</li>`;return;}
  stage.style.background=st.t.bg&&st.t.bg.startsWith('#')?st.t.bg:'#0B0F1A';
- S.last=r;
+ S.last=r;$('empty').hidden=r.g.nodes.size>0;
  if(!fast){const cur=pickType();S.cur=FlowTypes.TYPES.some(x=>x.id===cur)?cur:'flow';drawClusters();notesCanvas(r);
   $('styleinfo').innerHTML=`<b>${st.name}</b><span style="display:block;color:var(--mute);font-size:11.5px;margin-bottom:4px">${st.kicker}</span><span>${st.blurb}</span><span style="display:block;margin-top:6px;color:var(--mute)">Suits: ${st.suits}</span>`;
   store.set('src',$('src').value);store.set('title',$('title').value);store.set('subtitle',$('subtitle').value);}
  if(fit)fitView();else apply();}
 function notesCanvas(r){const g=r.g,ns=[...g.nodes.values()],bad=[],warn=[];
  for(const n of ns){const H=FlowEngine.healthOf(g,n,{health:r.health,nodeTypes:r.nodeTypes});if(!H)continue;if(H.s==='bad')bad.push(`“${n.label}”: ${H.tip}`);else if(H.s==='warn')warn.push(`“${n.label}”: ${H.tip}`);}
- const li=[{ok:true,text:`${ns.length} element${ns.length===1?'':'s'} and ${g.edges.length} connection${g.edges.length===1?'':'s'} on one canvas. Drag any element, double-click to edit it.`}];
+ const li=[{ok:true,text:`${ns.length} element${ns.length===1?'':'s'} and ${g.edges.length} connection${g.edges.length===1?'':'s'} on one canvas.`}];
  [...bad,...warn].slice(0,6).forEach(t=>li.push({ok:false,text:t}));if(bad.length+warn.length>6)li.push({ok:false,text:`${bad.length+warn.length-6} more elements need a look.`});
  $('notes').innerHTML=li.map(n=>`<li class="${n.ok?'':'warn'}">${n.text.replace(/</g,'&lt;')}</li>`).join('');}
+
+/* view: canvas or the original fixed picture */
 function syncView(){const c=S.view==='canvas';stage.classList.toggle('cvmode',c);paper.classList.toggle('cv',c);paper.classList.toggle('noflow',!S.motion);
- if(!c){stage.style.background='';paper.dataset.lod='';paper.style.width='';cv.close();}
+ if(!c){stage.style.background='';paper.dataset.lod='';paper.style.width='';cv.close();closeFly();}
  document.querySelectorAll('#viewSeg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===S.view)));
- $('feedSel').hidden=!(c&&feedReady);$('addKind').hidden=$('motionTgl').hidden=$('tidy').hidden=$('aiCheck').hidden=$('aiSuggest').hidden=!c;document.querySelectorAll('.cvbar .sep').forEach(x=>x.hidden=!c);$('aiCheck').setAttribute('aria-pressed',String(S.ai.check));$('aiSuggest').setAttribute('aria-pressed',String(S.ai.suggest));document.querySelector('.motion').hidden=c;$('motionTgl').setAttribute('aria-pressed',String(S.motion));store.set('view',S.view);}
+ document.querySelectorAll('[data-canvas]').forEach(el=>{el.hidden=!c||(el.dataset.fly==='workspace'&&!feedReady);});
+ document.querySelector('.motion').hidden=c;$('motionTgl').setAttribute('aria-pressed',String(S.motion));store.set('view',S.view);
+ if(!c)$('empty').hidden=true;}
 $('viewSeg').onclick=e=>{const b=e.target.closest('button');if(!b||b.dataset.v===S.view)return;S.view=b.dataset.v;syncView();render(true);};
-$('addKind').innerHTML='<option value="">+ Add element</option>'+['rect','decision','pill','data','io','sub','person','system','doc','note','mod_internal','mod_external','mod_flow'].map(k=>`<option value="${k}">${FlowEngine.KIND[k].name}</option>`).join('');
-$('addKind').onchange=e=>{const k=e.target.value;e.target.value='';if(k)cv.addElement(k);};
+$('tidy').onclick=()=>{cv.unfreeze();fitView();toast('Everything laid out again');};
 $('motionTgl').onclick=()=>{S.motion=!S.motion;store.set('motion',S.motion?'1':'0');syncView();};
-/* AI toggles live in the toolbar. No AI service is connected yet (it costs money, so it waits for Nicolas's yes): switching one on is remembered and the panel says so; the rule check keeps working. */
-$('aiCheck').onclick=()=>{S.ai.check=!S.ai.check;store.set('aiCheck',S.ai.check?'1':'0');syncView();cv.refreshPanel();toast(S.ai.check?'AI check on. No AI service is connected yet, so the rule check runs.':'AI check off');};
-$('aiSuggest').onclick=()=>{S.ai.suggest=!S.ai.suggest;store.set('aiSuggest',S.ai.suggest?'1':'0');syncView();cv.refreshPanel();toast(S.ai.suggest?'AI suggest on. No AI service is connected yet, so the rule check runs.':'AI suggest off');};
-/* workspace feeds: only where the host serves /_01/feeds (the 01 Design Suite). Each feed loads onto the canvas as a diagram you can move and edit. */
-const feedSel=$('feedSel');let feedReady=false,feedIndex=null;const feedCache={};
+
+/* menus (export, level of detail) */
+function closeMenus(except){document.querySelectorAll('.mnu').forEach(m=>{if(m!==except&&!m.hidden){m.hidden=true;const b=m.previousElementSibling;if(b)b.setAttribute('aria-expanded','false');}});}
+function toggleMenu(btn,menu){const open=menu.hidden;closeMenus(menu);menu.hidden=!open;btn.setAttribute('aria-expanded',String(open));if(open)(menu.querySelector('[aria-checked=true]')||menu.querySelector('button,a')).focus();}
+$('exportBtn').onclick=()=>toggleMenu($('exportBtn'),$('exportMenu'));
+$('exportMenu').addEventListener('click',()=>closeMenus());
+$('viewBtn').onclick=()=>toggleMenu($('viewBtn'),$('viewMenu'));
+const LODS={auto:'Auto',detail:'Detail',overview:'Overview',map:'Map'};
+$('viewMenu').addEventListener('click',e=>{const b=e.target.closest('[data-lod]');if(!b)return;S.lod=b.dataset.lod;store.set('lod',S.lod);$('viewMenu').querySelectorAll('[data-lod]').forEach(x=>x.setAttribute('aria-checked',String(x===b)));$('viewLbl').textContent=LODS[S.lod];closeMenus();apply();});
+document.addEventListener('pointerdown',e=>{if(!e.target.closest('.mwrap'))closeMenus();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeMenus();if(!$('fly').hidden){closeFly();document.querySelector('.rail [aria-expanded=true]')?.focus();}}});
+
+/* the tool rail: one flyout at a time */
+const kindIcon=k=>{const K=FlowEngine.KIND[k];return K&&K.icon?`<svg viewBox="0 0 24 24" fill="none" stroke="${K.tint}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${K.icon}"/></svg>`:`<svg viewBox="0 0 24 24" fill="none" stroke="#6B7183" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="7" width="16" height="10" rx="2.5"/></svg>`;};
+let flyName=null,addTab='elements',tplMode='new';
+function closeFly(){flyName=null;$('fly').hidden=true;$('fly').innerHTML='';document.querySelectorAll('.rail [data-fly]').forEach(b=>b.setAttribute('aria-expanded','false'));}
+const ELEMENT_KINDS=[['Basic',['rect','decision','pill','data','io','sub']],['People and systems',['person','system','doc','note']],['Connections',['mod_internal','mod_external','mod_flow']]];
+function drawFly(){const f=$('fly');let h='',title='';
+ if(flyName==='add'){title='Add';h=`<div class="seg" role="tablist"><button type="button" data-addtab="elements" aria-pressed="${addTab==='elements'}">Elements</button><button type="button" data-addtab="workers" aria-pressed="${addTab==='workers'}">Workers</button></div>`;
+  if(addTab==='elements')for(const [name,ks] of ELEMENT_KINDS)h+=`<div class="fly-sec">${name}</div><div class="fly-grid">${ks.map(k=>`<button type="button" class="fly-it" data-add="${k}"><span class="ic">${kindIcon(k)}</span><span>${FlowEngine.KIND[k].name}</span></button>`).join('')}</div>`;
+  else h+=`<p class="fly-note">A worker does a job for you. Add one and the workflow it runs appears next to it. Set “How many” and each extra worker shows its own lane.</p><div class="fly-list">${FlowPresets.WORKERS.map(w=>`<button type="button" class="fly-it" data-worker="${w.id}"><span class="ic">${kindIcon('worker')}</span><span>${w.name}<small>${w.role}</small></span></button>`).join('')}</div>`;}
+ else if(flyName==='templates'){title='Templates';h=`<div class="seg"><button type="button" data-tplmode="new" aria-pressed="${tplMode==='new'}">Start a new chart</button><button type="button" data-tplmode="add" aria-pressed="${tplMode==='add'}">Add to this canvas</button></div>`;
+  h+=`<div class="fly-sec">Diagram types</div><div class="fly-grid">${TPL.filter(x=>tplMode==='new'||x.id!=='blank').map(x=>`<button type="button" class="fly-it" data-tpl2="${x.id}"><span>${x.name}</span></button>`).join('')}</div>`;
+  if(tplMode==='new')h+=`<div class="fly-sec">Several types together</div><div class="fly-list">${COMBO.map(x=>`<button type="button" class="fly-it" data-tpl2="${x.id}"><span>${x.name}</span></button>`).join('')}</div>`;
+  h+=`<div class="fly-foot"><button type="button" class="btn" data-examples>Browse worked examples</button></div>`;}
+ else if(flyName==='workspace'){title='Workspace';h=feedIndex?feedIndex.feeds.map(fd=>`<div class="fly-sec">${fd.name}</div><div class="fly-list">${fd.views.map(v=>`<button type="button" class="fly-it" data-feed="${fd.id}:${v.id}"><span>${v.name}${v.hint?`<small>${v.hint}</small>`:''}</span></button>`).join('')}</div>`).join(''):'<p class="fly-note">No workspace is connected to this page.</p>';}
+ else if(flyName==='assist'){title='Assist';h=`<div class="fly-list"><button type="button" class="swrow" role="switch" data-ai="check" aria-checked="${S.ai.check}"><span>AI check<small>Judges whether each connection exists and is needed</small></span><i></i></button><button type="button" class="swrow" role="switch" data-ai="suggest" aria-checked="${S.ai.suggest}"><span>AI suggest<small>Suggests how to make each connection better</small></span><i></i></button></div><p class="fly-note">No AI service is connected yet. Your choice is remembered, and the built-in rule check runs in the meantime.</p>`;}
+ f.innerHTML=`<div class="fly-h"><b>${title}</b><button type="button" data-close aria-label="Close">×</button></div>${h}`;}
+function openFly(name,btn){if(flyName===name){closeFly();return;}closeFly();flyName=name;btn.setAttribute('aria-expanded','true');drawFly();$('fly').hidden=false;}
+$('rail').addEventListener('click',e=>{const b=e.target.closest('[data-fly]');if(b)openFly(b.dataset.fly,b);});
+$('fly').addEventListener('click',e=>{const t=e.target;let b;
+ if(t.closest('[data-close]')){closeFly();return;}
+ if((b=t.closest('[data-addtab]'))){addTab=b.dataset.addtab;drawFly();return;}
+ if((b=t.closest('[data-tplmode]'))){tplMode=b.dataset.tplmode;drawFly();return;}
+ if((b=t.closest('[data-add]'))){closeFly();cv.addElement(b.dataset.add);return;}
+ if((b=t.closest('[data-worker]'))){closeFly();cv.addWorker(b.dataset.worker);return;}
+ if((b=t.closest('[data-tpl2]'))){const x=[...TPL,...COMBO].find(y=>y.id===b.dataset.tpl2);closeFly();if(!x)return;
+  if(tplMode==='add'&&x.id!=='blank'){if(S.view!=='canvas'){S.view='canvas';syncView();render(true);}cv.addDiagram(x);toast(`Added “${x.name}” to the canvas`);}else{loadTemplate(x);toast(`Started from “${x.name}”`);}return;}
+ if(t.closest('[data-examples]')){closeFly();openExamples();return;}
+ if((b=t.closest('[data-feed]'))){closeFly();loadFeed(b.dataset.feed);return;}
+ if((b=t.closest('[data-ai]'))){const k=b.dataset.ai;S.ai[k]=!S.ai[k];store.set(k==='check'?'aiCheck':'aiSuggest',S.ai[k]?'1':'0');b.setAttribute('aria-checked',String(S.ai[k]));cv.refreshPanel();}});
+$('emptyTpl').onclick=()=>openFly('templates',document.querySelector('.rail [data-fly=templates]'));
+$('emptyAdd').onclick=()=>cv.addElement('rect');
+$('undoBtn').onclick=()=>cv.undo();$('redoBtn').onclick=()=>cv.redo();
+$('keysBtn').onclick=()=>$('keys').showModal();$('keysClose').onclick=()=>$('keys').close();
+const MODK=/mac|iphone|ipad/i.test(navigator.platform||'')?'⌘':'Ctrl+';
+$('keysList').innerHTML=[['Select several','Shift+click, or Shift+drag on empty space'],['Move the view','Drag empty space, or scroll'],['Zoom','Ctrl+scroll, + and −'],['Fit everything','0'],['Edit an element','Double-click, or Enter'],['Add an element','Double-click empty space'],['Connect elements','Drag from a round handle to another element'],['Add and connect','Drop a handle on empty space, or '+MODK+'Enter'],['Reconnect or disconnect a line','Select it, drag an end'],['Move next or previous','Tab, Shift+Tab'],['Nudge','Arrow keys, Shift for more'],['Copy, cut, paste',MODK+'C, '+MODK+'X, '+MODK+'V'],['Duplicate',MODK+'D'],['Select all',MODK+'A'],['Undo and redo',MODK+'Z, '+MODK+'Shift+Z'],['Delete','Delete or Backspace'],['Menu','Right-click, or press and hold'],['This list','?']].map(([a,b])=>`<dt>${a}</dt><dd><kbd>${b}</kbd></dd>`).join('');
+
+/* on narrow screens the look pickers live in the panel instead of the header */
+const narrow=matchMedia('(max-width:900px)'),pk=$('pickers'),pkHome=pk.parentElement;
+function placePickers(){if(narrow.matches){const g=document.querySelector('.ptab[data-tab=chart]');if(pk.parentElement!==g)g.insertBefore(pk,g.firstChild);}else if(pk.parentElement!==pkHome)pkHome.insertBefore(pk,pkHome.firstChild);}
+narrow.addEventListener('change',placePickers);placePickers();
+/* settings panel */
+function showPanel(on){$('panel').hidden=!on;$('panelBtn').setAttribute('aria-pressed',String(on));store.set('panel',on?'1':'0');setTimeout(()=>{if(S.last)apply();},0);}
+$('panelBtn').onclick=()=>showPanel($('panel').hidden);$('panelClose').onclick=()=>showPanel(false);
+function showTab(t){document.querySelectorAll('.ptabs [data-tab]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===t)));document.querySelectorAll('.ptab').forEach(x=>x.hidden=x.dataset.tab!==t);store.set('tab',t);}
+document.querySelector('.ptabs').addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(b)showTab(b.dataset.tab);});
+
+/* workspace feeds: only where this page's host serves /_01/feeds. Each loads onto the canvas as something you can move and edit. */
+let feedReady=false,feedIndex=null;const feedCache={};
 const feedClean=s=>String(s||'').replace(/[\[\]{}()|"';<>]/g,' ').replace(/\s+/g,' ').trim();
 function ownerFeedSource(items,view){
  const keep=items.filter(x=>view==='decisions'?x.kind==='decision':view==='bots'?x.who==='bots':(x.who==='you'||!x.who)&&x.status!=='done');
@@ -469,28 +604,27 @@ function ownerFeedSource(items,view){
   L.push('  end');});
  for(const x of keep)for(const d of (x.depends||[])){const f='a_'+String(d).replace(/[^A-Za-z0-9]/g,'_').toLowerCase();if(ids.has(f))L.push(`  ${f} --> ${nid(x)}`);}
  return L.join('\n');}
-fetch('_01/feeds/index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).then(ix=>{if(!ix||!ix.feeds||!ix.feeds.length)return;feedIndex=ix;
- feedSel.innerHTML='<option value="">Workspace feed…</option>'+ix.feeds.map(f=>`<optgroup label="${f.name}">${f.views.map(v=>`<option value="${f.id}:${v.id}">${v.name}</option>`).join('')}</optgroup>`).join('');
- feedReady=true;syncView();}).catch(()=>{});
-feedSel.onchange=async e=>{const val=e.target.value;e.target.value='';if(!val||!feedIndex)return;const [fid,vid]=val.split(':'),f=feedIndex.feeds.find(x=>x.id===fid),v=f&&f.views.find(x=>x.id===vid);if(!v)return;
+fetch('_01/feeds/index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).then(ix=>{if(!ix||!ix.feeds||!ix.feeds.length)return;feedIndex=ix;feedReady=true;syncView();}).catch(()=>{});
+async function loadFeed(val){if(!val||!feedIndex)return;const [fid,vid]=val.split(':'),f=feedIndex.feeds.find(x=>x.id===fid),v=f&&f.views.find(x=>x.id===vid);if(!v)return;
  try{if(!feedCache[fid]){const r=await fetch(f.file,{cache:'no-cache'});if(!r.ok)throw new Error(r.status);feedCache[fid]=await r.json();}
-  const data=feedCache[fid],src=ownerFeedSource(data.items,vid);
-  $('src').value=src;$('title').value=`${f.name}: ${v.name}`;$('subtitle').value=`Snapshot of ${(data.generated_at||'').slice(0,10)} from the ${f.name.toLowerCase()} page. Move things around; double-click to see what each one is waiting on.`;
-  S.type='stages';store.set('type',S.type);setSeg('dir','LR');cv.reset();cv.store();if(S.view!=='canvas'){S.view='canvas';syncView();}if(S.mode==='visual')editor.load(src);render(true);toast(`Loaded “${f.name}: ${v.name}”`);}
- catch(err){console.error(err);toast('Could not load that feed');}};
-$('tidy').onclick=()=>{cv.unfreeze();fitView();toast('Everything laid out again');};
+  const data=feedCache[fid];let src,title,sub,type='stages',state=null;
+  if(f.kind==='diagram'){const d=data.views.find(x=>x.id===vid);src=d.src;title=d.title;sub=d.subtitle||'';type=d.type||'flow';state={cl:d.cl||{},ct:d.ct||{},meta:d.meta||{},pos:d.pos||{},frozen:!!d.pos};}
+  else{src=ownerFeedSource(data.items,vid);title=`${f.name}: ${v.name}`;sub=`Snapshot of ${(data.generated_at||'').slice(0,10)}. Move things around; double-click one to see what it is waiting on.`;}
+  $('src').value=src;$('title').value=title;$('subtitle').value=sub;S.type=type;store.set('type',S.type);setSeg('dir',/flowchart\s+LR/.test(src)?'LR':'TB');
+  cv.reset();if(state)cv.setState(state);cv.store();if(S.view!=='canvas'){S.view='canvas';syncView();}if(S.mode==='visual')editor.load(src);render(true);toast(`Loaded “${title}”`);}
+ catch(err){console.error(err);toast('Could not load that');}}
 
 /* pan and zoom */
 const stage=$('stage'),paper=$('paper');
-function apply(){paper.style.transform=`translate(${S.x}px,${S.y}px) scale(${S.zoom})`;$('zVal').textContent=Math.round(S.zoom*100)+'%';paper.dataset.lod=S.view==='canvas'?(S.zoom<.28?'map':S.zoom<.5?'far':''):'';}
+function apply(){paper.style.transform=`translate(${S.x}px,${S.y}px) scale(${S.zoom})`;$('zVal').textContent=Math.round(S.zoom*100)+'%';paper.dataset.lod=S.view==='canvas'?(S.lod==='detail'?'':S.lod==='overview'?'far':S.lod==='map'?'map':(S.zoom<.28?'map':S.zoom<.5?'far':'')):'';}
 function fitView(){const r=S.last;if(!r)return;const W=stage.clientWidth,H=stage.clientHeight,pad=40;if(S.view==='canvas'){const b=r.bbox,bw=Math.max(1,b.x1-b.x0),bh=Math.max(1,b.y1-b.y0),pd=70;S.zoom=Math.max(.15,Math.min(1.25,(W-pd*2)/bw,(H-pd*2)/bh));S.x=(W-bw*S.zoom)/2-b.x0*S.zoom;S.y=(H-bh*S.zoom)/2-b.y0*S.zoom;apply();return;}const all=Math.min((W-pad*2)/r.width,(H-pad*2-40)/r.height);S.zoom=Math.min(1.25,Math.max(.15,Math.min((W-pad*2)/r.width,Math.max(all,.62))));S.x=(W-r.width*S.zoom)/2;S.y=r.height*S.zoom>H-pad*2-40?pad:Math.max(pad,(H-40-r.height*S.zoom)/2);apply();}
 function zoomAt(k,cx,cy){const z=Math.min(3,Math.max(.12,S.zoom*k));S.x=cx-(cx-S.x)*(z/S.zoom);S.y=cy-(cy-S.y)*(z/S.zoom);S.zoom=z;apply();}
 $('zIn').onclick=()=>zoomAt(1.2,stage.clientWidth/2,stage.clientHeight/2);$('zOut').onclick=()=>zoomAt(1/1.2,stage.clientWidth/2,stage.clientHeight/2);$('zFit').onclick=fitView;
-stage.addEventListener('wheel',e=>{if(!(e.ctrlKey||e.metaKey)){S.x-=e.deltaX;S.y-=e.deltaY;apply();e.preventDefault();return;}e.preventDefault();const b=stage.getBoundingClientRect();zoomAt(Math.exp(-e.deltaY*.0022),e.clientX-b.left,e.clientY-b.top);},{passive:false});
+stage.addEventListener('wheel',e=>{if(e.target.closest('.fly,.insp,.mnu,.cmenu'))return;if(!(e.ctrlKey||e.metaKey)){S.x-=e.deltaX;S.y-=e.deltaY;apply();e.preventDefault();return;}e.preventDefault();const b=stage.getBoundingClientRect();zoomAt(Math.exp(-e.deltaY*.0022),e.clientX-b.left,e.clientY-b.top);},{passive:false});
 const cv=FlowCanvas.create({stage,paper,panel:$('insp'),source:()=>source(),engineSource:engSrc,
  setSource:src=>{$('src').value=src;if(S.mode==='visual')editor.load(src);render(false);},style:()=>DVStyle(S.style),opts:()=>({dir:S.dir,spacing:S.spacing,decision:S.decision}),
- mainType:()=>S.type,setMainType:t=>{S.type=t;store.set('type',t);},rerender:fast=>render(false,!!fast),mode:()=>S.view,view:()=>({x:S.x,y:S.y,zoom:S.zoom}),pan:(x,y)=>{S.x=x;S.y=y;apply();},save:j=>store.set('cv',j),ai:()=>S.ai});
-let drag=null;stage.addEventListener('pointerdown',e=>{if(S.view==='canvas'||e.target.closest('.zoom,.styleinfo,.motion'))return;drag={x:e.clientX,y:e.clientY,sx:S.x,sy:S.y};stage.classList.add('drag');stage.setPointerCapture(e.pointerId);});
+ mainType:()=>S.type,setMainType:t=>{S.type=t;store.set('type',t);},rerender:fast=>render(false,!!fast),mode:()=>S.view,view:()=>({x:S.x,y:S.y,zoom:S.zoom}),pan:(x,y)=>{S.x=x;S.y=y;apply();},save:j=>store.set('cv',j),ai:()=>S.ai,toast,fit:()=>fitView(),zoomIn:()=>zoomAt(1.2,stage.clientWidth/2,stage.clientHeight/2),zoomOut:()=>zoomAt(1/1.2,stage.clientWidth/2,stage.clientHeight/2),showKeys:()=>$('keys').showModal(),history:(u,r)=>{$('undoBtn').disabled=!u;$('redoBtn').disabled=!r;}});
+let drag=null;stage.addEventListener('pointerdown',e=>{if(S.view==='canvas'||e.target.closest('.rail,.fly,.dock,.mnu,.empty>div,.motion,.insp'))return;drag={x:e.clientX,y:e.clientY,sx:S.x,sy:S.y};stage.classList.add('drag');stage.setPointerCapture(e.pointerId);});
 stage.addEventListener('pointermove',e=>{if(!drag)return;S.x=drag.sx+e.clientX-drag.x;S.y=drag.sy+e.clientY-drag.y;apply();});
 stage.addEventListener('pointerup',e=>{const d=drag;drag=null;stage.classList.remove('drag');
  /* a click without a drag selects the step under the pointer */
@@ -561,7 +695,7 @@ $('mvGif').onclick=async()=>{stopPlay();busy(true);try{download(slug()+'-build.g
  try{if(h.get('c')){cv.setState(h.get('v')?JSON.parse(unb64(h.get('v'))):null);}else cv.load(store.get('cv'));}catch{cv.setState(null);}
  const first=FlowExamples[0];$('src').value=src||first.src;$('title').value=title??first.name;$('subtitle').value=sub||'';
  if(!DVStyles.some(s=>s.id===S.style))S.style='workflow';drawPickers();
- setMode(S.mode);syncView();render(true);document.fonts?.ready.then(()=>setTimeout(()=>render(false),60));
+ setMode(S.mode);syncView();showTab(store.get('tab')||'chart');showPanel(store.get('panel')==='1'&&innerWidth>900);$('viewLbl').textContent=LODS[S.lod]||'Auto';$('viewMenu').querySelectorAll('[data-lod]').forEach(x=>x.setAttribute('aria-checked',String(x.dataset.lod===S.lod)));render(true);document.fonts?.ready.then(()=>setTimeout(()=>render(false),60));
 })();
 })();
 </script>

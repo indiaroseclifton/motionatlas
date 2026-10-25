@@ -29,7 +29,8 @@ const KIND={
  note:{name:'Note',tag:1,shape:'doc',w:160,h:80,tint:'#CA8A04',icon:'M5 4h14v12l-4 4H5zM15 20v-4h4',noDot:1},
  mod_internal:{name:'Internal connection',tag:1,module:'internal',shape:'hex',w:188,h:72,tint:'#0891B2',icon:'M10 14a4 4 0 0 0 6 0l3-3a4 4 0 0 0-6-6l-1 1M14 10a4 4 0 0 0-6 0l-3 3a4 4 0 0 0 6 6l1-1'},
  mod_external:{name:'External connection',tag:1,module:'external',shape:'hex',w:188,h:72,tint:'#EA580C',icon:'M14 4h6v6M20 4L10 14M18 14v6H4V6h6'},
- mod_flow:{name:'Flow connection',tag:1,module:'flow',shape:'hex',w:188,h:72,tint:'#C026D3',icon:'M4 12h12M12 6l6 6-6 6M4 6v12'}
+ mod_flow:{name:'Flow connection',tag:1,module:'flow',shape:'hex',w:188,h:72,tint:'#C026D3',icon:'M4 12h12M12 6l6 6-6 6M4 6v12'},
+ worker:{name:'Worker',tag:1,worker:1,shape:'oct',w:196,h:76,tint:'#0F766E',icon:'M12 3v3M7 8h10a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2zM9.5 13h.01M14.5 13h.01M9 17h6'}
 };
 const kindOf=n=>n.kind||n.shape||'rect';
 function fixSize(n,t,opt){const K=KIND[kindOf(n)]||KIND[n.shape]||KIND.rect,diamond=n.shape==='decision'&&opt.decision==='diamond';
@@ -437,6 +438,7 @@ function render(src,s,opt={}){
   if(t.board&&n.status)return alpha(col[n.status],.45);
   if(n.status&&!t.hachure)return t.dark?alpha(col[n.status],.75):alpha(col[n.status],.85);return t.nodeStroke;};
  const shapePath=(n,x,y,w,h)=>{const r=n.shape==='pill'||n.shape==='circle'?h/2:n.shape==='round'?(SC&&n.kind==='person'?h/2:Math.max(10,t.nodeRadius)):t.nodeRadius;
+  if(n.shape==='oct'){const k=14;return {d:`M${x+k} ${y}H${x+w-k}L${x+w} ${y+k}V${y+h-k}L${x+w-k} ${y+h}H${x+k}L${x} ${y+h-k}V${y+k}Z`,pts:[[x+k,y],[x+w-k,y],[x+w,y+k],[x+w,y+h-k],[x+w-k,y+h],[x+k,y+h],[x,y+h-k],[x,y+k]]};}
   if(n.shape==='hex'){const k=16;return {d:`M${x+k} ${y}H${x+w-k}L${x+w} ${y+h/2}L${x+w-k} ${y+h}H${x+k}L${x} ${y+h/2}Z`,pts:[[x+k,y],[x+w-k,y],[x+w,y+h/2],[x+w-k,y+h],[x+k,y+h],[x,y+h/2]]};}
   if(n.shape==='doc'){const k=16;return {d:`M${x} ${y}H${x+w-k}L${x+w} ${y+k}V${y+h}H${x}ZM${x+w-k} ${y}V${y+k}H${x+w}`,pts:[[x,y],[x+w-k,y],[x+w,y+k],[x+w,y+h],[x,y+h]]};}
   if(n.shape==='tab'){const rr=Math.min(t.nodeRadius,h/2,w/2);return {d:`M${x+rr} ${y}H${x+w-rr}Q${x+w} ${y} ${x+w} ${y+rr}V${y+h-rr}Q${x+w} ${y+h} ${x+w-rr} ${y+h}H${x+rr}Q${x} ${y+h} ${x} ${y+h-rr}V${y+rr}Q${x} ${y} ${x+rr} ${y}ZM${x} ${y+14}H${x+w}`,pts:[[x,y],[x+w,y],[x+w,y+h],[x,y+h]]};}
@@ -445,7 +447,7 @@ function render(src,s,opt={}){
   if(n.shape==='data'){const e=7;return {d:`M${x} ${y+e}C${x} ${y-e/2} ${x+w} ${y-e/2} ${x+w} ${y+e}V${y+h-e}C${x+w} ${y+h+e/2} ${x} ${y+h+e/2} ${x} ${y+h-e}Z M${x} ${y+e}C${x} ${y+e*2} ${x+w} ${y+e*2} ${x+w} ${y+e}`,pts:[[x,y+e],[x+w/2,y-e/3],[x+w,y+e],[x+w,y+h-e],[x+w/2,y+h+e/3],[x,y+h-e]]};}
   const rr=Math.min(r,h/2,w/2);return {d:`M${x+rr} ${y}H${x+w-rr}Q${x+w} ${y} ${x+w} ${y+rr}V${y+h-rr}Q${x+w} ${y+h} ${x+w-rr} ${y+h}H${x+rr}Q${x} ${y+h} ${x} ${y+h-rr}V${y+rr}Q${x} ${y} ${x+rr} ${y}Z`,pts:[[x,y],[x+w,y],[x+w,y+h],[x,y+h]]};};
  for(const n of g.nodes.values()){const {x,y,w,h}=n,sp=shapePath(n,x,y,w,h),fill=fillFor(n),stroke=strokeFor(n);let sw=t.stroke;
-  body+=`<g class="fc-n" data-nid="${esc(n.id)}" data-kind="${esc(kindOf(n))}"${CV?` tabindex="0" role="button" aria-label="${esc(n.label)}"`:''}>`;
+  body+=`<g class="fc-n" data-nid="${esc(n.id)}" data-kind="${esc(kindOf(n))}"${CV?` tabindex="0" role="button" aria-label="${esc(n.label)}"`:''}><title>${esc(n.label)} · ${esc((KIND[kindOf(n)]||KIND.rect).name)}${n.note?': '+esc(n.note):''}${opt.tips&&opt.tips[n.id]?'. '+esc(opt.tips[n.id]):''}</title>`;
   if(n.status&&!t.hachure&&t.id!=='brutal')sw=Math.max(sw,1.4);
   if(t.hardShadow)body+=`<path d="${sp.d}" transform="translate(4 4)" fill="${t.ink}"/>`;
   if(t.glow&&(n.status||n.shape==='decision'))body+=`<path d="${sp.d}" fill="none" stroke="${n.status?col[n.status]:t.accent}" stroke-width="3" opacity=".45" filter="url(#${uid}g)"/>`;
@@ -475,6 +477,7 @@ function render(src,s,opt={}){
   n.lines.forEach((l,i)=>{body+=`<text x="${tx}" y="${(ty+i*fs*1.3).toFixed(1)}" ${F} font-size="${fs}" font-weight="${t.id==='tufte'?500:600}" fill="${ink}" text-anchor="${anchor}">${esc(l)}</text>`;});
   ty+=n.lines.length*fs*1.3+4;
   n.noteLines.forEach((l,i)=>{body+=`<text class="fc-note" x="${tx}" y="${(ty+i*nfs*1.35).toFixed(1)}" ${F} font-size="${nfs}" fill="${t.id==='riso'||t.id==='brutal'&&(n.status||n.shape==='decision')?ink:t.mute}" text-anchor="${anchor}"${t.id==='tufte'?' font-style="italic"':''}>${esc(l)}</text>`;});
+  if(CV&&opt.badges&&opt.badges[n.id]){const bt=String(opt.badges[n.id]),bw=Math.max(26,bt.length*8+14);body+=`<g transform="translate(${x+w-bw-8} ${y+h-9})"><rect width="${bw}" height="18" rx="9" fill="#0F766E"/><text x="${bw/2}" y="12.6" text-anchor="middle" font-family="${esc(t.mono||t.font)}" font-size="10.5" font-weight="700" fill="#fff">${esc(bt)}</text></g>`;}
   if(CV){const H=healthOf(g,n,opt);if(H){const hx=x+14,hy=y,hc={ok:'#16A34A',warn:'#D97706',bad:'#DC2626'}[H.s],hg={ok:'M-2.6 .2l1.7 1.8 3.4-3.8',warn:'M0-3v3.2M0 2.4v.5',bad:'M-2.3-2.3l4.6 4.6M2.3-2.3l-4.6 4.6'}[H.s];
    body+=`<g class="fc-h" data-h="${H.s}" transform="translate(${hx} ${hy})"><title>${esc(H.tip)}</title><circle r="9" fill="transparent"/><circle r="6.2" fill="${hc}" stroke="${t.surface&&t.surface.startsWith('#')?t.surface:t.bg}" stroke-width="2"/><path d="${hg}" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>`;}}
   body+='</g>';}
@@ -484,8 +487,9 @@ function render(src,s,opt={}){
   else if(t.board)body+=`<rect x="${(l.x-l.w/2).toFixed(1)}" y="${(l.y-10).toFixed(1)}" width="${l.w.toFixed(1)}" height="20" rx="10" fill="${t.frost?'rgba(255,255,255,.85)':t.clay?'#FFFFFF':t.surface}" stroke="${alpha(l.c===t.mute?t.ink:l.c,t.edgeTint?.75:.22)}" stroke-width="${t.edgeTint?1.3:1}"${t.softShadow&&!t.edgeTint?` filter="url(#${uid}s)"`:''}/><text x="${l.x.toFixed(1)}" y="${(l.y+4).toFixed(1)}" ${F} font-size="11.5" font-weight="600" fill="${l.c===t.mute?t.ink:l.c}" text-anchor="middle">${esc(l.txt)}</text>`;
   else body+=`<rect x="${(l.x-l.w/2).toFixed(1)}" y="${(l.y-10).toFixed(1)}" width="${l.w.toFixed(1)}" height="20" rx="${t.id==='brutal'||t.id==='blueprint'||t.id==='editorial'?0:10}" fill="${plate}" stroke="${t.id==='brutal'?t.ink:alpha(l.c===t.mute?(t.dark?'#ffffff':t.ink):l.c,t.id==='brutal'?1:.28)}" stroke-width="${t.id==='brutal'?2:1}"/><text x="${l.x.toFixed(1)}" y="${(l.y+4).toFixed(1)}" ${F} font-size="11.5" font-weight="600" fill="${l.c===t.mute?t.ink:l.c}" text-anchor="middle">${esc(l.txt)}</text>`;body+='</g>';}
  body+='</g>';
+ const DOTS=CV&&t.texture!=='dots'&&t.texture!=='blueprint'?`<rect width="40000" height="40000" fill="url(#${uid}dg)"/>`:'';
  const FLOWCSS=`<style>.fc-flow{stroke-dasharray:.1 15;opacity:.9;animation:fcflow 1.4s linear infinite}.fc-flow.rev{animation-direction:reverse}@keyframes fcflow{to{stroke-dashoffset:-30}}@media (prefers-reduced-motion:reduce){.fc-flow{animation:none;opacity:0}}</style>`;
- const svg=CV?`<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1" style="overflow:visible" role="group" aria-label="${esc(opt.title||'Flowchart')}: ${g.nodes.size} elements, ${g.edges.length} connections"><defs>${defs}${FLOWCSS}</defs><g transform="translate(-20000 -20000)" pointer-events="none">${tex.rect}</g>${body}${tex.over?`<g transform="translate(-20000 -20000)">${tex.over}</g>`:''}</svg>`
+ const svg=CV?`<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1" style="overflow:visible" role="group" aria-label="${esc(opt.title||'Flowchart')}: ${g.nodes.size} elements, ${g.edges.length} connections"><defs>${defs}${CV?`<pattern id="${uid}dg" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.35" fill="${t.dark?'rgba(255,255,255,.22)':'rgba(24,28,45,.22)'}"/></pattern>`:''}${FLOWCSS}</defs><g transform="translate(-20000 -20000)" pointer-events="none">${tex.rect}${DOTS}</g>${body}${tex.over?`<g transform="translate(-20000 -20000)">${tex.over}</g>`:''}</svg>`
   :`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(opt.title||'Flowchart')}: ${g.nodes.size} steps, ${g.edges.length} connections"><defs>${defs}${opt.flow?FLOWCSS:''}</defs>${tex.rect}${body}${tex.over||''}</svg>`;
  /* what the engine took care of, and what the author should look at */
  const notes=[];const nodesArr=[...g.nodes.values()];

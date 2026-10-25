@@ -141,5 +141,14 @@ const COMBOS=[
  {id:'c-journey-state',name:'Journey + states',type:'journey',src:'flowchart LR\n  subgraph j1 [Browse]\n    a["Finds product"]:::have\n  end\n  subgraph j2 [Order]\n    b["Pays"]:::none\n    c["Waits"]:::dont\n  end\n  a --> b --> c\n  o1(["New"]) -->|Paid| o2["Packed"] -->|Sent| o3(["Delivered"])\n  b --> o1',cl:{o1:'x1',o2:'x1',o3:'x1'},ct:{x1:'state'}},
  {id:'c-sequence-er',name:'Sequence + data model',type:'sequence',src:'flowchart TD\n  u["Customer"]:::none.person\n  w["Website"]:::none.system\n  u -->|Order| w\n  w -->|Receipt| u\n  c["Customer | id, name"]:::none.system\n  o["Order | id, total"]:::none.system\n  c -->|1 to many| o',cl:{c:'x1',o:'x1'},ct:{x1:'er'}}
 ];
-window.FlowPresets={TYPES,byId,place,finish,compose,TEMPLATES,COMBOS};
+/* workers: an element that does work. Adding one shows the workflow it runs; more of them show more lanes of that workflow. */
+const WORKERS=[
+ {id:'intake',name:'Intake worker',role:'Reads every incoming message and turns it into a task',steps:[['Message arrives','io','Email, form or upload'],['Sort it','rect','What is it, how urgent?'],['Pull out the details','rect','Names, dates, amounts'],['Clear enough?','decision',''],['Create the task','system','Assigned to a person'],['Tell the client','pill','']]},
+ {id:'catalog',name:'Catalog worker',role:'Brings product files in and checks them against your rules',steps:[['File arrives','io','Spreadsheet or feed'],['Match the columns','rect',''],['Check the rules','rect','Prices, images, required fields'],['Looks right?','decision',''],['Draft the products','data','Waits for a person to approve'],['Ready to publish','pill','']]},
+ {id:'support',name:'Support worker',role:'Drafts replies to customers and hands over what it should not decide',steps:[['Customer writes in','io',''],['Find the order','data','Read only'],['Draft a reply','rect','In your voice'],['Safe to send?','decision',''],['Send the reply','system',''],['Done','pill','']]},
+ {id:'purchasing',name:'Purchasing worker',role:'Keeps orders with vendors matched to what arrives',steps:[['Vendor update','io','Confirmation or change'],['Match to the order','data',''],['Different from the order?','decision',''],['Ask a buyer','person','Approve or reject'],['Update the order','system',''],['Done','pill','']]},
+ {id:'listing',name:'Listing worker',role:'Writes complete, search-ready product listings as drafts',steps:[['Product to list','data',''],['Write title and description','rect',''],['Add images and specs','rect',''],['Complete?','decision',''],['Draft ready','doc','A person approves it'],['Done','pill','']]},
+ {id:'watch',name:'Market watcher',role:'Watches competitors and flags what changed',steps:[['Check the sources','io','On a schedule'],['Compare to last time','rect',''],['Big change?','decision',''],['Flag it','system','Shows in your workspace'],['Done','pill','']]}
+];
+window.FlowPresets={TYPES,byId,place,finish,compose,TEMPLATES,COMBOS,WORKERS};
 })();
