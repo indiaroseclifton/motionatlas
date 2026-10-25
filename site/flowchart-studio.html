@@ -319,6 +319,13 @@ ul.cl{list-style:none;margin:0;padding:0;display:grid;gap:6px}ul.cl:empty{displa
 'use strict';
 (()=>{
 const $=id=>document.getElementById(id);
+/* an older cached script next to this page would leave the canvas empty: clear the caches once and reload */
+if(!(window.FlowEngine&&FlowEngine.KIND&&window.FlowPresets&&window.FlowCanvas&&window.FlowEditor)){
+ $('notes').innerHTML='<li class="warn">Updating to the latest version…</li>';
+ const done=()=>{try{if(!sessionStorage.getItem('fcs-reload')){sessionStorage.setItem('fcs-reload','1');location.reload();}else $('notes').innerHTML='<li class="warn">Your browser is holding an old copy. Reload the page with Ctrl+Shift+R (Cmd+Shift+R on a Mac).</li>';}catch{location.reload();}};
+ Promise.resolve().then(()=>navigator.serviceWorker?navigator.serviceWorker.getRegistrations().then(rs=>Promise.all(rs.map(r=>r.unregister()))):0).then(()=>window.caches?caches.keys().then(ks=>Promise.all(ks.map(k=>caches.delete(k)))):0).then(done,done);
+ return;}
+try{sessionStorage.removeItem('fcs-reload');}catch{}
 const store={get(k){try{return localStorage.getItem('fcs:'+k);}catch{return null;}},set(k,v){try{localStorage.setItem('fcs:'+k,v);}catch{}}};
 const S={ai:{check:store.get('aiCheck')==='1',suggest:store.get('aiSuggest')==='1'},view:store.get('view')||'canvas',motion:store.get('motion')!=='0',type:store.get('type')||'auto',style:store.get('style')||'workflow',dir:'TB',lanes:'0',spacing:'comfortable',decision:'badge',legend:'1',zoom:1,x:0,y:0,last:null};
 const toast=m=>{const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),1800);};
