@@ -172,7 +172,7 @@ details.help summary::before{content:'+ ';}details.help[open] summary::before{co
 .paper[data-lod=map] .fc-n text,.paper[data-lod=map] .fc-note,.paper[data-lod=map] .fc-l,.paper[data-lod=map] .fc-g text{display:none}
 .paper.noflow .fc-flow{display:none}
 .cvbar{position:absolute;left:16px;top:16px;z-index:5;display:flex;gap:6px;align-items:center;flex-wrap:wrap;max-width:calc(100% - 32px);padding:4px;border-radius:12px;background:var(--panel);box-shadow:var(--shadow);border:1px solid var(--hair)}
-.cvbar select,.cvbar button{min-height:36px;border:0;border-radius:8px;background:var(--soft);padding:0 10px;font-size:12.5px;font-weight:600;color:var(--ink)}
+.cvbar .sep{width:1px;align-self:stretch;background:var(--hair);margin:4px 2px}.cvbar select{min-width:132px;flex:none}.cvbar select,.cvbar button{min-height:36px;border:0;border-radius:8px;background:var(--soft);padding:0 10px;font-size:12.5px;font-weight:600;color:var(--ink)}
 .cvbar button:hover,.cvbar select:hover{background:#ECEEF4}
 .cvbar button[aria-pressed=true]{background:var(--ink);color:#fff}
 .cvbar .seg{background:none;border:0;padding:0}
@@ -291,7 +291,7 @@ ul.cl{list-style:none;margin:0;padding:0;display:grid;gap:6px}ul.cl:empty{displa
   <div class="pickers" id="pickers" role="group" aria-label="Colour and design"></div>
   <div class="stage" id="stage" aria-label="Flowchart preview. Drag to pan, use the zoom buttons or Ctrl and scroll to zoom.">
    <div class="paper" id="paper"></div>
-   <div class="cvbar" id="cvbar" role="toolbar" aria-label="Canvas tools"><select id="addKind" aria-label="Add an element"></select><button type="button" id="motionTgl" aria-pressed="true" title="Show the direction each connection flows">Flow motion</button><button type="button" id="tidy" title="Lay everything out again">Tidy up</button><span class="seg" id="viewSeg" role="group" aria-label="View"><button type="button" data-v="canvas" aria-pressed="true">Canvas</button><button type="button" data-v="classic" aria-pressed="false" title="The original fixed layout, one picture">Fixed layout</button></span></div>
+   <div class="cvbar" id="cvbar" role="toolbar" aria-label="Canvas tools"><select id="addKind" aria-label="Add an element"></select><button type="button" id="motionTgl" aria-pressed="true" title="Show the direction each connection flows">Flow motion</button><button type="button" id="tidy" title="Lay everything out again">Tidy up</button><span class="sep" aria-hidden="true"></span><button type="button" id="aiCheck" aria-pressed="false" title="Let AI judge whether each connection exists and is needed">AI check</button><button type="button" id="aiSuggest" aria-pressed="false" title="Let AI suggest how to make each connection better">AI suggest</button><span class="sep" aria-hidden="true"></span><span class="seg" id="viewSeg" role="group" aria-label="View"><button type="button" data-v="canvas" aria-pressed="true">Canvas</button><button type="button" data-v="classic" aria-pressed="false" title="The original fixed layout, one picture">Fixed layout</button></span></div>
    <aside class="insp" id="insp" hidden aria-label="Element details"></aside>
    <div class="motion" role="group" aria-label="Animation"><button type="button" id="mvPlay" class="mv-play" aria-label="Play the build-up animation"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg><span>Play</span></button>
     <select id="mvSpeed" aria-label="Animation speed"><option value="0.6">Slow</option><option value="1" selected>Normal</option><option value="1.6">Fast</option></select>
@@ -320,7 +320,7 @@ ul.cl{list-style:none;margin:0;padding:0;display:grid;gap:6px}ul.cl:empty{displa
 (()=>{
 const $=id=>document.getElementById(id);
 const store={get(k){try{return localStorage.getItem('fcs:'+k);}catch{return null;}},set(k,v){try{localStorage.setItem('fcs:'+k,v);}catch{}}};
-const S={view:store.get('view')||'canvas',motion:store.get('motion')!=='0',type:store.get('type')||'auto',style:store.get('style')||'workflow',dir:'TB',lanes:'0',spacing:'comfortable',decision:'badge',legend:'1',zoom:1,x:0,y:0,last:null};
+const S={ai:{check:store.get('aiCheck')==='1',suggest:store.get('aiSuggest')==='1'},view:store.get('view')||'canvas',motion:store.get('motion')!=='0',type:store.get('type')||'auto',style:store.get('style')||'workflow',dir:'TB',lanes:'0',spacing:'comfortable',decision:'badge',legend:'1',zoom:1,x:0,y:0,last:null};
 const toast=m=>{const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),1800);};
 
 /* plain step lists become Mermaid */
@@ -440,11 +440,14 @@ function notesCanvas(r){const g=r.g,ns=[...g.nodes.values()],bad=[],warn=[];
 function syncView(){const c=S.view==='canvas';stage.classList.toggle('cvmode',c);paper.classList.toggle('cv',c);paper.classList.toggle('noflow',!S.motion);
  if(!c){stage.style.background='';paper.dataset.lod='';paper.style.width='';cv.close();}
  document.querySelectorAll('#viewSeg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===S.view)));
- $('addKind').hidden=$('motionTgl').hidden=$('tidy').hidden=!c;document.querySelector('.motion').hidden=c;$('motionTgl').setAttribute('aria-pressed',String(S.motion));store.set('view',S.view);}
+ $('addKind').hidden=$('motionTgl').hidden=$('tidy').hidden=$('aiCheck').hidden=$('aiSuggest').hidden=!c;document.querySelectorAll('.cvbar .sep').forEach(x=>x.hidden=!c);$('aiCheck').setAttribute('aria-pressed',String(S.ai.check));$('aiSuggest').setAttribute('aria-pressed',String(S.ai.suggest));document.querySelector('.motion').hidden=c;$('motionTgl').setAttribute('aria-pressed',String(S.motion));store.set('view',S.view);}
 $('viewSeg').onclick=e=>{const b=e.target.closest('button');if(!b||b.dataset.v===S.view)return;S.view=b.dataset.v;syncView();render(true);};
 $('addKind').innerHTML='<option value="">+ Add element</option>'+['rect','decision','pill','data','io','sub','person','system','doc','note','mod_internal','mod_external','mod_flow'].map(k=>`<option value="${k}">${FlowEngine.KIND[k].name}</option>`).join('');
 $('addKind').onchange=e=>{const k=e.target.value;e.target.value='';if(k)cv.addElement(k);};
 $('motionTgl').onclick=()=>{S.motion=!S.motion;store.set('motion',S.motion?'1':'0');syncView();};
+/* AI toggles live in the toolbar. No AI service is connected yet (it costs money, so it waits for Nicolas's yes): switching one on is remembered and the panel says so; the rule check keeps working. */
+$('aiCheck').onclick=()=>{S.ai.check=!S.ai.check;store.set('aiCheck',S.ai.check?'1':'0');syncView();cv.refreshPanel();toast(S.ai.check?'AI check on. No AI service is connected yet, so the rule check runs.':'AI check off');};
+$('aiSuggest').onclick=()=>{S.ai.suggest=!S.ai.suggest;store.set('aiSuggest',S.ai.suggest?'1':'0');syncView();cv.refreshPanel();toast(S.ai.suggest?'AI suggest on. No AI service is connected yet, so the rule check runs.':'AI suggest off');};
 $('tidy').onclick=()=>{cv.unfreeze();fitView();toast('Everything laid out again');};
 
 /* pan and zoom */
@@ -456,7 +459,7 @@ $('zIn').onclick=()=>zoomAt(1.2,stage.clientWidth/2,stage.clientHeight/2);$('zOu
 stage.addEventListener('wheel',e=>{if(!(e.ctrlKey||e.metaKey)){S.x-=e.deltaX;S.y-=e.deltaY;apply();e.preventDefault();return;}e.preventDefault();const b=stage.getBoundingClientRect();zoomAt(Math.exp(-e.deltaY*.0022),e.clientX-b.left,e.clientY-b.top);},{passive:false});
 const cv=FlowCanvas.create({stage,paper,panel:$('insp'),source:()=>source(),engineSource:engSrc,
  setSource:src=>{$('src').value=src;if(S.mode==='visual')editor.load(src);render(false);},style:()=>DVStyle(S.style),opts:()=>({dir:S.dir,spacing:S.spacing,decision:S.decision}),
- mainType:()=>S.type,setMainType:t=>{S.type=t;store.set('type',t);},rerender:fast=>render(false,!!fast),mode:()=>S.view,view:()=>({x:S.x,y:S.y,zoom:S.zoom}),pan:(x,y)=>{S.x=x;S.y=y;apply();},save:j=>store.set('cv',j)});
+ mainType:()=>S.type,setMainType:t=>{S.type=t;store.set('type',t);},rerender:fast=>render(false,!!fast),mode:()=>S.view,view:()=>({x:S.x,y:S.y,zoom:S.zoom}),pan:(x,y)=>{S.x=x;S.y=y;apply();},save:j=>store.set('cv',j),ai:()=>S.ai});
 let drag=null;stage.addEventListener('pointerdown',e=>{if(S.view==='canvas'||e.target.closest('.zoom,.styleinfo,.motion'))return;drag={x:e.clientX,y:e.clientY,sx:S.x,sy:S.y};stage.classList.add('drag');stage.setPointerCapture(e.pointerId);});
 stage.addEventListener('pointermove',e=>{if(!drag)return;S.x=drag.sx+e.clientX-drag.x;S.y=drag.sy+e.clientY-drag.y;apply();});
 stage.addEventListener('pointerup',e=>{const d=drag;drag=null;stage.classList.remove('drag');

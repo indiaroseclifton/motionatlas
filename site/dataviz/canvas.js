@@ -142,11 +142,11 @@ function create(host){
     +MODFIELDS.map(([k,l,ph,opts])=>opts?`<label class="f">${l}<select data-act="m-${k}">${opts.map(o=>`<option${m[k]===o?' selected':''}>${o}</option>`).join('')}</select></label>`:`<label class="f">${l}<input type="text" data-act="m-${k}" value="${esc(m[k]||'')}" placeholder="${esc(ph)}"></label>`).join('')
     +`<label class="f">Status<select data-act="m-status"><option value="">Not set</option>${MSTATUS.map(([v,l])=>`<option value="${v}"${m.status===v?' selected':''}>${l}</option>`).join('')}</select></label>
      <label class="f">Notes<textarea data-act="m-notes" rows="2">${esc(m.notes||'')}</textarea></label>
-     <div class="acts"><button type="button" class="b primary" data-act="m-check">Check this connection</button><button type="button" class="b" disabled title="AI review is off until you approve its cost">AI review</button></div>`;
+     <div class="acts"><button type="button" class="b primary" data-act="m-check">Check this connection</button></div>${host.ai&&(host.ai().check||host.ai().suggest)?'<p class="note">AI is switched on in the toolbar, but no AI service is connected yet, so this uses the rule check.</p>':''}`;
     if(m.analysis){const a=m.analysis;h+=`<div class="verdict" data-h="${a.state}"><b>${dotHtml(a.state,a.headline)} ${esc(a.headline)}</b>
      <dl><dt>Does it exist?</dt><dd>${esc(a.exists)}</dd><dt>Is it needed?</dt><dd>${esc(a.needed)}</dd></dl>
      ${a.must.length?`<h4>What needs to happen</h4><ul>${a.must.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}
-     ${a.improve.length?`<h4>Make it better</h4><ul>${a.improve.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}<small>Rule check from what you entered. AI review is off.</small></div>`;}
+     ${a.improve.length?`<h4>Make it better</h4><ul>${a.improve.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}<small>Rule check from what you entered.</small></div>`;}
     h+='</section>';}
    h+=`<section><h3>Connections <small>${ins.length} in · ${outs.length} out</small></h3><ul class="ics">${ins.map(e=>connRow(g,e,'in')).join('')}${outs.map(e=>connRow(g,e,'out')).join('')}</ul>${!ins.length&&!outs.length?'<p class="note">Nothing connects to this yet.</p>':''}
    <div class="add"><select data-act="c-target" aria-label="Connect to"><option value="">Connect to…</option>${others.map(x=>`<option value="${esc(x.id)}">${esc(x.label)}</option>`).join('')}</select><select data-act="c-way" aria-label="Which way"><option value="out">goes to it</option><option value="in">comes from it</option></select><button type="button" class="b" data-act="c-add">Add</button></div></section>`;
