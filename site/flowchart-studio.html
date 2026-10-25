@@ -248,6 +248,7 @@ body{overflow:hidden}
 .ptabs button{min-height:44px;padding:0 12px;border:0;background:none;border-bottom:2px solid transparent;font-size:13px;font-weight:600;color:var(--mute)}
 .ptabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--accent)}
 .pbody{overflow:auto;padding:16px;display:grid;gap:16px;align-content:start;min-height:0;flex:1}
+body[data-mode=view] [data-edit]{display:none!important}body[data-mode=edit] [data-view]{display:none!important}
 .ptab[hidden]{display:none}
 .ptab{display:grid;gap:16px;align-content:start}
 .grp{display:grid;gap:10px}.grp>h2{margin:0;font:600 13px/1.2 Inter,sans-serif;color:var(--ink);display:flex;justify-content:space-between;align-items:baseline}.grp>h2 small{font:400 12px Inter;color:var(--mute)}
@@ -294,6 +295,7 @@ button,a,select,summary,[role=button]{touch-action:manipulation}
   <h1 class="wm">Flowchart studio</h1>
   <input type="text" id="title" class="doc-title" placeholder="Name this chart" aria-label="Chart name" autocomplete="off">
   <div class="top-r">
+   <div class="seg" id="modeSeg" role="group" aria-label="Viewing or editing"><button type="button" data-m="view" aria-pressed="false">Viewing</button><button type="button" data-m="edit" aria-pressed="true">Editing</button></div>
    <div class="pickers" id="pickers" role="group" aria-label="Colour and design"></div>
    <button class="btn" id="exShare" title="Copy a link to this chart">Share link</button>
    <div class="mwrap"><button class="btn primary" id="exportBtn" aria-haspopup="menu" aria-expanded="false">Export</button>
@@ -302,6 +304,8 @@ button,a,select,summary,[role=button]{touch-action:manipulation}
      <button role="menuitem" id="exPng">PNG<small>2× size</small></button>
      <button role="menuitem" id="exCopy">Copy SVG</button>
      <button role="menuitem" id="exHtml">Web page</button>
+     <button role="menuitem" id="exVideo">Build-up video<small>MP4</small></button>
+     <button role="menuitem" id="exGif">Build-up GIF</button>
      <button role="menuitem" id="exGuide">Style guide</button>
      <hr><a role="menuitem" href="diagram-studio.html">Diagram studio</a><a role="menuitem" href="chart-styles.html">Chart styles</a>
     </div></div>
@@ -365,14 +369,14 @@ button,a,select,summary,[role=button]{touch-action:manipulation}
   </aside>
   <main class="stage" id="stage" aria-label="Chart canvas. Drag empty space to pan, scroll with Ctrl to zoom. Press the question mark for keyboard shortcuts.">
    <div class="paper" id="paper"></div>
-   <div class="empty" id="empty" hidden><div><b>An empty canvas</b><p>Start from a template, or double-click anywhere to add your first element.</p><div class="row"><button type="button" class="btn primary" id="emptyTpl">Start from a template</button><button type="button" class="btn" id="emptyAdd">Add an element</button></div></div></div>
+   <div class="empty" id="empty" hidden><div><b>Canvas empty</b><p data-edit>Start from a template, or double-click anywhere to add your first element.</p><p data-view>Nothing here yet. Switch to Editing to add something, or load your workspace from the left.</p><div class="row" data-edit><button type="button" class="btn primary" id="emptyTpl">Start from a template</button><button type="button" class="btn" id="emptyAdd">Add an element</button></div></div></div>
    <nav class="rail" id="rail" aria-label="Canvas tools">
-    <button type="button" data-fly="add" data-canvas aria-expanded="false" aria-haspopup="true" data-tip="Add elements and workers" aria-label="Add elements and workers"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
-    <button type="button" data-fly="templates" aria-expanded="false" aria-haspopup="true" data-tip="Templates" aria-label="Templates"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h7v6H4zM13 5h7v6h-7zM4 13h7v6H4zM13 13h7v6h-7z"/></svg></button>
+    <button type="button" data-fly="add" data-canvas data-edit aria-expanded="false" aria-haspopup="true" data-tip="Add elements and workers" aria-label="Add elements and workers"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+    <button type="button" data-fly="templates" data-edit aria-expanded="false" aria-haspopup="true" data-tip="Templates" aria-label="Templates"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h7v6H4zM13 5h7v6h-7zM4 13h7v6H4zM13 13h7v6h-7z"/></svg></button>
     <button type="button" data-fly="workspace" data-canvas aria-expanded="false" aria-haspopup="true" data-tip="Workspace" aria-label="Workspace feeds" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V9l8-5 8 5v11M9 20v-6h6v6"/></svg></button>
-    <button type="button" data-fly="assist" data-canvas aria-expanded="false" aria-haspopup="true" data-tip="Assist" aria-label="Assist"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg></button>
+    <button type="button" data-fly="assist" data-canvas data-edit aria-expanded="false" aria-haspopup="true" data-tip="Assist" aria-label="Assist"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg></button>
     <hr>
-    <button type="button" id="panelBtn" aria-pressed="false" data-tip="Diagram settings" aria-label="Diagram settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9M15 4v6M9 14v6"/></svg></button>
+    <button type="button" id="panelBtn" data-edit aria-pressed="false" data-tip="Diagram settings" aria-label="Diagram settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9M15 4v6M9 14v6"/></svg></button>
    </nav>
    <div class="fly" id="fly" hidden role="dialog" aria-label="Tool"></div>
    <aside class="insp" id="insp" hidden aria-label="Element details"></aside>
@@ -380,8 +384,8 @@ button,a,select,summary,[role=button]{touch-action:manipulation}
     <select id="mvSpeed" aria-label="Animation speed"><option value="0.6">Slow</option><option value="1" selected>Normal</option><option value="1.6">Fast</option></select>
     <button type="button" id="mvVideo" title="Download the build-up as a video">Video</button><button type="button" id="mvGif" title="Download the build-up as an animated GIF">GIF</button><output id="mvProg" aria-live="polite"></output></div>
    <div class="dock" id="dock" role="toolbar" aria-label="History, zoom and view">
-    <button type="button" id="undoBtn" data-canvas aria-label="Undo" title="Undo" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5M4 9h10a6 6 0 010 12h-3"/></svg></button>
-    <button type="button" id="redoBtn" data-canvas aria-label="Redo" title="Redo" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 14l5-5-5-5M20 9H10a6 6 0 000 12h3"/></svg></button>
+    <button type="button" id="undoBtn" data-canvas data-edit aria-label="Undo" title="Undo" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5M4 9h10a6 6 0 010 12h-3"/></svg></button>
+    <button type="button" id="redoBtn" data-canvas data-edit aria-label="Redo" title="Redo" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 14l5-5-5-5M20 9H10a6 6 0 000 12h3"/></svg></button>
     <span class="sep" data-canvas aria-hidden="true"></span>
     <button id="zOut" aria-label="Zoom out">−</button><output id="zVal">100%</output><button id="zIn" aria-label="Zoom in">+</button><button id="zFit" aria-label="Fit to screen">Fit</button>
     <span class="sep" data-canvas aria-hidden="true"></span>
@@ -537,12 +541,18 @@ function notesCanvas(r){const g=r.g,ns=[...g.nodes.values()],bad=[],warn=[];
  $('notes').innerHTML=li.map(n=>`<li class="${n.ok?'':'warn'}">${n.text.replace(/</g,'&lt;')}</li>`).join('');}
 
 /* view: canvas or the original fixed picture */
+/* viewing or editing: a client link can open in viewing with ?view=1 (the switch is hidden; real permissions come with the Workspace connection) */
+const qs=new URLSearchParams(location.search);S.edit=qs.get('view')==='1'?false:store.get('edit')!=='0';
+function railVisible(){const any=[...document.querySelectorAll('#rail button')].some(b=>!b.hidden&&getComputedStyle(b).display!=='none');$('rail').hidden=!any;}
+function syncMode(){document.body.dataset.mode=S.edit?'edit':'view';document.querySelectorAll('#modeSeg button').forEach(b=>b.setAttribute('aria-pressed',String((b.dataset.m==='edit')===S.edit)));$('modeSeg').hidden=qs.get('view')==='1';
+ if(!S.edit){closeFly();showPanel(false);}cv.viewMode&&!S.edit&&cv.viewMode();if(S.last)cv.repaint();railVisible();}
+$('modeSeg').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.edit=b.dataset.m==='edit';store.set('edit',S.edit?'1':'0');syncMode();toast(S.edit?'Editing':'Viewing: nothing here can be changed');};
 function syncView(){const c=S.view==='canvas';stage.classList.toggle('cvmode',c);paper.classList.toggle('cv',c);paper.classList.toggle('noflow',!S.motion);
  if(!c){stage.style.background='';paper.dataset.lod='';paper.style.width='';cv.close();closeFly();}
  document.querySelectorAll('#viewSeg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===S.view)));
  document.querySelectorAll('[data-canvas]').forEach(el=>{el.hidden=!c||(el.dataset.fly==='workspace'&&!feedReady);});
  document.querySelector('.motion').hidden=c;$('motionTgl').setAttribute('aria-pressed',String(S.motion));store.set('view',S.view);
- if(!c)$('empty').hidden=true;}
+ if(!c)$('empty').hidden=true;railVisible();}
 $('viewSeg').onclick=e=>{const b=e.target.closest('button');if(!b||b.dataset.v===S.view)return;S.view=b.dataset.v;syncView();render(true);};
 $('tidy').onclick=()=>{cv.unfreeze();fitView();toast('Everything laid out again');};
 $('motionTgl').onclick=()=>{S.motion=!S.motion;store.set('motion',S.motion?'1':'0');syncView();};
@@ -637,7 +647,7 @@ $('zIn').onclick=()=>zoomAt(1.2,stage.clientWidth/2,stage.clientHeight/2);$('zOu
 stage.addEventListener('wheel',e=>{if(e.target.closest('.fly,.insp,.mnu,.cmenu'))return;if(!(e.ctrlKey||e.metaKey)){S.x-=e.deltaX;S.y-=e.deltaY;apply();e.preventDefault();return;}e.preventDefault();const b=stage.getBoundingClientRect();zoomAt(Math.exp(-e.deltaY*.0022),e.clientX-b.left,e.clientY-b.top);},{passive:false});
 const cv=FlowCanvas.create({stage,paper,panel:$('insp'),source:()=>source(),engineSource:engSrc,
  setSource:src=>{$('src').value=src;if(S.mode==='visual')editor.load(src);render(false);},style:()=>DVStyle(S.style),opts:()=>({dir:S.dir,spacing:S.spacing,decision:S.decision}),
- mainType:()=>S.type,setMainType:t=>{S.type=t;store.set('type',t);},rerender:fast=>render(false,!!fast),mode:()=>S.view,view:()=>({x:S.x,y:S.y,zoom:S.zoom}),pan:(x,y)=>{S.x=x;S.y=y;apply();},save:j=>store.set('cv',j),ai:()=>S.ai,toast,fit:()=>fitView(),zoomIn:()=>zoomAt(1.2,stage.clientWidth/2,stage.clientHeight/2),zoomOut:()=>zoomAt(1/1.2,stage.clientWidth/2,stage.clientHeight/2),showKeys:()=>$('keys').showModal(),history:(u,r)=>{$('undoBtn').disabled=!u;$('redoBtn').disabled=!r;}});
+ canEdit:()=>S.edit,mainType:()=>S.type,setMainType:t=>{S.type=t;store.set('type',t);},rerender:fast=>render(false,!!fast),mode:()=>S.view,view:()=>({x:S.x,y:S.y,zoom:S.zoom}),pan:(x,y)=>{S.x=x;S.y=y;apply();},save:j=>store.set('cv',j),ai:()=>S.ai,toast,fit:()=>fitView(),zoomIn:()=>zoomAt(1.2,stage.clientWidth/2,stage.clientHeight/2),zoomOut:()=>zoomAt(1/1.2,stage.clientWidth/2,stage.clientHeight/2),showKeys:()=>$('keys').showModal(),history:(u,r)=>{$('undoBtn').disabled=!u;$('redoBtn').disabled=!r;}});
 let drag=null;stage.addEventListener('pointerdown',e=>{if(S.view==='canvas'||e.target.closest('.rail,.fly,.dock,.mnu,.empty>div,.motion,.insp'))return;drag={x:e.clientX,y:e.clientY,sx:S.x,sy:S.y};stage.classList.add('drag');stage.setPointerCapture(e.pointerId);});
 stage.addEventListener('pointermove',e=>{if(!drag)return;S.x=drag.sx+e.clientX-drag.x;S.y=drag.sy+e.clientY-drag.y;apply();});
 stage.addEventListener('pointerup',e=>{const d=drag;drag=null;stage.classList.remove('drag');
@@ -696,12 +706,23 @@ function stopPlay(){if(!play)return;cancelAnimationFrame(play.raf);play.P.reset(
 $('mvPlay').onclick=()=>{if(play){stopPlay();return;}const el=svgEl();if(!el)return;const P=FlowReveal.plan(el,{order:orderFor(),speed:+$('mvSpeed').value});P.apply(0);
  const t0=performance.now();play={P,raf:0};$('mvPlay').querySelector('span').textContent='Stop';$('mvPlay').setAttribute('aria-label','Stop the animation');
  const tick=now=>{if(!play)return;const t=now-t0;P.apply(t);if(t>=P.duration+600){stopPlay();return;}play.raf=requestAnimationFrame(tick);};play.raf=requestAnimationFrame(tick);};
-const busy=on=>{['mvPlay','mvVideo','mvGif'].forEach(id=>$(id).disabled=on);if(!on)setTimeout(()=>{$('mvProg').textContent='';},2500);};
+const busy=on=>{['mvPlay','mvVideo','mvGif','exVideo','exGif'].forEach(id=>$(id).disabled=on);if(!on)setTimeout(()=>{$('mvProg').textContent='';},2500);};
 const animOpts=()=>({svgEl:svgEl(),width:S.last.width,height:S.last.height,style:DVStyle(S.style),order:orderFor(),speed:+$('mvSpeed').value,onProgress:p=>{$('mvProg').textContent=`Rendering ${Math.round(p*100)}%`;}});
 $('mvVideo').onclick=async()=>{stopPlay();busy(true);try{const {blob,ext}=await DVExport.video(animOpts());download(slug()+'-build.'+ext,blob);$('mvProg').textContent='Done';toast(ext==='mp4'?'MP4 downloaded':'WebM downloaded (this browser has no H.264 encoder)');}
  catch(err){console.error(err);toast('Video export failed: '+(err.message||err));}finally{busy(false);}};
 $('mvGif').onclick=async()=>{stopPlay();busy(true);try{download(slug()+'-build.gif',await DVExport.gif(animOpts()));$('mvProg').textContent='Done';toast('GIF downloaded');}
  catch(err){console.error(err);toast('GIF export failed: '+(err.message||err));}finally{busy(false);}};
+
+/* build-up video and GIF from the canvas: the framed export is drawn off screen and animated from there */
+async function animJob(kind){stopPlay();busy(true);let host=null;
+ try{let o;if(S.view==='canvas'){const r=cur();host=document.createElement('div');host.style.cssText=`position:fixed;left:-99999px;top:0;width:${r.width}px;height:${r.height}px;pointer-events:none`;host.innerHTML=r.svg;document.body.appendChild(host);
+   o={svgEl:host.querySelector('svg'),width:r.width,height:r.height,style:DVStyle(S.style),order:orderFor(),speed:+$('mvSpeed').value,onProgress:p=>{$('mvProg').textContent=`Rendering ${Math.round(p*100)}%`;toast(`Rendering ${Math.round(p*100)}%`);}};}
+  else o=animOpts();
+  if(kind==='video'){const {blob,ext}=await DVExport.video(o);download(slug()+'-build.'+ext,blob);toast(ext==='mp4'?'MP4 downloaded':'WebM downloaded (this browser has no H.264 encoder)');}
+  else{download(slug()+'-build.gif',await DVExport.gif(o));toast('GIF downloaded');}}
+ catch(err){console.error(err);toast((kind==='video'?'Video':'GIF')+' export failed: '+(err.message||err));}
+ finally{if(host)host.remove();busy(false);$('mvProg').textContent='';}}
+$('exVideo').onclick=()=>animJob('video');$('exGif').onclick=()=>animJob('gif');
 
 /* start */
 (function init(){const h=new URLSearchParams(location.hash.slice(1));let src=store.get('src'),title=store.get('title'),sub=store.get('subtitle');
@@ -709,7 +730,7 @@ $('mvGif').onclick=async()=>{stopPlay();busy(true);try{download(slug()+'-build.g
  try{if(h.get('c')){cv.setState(h.get('v')?JSON.parse(unb64(h.get('v'))):null);}else cv.load(store.get('cv'));}catch{cv.setState(null);}
  const first=FlowExamples[0];$('src').value=src||first.src;$('title').value=title??first.name;$('subtitle').value=sub||'';
  if(!DVStyles.some(s=>s.id===S.style))S.style='workflow';drawPickers();
- setMode(S.mode);syncView();showTab(store.get('tab')||'chart');showPanel(store.get('panel')==='1'&&innerWidth>900);$('viewLbl').textContent=LODS[S.lod]||'Auto';$('viewMenu').querySelectorAll('[data-lod]').forEach(x=>x.setAttribute('aria-checked',String(x.dataset.lod===S.lod)));render(true);document.fonts?.ready.then(()=>setTimeout(()=>render(false),60));
+ setMode(S.mode);syncView();syncMode();showTab(store.get('tab')||'chart');showPanel(store.get('panel')==='1'&&innerWidth>900);$('viewLbl').textContent=LODS[S.lod]||'Auto';$('viewMenu').querySelectorAll('[data-lod]').forEach(x=>x.setAttribute('aria-checked',String(x.dataset.lod===S.lod)));render(true);document.fonts?.ready.then(()=>setTimeout(()=>render(false),60));
 })();
 })();
 </script>

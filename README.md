@@ -373,3 +373,7 @@ Short notes on parts of the atlas that are easy to miss:
 - **Films:** web encodes are in `site/assets/films/` (1920px masters, `-720` cuts for phones,
   posters). The Genesis hero source is the HyperFrames project in `film/`
   (`npx hyperframes render`).
+
+### Video, GIF and view-only mode (Flowchart Studio)
+- Export menu: **Canvas video (MP4)** and **Canvas GIF** play the diagram building up element by element.
+- `flowchart-studio.html?view=1` opens the studio read-only (pan, open panels, no editing); the Viewing/Editing switch toggles it otherwise.
