@@ -113,6 +113,7 @@ function create(host){
  function paintOverlay(tmp){const ov=paper.querySelector('.fc-ov');if(!ov||!last)return;const z=Math.max(.25,host.view().zoom),acc='#5B2DFF';let h='';
   const hr=Math.max(6,8/z);
   for(const id of sel){const n=last.g.nodes.get(id);if(!n)continue;h+=`<rect x="${n.x-5}" y="${n.y-5}" width="${n.w+10}" height="${n.h+10}" rx="${Math.max(8,(last.style.t.nodeRadius||8)+4)}" fill="none" stroke="${acc}" stroke-width="${2/Math.min(1,z)*.7+.6}" stroke-dasharray="5 4" pointer-events="none"/>`;}
+  if(!canEdit()){ov.innerHTML=h;return;}
   if(sel.size===1&&!selEdge&&!tmp){const n=last.g.nodes.get(primary);if(n){for(const [sd,x,y] of [['t',n.x+n.w/2,n.y-14],['b',n.x+n.w/2,n.y+n.h+14],['l',n.x-14,n.y+n.h/2],['r',n.x+n.w+14,n.y+n.h/2]])
    h+=`<g class="fc-handle" data-side="${sd}" data-nid="${esc(n.id)}"><title>Drag to another element to connect. Drop on empty space to add a new one.</title><circle cx="${x}" cy="${y}" r="${hr*1.9}" fill="transparent"/><circle cx="${x}" cy="${y}" r="${hr}" fill="#fff" stroke="${acc}" stroke-width="2"/><path d="M${x-hr*.45} ${y}H${x+hr*.45}M${x} ${y-hr*.45}V${y+hr*.45}" stroke="${acc}" stroke-width="1.6" stroke-linecap="round"/></g>`;}}
   if(sel.size===1&&!selEdge&&!tmp){const n=last.g.nodes.get(primary);if(n){const rs=hr*1.15;
@@ -212,7 +213,9 @@ function create(host){
     <label class="f">Title<input type="text" data-act="g-title" value="${esc(grp.title)}"></label>
     <section><h3>Inside</h3><ul class="ics">${mem.map(n=>{const H=HO(n);return `<li class="ic"><button type="button" class="ic-head" data-act="goto" data-id="${esc(n.id)}">${H?dotHtml(H.s,H.tip):''}<span class="ic-name">${esc(n.label)}</span><span class="ic-dir">${esc(kindName(n))}</span></button></li>`;}).join('')||'<li class="note">Empty</li>'}</ul></section>
     <div class="acts"><button type="button" class="b danger" data-act="g-del">Ungroup</button></div></div>`;}
-  if(focus){const el=panel.querySelector(focus);if(el){el.focus();if(el.select)el.select();}}}
+  if(!canEdit()){const pb=panel.querySelector('.pb');if(pb){panel.querySelectorAll('input,select,textarea').forEach(el=>{el.disabled=true;});panel.querySelectorAll('.acts,.add,.mod .sub,.mod h3+p').forEach(el=>{if(!el.closest('.verdict'))el.hidden=true;});
+    const n=document.createElement('p');n.className='note';n.textContent='You are viewing. Switch to Editing to change this.';pb.insertBefore(n,pb.firstChild);}}
+  if(focus&&canEdit()){const el=panel.querySelector(focus);if(el){el.focus();if(el.select)el.select();}}}
 
  /* ---------- edge helpers ---------- */
  const edgeIndex=(M,key)=>{const [f,t]=key.split('>');return M.edges.findIndex(x=>x.from===f&&x.to===t);};
@@ -334,6 +337,7 @@ function create(host){
 
  /* ---------- stage interactions ---------- */
  const mode=()=>host.mode()==='canvas';
+ const canEdit=()=>!host.canEdit||host.canEdit();
  const world=ev=>{const r=stage.getBoundingClientRect(),v=host.view();return {x:(ev.clientX-r.left-v.x)/v.zoom,y:(ev.clientY-r.top-v.y)/v.zoom};};
  const topEl=ev=>{const u=document.elementFromPoint(ev.clientX,ev.clientY);return u||ev.target;};
  const target=ev=>{let t=ev.target;if(!t.closest||!t.closest('.fc-n,.fc-e,.fc-l,.fc-g,.fc-handle,.fc-ehandle,.fc-rz'))t=topEl(ev);
@@ -342,6 +346,7 @@ function create(host){
  const edgeOfEl=el=>{const id=el.dataset.eid;const e=last&&last.g.edges.find(x=>String(x.i)===String(id));return e||null;};
  stage.addEventListener('pointerdown',ev=>{if(!mode()||ev.button>0)return;closeMenu();const T=target(ev);if(T.ui)return;
   stage.focus({preventScroll:true});
+  if(!canEdit()){const e=T.e?edgeOfEl(T.e):null;drag={kind:'pan',ox:ev.clientX,oy:ev.clientY,sx:host.view().x,sy:host.view().y,moved:false,pid:ev.pointerId,hit:{n:T.n?T.n.dataset.nid:null,e:e?edgeKey(e):null}};stage.classList.add('drag');stage.setPointerCapture(ev.pointerId);return;}
   if(T.h){const id=T.h.dataset.nid;drag={kind:'connect',from:id,ox:ev.clientX,oy:ev.clientY,moved:false,pid:ev.pointerId};stage.setPointerCapture(ev.pointerId);ev.stopPropagation();return;}
   if(T.rz){const id=T.rz.dataset.nid,n=last&&last.g.nodes.get(id),p0=posOf(id);if(!n||!p0)return;
    drag={kind:'resize',id,corner:T.rz.dataset.corner,orig:{x:p0.x,y:p0.y,w:n.w,h:n.h},start:world(ev),ox:ev.clientX,oy:ev.clientY,moved:false,pid:ev.pointerId};stage.setPointerCapture(ev.pointerId);ev.stopPropagation();return;}
@@ -357,7 +362,7 @@ function create(host){
   if(ev.shiftKey){const w=world(ev);drag={kind:'marquee',start:w,ox:ev.clientX,oy:ev.clientY,moved:false,pid:ev.pointerId,box:null};stage.setPointerCapture(ev.pointerId);return;}
   drag={kind:'pan',ox:ev.clientX,oy:ev.clientY,sx:host.view().x,sy:host.view().y,moved:false,pid:ev.pointerId};stage.classList.add('drag');stage.setPointerCapture(ev.pointerId);
   if(ev.pointerType!=='mouse')armPress(ev);});
- function armPress(ev){clearTimeout(press);const cx=ev.clientX,cy=ev.clientY,w=world(ev);press=setTimeout(()=>{if(drag&&!drag.moved){const T=target({target:topEl({clientX:cx,clientY:cy}),clientX:cx,clientY:cy});drag=null;stage.classList.remove('drag');showMenu(cx,cy,contextItems(T,w));}},560);}
+ function armPress(ev){if(!canEdit())return;clearTimeout(press);const cx=ev.clientX,cy=ev.clientY,w=world(ev);press=setTimeout(()=>{if(drag&&!drag.moved){const T=target({target:topEl({clientX:cx,clientY:cy}),clientX:cx,clientY:cy});drag=null;stage.classList.remove('drag');showMenu(cx,cy,contextItems(T,w));}},560);}
  stage.addEventListener('pointermove',ev=>{if(!drag||!mode())return;const dx=ev.clientX-drag.ox,dy=ev.clientY-drag.oy;if(!drag.moved&&Math.hypot(dx,dy)<4)return;
   if(!drag.moved){drag.moved=true;clearTimeout(press);if(drag.kind==='node'||drag.kind==='group'||drag.kind==='resize'){freeze();pushUndo();}}
   if(drag.kind==='pan'){host.pan(drag.sx+dx,drag.sy+dy);return;}
@@ -393,14 +398,14 @@ function create(host){
    if(!ev.shiftKey&&!ev.metaKey&&!ev.ctrlKey&&sel.size>1)setSel([d.id]);
    if(dbl){tap=null;open('node',d.id,'[data-act=n-label]');}else if(insp)open('node',d.id);paintOverlay();}
   else if(d.kind==='edge'){const now=performance.now(),dbl=tap&&tap.id==='e'+d.id&&now-tap.t<420;tap={id:'e'+d.id,t:now};if(dbl||insp){tap=null;open('edge',d.id);}}
-  else if(d.kind==='pan'){setSel([]);if(!ev.target.closest('.insp'))close();}});
- stage.addEventListener('dblclick',ev=>{if(!mode())return;const T=target(ev);if(T.ui||T.h||T.eh)return;ev.preventDefault();
+  else if(d.kind==='pan'){if(d.hit&&d.hit.n){setSel([d.hit.n]);open('node',d.hit.n);}else if(d.hit&&d.hit.e){setSel([],d.hit.e);open('edge',d.hit.e);}else{setSel([]);if(!ev.target.closest('.insp'))close();}}});
+ stage.addEventListener('dblclick',ev=>{if(!mode()||!canEdit())return;const T=target(ev);if(T.ui||T.h||T.eh)return;ev.preventDefault();
   if(T.rz){resetSize(T.rz.dataset.nid);return;}
   if(T.n){open('node',T.n.dataset.nid,'[data-act=n-label]');}
   else if(T.e){const e=edgeOfEl(T.e);if(e)open('edge',edgeKey(e));}
   else if(T.g){open('group',T.g.dataset.gid,'[data-act=g-title]');}
   else{addElement('rect',world(ev));}});
- stage.addEventListener('contextmenu',ev=>{if(!mode())return;ev.preventDefault();clearTimeout(press);const T=target(ev);if(T.ui)return;showMenu(ev.clientX,ev.clientY,contextItems(T,world(ev)));});
+ stage.addEventListener('contextmenu',ev=>{if(!mode())return;ev.preventDefault();if(!canEdit())return;clearTimeout(press);const T=target(ev);if(T.ui)return;showMenu(ev.clientX,ev.clientY,contextItems(T,world(ev)));});
  document.addEventListener('pointerdown',ev=>{if(menu&&!menu.contains(ev.target))closeMenu();},true);
  stage.addEventListener('focusin',ev=>{if(!mode())return;const n=ev.target.closest&&ev.target.closest('.fc-n');if(n&&!sel.has(n.dataset.nid)){sel=new Set([n.dataset.nid]);selEdge=null;primary=n.dataset.nid;paintOverlay();}});
 
@@ -408,6 +413,7 @@ function create(host){
  const editable=t=>t&&(/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)||t.isContentEditable);
  document.addEventListener('keydown',ev=>{if(!mode()||ev.defaultPrevented)return;const t=ev.target;if(editable(t)||(t.closest&&t.closest('dialog,.dd-list,.cmenu,.insp,.toolbar,.pickers,.side,header')))return;
   const mod=ev.metaKey||ev.ctrlKey,k=ev.key.toLowerCase();let used=true;
+  if(!canEdit()){if(k==='escape'){closeMenu();if(insp)close();setSel([]);}else if(k==='enter'&&primary&&sel.size===1)open('node',primary);else if(k==='+'||k==='='){host.zoomIn&&host.zoomIn();}else if(k==='-'||k==='_'){host.zoomOut&&host.zoomOut();}else if(k==='0'){host.fit&&host.fit();}else if(k==='?'){host.showKeys&&host.showKeys();}else used=false;if(used)ev.preventDefault();return;}
   if(mod&&k==='z'&&!ev.shiftKey)undo();else if(mod&&(k==='y'||(k==='z'&&ev.shiftKey)))redo();
   else if(mod&&k==='c'){if(!copy())used=false;}else if(mod&&k==='x'){if(sel.size)cut();else used=false;}
   else if(mod&&k==='v'){if(clip)paste();else{used=false;pasteFromSystem();}}
@@ -427,7 +433,7 @@ function create(host){
  return {draw,exportSvg,load,getState,setState,store,reset(){setState(null);close();sel=new Set();selEdge=null;primary=null;hist.u=[];hist.r=[];notify();},open,close,addElement,addWorker,addDiagram,setClusterType,removeCluster,undo,redo,copy,cut,paste,duplicate,deleteSelection,selectAll,
   clusters:()=>last?last.clusters.map(c=>({id:c.id,type:c.type,count:c.nodes.length})):[],workers:()=>FP.WORKERS,
   last:()=>last,get frozen(){return st.frozen;},unfreeze(){pushUndo();st.pos={};st.frozen=false;store();host.rerender();},
-  inspectorOpen:()=>!!insp,refreshPanel(){if(insp)renderPanel();},repaint(){paintOverlay();},
+  inspectorOpen:()=>!!insp,refreshPanel(){if(insp)renderPanel();},repaint(){paintOverlay();},viewMode(){close();closeMenu();setSel([]);},
   canUndo:()=>hist.u.length>0,canRedo:()=>hist.r.length>0,selectedCount:()=>sel.size};
 }
 window.FlowCanvas={create};
