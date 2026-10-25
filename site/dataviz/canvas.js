@@ -16,15 +16,15 @@ const MOD=navigator.platform&&/mac|iphone|ipad/i.test(navigator.platform)?'⌘':
 
 function create(host){
  const FE=window.FlowEngine,FP=window.FlowPresets;
- const st={pos:{},meta:{},cl:{},ct:{},frozen:false,pending:[]};
+ const st={pos:{},size:{},meta:{},cl:{},ct:{},frozen:false,pending:[]};
  let sel=new Set(),selEdge=null,primary=null,clip=null,pasteN=0;
  let last=null,raf=0,drag=null,insp=null,menu=null,tap=null,press=null;
  const stage=host.stage,paper=host.paper,panel=host.panel;
  stage.tabIndex=0;
  const store=()=>host.save(JSON.stringify(getState()));
- function setState(o){st.pos=o?.pos||{};st.meta=o?.meta||{};st.cl=o?.cl||{};st.ct=o?.ct||{};st.frozen=!!o?.frozen;st.pending=[];}
+ function setState(o){st.pos=o?.pos||{};st.size=o?.size||{};st.meta=o?.meta||{};st.cl=o?.cl||{};st.ct=o?.ct||{};st.frozen=!!o?.frozen;st.pending=[];}
  function load(json){try{setState(json?JSON.parse(json):null);}catch{setState(null);}hist.u=[];hist.r=[];notify();}
- const getState=()=>({pos:st.pos,meta:st.meta,cl:st.cl,ct:st.ct,frozen:st.frozen});
+ const getState=()=>({pos:st.pos,size:st.size,meta:st.meta,cl:st.cl,ct:st.ct,frozen:st.frozen});
 
  /* ---------- history ---------- */
  const hist={u:[],r:[],key:null,t:0};
@@ -65,7 +65,7 @@ function create(host){
   for(const n of g.nodes.values()){const c=clusterOf(n);if(!mem.has(c)){mem.set(c,[]);ids.push(c);}mem.get(c).push(n);}
   if(!ids.length){ids.push('main');mem.set('main',[]);}
   const typeOf=c=>st.ct[c]||(c==='main'?mainType(g):'flow');
-  FE.layout(g,style,{canvas:true,direction:o.dir,spacing:o.spacing,decision:o.decision});
+  FE.layout(g,style,{canvas:true,sizes:st.size,direction:o.dir,spacing:o.spacing,decision:o.decision});
   const ctx={style,t:style.t,dir:o.dir,spacing:o.spacing,decision:o.decision,groups:g.groups};
   const clusters=ids.map(c=>({id:c,type:typeOf(c),nodes:mem.get(c),edges:g.edges.filter(e=>mem.get(c).some(n=>n.id===e.from)&&mem.get(c).some(n=>n.id===e.to))}));
   const auto=FP.compose(clusters.filter(c=>c.nodes.length),ctx);
@@ -90,7 +90,7 @@ function create(host){
  function draw(){
   const hadFocus=stage.contains(document.activeElement)&&document.activeElement!==stage;
   const b=build();
-  const r=FE.render(b.g,b.style,{canvas:true,positions:b.pos,routes:b.routes,decor:b.decor,health:b.health,nodeTypes:b.nodeTypes,badges:b.badges,tips:b.tips,direction:b.o.dir,spacing:b.o.spacing,decision:b.o.decision});
+  const r=FE.render(b.g,b.style,{canvas:true,sizes:st.size,positions:b.pos,routes:b.routes,decor:b.decor,health:b.health,nodeTypes:b.nodeTypes,badges:b.badges,tips:b.tips,direction:b.o.dir,spacing:b.o.spacing,decision:b.o.decision});
   paper.innerHTML=r.svg.replace(/<\/svg>$/,'<g class="fc-ov"></g></svg>');
   let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;
   for(const n of b.g.nodes.values()){x0=Math.min(x0,n.x);y0=Math.min(y0,n.y);x1=Math.max(x1,n.x+n.w);y1=Math.max(y1,n.y+n.h);}
@@ -104,7 +104,7 @@ function create(host){
   return last;}
 
  /* what the exports draw: the same positions on a framed page */
- function exportSvg(opts){const b=build();return FE.render(b.g,b.style,{scene:true,flow:true,positions:b.pos,routes:b.routes,decor:b.decor,direction:b.o.dir,spacing:b.o.spacing,decision:b.o.decision,title:opts.title,subtitle:opts.subtitle,showLegend:opts.showLegend});}
+ function exportSvg(opts){const b=build();return FE.render(b.g,b.style,{scene:true,flow:true,sizes:st.size,positions:b.pos,routes:b.routes,decor:b.decor,direction:b.o.dir,spacing:b.o.spacing,decision:b.o.decision,title:opts.title,subtitle:opts.subtitle,showLegend:opts.showLegend});}
 
  /* ---------- selection and overlay ---------- */
  const edgeKey=e=>e.from+'>'+e.to;
@@ -115,6 +115,9 @@ function create(host){
   for(const id of sel){const n=last.g.nodes.get(id);if(!n)continue;h+=`<rect x="${n.x-5}" y="${n.y-5}" width="${n.w+10}" height="${n.h+10}" rx="${Math.max(8,(last.style.t.nodeRadius||8)+4)}" fill="none" stroke="${acc}" stroke-width="${2/Math.min(1,z)*.7+.6}" stroke-dasharray="5 4" pointer-events="none"/>`;}
   if(sel.size===1&&!selEdge&&!tmp){const n=last.g.nodes.get(primary);if(n){for(const [sd,x,y] of [['t',n.x+n.w/2,n.y-14],['b',n.x+n.w/2,n.y+n.h+14],['l',n.x-14,n.y+n.h/2],['r',n.x+n.w+14,n.y+n.h/2]])
    h+=`<g class="fc-handle" data-side="${sd}" data-nid="${esc(n.id)}"><title>Drag to another element to connect. Drop on empty space to add a new one.</title><circle cx="${x}" cy="${y}" r="${hr*1.9}" fill="transparent"/><circle cx="${x}" cy="${y}" r="${hr}" fill="#fff" stroke="${acc}" stroke-width="2"/><path d="M${x-hr*.45} ${y}H${x+hr*.45}M${x} ${y-hr*.45}V${y+hr*.45}" stroke="${acc}" stroke-width="1.6" stroke-linecap="round"/></g>`;}}
+  if(sel.size===1&&!selEdge&&!tmp){const n=last.g.nodes.get(primary);if(n){const rs=hr*1.15;
+   for(const [c,x,y] of [['nw',n.x,n.y],['ne',n.x+n.w,n.y],['sw',n.x,n.y+n.h],['se',n.x+n.w,n.y+n.h]])
+    h+=`<g class="fc-rz" data-corner="${c}" data-nid="${esc(n.id)}"><title>Drag to resize. Double-click to reset the size.</title><rect x="${x-rs*1.9}" y="${y-rs*1.9}" width="${rs*3.8}" height="${rs*3.8}" fill="transparent"/><rect x="${x-rs}" y="${y-rs}" width="${rs*2}" height="${rs*2}" rx="2.5" fill="#fff" stroke="${acc}" stroke-width="2"/></g>`;}}
   if(selEdge&&!tmp){const e=findEdge(selEdge);if(e&&e.xy){const d='M'+e.xy.map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join('L');
    h+=`<path d="${d}" fill="none" stroke="${acc}" stroke-width="${4/Math.min(1,z)}" stroke-opacity=".35" stroke-linecap="round" stroke-linejoin="round" pointer-events="none"/>`;
    const a=e.xy[0],b=e.xy[e.xy.length-1];
@@ -190,6 +193,7 @@ function create(host){
      ${a.must.length?`<h4>What needs to happen</h4><ul>${a.must.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}
      ${a.improve.length?`<h4>Make it better</h4><ul>${a.improve.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}<small>Rule check from what you entered.</small></div>`;}
     h+='</section>';}
+   h+=`<section class="mod"><h3>Size</h3><p class="sub">Drag a corner of the element to resize it, or type a size. Text shrinks to fit.</p><div class="two"><label class="f">Width<input type="number" min="96" max="720" step="4" data-act="s-w" value="${Math.round(n.w)}"></label><label class="f">Height<input type="number" min="44" max="420" step="4" data-act="s-h" value="${Math.round(n.h)}"></label></div><div class="acts"><button type="button" class="b" data-act="s-reset"${st.size[n.id]?'':' disabled'}>Back to the standard size</button></div></section>`;
    h+=kickHtml(m);
    h+=`<section><h3>Connections <small>${ins.length} in · ${outs.length} out</small></h3><ul class="ics">${ins.map(e=>connRow(g,e,'in')).join('')}${outs.map(e=>connRow(g,e,'out')).join('')}</ul>${!ins.length&&!outs.length?'<p class="note">Nothing connects to this yet. Drag from one of its round handles to another element.</p>':''}
    <div class="add"><select data-act="c-target" aria-label="Connect to"><option value="">Connect to…</option>${others.map(x=>`<option value="${esc(x.id)}">${esc(x.label)}</option>`).join('')}</select><select data-act="c-way" aria-label="Which way"><option value="out">goes to it</option><option value="in">comes from it</option></select><button type="button" class="b" data-act="c-add">Add</button></div></section>`;
@@ -234,6 +238,7 @@ function create(host){
    else if(a==='n-group'){mut(M=>{const from=stageOf(M,id);if(from)from.steps=from.steps.filter(x=>x!==id);else M.items=M.items.filter(it=>!(it.type==='step'&&it.id===id));const to=M.items.find(it=>it.type==='stage'&&it.id===el.value);if(to)to.steps.push(id);else M.items.push({type:'step',id});});after();}
    else if(a==='w-count'){const n=Math.max(1,Math.min(12,Math.round(+el.value||1)));el.value=n;pushUndo();metaOf(id).count=n;syncLanes(id);store();after();}
    else if(a==='w-status'){pushUndo();metaOf(id).wstatus=el.value;store();after();}
+   else if(a==='s-w'||a==='s-h'){const nn=last.g.nodes.get(id),w=a==='s-w'?+el.value:nn.w,hh=a==='s-h'?+el.value:nn.h;setSize(id,w,hh);renderPanel();}
    else if(a==='k-trigger'){pushUndo();metaOf(id).trigger=el.value;store();host.rerender(true);}
    else if(a.startsWith('m-')){pushUndo();metaOf(id)[a.slice(2)]=el.value;store();}}
   if(a==='e-kind'){mut(M=>{const i=edgeIndex(M,el.dataset.ek);if(i>=0)M.edges[i].kind=el.value;});after();}
@@ -246,25 +251,28 @@ function create(host){
   if(a==='e-swap'){const k=b.dataset.ek;mut(M=>{const i=edgeIndex(M,k);if(i>=0){const e=M.edges[i];[e.from,e.to]=[e.to,e.from];}});if(insp.kind==='edge')insp.id=k.split('>').reverse().join('>');after();return;}
   if(a==='c-add'){const t=panel.querySelector('[data-act=c-target]').value,w=panel.querySelector('[data-act=c-way]').value;if(!t)return;
    if(w==='out')addEdge(insp.id,t);else addEdge(t,insp.id);after();return;}
+  if(a==='s-reset'){resetSize(insp.id);return;}
   if(a==='n-del'){deleteSelection();return;}
   if(a==='n-dup'){duplicate();return;}
   if(a==='m-check'){const id=insp.id;pushUndo();metaOf(id).analysis=analyse(id);store();host.rerender();renderPanel();return;}
   if(a==='g-del'){mut(M=>{const i=M.items.findIndex(x=>x.type==='stage'&&('grp_'+x.id)===insp.id);if(i>=0){const s0=M.items[i];M.items.splice(i,1,...s0.steps.map(x=>({type:'step',id:x})));}});close();host.rerender();return;}});
  panel.addEventListener('keydown',ev=>{if(ev.key==='Escape'){close();paintOverlay();stage.focus();}});
 
+ function resetSize(id){if(!st.size[id])return;pushUndo();delete st.size[id];store();host.rerender();if(insp)renderPanel();}
+ function setSize(id,w,h){const n=last&&last.g.nodes.get(id);if(!n)return;pushUndo('size:'+id);freeze();const cur=posOf(id)||{x:n.x,y:n.y};st.size[id]={w:Math.max(96,Math.min(720,Math.round(w||n.w))),h:Math.max(44,Math.min(420,Math.round(h||n.h)))};st.pos[id]=cur;store();host.rerender(true);paintOverlay();}
  /* ---------- clipboard, delete, duplicate ---------- */
  function copy(){const ids=[...sel];if(!ids.length)return false;const M=model();
-  clip={nodes:ids.filter(id=>M.nodes.has(id)).map(id=>({n:{...M.nodes.get(id)},pos:{...(posOf(id)||{x:0,y:0})},meta:st.meta[id]?JSON.parse(JSON.stringify({...st.meta[id],analysis:undefined})):null})),edges:M.edges.filter(e=>ids.includes(e.from)&&ids.includes(e.to)).map(e=>({...e}))};
+  clip={nodes:ids.filter(id=>M.nodes.has(id)).map(id=>({n:{...M.nodes.get(id)},pos:{...(posOf(id)||{x:0,y:0})},meta:st.meta[id]?JSON.parse(JSON.stringify({...st.meta[id],analysis:undefined})):null,size:st.size[id]?{...st.size[id]}:null})),edges:M.edges.filter(e=>ids.includes(e.from)&&ids.includes(e.to)).map(e=>({...e}))};
   pasteN=0;try{navigator.clipboard&&navigator.clipboard.writeText('atlas-canvas '+JSON.stringify(clip)).catch(()=>{});}catch{}return true;}
  function paste(at){if(!clip||!clip.nodes.length){host.toast('Nothing copied yet');return;}freeze();pasteN++;const ids=[];
   const x0=Math.min(...clip.nodes.map(c=>c.pos.x)),y0=Math.min(...clip.nodes.map(c=>c.pos.y)),dx=at?at.x-x0:30*pasteN,dy=at?at.y-y0:30*pasteN;
-  mut(M=>{const map=new Map(),taken=takenId(M);for(const c of clip.nodes){const id=slug(c.n.label,taken);map.set(c.n.id,id);M.nodes.set(id,{...c.n,id});M.items.push({type:'step',id});ids.push(id);st.pos[id]={x:Math.round(c.pos.x+dx),y:Math.round(c.pos.y+dy)};if(c.meta)st.meta[id]=JSON.parse(JSON.stringify(c.meta));}
+  mut(M=>{const map=new Map(),taken=takenId(M);for(const c of clip.nodes){const id=slug(c.n.label,taken);map.set(c.n.id,id);M.nodes.set(id,{...c.n,id});M.items.push({type:'step',id});ids.push(id);st.pos[id]={x:Math.round(c.pos.x+dx),y:Math.round(c.pos.y+dy)};if(c.meta)st.meta[id]=JSON.parse(JSON.stringify(c.meta));if(c.size)st.size[id]={...c.size};}
    for(const e of clip.edges)M.edges.push({...e,from:map.get(e.from),to:map.get(e.to)});});
   store();setSel(ids);host.rerender(true);paintOverlay();}
  function duplicate(){if(!sel.size)return;const keep=clip,n=pasteN;copy();paste();clip=keep||clip;pasteN=n;}
  function cut(){if(copy())deleteSelection();}
  function deleteSelection(){if(selEdge){const k=selEdge;selEdge=null;removeEdges([k]);close();host.rerender();return;}
-  if(!sel.size)return;const ids=[...sel];mut(M=>{for(const id of ids)removeNode(M,id);});for(const id of ids){delete st.pos[id];delete st.meta[id];}store();sel=new Set();primary=null;close();host.rerender();}
+  if(!sel.size)return;const ids=[...sel];mut(M=>{for(const id of ids)removeNode(M,id);});for(const id of ids){delete st.pos[id];delete st.meta[id];delete st.size[id];}store();sel=new Set();primary=null;close();host.rerender();}
  function selectAll(){if(!last)return;setSel([...last.g.nodes.keys()]);}
  function nudge(dx,dy){if(!sel.size)return;freeze();pushUndo('nudge');for(const id of sel){const p=posOf(id);if(p)st.pos[id]={x:p.x+dx,y:p.y+dy};}store();host.rerender(true);}
 
@@ -328,13 +336,15 @@ function create(host){
  const mode=()=>host.mode()==='canvas';
  const world=ev=>{const r=stage.getBoundingClientRect(),v=host.view();return {x:(ev.clientX-r.left-v.x)/v.zoom,y:(ev.clientY-r.top-v.y)/v.zoom};};
  const topEl=ev=>{const u=document.elementFromPoint(ev.clientX,ev.clientY);return u||ev.target;};
- const target=ev=>{let t=ev.target;if(!t.closest||!t.closest('.fc-n,.fc-e,.fc-l,.fc-g,.fc-handle,.fc-ehandle'))t=topEl(ev);
-  return {n:t.closest&&t.closest('.fc-n'),e:t.closest&&t.closest('.fc-e,.fc-l'),g:t.closest&&t.closest('.fc-g'),h:t.closest&&t.closest('.fc-handle'),eh:t.closest&&t.closest('.fc-ehandle'),ui:ev.target.closest&&ev.target.closest('.rail,.fly,.dock,.mnu,.panel,.empty>div,.motion,.insp,.cmenu')};};
+ const target=ev=>{let t=ev.target;if(!t.closest||!t.closest('.fc-n,.fc-e,.fc-l,.fc-g,.fc-handle,.fc-ehandle,.fc-rz'))t=topEl(ev);
+  return {n:t.closest&&t.closest('.fc-n'),e:t.closest&&t.closest('.fc-e,.fc-l'),g:t.closest&&t.closest('.fc-g'),h:t.closest&&t.closest('.fc-handle'),rz:t.closest&&t.closest('.fc-rz'),eh:t.closest&&t.closest('.fc-ehandle'),ui:ev.target.closest&&ev.target.closest('.rail,.fly,.dock,.mnu,.panel,.empty>div,.motion,.insp,.cmenu')};};
  const nodeAt=ev=>{const u=topEl(ev),n=u.closest&&u.closest('.fc-n');return n?n.dataset.nid:null;};
  const edgeOfEl=el=>{const id=el.dataset.eid;const e=last&&last.g.edges.find(x=>String(x.i)===String(id));return e||null;};
  stage.addEventListener('pointerdown',ev=>{if(!mode()||ev.button>0)return;closeMenu();const T=target(ev);if(T.ui)return;
   stage.focus({preventScroll:true});
   if(T.h){const id=T.h.dataset.nid;drag={kind:'connect',from:id,ox:ev.clientX,oy:ev.clientY,moved:false,pid:ev.pointerId};stage.setPointerCapture(ev.pointerId);ev.stopPropagation();return;}
+  if(T.rz){const id=T.rz.dataset.nid,n=last&&last.g.nodes.get(id),p0=posOf(id);if(!n||!p0)return;
+   drag={kind:'resize',id,corner:T.rz.dataset.corner,orig:{x:p0.x,y:p0.y,w:n.w,h:n.h},start:world(ev),ox:ev.clientX,oy:ev.clientY,moved:false,pid:ev.pointerId};stage.setPointerCapture(ev.pointerId);ev.stopPropagation();return;}
   if(T.eh){drag={kind:'reconnect',end:T.eh.dataset.end,key:T.eh.dataset.ekey,ox:ev.clientX,oy:ev.clientY,moved:false,pid:ev.pointerId};stage.setPointerCapture(ev.pointerId);ev.stopPropagation();return;}
   if(T.n){const id=T.n.dataset.nid,n=last&&last.g.nodes.get(id);if(!n)return;
    if(ev.shiftKey||ev.metaKey||ev.ctrlKey){const s=new Set(sel);s.has(id)?s.delete(id):s.add(id);setSel([...s]);}else if(!sel.has(id)||selEdge){setSel([id]);}
@@ -349,10 +359,15 @@ function create(host){
   if(ev.pointerType!=='mouse')armPress(ev);});
  function armPress(ev){clearTimeout(press);const cx=ev.clientX,cy=ev.clientY,w=world(ev);press=setTimeout(()=>{if(drag&&!drag.moved){const T=target({target:topEl({clientX:cx,clientY:cy}),clientX:cx,clientY:cy});drag=null;stage.classList.remove('drag');showMenu(cx,cy,contextItems(T,w));}},560);}
  stage.addEventListener('pointermove',ev=>{if(!drag||!mode())return;const dx=ev.clientX-drag.ox,dy=ev.clientY-drag.oy;if(!drag.moved&&Math.hypot(dx,dy)<4)return;
-  if(!drag.moved){drag.moved=true;clearTimeout(press);if(drag.kind==='node'||drag.kind==='group'){freeze();pushUndo();}}
+  if(!drag.moved){drag.moved=true;clearTimeout(press);if(drag.kind==='node'||drag.kind==='group'||drag.kind==='resize'){freeze();pushUndo();}}
   if(drag.kind==='pan'){host.pan(drag.sx+dx,drag.sy+dy);return;}
   if(drag.kind==='node'||drag.kind==='group'){const w=world(ev),mx=w.x-drag.start.x,my=w.y-drag.start.y;
    for(const [id,o] of Object.entries(drag.orig))st.pos[id]={x:Math.round(o.x+mx),y:Math.round(o.y+my)};
+   if(!raf)raf=requestAnimationFrame(()=>{raf=0;host.rerender(true);});return;}
+  if(drag.kind==='resize'){const w=world(ev),o=drag.orig;let dx=w.x-drag.start.x,dy=w.y-drag.start.y;const c=drag.corner,west=c==='nw'||c==='sw',north=c==='nw'||c==='ne';
+   let nw=Math.max(96,Math.min(720,o.w+(west?-dx:dx))),nh=Math.max(44,Math.min(420,o.h+(north?-dy:dy)));
+   if(ev.shiftKey){const k=o.w/o.h;if(nw/nh>k)nw=nh*k;else nh=nw/k;nw=Math.max(96,nw);nh=Math.max(44,nh);}
+   nw=Math.round(nw);nh=Math.round(nh);st.size[drag.id]={w:nw,h:nh};st.pos[drag.id]={x:Math.round(west?o.x+o.w-nw:o.x),y:Math.round(north?o.y+o.h-nh:o.y)};
    if(!raf)raf=requestAnimationFrame(()=>{raf=0;host.rerender(true);});return;}
   if(drag.kind==='connect'||drag.kind==='reconnect'){const w=world(ev),tid=nodeAt(ev);let a;
    if(drag.kind==='connect')a=last.g.nodes.get(drag.from);
@@ -363,6 +378,7 @@ function create(host){
    mq.style.cssText=`left:${x*v.zoom+v.x}px;top:${y*v.zoom+v.y}px;width:${ww*v.zoom}px;height:${hh*v.zoom}px`;}});
  stage.addEventListener('pointerup',ev=>{clearTimeout(press);if(!drag||!mode())return;const d=drag;drag=null;stage.classList.remove('drag');try{stage.releasePointerCapture(ev.pointerId);}catch{}
   const mq=stage.querySelector('.mq');if(mq)mq.remove();
+  if(d.kind==='resize'){paintOverlay();return;}
   if(d.kind==='connect'){const tid=nodeAt(ev),w=world(ev);if(!d.moved){paintOverlay();return;}
    if(tid&&tid!==d.from){if(addEdge(d.from,tid))setSel([tid]);else paintOverlay();host.rerender(true);}
    else if(!tid){addConnected(d.from,w);}else paintOverlay();return;}
@@ -372,13 +388,14 @@ function create(host){
    else{removeEdges([d.key]);setSel([]);host.toast('Disconnected');}
    host.rerender(true);return;}
   if(d.kind==='marquee'){if(d.box){const b=d.box,ids=[...last.g.nodes.values()].filter(n=>{const p=posOf(n.id);return p&&p.x<b.x+b.w&&p.x+n.w>b.x&&p.y<b.y+b.h&&p.y+n.h>b.y;}).map(n=>n.id);setSel(ids);}return;}
-  if(d.moved){if(d.kind==='node'||d.kind==='group'){store();host.rerender();}return;}
+  if(d.moved){if(d.kind==='node'||d.kind==='group'||d.kind==='resize'){store();host.rerender();}return;}
   if(d.kind==='node'){const now=performance.now(),dbl=tap&&tap.id===d.id&&now-tap.t<420;tap={id:d.id,t:now};
    if(!ev.shiftKey&&!ev.metaKey&&!ev.ctrlKey&&sel.size>1)setSel([d.id]);
    if(dbl){tap=null;open('node',d.id,'[data-act=n-label]');}else if(insp)open('node',d.id);paintOverlay();}
   else if(d.kind==='edge'){const now=performance.now(),dbl=tap&&tap.id==='e'+d.id&&now-tap.t<420;tap={id:'e'+d.id,t:now};if(dbl||insp){tap=null;open('edge',d.id);}}
   else if(d.kind==='pan'){setSel([]);if(!ev.target.closest('.insp'))close();}});
  stage.addEventListener('dblclick',ev=>{if(!mode())return;const T=target(ev);if(T.ui||T.h||T.eh)return;ev.preventDefault();
+  if(T.rz){resetSize(T.rz.dataset.nid);return;}
   if(T.n){open('node',T.n.dataset.nid,'[data-act=n-label]');}
   else if(T.e){const e=edgeOfEl(T.e);if(e)open('edge',edgeKey(e));}
   else if(T.g){open('group',T.g.dataset.gid,'[data-act=g-title]');}
@@ -399,6 +416,7 @@ function create(host){
   else if(k==='delete'||k==='backspace'){if(sel.size||selEdge)deleteSelection();else used=false;}
   else if(k==='enter'){if(primary&&sel.size===1)open('node',primary,'[data-act=n-label]');else if(selEdge)open('edge',selEdge);else used=false;}
   else if(k==='escape'){closeMenu();if(insp)close();setSel([]);}
+  else if(k.startsWith('arrow')&&ev.altKey&&sel.size===1){const n=last.g.nodes.get(primary),s=ev.shiftKey?40:10;if(n)setSize(primary,n.w+(k==='arrowright'?s:k==='arrowleft'?-s:0),n.h+(k==='arrowdown'?s:k==='arrowup'?-s:0));}
   else if(k.startsWith('arrow')&&sel.size){const s=ev.shiftKey?40:10;nudge(k==='arrowleft'?-s:k==='arrowright'?s:0,k==='arrowup'?-s:k==='arrowdown'?s:0);}
   else if(k==='+'||k==='='){host.zoomIn&&host.zoomIn();}else if(k==='-'||k==='_'){host.zoomOut&&host.zoomOut();}else if(k==='0'){host.fit&&host.fit();}
   else if(k==='?'||(ev.shiftKey&&k==='/')){host.showKeys&&host.showKeys();}

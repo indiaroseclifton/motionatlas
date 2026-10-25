@@ -34,7 +34,8 @@ const KIND={
 };
 const kindOf=n=>n.kind||n.shape||'rect';
 function fixSize(n,t,opt){const K=KIND[kindOf(n)]||KIND[n.shape]||KIND.rect,diamond=n.shape==='decision'&&opt.decision==='diamond';
- const W=diamond?K.w+28:K.w,H=diamond?K.h+30:K.h,center=n.shape==='pill'||n.shape==='circle'||diamond;
+ const ov=opt.sizes&&opt.sizes[n.id];
+ const W=ov?Math.max(96,Math.min(720,ov.w)):(diamond?K.w+28:K.w),H=ov?Math.max(44,Math.min(420,ov.h)):(diamond?K.h+30:K.h),center=n.shape==='pill'||n.shape==='circle'||diamond;
  const lead=t.iconTiles?40:(K.icon&&!center?30:0),aw=Math.max(40,W-(diamond?W*.34:32)-lead-(n.status?14:0)),ah=H-(diamond?H*.3:16);
  const lab=t.upper?n.label.toUpperCase():n.label;let fs=13.5,lines,notes;
  for(;fs>=9;fs-=.5){const nfs=Math.max(8.5,fs-1.5);lines=wrap(lab,fs,600,t.font,aw);notes=n.note?wrap(n.note,nfs,400,t.font,aw):[];
@@ -405,7 +406,7 @@ function render(src,s,opt={}){
   const d=rough?DVRough(q,e.i+11,.9,false):rounded(q,t.route==='curve'?(t.curve||22):(t.radius>=8?10:t.nodeRadius?7:3));
   if(s.t.misregister)edgesSvg.push(`<path d="${d}" fill="none" stroke="${t.accent}" stroke-width="${w}" opacity=".55" transform="translate(1.4 1)" style="mix-blend-mode:multiply"/>`);
   edgesSvg.push(`<path class="fc-line" d="${d}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"${dash}${marker}/>`);
-  if((CV||opt.flow)&&e.arrow!==false&&!rough){const fc=isLoop?loopCol:thick?t.accent:t.accent,fw=Math.max(2.4,w+1.2);
+  if((CV||opt.flow)&&e.arrow!==false&&!rough&&g.edges.length<=120){const fc=isLoop?loopCol:thick?t.accent:t.accent,fw=Math.max(2.4,w+1.2);
    edgesSvg.push(`<path class="fc-flow" d="${d}" fill="none" stroke="${fc}" stroke-width="${fw}" stroke-linecap="round" pointer-events="none"/>`);
    if(e.bi)edgesSvg.push(`<path class="fc-flow rev" d="${d}" fill="none" stroke="${fc}" stroke-width="${fw}" stroke-linecap="round" pointer-events="none"/>`);}
   if(t.arrow==='none')edgesSvg.push(`<circle cx="${p[0][0]}" cy="${p[0][1]}" r="3.4" fill="${t.surface}" stroke="${c}" stroke-width="1.6"/><circle cx="${end[0]}" cy="${end[1]}" r="3.4" fill="${c}"/>`);
