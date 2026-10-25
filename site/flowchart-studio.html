@@ -116,7 +116,7 @@ details.help summary::before{content:'+ ';}details.help[open] summary::before{co
 .dd{position:relative}
 .dd>button{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0 12px 0 8px;border:1px solid var(--hair);border-radius:12px;background:var(--panel);font-size:13px;font-weight:500;text-align:left}
 .dd>button:hover{border-color:#CBD0DB}.dd>button[aria-expanded=true]{border-color:var(--ink)}
-.dd .cap{display:block;font:600 10px/1.1 Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+.dd .cap{display:block;font:500 11px/1.15 Inter,sans-serif;color:var(--mute)}
 .dd .cur{display:block;font-size:13px;line-height:1.25;white-space:nowrap}
 .dd .car{margin-left:4px;color:var(--mute);font-size:11px}
 .dd-list{position:absolute;z-index:30;top:calc(100% + 6px);left:0;min-width:250px;max-height:min(60vh,420px);overflow:auto;padding:6px;border:1px solid var(--hair);border-radius:14px;background:var(--panel);box-shadow:var(--shadow);animation:ddin .16s cubic-bezier(.2,.8,.2,1)}
@@ -199,7 +199,7 @@ body{overflow:hidden}
 .mnu hr{border:0;border-top:1px solid var(--hair);margin:4px 2px}
 .work{position:relative;min-height:0;display:flex}
 .stage{position:relative;overflow:hidden;flex:1 1 0;min-width:0;background:#EDEFF4;cursor:grab;touch-action:none}
-.stage:focus{outline:none}.stage.drag{cursor:grabbing}
+.stage:focus{outline:none}.stage:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}.stage.drag{cursor:grabbing}
 .paper{position:absolute;left:0;top:0;transform-origin:0 0;box-shadow:0 30px 60px -30px rgba(20,24,40,.35),0 0 0 1px rgba(20,24,40,.06);border-radius:10px;overflow:hidden;line-height:0}
 .paper svg{display:block}
 .mq{position:absolute;z-index:4;border:1.5px solid var(--accent);background:rgba(91,45,255,.08);border-radius:4px;pointer-events:none}
@@ -271,6 +271,20 @@ body{overflow:hidden}
 @media (pointer:coarse){.dock button{min-width:44px;height:44px}input[type=text],select,.opt .seg button{min-height:44px}}
 @media (max-width:560px){.hs,#zVal,#keysBtn,.dock .sep{display:none}.top{gap:2px 8px}.top-r{margin-left:auto}.doc-title{order:5}.btn{padding:0 12px}.dock{gap:0}}
 .pickers{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.top-r .dd:last-child .dd-list{left:auto;right:0}
+
+/* polish from the design audit: press feedback, concentric radii, containment, type details */
+:root{--ease:cubic-bezier(.23,1,.32,1)}
+button,a,select,summary,[role=button]{touch-action:manipulation}
+.rail button,.dock button,.btn,.fly-it,.swrow,.dd>button,.insp .b{transition:transform 120ms var(--ease),background-color .15s,border-color .15s,color .15s}
+.rail button:active,.dock button:active:not(:disabled),.btn:active,.fly-it:active,.swrow:active,.dd>button:active,.insp .b:active{transform:scale(.96)}
+.rail{border-radius:16px}.rail button{border-radius:10px}.dock{border-radius:14px}.dock button{border-radius:10px}.fly{border-radius:16px}.fly-it{border-radius:9px}.mnu{border-radius:14px}.mnu button,.mnu a{border-radius:8px}
+.fly,.insp,.pbody,.cmenu,.mnu,.dd-list{overscroll-behavior:contain}
+.fly-h b,.empty b,.keys h2,.ph2 b,.insp .ph b{text-wrap:balance}
+.fly-note,.empty p,.insp .sub,.insp .note,.why,.fe-hint{text-wrap:pretty}
+.dock output,#zVal,.fe-num,.ih{font-variant-numeric:tabular-nums}
+.paper[data-lod=far] .fc-flow,.paper[data-lod=map] .fc-flow{display:none}
+.paper.cv .fc-rz{cursor:nwse-resize}.paper.cv .fc-rz[data-corner=ne],.paper.cv .fc-rz[data-corner=sw]{cursor:nesw-resize}
+.paper.cv .fc-handle,.paper.cv .fc-ehandle{cursor:crosshair}
 @media (prefers-reduced-motion:reduce){.mnu,.fly,.cmenu{animation:none}}
 </style></head>
 <body>
@@ -425,7 +439,7 @@ const isMermaid=t=>/^\s*(flowchart|graph)\b/i.test(t)||/-->|==>|-\.->|---/.test(
 const GROUPS=[['brand','Your brand',x=>x.brand],['board','From your board',x=>x.board],['researched','Researched',x=>!x.board&&!x.brand]];
 const swHTML=st=>`<span class="sw" style="background:${st.t.bg.startsWith('#')?st.t.bg:'#0B0F1A'}"><i style="background:${st.t.accent}"></i></span>`;
 function drawPickers(){$('pickers').innerHTML=GROUPS.map(([k,label,f])=>{const list=DVStyles.filter(f),on=list.find(x=>x.id===S.style);
-  return `<div class="dd" data-g="${k}"><button type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="${label}${on?': '+on.name:''}">${on?swHTML(on):''}<span><span class="cap">${label}</span><span class="cur">${on?on.name:'Choose…'}</span></span><span class="car" aria-hidden="true">▾</span></button><div class="dd-list" role="listbox" aria-label="${label}" hidden>${list.map(st=>`<button type="button" class="dd-opt" role="option" data-style="${st.id}" aria-selected="${st.id===S.style}" title="${st.kicker}">${swHTML(st)}${st.name}</button>`).join('')}</div></div>`;}).join('');}
+  return `<div class="dd" data-g="${k}"><button type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="${label}${on?': '+on.name:''}">${on?swHTML(on):''}<span>${on?`<span class="cap">${label}</span><span class="cur">${on.name}</span>`:`<span class="cur">${label}</span>`}</span><span class="car" aria-hidden="true">▾</span></button><div class="dd-list" role="listbox" aria-label="${label}" hidden>${list.map(st=>`<button type="button" class="dd-opt" role="option" data-style="${st.id}" aria-selected="${st.id===S.style}" title="${st.kicker}">${swHTML(st)}${st.name}</button>`).join('')}</div></div>`;}).join('');}
 function closeDD(except){$('pickers').querySelectorAll('.dd').forEach(d=>{if(d===except)return;const l=d.querySelector('.dd-list');if(!l.hidden){l.hidden=true;d.querySelector('button').setAttribute('aria-expanded','false');}});}
 $('pickers').addEventListener('click',e=>{const opt=e.target.closest('[data-style]');
  if(opt){S.style=opt.dataset.style;store.set('style',S.style);drawPickers();render(true);$('pickers').querySelector(`[data-g] button[aria-label*="${DVStyle(S.style).name}"]`)?.focus();return;}
@@ -578,7 +592,7 @@ $('emptyAdd').onclick=()=>cv.addElement('rect');
 $('undoBtn').onclick=()=>cv.undo();$('redoBtn').onclick=()=>cv.redo();
 $('keysBtn').onclick=()=>$('keys').showModal();$('keysClose').onclick=()=>$('keys').close();
 const MODK=/mac|iphone|ipad/i.test(navigator.platform||'')?'⌘':'Ctrl+';
-$('keysList').innerHTML=[['Select several','Shift+click, or Shift+drag on empty space'],['Move the view','Drag empty space, or scroll'],['Zoom','Ctrl+scroll, + and −'],['Fit everything','0'],['Edit an element','Double-click, or Enter'],['Add an element','Double-click empty space'],['Connect elements','Drag from a round handle to another element'],['Add and connect','Drop a handle on empty space, or '+MODK+'Enter'],['Reconnect or disconnect a line','Select it, drag an end'],['Move next or previous','Tab, Shift+Tab'],['Nudge','Arrow keys, Shift for more'],['Copy, cut, paste',MODK+'C, '+MODK+'X, '+MODK+'V'],['Duplicate',MODK+'D'],['Select all',MODK+'A'],['Undo and redo',MODK+'Z, '+MODK+'Shift+Z'],['Delete','Delete or Backspace'],['Menu','Right-click, or press and hold'],['This list','?']].map(([a,b])=>`<dt>${a}</dt><dd><kbd>${b}</kbd></dd>`).join('');
+$('keysList').innerHTML=[['Select several','Shift+click, or Shift+drag on empty space'],['Move the view','Drag empty space, or scroll'],['Zoom','Ctrl+scroll, + and −'],['Fit everything','0'],['Edit an element','Double-click, or Enter'],['Add an element','Double-click empty space'],['Connect elements','Drag from a round handle to another element'],['Add and connect','Drop a handle on empty space, or '+MODK+'Enter'],['Reconnect or disconnect a line','Select it, drag an end'],['Move next or previous','Tab, Shift+Tab'],['Nudge','Arrow keys, Shift for more'],['Resize','Drag a corner, or Alt+arrow keys'],['Reset the size','Double-click a corner'],['Copy, cut, paste',MODK+'C, '+MODK+'X, '+MODK+'V'],['Duplicate',MODK+'D'],['Select all',MODK+'A'],['Undo and redo',MODK+'Z, '+MODK+'Shift+Z'],['Delete','Delete or Backspace'],['Menu','Right-click, or press and hold'],['This list','?']].map(([a,b])=>`<dt>${a}</dt><dd><kbd>${b}</kbd></dd>`).join('');
 
 /* on narrow screens the look pickers live in the panel instead of the header */
 const narrow=matchMedia('(max-width:900px)'),pk=$('pickers'),pkHome=pk.parentElement;
