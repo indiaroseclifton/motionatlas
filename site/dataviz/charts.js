@@ -263,5 +263,7 @@ function render(kind,s,opt={}){const k=K[kind],C=ctx(s,kind),t=s.t,W=opt.width||
  const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(k.title)}. ${esc(k.sub)}."><defs>${C.defs}</defs>${bg}${head}${body}${src}${tex&&tex.over?tex.over:''}</svg>`;
  return {svg,tips:C.tips,table:k.table(),title:k.title,sub:k.sub,name:k.name,note:k.note,height:H,width:W};}
 
-window.DVCharts={kinds:Object.keys(K).map(id=>({id,name:K[id].name,note:K[id].note})),render,data:D};
+window.DVCharts={kinds:Object.keys(K).map(id=>({id,name:K[id].name,note:K[id].note})),render,data:D,
+ /* drawing kit for other chart tools (chart studio); additive, the gallery above does not use it */
+ kit:{ctx,fill,bar,barPts,line,dot,mix,alpha,lum,onFill,compact,niceMax,ticks,esc}};
 })();

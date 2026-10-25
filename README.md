@@ -42,6 +42,24 @@ Live: https://motionatlas-ten.vercel.app (`/` rewrites to `/atlas`).
 
 ---
 
+## Chart studio
+
+`site/chart-studio.html` turns your own data into a chart. Engine: `dataviz/chartmaker.js` (`window.DVChartMaker`), drawn with the chart style guides' kit (`DVCharts.kit` in `dataviz/charts.js`) so a chart matches its style guide.
+
+- **Data in.** Paste cells from a spreadsheet (also straight into the grid), upload `.csv`/`.tsv`/`.json`, or edit the grid (add/remove rows and columns, transpose). 21 sample datasets. Column types (number, time, text) are inferred.
+- **26 forms.** Column, horizontal bar, stacked and 100% stacked column, stacked bar, pie, donut (five slices max, the tail folds into Other, close values warn), treemap, line, area, stacked area, small multiples, slope, dumbbell, waterfall, bullet, KPI tiles, meter, funnel, sankey, histogram, box plot, heatmap, scatter, bubble, radar.
+- **Recommend.** `recommend(table)` ranks forms from the data's shape (the dataviz form heuristic: the job picks the chart, a single row is a stat tile, five-plus series go to small multiples).
+- **Style.** Any of the nineteen styles; light/dark: the opposite mode is computed (surfaces swapped, hues snapped into the mode's OKLCH lightness band) and validated. Colour slots per series, emphasis (one series in colour), "Most distinct order" (searches slot orders for the widest colour-blind separation). The palette check is a browser port of the dataviz validator (lightness band, chroma floor, Machado CVD ΔE, normal-vision ΔE, contrast) run on the colours actually shown.
+- **Options.** Number format (auto, 1,234, 1.2K, percent, prefix/suffix, decimals), value labels, legend, direct labels, gridlines, axis labels, zero baseline, sort, size. Annotations: a callout with an arrow to one value, a reference line, a reference band.
+- **Accessible.** The SVG has `role="img"`, a `<title>` and a generated long `<desc>` (overridable); a data-table toggle; the chart is one tab stop and the arrow keys walk every mark with its tooltip (announced in a live region).
+- **Out.** SVG (fonts embedded), PNG 2×, copy SVG, embed HTML (chart + data table), CSV, build-up video/GIF (`DVChartMaker.plan`: bars grow, lines draw; `DVExport` takes a `plan`). Drafts in localStorage, a share link with the whole chart compressed into `#c=`, undo/redo. `?style=`, `?kind=` and `?sample=` preset the studio (the style guides link here per style).
+
+## Diagram studio
+
+`site/diagram-studio.html` draws eighteen non-process diagrams: roadmap, org chart, journey map, comparison matrix (`dataviz/diagrams.js`) and timeline, Gantt with dependencies, radial mind map, Venn (2–3 sets), 2×2 matrix, pyramid, cycle, sequence, entity relationship, network, kanban, SWOT, fishbone and process arrows (`dataviz/diagrams-more.js`, registered into `window.Diagrams`). Click an element on the canvas to edit it in the panel; drag ⋮⋮ to reorder list items (arrow keys work too); drag 2×2 points to re-score. **Import text** reads an outline or Mermaid-like syntax for every type (sequence `A->>B: msg`, ER `A ||--o{ B : label`, Gantt `Task :id, after a, 2`) and shows the current diagram as text. Templates gallery, undo/redo, drafts, share link (`#d=`), SVG, PNG, embed HTML, text export, build-up video and GIF.
+
+---
+
 ## Directory map
 
 ```
@@ -62,7 +80,7 @@ site/                    everything that is served (outputDirectory in vercel.js
   interactions/          interactions shelf: manifest.js + demos/*.html
   builder/               page builder (page-builder.html)
   system-components/     live HTML/CSS components for systems D21–D32
-  dataviz/               flowchart studio, diagram studio, chart style guides
+  dataviz/               flowchart, diagram and chart studios, chart style guides
   studies/               live WebGL particle studies (lion, whale, butterfly, bird/fox)
   supabase-client.js     accounts (window.AtlasCloud)
   projects*.js, account.html, p.html, shared.html   My projects, sign-in, public hubs, shared links
@@ -344,7 +362,7 @@ Short notes on parts of the atlas that are easy to miss:
 - **Background generator** (`#backgrounds`, `backgrounds.js`): one WebGL shader with 16 families and
   80 presets, with PNG, loop, CSS and code export.
 - **Showcase reels** (`#showcase`, `showcase.js`): eight motion templates with 1080p export.
-- **Studios:** flowchart, diagram, chart style guides and the particle studio (`dataviz/`,
+- **Studios:** flowchart, diagram, chart studio, chart style guides and the particle studio (`dataviz/`,
   `*-studio.html`, `chart-styles.html`, `particle-engine.js`). The dataviz tools share nineteen styles (`dataviz/styles.js`), the channel's Kitchen noir and Kitchen paper first.
 - **Low-power mode** (`window.AtlasMotion` in `hero-scenes.js`): Data Saver, no or software WebGL,
   or ≤ 2 GB of memory turn off live hero scenes. Use `?fullmotion` to override.

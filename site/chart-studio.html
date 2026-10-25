@@ -1,0 +1,446 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Chart studio · Visual & Motion Atlas</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<meta name="description" content="Make a chart from your own data: paste from a spreadsheet, upload CSV or JSON, or edit the grid. Twenty-six chart forms in nineteen validated styles, with SVG, PNG, embed, video and GIF export.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap">
+<style>
+:root{--bg:#F4F5F8;--panel:#FFFFFF;--ink:#1C1F2A;--mute:#5F6577;--hair:#E4E7EE;--soft:#F7F8FB;--accent:#5B2DFF;--ok:#17633A;--okbg:#EAF7EF;--warn:#8A5300;--warnbg:#FFF4E2;--bad:#A3221B;--badbg:#FDECEA;--shadow:0 1px 2px rgba(20,24,40,.04),0 8px 24px -12px rgba(20,24,40,.12);color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:14px/1.5 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}button,select,input,textarea{font:inherit;color:inherit}button{cursor:pointer}
+[hidden]{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+header.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px max(16px,env(safe-area-inset-right)) 10px max(16px,env(safe-area-inset-left));background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border-bottom:1px solid var(--hair)}
+.brand{display:flex;align-items:baseline;gap:12px;min-width:0}
+.brand a{font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);text-decoration:none;white-space:nowrap}
+.brand h1{margin:0;font:500 26px/1 'Cormorant Garamond',Georgia,serif;font-style:italic;white-space:nowrap}
+.links{display:flex;gap:4px;flex-wrap:wrap}.links a{font-size:12.5px;color:var(--mute);text-decoration:none;padding:6px 8px;border-radius:8px}.links a:hover{background:var(--soft);color:var(--ink)}
+.acts{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 12px;border-radius:10px;border:1px solid var(--hair);background:var(--panel);font-weight:500;font-size:13px;text-decoration:none;white-space:nowrap}
+.btn:hover{border-color:#CBD0DB;background:var(--soft)}.btn:disabled{opacity:.5;cursor:default}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}.btn.primary:hover{background:#4A1FF0}
+.btn.sm{min-height:30px;padding:0 9px;font-size:12px;border-radius:8px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+details.menu{position:relative}details.menu>summary{list-style:none}details.menu>summary::-webkit-details-marker{display:none}
+details.menu>summary::after{content:'▾';font-size:10px;margin-left:2px;color:var(--mute)}
+.pop{position:absolute;right:0;top:calc(100% + 6px);z-index:30;min-width:220px;max-width:min(320px,calc(100vw - 24px));background:var(--panel);border:1px solid var(--hair);border-radius:12px;box-shadow:0 18px 40px -16px rgba(20,24,40,.35);padding:6px;display:grid;gap:2px}
+.pop button{display:flex;justify-content:space-between;gap:12px;align-items:center;text-align:left;border:0;background:none;border-radius:8px;padding:8px 10px;font-size:13px;min-height:36px}.pop button:hover{background:var(--soft)}
+.pop small{color:var(--mute);font-size:11.5px}.pop hr{border:0;border-top:1px solid var(--hair);margin:4px 2px}
+.pop .drow{display:grid;grid-template-columns:1fr auto;gap:2px}.pop .drow button:last-child{color:var(--bad);padding:8px}
+.app{display:grid;grid-template-columns:minmax(330px,390px) minmax(0,1fr);min-height:calc(100vh - 57px)}
+.side{background:var(--panel);border-right:1px solid var(--hair);display:flex;flex-direction:column;min-width:0}
+.tabs{display:flex;border-bottom:1px solid var(--hair);position:sticky;top:57px;background:var(--panel);z-index:5}
+.tablist{display:flex;flex:1;min-width:0}.tabs button{flex:1;min-width:0;padding:0 2px;border:0;background:none;min-height:44px;font-size:12.5px;font-weight:600;color:var(--mute);border-bottom:2px solid transparent}
+.tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--accent)}
+.sheetx{display:none}
+.panel{padding:4px 0 24px}
+.sec{padding:14px 18px;border-bottom:1px solid var(--hair);display:grid;gap:10px}
+.sec h2{margin:0;font:600 11px/1.2 Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);display:flex;justify-content:space-between;align-items:center;gap:8px}
+.sec h2 small{font:500 11.5px Inter;letter-spacing:0;text-transform:none}
+.hint{margin:0;font-size:12px;color:var(--mute);line-height:1.45}
+label.f{display:grid;gap:4px;font-size:12px;color:var(--mute)}
+input[type=text],input[type=number],select,textarea{min-height:34px;border:1px solid var(--hair);border-radius:9px;padding:0 9px;background:var(--panel);color:var(--ink);min-width:0;width:100%}
+textarea{padding:8px 10px;min-height:90px;resize:vertical;font:12px/1.55 'JetBrains Mono',ui-monospace,monospace;white-space:pre;overflow:auto}
+textarea.prose{font:13px/1.5 Inter,sans-serif;white-space:pre-wrap}
+.row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.seg{display:inline-flex;padding:3px;border-radius:10px;background:var(--soft);border:1px solid var(--hair)}
+.seg button{border:0;background:none;min-height:30px;padding:0 11px;border-radius:7px;font-size:12.5px;font-weight:500;color:var(--mute)}
+.seg button[aria-pressed=true]{background:var(--panel);color:var(--ink);box-shadow:0 1px 3px rgba(20,24,40,.12)}
+/* data grid */
+.gridwrap{overflow:auto;max-height:46vh;border:1px solid var(--hair);border-radius:10px}
+table.grid{border-collapse:separate;border-spacing:0;font-size:12px;min-width:100%}
+table.grid th,table.grid td{border-bottom:1px solid var(--hair);border-right:1px solid var(--hair);padding:0;background:var(--panel)}
+table.grid thead th{position:sticky;top:0;background:var(--soft);z-index:1}
+table.grid input{border:0;border-radius:0;min-height:30px;width:100%;min-width:84px;padding:0 7px;background:transparent;font-size:12px}
+table.grid thead input{font-weight:600}
+table.grid input:focus{outline:2px solid var(--accent);outline-offset:-2px;background:var(--panel)}
+table.grid .rn{width:30px;min-width:30px;text-align:center;color:var(--mute);font:10.5px 'JetBrains Mono',monospace;position:sticky;left:0;background:var(--soft)}
+table.grid .ty{display:flex;align-items:center;gap:2px;padding:2px 3px 0 6px;font:600 9.5px 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+table.grid .x{border:0;background:none;width:26px;height:26px;border-radius:6px;color:var(--mute);font-size:14px;line-height:1;margin-left:auto}
+table.grid .x:hover{color:var(--bad);background:var(--badbg)}
+/* chart types */
+.types{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:6px}
+.types h3{grid-column:1/-1;margin:6px 0 0;font:600 10.5px Inter;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.type{display:grid;gap:2px;justify-items:start;text-align:left;padding:7px 8px;border-radius:9px;border:1px solid var(--hair);background:var(--panel);min-height:44px;font-size:12px;font-weight:600}
+.type svg{width:28px;height:18px;color:var(--mute)}
+.type:hover{border-color:#CBD0DB}.type[aria-pressed=true]{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}.type[aria-pressed=true] svg{color:var(--accent)}
+.recs{display:grid;gap:6px}
+.rec{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;text-align:left;border:1px solid var(--hair);background:var(--soft);border-radius:10px;padding:8px 10px}
+.rec b{font-size:13px}.rec span{grid-column:1/-1;font-size:12px;color:var(--mute);line-height:1.4}.rec i{font-style:normal;justify-self:end;font:600 10.5px 'JetBrains Mono',monospace;color:var(--accent)}
+.rec[aria-pressed=true]{border-color:var(--accent);background:#F4F0FF}
+.checks{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.checks li{display:grid;grid-template-columns:auto 1fr;gap:2px 8px;font-size:12px;line-height:1.4;align-items:start}
+.checks li b{font-size:12.5px}.checks li span:not(.badge){grid-column:2;color:var(--mute);overflow-wrap:anywhere}
+.badge{font:700 10px/1 Inter;letter-spacing:.06em;padding:4px 6px;border-radius:6px;background:var(--okbg);color:var(--ok)}.badge.warn{background:var(--warnbg);color:var(--warn)}.badge.fail{background:var(--badbg);color:var(--bad)}
+.warns{display:grid;gap:6px;margin:0;padding:0;list-style:none}.warns li{font-size:12.5px;padding:8px 10px;border-radius:9px;background:var(--warnbg);color:#5C3A00;line-height:1.4}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chips .lbl{width:100%;font:600 10.5px Inter;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin-top:4px}
+.chip{display:inline-flex;align-items:center;gap:7px;min-height:34px;padding:0 10px 0 4px;border-radius:999px;border:1px solid var(--hair);background:var(--panel);font-size:12px;font-weight:500;white-space:nowrap}
+.chip[aria-pressed=true]{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+.sw{width:24px;height:24px;border-radius:50%;display:grid;grid-template-columns:1fr 1fr;overflow:hidden;border:1px solid rgba(0,0,0,.08);flex:none}
+.slots{display:grid;gap:6px}.slot{display:grid;grid-template-columns:18px minmax(0,1fr) 120px;gap:8px;align-items:center;font-size:12.5px}
+.slot i{width:18px;height:18px;border-radius:5px;border:1px solid rgba(0,0,0,.1)}.slot span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.notes{display:grid;gap:8px;list-style:none;margin:0;padding:0}.note{display:grid;gap:6px;padding:9px;border:1px solid var(--hair);border-radius:10px;background:var(--soft)}
+.note .hd{display:flex;justify-content:space-between;align-items:center;font:600 11px Inter;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.note .x{border:0;background:none;width:30px;height:30px;border-radius:7px;color:var(--mute);font-size:15px}.note .x:hover{color:var(--bad);background:var(--badbg)}
+/* stage */
+.main{min-width:0;display:grid;align-content:start;gap:14px;padding:22px clamp(14px,2.4vw,32px) 48px}
+.bar2{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.bar2 .row{gap:6px}
+.fig{position:relative;border-radius:16px;overflow:hidden;line-height:0;box-shadow:var(--shadow);border:1px solid var(--hair);background:#fff;max-width:100%}
+.fig svg{width:100%;height:auto;display:block}
+.fig:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.ring{position:absolute;pointer-events:none;border:2px solid var(--accent);border-radius:6px;box-shadow:0 0 0 3px rgba(255,255,255,.85);display:none}
+.kbd{font-size:12px;color:var(--mute)}.kbd kbd{font:11px 'JetBrains Mono',monospace;border:1px solid var(--hair);border-bottom-width:2px;border-radius:5px;padding:1px 5px;background:var(--panel)}
+.dtable{overflow:auto;border:1px solid var(--hair);border-radius:12px;background:var(--panel);max-height:420px}
+.dtable table{border-collapse:collapse;width:100%;font-size:12.5px;font-variant-numeric:tabular-nums}
+.dtable caption{text-align:left;padding:10px 12px;font-weight:600;font-size:13px}
+.dtable th,.dtable td{padding:6px 12px;border-top:1px solid #EEF0F4;text-align:left;white-space:nowrap}.dtable th{color:var(--mute);font-weight:600;font-size:11.5px;position:sticky;top:0;background:var(--panel)}
+.dtable td.n{text-align:right}
+.descbox{font-size:13px;line-height:1.55;color:#33384A;background:var(--panel);border:1px solid var(--hair);border-radius:12px;padding:12px 14px;margin:0}
+.descbox b{display:block;font:600 11px Inter;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin-bottom:4px}
+.prog{font:500 11.5px 'JetBrains Mono',monospace;color:var(--mute)}
+.tip{position:fixed;z-index:40;pointer-events:none;min-width:150px;max-width:280px;padding:10px 12px;border-radius:10px;background:#16181F;color:#F4F5F8;font-size:12.5px;line-height:1.45;box-shadow:0 12px 30px -10px rgba(0,0,0,.4);opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s}
+.tip.on{opacity:1;transform:none}.tip .t{color:#B4BACA;font-size:11.5px;margin-bottom:4px}.tip .r{display:flex;align-items:center;gap:8px}.tip .r i{width:12px;height:3px;border-radius:2px;flex:none}.tip .r b{font-weight:600}.tip .r span{color:#B4BACA}
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);opacity:0;padding:10px 16px;border-radius:10px;background:var(--ink);color:#fff;font-size:13px;transition:opacity .2s,transform .2s;pointer-events:none;z-index:60;max-width:calc(100vw - 32px)}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+dialog{border:0;border-radius:16px;padding:0;width:min(640px,calc(100vw - 24px));box-shadow:0 30px 80px -20px rgba(20,24,40,.45)}dialog::backdrop{background:rgba(20,24,40,.45)}
+dialog .in{padding:18px;display:grid;gap:10px}dialog h2{margin:0;font-size:16px}dialog textarea{min-height:220px}
+@media (max-width:860px){
+ header.top{position:relative}.brand h1{font-size:22px}.links{display:none}.acts{margin-left:0;width:100%;justify-content:flex-start}
+ .app{display:block}
+ .main{padding:14px 12px 96px}
+ .side{position:fixed;left:0;right:0;bottom:0;z-index:25;border-right:0;border-top:1px solid var(--hair);border-radius:16px 16px 0 0;box-shadow:0 -12px 40px -16px rgba(20,24,40,.35);max-height:66vh;transform:translateY(calc(100% - 50px));transition:transform .22s ease}
+ .side.open{transform:none}
+ .tabs{position:static;border-radius:16px 16px 0 0}.tabs button{min-height:50px;font-size:12px}
+ .tabs .sheetx{flex:none;display:block;border:0;background:none;width:44px;min-height:50px;font-size:18px;color:var(--mute)}
+ .side:not(.open) .sheetx{display:none}
+ .panels{overflow:auto;max-height:calc(66vh - 50px);overscroll-behavior:contain}
+ .gridwrap{max-height:38vh}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head><body>
+<header class="top">
+ <div class="brand"><a href="atlas.html#systems" aria-label="Back to the Visual & Motion Atlas">← Atlas</a><h1>Chart studio</h1></div>
+ <nav class="links" aria-label="Other studios"><a href="chart-styles.html" id="guideLink">Style guides</a><a href="diagram-studio.html">Diagram studio</a><a href="flowchart-studio.html">Flowchart studio</a></nav>
+ <div class="acts">
+  <button class="btn" id="undo" type="button" title="Undo (Ctrl+Z)" aria-label="Undo">↶</button><button class="btn" id="redo" type="button" title="Redo (Ctrl+Shift+Z)" aria-label="Redo">↷</button>
+  <details class="menu" id="draftsMenu"><summary class="btn">Drafts</summary><div class="pop" id="drafts"></div></details>
+  <button class="btn" id="share" type="button">Copy link</button>
+  <details class="menu" id="exportMenu"><summary class="btn primary">Export</summary><div class="pop">
+   <button type="button" data-ex="svg">SVG file <small>fonts embedded</small></button>
+   <button type="button" data-ex="png">PNG <small>2×</small></button>
+   <button type="button" data-ex="copy">Copy SVG <small>markup</small></button>
+   <button type="button" data-ex="embed">Embed HTML <small>chart + table</small></button>
+   <button type="button" data-ex="csv">Data as CSV</button>
+   <hr><button type="button" data-ex="video">Build-up video <small>MP4/WebM</small></button>
+   <button type="button" data-ex="gif">Build-up GIF</button></div></details>
+ </div>
+</header>
+<div class="app">
+ <aside class="side" id="side" aria-label="Chart settings">
+  <div class="tabs"><div class="tablist" role="tablist" aria-label="Settings">
+   <button role="tab" id="t-data" aria-controls="p-data" aria-selected="true" type="button">Data</button>
+   <button role="tab" id="t-chart" aria-controls="p-chart" aria-selected="false" tabindex="-1" type="button">Chart</button>
+   <button role="tab" id="t-style" aria-controls="p-style" aria-selected="false" tabindex="-1" type="button">Style</button>
+   <button role="tab" id="t-notes" aria-controls="p-notes" aria-selected="false" tabindex="-1" type="button">Annotate</button>
+   <button role="tab" id="t-check" aria-controls="p-check" aria-selected="false" tabindex="-1" type="button">Check</button>
+   </div><button class="sheetx" id="sheetx" type="button" aria-label="Close settings">×</button>
+  </div>
+  <div class="panels">
+  <section class="panel" role="tabpanel" id="p-data" aria-labelledby="t-data">
+   <div class="sec"><h2>Start from <small id="dataInfo"></small></h2>
+    <label class="f">Sample data<select id="sample"><option value="">Choose a sample…</option></select></label>
+    <div class="row"><label class="btn sm" for="file" style="cursor:pointer">Upload .csv / .json</label><input type="file" id="file" accept=".csv,.tsv,.txt,.json,text/csv,application/json" class="sr"><button class="btn sm" id="pasteOpen" type="button">Paste from a spreadsheet</button></div>
+    <p class="hint">Copy cells in Excel, Sheets or Numbers and paste; the first row is the header. Numbers like 1,234, £12, 45% and 1.2k are understood.</p></div>
+   <div class="sec"><h2>Data <small><button class="btn sm" id="transpose" type="button" title="Swap rows and columns">Transpose</button></small></h2>
+    <div class="gridwrap"><table class="grid" id="grid" aria-label="Chart data"></table></div>
+    <div class="row"><button class="btn sm" id="addRow" type="button">+ Row</button><button class="btn sm" id="addCol" type="button">+ Column</button><button class="btn sm" id="clearData" type="button">Clear</button></div>
+   </div>
+  </section>
+  <section class="panel" role="tabpanel" id="p-chart" aria-labelledby="t-chart" hidden>
+   <div class="sec"><h2>Recommended <small>for this data's shape</small></h2><div class="recs" id="recs"></div></div>
+   <div class="sec"><h2>All charts</h2><div class="types" id="types" role="group" aria-label="Chart type"></div></div>
+   <div class="sec"><h2>Columns</h2><div id="mapping" class="g2"></div></div>
+   <div class="sec"><h2>Text</h2>
+    <label class="f">Title <small>state the finding</small><input type="text" id="o-title"></label>
+    <label class="f">Subtitle<input type="text" id="o-subtitle"></label>
+    <label class="f">Source note<input type="text" id="o-source" placeholder="e.g. Channel analytics, 2026"></label></div>
+   <div class="sec"><h2>Labels &amp; axes</h2><div class="g2" id="opts"></div></div>
+   <div class="sec"><h2>Numbers</h2><div class="g2">
+    <label class="f">Format<select id="f-style"><option value="auto">Auto</option><option value="number">1,234</option><option value="compact">1.2K</option><option value="percent">Percent</option></select></label>
+    <label class="f">Decimals<select id="f-decimals"><option value="">Auto</option><option>0</option><option>1</option><option>2</option></select></label>
+    <label class="f">Prefix<input type="text" id="f-prefix" placeholder="£ $ €"></label><label class="f">Suffix<input type="text" id="f-suffix" placeholder=" h, pts"></label></div></div>
+   <div class="sec"><h2>Size</h2><div class="g2">
+    <label class="f">Width<select id="o-width"><option value="auto">Fit the screen</option><option value="560">560 px</option><option value="760">760 px</option><option value="1080">1080 px</option><option value="1280">1280 px</option></select></label>
+    <label class="f">Plot height<select id="o-height"><option value="">Normal</option><option value="220">Compact</option><option value="400">Tall</option><option value="520">Extra tall</option></select></label></div></div>
+  </section>
+  <section class="panel" role="tabpanel" id="p-style" aria-labelledby="t-style" hidden>
+   <div class="sec"><h2>Mode</h2><div class="seg" id="mode" role="group" aria-label="Light or dark"><button type="button" data-mode="auto" aria-pressed="true">Style's own</button><button type="button" data-mode="light" aria-pressed="false">Light</button><button type="button" data-mode="dark" aria-pressed="false">Dark</button></div>
+    <p class="hint" id="modeHint"></p></div>
+   <div class="sec"><h2>Colour slots <small><button class="btn sm" id="bestOrder" type="button">Most distinct order</button></small></h2><div class="slots" id="slots"></div>
+    <label class="f">Emphasis <small>one series in colour, the rest grey</small><select id="emph"></select></label></div>
+   <div class="sec"><h2>Palette check <small id="palState"></small></h2><ul class="checks" id="palChecks"></ul><p class="hint">Computed in the mode shown, against the chart surface (OKLab ΔE, Machado colour-blind simulation). Scatter, bubble and radar check every pair, the rest check neighbours.</p></div>
+   <div class="sec"><h2>Style</h2><div class="chips" id="styles" role="group" aria-label="Style"></div><p class="hint" id="styleBlurb"></p></div>
+  </section>
+  <section class="panel" role="tabpanel" id="p-notes" aria-labelledby="t-notes" hidden>
+   <div class="sec"><h2>Annotations</h2><p class="hint">A callout points at one value; a reference line or band marks a target or a range on the value axis. Keep it to one or two.</p>
+    <ul class="notes" id="notes"></ul>
+    <div class="row"><button class="btn sm" data-add="point" type="button">+ Callout</button><button class="btn sm" data-add="line" type="button">+ Reference line</button><button class="btn sm" data-add="band" type="button">+ Band</button></div></div>
+  </section>
+  <section class="panel" role="tabpanel" id="p-check" aria-labelledby="t-check" hidden>
+   <div class="sec"><h2>Pre-flight</h2><ul class="warns" id="warns"></ul><ul class="checks" id="preflight"></ul></div>
+   <div class="sec"><h2>Long description <small>read by screen readers</small></h2><p class="hint">Generated from the data and stored in the chart's &lt;desc&gt;. Write your own to replace it.</p>
+    <textarea class="prose" id="o-desc" rows="5" aria-label="Your own description (optional)" placeholder="Leave empty to use the generated one"></textarea></div>
+  </section>
+  </div>
+ </aside>
+ <main class="main" id="main">
+  <div class="bar2"><div class="row"><button class="btn sm" id="play" type="button">▶ Play build-up</button><select id="speed" aria-label="Animation speed" class="btn sm" style="width:auto"><option value="0.6">Slow</option><option value="1" selected>Normal</option><option value="1.6">Fast</option></select><span class="prog" id="prog" aria-live="polite"></span></div>
+   <div class="row"><button class="btn sm" id="tableToggle" type="button" aria-pressed="false" aria-controls="dtable">Show data table</button></div></div>
+  <div class="fig" id="fig" tabindex="0" role="group" aria-roledescription="chart" aria-label="Chart. Use the arrow keys to step through the values."><div id="chart"></div><div class="ring" id="ring"></div></div>
+  <p class="kbd">Hover a mark, or focus the chart and use <kbd>←</kbd> <kbd>→</kbd> to read each value. <span id="live" class="sr" aria-live="polite"></span></p>
+  <div class="dtable" id="dtable" hidden tabindex="0" role="region" aria-label="Data table"></div>
+  <p class="descbox" id="descbox"><b>Description</b><span id="desc"></span></p>
+ </main>
+</div>
+<dialog id="pasteDlg" aria-labelledby="pasteH"><form method="dialog" class="in"><h2 id="pasteH">Paste data</h2><p class="hint">Paste cells from a spreadsheet, CSV or JSON. The first row is the header.</p><textarea id="pasteBox" aria-label="Data to paste" spellcheck="false"></textarea><div class="row" style="justify-content:flex-end"><button class="btn" value="cancel" type="submit">Cancel</button><button class="btn primary" id="pasteUse" value="ok" type="submit">Use this data</button></div></form></dialog>
+<div class="tip" id="tip" aria-hidden="true"></div>
+<div class="toast" id="toast" role="status"></div>
+<script src="dataviz/styles.js"></script>
+<script src="dataviz/charts.js"></script>
+<script src="dataviz/chartmaker.js"></script>
+<script src="dataviz/export.js"></script>
+<script>
+'use strict';
+(()=>{
+const $=id=>document.getElementById(id),M=DVChartMaker;
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const store={get(k){try{return localStorage.getItem('cst:'+k);}catch{return null;}},set(k,v){try{localStorage.setItem('cst:'+k,v);return true;}catch{return false;}}};
+const toast=m=>{const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),2200);};
+const clone=o=>JSON.parse(JSON.stringify(o));
+
+/* ---------- state ---------- */
+const fresh=id=>{const smp=M.SAMPLES.find(s=>s.id===id)||M.SAMPLES[0];return {v:1,table:M.parse(smp.text),kind:smp.kind,style:'paper',mode:'auto',map:null,sample:smp.id,
+ opt:{title:smp.title||'',subtitle:smp.subtitle||'',source:smp.source||'',fmt:{style:'auto',decimals:'',prefix:'',suffix:''},labels:'auto',legend:'auto',direct:'on',grid:'on',yLabels:'on',xLabels:'on',zero:'auto',sort:'',markers:'off',width:'auto',height:'',bins:'',invert:'off',wfStart:'auto',wfEnd:'on',target:'',emph:'',slots:[],desc:''},notes:[]};};
+let S=fresh('views');
+const restore=o=>{if(!o||!o.table||!Array.isArray(o.table.columns))return false;const f=fresh(o.sample||'views');S={...f,...o,opt:{...f.opt,...(o.opt||{}),fmt:{...f.opt.fmt,...((o.opt||{}).fmt||{})}},notes:o.notes||[]};if(!DVStyles.some(s=>s.id===S.style))S.style='paper';if(!M.KIND[S.kind])S.kind='column';return true;};
+try{restore(JSON.parse(store.get('cur')||'null'));}catch{}
+const q=new URLSearchParams(location.search);
+if(q.get('sample')&&M.SAMPLES.some(s=>s.id===q.get('sample')))S=fresh(q.get('sample'));
+if(q.get('style')&&DVStyles.some(s=>s.id===q.get('style')))S.style=q.get('style');
+if(q.get('kind')&&M.KIND[q.get('kind')]){S.kind=q.get('kind');S.map=null;}
+
+/* undo / redo: snapshots of the whole state, taken after each change settles */
+const hist={past:[],future:[],last:JSON.stringify(S)};
+function commit(){const now=JSON.stringify(S);if(now===hist.last)return;hist.past.push(hist.last);if(hist.past.length>80)hist.past.shift();hist.future=[];hist.last=now;store.set('cur',now);syncUndo();}
+function undo(){if(!hist.past.length)return;hist.future.push(hist.last);hist.last=hist.past.pop();restore(JSON.parse(hist.last));drawAll();store.set('cur',hist.last);syncUndo();toast('Undone');}
+function redo(){if(!hist.future.length)return;hist.past.push(hist.last);hist.last=hist.future.pop();restore(JSON.parse(hist.last));drawAll();store.set('cur',hist.last);syncUndo();toast('Redone');}
+const syncUndo=()=>{$('undo').disabled=!hist.past.length;$('redo').disabled=!hist.future.length;};
+$('undo').onclick=undo;$('redo').onclick=redo;
+addEventListener('keydown',e=>{if(!(e.ctrlKey||e.metaKey)||e.key.toLowerCase()!=='z')return;if(e.target.closest&&e.target.closest('input,textarea'))return;e.preventDefault();e.shiftKey?redo():undo();});
+
+/* ---------- tabs and the phone bottom sheet ---------- */
+const TABS=['data','chart','style','notes','check'];
+function showTab(id,focus){TABS.forEach(t=>{const on=t===id;$('t-'+t).setAttribute('aria-selected',on);$('t-'+t).tabIndex=on?0:-1;$('p-'+t).hidden=!on;});if(focus)$('t-'+id).focus();$('side').classList.add('open');store.set('tab',id);}
+$('side').querySelector('.tabs').addEventListener('click',e=>{const b=e.target.closest('[role=tab]');if(b)showTab(b.id.slice(2));});
+$('side').querySelector('.tabs').addEventListener('keydown',e=>{const i=TABS.indexOf((document.activeElement.id||'').slice(2));if(i<0)return;if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();showTab(TABS[(i+(e.key==='ArrowRight'?1:TABS.length-1))%TABS.length],true);}});
+$('sheetx').onclick=()=>$('side').classList.remove('open');
+{const t=store.get('tab');if(TABS.includes(t))showTab(t);$('side').classList.remove('open');}
+
+/* ---------- data in ---------- */
+M.SAMPLES.forEach(s=>$('sample').insertAdjacentHTML('beforeend',`<option value="${s.id}">${esc(s.name)} · ${esc(M.KIND[s.kind].name)}</option>`));
+$('sample').onchange=()=>{const id=$('sample').value;if(!id)return;const keep={style:S.style,mode:S.mode};S={...fresh(id),...keep};drawAll();commit();toast('Loaded '+M.SAMPLES.find(s=>s.id===id).name.toLowerCase());};
+function useText(text,what){let tb;try{tb=M.parse(text);}catch(e){toast('Could not read that: '+(e.message||e));return;}if(!tb.rows.length){toast('No rows found');return;}
+ S.table=tb;S.map=null;S.sample='';S.opt.slots=[];S.opt.emph='';const rec=M.recommend(tb)[0];if(rec)S.kind=rec.id;drawAll();commit();toast(`${what}: ${tb.rows.length} rows × ${tb.columns.length} columns. Suggested: ${M.KIND[S.kind].name}`);}
+$('file').onchange=async()=>{const f=$('file').files[0];if(!f)return;if(f.size>5e6){toast('That file is over 5 MB');return;}useText(await f.text(),f.name);$('file').value='';};
+$('pasteOpen').onclick=()=>{$('pasteBox').value='';$('pasteDlg').showModal();$('pasteBox').focus();};
+$('pasteDlg').addEventListener('close',()=>{if($('pasteDlg').returnValue==='ok'&&$('pasteBox').value.trim())useText($('pasteBox').value,'Pasted');});
+/* pasting several cells straight into the grid replaces the data from that point */
+const csvCell=v=>/[",\n]/.test(v)?'"'+String(v).replace(/"/g,'""')+'"':String(v);
+function drawGrid(){const tb=S.table,ty=M.infer(tb),max=300;const n=Math.min(tb.rows.length,max);
+ let h=`<thead><tr><th class="rn" scope="col"><span class="sr">Row</span></th>${tb.columns.map((c,j)=>`<th scope="col"><div class="ty">${ty[j]==='num'?'123':ty[j]==='time'?'time':'abc'}<button class="x" type="button" data-delcol="${j}" aria-label="Remove column ${esc(c)}">×</button></div><input type="text" data-h="${j}" value="${esc(c)}" aria-label="Column ${j+1} name"></th>`).join('')}</tr></thead><tbody>`;
+ for(let i=0;i<n;i++)h+=`<tr><td class="rn"><button class="x" type="button" data-delrow="${i}" aria-label="Remove row ${i+1}" title="Remove row ${i+1}">${i+1}</button></td>${tb.columns.map((c,j)=>`<td><input type="text" data-r="${i}" data-c="${j}" value="${esc(tb.rows[i][j]??'')}" aria-label="${esc(c)}, row ${i+1}"></td>`).join('')}</tr>`;
+ $('grid').innerHTML=h+'</tbody>';$('dataInfo').textContent=`${tb.rows.length} rows × ${tb.columns.length} columns${tb.rows.length>max?` · first ${max} shown`:''}`;}
+$('grid').addEventListener('input',e=>{const el=e.target;if(el.dataset.h!=null)S.table.columns[+el.dataset.h]=el.value;else if(el.dataset.r!=null)S.table.rows[+el.dataset.r][+el.dataset.c]=el.value;else return;later();});
+$('grid').addEventListener('change',()=>{drawGrid();drawChartTab();});
+$('grid').addEventListener('paste',e=>{const el=e.target;if(el.dataset.r==null)return;const txt=e.clipboardData.getData('text');if(!/[\t\n]/.test(txt.trim()))return;e.preventDefault();
+ const r0=+el.dataset.r,c0=+el.dataset.c,lines=txt.replace(/\r/g,'').replace(/\n$/,'').split('\n').map(l=>l.split('\t'));lines.forEach((cells,i)=>{const r=r0+i;while(S.table.rows.length<=r)S.table.rows.push(S.table.columns.map(()=>''));cells.forEach((v,j)=>{const c=c0+j;while(S.table.columns.length<=c){S.table.columns.push('Column '+(S.table.columns.length+1));S.table.rows.forEach(rw=>rw.push(''));}S.table.rows[r][c]=v.trim();});});
+ S.map=null;drawGrid();render();commit();toast(`Pasted ${lines.length} rows`);});
+$('grid').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.delrow!=null){S.table.rows.splice(+b.dataset.delrow,1);}else if(b.dataset.delcol!=null){if(S.table.columns.length<2)return toast('Keep at least one column');const j=+b.dataset.delcol;S.table.columns.splice(j,1);S.table.rows.forEach(r=>r.splice(j,1));S.map=null;}else return;drawGrid();drawChartTab();render();commit();});
+$('addRow').onclick=()=>{S.table.rows.push(S.table.columns.map(()=>''));drawGrid();const ins=$('grid').querySelectorAll(`[data-r="${S.table.rows.length-1}"]`);ins[0]&&ins[0].focus();commit();};
+$('addCol').onclick=()=>{S.table.columns.push('Series '+S.table.columns.length);S.table.rows.forEach(r=>r.push(''));S.map=null;drawGrid();drawChartTab();render();commit();};
+$('clearData').onclick=()=>{S.table={columns:['Label','Value'],rows:[['A',''],['B',''],['C','']]};S.map=null;drawGrid();drawChartTab();render();commit();};
+$('transpose').onclick=()=>{const tb=S.table,cols=[tb.columns[0],...tb.rows.map(r=>r[0])],rows=tb.columns.slice(1).map((c,j)=>[c,...tb.rows.map(r=>r[j+1])]);S.table={columns:cols,rows};S.map=null;drawGrid();drawChartTab();render();commit();toast('Rows and columns swapped');};
+
+/* ---------- chart tab ---------- */
+const ICONS={column:'<path d="M3 17V9M9 17V4M15 17V11M21 17V7"/>',bar:'<path d="M2 3h18M2 8h13M2 13h9M2 17h5"/>',stacked:'<path d="M5 17V7M12 17V3M19 17V9" stroke-width="4"/>',stacked100:'<rect x="3" y="2" width="5" height="15"/><rect x="11" y="2" width="5" height="15"/><rect x="19" y="2" width="5" height="15"/><path d="M3 9h5M11 7h5M19 11h5"/>',barStacked:'<path d="M2 4h18M2 10h14M2 16h10" stroke-width="3.5"/>',
+ pie:'<circle cx="14" cy="10" r="7.5"/><path d="M14 10V2.5M14 10l6.5 3.7"/>',donut:'<circle cx="14" cy="10" r="7.5"/><circle cx="14" cy="10" r="3.5"/>',treemap:'<rect x="2" y="2" width="24" height="15"/><path d="M14 2v15M14 10h12M20 10v7"/>',line:'<path d="M2 15l6-6 5 3 6-8 7 4"/>',area:'<path d="M2 15l6-6 5 3 6-8 7 4v9H2z"/>',stackedArea:'<path d="M2 12l8-4 8 2 8-5M2 16l8-2 8 1 8-3"/>',multiples:'<path d="M2 8l3-3 3 2 3-4M15 8l3-1 3 1 3-4M2 17l3-2 3 1 3-3M15 17l3-3 3 2 3-1"/>',slope:'<path d="M5 3v15M23 3v15M5 13l18-8M5 7l18 6"/>',dumbbell:'<path d="M5 5h14M8 10h16M3 15h10"/><circle cx="5" cy="5" r="2"/><circle cx="19" cy="5" r="2"/><circle cx="8" cy="10" r="2"/><circle cx="24" cy="10" r="2"/>',
+ waterfall:'<path d="M3 17V9M8 9V5M13 5V8M18 8V12M23 17V12"/>',bullet:'<rect x="2" y="5" width="24" height="9"/><path d="M2 9.5h15M20 3v13" stroke-width="2.5"/>',kpi:'<rect x="2" y="3" width="11" height="14" rx="2"/><rect x="15" y="3" width="11" height="14" rx="2"/><path d="M4 14l3-2 3 1M17 14l3-3 3 1"/>',gauge:'<path d="M5 16a9 9 0 1 1 18 0"/><path d="M14 16l5-6"/>',funnel:'<path d="M2 3h24l-8 7v7h-8v-7z"/>',sankey:'<path d="M2 4c12 0 12 9 24 9M2 14c12 0 12-9 24-9"/>',
+ histogram:'<path d="M2 17V12h4V6h4V3h4v6h4v5h4v3"/>',boxplot:'<path d="M7 2v4M7 14v4M21 4v3M21 13v4"/><rect x="4" y="6" width="6" height="8"/><rect x="18" y="7" width="6" height="6"/>',heatmap:'<rect x="2" y="2" width="7" height="5"/><rect x="10" y="2" width="7" height="5" fill="currentColor"/><rect x="18" y="2" width="7" height="5"/><rect x="2" y="9" width="7" height="5" fill="currentColor"/><rect x="10" y="9" width="7" height="5"/><rect x="18" y="9" width="7" height="5" fill="currentColor"/>',
+ scatter:'<circle cx="5" cy="14" r="1.5"/><circle cx="10" cy="10" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="19" cy="6" r="1.5"/><circle cx="24" cy="4" r="1.5"/>',bubble:'<circle cx="7" cy="12" r="4"/><circle cx="17" cy="7" r="2.5"/><circle cx="22" cy="13" r="3"/>',radar:'<path d="M14 2l9 6-3 9H8L5 8z"/><path d="M14 6l5 3-2 5h-6l-2-5z"/>'};
+const ico=id=>`<svg viewBox="0 0 28 19" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">${ICONS[id]||''}</svg>`;
+function drawTypes(){const groups=[...new Set(M.KINDS.map(k=>k.group))];$('types').innerHTML=groups.map(g=>`<h3>${g}</h3>`+M.KINDS.filter(k=>k.group===g).map(k=>`<button class="type" type="button" data-kind="${k.id}" aria-pressed="${k.id===S.kind}" title="${esc(k.hint)}">${ico(k.id)}${esc(k.name)}</button>`).join('')).join('');}
+function setKind(k){if(!M.KIND[k])return;S.kind=k;S.map=null;drawChartTab();render();commit();}
+$('types').addEventListener('click',e=>{const b=e.target.closest('[data-kind]');if(b)setKind(b.dataset.kind);});
+$('recs').addEventListener('click',e=>{const b=e.target.closest('[data-kind]');if(b)setKind(b.dataset.kind);});
+const curMap=()=>S.map||M.defaultMap(S.kind,S.table);
+function drawMapping(){const k=M.KIND[S.kind],m=curMap(),cols=S.table.columns,ty=M.infer(S.table),lab=r=>(S.kind==='sankey'&&M.SANKEY_LABEL[r])||M.ROLE_LABEL[r];
+ const sel=(role,val,allowNone,onlyNum)=>`<label class="f">${lab(role)}<select data-role="${role}">${allowNone?`<option value="-1"${val<0?' selected':''}>None</option>`:''}${cols.map((c,i)=>onlyNum&&ty[i]!=='num'?'':`<option value="${i}"${+val===i?' selected':''}>${esc(c)}</option>`).join('')}</select></label>`;let h='';
+ k.roles.forEach(r=>{if(r==='x')h+=sel('x',m.x,true);else if(r==='xg')h+=sel('xg',m.x,true);else if(r==='xn')h+=sel('xn',m.x,false,true);else if(r==='y1')h+=sel('y1',m.y[0]??-1,false,true);
+  else if(r==='y2')h+=`<label class="f">${S.kind==='bullet'||S.kind==='gauge'?'Actual':'First value'}<select data-role="y2a">${cols.map((c,i)=>ty[i]==='num'?`<option value="${i}"${m.y[0]===i?' selected':''}>${esc(c)}</option>`:'').join('')}</select></label><label class="f">${S.kind==='bullet'||S.kind==='gauge'?'Target':'Second value'}<select data-role="y2b"><option value="-1">None</option>${cols.map((c,i)=>ty[i]==='num'?`<option value="${i}"${m.y[1]===i?' selected':''}>${esc(c)}</option>`:'').join('')}</select></label>`;
+  else if(r==='y')h+=`<fieldset class="f" style="grid-column:1/-1;border:0;padding:0;margin:0"><legend style="font-size:12px;color:var(--mute);margin-bottom:4px">${lab('y')}${k.max?` · up to ${k.max}`:''}</legend><div class="row">${cols.map((c,i)=>ty[i]==='num'&&i!==m.x?`<label class="chip" style="padding:0 10px"><input type="checkbox" data-y="${i}"${m.y.includes(i)?' checked':''}> ${esc(c)}</label>`:'').join('')||'<span class="hint">No numeric columns yet.</span>'}</div></fieldset>`;
+  else h+=sel(r,m[r==='size'?'size':r==='group'?'group':'label'],true);});
+ $('mapping').innerHTML=h;}
+$('mapping').addEventListener('change',e=>{const el=e.target,m=clone(curMap());const v=+el.value;
+ if(el.dataset.y!=null){const i=+el.dataset.y;m.y=el.checked?[...m.y,i].sort((a,b)=>S.table.columns.indexOf(S.table.columns[a])-S.table.columns.indexOf(S.table.columns[b])):m.y.filter(x=>x!==i);m.y.sort((a,b)=>a-b);}
+ else{const r=el.dataset.role;if(r==='x'||r==='xg'||r==='xn')m.x=v;else if(r==='y1')m.y=[v];else if(r==='y2a')m.y=[v,m.y[1]??-1].filter(x=>x>=0);else if(r==='y2b')m.y=[m.y[0],v].filter(x=>x>=0);else m[r]=v;}
+ S.map=m;S.opt.slots=[];render();commit();});
+const OPTS={labels:['Value labels',[['auto','Auto'],['all','All'],['max','Highest only'],['none','None']]],legend:['Legend',[['auto','When 2+ series'],['off','Off']]],direct:['Direct labels',[['on','On'],['off','Off']]],
+ grid:['Gridlines',[['on','On'],['off','Off']]],yLabels:['Value axis labels',[['on','On'],['off','Off']]],xLabels:['Category labels',[['on','On'],['off','Off']]],zero:['Start at zero',[['auto','Auto'],['on','Always'],['off','Fit the data']]],
+ sort:['Sort',[['','Default'],['none','As entered'],['desc','High to low'],['asc','Low to high']]],markers:['Point markers',[['off','Off'],['on','On']]],invert:['Higher is better',[['off','Yes'],['on','No, lower is better']]],wfStart:['First row',[['auto','Auto'],['on','Starting total'],['off','A change']]],wfEnd:['Add total bar',[['on','Yes'],['off','No']]]};
+const KOPTS={column:['labels','legend','grid','yLabels','xLabels','sort'],bar:['labels','legend','grid','xLabels','sort'],stacked:['labels','legend','grid','yLabels','xLabels','sort'],stacked100:['labels','legend','grid','yLabels','xLabels','sort'],barStacked:['labels','legend','grid','xLabels','sort'],
+ pie:['labels','sort'],donut:['labels','sort'],treemap:['legend'],line:['labels','legend','direct','grid','yLabels','xLabels','zero','markers'],area:['labels','grid','yLabels','xLabels','zero'],stackedArea:['legend','direct','grid','yLabels','xLabels'],multiples:['grid','yLabels'],
+ slope:['sort'],dumbbell:['labels','legend','grid','xLabels','zero','sort'],waterfall:['labels','legend','grid','yLabels','xLabels','wfStart','wfEnd'],bullet:['legend','xLabels','sort'],kpi:['invert'],gauge:[],funnel:[],sankey:[],histogram:['grid','yLabels'],boxplot:['grid','yLabels','xLabels'],heatmap:['labels','sort'],scatter:['labels','legend','grid','yLabels','xLabels','zero'],bubble:['labels','legend','grid','yLabels','xLabels','zero'],radar:['legend']};
+function drawOpts(){let h=(KOPTS[S.kind]||[]).map(k=>{const [lab,ch]=OPTS[k];return `<label class="f">${lab}<select data-o="${k}">${ch.map(([v,l])=>`<option value="${v}"${String(S.opt[k]??'')===v?' selected':''}>${l}</option>`).join('')}</select></label>`;}).join('');
+ if(S.kind==='histogram')h+=`<label class="f">Bins<input type="number" min="2" max="60" data-o="bins" value="${esc(S.opt.bins)}" placeholder="Auto"></label>`;
+ if(S.kind==='gauge')h+=`<label class="f">Target if no column<input type="number" data-o="target" value="${esc(S.opt.target)}" placeholder="Auto"></label>`;
+ $('opts').innerHTML=h||'<p class="hint" style="grid-column:1/-1">This chart has no extra options.</p>';}
+$('opts').addEventListener('change',e=>{const k=e.target.dataset.o;if(!k)return;S.opt[k]=e.target.value;render();commit();});
+const bindText=(id,get,set)=>{$(id).addEventListener('input',()=>{set($(id).value);later();});};
+['title','subtitle','source','desc'].forEach(k=>bindText('o-'+k,null,v=>S.opt[k]=v));
+['style','decimals','prefix','suffix'].forEach(k=>{const el=$('f-'+k);el.addEventListener(el.tagName==='SELECT'?'change':'input',()=>{S.opt.fmt[k]=el.value;later();});});
+['width','height'].forEach(k=>$('o-'+k).addEventListener('change',()=>{S.opt[k]=$('o-'+k).value;render();commit();}));
+function drawRecs(){const R=M.recommend(S.table);$('recs').innerHTML=R.slice(0,4).map(r=>`<button class="rec" type="button" data-kind="${r.id}" aria-pressed="${r.id===S.kind}"><b>${esc(M.KIND[r.id].name)}</b><i>${r.score}</i><span>${esc(r.why)}</span></button>`).join('');}
+function drawChartTab(){drawRecs();drawTypes();drawMapping();drawOpts();}
+function syncFields(){['title','subtitle','source','desc'].forEach(k=>{if(document.activeElement!==$('o-'+k))$('o-'+k).value=S.opt[k]||'';});['style','decimals','prefix','suffix'].forEach(k=>$('f-'+k).value=S.opt.fmt[k]||'');$('o-width').value=S.opt.width||'auto';$('o-height').value=S.opt.height||'';}
+
+/* ---------- style tab ---------- */
+const chip=s=>`<button class="chip" type="button" data-style="${s.id}" aria-pressed="${s.id===S.style}" title="${esc(s.kicker)}"><span class="sw">${s.t.cat.slice(0,4).map(c=>`<i style="background:${c}"></i>`).join('')}</span>${esc(s.name)}</button>`;
+$('styles').innerHTML=`<span class="lbl">Your brand</span>${DVStyles.filter(s=>s.brand).map(chip).join('')}<span class="lbl">From your board</span>${DVStyles.filter(s=>s.board).map(chip).join('')}<span class="lbl">Researched</span>${DVStyles.filter(s=>!s.board&&!s.brand).map(chip).join('')}`;
+$('styles').onclick=e=>{const b=e.target.closest('[data-style]');if(!b)return;S.style=b.dataset.style;render();commit();};
+$('mode').onclick=e=>{const b=e.target.closest('[data-mode]');if(!b)return;S.mode=b.dataset.mode;render();commit();};
+$('slots').addEventListener('change',e=>{const i=+e.target.dataset.slot;S.opt.slots=S.opt.slots||[];S.opt.slots[i]=e.target.value;render();commit();});
+$('emph').onchange=()=>{S.opt.emph=$('emph').value;render();commit();};
+$('bestOrder').onclick=()=>{const r=last;if(!r)return;const n=Math.max(1,Math.min(r.style.t.cat.length,seriesNames().length));const o=M.bestOrder(r.style.t.cat,n,r.pairs);S.opt.slots=o.map(String);S.opt.emph='';render();commit();toast('Slots reordered for the widest colour-blind separation');};
+function seriesNames(){const m=last?last.map:curMap();if(['pie','donut'].includes(S.kind)){const n=Math.min(5,S.table.rows.length);return S.table.rows.slice(0,n).map(r=>String(r[m.x]??''));}
+ if(['scatter','bubble'].includes(S.kind)&&m.group>=0)return [...new Set(S.table.rows.map(r=>String(r[m.group])))].slice(0,3);
+ if(['heatmap','multiples','histogram','funnel','kpi','gauge','bullet','dumbbell','treemap','sankey','waterfall','boxplot'].includes(S.kind))return [];return (m.y||[]).map(i=>S.table.columns[i]);}
+function drawStyleTab(r){const st=r.style,cat=st.t.cat;$('styles').querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',String(c.dataset.style===S.style)));
+ $('mode').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===S.mode)));
+ const base=DVStyle(S.style);$('modeHint').textContent=st.derived?`${base.name} is ${base.t.dark?'dark':'light'} by design. The ${st.t.dark?'dark':'light'} version is computed: surfaces swapped, every hue snapped into the ${st.t.dark?'dark':'light'} lightness band, then checked below.`:S.mode!=='auto'&&st.id!==base.id?`${base.name}'s ${st.t.dark?'dark':'light'} twin is ${st.name}.`:`${base.name} is a ${base.t.dark?'dark':'light'} style.`;
+ $('styleBlurb').textContent=base.blurb;
+ const names=seriesNames();$('slots').innerHTML=names.length?names.map((n,i)=>{const cur=S.opt.slots&&S.opt.slots[i]!=null&&S.opt.slots[i]!==''?+S.opt.slots[i]:i;return `<div class="slot"><i style="background:${cat[cur%cat.length]}"></i><span title="${esc(n)}">${esc(n)}</span><select data-slot="${i}" aria-label="Colour slot for ${esc(n)}">${cat.map((c,k)=>`<option value="${k}"${k===cur%cat.length?' selected':''}>Slot ${k+1}</option>`).join('')}</select></div>`;}).join(''):`<p class="hint">This chart colours by ${['heatmap','funnel','treemap'].includes(S.kind)?'magnitude on a one-hue ramp':S.kind==='waterfall'?'direction, on the diverging poles':'one accent'}, so there are no series slots to assign.</p>`;
+ $('bestOrder').disabled=names.length<2;
+ $('emph').innerHTML=`<option value="">None</option>`+names.map((n,i)=>`<option value="${i}"${String(S.opt.emph)===String(i)?' selected':''}>${esc(n)}</option>`).join('');$('emph').disabled=!names.length||['pie','donut','scatter','bubble'].includes(S.kind);
+ const pal=r.palette.filter(c=>/^#[0-9a-f]{6}$/i.test(c));const v=M.validate(pal,{mode:st.t.dark?'dark':'light',surface:r.surface,pairs:r.pairs});last.check=v;
+ $('palState').innerHTML=pal.length?`<span class="badge ${v.ok?(v.checks.some(c=>c.state==='warn')?'warn':''):'fail'}">${v.ok?(v.checks.some(c=>c.state==='warn')?'PASS · WITH LABELS':'PASS'):'FAIL'}</span>`:'';
+ $('palChecks').innerHTML=pal.length?v.checks.map(c=>`<li><span class="badge ${c.state==='pass'?'':c.state}">${c.state==='pass'?'PASS':c.state==='warn'?'WARN':'FAIL'}</span><b>${esc(c.name)}</b><span>${esc(c.detail)}</span></li>`).join('')+`<li><span class="badge">INFO</span><b>Colours in use</b><span>${pal.map(c=>`<i style="display:inline-block;width:11px;height:11px;border-radius:3px;background:${c};vertical-align:-1px;margin-right:3px"></i>${c}`).join('  ')}</span></li>`:'<li><span class="badge">INFO</span><b>No categorical colours</b><span>This chart uses one accent, a one-hue ramp or the diverging poles.</span></li>';}
+
+/* ---------- annotations ---------- */
+function drawNotes(){const labels=(last?S.table.rows.map((r,i)=>String(r[(last.map||{}).x]??`Row ${i+1}`)):[]);const ser=seriesNames();
+ $('notes').innerHTML=S.notes.map((n,i)=>`<li class="note"><div class="hd">${n.type==='point'?'Callout':n.type==='line'?'Reference line':'Band'}<button class="x" type="button" data-delnote="${i}" aria-label="Remove annotation">×</button></div>
+  <label class="f">Text<input type="text" data-n="${i}" data-k="text" value="${esc(n.text||'')}"></label>
+  ${n.type==='point'?`<div class="g2"><label class="f">Row<select data-n="${i}" data-k="row">${labels.map((l,j)=>`<option value="${j}"${+n.row===j?' selected':''}>${esc(l||'Row '+(j+1))}</option>`).join('')}</select></label><label class="f">Series<select data-n="${i}" data-k="series">${(ser.length?ser:['Value']).map((l,j)=>`<option value="${j}"${+n.series===j?' selected':''}>${esc(l)}</option>`).join('')}</select></label></div>`
+  :n.type==='line'?`<label class="f">At value<input type="text" inputmode="decimal" data-n="${i}" data-k="value" value="${esc(n.value??'')}"></label>`
+  :`<div class="g2"><label class="f">From<input type="text" inputmode="decimal" data-n="${i}" data-k="value" value="${esc(n.value??'')}"></label><label class="f">To<input type="text" inputmode="decimal" data-n="${i}" data-k="to" value="${esc(n.to??'')}"></label></div>`}</li>`).join('')||'<li class="hint">No annotations yet.</li>';}
+$('notes').addEventListener('input',e=>{const el=e.target;if(el.dataset.n==null)return;S.notes[+el.dataset.n][el.dataset.k]=el.value;later();});
+$('notes').addEventListener('change',e=>{const el=e.target;if(el.tagName==='SELECT'){S.notes[+el.dataset.n][el.dataset.k]=+el.value;render();commit();}});
+$('notes').addEventListener('click',e=>{const b=e.target.closest('[data-delnote]');if(!b)return;S.notes.splice(+b.dataset.delnote,1);drawNotes();render();commit();});
+document.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{const t=b.dataset.add;const vals=last&&last.map?(S.table.rows.map(r=>M.parseNum(r[(last.map.y||[])[0]])).filter(isFinite)):[];
+ const avg=vals.length?Math.round(vals.reduce((a,c)=>a+c,0)/vals.length*10)/10:0;const imax=vals.length?vals.indexOf(Math.max(...vals)):0;
+ S.notes.push(t==='point'?{type:'point',text:'The highest value',row:Math.max(0,imax),series:0}:t==='line'?{type:'line',value:avg,text:'Average '+avg}:{type:'band',value:avg*.9,to:avg*1.1,text:'Normal range'});drawNotes();render();commit();});
+
+/* ---------- render ---------- */
+let last=null,timer=0;const later=()=>{clearTimeout(timer);timer=setTimeout(()=>{render();commit();},180);};
+const loadedFonts=new Set();
+function chartWidth(){if(S.opt.width&&S.opt.width!=='auto')return +S.opt.width;const w=$('fig').parentElement.clientWidth;return Math.max(320,Math.min(1100,Math.round(w-2)));}
+function render(){stopPlay();const st=DVStyle(S.style);
+ const r=M.render(S.kind,S.table,st,{...S.opt,mode:S.mode,map:S.map||undefined,width:chartWidth(),height:+S.opt.height||undefined,notes:S.notes,fmt:S.opt.fmt});last=r;
+ const ms=r.style;if(!loadedFonts.has(ms.id)&&document.fonts){loadedFonts.add(ms.id);DVFonts(ms);const fam=ms.t.font.split(',')[0],hd=ms.t.head.split(',')[0];Promise.all([document.fonts.load(`600 14px ${fam}`),document.fonts.load(`400 12px ${fam}`),document.fonts.load(`600 20px ${hd}`)]).then(()=>render()).catch(()=>{});}
+ $('chart').innerHTML=r.svg;$('fig').style.background=ms.t.bg.startsWith('#')?ms.t.bg:'#0B0F1A';$('fig').style.maxWidth=S.opt.width&&S.opt.width!=='auto'?r.width+'px':'';
+ $('desc').textContent=r.desc;drawStyleTab(r);drawTable();drawWarns(r);$('guideLink').href='chart-styles.html#s='+S.style;
+ document.title=(S.opt.title||M.KIND[S.kind].name)+' · Chart studio';cursor=-1;$('ring').style.display='none';}
+function drawAll(){drawGrid();drawChartTab();syncFields();render();drawNotes();}
+function drawWarns(r){const w=[...r.warnings];const v=last.check;const items=[];
+ items.push(['pass',`${M.KIND[S.kind].name}`,M.KIND[S.kind].hint]);
+ items.push([S.opt.title&&S.opt.title.trim()?'pass':'warn','Title',S.opt.title&&S.opt.title.trim()?'Present. Good titles state the finding, not the topic.':'Add a title that states the finding.']);
+ items.push(['pass','Accessible name and description','The SVG has role="img", a <title> and a generated <desc>; the data table is one click away.']);
+ if(v&&r.palette.length)items.push([v.ok?(v.checks.some(c=>c.state==='warn')?'warn':'pass'):'fail','Colour-blind safety',v.ok?`Worst colour-blind ΔE ${v.cvd.toFixed(1)}${v.cvd<8?' is in the 6–8 floor band: keep labels or the table':''}.`:'A palette check fails; see the Style tab, or use “Most distinct order”.']);
+ const n=last.palette.length;if(n>=2&&S.opt.legend==='off'&&S.opt.direct==='off')items.push(['warn','Identity','Neither a legend nor direct labels: colour alone carries identity. Turn one on.']);
+ $('warns').innerHTML=w.map(x=>`<li>${esc(x)}</li>`).join('');$('preflight').innerHTML=items.map(([s,b,d])=>`<li><span class="badge ${s==='pass'?'':s}">${s==='pass'?'OK':s==='warn'?'CHECK':'FIX'}</span><b>${esc(b)}</b><span>${esc(d)}</span></li>`).join('');}
+
+/* data table twin of the chart */
+let tableOn=store.get('table')==='1';
+function drawTable(){$('tableToggle').setAttribute('aria-pressed',tableOn);$('tableToggle').textContent=tableOn?'Hide data table':'Show data table';$('dtable').hidden=!tableOn;if(!tableOn)return;
+ const tb=S.table,ty=M.infer(tb);$('dtable').innerHTML=`<table><caption>${esc(S.opt.title||'Chart data')}</caption><thead><tr>${tb.columns.map(c=>`<th scope="col">${esc(c)}</th>`).join('')}</tr></thead><tbody>${tb.rows.slice(0,500).map(r=>`<tr>${r.map((c,j)=>j===0?`<th scope="row">${esc(c)}</th>`:`<td${ty[j]==='num'?' class="n"':''}>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;}
+$('tableToggle').onclick=()=>{tableOn=!tableOn;store.set('table',tableOn?'1':'0');drawTable();};
+
+/* ---------- tooltips: pointer and a keyboard cursor over the marks ---------- */
+const tip=$('tip');let cur=null,cursor=-1;
+function fillTip(d){tip.replaceChildren();const ti=document.createElement('div');ti.className='t';ti.textContent=d.title;tip.append(ti);
+ d.rows.forEach(([c,v,l])=>{const row=document.createElement('div');row.className='r';if(c){const i=document.createElement('i');i.style.background=c;row.append(i);}const b=document.createElement('b');b.textContent=v;row.append(b);if(l){const sp=document.createElement('span');sp.textContent=l;row.append(sp);}tip.append(row);});}
+function xh(el){const svg=el.ownerSVGElement;svg.querySelector('.xhl')?.remove();const g=el.closest('.xh');if(!g)return;const L=document.createElementNS('http://www.w3.org/2000/svg','line');L.setAttribute('class','xhl');['x1','x2'].forEach(a=>L.setAttribute(a,g.dataset.x));L.setAttribute('y1',g.dataset.y0);L.setAttribute('y2',g.dataset.y1);L.setAttribute('stroke',last.style.t.mute);L.setAttribute('stroke-width','1');L.setAttribute('pointer-events','none');svg.append(L);}
+function show(el,x,y){const d=last&&last.tips[+el.dataset.tip];if(!d)return;fillTip(d);const w=tip.offsetWidth||180,h=tip.offsetHeight||60;tip.style.left=Math.max(8,Math.min(innerWidth-w-12,x+14))+'px';tip.style.top=(y-h-12<8?y+18:y-h-12)+'px';tip.classList.add('on');xh(el);cur=el;}
+function hide(){tip.classList.remove('on');if(cur){cur.ownerSVGElement?.querySelector('.xhl')?.remove();cur=null;}}
+$('chart').addEventListener('pointermove',e=>{const el=e.target.closest?.('[data-tip]');if(el)show(el,e.clientX,e.clientY);else if(cur)hide();});
+$('chart').addEventListener('pointerleave',hide);addEventListener('scroll',hide,{passive:true});
+const marks=()=>{const all=[...$('chart').querySelectorAll('[data-tip]')];const seen=new Set();return all.filter(e=>{const k=e.dataset.tip;if(seen.has(k))return false;seen.add(k);return true;}).sort((a,b)=>+a.dataset.tip - +b.dataset.tip);};
+function moveCursor(i){const ms=marks();if(!ms.length)return;cursor=(i+ms.length)%ms.length;const el=ms[cursor],b=el.getBoundingClientRect(),fb=$('fig').getBoundingClientRect(),ring=$('ring');
+ ring.style.display='block';ring.style.left=(b.left-fb.left-3)+'px';ring.style.top=(b.top-fb.top-3)+'px';ring.style.width=(b.width+6)+'px';ring.style.height=(b.height+6)+'px';
+ show(el,b.left+b.width/2,b.top);const d=last.tips[+el.dataset.tip];$('live').textContent=`${cursor+1} of ${ms.length}. ${d.title}: ${d.rows.map(r=>[r[1],r[2]].filter(Boolean).join(' ')).join(', ')}`;}
+$('fig').addEventListener('keydown',e=>{const k=e.key;if(['ArrowRight','ArrowDown'].includes(k)){e.preventDefault();moveCursor(cursor+1);}else if(['ArrowLeft','ArrowUp'].includes(k)){e.preventDefault();moveCursor(cursor<0?-1:cursor-1);}else if(k==='Home'){e.preventDefault();moveCursor(0);}else if(k==='End'){e.preventDefault();moveCursor(-1);}else if(k==='Escape'){hide();$('ring').style.display='none';cursor=-1;}});
+$('fig').addEventListener('blur',()=>{hide();$('ring').style.display='none';cursor=-1;});
+
+/* ---------- exports ---------- */
+const slug=()=>((S.opt.title||M.KIND[S.kind].name).trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,60))||'chart';
+const csv=()=>[S.table.columns,...S.table.rows].map(r=>r.map(csvCell).join(',')).join('\n')+'\n';
+function embedHTML(){const r=last,st=r.style,tb=S.table,fonts=st.fonts&&st.fonts.length?`<link rel="stylesheet" href="https://fonts.googleapis.com/css2?${st.fonts.map(f=>'family='+f).join('&')}&display=swap">\n`:'';
+ const svg=r.svg.replace(/<svg([^>]*) width="\d+" height="\d+"/,'<svg$1 width="100%" style="height:auto;display:block"');
+ return `<!-- ${esc(S.opt.title||'Chart')} · made in Chart studio -->\n${fonts}<figure style="margin:0;max-width:${r.width}px;font-family:${esc(st.t.font)}">\n${svg}\n<details style="margin-top:8px;font-size:13px"><summary>Data table</summary>\n<table style="border-collapse:collapse;font-variant-numeric:tabular-nums"><thead><tr>${tb.columns.map(c=>`<th scope="col" style="text-align:left;padding:4px 10px;border-bottom:1px solid #ccc">${esc(c)}</th>`).join('')}</tr></thead><tbody>${tb.rows.map(row=>`<tr>${row.map(c=>`<td style="padding:4px 10px;border-bottom:1px solid #eee">${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></details>\n${S.opt.source?`<figcaption style="font-size:12px;color:#666">Source: ${esc(S.opt.source)}</figcaption>\n`:''}</figure>\n`;}
+const animOpts=()=>({svgEl:$('chart').querySelector('svg'),width:last.width,height:last.height,style:last.style,speed:+$('speed').value,plan:M.plan,onProgress:p=>{$('prog').textContent=`Rendering ${Math.round(p*100)}%`;}});
+const EX={
+ svg:async()=>{DVExport.download(slug()+'.svg',await DVExport.svgWithFonts(last.svg,last.style),'image/svg+xml');toast('SVG downloaded with fonts embedded');},
+ png:async()=>{DVExport.download(slug()+'.png',await DVExport.png(last.svg,last.width,last.height,last.style));toast('PNG downloaded at 2×');},
+ copy:async()=>{try{await navigator.clipboard.writeText(last.svg);toast('SVG copied');}catch{DVExport.download(slug()+'.svg',last.svg,'image/svg+xml');toast('Copy was blocked, so the SVG was downloaded');}},
+ embed:async()=>{const h=embedHTML();try{await navigator.clipboard.writeText(h);toast('Embed HTML copied; a file was downloaded too');}catch{}DVExport.download(slug()+'-embed.html',h,'text/html');},
+ csv:async()=>{DVExport.download(slug()+'.csv',csv(),'text/csv');toast('CSV downloaded');},
+ video:async()=>{const {blob,ext}=await DVExport.video(animOpts());DVExport.download(slug()+'-build.'+ext,blob);toast(ext==='mp4'?'MP4 downloaded':'WebM downloaded');},
+ gif:async()=>{DVExport.download(slug()+'-build.gif',await DVExport.gif(animOpts()));toast('GIF downloaded');}};
+$('exportMenu').addEventListener('click',async e=>{const b=e.target.closest('[data-ex]');if(!b)return;$('exportMenu').open=false;stopPlay();const k=b.dataset.ex;if(k==='video'||k==='gif'){$('play').disabled=true;toast('Rendering the build-up…');}
+ try{await EX[k]();}catch(err){console.warn(err);toast(`${k.toUpperCase()} export failed: ${err.message||err}`);}finally{$('play').disabled=false;setTimeout(()=>$('prog').textContent='',2000);}});
+document.addEventListener('click',e=>{document.querySelectorAll('details.menu[open]').forEach(d=>{if(!d.contains(e.target))d.open=false;});});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('details.menu[open]').forEach(d=>{d.open=false;d.querySelector('summary').focus();});});
+
+/* build-up preview */
+let play=null;
+function stopPlay(){if(!play)return;cancelAnimationFrame(play.raf);play.P.reset();play=null;$('play').textContent='▶ Play build-up';}
+$('play').onclick=()=>{if(play){stopPlay();return;}const el=$('chart').querySelector('svg');if(!el)return;const P=M.plan(el,{speed:+$('speed').value});P.apply(0);const t0=performance.now();play={P,raf:0};$('play').textContent='■ Stop';
+ const tick=now=>{if(!play)return;const t=now-t0;P.apply(t);if(t>=P.duration+500){stopPlay();return;}play.raf=requestAnimationFrame(tick);};play.raf=requestAnimationFrame(tick);};
+
+/* ---------- drafts and share links ---------- */
+const b64u={enc:bytes=>{let s='';for(let i=0;i<bytes.length;i+=0x8000)s+=String.fromCharCode.apply(null,bytes.subarray(i,i+0x8000));return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');},
+ dec:str=>{const s=atob(str.replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from(s,c=>c.charCodeAt(0));}};
+async function packState(){const json=new TextEncoder().encode(JSON.stringify(S));if(window.CompressionStream){try{const buf=await new Response(new Blob([json]).stream().pipeThrough(new CompressionStream('deflate-raw'))).arrayBuffer();return 'z.'+b64u.enc(new Uint8Array(buf));}catch{}}return 'j.'+b64u.enc(json);}
+async function unpack(tok){const [k,v]=[tok.slice(0,1),tok.slice(2)];const bytes=b64u.dec(v);if(k==='z'){const buf=await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer();return JSON.parse(new TextDecoder().decode(buf));}return JSON.parse(new TextDecoder().decode(bytes));}
+$('share').onclick=async()=>{const tok=await packState();const url=location.origin+location.pathname+'#c='+tok;history.replaceState(null,'','#c='+tok);try{await navigator.clipboard.writeText(url);toast(url.length>8000?'Link copied (long: the data travels inside it)':'Link copied: it opens this exact chart');}catch{toast('Link is in the address bar; copy it from there');}};
+const drafts=()=>{try{return JSON.parse(store.get('drafts')||'[]');}catch{return [];}};
+function drawDrafts(){const d=drafts();$('drafts').innerHTML=`<button type="button" data-save>Save this chart as a draft</button><button type="button" data-new>New chart from sample</button>${d.length?'<hr>':''}${d.map((x,i)=>`<div class="drow"><button type="button" data-load="${i}"><span>${esc(x.name)}</span><small>${new Date(x.ts).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</small></button><button type="button" data-deld="${i}" aria-label="Delete draft ${esc(x.name)}">×</button></div>`).join('')}`;}
+$('draftsMenu').addEventListener('toggle',()=>{if($('draftsMenu').open)drawDrafts();});
+$('drafts').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=drafts();
+ if(b.hasAttribute('data-save')){const name=(S.opt.title||M.KIND[S.kind].name).slice(0,60);const i=d.findIndex(x=>x.name===name);const item={name,ts:Date.now(),state:clone(S)};if(i>=0)d[i]=item;else d.unshift(item);if(!store.set('drafts',JSON.stringify(d.slice(0,30))))return toast('Could not save: browser storage is full or blocked');toast('Draft saved: '+name);}
+ else if(b.hasAttribute('data-new')){S={...fresh('views'),style:S.style};drawAll();commit();}
+ else if(b.dataset.load!=null){restore(clone(d[+b.dataset.load].state));drawAll();commit();toast('Draft opened');$('draftsMenu').open=false;return;}
+ else if(b.dataset.deld!=null){d.splice(+b.dataset.deld,1);store.set('drafts',JSON.stringify(d));}
+ drawDrafts();});
+
+/* ---------- start ---------- */
+let rw=0;addEventListener('resize',()=>{if(S.opt.width&&S.opt.width!=='auto')return;const w=$('fig').parentElement.clientWidth;if(Math.abs(w-rw)<8)return;rw=w;clearTimeout(rw.t);setTimeout(render,120);});
+async function start(){const m=location.hash.match(/^#c=([zj]\.[A-Za-z0-9_-]+)/);if(m){try{restore(await unpack(m[1]));toast('Opened the shared chart');}catch(e){console.warn('share link unreadable',e);toast('That share link could not be read');}}
+ drawAll();hist.last=JSON.stringify(S);syncUndo();rw=$('fig').parentElement.clientWidth;document.fonts?.ready.then(()=>setTimeout(render,60));}
+window.ChartStudio={get state(){return S;},set(p){if(p.sample){S={...fresh(p.sample),style:S.style,mode:S.mode};}Object.entries(p).forEach(([k,v])=>{if(k==='sample')return;if(k==='opt')Object.assign(S.opt,v);else S[k]=v;});if(p.kind||p.table)S.map=p.map||null;drawAll();return last;},
+ get last(){return last;},csv,embedHTML,packState,unpack,EX};
+start();
+})();
+</script>
+</body></html>

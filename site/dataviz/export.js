@@ -19,10 +19,11 @@ const loadScript=(src,g)=>new Promise((ok,no)=>{if(window[g])return ok();const s
 const vendor=new URL('../vendor/',document.currentScript?document.currentScript.src:location.href).href;
 async function png(svg,w,h,st,k=2){const img=await loadImg('data:image/svg+xml;charset=utf-8,'+encodeURIComponent(await svgWithFonts(svg,st)));const c=document.createElement('canvas');c.width=Math.round(w*k);c.height=Math.round(h*k);const x=c.getContext('2d');x.scale(k,k);x.drawImage(img,0,0,w,h);return new Promise(r=>c.toBlob(r,'image/png'));}
 
-/* frames of the build-up: o = {svgEl,width,height,style,order,speed,kind,onProgress} */
+/* frames of the build-up: o = {svgEl,width,height,style,order,speed,kind,onProgress,plan?}; plan(svg,opt) swaps in a
+   different build-up (the chart studio grows bars and draws lines) with the same {duration,apply,reset} shape */
 async function frames(o,onFrame,onFinal){const el=o.svgEl,st=o.style,css=await fontCSS(st);
  const fps=o.kind==='gif'?15:30,maxSide=o.kind==='gif'?960:1920,k=Math.min(2,maxSide/o.width,maxSide/o.height);const W=Math.round(o.width*k/2)*2,H=Math.round(o.height*k/2)*2;
- const P=window.FlowReveal.plan(el,{order:o.order,speed:o.speed||1});const hold=1600,total=P.duration+hold,n=Math.ceil(total/1000*fps);
+ const P=o.plan?o.plan(el,{order:o.order,speed:o.speed||1}):window.FlowReveal.plan(el,{order:o.order,speed:o.speed||1});const hold=1600,total=P.duration+hold,n=Math.ceil(total/1000*fps);
  const c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d',{willReadFrequently:o.kind==='gif'});const bg=st.t.bg.startsWith('#')?st.t.bg:'#0B0F1A';
  const draw=async svg=>{const img=await loadImg('data:image/svg+xml;charset=utf-8,'+encodeURIComponent(inject(svg,css)));x.fillStyle=bg;x.fillRect(0,0,W,H);x.drawImage(img,0,0,W,H);};
  let last='';try{if(onFinal){P.apply(P.duration);await draw(el.outerHTML);await onFinal(c,x,W,H);}
