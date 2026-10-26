@@ -56,7 +56,7 @@ function loadStore(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.p
  if(!first)first=S.normalize(TEMPLATES[0](),def);
  s.pages[first.id]=first;s.cur=first.id;return s}
 let persistedOnce=false;
-function persist(){site.updated=Date.now();try{localStorage.setItem(KEY,JSON.stringify(store));persistedOnce=true;saved('Saved','ok');if(PB.app&&PB.app.onSaved)PB.app.onSaved()}catch(e){saved('Not saved: storage is full or blocked','bad')}}
+function persist(){site.updated=Date.now();try{localStorage.setItem(KEY,JSON.stringify(store));persistedOnce=true;saved('Saved','ok');if(PB.projSync)PB.projSync();if(PB.app&&PB.app.onSaved)PB.app.onSaved()}catch(e){saved('Not saved: storage is full or blocked','bad')}}
 function saved(t,st){const el=$('#saveInd');if(!el)return;el.dataset.s=st||'ok';el.lastElementChild.textContent=t;el.title=st==='ok'?'Saved in this browser':t}
 store=loadStore();site=store.pages[store.cur]||Object.values(store.pages)[0];store.cur=site.id;curId=site.home;
 const ui=(()=>{try{return JSON.parse(localStorage.getItem(UIKEY))||{}}catch(e){return {}}})();
@@ -135,6 +135,8 @@ function compose(mode,pg,acc,opt){ // mode: preview | html | zip  -> parts for o
   if(!css.has('pb-base'))css.set('pb-base',PB.sec.base);
   const sticky=S.isTop(d)&&d.id!=='announce';
   body.push(`<div class="b-${isX(blk.id)?'x':d.id}${sticky?' pb-sticky':''}${sb.cls?' '+sb.cls:''}" id="${blk.uid}"${mode==='preview'?' data-pb data-zone="'+zone+'" data-name="'+esc(d.name)+'"':''}>${mode==='preview'?lazyMedia(sb.inner):sb.inner}${sb.flip?`<div class="pb-in" style="${sb.flip}">${html}</div>`:html}</div>`);
+  const hh=blk.set&&blk.set.hide;if(mode==='preview'&&EDIT&&!(opt&&opt.solo)&&hh&&(hh.d||hh.t||hh.p)){const nm=[hh.d?'desktop':'',hh.t?'tablet':'',hh.p?'phone':''].filter(Boolean);css.set('pb-ghost','.pb-ghost{display:none;align-items:center;justify-content:center;gap:10px;margin:6px 12px;padding:8px 12px;border:1.5px dashed #8a8fa3;border-radius:10px;background:rgba(138,143,163,.12);color:#555b70;font:600 12px/1.2 system-ui,sans-serif}.pb-ghost button{all:unset;cursor:pointer;color:#5B2DFF;text-decoration:underline;font-weight:700}.pb-ghost button:focus-visible{outline:2px solid #5B2DFF;outline-offset:2px}@media (min-width:1025px){.pbg-d{display:flex}}@media (min-width:641px) and (max-width:1024px){.pbg-t{display:flex}}@media (max-width:640px){.pbg-p{display:flex}}');
+   body.push(`<div class="pb-ghost${hh.d?' pbg-d':''}${hh.t?' pbg-t':''}${hh.p?' pbg-p':''}" data-pbg="${blk.uid}"><span>${esc(d.name)}: hidden on ${nm.join(' and ')}</span><button type="button" data-pbg-show="${blk.uid}">Show</button></div>`)}
   if(bjs)js.push(`(()=>{const root=document.getElementById(${JSON.stringify(blk.uid)});if(!root)return;try{${bjs}}catch(e){console.error(e)}})();`)});
  const rt=[];let cl=false;
  needs.forEach((v,k)=>{if(v&&v.componentLab)cl=true;else rt.push(v)});
@@ -311,6 +313,7 @@ addEventListener('message',e=>{if(e.source!==pv.contentWindow||!e.data)return;co
   case 'focus':editingText=true;break;
   case 'blur':editingText=false;if(rendPending){rendPending=false;render()}if(open)outline();break;
   case 'add':askAdd(m.uid,m.where);break;
+  case 'unhide':{const f=findBlk(m.uid);if(f){setS(f.blk,'hide',null,true);say('Section is visible again')}break}
   case 'move':{const f=findBlk(m.uid);if(!f)break;let t=m.before?f.list.findIndex(b=>b.uid===m.before):f.list.length;if(t<0)break;move(f.list,f.i,t>f.i?t-1:t);break}
   case 'key':{if(!csel)break;const f=findBlk(csel.uid);
    if(m.key==='Escape'){csel=null;hideTb();toAgent({pb:'clear'})}
@@ -609,7 +612,8 @@ PB.buildSiteFiles=buildSiteFiles;PB.getSite=()=>site;
 
 /* ---------- publish to a shareable address (api/site.js) ---------- */
 const PUBKEY='atlas-site-publish-v1',pubDlg=$('#pubDlg');
-const pubGet=()=>{try{return (JSON.parse(localStorage.getItem(PUBKEY))||{})[site.id]||null}catch(e){return null}};
+const pubGetFor=id=>{try{return (JSON.parse(localStorage.getItem(PUBKEY))||{})[id]||null}catch(e){return null}};
+const pubGet=()=>pubGetFor(site.id);
 const pubSet=r=>{try{const a=JSON.parse(localStorage.getItem(PUBKEY))||{};if(r)a[site.id]=r;else delete a[site.id];localStorage.setItem(PUBKEY,JSON.stringify(a))}catch(e){}};
 async function apiSite(method,qs,body,key){let r;try{r=await fetch('/api/site'+qs,{method,headers:{'content-type':'application/json',...(key?{'x-edit-key':key}:{})},body:body?JSON.stringify(body):undefined})}catch(e){return {ok:false,status:0,j:null}}
  let j=null;try{j=await r.json()}catch(e){}return {ok:r.ok,status:r.status,j}}
@@ -641,14 +645,19 @@ $('#pubCopy').onclick=()=>{const r=pubGet();r&&copy(r.url,'Link copied')};
 $('#pubOff').onclick=async()=>{const r=pubGet();if(!r||!confirm('Unpublish this site? The link stops working.'))return;const d=await apiSite('DELETE','?id='+r.id,null,r.key);if(d.ok||d.status===404){pubSet(null);await pubDraw('Unpublished.')}else await pubDraw((d.j&&d.j.error)||'Could not unpublish')};
 
 /* ---------- save into My projects (local first) ---------- */
-function saveToProjects(){const K='atlas-projects-v1';let list=[];try{list=JSON.parse(localStorage.getItem(K)||'[]');if(!Array.isArray(list))list=[]}catch(e){list=[]}
- const origin='site-'+site.id.replace(/[^\w-]/g,''),rec=pubGet(),links=[{id:'site-edit',title:'Edit in the site builder',url:'page-builder.html?site='+encodeURIComponent(site.id),kind:'page',text:site.pages.length+' page'+(site.pages.length>1?'s':'')+', saved in this browser.'}];
+function projectsList(){try{const l=JSON.parse(localStorage.getItem('atlas-projects-v1')||'[]');return Array.isArray(l)?l:[]}catch(e){return []}}
+const projOrigin=s=>'site-'+String(s.id).replace(/[^\w-]/g,'');
+const hasProject=s=>projectsList().some(x=>x&&x.origin===projOrigin(s));
+function saveToProjects(sx,quiet){sx=sx&&sx.pages?sx:site;const K='atlas-projects-v1';const list=projectsList();
+ const origin=projOrigin(sx),rec=pubGetFor(sx.id),links=[{id:'site-edit',title:'Edit in the site builder',url:'page-builder.html?site='+encodeURIComponent(sx.id),kind:'page',text:sx.pages.length+' page'+(sx.pages.length>1?'s':'')+', saved in this browser.'}];
  if(rec&&rec.url)links.push({id:'site-live',title:'Published site',url:rec.url,kind:'page',text:'The live address.'});
  let p=list.find(x=>x&&x.origin===origin);const now=Date.now();
- if(!p){p={id:(crypto.randomUUID?crypto.randomUUID():'p'+now.toString(36)),name:site.name||site.brand,brief:'A website made in the site builder: '+site.pages.map(x=>x.name).join(', ')+'.',platform:'Website',stage:'Designing',entries:[],icons:[],references:[],decisions:'',notes:{},directions:[],created:now,updated:now,origin,isPublic:false,files:[],hub:{links:[]}};list.push(p)}
- p.name=site.name||site.brand;p.updated=now;p.hub=p.hub&&typeof p.hub==='object'?p.hub:{links:[]};const keep=(p.hub.links||[]).filter(l=>!/^site-(edit|live)$/.test(l.id));p.hub.links=[...links,...keep];
- try{localStorage.setItem(K,JSON.stringify(list));say('Saved to My projects');return true}catch(e){say('Could not save: storage is full');return false}}
+ if(!p){p={id:(crypto.randomUUID?crypto.randomUUID():'p'+now.toString(36)),name:sx.name||sx.brand,brief:'A website made in the site builder: '+sx.pages.map(x=>x.name).join(', ')+'.',platform:'Website',stage:'Designing',entries:[],icons:[],references:[],decisions:'',notes:{},directions:[],created:now,updated:now,origin,isPublic:false,files:[],hub:{links:[]}};list.push(p)}
+ p.name=sx.name||sx.brand;p.updated=now;p.hub=p.hub&&typeof p.hub==='object'?p.hub:{links:[]};const keep=(p.hub.links||[]).filter(l=>!/^site-(edit|live)$/.test(l.id));p.hub.links=[...links,...keep];
+ try{localStorage.setItem(K,JSON.stringify(list));if(!quiet)say('Saved to My projects');return true}catch(e){if(!quiet)say('Could not save: storage is full');return false}}
+let projT=0;
 $('#projBtn').onclick=()=>{closeMenu();saveToProjects()};
+PB.projSync=()=>{clearTimeout(projT);projT=setTimeout(()=>{try{if(hasProject(site))saveToProjects(site,true)}catch(e){}},2500)};
 {const q=new URLSearchParams(location.search).get('site');if(q&&store.pages[q]&&site.id!==q){site=store.pages[q];store.cur=q;curId=site.home;lastSnap=snap()}}
 
 $('#copyPrompt').onclick=()=>{closeMenu();const st=PB.styles.get(page.style),pair=page.pair>=0?LIB.pairs[page.pair]:null;
@@ -739,7 +748,7 @@ fetch('backgrounds.js').then(r=>r.text()).then(t=>{const m=t.match(/const FRAG=`
 
 PB.dbg=()=>({hist:hist.map(h=>JSON.parse(h).blocks.length),fut:fut.length,last:JSON.parse(lastSnap).blocks.length,now:page.blocks.length});
 /* ---------- hooks for builder/ux.js ---------- */
-PB.app={setZoom,get zoom(){return ZOOM},addBlockAfter:(id,v,uid,where,extra)=>{addTarget={uid,where:where||'after'};return addBlock(id,v,null,extra)},get site(){return site},get store(){return store},get curId(){return curId},get csel(){return csel},get open(){return open},set open(v){open=v},get first(){return !persistedOnce&&!hasSaved},
+PB.app={saveToProjects,hasProject,setZoom,get zoom(){return ZOOM},addBlockAfter:(id,v,uid,where,extra)=>{addTarget={uid,where:where||'after'};return addBlock(id,v,null,extra)},get site(){return site},get store(){return store},get curId(){return curId},get csel(){return csel},get open(){return open},set open(v){open=v},get first(){return !persistedOnce&&!hasSaved},
  def,B,isX,uidGen,clone,addBlock,render,commit,commitSoon,outline,refresh,say,switchTo,findBlk,goPage,openPicker,siteChanged,showPane,rtab,persist,saved,curPage,blank,S,TEMPLATES,siteFromTemplate,aiSiteGo,get aiOn(){return aiOn},aiStatus,dupBlk,rmBlk,move,toAgent,compose,assemble,swapA,thumbHTML,thumbW,mountThumbs,fieldsOf,val,vals,undo,redo,xLabel,setW,setMode,get EDIT(){return EDIT},status,histSnapshot:()=>lastSnap,restoreSnap:s=>{clearTimeout(typing);commit();hist.push(lastSnap);fut=[];restore(s);histUI()},UI:ui,saveUI,pv,runCheck,libraryRedraw:()=>library(),copy,dl,setS,pickDraw:()=>pickDraw(),selectBlock:uid=>{const f=findBlk(uid);if(!f)return;csel={uid,kind:'section'};open=uid;outline();toAgent({pb:'reselect',uid,kind:'section'});scrollPreviewTo(uid)},clearSel:()=>{csel=null;hideTb();toAgent({pb:'clear'})}};
 /* ---------- boot ---------- */
 try{const CLX=PB.src.CL();if(CLX){const st=document.createElement('style');st.textContent=CLX.css();document.head.append(st)}}catch(e){}

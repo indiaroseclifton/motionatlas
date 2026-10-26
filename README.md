@@ -245,7 +245,7 @@ static site or publish it to a live address. Old single-page saves open as one-p
   `site/builder/thumbs/<template>-<page>.webp` (about 10 KB each); regenerate them after editing a template with
   `BASE=http://localhost:8797/ node tools/builder-thumbs.mjs [templateId...]` (needs Playwright and Pillow).
 - **Layout of the editor:** header shows the site name, a saved / unsaved indicator, Undo and Redo, a **Checks** badge
-  (issue count for the page; click for the list), **History** (last 20 automatic snapshots per site, restore is
+  (issue count for the page; click for the list), **History** (last 20 automatic snapshots per site, kept in IndexedDB with no size cap, restore is
   undoable) and `?` for the shortcut sheet. The right panel has four tabs: Outline (pages, sections, this page's
   settings), Design (styles and tokens), Site (identity, menu, SEO, 404, forms) and AI. On phones and narrow screens
   the canvas fills the screen with a bottom bar (Outline, Library, Add, Design, More); panels open as sheets and
@@ -254,8 +254,14 @@ static site or publish it to a live address. Old single-page saves open as one-p
   outline for edit, add after, duplicate, copy, paste, move, hide on every screen, save as reusable block and delete.
   Ctrl/Cmd+C and V copy sections between pages (and sites). Saved blocks keep words and settings and live under
   Library, My blocks (`atlas-pb-blocks-v1`). Find and replace (Ctrl/Cmd+Shift+H) searches every page, the header and
-  the footer. Words accept `**bold**`, `*italic*` and `[text](address)`; select text on the canvas for the B / I / Link
-  bar. Zoom (40 to 150%) with the buttons, + and -, or Ctrl+wheel; drag a library card onto the canvas to see a drop line.
+  the footer. Select words on the canvas for the B / I / Link bar (or Ctrl+B / Ctrl+I): the plain text stays in the field and the
+  formatting is stored beside it as sanitized inline HTML (`b`, `i`, `a` only), so literal asterisks and brackets stay
+  literal; editing the words in the side panel drops stale formatting. Hidden sections show as dashed ghost bars on the
+  canvas with a Show button. Zoom (40 to 150%) with the buttons, + and -, or Ctrl+wheel; drag a library card onto the canvas to see a drop line.
+- **Backup and My projects:** Export has "Download site file (.json)" (the whole site plus uploaded images and saved
+  blocks) and "Open a site file…" (adds it as a new site). Autosave keeps an existing My projects entry up to date;
+  "Sync all sites to My projects" in the start dialog creates a Website project for every site (cloud sync of projects
+  follows the projects page when signed in; nothing happens silently when not).
 - **Speed:** films in the canvas load their poster first and start when they scroll into view; library previews and
   embedded frames are lazy.
 - **Pages and sites:** a site has pages (add, rename, duplicate, reorder, delete, home page, file names), a shared

@@ -55,8 +55,9 @@ function drawHome(body){const P=sitesSorted(),hasAny=P.length&&!A.first,cur=A.si
   opt('ai','Describe your site','Say what it is for, get a first draft','M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z')+
   opt('blank','Blank site','Empty canvas, add sections yourself','M6 3h9l4 4v14H6zM14 3v5h5')+
   opt('brand','From a brand kit','Colours and fonts from the Brand generator','M12 3a9 9 0 1 0 0 18c1.5 0 2-1 1.5-2s.2-2.5 2-2.5H18a3 3 0 0 0 3-3A9 9 0 0 0 12 3z')+`</div>`+
-  `<h3 class="sth3">Your sites <small>${hasAny?P.length:0}</small></h3>`+(hasAny?`<ul class="sitegrid" id="siteGrid">`+P.map(s=>`<li class="sitecard${s.id===cur.id?' cur':''}" data-id="${esc(s.id)}"><button type="button" class="stthumb" data-a="open" aria-label="Open ${esc(s.name||'site')}">${miniThumb(s)}</button><div class="stmeta"><b class="sname" data-name>${esc(s.name||s.brand||'Untitled')}</b><small>${s.pages.length} page${s.pages.length>1?'s':''} · ${esc(PB.styles.has(s.style)?PB.styles.get(s.style).name:s.style)}${s.updated?' · '+ago(s.updated):''}</small></div><div class="stact"><button type="button" class="btn small" data-a="open">${s.id===cur.id?'Continue':'Open'}</button><button type="button" class="btn small" data-a="rename" aria-label="Rename ${esc(s.name||'site')}">Rename</button><button type="button" class="btn small" data-a="dup" aria-label="Duplicate ${esc(s.name||'site')}">Duplicate</button><button type="button" class="btn small" data-a="del" aria-label="Delete ${esc(s.name||'site')}">Delete</button></div></li>`).join('')+`</ul>`:`<p class="hint">Sites you build are saved in this browser and listed here. Pick one of the options above to start the first one.</p>`);
+  `<h3 class="sth3">Your sites <small>${hasAny?P.length:0}</small></h3><div class="btools stfiles"><button type="button" class="btn small" id="stOpenFile">Open a site file…</button>${hasAny?'<button type="button" class="btn small" id="stSave">Download this site as a file</button><button type="button" class="btn small" id="stSync">Sync all sites to My projects</button>':''}</div>`+(hasAny?`<ul class="sitegrid" id="siteGrid">`+P.map(s=>`<li class="sitecard${s.id===cur.id?' cur':''}" data-id="${esc(s.id)}"><button type="button" class="stthumb" data-a="open" aria-label="Open ${esc(s.name||'site')}">${miniThumb(s)}</button><div class="stmeta"><b class="sname" data-name>${esc(s.name||s.brand||'Untitled')}</b><small>${s.pages.length} page${s.pages.length>1?'s':''} · ${esc(PB.styles.has(s.style)?PB.styles.get(s.style).name:s.style)}${s.updated?' · '+ago(s.updated):''}</small></div><div class="stact"><button type="button" class="btn small" data-a="open">${s.id===cur.id?'Continue':'Open'}</button><button type="button" class="btn small" data-a="rename" aria-label="Rename ${esc(s.name||'site')}">Rename</button><button type="button" class="btn small" data-a="dup" aria-label="Duplicate ${esc(s.name||'site')}">Duplicate</button><button type="button" class="btn small" data-a="del" aria-label="Delete ${esc(s.name||'site')}">Delete</button></div></li>`).join('')+`</ul>`:`<p class="hint">Sites you build are saved in this browser and listed here. Pick one of the options above to start the first one.</p>`);
  body.querySelectorAll('.stopt').forEach(b=>b.onclick=()=>{const o=b.dataset.o;if(o==='continue')dlg.close();else if(o==='templates'){view='templates';draw()}else if(o==='ai'){view='ai';draw()}else if(o==='brand'){view='brand';draw()}else if(o==='blank'){const p=A.blank();A.store.pages[p.id]=p;A.switchTo(p.id);dlg.close();A.showPane('lib');A.say('New blank site. Add sections from the library.')}});
+ {const g=id=>body.querySelector(id);g('#stOpenFile').onclick=()=>$('#openJson').click();if(g('#stSave'))g('#stSave').onclick=()=>UX.exportFile();if(g('#stSync'))g('#stSync').onclick=()=>UX.syncAll()}
  body.querySelectorAll('.sitecard [data-a]').forEach(b=>b.onclick=()=>siteAct(b.closest('.sitecard').dataset.id,b.dataset.a,b))}
 function siteAct(id,a,btn){const st=A.store,s=st.pages[id];if(!s)return;
  if(a==='open'){if(id!==A.site.id)A.switchTo(id);dlg.close();return}
@@ -110,22 +111,29 @@ function drawBrand(body){const d=tryJSON('brandgen-draft-v1',null),M=d&&d.modes&
 /* first run: a start screen for visitors with no saved site */
 if(A.first&&!/[?&](site|nostart)=?/.test(location.search))setTimeout(()=>openStart('home'),50);
 
-/* ---------- version history: last 20 autosaves per site ---------- */
-const VK='atlas-pb-versions-v1',MAXV=20;
-function versions(){return tryJSON(VK,{})}
-let vTimer=0,lastV=0;
-function captureVersion(force){const id=A.site.id,all=versions(),list=all[id]||[],json=JSON.stringify({...A.site,updated:0});if(json.length>600000)return;
- if(list.length&&list[0].json===json)return;if(!force&&Date.now()-lastV<60000)return;
- list.unshift({t:Date.now(),json,pages:A.site.pages.length,sections:A.site.pages.reduce((n,p)=>n+p.blocks.length,0)});while(list.length>MAXV)list.pop();all[id]=list;lastV=Date.now();
- for(let k=0;k<6;k++){if(trySet(VK,all))return;const big=Object.keys(all).sort((a,b)=>(all[b].length)-(all[a].length))[0];if(big&&all[big].length>1)all[big].pop();else delete all[big]}}
+/* ---------- version history: last 20 autosaves per site, kept in IndexedDB (no size cap) ---------- */
+const MAXV=20;
+let dbp=null;
+function hdb(){if(dbp)return dbp;dbp=new Promise((res,rej)=>{try{const r=indexedDB.open('atlas-pb-history',1);r.onupgradeneeded=()=>{const d=r.result;const st=d.createObjectStore('v',{keyPath:'k'});st.createIndex('site','sid')};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error||new Error('IndexedDB error'))}catch(e){rej(e)}});dbp.catch(()=>{dbp=null});return dbp}
+const req=r=>new Promise((res,rej)=>{r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
+async function listV(sid){const d=await hdb(),all=await req(d.transaction('v').objectStore('v').index('site').getAll(sid));return all.sort((a,b)=>b.t-a.t)}
+let vTimer=0,lastV=0,lastJson={},warned=false;
+async function captureVersion(force){const id=A.site.id,json=JSON.stringify({...A.site,updated:0});
+ if(lastJson[id]===json)return true;if(!force&&Date.now()-lastV<60000)return true;
+ try{const d=await hdb(),list=await listV(id);if(list.length&&list[0].json===json){lastJson[id]=json;return true}
+  const t=Date.now(),tx=d.transaction('v','readwrite'),st=tx.objectStore('v');st.put({k:id+':'+t,sid:id,t,json,pages:A.site.pages.length,sections:A.site.pages.reduce((n,p)=>n+p.blocks.length,0)});
+  list.slice(MAXV-1).forEach(v=>st.delete(v.k));await new Promise((res,rej)=>{tx.oncomplete=res;tx.onerror=()=>rej(tx.error);tx.onabort=()=>rej(tx.error)});
+  lastJson[id]=json;lastV=t;return true}
+ catch(e){if(!warned||force){warned=true;A.say('Could not save a history snapshot ('+((e&&e.name==='QuotaExceededError')?'this browser is out of space':'history storage is unavailable here')+'). Your site itself is still saved.')}return false}}
 const prevSaved=A.onSaved;A.onSaved=()=>{if(prevSaved)prevSaved();clearTimeout(vTimer);vTimer=setTimeout(()=>captureVersion(false),4000)};
-addEventListener('pagehide',()=>captureVersion(true));
+addEventListener('pagehide',()=>{captureVersion(true)});
 UX.captureVersion=captureVersion;
 const hd=dialog('histDlg','pubdlg','Version history');hd.setAttribute('aria-labelledby','hdTitle');hd.removeAttribute('aria-label');
-function drawHist(){const list=versions()[A.site.id]||[];hd.innerHTML=`<div class="pkhead"><h2 id="hdTitle">Version history</h2><span style="flex:1"></span><button class="btn small" id="hdClose" type="button">Close</button></div><div class="pubb"><p class="hint">Automatic snapshots of “${esc(A.site.name||'this site')}”, saved in this browser (the last ${MAXV}). Restoring is itself undoable.</p><div class="btools"><button class="btn small" id="hdNow" type="button">Save a snapshot now</button></div>${list.length?`<ul class="histl">`+list.map((v,i)=>`<li><div><b>${ago(v.t)}</b><small>${new Date(v.t).toLocaleString()} · ${v.pages} page${v.pages>1?'s':''} · ${v.sections} sections</small></div><button class="btn small" type="button" data-i="${i}">Restore</button></li>`).join('')+`</ul>`:'<p>No snapshots yet. They appear a few seconds after you make changes.</p>'}</div>`;
- $('#hdClose').onclick=()=>hd.close();$('#hdNow').onclick=()=>{captureVersion(true);drawHist();A.say('Snapshot saved')};
- hd.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{const v=list[+b.dataset.i];if(!v)return;captureVersion(true);A.restoreSnap(v.json);hd.close();A.say('Restored the version from '+ago(v.t)+'. Undo brings back what you had.')})}
-$('#histBtn').onclick=()=>{captureVersion(true);drawHist();hd.showModal()};
+async function drawHist(){let list=[],err='';try{list=await listV(A.site.id)}catch(e){err='History is not available in this browser (private windows can block it).'}
+ hd.innerHTML=`<div class="pkhead"><h2 id="hdTitle">Version history</h2><span style="flex:1"></span><button class="btn small" id="hdClose" type="button">Close</button></div><div class="pubb"><p class="hint">Automatic snapshots of “${esc(A.site.name||'this site')}”, kept in this browser (the last ${MAXV}, any size). Restoring is itself undoable.</p><div class="btools"><button class="btn small" id="hdNow" type="button">Save a snapshot now</button></div>${err?`<p role="alert">${esc(err)}</p>`:list.length?`<ul class="histl">`+list.map((v,i)=>`<li><div><b>${ago(v.t)}</b><small>${new Date(v.t).toLocaleString()} · ${v.pages} page${v.pages>1?'s':''} · ${v.sections} sections</small></div><button class="btn small" type="button" data-i="${i}">Restore</button></li>`).join('')+`</ul>`:'<p>No snapshots yet. They appear a few seconds after you make changes.</p>'}</div>`;
+ $('#hdClose').onclick=()=>hd.close();$('#hdNow').onclick=async()=>{if(await captureVersion(true)){await drawHist();A.say('Snapshot saved')}};
+ hd.querySelectorAll('[data-i]').forEach(b=>b.onclick=async()=>{const v=list[+b.dataset.i];if(!v)return;await captureVersion(true);A.restoreSnap(v.json);hd.close();A.say('Restored the version from '+ago(v.t)+'. Undo brings back what you had.')})}
+$('#histBtn').onclick=async()=>{await captureVersion(true);await drawHist();hd.showModal()};
 
 /* ---------- keyboard cheat sheet ---------- */
 const hp=dialog('helpDlg','pubdlg','Keyboard shortcuts');hp.setAttribute('aria-labelledby','hpTitle');hp.removeAttribute('aria-label');
@@ -255,4 +263,25 @@ function fdRun(onlySel){const q=$('#fdQ').value,r=$('#fdR').value,cs=$('#fdCase'
 $('#fdQ').oninput=fdDraw;$('#fdCase').onchange=fdDraw;$('#fdSel').onclick=()=>fdRun(true);$('#fdAll').onclick=()=>fdRun(false);
 function find(){if(!fd.open)fd.showModal();const sel=getSelection&&String(getSelection()).trim();if(sel&&sel.length<60&&!$('#fdQ').value)$('#fdQ').value=sel;$('#fdQ').focus();$('#fdQ').select();fdDraw()}
 UX.find=find;
+
+/* ---------- site files: backup and move between browsers; keep My projects in step ---------- */
+{const exp=$('#exportMenu');const close=()=>{exp.open=false};
+ const fi=mk('input');fi.type='file';fi.accept='.json,application/json';fi.hidden=true;fi.setAttribute('aria-label','Choose a site file');document.body.append(fi);
+ async function download(){close();try{const s=A.site,ids=[...new Set([...JSON.stringify(s).matchAll(/user:([\w-]+)/g)].map(m=>m[1]))],images={};
+   for(const id of ids){const u=await PB.images.dataURL(id);if(u)images[id]=u}
+   const out={format:'atlas-site',v:1,exported:new Date().toISOString(),site:s,images,blocks:blocks()};
+   const nm=(s.name||s.brand||'site').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'site';
+   A.dl(new Blob([JSON.stringify(out)],{type:'application/json'}),nm+'.atlas-site.json');A.say('Downloaded '+nm+'.atlas-site.json'+(ids.length?' with '+ids.length+' image'+(ids.length>1?'s':''):''))}
+  catch(e){A.say('Could not build the site file: '+((e&&e.message)||'unknown error'))}}
+ async function importFile(f){if(!f)return;if(f.size>80e6)return A.say('That file is too big to be a site file (over 80 MB).');
+  let j;try{j=JSON.parse(await f.text())}catch(e){return A.say('That file is not valid JSON, so it cannot be a site file.')}
+  const raw=j&&j.format==='atlas-site'&&j.site?j.site:(j&&Array.isArray(j.pages)?j:null);if(!raw||!Array.isArray(raw.pages)||!raw.pages.length)return A.say('That file is not a site builder file. Use “Download site file” to make one.');
+  try{for(const [id,u] of Object.entries(j.images||{})){if(/^[\w-]+$/.test(id)&&/^data:image\//.test(u))await PB.images.putData(id,u)}
+   const ns=A.S.normalize({...raw,id:undefined},A.def);ns.name=(ns.name||'Imported site').slice(0,60);ns.updated=Date.now();A.store.pages[ns.id]=ns;
+   if(Array.isArray(j.blocks)){const have=new Set(blocks().map(b=>b.mid));const add=j.blocks.filter(b=>b&&b.mid&&b.bid&&!have.has(b.mid)).slice(0,50);if(add.length)trySet(BK,[...add,...blocks()].slice(0,100))}
+   A.switchTo(ns.id);const d=document.getElementById('startDlg');if(d&&d.open)d.close();A.say('Opened “'+ns.name+'” as a new site')}
+  catch(e){A.say('Could not open that file: '+((e&&e.message)||'unknown error'))}}
+ $('#dlJson').onclick=download;$('#openJson').onclick=()=>{close();fi.value='';fi.click()};fi.onchange=()=>importFile(fi.files[0]);
+ UX.exportFile=download;UX.importFile=importFile;
+ UX.syncAll=()=>{let n=0;Object.values(A.store.pages).forEach(s=>{if(A.saveToProjects(s,true))n++});A.say(n?'Synced '+n+' site'+(n>1?'s':'')+' to My projects':'Could not sync to My projects')}}
 })();

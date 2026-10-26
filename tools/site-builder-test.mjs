@@ -418,7 +418,9 @@ if (axeSrc) {
   await pg.click('#tplBtn'); await pg.click('[data-o=brand]'); await pg.click('#brGo'); await waitPv(pg);
   const bs = await site(pg); ok(bs.name === 'Moss' && bs.tokens && bs.tokens.accent === '#2F6B3F', 'brand kit becomes a site with its colours');
   // version history
-  await pg.evaluate(() => PB.ux.captureVersion(true)); await pg.click('#histBtn'); ok(await pg.locator('#histDlg .histl li').count() >= 1, 'history lists snapshots'); await pg.keyboard.press('Escape');
+  await pg.evaluate(() => PB.ux.captureVersion(true)); await pg.click('#histBtn'); await pg.waitForSelector('#histDlg .histl li'); ok(await pg.locator('#histDlg .histl li').count() >= 1, 'history lists snapshots');
+  const bigOk = await pg.evaluate(async () => { const A = PB.app; A.curPage().blocks.push({ uid: 'big1', id: 'rich-text', vals: { kicker: '', heading: 'Big', paras: 'x'.repeat(900000) } }); const r = await PB.ux.captureVersion(true); A.curPage().blocks.pop(); return r; });
+  ok(bigOk, 'a site over 600 KB still gets a history snapshot'); await pg.keyboard.press('Escape');
   // shortcuts sheet
   await pg.locator('body').click({ position: { x: 5, y: 5 } }); await pg.keyboard.press('?'); ok(await pg.locator('#helpDlg[open]').count() === 1, '? opens the shortcut sheet'); await pg.keyboard.press('Escape');
   ok((await pg.textContent('#saveInd')).trim().length > 0, 'saved indicator shows a state');
@@ -436,6 +438,11 @@ if (axeSrc) {
   await pg.evaluate(u => PB.ux.menu(u, 300, 200), uid); ok(await pg.locator('.ctxmenu button').count() >= 8, 'section menu opens with actions');
   await pg.click('.ctxmenu [data-k=dup]'); ok((await site(pg)).pages[0].blocks.length === n0 + 1, 'menu duplicate adds a section');
   await pg.evaluate(u => PB.ux.menu(u, 300, 200), uid); await pg.click('.ctxmenu [data-k=hide]'); ok((await site(pg)).pages[0].blocks.find(b => b.uid === uid).set.hide.p === 1, 'menu hide hides a section on every screen');
+  await waitPv(pg); await pg.waitForTimeout(400);
+  ok(await frame(pg).locator('.pb-ghost:visible').count() === 1, 'a hidden section shows as a ghost bar on the canvas');
+  await frame(pg).locator('[data-pbg-show]').click(); await pg.waitForTimeout(300);
+  ok(!(await site(pg)).pages[0].blocks.find(b => b.uid === uid).set, 'Show on the ghost bar makes the section visible again');
+  await pg.evaluate(u => PB.ux.menu(u, 300, 200), uid); await pg.click('.ctxmenu [data-k=hide]');
   await pg.evaluate(u => PB.ux.menu(u, 300, 200), uid); await pg.click('.ctxmenu [data-k=hide]');
   // copy and paste to another page
   await pg.evaluate(u => PB.ux.copy(u), uid); await openPages(pg); await pg.click('#addPage'); await waitPv(pg);
@@ -460,6 +467,25 @@ if (axeSrc) {
   // drop line from the library
   const dr = await pg.evaluate(() => !!document.querySelector('.dropov') && !!document.querySelector('.dropind'));
   ok(dr, 'canvas has a drop overlay and indicator');
+  await ctx.close();
+}
+// ---- 5a. site file backup, import, My projects sync
+{
+  const { ctx, pg } = await open();
+  await pg.evaluate(() => PB.ux.useTemplate(1)); await waitPv(pg);
+  const [dl] = await Promise.all([pg.waitForEvent('download'), pg.evaluate(() => PB.ux.exportFile())]);
+  const file = path.join(os.tmpdir(), 'pbtest.atlas-site.json'); await dl.saveAs(file);
+  const j = JSON.parse(fs.readFileSync(file, 'utf8'));
+  ok(j.format === 'atlas-site' && j.site.pages.length >= 3, 'site file download holds the whole site');
+  const before = await pg.evaluate(() => Object.keys(PB.app.store.pages).length);
+  await pg.setInputFiles('input[type=file][aria-label="Choose a site file"]', file); await waitPv(pg);
+  ok(await pg.evaluate(() => Object.keys(PB.app.store.pages).length) === before + 1, 'opening a site file adds a site');
+  const bad = path.join(os.tmpdir(), 'pbtest-bad.json'); fs.writeFileSync(bad, '{"nope":1}'); await pg.setInputFiles('input[type=file][aria-label="Choose a site file"]', bad); await pg.waitForTimeout(300);
+  ok(/not a site builder file/.test(await pg.textContent('#toast')), 'a wrong file gives a clear message');
+  await pg.click('#exportMenu summary'); await pg.click('#projBtn');
+  await pg.evaluate(() => { PB.app.site.name = 'Renamed for sync'; PB.app.commit(); PB.app.persist(); }); await pg.waitForTimeout(3200);
+  ok(await pg.evaluate(() => JSON.parse(localStorage.getItem('atlas-projects-v1')).some(p => p.name === 'Renamed for sync')), 'autosave keeps the My projects entry up to date');
+  await pg.click('#tplBtn'); await pg.click('#stSync'); ok(await pg.evaluate(() => JSON.parse(localStorage.getItem('atlas-projects-v1')).filter(p => /^site-/.test(p.origin || '')).length === Object.keys(PB.app.store.pages).length), 'sync all sites creates a Website project for each');
   await ctx.close();
 }
 // ---- 5b. legacy **markers** migrate to real formatting

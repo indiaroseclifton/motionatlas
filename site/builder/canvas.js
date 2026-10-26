@@ -64,6 +64,7 @@ function agent(){
   if(e.target.closest&&e.target.closest('#pb-ui'))return;
   var a=e.target.closest&&e.target.closest('a');if(a)e.preventDefault();
   var o=infoOf(e.target);if(!o)return;setSel(o);send(o)},true);
+ document.addEventListener('click',function(e){var g=e.target.closest&&e.target.closest('[data-pbg-show]');if(g){e.preventDefault();e.stopPropagation();send({pb:'unhide',uid:g.getAttribute('data-pbg-show')})}},true);
  document.addEventListener('submit',function(e){e.preventDefault()},true);
  /* hover */
  document.addEventListener('mouseover',function(e){if(!EDIT||drag)return;var b=blockOf(e.target);if(!b){box(H,null);return}if(sel&&sel.uid===b.id){box(H,null);return}box(H,rc(b));H.firstChild.textContent=b.getAttribute('data-name')||''});
@@ -156,6 +157,7 @@ const IMG={cache:new Map(),dbp:null,
  async load(){try{const all=await this.tx('readonly',s=>s.getAll())||[];all.forEach(r=>{this.cache.set(r.id,{...r,url:URL.createObjectURL(r.blob)})})}catch(e){}return this.cache.size},
  async add(file){const blob=await downscale(file),id='u'+Math.random().toString(36).slice(2,9);const rec={id,name:file.name||'image',type:blob.type||file.type,blob,added:Date.now()};
   this.cache.set(id,{...rec,url:URL.createObjectURL(blob)});try{await this.tx('readwrite',s=>s.put(rec))}catch(e){PB.imgWarn=true}return id},
+ async putData(id,u){const blob=await (await fetch(u)).blob(),rec={id,name:'image',type:blob.type,blob,added:Date.now()};this.cache.set(id,{...rec,url:URL.createObjectURL(blob)});try{await this.tx('readwrite',s=>s.put(rec))}catch(e){PB.imgWarn=true}},
  url(id){const r=this.cache.get(id);return r?r.url:''},
  ext(id){const r=this.cache.get(id),t=r&&r.type||'';return t.includes('png')?'png':t.includes('webp')?'webp':t.includes('svg')?'svg':t.includes('gif')?'gif':'jpg'},
  async bytes(id){const r=this.cache.get(id);return r?new Uint8Array(await r.blob.arrayBuffer()):null},
