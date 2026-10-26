@@ -1,0 +1,191 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mockup & social asset studio · Visual & Motion Atlas</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<meta name="description" content="Put a screenshot, chart, diagram or page into a phone, tablet, laptop, browser or watch frame on an atlas background, add a headline, and export every social and store size at once: Open Graph, X, LinkedIn, Instagram, YouTube, Dribbble, Product Hunt and App Store.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@500;800&family=Space+Grotesk:wght@700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Fraunces:opsz,wght@9..144,700&family=DM+Serif+Display&family=Playfair+Display:wght@700&family=Archivo+Black&display=swap">
+<style>
+:root{--bg:#F4F5F8;--panel:#FFFFFF;--ink:#1C1F2A;--mute:#5F6577;--hair:#E4E7EE;--soft:#F7F8FB;--accent:#5B2DFF;--shadow:0 1px 2px rgba(20,24,40,.06),0 8px 24px -12px rgba(20,24,40,.18)}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:14px/1.5 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}button,select,input,textarea{font:inherit;color:inherit}button{cursor:pointer}
+[hidden]{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip{position:absolute;left:12px;top:-60px;z-index:50;background:var(--ink);color:#fff;padding:8px 12px;border-radius:8px}.skip:focus{top:10px}
+header.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px max(16px,env(safe-area-inset-right)) 10px max(16px,env(safe-area-inset-left));background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--hair)}
+.brand{display:flex;align-items:baseline;gap:12px;min-width:0;flex-wrap:wrap}
+.brand a{font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);text-decoration:none;white-space:nowrap}
+.brand h1{margin:0;font:500 26px/1.05 'Cormorant Garamond',Georgia,serif;font-style:italic}
+.links{display:flex;gap:4px;flex-wrap:wrap}.links a{font-size:12.5px;color:var(--mute);text-decoration:none;padding:6px 8px;border-radius:8px}.links a:hover{background:var(--soft);color:var(--ink)}
+.acts{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;align-items:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:36px;padding:0 12px;border-radius:10px;border:1px solid var(--hair);background:var(--panel);font-weight:500;font-size:13px;text-decoration:none;white-space:nowrap}
+.btn:hover{border-color:#CBD0DB;background:var(--soft)}.btn:disabled{opacity:.5;cursor:default}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}.btn.primary:hover{background:#4A1FF0}
+.btn.sm{min-height:30px;padding:0 9px;font-size:12px;border-radius:8px}.btn.block{width:100%}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+details.menu{position:relative}details.menu>summary{list-style:none}details.menu>summary::-webkit-details-marker{display:none}
+details.menu>summary::after{content:'▾';font-size:10px;margin-left:2px}
+.pop{position:absolute;right:0;top:calc(100% + 6px);z-index:30;min-width:230px;max-width:min(320px,calc(100vw - 24px));background:var(--panel);border:1px solid var(--hair);border-radius:12px;box-shadow:0 18px 40px -16px rgba(20,24,40,.35);padding:6px;display:grid;gap:2px}
+.pop button{display:flex;justify-content:space-between;gap:12px;align-items:center;text-align:left;border:0;background:none;border-radius:8px;padding:8px 10px;font-size:13px;min-height:36px}.pop button:hover{background:var(--soft)}
+.pop small{color:var(--mute);font-size:11.5px}
+.app{display:grid;grid-template-columns:minmax(320px,380px) minmax(0,1fr);min-height:calc(100vh - 57px)}
+.side{background:var(--panel);border-right:1px solid var(--hair);min-width:0}
+.tabs{display:flex;border-bottom:1px solid var(--hair);position:sticky;top:57px;background:var(--panel);z-index:5;overflow-x:auto;scrollbar-width:none}
+.tabs button{flex:1 0 auto;padding:0 10px;border:0;background:none;min-height:44px;font-size:12.5px;font-weight:600;color:var(--mute);border-bottom:2px solid transparent}
+.tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--accent)}
+.sec{padding:14px 18px;border-bottom:1px solid var(--hair);display:grid;gap:10px}
+.sec h2{margin:0;font:600 11px/1.2 Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+.hint{margin:0;font-size:12px;color:var(--mute);line-height:1.45}
+label.f{display:grid;gap:4px;font-size:12px;color:var(--mute)}
+label.f>span{display:flex;justify-content:space-between;gap:8px}label.f output{font:500 11px 'JetBrains Mono',monospace;color:var(--ink)}
+input[type=text],input[type=number],input[type=url],select,textarea{min-height:36px;border:1px solid var(--hair);border-radius:9px;padding:0 9px;background:var(--panel);color:var(--ink);min-width:0;width:100%}
+textarea{padding:8px 10px;min-height:64px;resize:vertical;font:13px/1.45 Inter,sans-serif}
+input[type=color]{width:100%;height:36px;border:1px solid var(--hair);border-radius:9px;padding:2px;background:var(--panel)}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.check{display:flex;gap:8px;align-items:center;font-size:12.5px}
+.drop{display:grid;place-items:center;gap:6px;text-align:center;border:1.5px dashed #CBD0DB;border-radius:12px;padding:16px;background:var(--soft);font-size:13px}
+.drop b{font-weight:600}.fileBtn{position:relative;overflow:hidden}.fileBtn input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.fileBtn:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+.now{font:500 11.5px 'JetBrains Mono',monospace;color:var(--mute);overflow-wrap:anywhere}
+.bgs{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:6px;max-height:300px;overflow:auto;padding:2px}
+.bgs button{display:grid;gap:4px;border:1px solid var(--hair);background:var(--panel);border-radius:10px;padding:4px;text-align:left;font-size:10.5px;line-height:1.2}
+.bgs button span{display:block;aspect-ratio:16/10;border-radius:7px}.bgs button b{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bgs button[aria-pressed=true]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.presetsBtns{display:flex;gap:6px;flex-wrap:wrap}
+.main{min-width:0;grid-template-columns:minmax(0,1fr);padding:18px clamp(12px,2.4vw,28px) 40px;display:grid;gap:16px;align-content:start}
+.bar{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.bar p{margin:0;font:500 12px 'JetBrains Mono',monospace;color:var(--mute)}
+#msStage{position:relative;min-width:0;overflow:hidden;display:grid;place-items:center;min-height:300px;padding:16px;border-radius:16px;background:repeating-conic-gradient(#ECEEF3 0 25%,#F7F8FB 0 50%) 0 0/22px 22px;border:1px solid var(--hair)}
+#msStage.drop{outline:3px dashed var(--accent);outline-offset:-8px}
+#msCanvas{display:block;max-width:100%;height:auto;border-radius:6px;box-shadow:var(--shadow);background:#fff}
+.stripWrap h2{margin:0 0 8px;font:600 11px/1.2 Inter;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+#msStrip{list-style:none;margin:0;padding:2px 2px 8px;display:flex;gap:10px;overflow-x:auto}
+#msStrip button{display:grid;gap:6px;justify-items:start;border:1px solid var(--hair);background:var(--panel);border-radius:12px;padding:8px;min-width:120px;height:100%;text-align:left}
+#msStrip button[aria-pressed=true]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+#msStrip canvas{display:block;max-width:150px;max-height:110px;width:auto;height:auto;border-radius:4px;background:var(--soft)}
+#msStrip b{display:block;font-size:12px;font-weight:600}#msStrip small{font:11px 'JetBrains Mono',monospace;color:var(--mute)}
+.picks{display:grid;gap:4px}.pk{display:flex;gap:10px;align-items:flex-start;padding:6px 4px;border-radius:8px;font-size:13px}.pk:hover{background:var(--soft)}
+.pk input{margin-top:3px;accent-color:var(--accent)}.pk b{display:block;font-weight:600;font-size:12.5px}.pk small{color:var(--mute);font-size:11.5px}
+#msStatus{margin:0;font-size:12.5px;color:var(--mute);min-height:1.4em}
+.toast{position:fixed;left:50%;bottom:20px;transform:translate(-50%,20px);background:var(--ink);color:#fff;padding:10px 14px;border-radius:10px;font-size:13px;opacity:0;pointer-events:none;transition:.2s;z-index:60;max-width:calc(100vw - 32px)}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+#msOffscreen{position:fixed;left:-30000px;top:0;width:10px;height:10px;overflow:hidden}
+@media (max-width:900px){.app{grid-template-columns:1fr}.side{border-right:0;border-top:1px solid var(--hair);order:2}.main{order:1;padding-bottom:10px}.tabs{top:0;position:relative}.links{display:none}}
+@media (max-width:480px){.brand h1{font-size:22px}header.top{gap:8px}.acts .btn{padding:0 10px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head>
+<body>
+<a class="skip" href="#msMain">Skip to the preview</a>
+<header class="top">
+ <div class="brand"><a href="atlas.html">Atlas</a><h1>Mockup studio</h1></div>
+ <nav class="links" aria-label="Other studios"><a href="page-builder.html">Page builder</a><a href="chart-studio.html">Chart studio</a><a href="diagram-studio.html">Diagram studio</a><a href="moodboard.html">Moodboards</a></nav>
+ <div class="acts">
+  <button class="btn" id="msCopy" type="button">Copy PNG</button>
+  <details class="menu" id="msMenu"><summary class="btn primary">Export</summary><div class="pop">
+   <button type="button" onclick="document.getElementById('msDl').click()">This size <small>PNG, JPEG or WebP</small></button>
+   <button type="button" onclick="document.getElementById('msZip').click()">Every chosen size <small>one ZIP</small></button>
+  </div></details>
+ </div>
+</header>
+<div class="app">
+<aside class="side" aria-label="Mockup settings">
+ <div class="tabs" id="msTabs" role="tablist" aria-label="Settings">
+  <button role="tab" id="msT-image" data-t="image" aria-controls="msP-image" aria-selected="true">Image</button>
+  <button role="tab" id="msT-frame" data-t="frame" aria-controls="msP-frame" aria-selected="false" tabindex="-1">Frame</button>
+  <button role="tab" id="msT-bg" data-t="bg" aria-controls="msP-bg" aria-selected="false" tabindex="-1">Background</button>
+  <button role="tab" id="msT-layout" data-t="layout" aria-controls="msP-layout" aria-selected="false" tabindex="-1">Layout</button>
+  <button role="tab" id="msT-text" data-t="text" aria-controls="msP-text" aria-selected="false" tabindex="-1">Words</button>
+  <button role="tab" id="msT-export" data-t="export" aria-controls="msP-export" aria-selected="false" tabindex="-1">Export</button>
+ </div>
+ <section class="msPanel" id="msP-image" role="tabpanel" aria-labelledby="msT-image">
+  <div class="sec"><h2>Your picture</h2>
+   <div class="drop"><b>Drop, paste or choose a screenshot</b><span class="hint">PNG, JPEG, WebP, GIF or SVG. It stays in this browser.</span>
+    <div class="row"><span class="btn primary fileBtn">Choose image<input type="file" id="msFile" accept="image/*" aria-label="Choose an image"></span><button class="btn" type="button" id="msPasteBtn">Paste</button></div></div>
+   <p class="now" id="msImgNow"></p><button class="btn sm" type="button" id="msClearMain" hidden>Remove and use the sample</button></div>
+  <div class="sec"><h2>Capture a page of this site</h2>
+   <label class="f"><span>Page</span><select id="msSitePage"></select></label>
+   <label class="f"><span>Viewport</span><select id="msSiteSize"><option value="desktop">Desktop 1440×900</option><option value="phone">Phone 390×844</option></select></label>
+   <button class="btn" type="button" id="msCapture">Capture page</button>
+   <p class="hint">Captures the top of the page as a picture. Live canvases and video can come out still or blank, so for a pixel-perfect copy take a screenshot and drop it in.</p></div>
+  <div class="sec"><h2>From the other studios</h2><p class="hint">Use <b>Make share image</b> in the <a href="chart-studio.html">Chart studio</a>, <a href="diagram-studio.html">Diagram studio</a> or <a href="page-builder.html">Page builder</a> export menus to bring your work straight here.</p></div>
+ </section>
+ <section class="msPanel" id="msP-frame" role="tabpanel" aria-labelledby="msT-frame" hidden>
+  <div class="sec"><h2>Device</h2>
+   <label class="f"><span>Frame</span><select id="msFrame"></select></label>
+   <div id="msColorRow"><label class="f"><span>Finish</span><select id="msColor"><option value="black">Graphite</option><option value="silver">Silver</option><option value="sand">Sand</option><option value="blue">Deep blue</option></select></label></div>
+   <div id="msChromeRow" class="g2"><label class="f"><span>Window</span><select id="msChrome"><option value="light">Light</option><option value="dark">Dark</option></select></label><label class="f"><span>Address bar</span><input type="text" id="msUrl" maxlength="80" spellcheck="false"></label></div>
+   <div id="msOrientRow"><label class="f"><span>Orientation</span><select id="msOrient"><option value="auto">Match the picture</option><option value="portrait">Portrait</option><option value="landscape">Landscape</option></select></label></div>
+   <label class="f"><span>Picture in the screen</span><select id="msFit"><option value="top">Fill, from the top</option><option value="center">Fill, centred</option><option value="contain">Show it all</option></select></label>
+   <div id="msSecondRow" class="sec" style="padding:0;border:0"><p class="hint">The phone shows its own picture if you add one; otherwise the top of the main picture.</p><div class="row"><span class="btn sm fileBtn">Phone picture<input type="file" id="msFile2" accept="image/*" aria-label="Choose a picture for the phone"></span><button class="btn sm" type="button" id="msClear2" hidden>Remove</button></div></div>
+  </div>
+ </section>
+ <section class="msPanel" id="msP-bg" role="tabpanel" aria-labelledby="msT-bg" hidden>
+  <div class="sec"><h2>Background</h2>
+   <label class="f"><span>Type</span><select id="msBgType"><option value="atlas">Atlas background</option><option value="gradient">Gradient</option><option value="solid">Solid colour</option><option value="kit">Theme kit palette</option><option value="image">Image</option></select></label>
+   <div data-bg="atlas"><p class="hint" style="margin-bottom:6px">Procedural backgrounds from the <a href="atlas.html#backgrounds">background generator</a>.</p><div class="bgs" id="msAtlasBgs" role="group" aria-label="Atlas backgrounds"></div></div>
+   <div data-bg="solid"><label class="f"><span>Colour</span><input type="color" id="msBgSolid"></label></div>
+   <div data-bg="gradient" class="sec" style="padding:0;border:0"><div class="g3"><label class="f"><span>From</span><input type="color" id="msG0"></label><label class="f"><span>Via</span><input type="color" id="msG1"></label><label class="f"><span>To</span><input type="color" id="msG2"></label></div>
+    <div class="g2"><label class="f"><span>Shape</span><select id="msGType"><option value="linear">Linear</option><option value="radial">Radial</option></select></label><label class="f"><span>Angle</span><input type="range" id="msAngle" min="0" max="360" step="5"></label></div></div>
+   <div data-bg="kit" class="sec" style="padding:0;border:0"><label class="f"><span>Theme kit</span><select id="msKit"><option value="">Loading kits…</option></select></label>
+    <label class="f"><span>Look</span><select id="msKitStyle"><option value="glow">Palette with accent glow</option><option value="signature">The kit’s signature background</option></select></label><p class="hint">Badges take the kit’s accent; pick “Theme kit heading font” under Words for its type.</p></div>
+   <div data-bg="image" class="sec" style="padding:0;border:0"><span class="btn sm fileBtn">Choose background image<input type="file" id="msBgFile" accept="image/*" aria-label="Choose a background image"></span><label class="f"><span>Blur</span><input type="range" id="msBlur" min="0" max="1" step=".05"></label></div>
+   <div data-bg="image kit"><label class="f"><span>Darken</span><input type="range" id="msDim" min="0" max=".8" step=".05"></label></div>
+   <label class="f"><span>Grain</span><input type="range" id="msGrain" min="0" max=".4" step=".01"></label>
+  </div>
+ </section>
+ <section class="msPanel" id="msP-layout" role="tabpanel" aria-labelledby="msT-layout" hidden>
+  <div class="sec"><h2>Angle</h2>
+   <div class="presetsBtns"><button class="btn sm" type="button" data-tilt="0,0,0">Flat</button><button class="btn sm" type="button" data-tilt="0,12,-22">Left</button><button class="btn sm" type="button" data-tilt="0,12,22">Right</button><button class="btn sm" type="button" data-tilt="-8,28,0">Lying back</button><button class="btn sm" type="button" data-tilt="-6,0,0">Tilted</button></div>
+   <label class="f"><span>Rotate <output for="msRotate"></output></span><input type="range" id="msRotate" min="-45" max="45" step="1"></label>
+   <label class="f"><span>Tilt back <output for="msTiltX"></output></span><input type="range" id="msTiltX" min="-45" max="45" step="1"></label>
+   <label class="f"><span>Turn <output for="msTiltY"></output></span><input type="range" id="msTiltY" min="-50" max="50" step="1"></label></div>
+  <div class="sec"><h2>Size and space</h2>
+   <label class="f"><span>Scale <output for="msScale"></output></span><input type="range" id="msScale" min=".3" max="1.6" step=".01"></label>
+   <label class="f"><span>Padding <output for="msPad"></output></span><input type="range" id="msPad" min="0" max=".25" step=".005"></label>
+   <label class="f"><span>Shadow <output for="msShadow"></output></span><input type="range" id="msShadow" min="0" max="1" step=".01"></label>
+   <div class="g2"><label class="f"><span>Move across <output for="msOffX"></output></span><input type="range" id="msOffX" min="-.5" max=".5" step=".005"></label><label class="f"><span>Move down <output for="msOffY"></output></span><input type="range" id="msOffY" min="-.5" max=".5" step=".005"></label></div>
+   <button class="btn sm" type="button" id="msReset">Reset everything</button></div>
+ </section>
+ <section class="msPanel" id="msP-text" role="tabpanel" aria-labelledby="msT-text" hidden>
+  <div class="sec"><h2>Headline and caption</h2>
+   <label class="f"><span>Headline</span><textarea id="msHead" rows="2" maxlength="140"></textarea></label>
+   <label class="f"><span>Caption</span><textarea id="msCap" rows="2" maxlength="220"></textarea></label>
+   <div class="g2"><label class="f"><span>Font</span><select id="msFont"><option>Inter</option><option>Manrope</option><option>Space Grotesk</option><option>Bricolage Grotesque</option><option>Fraunces</option><option>DM Serif Display</option><option>Playfair Display</option><option>Cormorant Garamond</option><option>Archivo Black</option><option>JetBrains Mono</option></select></label>
+    <label class="f"><span>Size</span><input type="range" id="msTSize" min=".5" max="1.8" step=".05"></label></div>
+   <div class="g2"><label class="f"><span>Position</span><select id="msTPos"><option value="auto">Auto for each size</option><option value="top">Above</option><option value="bottom">Below</option><option value="left">Left</option><option value="right">Right</option></select></label>
+    <label class="f"><span>Align</span><select id="msTAlign"><option value="auto">Auto</option><option value="left">Left</option><option value="center">Centre</option><option value="right">Right</option></select></label></div>
+   <div class="g2"><label class="check"><input type="checkbox" id="msTColorAuto"> Colour from background</label><label class="f"><span class="sr">Text colour</span><input type="color" id="msTColor" aria-label="Text colour"></label></div></div>
+  <div class="sec"><h2>Badge and logo</h2>
+   <div class="g2"><label class="f"><span>Badge</span><input type="text" id="msBadge" maxlength="40" placeholder="New · Now on iOS"></label><label class="f"><span>Badge colour</span><input type="color" id="msBadgeColor"></label></div>
+   <label class="f"><span>Badge position</span><select id="msBadgePos"><option value="above">Above the headline</option><option value="tl">Top left</option><option value="tr">Top right</option><option value="bl">Bottom left</option><option value="br">Bottom right</option></select></label>
+   <div class="row"><span class="btn sm fileBtn">Logo image<input type="file" id="msLogoFile" accept="image/*" aria-label="Choose a logo image"></span><button class="btn sm" type="button" id="msClearLogo" hidden>Remove logo</button></div>
+   <div class="g2"><label class="f"><span>Logo corner</span><select id="msLogoPos"><option value="tl">Top left</option><option value="tr">Top right</option><option value="bl">Bottom left</option><option value="br">Bottom right</option></select></label><label class="f"><span>Logo size</span><input type="range" id="msLogoSize" min=".04" max=".25" step=".005"></label></div></div>
+ </section>
+ <section class="msPanel" id="msP-export" role="tabpanel" aria-labelledby="msT-export" hidden>
+  <div class="sec"><h2>This size</h2>
+   <div class="g2"><label class="f"><span>Format</span><select id="msFmt"><option value="png">PNG</option><option value="jpeg">JPEG</option><option value="webp">WebP</option></select></label><label class="f"><span>Quality (JPEG, WebP)</span><input type="range" id="msQ" min=".5" max="1" step=".01"></label></div>
+   <div class="row"><button class="btn primary" type="button" id="msDl">Download this size</button><button class="btn" type="button" onclick="document.getElementById('msCopy').click()">Copy PNG</button></div>
+   <div class="g2"><label class="f"><span>Custom width</span><input type="number" id="msCW" min="64" max="4096"></label><label class="f"><span>Custom height</span><input type="number" id="msCH" min="64" max="4096"></label></div></div>
+  <div class="sec"><h2>Every size at once</h2>
+   <div class="row"><button class="btn sm" type="button" id="msPickAll">All</button><button class="btn sm" type="button" id="msPickNone">None</button></div>
+   <fieldset style="border:0;padding:0;margin:0"><legend class="sr">Sizes in the ZIP</legend><div class="picks" id="msPicks"></div></fieldset>
+   <button class="btn primary block" type="button" id="msZip">Download ZIP</button>
+   <p class="hint">Each size is laid out on its own: words move beside the device on wide images and above it on tall ones.</p></div>
+ </section>
+</aside>
+<main class="main" id="msMain" tabindex="-1">
+ <div class="bar"><p id="msSizeNow"></p><p class="hint">Drop or paste a picture onto the preview.</p></div>
+ <div id="msStage"><canvas id="msCanvas" role="img" aria-label="Preview"></canvas></div>
+ <p id="msStatus" role="status" aria-live="polite"></p>
+ <section class="stripWrap" aria-labelledby="msStripH"><h2 id="msStripH">Sizes</h2><ul id="msStrip" aria-label="Choose a size to preview"></ul></section>
+</main>
+</div>
+<div id="msOffscreen" aria-hidden="true"></div>
+<div class="toast" id="msToast" role="status" aria-live="polite"></div>
+<script src="backgrounds.js"></script>
+<script src="builder/zip.js"></script>
+<script src="mockup/handoff.js"></script>
+<script src="mockup/devices.js"></script>
+<script src="mockup/studio.js"></script>
+</body></html>
