@@ -219,6 +219,7 @@ document.addEventListener('keydown',e=>{const t=document.activeElement,inField=/
  else if(e.key==='ContextMenu'&&c){e.preventDefault();menuFor(c.uid)}
  else if((e.key==='+'||e.key==='=')&&!mod){A.setZoom(A.zoom+.1)}else if(e.key==='-'&&!mod){A.setZoom(A.zoom-.1)}});
 
+addEventListener('message',e=>{if(e.source!==A.pv.contentWindow||!e.data)return;if(e.data.pb==='empty')A.openPicker(null);else if(e.data.pb==='emptyTpl')openStart('templates')});
 /* ---------- zoom control ---------- */
 {const z=mk('div','seg',`<button type="button" id="zoomOut" aria-label="Zoom out">−</button><output id="zoomVal" aria-live="polite">100%</output><button type="button" id="zoomIn" aria-label="Zoom in">+</button>`);z.id='zoomSeg';z.setAttribute('role','group');z.setAttribute('aria-label','Zoom');$('#widths').after(z);
  $('#zoomOut').onclick=()=>A.setZoom(A.zoom-.1);$('#zoomIn').onclick=()=>A.setZoom(A.zoom+.1);$('#zoomVal').onclick=()=>A.setZoom(1);$('#zoomVal').title='Reset zoom';$('#zoomVal').textContent=Math.round(A.zoom*100)+'%';

@@ -236,11 +236,33 @@ it New. `hash` picks a style for `sec-*` pieces. The page builder picks it up au
 A website builder that runs in the browser: multi-page sites, edit on the canvas, one design system, export a
 static site or publish it to a live address. Old single-page saves open as one-page sites.
 
+- **Start screen and sites home:** first-time visitors (no saved site) get a start dialog; "Sites & templates" in the
+  header reopens it. Paths: **Continue** the last site, **Start from a template** (gallery with category filter, a large
+  preview and a page list per template), **Describe your site** (AI when on, otherwise the closest template filled with
+  your words), **Blank site** (the empty page explains how to begin) and **From a brand kit** (reads the Brand
+  generator's draft, `brandgen-draft-v1`). Your sites are listed with thumbnails drawn from their own colours and
+  headline; rename, duplicate and delete (with undo). Template thumbnails are pre-rendered WebP files in
+  `site/builder/thumbs/<template>-<page>.webp` (about 10 KB each); regenerate them after editing a template with
+  `BASE=http://localhost:8797/ node tools/builder-thumbs.mjs [templateId...]` (needs Playwright and Pillow).
+- **Layout of the editor:** header shows the site name, a saved / unsaved indicator, Undo and Redo, a **Checks** badge
+  (issue count for the page; click for the list), **History** (last 20 automatic snapshots per site, restore is
+  undoable) and `?` for the shortcut sheet. The right panel has four tabs: Outline (pages, sections, this page's
+  settings), Design (styles and tokens), Site (identity, menu, SEO, 404, forms) and AI. On phones and narrow screens
+  the canvas fills the screen with a bottom bar (Outline, Library, Add, Design, More); panels open as sheets and
+  the selected section's actions sit in a bar above the bottom bar.
+- **Section menu and clipboard:** right-click (or press and hold, or Shift+F10) a section on the canvas or in the
+  outline for edit, add after, duplicate, copy, paste, move, hide on every screen, save as reusable block and delete.
+  Ctrl/Cmd+C and V copy sections between pages (and sites). Saved blocks keep words and settings and live under
+  Library, My blocks (`atlas-pb-blocks-v1`). Find and replace (Ctrl/Cmd+Shift+H) searches every page, the header and
+  the footer. Words accept `**bold**`, `*italic*` and `[text](address)`; select text on the canvas for the B / I / Link
+  bar. Zoom (40 to 150%) with the buttons, + and -, or Ctrl+wheel; drag a library card onto the canvas to see a drop line.
+- **Speed:** films in the canvas load their poster first and start when they scroll into view; library previews and
+  embedded frames are lazy.
 - **Pages and sites:** a site has pages (add, rename, duplicate, reorder, delete, home page, file names), a shared
   header and footer, a menu that lists the pages (or a custom list) and a mobile menu. Site settings cover the brand,
   favicon (icon library), language, site address, default description and social image, a 404 page, a form address
   (Formspree URL or `mailto:`) and an analytics snippet. Every page has its own title, description and social image.
-- **Editing on the canvas:** click text to edit it in place (plain text only), click a section for its toolbar (move,
+- **Editing on the canvas:** click text to edit it in place, click a section for its toolbar (move,
   duplicate, delete, settings, add), drag a section by its handle, replace images (upload, kept in IndexedDB, or pick from
   the atlas), set where a button links, and use the searchable section picker with live thumbnails. Per section: spacing,
   width, alignment, background (soft, accent, inverted, gradient, image, film), tablet and phone tweaks, hide on a
@@ -248,7 +270,7 @@ static site or publish it to a live address. Old single-page saves open as one-p
   Everything autosaves to this browser.
 - **Design system:** 144 styles (4 builder styles, 48 theme kits, 48 design systems, 22 atlas themes in light and dark)
   swap the whole site in one click; site tokens (colours, corner radius, button shape, fonts) sit on top of any style.
-- **Responsive and accessibility:** desktop, tablet and phone previews; a Check tab lists low contrast, heading order,
+- **Responsive and accessibility:** desktop, tablet and phone previews; the Checks list shows low contrast, heading order,
   missing alt text, unnamed links and unlabelled fields, with fixes where they can be automatic.
 - **Library:** 54 sections (including article, find-us map, menu, schedule, product grid, course outline, contact form,
   donate, countdown), 64 components, interactions, backgrounds, films, icons and theme-kit assets, plus 12 multi-page

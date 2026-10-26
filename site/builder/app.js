@@ -117,18 +117,21 @@ function compose(mode,pg,acc,opt){ // mode: preview | html | zip  -> parts for o
   try{if(isX(blk.id)){const r=d.render(vals(blk),ctx)||{};html=r.html||'';bjs=r.js||'';(r.css||[]).forEach(([k,c])=>{if(!css.has(k))css.set(k,c)});if(!css.has('x-base'))css.set('x-base',PB.extraBase)}
    else{html=fill(mode==='preview'?PB.canvas.mark(d):d.html,blk,AT);bjs=d.js?fill(d.js,blk,AT):'';if(!css.has('b:'+d.id))css.set('b:'+d.id,d.css)}}
   catch(e){console.warn('Page builder: block failed',blk.id,e);html='<section class="wrap"><p>This section could not be drawn.</p></section>'}
+  if(mode==='preview')html=lazyMedia(html);
   html=anchors(S.linkPages(site,html.split(AT+'http').join('http'),CTX,esc),blk,mode);
   html=html.replace(/\u0001A\/\u0002U:([\w-]+)\u0002|\u0002U:([\w-]+)\u0002/g,(m,a,b)=>upURL(a||b,mode,acc));
   const sb=PB.sec.build(blk,{mode,A:AT,asset:v=>/^user:/.test(v)?upURL(v.slice(5),mode,acc):AT+v});
   if(sb.css)css.set('set:'+blk.uid,sb.css);if(sb.rt)ctx.need(sb.rt,PB.sec.runtime[sb.rt]);
   if(!css.has('pb-base'))css.set('pb-base',PB.sec.base);
   const sticky=S.isTop(d)&&d.id!=='announce';
-  body.push(`<div class="b-${isX(blk.id)?'x':d.id}${sticky?' pb-sticky':''}${sb.cls?' '+sb.cls:''}" id="${blk.uid}"${mode==='preview'?' data-pb data-zone="'+zone+'" data-name="'+esc(d.name)+'"':''}>${sb.inner}${sb.flip?`<div class="pb-in" style="${sb.flip}">${html}</div>`:html}</div>`);
+  body.push(`<div class="b-${isX(blk.id)?'x':d.id}${sticky?' pb-sticky':''}${sb.cls?' '+sb.cls:''}" id="${blk.uid}"${mode==='preview'?' data-pb data-zone="'+zone+'" data-name="'+esc(d.name)+'"':''}>${mode==='preview'?lazyMedia(sb.inner):sb.inner}${sb.flip?`<div class="pb-in" style="${sb.flip}">${html}</div>`:html}</div>`);
   if(bjs)js.push(`(()=>{const root=document.getElementById(${JSON.stringify(blk.uid)});if(!root)return;try{${bjs}}catch(e){console.error(e)}})();`)});
  const rt=[];let cl=false;
  needs.forEach((v,k)=>{if(v&&v.componentLab)cl=true;else rt.push(v)});
  return {st,acc,pg,cssText:buildCSS(st,acc),body:body.join('\n'),runtime:rt.join('\n'),js:js.join('\n'),cl,fontURL:fontURLOf(acc),files,mode};
 }
+/* poster first: in the editor, films wait for a poster frame and start when they scroll into view; frames load lazily */
+function lazyMedia(h){if(!h||h.indexOf('<')<0)return h;return h.replace(/<video\b([^>]*)>/g,(m,a)=>'<video data-pbv preload="none"'+a.replace(/\sautoplay(="[^"]*")?/g,'')+'>').replace(/<iframe\b(?![^>]*loading=)/g,'<iframe loading="lazy"')}
 /* anchors: per-link overrides (blk.links[index]) and preview ids */
 function anchors(html,blk,mode){let i=0;return html.replace(/<a\s([^>]*)>/g,(m,attrs)=>{if(/data-rich/.test(attrs))return m;const idx=i++;const ov=blk.links&&blk.links[idx];let a=attrs;
   if(ov!==undefined){const h='href="'+esc(S.href(site,ov,CTX))+'"';a=/href="[^"]*"/.test(a)?a.replace(/href="[^"]*"/,h):h+' '+a}
@@ -150,7 +153,8 @@ function assemble(P,opt={}){ // opt: {cssHref, jsHref, clSrc, clInline, favHref,
  const code=(P.runtime?P.runtime+'\n':'')+P.js;
  if(code)scripts+=opt.jsHref?`<script src="${opt.jsHref}"><\/script>\n`:`<script>\n${code.replace(/<\/script/gi,'<\\/script')}\n<\/script>\n`;
  if(pre&&!opt.noagent)scripts+=`<script>window.__PB_EDIT=${opt.edit?'true':'false'};${PB.agentSrc}<\/script>\n`;
- return head+P.body+'\n'+scripts+'</body></html>\n';
+ const emptyMsg=pre&&!pg.blocks.length&&!site.header.length&&!site.footer.length?'<div id="pb-empty" style="padding:14vh 24px;text-align:center;font:500 16px/1.5 system-ui,sans-serif;color:#555"><p style="font:italic 500 30px/1.1 Georgia,serif;margin:0 0 10px;color:#1C1F2A">This page is empty.</p><p style="margin:0 0 18px">Add a section, or start from a template.</p><button type="button" style="font:600 14px system-ui;padding:11px 18px;border-radius:10px;border:0;background:#5B2DFF;color:#fff;cursor:pointer" onclick="parent.postMessage({pb:\'empty\'},\'*\')">Add a section</button> <button type="button" style="font:600 14px system-ui;padding:11px 18px;border-radius:10px;border:1px solid #ccc;background:#fff;color:#1C1F2A;cursor:pointer" onclick="parent.postMessage({pb:\'emptyTpl\'},\'*\')">Browse templates</button></div>':'';
+ return head+P.body+emptyMsg+'\n'+scripts+'</body></html>\n';
 }
 const swapA=(s,base)=>s.split(AT).join(base);
 
@@ -366,7 +370,7 @@ let ixIO=null,bgThumbs={};
 function library(){const L=$('#libList');let h='';if(ixIO){ixIO.disconnect();ixIO=null}
  if(ltab==='sections'){const all=[...LIB.blocks,PB.extraById['x-type']];const gs=['All',...GROUPS.filter(g=>all.some(b=>b.group===g))];h+=chips(gs);
   const items=all.filter(b=>(lgroup==='All'||b.group===lgroup)&&match(b.name,b.group,b.desc));
-  h+=`<p class="lcount">${items.length} sections · previews use your style</p><ul class="lgrid tiles">`+items.map(b=>card({id:b.id,title:b.name,meta:b.group,thumb:`<div class="sth" data-sth="${esc(b.id)}" data-sw="${thumbW(b.id)}"></div>`,cls:'sec'})).join('')+'</ul>'}
+  h+=`<p class="lcount">${items.length} sections · previews use your style</p><ul class="lgrid tiles">`+items.map(b=>card({id:b.id,title:b.name,meta:b.group,thumb:`<div class="sth" data-sth="${esc(b.id)}" data-sw="${thumbW(b.id)}"></div>`,cls:'sec'})).join('')+'</ul>'+(items.length?'':'<p class="hint">No section matches “'+esc($('#libSearch').value)+'”. Try a shorter word such as “price”, “team” or “form”, or clear the search.</p>')}
  else if(ltab==='components'){const L2=PB.src.CL();if(!L2)h+='<p class="hint">The UI component lab has not loaded, so components are unavailable right now.</p>';else{
   const items=L2.components.filter(c=>match(c.id,c.name));h+=`<p class="lcount">${items.length} of ${L2.components.length} components · each one is themed by your page style</p><ul class="lgrid comp">`+items.map(c=>card({id:'x-component',vals:{cid:c.id},title:c.name,meta:c.id+(c.live?' · interactive':''),thumb:`<div class="cthumb pb-cl"><div class="cl-root" inert>${PB.componentHTML(c,c.thumb||c.v[0][0],'t'+c.id)}</div></div>`,cls:'comp'})).join('')+'</ul>'}}
  else if(ltab==='interactions'){const X=(window.INTERACTIONS||[]).filter(x=>!/^sec-/.test(x.id));if(!X.length)h+='<p class="hint">The interactions shelf has not loaded.</p>';else{

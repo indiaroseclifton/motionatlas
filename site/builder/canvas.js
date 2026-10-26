@@ -123,6 +123,8 @@ function agent(){
    var ed=document.activeElement;if(ed&&ed.closest&&ed.closest('[data-pbf]'))ed.dispatchEvent(new Event('input',{bubbles:true}))});
   document.addEventListener('selectionchange',function(){var s=window.getSelection();if(!s||s.isCollapsed||!s.rangeCount){RT.style.display='none';return}var n=s.anchorNode,el=n&&(n.nodeType===1?n:n.parentNode);if(!el||!el.closest||!el.closest('[data-pbf][contenteditable]')){RT.style.display='none';return}
    var r=s.getRangeAt(0).getBoundingClientRect();RT.style.display='flex';RT.style.left=Math.max(4,Math.min(innerWidth-130,r.left))+'px';RT.style.top=Math.min(innerHeight-40,r.bottom+8)+'px'})}
+ /* start films once they scroll into view (poster first), unless motion is reduced */
+ try{var vs=[].slice.call(document.querySelectorAll('video[data-pbv]'));if(vs.length&&window.IntersectionObserver&&!matchMedia('(prefers-reduced-motion: reduce)').matches){var vio=new IntersectionObserver(function(es){es.forEach(function(e){var v=e.target;if(e.isIntersecting){v.preload='auto';var pr=v.play&&v.play();if(pr&&pr.catch)pr.catch(function(){})}else if(v.pause)v.pause()})});setTimeout(function(){vs.forEach(function(v){vio.observe(v)})},900)}}catch(x){}
  addEventListener('wheel',function(e){if(e.ctrlKey&&EDIT){e.preventDefault();send({pb:'zoom',d:e.deltaY<0?1:-1})}},{passive:false});
  /* accessibility scan */
  function pc(v){var m=/rgba?\(([^)]+)\)/.exec(v);if(!m)return null;var p=m[1].split(/[ ,\/]+/).filter(Boolean).map(parseFloat);return {r:p[0],g:p[1],b:p[2],a:p.length>3?p[3]:1}}

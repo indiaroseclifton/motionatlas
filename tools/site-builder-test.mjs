@@ -387,6 +387,9 @@ if (axeSrc) {
   ok(await pg.locator('#startDlg[open]').count() === 1, 'first visit opens the start screen');
   ok(await pg.locator('#startDlg .stopt').count() >= 4, 'start screen offers template, describe, blank and brand-kit paths');
   ok(!(await pg.locator('#startDlg [data-o=continue]').count()), 'no "continue" option before a site has been saved');
+  if (axeSrc) { await pg.addScriptTag({ content: axeSrc }).catch(() => {}); const r = await pg.evaluate(() => axe.run(document.querySelector('#startDlg'), { resultTypes: ['violations'] })); const bad = r.violations.filter(v => ['serious', 'critical'].includes(v.impact)); ok(bad.length === 0, 'axe: start screen has no serious or critical issues ' + bad.map(v => v.id + ' ' + v.nodes.map(n => n.target.join(' ')).slice(0, 3)).join(' | ')); }
+  ok(await pg.evaluate(() => document.activeElement && document.querySelector('#startDlg').contains(document.activeElement)), 'focus moves into the start screen');
+  await pg.keyboard.press('Escape'); ok(await pg.locator('#startDlg[open]').count() === 0, 'Escape closes the start screen'); await pg.click('#tplBtn');
   await pg.click('[data-o=templates]');
   ok(await pg.locator('#tplGallery .tplcard').count() >= 12, 'template gallery lists every template');
   await pg.click('#tcats [data-c=shop]'); ok(await pg.locator('#tplGallery .tplcard').count() === 2, 'category filter narrows the gallery');
