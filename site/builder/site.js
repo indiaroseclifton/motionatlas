@@ -18,7 +18,7 @@ const isTop=d=>!!d&&(d.place==='top'||d.id==='announce'),isEnd=d=>!!d&&d.place==
 function split(blocks,def){const header=[],body=[],footer=[];(blocks||[]).forEach(b=>{const d=def(b.id);if(!d)return;(isTop(d)?header:isEnd(d)?footer:body).push(b)});return {header,body,footer}}
 /* Build a clean site from anything: a whole site, an old single page {blocks,title,brand,style,...}, or a template. */
 function normalize(x,def){
- x=x||{};const s={id:x.id||uid('s'),name:x.name||x.brand||'My site',brand:x.brand||'Brand',style:x.style||'studio',pair:x.pair==null?-1:x.pair,updated:x.updated||0};
+ x=x||{};const s={id:x.id||uid('s'),name:x.name||x.brand||'My site',brand:x.brand||'Brand',style:x.style||'studio',pair:x.pair==null?-1:x.pair,updated:x.updated||0};if(x.rich===2)s.rich=2;
  if(Array.isArray(x.pages)&&x.pages.length){
   s.pages=x.pages.map(p=>({id:p.id||uid('pg'),name:String(p.name||'Page').slice(0,60),slug:slugify(p.slug)||'',title:String(p.title||'').slice(0,80),desc:String(p.desc||'').slice(0,300),og:String(p.og||'').slice(0,300),inNav:p.inNav!==false,blocks:fix(p.blocks,def)}));
   s.header=fix(x.header,def);s.footer=fix(x.footer,def);
@@ -38,7 +38,7 @@ function normalize(x,def){
  const d=DEFAULTS(),st=x.settings||{};s.settings={...d,...st,favicon:{...d.favicon,...(st.favicon||{})},notFound:{...d.notFound,...(st.notFound||{})}};
  if(x.tokens&&typeof x.tokens==='object'){const t={},k=x.tokens,hex=v=>/^#[0-9a-f]{6}$/i.test(v);['bg','surface','ink','accent'].forEach(n=>{if(hex(k[n]))t[n]=k[n]});if(k.radius!=null&&+k.radius>=0&&+k.radius<=40)t.radius=+k.radius;if(['sharp','pill'].includes(k.btn))t.btn=k.btn;['fontHead','fontBody'].forEach(n=>{if(/^[\w ]{2,40}$/.test(k[n]||''))t[n]=k[n]});if(Object.keys(t).length)s.tokens=t}
  return s}
-function fix(list,def){return (list||[]).filter(b=>b&&(!def||def(b.id))).map(b=>{const o={uid:b.uid||uid(),id:b.id,vals:b.vals||{}};if(b.set&&typeof b.set==='object')o.set=b.set;if(b.links&&typeof b.links==='object')o.links=b.links;return o})}
+function fix(list,def){return (list||[]).filter(b=>b&&(!def||def(b.id))).map(b=>{const o={uid:b.uid||uid(),id:b.id,vals:b.vals||{}};if(b.set&&typeof b.set==='object')o.set=b.set;if(b.links&&typeof b.links==='object')o.links=b.links;if(b.rich&&typeof b.rich==='object')o.rich=b.rich;return o})}
 const safeLink=l=>{l=String(l||'').trim();if(!l)return '#';if(/^\s*(javascript|data|vbscript):/i.test(l))return '#';return l};
 /* menu: the pages (in order) or the custom list; each item {label,link} */
 function menu(site){if(site.navAuto)return site.pages.filter(p=>p.inNav).map(p=>({label:p.name,link:'page:'+p.id,pageId:p.id}));

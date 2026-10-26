@@ -451,13 +451,23 @@ if (axeSrc) {
   // zoom
   await pg.click('#zoomOut'); ok((await pg.textContent('#zoomVal')) === '90%', 'zoom out to 90%'); await pg.click('#zoomVal');
   // rich words
-  await pg.evaluate(() => { const A = PB.app, b = A.curPage().blocks.find(b => A.fieldsOf(A.def(b.id)).some(f => f.k === 'intro' && f.type === 'long')); b.vals.intro = 'Plain **bold** and *italic* and [a link](https://example.com) here.'; A.commit(); A.render(); });
+  await pg.evaluate(() => { const A = PB.app, b = A.curPage().blocks.find(b => A.fieldsOf(A.def(b.id)).some(f => f.k === 'intro' && f.type === 'long')); b.vals.intro = 'Plain bold and italic and a link here. Keep *this* and [that](x) literal.'; b.rich = { intro: 'Plain <b>bold</b> and <i>italic</i> and <a href="https://example.com">a link</a> here. Keep *this* and [that](x) literal.' }; A.commit(); A.render(); });
   await waitPv(pg); await pg.waitForTimeout(500);
-  const rich = await frame(pg).locator('strong').count(); ok(rich >= 1, 'bold markup renders as <strong> in the preview');
-  ok(await frame(pg).locator('a[data-rich]').count() >= 1, 'link markup renders as a link');
+  const rich = await frame(pg).locator('[data-pbf] b').count(); ok(rich >= 1, 'stored bold formatting renders in the preview');
+  ok(await frame(pg).locator('a[data-rich]').count() >= 1, 'stored link formatting renders as a link');
+  ok((await frame(pg).locator('body').innerText()).includes('Keep *this* and [that](x) literal'), 'literal asterisks and brackets stay literal');
+  await pg.evaluate(() => { const A = PB.app, b = A.curPage().blocks.find(b => b.rich); b.vals.intro = 'Edited in the panel'; A.commit(); A.render(); }); await waitPv(pg); ok(await frame(pg).locator('a[data-rich]').count() === 0, 'editing the plain words drops stale formatting');
   // drop line from the library
   const dr = await pg.evaluate(() => !!document.querySelector('.dropov') && !!document.querySelector('.dropind'));
   ok(dr, 'canvas has a drop overlay and indicator');
+  await ctx.close();
+}
+// ---- 5b. legacy **markers** migrate to real formatting
+{
+  const old = { cur: 's1', pages: { s1: { id: 's1', name: 'Old', brand: 'B', style: 'studio', home: 'p1', pages: [{ id: 'p1', name: 'Home', slug: 'index', blocks: [{ uid: 'u1', id: 'statement', vals: { text: 'We **really** care, 5 * 3 stays' } }] }] } } };
+  const { ctx, pg } = await open({ init: 'localStorage.setItem("atlas-page-builder-v2", ' + JSON.stringify(JSON.stringify(old)) + ')' });
+  const b = await pg.evaluate(() => PB.app.site.pages[0].blocks[0]);
+  ok(b.vals.text === 'We really care, 5 * 3 stays' && /<b>really<\/b>/.test(b.rich.text), 'old **bold** markers become stored formatting and plain words');
   await ctx.close();
 }
 // ---- 6. phone: bottom bar, sheets, no overflow

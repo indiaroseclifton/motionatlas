@@ -15,6 +15,22 @@ const uidGen=()=>'b'+Math.random().toString(36).slice(2,8);
 const clone=x=>JSON.parse(JSON.stringify(x));
 const GROUPS=['Navigation','Heroes','Features','Proof','Sell','Story','Content','Endings','Fonts'];
 
+/* ---------- rich words: a field keeps its plain text in vals[k] and its formatting (b, i, a only) as sanitized inline HTML in blk.rich[k] ---------- */
+const RICH_URL=/^(https?:\/\/|mailto:|tel:|#|page:)/i;
+const unent=h=>h.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&amp;/g,'&');
+const richText=h=>unent(String(h).replace(/<[^>]+>/g,'')).replace(/\s+/g,' ').trim();
+/* keep only <b>, <i> and <a href>; everything else becomes text */
+function cleanInline(h){const t=document.createElement('template');t.innerHTML=String(h);const ee=x=>String(x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+ const walk=n=>{let o='';n.childNodes.forEach(c=>{if(c.nodeType===3)o+=ee(c.nodeValue);else if(c.nodeType===1){const g=c.tagName,i=walk(c);if(!i.trim())o+=i;else if(g==='B'||g==='STRONG')o+='<b>'+i+'</b>';else if(g==='I'||g==='EM')o+='<i>'+i+'</i>';else if(g==='A'&&RICH_URL.test(c.getAttribute('href')||''))o+='<a href="'+ee(c.getAttribute('href'))+'">'+i+'</a>';else if(g==='BR')o+=' ';else o+=i}});return o};return walk(t.content)}
+/* the legacy **bold**, *italic*, [text](address) markers become real formatting once, when a saved site loads */
+function migrateRich(st){if(!st||st.rich===2)return st;const lists=[st.header||[],st.footer||[],...(st.pages||[]).map(p=>p.blocks||[])];
+ lists.forEach(l=>l.forEach(b=>{const d=def(b.id);if(!d||!b.vals)return;(d.fields||[]).forEach(f=>{if(f.type!=='text'&&f.type!=='long')return;const v=b.vals[f.k];if(typeof v!=='string'||!/(\*\*\S|\*\S[^*]*\S\*|\]\()/.test(v))return;
+  const hs=v.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(?=\S)([^*]+?)(?<=\S)\*\*/g,'<b>$1</b>').replace(/(^|[^*])\*(?=[^\s*])([^*]+?)(?<=[^\s*])\*(?!\*)/g,'$1<i>$2</i>').replace(/\[([^\]]+)\]\(([^)\s]+)\)/g,(m,t,u)=>RICH_URL.test(u)?'<a href="'+u.replace(/&amp;/g,'&').replace(/&/g,'&amp;')+'">'+t+'</a>':m);
+  if(hs===v.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'))return;b.rich=b.rich||{};b.rich[f.k]=hs;b.vals[f.k]=richText(hs)})}));st.rich=2;return st}
+function richOf(blk,k,v,pre){const r=blk.rich&&blk.rich[k];if(!r||richText(r)!==String(v).replace(/\s+/g,' ').trim())return esc(v);
+ const inA=pre.lastIndexOf('<a')>pre.lastIndexOf('</a>')||pre.lastIndexOf('<button')>pre.lastIndexOf('</button>');let h=cleanInline(r);
+ if(inA)h=h.replace(/<a href="[^"]*">/g,'').replace(/<\/a>/g,'');
+ return h.replace(/<a href="([^"]*)">/g,(m,u)=>{const raw=unent(u);return `<a data-rich="1" data-raw="${esc(raw)}" href="${esc(CTX?S.href(site,raw,CTX):raw)}">`})}
 /* ---------- templates ---------- */
 const T=(name,brand,style,title,blocks)=>({name,brand,style,title,pair:-1,blocks:blocks.map(x=>typeof x==='string'?{uid:uidGen(),id:x,vals:{}}:{uid:uidGen(),id:x[0],vals:x[1]})});
 const TEMPLATES=[
@@ -34,7 +50,7 @@ const curPage=()=>site.pages.find(p=>p.id===curId)||site.pages[0];
 const page=new Proxy({},{get:(_,k)=>GK.has(k)?site[k]:curPage()[k],set:(_,k,v)=>{(GK.has(k)?site:curPage())[k]=v;return true}});
 function blank(){return S.normalize({name:'Untitled site',brand:'Brand',style:'studio',blocks:[]},def)}
 let hasSaved=false;
-function loadStore(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.pages&&Object.keys(s.pages).length){hasSaved=true;Object.keys(s.pages).forEach(k=>{s.pages[k]=S.normalize(s.pages[k],def)});return s}}catch(e){}
+function loadStore(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.pages&&Object.keys(s.pages).length){hasSaved=true;Object.keys(s.pages).forEach(k=>{s.pages[k]=migrateRich(S.normalize(s.pages[k],def))});return s}}catch(e){}
  const s={cur:null,pages:{}};let first=null;
  try{const o=JSON.parse(localStorage.getItem(OLD));if(o&&o.blocks){hasSaved=true;first=S.normalize({name:o.brand||'My site',brand:o.brand,title:o.title,style:o.style||'noir',blocks:o.blocks},def)}}catch(e){}
  if(!first)first=S.normalize(TEMPLATES[0](),def);
@@ -56,12 +72,6 @@ function undo(){clearTimeout(typing);commit();if(!hist.length)return say('Nothin
 function redo(){if(!fut.length)return say('Nothing to redo');hist.push(lastSnap);restore(fut.pop());histUI();say('Redone')}
 function histUI(){$('#undoBtn').disabled=!hist.length;$('#redoBtn').disabled=!fut.length}
 
-/* ---------- rich words: **bold**, *italic*, [text](address) inside text and paragraph fields ---------- */
-const RICH_URL=/^(https?:\/\/|mailto:|tel:|#|page:)/i;
-const plainRich=v=>String(v).replace(/\[([^\]]+)\]\(([^)\s]+)\)/g,'$1').replace(/\*\*(?=\S)([^*]+?)(?<=\S)\*\*/g,'$1').replace(/(^|[^*])\*(?=[^\s*])([^*]+?)(?<=[^\s*])\*(?!\*)/g,'$1$2');
-function rich(v,pre){v=String(v);if(!/[*\[]/.test(v))return esc(v);let s=esc(v);const inA=pre.lastIndexOf('<a')>pre.lastIndexOf('</a>')||pre.lastIndexOf('<button')>pre.lastIndexOf('</button>');
- s=s.replace(/\*\*(?=\S)([^*]+?)(?<=\S)\*\*/g,'<strong>$1</strong>').replace(/(^|[^*])\*(?=[^\s*])([^*]+?)(?<=[^\s*])\*(?!\*)/g,'$1<em>$2</em>');
- return s.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g,(m,t,u)=>{if(inA||!RICH_URL.test(u))return t;const raw=u.replace(/&amp;/g,'&');return `<a data-rich="1" data-raw="${u}" href="${esc(CTX?S.href(site,raw,CTX):raw)}">${t}</a>`})}
 /* ---------- values and templating ---------- */
 const fieldsOf=d=>d.fields||[];
 function val(blk,k){const d=def(blk.id),f=fieldsOf(d).find(f=>f.k===k);return blk.vals[k]!=null?blk.vals[k]:f?f.def:''}
@@ -76,7 +86,7 @@ function fill(str,blk,A){const d=def(blk.id),keys=new Set(fieldsOf(d).map(f=>f.k
  return str.replace(/\{\{(\w+)\}\}/g,(m,k,off)=>{if(k==='A')return A;if(k==='brand')return esc(page.brand||'Brand');if(k==='formAction')return esc(CTX&&CTX.mode==='preview'?'#':(site.settings.formAction||'#'));if(k==='home')return esc(CTX?CTX.pageHref(S.pageOf(site,site.home)):'#');
   if(k==='menu'||k==='menuL'||k==='menuR'){const it=S.menu(site),h=Math.ceil(it.length/2),sub=k==='menu'?it:k==='menuL'?it.slice(0,h):it.slice(h);return CTX?S.menuHTML(site,sub,CTX,esc):''}
   if(!keys.has(k))return m;const f=fieldsOf(d).find(f=>f.k===k);if(f.type==='link')return esc(CTX?S.href(site,val(blk,k),CTX):'#');if(f.type==='image'&&/^user:[\w-]+$/.test(val(blk,k)))return '\u0002U:'+val(blk,k).slice(5)+'\u0002';
-  if(f.type==='text'||f.type==='long'){const pre=str.slice(0,off),inTag=pre.lastIndexOf('<')>pre.lastIndexOf('>');return inTag?esc(plainRich(val(blk,k))):rich(val(blk,k),pre)}
+  if(f.type==='text'||f.type==='long'){const pre=str.slice(0,off),inTag=pre.lastIndexOf('<')>pre.lastIndexOf('>');return inTag?esc(val(blk,k)):richOf(blk,k,val(blk,k),pre)}
   return esc(f.type==='list'?rows(val(blk,k)).map(r=>r.join(' ')).join(', '):val(blk,k))})}
 
 /* ---------- compose ---------- */
@@ -178,7 +188,7 @@ function placeIndex(id){const d=def(id),bl=listFor(id);
  if(d&&d.place==='hero'){let i=0;while(i<bl.length&&def(bl[i].id).place==='hero')i++;return i}
  return bl.length}
 function dropAt(i,list){const items=$$('#ol .blk');if(i<items.length){const t=findBlk(items[i].dataset.uid);return t&&t.list===list?t.i:-1}const l=items[items.length-1],t=l&&findBlk(l.dataset.uid);return t&&t.list===list?list.length:-1}
-function addBlock(id,valsIn,at,extra){if(!def(id))return;const b={uid:uidGen(),id,vals:valsIn||{}};if(extra){if(extra.set)b.set=clone(extra.set);if(extra.links)b.links=clone(extra.links)}let list=listFor(id),i=-1;
+function addBlock(id,valsIn,at,extra){if(!def(id))return;const b={uid:uidGen(),id,vals:valsIn||{}};if(extra){if(extra.rich)b.rich=clone(extra.rich);if(extra.set)b.set=clone(extra.set);if(extra.links)b.links=clone(extra.links)}let list=listFor(id),i=-1;
  if(addTarget){const t=findBlk(addTarget.uid),w=addTarget.where;addTarget=null;if(t&&t.list===list){i=t.i+(w==='before'?0:1)}}
  if(i<0&&at!=null)i=dropAt(at,list);if(i<0)i=placeIndex(id);
  list.splice(i,0,b);open=b.uid;csel={uid:b.uid,kind:'section'};commit();outline();render();jump=b.uid;say('Added '+def(id).name+(list===page.blocks?'':list===site.header?' to the header (every page)':' to the footer (every page)'));return b}
@@ -200,7 +210,7 @@ function outRow(blk,list,i){const d=def(blk.id);const li=document.createElement(
   nb.onkeydown=e=>{if(e.altKey&&(e.key==='ArrowUp'||e.key==='ArrowDown')){e.preventDefault();const j=e.key==='ArrowUp'?i-1:i+1;if(j<0||j>=list.length)return;move(list,i,j);say(d.name+' moved to position '+(j+1));const el=$(`#ol [data-uid="${blk.uid}"] .bname`);el&&el.focus()}};
   li.querySelectorAll('.ib').forEach(b=>b.onclick=()=>{const a=b.dataset.a;
    if(a==='rm'){list.splice(i,1);if(open===blk.uid)open=null;commit();outline();render();say('Removed '+d.name+'. Undo brings it back.');const n=$$('#ol .blk')[Math.min(i,$$('#ol .blk').length-1)];(n?n.querySelector('.bname'):$('#libSearch')).focus();return}
-   if(a==='dup'){const c={uid:uidGen(),id:blk.id,vals:clone(blk.vals)};list.splice(i+1,0,c);commit();outline();render();say('Duplicated '+d.name);return}
+   if(a==='dup'){const c={uid:uidGen(),id:blk.id,vals:clone(blk.vals)};if(blk.rich)c.rich=clone(blk.rich);list.splice(i+1,0,c);commit();outline();render();say('Duplicated '+d.name);return}
    const j=a==='up'?i-1:i+1;move(list,i,j);const el=$(`#ol [data-uid="${blk.uid}"] [data-a="${a}"]:not(:disabled)`)||$(`#ol [data-uid="${blk.uid}"] .bname`);el&&el.focus()});
   return li}
 function xLabel(blk){const v=vals(blk);try{if(blk.id==='x-component'){const c=PB.src.CL()&&PB.src.CL().components.find(x=>x.id===v.cid);return c?c.id+' · '+c.name:'Component'}
@@ -253,7 +263,7 @@ function hideTb(){tb.hidden=true;if(typeof closePop==='function')closePop()}
 function toAgent(m){try{pv.contentWindow.postMessage(m,'*')}catch(e){}}
 function applyText(m){const f=findBlk(m.uid);if(!f)return;const blk=f.blk;
  if(m.r!=null){const r=rows(val(blk,m.k)),ri=+m.r-1,ci=+m.c;if(!r[ri])return;while(r[ri].length<=ci)r[ri].push('');r[ri][ci]=m.v.replace(/\|/g,'/');blk.vals[m.k]=r.map(x=>x.join(' | ')).join('\n')}
- else blk.vals[m.k]=m.v;commitSoon();status()}
+ else{blk.vals[m.k]=m.v;if(m.h){blk.rich=blk.rich||{};blk.rich[m.k]=cleanInline(m.h)}else if(blk.rich){delete blk.rich[m.k];if(!Object.keys(blk.rich).length)delete blk.rich}}commitSoon();status()}
 function tbBtn(label,aria,fn,dis){const b=document.createElement('button');b.type='button';b.className='tbb';b.textContent=label;b.setAttribute('aria-label',aria);b.title=aria;if(dis)b.disabled=true;b.onclick=fn;return b}
 function buildTb(){const f=csel&&findBlk(csel.uid);if(!f||!EDIT){hideTb();return null}
  const d=def(f.blk.id);tb.innerHTML='';const name=document.createElement('span');name.className='tbn';name.textContent=d.name+(f.kind==='page'?'':' · shared');tb.append(name);
@@ -265,7 +275,7 @@ function placeTb(m){if(!EDIT||!csel||!m){hideTb();return}const f=buildTb();if(!f
  const ir=pv.getBoundingClientRect(),sr=stage.getBoundingClientRect(),r0=m.el||m.sec;if(!r0){hideTb();return}const z=ZOOM,r={left:r0.left*z,top:r0.top*z,width:r0.width*z,height:r0.height*z};if(r.top+r.height<0||r.top>ir.height){hideTb();return}
  const h=tb.offsetHeight||40,w=tb.offsetWidth||260,top0=ir.top-sr.top;let y=ir.top-sr.top+r.top-h-8;if(y<top0+4)y=top0+Math.max(r.top,0)+8;
  let x=ir.left-sr.left+Math.max(r.left,0);x=Math.max(8,Math.min(x,sr.width-w-8));tb.style.left=x+'px';tb.style.top=Math.min(y,sr.height-h-8)+'px'}
-function dupBlk(uid){const f=findBlk(uid);if(!f)return;const c={uid:uidGen(),id:f.blk.id,vals:clone(f.blk.vals)};if(f.blk.set)c.set=clone(f.blk.set);if(f.blk.links)c.links=clone(f.blk.links);f.list.splice(f.i+1,0,c);csel=null;open=c.uid;commit();outline();render();say('Duplicated '+def(f.blk.id).name)}
+function dupBlk(uid){const f=findBlk(uid);if(!f)return;const c={uid:uidGen(),id:f.blk.id,vals:clone(f.blk.vals)};if(f.blk.rich)c.rich=clone(f.blk.rich);if(f.blk.set)c.set=clone(f.blk.set);if(f.blk.links)c.links=clone(f.blk.links);f.list.splice(f.i+1,0,c);csel=null;open=c.uid;commit();outline();render();say('Duplicated '+def(f.blk.id).name)}
 function rmBlk(uid){const f=findBlk(uid);if(!f)return;f.list.splice(f.i,1);if(open===uid)open=null;csel=null;hideTb();commit();outline();render();say('Removed '+def(f.blk.id).name+'. Undo brings it back.')}
 function askAdd(uid,where){openPicker({uid,where})}
 /* element tools: links, images, menu */
@@ -316,7 +326,7 @@ const thumbCache=new Map();
 const thumbW=id=>{const d=def(id);return d&&(S.isTop(d)||d.id==='announce')?600:1200};
 const PH='<div aria-hidden="true" style="padding:36px 6%;display:grid;gap:14px;color:var(--ink,#888)"><i style="display:block;height:10px;width:20%;background:var(--accent,currentColor);opacity:.55;border-radius:4px"></i><i style="display:block;height:30px;width:70%;background:currentColor;opacity:.16;border-radius:6px"></i><i style="display:block;height:30px;width:52%;background:currentColor;opacity:.16;border-radius:6px"></i><i style="display:block;height:12px;width:80%;background:currentColor;opacity:.1;border-radius:4px"></i><i style="display:block;height:12px;width:64%;background:currentColor;opacity:.1;border-radius:4px"></i><i style="display:block;height:34px;width:22%;background:var(--accent,currentColor);opacity:.35;border-radius:8px"></i></div>';
 function thumbHTML(id){const key=page.style+'|'+page.pair+'|'+JSON.stringify(site.tokens||{})+'|'+id;if(thumbCache.has(key))return thumbCache.get(key);
- let h='';try{const P=compose('preview',{id:'__t',name:'t',blocks:[{uid:'tb'+id.replace(/\W/g,''),id,vals:{}}]},undefined,{solo:true});h=swapA(assemble(P,{noagent:true,clSrc:ABS+'component-lab.js'}),ABS+'assets/').replace(/\sautoplay\b/g,'').replace(/<video /g,'<video preload="none" ');if(thumbW(id)<1200)h=h.replace('</body>',PH+'</body>')}catch(e){h=''}
+ let h='';try{const P=compose('preview',{id:'__t',name:'t',blocks:[{uid:'tb'+id.replace(/\W/g,''),id,vals:{}}]},undefined,{solo:true});h=swapA(assemble(P,{noagent:true,clSrc:ABS+'component-lab.js'}),ABS+'assets/').replace(/\sautoplay\b/g,'').replace(/<video /g,'<video preload="none" ');if(thumbW(id)<1200)h=h.replace('</body>',PH+'</body>');if(id==='spacer'||/b-spacer/.test(h)&&h.length<9000){const bar='<div aria-hidden="true" style="padding:22px 6%;display:grid;gap:10px;color:var(--ink,#888)"><i style="display:block;height:26px;width:60%;background:currentColor;opacity:.16;border-radius:6px"></i><i style="display:block;height:10px;width:80%;background:currentColor;opacity:.1;border-radius:4px"></i></div>';h=h.replace('</head>','<style>.b-spacer{outline:1px dashed var(--accent,#888);outline-offset:-1px;background:repeating-linear-gradient(135deg,transparent 0 9px,rgba(128,128,128,.16) 9px 10px)}</style></head>').replace(/(<body[^>]*>)/,'$1'+bar).replace('</body>',bar+'</body>')}}catch(e){h=''}
  thumbCache.set(key,h);if(thumbCache.size>160)thumbCache.delete(thumbCache.keys().next().value);return h}
 let thIO=null;
 function mountThumbs(root,scroller){if(!('IntersectionObserver' in window))return;if(thIO)thIO.disconnect();
@@ -730,7 +740,7 @@ fetch('backgrounds.js').then(r=>r.text()).then(t=>{const m=t.match(/const FRAG=`
 PB.dbg=()=>({hist:hist.map(h=>JSON.parse(h).blocks.length),fut:fut.length,last:JSON.parse(lastSnap).blocks.length,now:page.blocks.length});
 /* ---------- hooks for builder/ux.js ---------- */
 PB.app={setZoom,get zoom(){return ZOOM},addBlockAfter:(id,v,uid,where,extra)=>{addTarget={uid,where:where||'after'};return addBlock(id,v,null,extra)},get site(){return site},get store(){return store},get curId(){return curId},get csel(){return csel},get open(){return open},set open(v){open=v},get first(){return !persistedOnce&&!hasSaved},
- def,B,isX,uidGen,clone,addBlock,render,commit,commitSoon,outline,refresh,say,switchTo,findBlk,goPage,openPicker,siteChanged,showPane,rtab,persist,saved,curPage,blank,S,TEMPLATES,siteFromTemplate,aiSiteGo,get aiOn(){return aiOn},aiStatus,dupBlk,rmBlk,move,toAgent,compose,assemble,swapA,thumbHTML,mountThumbs,fieldsOf,val,vals,undo,redo,xLabel,setW,setMode,get EDIT(){return EDIT},status,histSnapshot:()=>lastSnap,restoreSnap:s=>{clearTimeout(typing);commit();hist.push(lastSnap);fut=[];restore(s);histUI()},UI:ui,saveUI,pv,runCheck,libraryRedraw:()=>library(),copy,dl,setS,pickDraw:()=>pickDraw(),selectBlock:uid=>{const f=findBlk(uid);if(!f)return;csel={uid,kind:'section'};open=uid;outline();toAgent({pb:'reselect',uid,kind:'section'});scrollPreviewTo(uid)},clearSel:()=>{csel=null;hideTb();toAgent({pb:'clear'})}};
+ def,B,isX,uidGen,clone,addBlock,render,commit,commitSoon,outline,refresh,say,switchTo,findBlk,goPage,openPicker,siteChanged,showPane,rtab,persist,saved,curPage,blank,S,TEMPLATES,siteFromTemplate,aiSiteGo,get aiOn(){return aiOn},aiStatus,dupBlk,rmBlk,move,toAgent,compose,assemble,swapA,thumbHTML,thumbW,mountThumbs,fieldsOf,val,vals,undo,redo,xLabel,setW,setMode,get EDIT(){return EDIT},status,histSnapshot:()=>lastSnap,restoreSnap:s=>{clearTimeout(typing);commit();hist.push(lastSnap);fut=[];restore(s);histUI()},UI:ui,saveUI,pv,runCheck,libraryRedraw:()=>library(),copy,dl,setS,pickDraw:()=>pickDraw(),selectBlock:uid=>{const f=findBlk(uid);if(!f)return;csel={uid,kind:'section'};open=uid;outline();toAgent({pb:'reselect',uid,kind:'section'});scrollPreviewTo(uid)},clearSel:()=>{csel=null;hideTb();toAgent({pb:'clear'})}};
 /* ---------- boot ---------- */
 try{const CLX=PB.src.CL();if(CLX){const st=document.createElement('style');st.textContent=CLX.css();document.head.append(st)}}catch(e){}
 PB.styles.build();if(!PB.styles.has(page.style)&&!/^ds:/.test(page.style))page.style='studio';
