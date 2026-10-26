@@ -56,6 +56,12 @@ function undo(){clearTimeout(typing);commit();if(!hist.length)return say('Nothin
 function redo(){if(!fut.length)return say('Nothing to redo');hist.push(lastSnap);restore(fut.pop());histUI();say('Redone')}
 function histUI(){$('#undoBtn').disabled=!hist.length;$('#redoBtn').disabled=!fut.length}
 
+/* ---------- rich words: **bold**, *italic*, [text](address) inside text and paragraph fields ---------- */
+const RICH_URL=/^(https?:\/\/|mailto:|tel:|#|page:)/i;
+const plainRich=v=>String(v).replace(/\[([^\]]+)\]\(([^)\s]+)\)/g,'$1').replace(/\*\*(?=\S)([^*]+?)(?<=\S)\*\*/g,'$1').replace(/(^|[^*])\*(?=[^\s*])([^*]+?)(?<=[^\s*])\*(?!\*)/g,'$1$2');
+function rich(v,pre){v=String(v);if(!/[*\[]/.test(v))return esc(v);let s=esc(v);const inA=pre.lastIndexOf('<a')>pre.lastIndexOf('</a>')||pre.lastIndexOf('<button')>pre.lastIndexOf('</button>');
+ s=s.replace(/\*\*(?=\S)([^*]+?)(?<=\S)\*\*/g,'<strong>$1</strong>').replace(/(^|[^*])\*(?=[^\s*])([^*]+?)(?<=[^\s*])\*(?!\*)/g,'$1<em>$2</em>');
+ return s.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g,(m,t,u)=>{if(inA||!RICH_URL.test(u))return t;const raw=u.replace(/&amp;/g,'&');return `<a data-rich="1" data-raw="${u}" href="${esc(CTX?S.href(site,raw,CTX):raw)}">${t}</a>`})}
 /* ---------- values and templating ---------- */
 const fieldsOf=d=>d.fields||[];
 function val(blk,k){const d=def(blk.id),f=fieldsOf(d).find(f=>f.k===k);return blk.vals[k]!=null?blk.vals[k]:f?f.def:''}
@@ -67,9 +73,10 @@ const tick=c=>/^(yes|y|true|✓|✔|1|included)$/i.test(String(c).trim())?`<span
 function fill(str,blk,A){const d=def(blk.id),keys=new Set(fieldsOf(d).map(f=>f.k));
  str=str.replace(/\{\{each:(\w+)\}\}([\s\S]*?)\{\{\/each\}\}/g,(m,k,body)=>rows(val(blk,k)).map((cells,i)=>body.replace(/\{\{n\}\}|\{\{(g|i|t|list)?(\d+)\}\}/g,(mm,kind,num)=>{if(mm==='{{n}}')return String(i+1);const c=cells[+num]||'';
   if(!kind)return esc(c);if(kind==='g')return glyph(c);if(kind==='i')return esc(initials(c));if(kind==='t')return tick(c);return c.split(';').map(x=>x.trim()).filter(Boolean).map(x=>'<li>'+esc(x)+'</li>').join('')})).join(''));
- return str.replace(/\{\{(\w+)\}\}/g,(m,k)=>{if(k==='A')return A;if(k==='brand')return esc(page.brand||'Brand');if(k==='formAction')return esc(CTX&&CTX.mode==='preview'?'#':(site.settings.formAction||'#'));if(k==='home')return esc(CTX?CTX.pageHref(S.pageOf(site,site.home)):'#');
+ return str.replace(/\{\{(\w+)\}\}/g,(m,k,off)=>{if(k==='A')return A;if(k==='brand')return esc(page.brand||'Brand');if(k==='formAction')return esc(CTX&&CTX.mode==='preview'?'#':(site.settings.formAction||'#'));if(k==='home')return esc(CTX?CTX.pageHref(S.pageOf(site,site.home)):'#');
   if(k==='menu'||k==='menuL'||k==='menuR'){const it=S.menu(site),h=Math.ceil(it.length/2),sub=k==='menu'?it:k==='menuL'?it.slice(0,h):it.slice(h);return CTX?S.menuHTML(site,sub,CTX,esc):''}
   if(!keys.has(k))return m;const f=fieldsOf(d).find(f=>f.k===k);if(f.type==='link')return esc(CTX?S.href(site,val(blk,k),CTX):'#');if(f.type==='image'&&/^user:[\w-]+$/.test(val(blk,k)))return '\u0002U:'+val(blk,k).slice(5)+'\u0002';
+  if(f.type==='text'||f.type==='long'){const pre=str.slice(0,off),inTag=pre.lastIndexOf('<')>pre.lastIndexOf('>');return inTag?esc(plainRich(val(blk,k))):rich(val(blk,k),pre)}
   return esc(f.type==='list'?rows(val(blk,k)).map(r=>r.join(' ')).join(', '):val(blk,k))})}
 
 /* ---------- compose ---------- */
@@ -123,7 +130,7 @@ function compose(mode,pg,acc,opt){ // mode: preview | html | zip  -> parts for o
  return {st,acc,pg,cssText:buildCSS(st,acc),body:body.join('\n'),runtime:rt.join('\n'),js:js.join('\n'),cl,fontURL:fontURLOf(acc),files,mode};
 }
 /* anchors: per-link overrides (blk.links[index]) and preview ids */
-function anchors(html,blk,mode){let i=0;return html.replace(/<a\s([^>]*)>/g,(m,attrs)=>{const idx=i++;const ov=blk.links&&blk.links[idx];let a=attrs;
+function anchors(html,blk,mode){let i=0;return html.replace(/<a\s([^>]*)>/g,(m,attrs)=>{if(/data-rich/.test(attrs))return m;const idx=i++;const ov=blk.links&&blk.links[idx];let a=attrs;
   if(ov!==undefined){const h='href="'+esc(S.href(site,ov,CTX))+'"';a=/href="[^"]*"/.test(a)?a.replace(/href="[^"]*"/,h):h+' '+a}
   if(mode==='preview')a+=` data-pba="${idx}"`;return '<a '+a+'>'})}
 const dcache=new Map();
@@ -167,10 +174,10 @@ function placeIndex(id){const d=def(id),bl=listFor(id);
  if(d&&d.place==='hero'){let i=0;while(i<bl.length&&def(bl[i].id).place==='hero')i++;return i}
  return bl.length}
 function dropAt(i,list){const items=$$('#ol .blk');if(i<items.length){const t=findBlk(items[i].dataset.uid);return t&&t.list===list?t.i:-1}const l=items[items.length-1],t=l&&findBlk(l.dataset.uid);return t&&t.list===list?list.length:-1}
-function addBlock(id,valsIn,at){if(!def(id))return;const b={uid:uidGen(),id,vals:valsIn||{}};let list=listFor(id),i=-1;
+function addBlock(id,valsIn,at,extra){if(!def(id))return;const b={uid:uidGen(),id,vals:valsIn||{}};if(extra){if(extra.set)b.set=clone(extra.set);if(extra.links)b.links=clone(extra.links)}let list=listFor(id),i=-1;
  if(addTarget){const t=findBlk(addTarget.uid),w=addTarget.where;addTarget=null;if(t&&t.list===list){i=t.i+(w==='before'?0:1)}}
  if(i<0&&at!=null)i=dropAt(at,list);if(i<0)i=placeIndex(id);
- list.splice(i,0,b);open=b.uid;commit();outline();render();jump=b.uid;say('Added '+def(id).name+(list===page.blocks?'':list===site.header?' to the header (every page)':' to the footer (every page)'));return b}
+ list.splice(i,0,b);open=b.uid;csel={uid:b.uid,kind:'section'};commit();outline();render();jump=b.uid;say('Added '+def(id).name+(list===page.blocks?'':list===site.header?' to the header (every page)':' to the footer (every page)'));return b}
 function move(list,i,j){if(j<0||j>=list.length||i===j)return;const [b]=list.splice(i,1);list.splice(j,0,b);commit();outline();render()}
 
 /* ---------- outline + editor ---------- */
@@ -204,7 +211,7 @@ function settingsUI(blk){const det=document.createElement('details');det.classNa
  sel('Spacing',PB.sec.SPACING,'pad');sel('Width',PB.sec.WIDTH,'width');sel('Alignment',PB.sec.ALIGN,'align');sel('Background',PB.sec.BG,'bg',true);
  if(S0.bg==='image'||S0.bg==='film'){const id='f'+(++fid),w=document.createElement('div');w.className='f';const l=document.createElement('label');l.htmlFor=id;l.textContent=S0.bg==='film'?'Background film':'Background image';
   if(S0.bg==='film'){const s=document.createElement('select');s.id=id;[['','Choose a film'],...LIB.films.map(n=>[n,n.replace(/-/g,' ')])].forEach(([v,t])=>{const o=document.createElement('option');o.value=v;o.textContent=t;s.append(o)});s.value=S0.bgv||'';s.onchange=()=>setS(blk,'bgv',s.value);w.append(l,s)}
-  else{const i=document.createElement('input');i.id=id;i.setAttribute('list','pbImages');i.placeholder='Pick a library image or paste a path';i.value=/^user:/.test(S0.bgv||'')?'(uploaded image)':S0.bgv||'';i.onchange=()=>setS(blk,'bgv',i.value.trim());const up=document.createElement('button');up.type='button';up.className='btn small';up.textContent='Upload an image';const fi=document.createElement('input');fi.type='file';fi.accept='image/*';fi.hidden=true;fi.setAttribute('aria-label','Choose a background image file');up.onclick=()=>fi.click();fi.onchange=async()=>{if(fi.files[0]){const id2=await PB.images.add(fi.files[0]);setS(blk,'bgv','user:'+id2,true)}};w.append(l,i,up,fi)}
+  else{const i=document.createElement('input');i.id=id;i.setAttribute('list','pbImages');i.placeholder='Pick a library image or paste a path';i.value=/^user:/.test(S0.bgv||'')?'(uploaded image)':S0.bgv||'';i.onchange=()=>setS(blk,'bgv',i.value.trim());const up=document.createElement('button');up.type='button';up.className='btn small';up.textContent='Upload an image';const fi=document.createElement('input');fi.type='file';fi.accept='image/*';fi.hidden=true;fi.setAttribute('aria-label','Choose a background image file');up.onclick=()=>fi.click();fi.onchange=async()=>{const fl=fi.files[0];if(!fl)return;if(!/^image\//.test(fl.type))return say('That file is not an image. Try a JPG, PNG or WebP.');try{const id2=await PB.images.add(fl);setS(blk,'bgv','user:'+id2,true)}catch(e){say('Could not keep that image. Try a smaller JPG, PNG or WebP.')}};w.append(l,i,up,fi)}
   box.append(w);
   const oid='f'+(++fid),ow=document.createElement('div');ow.className='f';ow.innerHTML=`<label for="${oid}">Tint over the background: <output>${S0.ov>=0&&S0.ov!=null?S0.ov:55}%</output></label><input id="${oid}" type="range" min="0" max="90" step="5" value="${S0.ov>=0&&S0.ov!=null?S0.ov:55}">`;const r=ow.querySelector('input');r.oninput=()=>{ow.querySelector('output').textContent=r.value+'%'};r.onchange=()=>{blk.set=blk.set||{};blk.set.ov=+r.value;commit();render()};box.append(ow)}
  const hs=document.createElement('fieldset');hs.className='hidef';hs.innerHTML='<legend>Hide on</legend>';[['d','Desktop'],['t','Tablet'],['p','Phone']].forEach(([k,t])=>{const lb=document.createElement('label');lb.className='check';const c=document.createElement('input');c.type='checkbox';c.checked=!!(S0.hide&&S0.hide[k]);c.onchange=()=>{blk.set=blk.set||{};const h=Object.assign({},blk.set.hide);if(c.checked)h[k]=1;else delete h[k];if(Object.keys(h).length)blk.set.hide=h;else delete blk.set.hide;if(!Object.keys(blk.set).length)delete blk.set;commit();render()};lb.append(c,' '+t);hs.append(lb)});box.append(hs);
@@ -234,7 +241,7 @@ function editor(blk){const d=def(blk.id),bb=document.createElement('div');bb.cla
  bb.append(tools);return bb}
 
 /* ---------- canvas controller: selection, in-place editing, floating toolbar ---------- */
-let EDIT=ui.edit!==false,csel=null,addTarget=null;
+let EDIT=ui.edit!==false,csel=null,addTarget=null,ZOOM=1;
 const stage=document.querySelector('main.stage'),tb=$('#cvTb');
 function setMode(edit){EDIT=edit;ui.edit=edit;saveUI();$$('#modeSeg button').forEach(b=>b.setAttribute('aria-pressed',(b.dataset.m==='edit')===edit));if(!edit)csel=null;hideTb();render()}
 $$('#modeSeg button').forEach(b=>{b.onclick=()=>setMode(b.dataset.m==='edit');b.setAttribute('aria-pressed',(b.dataset.m==='edit')===EDIT)});
@@ -251,7 +258,7 @@ function buildTb(){const f=csel&&findBlk(csel.uid);if(!f||!EDIT){hideTb();return
  tb.append(tbBtn('↑','Move section up',()=>move(L,i,i-1),i===0),tbBtn('↓','Move section down',()=>move(L,i,i+1),i===L.length-1),tbBtn('⧉','Duplicate section',()=>dupBlk(csel.uid)),tbBtn('✕','Delete section',()=>rmBlk(csel.uid)),tbBtn('⚙','Section settings and words',()=>{open=csel.uid;showPane('page');rtab('page');outline();const el=$(`#ol [data-uid="${csel.uid}"]`);el&&el.scrollIntoView({block:'nearest'})}),tbBtn('＋','Add a section after this one',()=>askAdd(csel.uid,'after')));
  return f}
 function placeTb(m){if(!EDIT||!csel||!m){hideTb();return}const f=buildTb();if(!f)return;tb.hidden=false;
- const ir=pv.getBoundingClientRect(),sr=stage.getBoundingClientRect(),r=m.el||m.sec;if(!r||r.top+r.height<0||r.top>ir.height){hideTb();return}
+ const ir=pv.getBoundingClientRect(),sr=stage.getBoundingClientRect(),r0=m.el||m.sec;if(!r0){hideTb();return}const z=ZOOM,r={left:r0.left*z,top:r0.top*z,width:r0.width*z,height:r0.height*z};if(r.top+r.height<0||r.top>ir.height){hideTb();return}
  const h=tb.offsetHeight||40,w=tb.offsetWidth||260,top0=ir.top-sr.top;let y=ir.top-sr.top+r.top-h-8;if(y<top0+4)y=top0+Math.max(r.top,0)+8;
  let x=ir.left-sr.left+Math.max(r.left,0);x=Math.max(8,Math.min(x,sr.width-w-8));tb.style.left=x+'px';tb.style.top=Math.min(y,sr.height-h-8)+'px'}
 function dupBlk(uid){const f=findBlk(uid);if(!f)return;const c={uid:uidGen(),id:f.blk.id,vals:clone(f.blk.vals)};if(f.blk.set)c.set=clone(f.blk.set);if(f.blk.links)c.links=clone(f.blk.links);f.list.splice(f.i+1,0,c);csel=null;open=c.uid;commit();outline();render();say('Duplicated '+def(f.blk.id).name)}
@@ -269,14 +276,15 @@ function elGroup(f){const out=[];
  return out}
 function linkPop(f){const blk=f.blk,a=csel.a;const w=document.createElement('div');w.className='ppb';const cur=blk.links&&blk.links[a]!==undefined?blk.links[a]:'';
  w.append(linkPicker(cur,v=>{blk.links=blk.links||{};blk.links[a]=v;commitSoon();render()},'Link target'));const p=document.createElement('p');p.className='hint';p.textContent='Pick a page of this site, or paste any address. Edit the button words by clicking them.';w.append(p);showPop('Link',w)}
-function imgPop(f){const blk=f.blk,d=def(blk.id),key=csel.k;const w=document.createElement('div');w.className='ppb';
+function imgPop(f){const blk=f.blk,d=def(blk.id),key=csel.k;const w=document.createElement('div');w.className='ppb';let altInput=null;
+ const afterImg=()=>{if(altInput&&!altInput.value.trim()){altInput.focus();say('Describe the image for people who cannot see it')}else closePop()};
  const up=document.createElement('button');up.type='button';up.className='btn small pk';up.textContent='Upload from your device';const fi=document.createElement('input');fi.type='file';fi.accept='image/*';fi.hidden=true;fi.setAttribute('aria-label','Choose an image file');
- up.onclick=()=>fi.click();fi.onchange=async()=>{const file=fi.files[0];if(!file)return;if(file.size>25e6)return say('Choose an image under 25 MB');try{const id=await PB.images.add(file);blk.vals[key]='user:'+id;commit();render();closePop();say('Image replaced. It is saved in this browser.')}catch(e){say('Could not read that image')}};
+ up.onclick=()=>fi.click();fi.onchange=async()=>{const file=fi.files[0];if(!file)return;if(!/^image\//.test(file.type))return say('That file is not an image. Try a JPG, PNG or WebP.');if(file.size>25e6)return say('Choose an image under 25 MB');try{const id=await PB.images.add(file);blk.vals[key]='user:'+id;commit();render();say('Image replaced. It is saved in this browser.');afterImg()}catch(e){say(e&&e.name==='QuotaExceededError'?'This browser has no room left to keep that image. Try a smaller one.':'Could not read that image. Try a JPG, PNG or WebP.')}};
  const q=document.createElement('input');q.type='search';q.placeholder='Search the atlas images';q.setAttribute('aria-label','Search the atlas images');
  const g=document.createElement('div');g.className='pgrid';
- const draw=()=>{const t=q.value.trim().toLowerCase();g.innerHTML='';LIB.images.filter(i=>!t||i.toLowerCase().includes(t)).slice(0,90).forEach(i=>{const b=document.createElement('button');b.type='button';b.className='pimg';b.title=i;b.setAttribute('aria-label','Use '+i);b.innerHTML=`<img src="assets/${esc(i)}" alt="" loading="lazy">`;b.onclick=()=>{blk.vals[key]=i;commit();render();closePop()};g.append(b)})};
+ const draw=()=>{const t=q.value.trim().toLowerCase();g.innerHTML='';LIB.images.filter(i=>!t||i.toLowerCase().includes(t)).slice(0,90).forEach(i=>{const b=document.createElement('button');b.type='button';b.className='pimg';b.title=i;b.setAttribute('aria-label','Use '+i);b.innerHTML=`<img src="assets/${esc(i)}" alt="" loading="lazy">`;b.onclick=()=>{blk.vals[key]=i;commit();render();afterImg()};g.append(b)})};
  q.oninput=draw;draw();w.append(up,fi,q,g);
- const altF=fieldsOf(d).find(x=>x.k==='alt');if(altF){const l=document.createElement('label');l.className='f';l.textContent='Describe the image (alt text)';const ai=document.createElement('input');ai.value=val(blk,'alt');ai.oninput=()=>{blk.vals.alt=ai.value;commitSoon();render()};l.append(ai);w.append(l)}
+ const altF=fieldsOf(d).find(x=>x.k==='alt');if(altF){const l=document.createElement('label');l.className='f';l.textContent='Describe the image (alt text)';const ai=document.createElement('input');ai.value=val(blk,'alt');ai.oninput=()=>{blk.vals.alt=ai.value;commitSoon();render()};altInput=ai;l.append(ai);w.append(l)}
  showPop('Image',w)}
 let lastRects=null;
 addEventListener('message',e=>{if(e.source!==pv.contentWindow||!e.data)return;const m=e.data;
@@ -335,14 +343,14 @@ ol.addEventListener('dragover',e=>{e.preventDefault();e.dataTransfer.dropEffect=
 ol.addEventListener('dragleave',e=>{if(!ol.contains(e.relatedTarget))clearMark()});
 ol.addEventListener('drop',e=>{e.preventDefault();const i=dropIndex(e.clientY);clearMark();
  if(dragUid){const f=findBlk(dragUid);if(!f)return;const t=dropAt(i,f.list);if(t<0)return say('A section can only move within its own area');move(f.list,f.i,t>f.i?t-1:t);return}
- try{const x=JSON.parse(e.dataTransfer.getData('application/x-pb')||'null');if(x&&x.id)addBlock(x.id,x.vals,i)}catch(err){}});
+ try{const x=JSON.parse(e.dataTransfer.getData('application/x-pb')||'null');if(x&&x.id)addBlock(x.id,x.vals,i,x)}catch(err){}});
 const frameWrap=$('#wrap');
 frameWrap.addEventListener('dragover',e=>{if(dragUid)return;e.preventDefault();frameWrap.classList.add('drop')});
 frameWrap.addEventListener('dragleave',()=>frameWrap.classList.remove('drop'));
-frameWrap.addEventListener('drop',e=>{frameWrap.classList.remove('drop');if(dragUid)return;e.preventDefault();try{const x=JSON.parse(e.dataTransfer.getData('application/x-pb')||'null');if(x&&x.id)addBlock(x.id,x.vals)}catch(err){}});
+frameWrap.addEventListener('drop',e=>{frameWrap.classList.remove('drop');if(dragUid)return;e.preventDefault();try{const x=JSON.parse(e.dataTransfer.getData('application/x-pb')||'null');if(x&&x.id)addBlock(x.id,x.vals,null,x)}catch(err){}});
 
 /* ---------- library ---------- */
-const LTABS=[['sections','Sections'],['components','Components'],['interactions','Interactions'],['media','Media & backgrounds'],['icons','Icons'],['kit','Kit assets']];
+const LTABS=[['sections','Sections'],['components','Components'],['interactions','Interactions'],['media','Media & backgrounds'],['icons','Icons'],['kit','Kit assets'],['mine','My blocks']];
 let ltab=LTABS.some(t=>t[0]===ui.ltab)?ui.ltab:'sections',lgroup='All';
 function libTabs(){const tl=$('#ltabs');tl.innerHTML=LTABS.map(([k,l])=>`<button role="tab" type="button" id="lt-${k}" aria-controls="libList" aria-selected="${k===ltab}" tabindex="${k===ltab?0:-1}">${l}</button>`).join('');
  tl.querySelectorAll('[role=tab]').forEach((b,i,all)=>{b.onclick=()=>{ltab=b.id.slice(3);ui.ltab=ltab;saveUI();lgroup='All';libTabs();library()};
@@ -350,7 +358,7 @@ function libTabs(){const tl=$('#ltabs');tl.innerHTML=LTABS.map(([k,l])=>`<button
  $('#libList').setAttribute('aria-labelledby','lt-'+ltab)}
 const q=()=>($('#libSearch').value||'').trim().toLowerCase();
 const match=(...s)=>{const t=q();return !t||s.join(' ').toLowerCase().includes(t)};
-function card({id,vals:v,title,meta,desc,thumb,cls}){return `<li class="lc ${cls||''}" draggable="true" data-add='${esc(JSON.stringify({id,vals:v||{}}))}'><div class="lth" aria-hidden="true">${thumb||''}</div><div class="lb"><b>${esc(title)}</b>${meta?`<small>${esc(meta)}</small>`:''}${desc?`<p>${esc(desc)}</p>`:''}</div><button type="button" class="btn small add" aria-label="Add ${esc(title)} to the page">Add</button></li>`}
+function card({id,vals:v,title,meta,desc,thumb,cls,extra}){return `<li class="lc ${cls||''}" draggable="true" data-add='${esc(JSON.stringify({id,vals:v||{},...(extra||{})}))}'><div class="lth" aria-hidden="true">${thumb||''}</div><div class="lb"><b>${esc(title)}</b>${meta?`<small>${esc(meta)}</small>`:''}${desc?`<p>${esc(desc)}</p>`:''}</div><button type="button" class="btn small add" aria-label="Add ${esc(title)} to the page">Add</button></li>`}
 function chips(groups){return `<div class="gchips" role="group" aria-label="Filter">${groups.map(g=>`<button type="button" class="chip" aria-pressed="${g===lgroup}" data-g="${esc(g)}">${esc(g)}</button>`).join('')}</div>`}
 const SEC_ICON={Navigation:'M3 6h18M3 6v4h18V6',Heroes:'M3 4h18v12H3zM6 19h12',Features:'M3 4h8v7H3zM13 4h8v7h-8zM3 13h8v7H3zM13 13h8v7h-8z',Proof:'M5 7h6v6H5zM13 7h6v6h-6zM5 16h14',Sell:'M4 5h5v14H4zM10 3h5v18h-5zM16 5h5v14h-5z',Story:'M4 6h16M4 10h16M4 14h12M4 18h8',Content:'M4 4h16v10H4zM4 17h16M4 20h10',Endings:'M3 14h18v6H3zM6 17h4M14 17h4',Fonts:'M5 19 10 5h2l5 14M7 14h8',Components:'M4 6h7v5H4zM13 6h7v5h-7zM4 14h16v4H4z'};
 const secThumb=g=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="${SEC_ICON[g]||SEC_ICON.Content}"/></svg>`;
@@ -373,6 +381,7 @@ function library(){const L=$('#libList');let h='';if(ixIO){ixIO.disconnect();ixI
  else if(ltab==='icons'){const fams=[['glyphs','Builder glyphs',Object.keys(LIB.glyphs)],...Object.entries(LIB.iconFiles).map(([f,list])=>[f,f.replace(/-/g,' '),list.map(x=>x.replace(/\.\w+$/,''))]),...(PB.src.TK()?PB.src.TK().list.map(k=>['kit:'+k.id,k.name+' kit',Object.keys(PB.src.TK().ICONS||{})]):[])];
   const items=fams.filter(([f,n,names])=>match(f,n,names.join(' '),'icon'));
   h+=`<p class="lcount">${items.length} icon families · adds an icon feature row you can edit</p><ul class="lgrid icons">`+items.map(([f,n,names])=>card({id:'x-icons',vals:{family:f,items:iconItems(f)},title:n,meta:names.length+' icons',thumb:`<div class="icstrip" data-fam="${esc(f)}">${names.slice(0,8).map(x=>`<span>${PB.iconSVG(f,x,{site:ABS})}</span>`).join('')}</div>`,cls:'icf'})).join('')+'</ul>'}
+ else if(ltab==='mine'){h+=PB.ux&&PB.ux.mineHTML?PB.ux.mineHTML(card):''}
  else if(ltab==='kit'){const TK=PB.src.TK();if(!TK)h+='<p class="hint">The theme kits have not loaded.</p>';else{
   const kits=TK.list.filter(k=>match(k.name,k.mood||'',k.tagline||'',k.id));const sel=kits.find(k=>k.id===ui.kit)||kits[0]||TK.list[0];
   h+=`<div class="f"><label for="kitSel">Theme kit (${kits.length})</label><select id="kitSel">${kits.map(k=>`<option value="${esc(k.id)}"${k===sel?' selected':''}>${esc((k.no?k.no+' · ':'')+k.name)}</option>`).join('')}</select></div>`;
@@ -387,10 +396,11 @@ function library(){const L=$('#libList');let h='';if(ixIO){ixIO.disconnect();ixI
      return card({id:'x-kitasset',vals:{kit:sel.id,asset:a},title:l,meta:sel.name,thumb:art,cls:'tile'})}).join('')+'</ul>'}}}
  L.innerHTML=h;
  L.querySelectorAll('.gchips .chip').forEach(b=>b.onclick=()=>{lgroup=b.dataset.g;library();const n=$(`#libList .chip[data-g="${CSS.escape(lgroup)}"]`);n&&n.focus()});
- L.querySelectorAll('.lc').forEach(li=>{const x=JSON.parse(li.dataset.add);li.querySelector('.add').onclick=()=>addBlock(x.id,clone(x.vals));
+ L.querySelectorAll('.lc').forEach(li=>{const x=JSON.parse(li.dataset.add);li.querySelector('.add').onclick=()=>addBlock(x.id,clone(x.vals),null,x);
   li.addEventListener('dragstart',e=>{e.dataTransfer.effectAllowed='copy';e.dataTransfer.setData('application/x-pb',li.dataset.add);e.dataTransfer.setData('text/plain',x.id)})});
  const ks=$('#kitSel');if(ks){ks.onchange=()=>{ui.kit=ks.value;saveUI();library();$('#kitSel').focus()};
   $('#kitStyle').onclick=()=>{setStyle('kit:'+ks.value)};const z=$('#kitZip');z.onclick=async()=>{const TK=PB.src.TK(),k=TK.list.find(x=>x.id===ks.value);z.disabled=true;say('Building the kit ZIP…');try{dl(await TK.zipKit(k),k.id+'-theme-kit.zip')}catch(e){say('Could not build the kit ZIP')}z.disabled=false}}
+ if(ltab==='mine'&&PB.ux&&PB.ux.mineAfter)PB.ux.mineAfter(L);
  if(ltab==='sections')mountThumbs($('#libList'),$('#libScroll'));
  if(ltab==='interactions')mountIx();if(ltab==='media')bgThumbsLater();
 }
@@ -535,8 +545,13 @@ function showPane(k){document.body.dataset.pane=k;$$('#panes button').forEach(b=
 $$('#panes button').forEach(b=>b.onclick=()=>showPane(b.dataset.p));
 const W=[['desk','Desktop','100%'],['tab','Tablet','820px'],['phone','Phone','390px']];
 $('#widths').innerHTML=W.map(([k,l])=>`<button type="button" data-w="${k}" aria-pressed="${k===(ui.w||'desk')}">${l}</button>`).join('');
-function setW(k){ui.w=k;saveUI();const w=W.find(x=>x[0]===k)||W[0];frameWrap.dataset.w=k;pv.style.width=w[2];$$('#widths button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.w===k))}
-$$('#widths button').forEach(b=>b.onclick=()=>setW(b.dataset.w));setW(ui.w||'desk');
+function setW(k){ui.w=k;saveUI();const w=W.find(x=>x[0]===k)||W[0];frameWrap.dataset.w=k;pv.style.width=w[2];applyZoom();$$('#widths button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.w===k))}
+function applyZoom(){const z=ZOOM,w=(W.find(x=>x[0]===(ui.w||'desk'))||W[0])[2];frameWrap.classList.toggle('zoomed',z!==1);
+ if(z===1){pv.style.transform='';pv.style.width=w;pv.style.height='';pv.style.transformOrigin='';frameWrap.style.removeProperty('--zh')}
+ else{const px=/px$/.test(w)?parseFloat(w):null;pv.style.width=px?px+'px':(100/z)+'%';pv.style.height=(100/z)+'%';pv.style.transformOrigin='top '+(px?'center':'left');pv.style.transform='scale('+z+')'}
+ const o=$('#zoomVal');if(o)o.textContent=Math.round(z*100)+'%';placeTb(lastRects)}
+function setZoom(z){ZOOM=Math.max(.4,Math.min(1.5,Math.round(z*20)/20));ui.zoom=ZOOM;saveUI();applyZoom()}
+$$('#widths button').forEach(b=>b.onclick=()=>setW(b.dataset.w));ZOOM=ui.zoom>=.4&&ui.zoom<=1.5?ui.zoom:1;setW(ui.w||'desk');
 
 /* ---------- export ---------- */
 const slug=()=>(page.brand||page.name||'page').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'page';
@@ -593,15 +608,16 @@ async function pubDraw(msg){const rec=pubGet(),st=pubAvail||await pubStatus();co
  else if(st==='off')state.textContent='Publishing is not switched on yet: the site owner needs to connect a Vercel Blob store to this project. You can still download the ZIP and host it anywhere.';
  else state.textContent=msg||(rec?'Published. Update it after you make changes.':'Publish this site to a shareable address on the atlas. You can unpublish any time.');
  if(rec&&rec.url){link.innerHTML=`<a href="${esc(rec.url)}" target="_blank" rel="noopener">${esc(rec.url)}</a>${rec.at?' · '+new Date(rec.at).toLocaleString():''}`;$('#pubOpen').href=rec.url}else link.textContent=''}
+const pubMsg=st=>st===0?'Could not reach the publishing service. Check your connection and try again. Your site is safe in this browser, and the ZIP download still works.':st===413?'The site is too big to publish. Remove large uploaded images or download the ZIP instead.':st===429?'Too many publishes just now. Wait a minute and try again.':'Publishing failed ('+st+'). Try again, or download the ZIP.';
 async function publishSite(){const go=$('#pubGo');go.disabled=true;let rec=pubGet();
  try{
   for(let attempt=0;attempt<2;attempt++){
-   if(!rec){await pubDraw('Creating the address…');const c=await apiSite('POST','',{name:site.name,files:[]});if(!c.ok)throw new Error((c.j&&c.j.error)||'Publishing failed ('+c.status+')');rec={id:c.j.id,key:c.j.key};pubSet(rec)}
+   if(!rec){await pubDraw('Creating the address…');const c=await apiSite('POST','',{name:site.name,files:[]});if(!c.ok)throw new Error((c.j&&c.j.error)||pubMsg(c.status));rec={id:c.j.id,key:c.j.key};pubSet(rec)}
    $('#pubState').textContent='Building the site…';const base='/site/'+rec.id+'/',files=await buildSiteFiles({pub:{base,origin:location.origin}});
    const payload=files.filter(([p])=>!/^README/.test(p)).map(([p,c])=>typeof c==='string'?{path:p,text:c}:{path:p,b64:b64(c)});
    $('#pubState').textContent='Uploading '+payload.length+' files…';const u=await apiSite('PUT','?id='+rec.id,{name:site.name,files:payload},rec.key);
    if(u.status===403||u.status===404){pubSet(null);rec=null;continue}
-   if(!u.ok)throw new Error((u.j&&u.j.error)||'Publishing failed ('+u.status+')');
+   if(!u.ok)throw new Error((u.j&&u.j.error)||pubMsg(u.status));
    rec.url=location.origin+base;rec.at=Date.now();pubSet(rec);await pubDraw('Published. Share the link below.');say('Site published');return}
   throw new Error('Could not publish. Try again.')}
  catch(e){await pubDraw(e.message||'Publishing failed');$('#pubGo').disabled=false}}
@@ -709,7 +725,7 @@ fetch('backgrounds.js').then(r=>r.text()).then(t=>{const m=t.match(/const FRAG=`
 
 PB.dbg=()=>({hist:hist.map(h=>JSON.parse(h).blocks.length),fut:fut.length,last:JSON.parse(lastSnap).blocks.length,now:page.blocks.length});
 /* ---------- hooks for builder/ux.js ---------- */
-PB.app={get site(){return site},get store(){return store},get curId(){return curId},get csel(){return csel},get open(){return open},set open(v){open=v},get first(){return !persistedOnce&&!hasSaved},
+PB.app={setZoom,get zoom(){return ZOOM},addBlockAfter:(id,v,uid,where,extra)=>{addTarget={uid,where:where||'after'};return addBlock(id,v,null,extra)},get site(){return site},get store(){return store},get curId(){return curId},get csel(){return csel},get open(){return open},set open(v){open=v},get first(){return !persistedOnce&&!hasSaved},
  def,B,isX,uidGen,clone,addBlock,render,commit,commitSoon,outline,refresh,say,switchTo,findBlk,goPage,openPicker,siteChanged,showPane,rtab,persist,saved,curPage,blank,S,TEMPLATES,siteFromTemplate,aiSiteGo,get aiOn(){return aiOn},aiStatus,dupBlk,rmBlk,move,toAgent,compose,assemble,swapA,thumbHTML,mountThumbs,fieldsOf,val,vals,undo,redo,xLabel,setW,setMode,get EDIT(){return EDIT},status,histSnapshot:()=>lastSnap,restoreSnap:s=>{clearTimeout(typing);commit();hist.push(lastSnap);fut=[];restore(s);histUI()},UI:ui,saveUI,pv,runCheck,libraryRedraw:()=>library(),copy,dl,setS,pickDraw:()=>pickDraw(),selectBlock:uid=>{const f=findBlk(uid);if(!f)return;csel={uid,kind:'section'};open=uid;outline();toAgent({pb:'reselect',uid,kind:'section'});scrollPreviewTo(uid)},clearSel:()=>{csel=null;hideTb();toAgent({pb:'clear'})}};
 /* ---------- boot ---------- */
 try{const CLX=PB.src.CL();if(CLX){const st=document.createElement('style');st.textContent=CLX.css();document.head.append(st)}}catch(e){}

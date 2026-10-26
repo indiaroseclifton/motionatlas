@@ -362,10 +362,10 @@ const waitPv = pg => pg.waitForTimeout(700);
   const { ctx, pg } = await open({ vp: { width: 390, height: 844 } });
   ok(await pg.evaluate(() => document.documentElement.scrollWidth <= 390), 'no horizontal overflow at 390px');
   for (const tab of ['page', 'site', 'style']) {
-    await pg.click('#panes [data-p=page]'); await pg.click('#rt-' + tab);
+    await pg.evaluate(() => PB.app.showPane('page')); await pg.click('#rt-' + tab);
     ok(await pg.evaluate(() => document.documentElement.scrollWidth <= 390), 'no horizontal overflow on the ' + tab + ' tab at 390px');
   }
-  await pg.click('#panes [data-p=preview]'); await pg.waitForTimeout(500);
+  await pg.click('.sheetbar button >> visible=true'); await pg.waitForTimeout(500);
   ok(await pg.locator('#pageSel').isVisible(), 'page switcher visible in the preview pane at 390px');
   await ctx.close();
 }
@@ -378,6 +378,97 @@ if (axeSrc) {
     const bad = r.violations.filter(v => ['serious', 'critical'].includes(v.impact));
     ok(bad.length === 0, 'axe: editor ' + tab + ' tab has no serious or critical issues ' + bad.map(v => v.id + ' ' + v.nodes.map(n => n.target.join(' ')).slice(0, 3)).join(' | '));
   }
+  await ctx.close();
+}
+
+// ---- 4. start screen, sites home, template gallery, history, shortcuts
+{
+  const { ctx, pg } = await open({ start: true });
+  ok(await pg.locator('#startDlg[open]').count() === 1, 'first visit opens the start screen');
+  ok(await pg.locator('#startDlg .stopt').count() >= 4, 'start screen offers template, describe, blank and brand-kit paths');
+  ok(!(await pg.locator('#startDlg [data-o=continue]').count()), 'no "continue" option before a site has been saved');
+  await pg.click('[data-o=templates]');
+  ok(await pg.locator('#tplGallery .tplcard').count() >= 12, 'template gallery lists every template');
+  await pg.click('#tcats [data-c=shop]'); ok(await pg.locator('#tplGallery .tplcard').count() === 2, 'category filter narrows the gallery');
+  await pg.click('#tplGallery .tplbtn'); await pg.waitForTimeout(300);
+  ok(await pg.locator('#tpImg img').count() === 1 && await pg.locator('#tPages .tpgb').count() >= 3, 'template detail shows a thumbnail and its pages');
+  const okImg = await pg.evaluate(() => new Promise(r => { const i = document.querySelector('#tpImg img'); if (!i) return r(false); if (i.complete) return r(i.naturalWidth > 100); i.onload = () => r(i.naturalWidth > 100); i.onerror = () => r(false); }));
+  ok(okImg, 'template thumbnail is a real image');
+  await pg.click('#tPages .tpgb:nth-child(1)'); await pg.click('#tUse'); await waitPv(pg);
+  ok(await pg.locator('#startDlg[open]').count() === 0 && (await site(pg)).pages.length >= 3, 'using a template creates a multi-page site and closes the dialog');
+  // sites home: thumbnails, rename, duplicate, delete with undo
+  await pg.click('#tplBtn'); const nSites = await pg.locator('#siteGrid .sitecard').count(); ok(nSites >= 1 && await pg.locator('#siteGrid .mini').count() === nSites, 'sites home lists saved sites with thumbnails');
+  await pg.click('#siteGrid .sitecard.cur [data-a=rename]'); await pg.fill('.strename', 'My renamed site'); await pg.keyboard.press('Enter');
+  ok((await site(pg)).name === 'My renamed site' && /My renamed site/.test(await pg.textContent('#siteTitle')), 'rename updates the site and the header');
+  await pg.click('#siteGrid .sitecard.cur [data-a=dup]'); ok(await pg.locator('#siteGrid .sitecard').count() === nSites + 1, 'duplicate adds a site');
+  await pg.click('#siteGrid .sitecard:nth-child(2) [data-a=del]'); ok(await pg.locator('#siteGrid .gone').count() === 1, 'delete offers undo'); await pg.click('.gone button');
+  ok(await pg.locator('#siteGrid .sitecard').count() === nSites + 1, 'undo restores the deleted site');
+  ok(await pg.locator('#startDlg [data-o=continue]').count() === 1, 'continue option appears once a site is saved');
+  await pg.click('[data-o=blank]'); await waitPv(pg);
+  ok((await site(pg)).pages[0].blocks.length === 0, 'blank site starts empty');
+  ok(await pg.locator('#ol .empty').count() >= 1, 'empty page shows an empty state in the outline');
+  // describe it: falls back to a template when the AI is off
+  await pg.click('#tplBtn'); await pg.click('[data-o=ai]'); await pg.fill('#stBrief', 'A website for a weekend pottery school in Leeds called Clay & Co with classes and a gallery'); await pg.click('#stGo'); await pg.waitForTimeout(1200);
+  ok((await site(pg)).pages.length >= 3, 'describe-your-site builds a site even when the AI is off');
+  // brand kit import
+  await pg.evaluate(() => localStorage.setItem('brandgen-draft-v1', JSON.stringify({ name: 'Moss', mode: 'light', modes: { light: { bg: '#F4F1E8', surface: '#FFFFFF', ink: '#1F2A20', primary: '#2F6B3F' } }, type: { head: 'Fraunces', body: 'Inter' }, radius: 10 })));
+  await pg.click('#tplBtn'); await pg.click('[data-o=brand]'); await pg.click('#brGo'); await waitPv(pg);
+  const bs = await site(pg); ok(bs.name === 'Moss' && bs.tokens && bs.tokens.accent === '#2F6B3F', 'brand kit becomes a site with its colours');
+  // version history
+  await pg.evaluate(() => PB.ux.captureVersion(true)); await pg.click('#histBtn'); ok(await pg.locator('#histDlg .histl li').count() >= 1, 'history lists snapshots'); await pg.keyboard.press('Escape');
+  // shortcuts sheet
+  await pg.locator('body').click({ position: { x: 5, y: 5 } }); await pg.keyboard.press('?'); ok(await pg.locator('#helpDlg[open]').count() === 1, '? opens the shortcut sheet'); await pg.keyboard.press('Escape');
+  ok((await pg.textContent('#saveInd')).trim().length > 0, 'saved indicator shows a state');
+  ok(/Atlas|projects/i.test(await pg.textContent('#backLink')), 'back link says Atlas or My projects');
+  await ctx.close();
+}
+// ---- 5. outline and phone editing, section menu, copy and paste, saved blocks, find and replace, rich words, zoom, drag
+{
+  const { ctx, pg } = await open();
+  await pg.evaluate(() => PB.ux.useTemplate(0)); await waitPv(pg);
+  ok(await pg.locator('#rtabs [role=tab]').count() === 4, 'right panel has four tabs');
+  ok(await pg.locator('#chkBadge').count() === 1, 'checks badge in the header');
+  // section menu
+  const s0 = await site(pg), n0 = s0.pages[0].blocks.length, uid = s0.pages[0].blocks[1].uid;
+  await pg.evaluate(u => PB.ux.menu(u, 300, 200), uid); ok(await pg.locator('.ctxmenu button').count() >= 8, 'section menu opens with actions');
+  await pg.click('.ctxmenu [data-k=dup]'); ok((await site(pg)).pages[0].blocks.length === n0 + 1, 'menu duplicate adds a section');
+  await pg.evaluate(u => PB.ux.menu(u, 300, 200), uid); await pg.click('.ctxmenu [data-k=hide]'); ok((await site(pg)).pages[0].blocks.find(b => b.uid === uid).set.hide.p === 1, 'menu hide hides a section on every screen');
+  await pg.evaluate(u => PB.ux.menu(u, 300, 200), uid); await pg.click('.ctxmenu [data-k=hide]');
+  // copy and paste to another page
+  await pg.evaluate(u => PB.ux.copy(u), uid); await openPages(pg); await pg.click('#addPage'); await waitPv(pg);
+  const n1 = (await site(pg)).pages.at(-1).blocks.length; await pg.evaluate(() => PB.ux.paste()); ok((await site(pg)).pages.at(-1).blocks.length === n1 + 1, 'copy on one page, paste on another');
+  // saved block
+  await pg.evaluate(id => PB.app.goPage(id), s0.pages[0].id); await waitPv(pg); await pg.evaluate(u => PB.ux.menu(u, 300, 200), uid); await pg.click('.ctxmenu [data-k=save]'); await pg.fill('#ndName', 'My block'); await pg.click('#ndOk');
+  await pg.click('#lt-mine'); ok(await pg.locator('#libList .lc.mine').count() === 1, 'saved block appears in Library, My blocks');
+  const before = (await site(pg)).pages[0].blocks.length; await pg.click('#libList .lc.mine .add'); ok((await site(pg)).pages[0].blocks.length === before + 1, 'saved block can be added to a page');
+  // find and replace
+  const word = await pg.evaluate(() => { const s = PB.app.site; const b = s.pages[0].blocks.find(b => b.vals && b.vals.heading); return b ? b.vals.heading.split(' ')[0] : 'Saffron'; });
+  await pg.keyboard.press('Control+Shift+H'); await pg.fill('#fdQ', word); ok(await pg.locator('#fdList li').count() >= 1, 'find lists matches across the site');
+  await pg.fill('#fdR', 'Zzyzx'); await pg.click('#fdAll'); ok(await pg.evaluate(() => PB.app.site.pages.some(p => p.blocks.some(b => b.vals && /Zzyzx/.test(b.vals.heading || '')))), 'replace all rewrites the matching words'); await pg.keyboard.press('Escape');
+  // zoom
+  await pg.click('#zoomOut'); ok((await pg.textContent('#zoomVal')) === '90%', 'zoom out to 90%'); await pg.click('#zoomVal');
+  // rich words
+  await pg.evaluate(() => { const A = PB.app, b = A.curPage().blocks.find(b => A.fieldsOf(A.def(b.id)).some(f => f.k === 'intro' && f.type === 'long')); b.vals.intro = 'Plain **bold** and *italic* and [a link](https://example.com) here.'; A.commit(); A.render(); });
+  await waitPv(pg); await pg.waitForTimeout(500);
+  const rich = await frame(pg).locator('strong').count(); ok(rich >= 1, 'bold markup renders as <strong> in the preview');
+  ok(await frame(pg).locator('a[data-rich]').count() >= 1, 'link markup renders as a link');
+  // drop line from the library
+  const dr = await pg.evaluate(() => !!document.querySelector('.dropov') && !!document.querySelector('.dropind'));
+  ok(dr, 'canvas has a drop overlay and indicator');
+  await ctx.close();
+}
+// ---- 6. phone: bottom bar, sheets, no overflow
+{
+  const { ctx, pg } = await open({ vp: { width: 390, height: 844 } });
+  ok(await pg.locator('.phbar').isVisible() && await pg.locator('#phAdd').isVisible(), 'phone shows the bottom bar with an add button');
+  ok(await pg.locator('#pv').isVisible(), 'phone opens on the preview canvas');
+  await pg.click('#phOutline'); ok(await pg.locator('.right').isVisible() && await pg.locator('#ol').isVisible(), 'outline opens as a sheet');
+  ok(await pg.evaluate(() => document.documentElement.scrollWidth <= 390), 'no horizontal overflow with the outline sheet open');
+  await pg.click('.right .sheetbar button'); ok(!(await pg.locator('.right').isVisible()), 'sheet closes');
+  await pg.click('#phAdd'); ok(await pg.locator('#picker[open]').count() === 1, 'add button opens the section picker'); await pg.keyboard.press('Escape');
+  await pg.click('#phMore'); ok(await pg.locator('#moreDlg[open] [data-k]').count() >= 6, 'more menu lists actions'); await pg.keyboard.press('Escape');
+  await pg.click('#phLib'); ok(await pg.locator('.lib').isVisible(), 'library opens as a sheet'); await pg.click('.lib .sheetbar button');
+  ok(await pg.evaluate(() => document.documentElement.scrollWidth <= 390), 'no horizontal overflow on the canvas at 390px');
   await ctx.close();
 }
 ok(errs.length === 0, 'no console or page errors ' + errs.slice(0, 5).join(' || '));

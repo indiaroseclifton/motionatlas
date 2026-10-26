@@ -137,4 +137,121 @@ $('#helpBtn').onclick=help;
 document.addEventListener('keydown',e=>{if(e.key==='?'&&!e.ctrlKey&&!e.metaKey&&!/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)&&!document.activeElement.isContentEditable){e.preventDefault();help()}});
 
 header();
+
+/* ---------- phone: bottom bar, sheets, more menu ---------- */
+{const mq=matchMedia('(max-width:980px)');
+ const ic=p=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${p}"/></svg>`;
+ const bar=mk('nav','phbar',`<button type="button" id="phOutline" aria-pressed="false">${ic('M4 6h16M4 12h16M4 18h10')}Outline</button><button type="button" id="phLib" aria-pressed="false">${ic('M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z')}Library</button><button type="button" class="add" id="phAdd" aria-label="Add a section"><span>${ic('M12 5v14M5 12h14')}</span></button><button type="button" id="phDesign" aria-pressed="false">${ic('M12 3a9 9 0 1 0 0 18c1.5 0 2-1 1.5-2s.2-2.5 2-2.5H18a3 3 0 0 0 3-3A9 9 0 0 0 12 3z')}Design</button><button type="button" id="phMore" aria-haspopup="dialog">${ic('M5 12h.01M12 12h.01M19 12h.01')}More</button>`);
+ bar.setAttribute('aria-label','Editor');document.body.append(bar);
+ const back=mk('div','sheetback');back.onclick=()=>A.showPane('preview');document.body.append(back);
+ [['.lib','Library'],['.right','Outline and settings']].forEach(([sel,t])=>{const el=$(sel),sb=mk('div','sheetbar',`<b>${t}</b><button type="button" class="btn small">Done</button>`);sb.querySelector('button').onclick=()=>A.showPane('preview');el.prepend(sb)});
+ const sync=()=>{const p=document.body.dataset.pane;$('#phOutline').setAttribute('aria-pressed',p==='page'&&A.UI.rtab!=='style');$('#phLib').setAttribute('aria-pressed',p==='lib');$('#phDesign').setAttribute('aria-pressed',p==='page'&&A.UI.rtab==='style')};
+ new MutationObserver(sync).observe(document.body,{attributes:true,attributeFilter:['data-pane']});
+ $('#phOutline').onclick=()=>{if(document.body.dataset.pane==='page'&&A.UI.rtab!=='style')return A.showPane('preview');A.rtab('page');A.showPane('page');sync()};
+ $('#phDesign').onclick=()=>{if(document.body.dataset.pane==='page'&&A.UI.rtab==='style')return A.showPane('preview');A.rtab('style');A.showPane('page');sync()};
+ $('#phLib').onclick=()=>A.showPane(document.body.dataset.pane==='lib'?'preview':'lib');
+ $('#phAdd').onclick=()=>{A.showPane('preview');const c=A.csel;A.openPicker(c&&A.findBlk(c.uid)?{uid:c.uid,where:'after'}:null)};
+ const ms=dialog('moreDlg','moresheet','More');ms.setAttribute('aria-labelledby','mrT');ms.removeAttribute('aria-label');
+ $('#phMore').onclick=()=>{ms.innerHTML=`<div class="pkhead"><h2 id="mrT">More</h2><span style="flex:1"></span><button class="btn small" id="mrX" type="button">Close</button></div><div class="morelist">`+[['sites','Sites & templates'],['undo','Undo'],['redo','Redo'],['checks','Checks on this page'],['find','Find and replace'],['hist','Version history'],['site','Site settings'],['help','Keyboard shortcuts']].map(([k,l])=>`<button type="button" data-k="${k}">${l}</button>`).join('')+`</div>`;
+  $('#mrX').onclick=()=>ms.close();ms.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{const k=b.dataset.k;ms.close();
+   ({sites:()=>openStart('home'),undo:()=>A.undo(),redo:()=>A.redo(),checks:()=>{A.rtab('check');A.showPane('page')},find:()=>UX.find&&UX.find(),hist:()=>$('#histBtn').click(),site:()=>{A.rtab('site');A.showPane('page')},help:help})[k]()});
+  ms.showModal()};
+ if(mq.matches&&A.first===false&&!/[?&]pane=/.test(location.search))A.showPane('preview');
+ else if(mq.matches)A.showPane('preview');
+ sync();
+}
+
+/* ---------- section menu (right-click, long press, Shift+F10) ---------- */
+const CK='atlas-pb-clip-v1',BK='atlas-pb-blocks-v1';
+const menuEl=mk('div','ctxmenu');menuEl.setAttribute('role','menu');menuEl.setAttribute('aria-label','Section actions');menuEl.hidden=true;document.body.append(menuEl);
+function closeMenu(){menuEl.hidden=true;menuEl.innerHTML=''}
+const clip=()=>tryJSON(CK,null);
+function menuFor(uid,x,y){const f=A.findBlk(uid);if(!f)return;const d=A.def(f.blk.id),L=f.list,i=f.i;
+ const hid=!!(f.blk.set&&f.blk.set.hide&&f.blk.set.hide.d&&f.blk.set.hide.t&&f.blk.set.hide.p);
+ const items=[['edit','Edit words and settings'],['add','Add a section after'],['dup','Duplicate'],['copy','Copy'],clip()?['paste','Paste after “'+(A.def(clip().bid)||{name:'section'}).name+'”']:null,['up','Move up',i===0],['down','Move down',i===L.length-1],['hide',hid?'Show on every screen':'Hide on every screen'],['save','Save as reusable block…'],['rm','Delete','danger']].filter(Boolean);
+ menuEl.innerHTML='<div class="cmh">'+esc(d.name)+'</div>'+items.map(([k,l,x2])=>`<button type="button" role="menuitem" data-k="${k}"${x2===true?' disabled':''}${x2==='danger'?' class="danger"':''}>${esc(l)}</button>`).join('');
+ menuEl.hidden=false;
+ if(x==null){const r=($(`#ol [data-uid="${uid}"]`)||$('#wrap')).getBoundingClientRect();x=r.left+24;y=r.top+24}
+ menuEl.style.left=Math.max(6,Math.min(x,innerWidth-menuEl.offsetWidth-6))+'px';menuEl.style.top=Math.max(6,Math.min(y,innerHeight-menuEl.offsetHeight-6))+'px';
+ const bs=[...menuEl.querySelectorAll('button:not(:disabled)')];bs[0]&&bs[0].focus();
+ menuEl.onkeydown=e=>{const j=bs.indexOf(document.activeElement);if(e.key==='ArrowDown'){e.preventDefault();bs[(j+1)%bs.length].focus()}else if(e.key==='ArrowUp'){e.preventDefault();bs[(j-1+bs.length)%bs.length].focus()}else if(e.key==='Escape'||e.key==='Tab'){e.preventDefault();closeMenu()}};
+ menuEl.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{const k=b.dataset.k;closeMenu();act(k,uid)})}
+function act(k,uid){const f=A.findBlk(uid);if(!f)return;
+ if(k==='edit'){A.open=uid;A.showPane('page');A.rtab('page');A.outline();const el=$(`#ol [data-uid="${uid}"]`);el&&el.scrollIntoView({block:'nearest'})}
+ else if(k==='add')A.openPicker({uid,where:'after'});
+ else if(k==='dup')A.dupBlk(uid);else if(k==='copy')copyBlk(uid);else if(k==='paste')pasteBlk(uid);
+ else if(k==='up')A.move(f.list,f.i,f.i-1);else if(k==='down')A.move(f.list,f.i,f.i+1);
+ else if(k==='hide'){const hid=!!(f.blk.set&&f.blk.set.hide&&f.blk.set.hide.d&&f.blk.set.hide.t&&f.blk.set.hide.p);A.setS(f.blk,'hide',hid?null:{d:1,t:1,p:1},true);A.say(hid?'Section is visible again':'Section hidden on every screen. Show it again from this menu or Section settings.')}
+ else if(k==='save')saveBlock(uid);else if(k==='rm')A.rmBlk(uid)}
+document.addEventListener('click',e=>{if(!menuEl.hidden&&!menuEl.contains(e.target))closeMenu()},true);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!menuEl.hidden){e.stopPropagation();closeMenu()}},true);
+UX.menu=menuFor;
+$('#ol').addEventListener('contextmenu',e=>{const li=e.target.closest('.blk');if(!li)return;e.preventDefault();menuFor(li.dataset.uid,e.clientX,e.clientY)});
+{let t=0,px=0,py=0;const ol=$('#ol');ol.addEventListener('touchstart',e=>{const li=e.target.closest('.blk');if(!li||e.touches.length!==1)return;px=e.touches[0].clientX;py=e.touches[0].clientY;clearTimeout(t);t=setTimeout(()=>menuFor(li.dataset.uid,px,py),650)},{passive:true});['touchend','touchmove','touchcancel'].forEach(n=>ol.addEventListener(n,()=>clearTimeout(t),{passive:true}))}
+
+/* ---------- copy and paste sections, saved blocks ---------- */
+function snapBlk(f){return {bid:f.blk.id,vals:A.clone(f.blk.vals),...(f.blk.set?{set:A.clone(f.blk.set)}:{}),...(f.blk.links?{links:A.clone(f.blk.links)}:{})}}
+function copyBlk(uid){const f=A.findBlk(uid);if(!f)return;trySet(CK,snapBlk(f));A.say('Copied “'+A.def(f.blk.id).name+'”. Paste it on any page with Ctrl + V.')}
+function pasteBlk(uid){const c=clip();if(!c||!A.def(c.bid))return A.say('Nothing copied yet. Select a section and press Ctrl + C.');const target=uid||(A.csel&&A.findBlk(A.csel.uid)&&A.csel.uid)||null;A.addBlockAfter(c.bid,A.clone(c.vals),target,'after',c)}
+UX.copy=copyBlk;UX.paste=pasteBlk;
+function blocks(){const a=tryJSON(BK,[]);return Array.isArray(a)?a:[]}
+function saveBlock(uid){const f=A.findBlk(uid);if(!f)return;const d=A.def(f.blk.id),nd=dialog('nameDlg','pubdlg','Save as block');
+ nd.setAttribute('aria-labelledby','ndT');nd.removeAttribute('aria-label');
+ nd.innerHTML=`<div class="pkhead"><h2 id="ndT">Save as reusable block</h2></div><div class="pubb"><div class="f"><label for="ndName">Block name</label><input id="ndName" maxlength="50"></div><p class="hint">Keeps the words and section settings. Find it under Library, My blocks, in this browser.</p><div class="btools"><button class="btn primary" id="ndOk" type="button">Save block</button><button class="btn" id="ndNo" type="button">Cancel</button></div></div>`;
+ $('#ndName').value=d.name;nd.showModal();$('#ndName').select();
+ const ok=()=>{const n=$('#ndName').value.trim()||d.name,list=blocks();list.unshift({mid:'m'+Date.now().toString(36),name:n.slice(0,50),...snapBlk(f)});if(!trySet(BK,list.slice(0,100)))A.say('Could not save: this browser is out of space.');else A.say('Saved “'+n+'” under Library, My blocks');nd.close();if(document.getElementById('lt-mine'))A.libraryRedraw()};
+ $('#ndOk').onclick=ok;$('#ndNo').onclick=()=>nd.close();$('#ndName').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();ok()}}}
+UX.mineHTML=card=>{const L=blocks();if(!L.length)return '<p class="hint">Nothing saved yet. Right-click a section on the page (or press and hold on a phone) and choose “Save as reusable block…”. Your blocks keep their words and settings and can be added to any page or site.</p>';
+ return `<p class="lcount">${L.length} saved block${L.length>1?'s':''} · stored in this browser</p><ul class="lgrid tiles">`+L.map(b=>{const d=A.def(b.bid);if(!d)return '';const w=Object.values(b.vals||{}).find(v=>typeof v==='string'&&v.length>2&&!/^(https?:|user:|shelf\/|films\/)/.test(v))||'';return card({id:b.bid,vals:b.vals,title:b.name,meta:d.name,thumb:`<div class="minith"><b>${esc(String(w).slice(0,70))}</b></div>`,cls:'tile mine',extra:{set:b.set,links:b.links,mid:b.mid}})}).join('')+'</ul>'};
+UX.mineAfter=L=>{L.querySelectorAll('.lc.mine').forEach(li=>{const x=JSON.parse(li.dataset.add),b=mk('button','btn small rmmine','Remove');b.type='button';b.setAttribute('aria-label','Remove saved block '+li.querySelector('b').textContent);b.onclick=()=>{trySet(BK,blocks().filter(y=>y.mid!==x.mid));A.libraryRedraw();A.say('Removed from My blocks')};li.querySelector('.lb').append(b)})};
+
+/* ---------- keyboard and messages from the canvas ---------- */
+addEventListener('message',e=>{if(e.source!==A.pv.contentWindow||!e.data)return;const m=e.data;
+ if(m.pb==='ctx'){const r=A.pv.getBoundingClientRect(),z=A.zoom;menuFor(m.uid,r.left+m.x*z,r.top+m.y*z)}
+ else if(m.pb==='zoom')A.setZoom(A.zoom+(m.d>0?.1:-.1))
+ else if(m.pb==='key'){const c=A.csel;if(m.key==='?')help();else if(m.mod&&m.shift&&/^h$/i.test(m.key))find();else if(c&&m.mod&&/^c$/i.test(m.key))copyBlk(c.uid);else if(m.mod&&/^v$/i.test(m.key))pasteBlk(null);else if(c&&m.shift&&m.key==='F10')menuFor(c.uid)}});
+document.addEventListener('keydown',e=>{const t=document.activeElement,inField=/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)||t.isContentEditable,mod=e.ctrlKey||e.metaKey;if(document.querySelector('dialog[open]'))return;
+ if(mod&&e.shiftKey&&/^h$/i.test(e.key)){e.preventDefault();find();return}
+ if(inField)return;const c=A.csel;
+ if(mod&&/^c$/i.test(e.key)&&c&&getSelection().isCollapsed){e.preventDefault();copyBlk(c.uid)}
+ else if(mod&&/^v$/i.test(e.key)){e.preventDefault();pasteBlk(null)}
+ else if(e.shiftKey&&e.key==='F10'&&c){e.preventDefault();menuFor(c.uid)}
+ else if(e.key==='ContextMenu'&&c){e.preventDefault();menuFor(c.uid)}
+ else if((e.key==='+'||e.key==='=')&&!mod){A.setZoom(A.zoom+.1)}else if(e.key==='-'&&!mod){A.setZoom(A.zoom-.1)}});
+
+/* ---------- zoom control ---------- */
+{const z=mk('div','seg',`<button type="button" id="zoomOut" aria-label="Zoom out">−</button><output id="zoomVal" aria-live="polite">100%</output><button type="button" id="zoomIn" aria-label="Zoom in">+</button>`);z.id='zoomSeg';z.setAttribute('role','group');z.setAttribute('aria-label','Zoom');$('#widths').after(z);
+ $('#zoomOut').onclick=()=>A.setZoom(A.zoom-.1);$('#zoomIn').onclick=()=>A.setZoom(A.zoom+.1);$('#zoomVal').onclick=()=>A.setZoom(1);$('#zoomVal').title='Reset zoom';$('#zoomVal').textContent=Math.round(A.zoom*100)+'%';
+ $('#wrap').addEventListener('wheel',e=>{if(e.ctrlKey){e.preventDefault();A.setZoom(A.zoom+(e.deltaY<0?.1:-.1))}},{passive:false})}
+
+/* ---------- drag a library card onto the canvas, with a drop line ---------- */
+{const wrap=$('#wrap'),ov=mk('div','dropov'),ind=mk('div','dropind');ov.hidden=true;ind.hidden=true;wrap.append(ov,ind);let tgt=null;
+ const arm=()=>{ov.hidden=false},disarm=()=>{ov.hidden=true;ind.hidden=true;tgt=null};
+ $('#libList').addEventListener('dragstart',arm);document.addEventListener('dragend',disarm);document.addEventListener('drop',()=>setTimeout(disarm,0));
+ ov.addEventListener('dragover',e=>{e.preventDefault();e.stopPropagation();e.dataTransfer.dropEffect='copy';let doc;try{doc=A.pv.contentDocument}catch(x){return}if(!doc)return;
+  const bs=[...doc.querySelectorAll('[data-pb][data-zone="page"]')],ir=A.pv.getBoundingClientRect(),wr=wrap.getBoundingClientRect(),z=A.zoom,y=(e.clientY-ir.top)/z;let line=null;tgt=null;
+  for(const b of bs){const r=b.getBoundingClientRect();if(y<r.top+r.height/2){tgt={uid:b.id,where:'before'};line=r.top;break}}
+  if(!tgt&&bs.length){const l=bs[bs.length-1],r=l.getBoundingClientRect();tgt={uid:l.id,where:'after'};line=r.bottom}
+  if(line==null){ind.hidden=true;return}ind.hidden=false;ind.style.top=(ir.top-wr.top+line*z-2+wrap.scrollTop)+'px';ind.style.left=(ir.left-wr.left)+'px';ind.style.width=ir.width+'px'});
+ ov.addEventListener('drop',e=>{e.preventDefault();e.stopPropagation();let x=null;try{x=JSON.parse(e.dataTransfer.getData('application/x-pb')||'null')}catch(err){}const t=tgt;disarm();if(!x||!x.id)return;if(t)A.addBlockAfter(x.id,x.vals,t.uid,t.where,x);else A.addBlock(x.id,x.vals,null,x)})}
+
+/* ---------- find and replace across the whole site ---------- */
+const fd=dialog('findDlg','pubdlg finddlg','Find and replace');fd.setAttribute('aria-labelledby','fdT');fd.removeAttribute('aria-label');
+fd.innerHTML=`<div class="pkhead"><h2 id="fdT">Find and replace</h2><span style="flex:1"></span><button class="btn small" id="fdX" type="button">Close</button></div><div class="pubb"><div class="f"><label for="fdQ">Find</label><input id="fdQ" autocomplete="off"></div><div class="f"><label for="fdR">Replace with</label><input id="fdR" autocomplete="off"></div><label class="check"><input type="checkbox" id="fdCase"> Match case</label><p class="hint" id="fdCount" role="status">Type something to search every page, the header and the footer.</p><ul class="findl" id="fdList"></ul><div class="btools"><button class="btn primary" id="fdSel" type="button" disabled>Replace selected</button><button class="btn" id="fdAll" type="button" disabled>Replace all</button></div></div>`;
+$('#fdX').onclick=()=>fd.close();
+function scan(q,cs){const out=[];if(!q)return out;const re=new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),cs?'g':'gi');
+ const zones=[['Header',A.site.header],...A.site.pages.map(p=>[p.name||'Page',p.blocks]),['Footer',A.site.footer]];
+ zones.forEach(([zn,list])=>list.forEach(blk=>{const d=A.def(blk.id);if(!d)return;A.fieldsOf(d).forEach(f=>{if(!['text','long','list'].includes(f.type))return;const v=String(A.val(blk,f.k)||'');const m=v.match(re);if(!m)return;re.lastIndex=0;const i=v.search(re);out.push({blk,k:f.k,zone:zn,name:d.name,label:f.label.replace(/\s*\(.*\)/,''),n:m.length,ctx:v.slice(Math.max(0,i-24),i+q.length+34).replace(/\n/g,' '),i:Math.min(24,i),len:q.length})})}));return out}
+let found=[];
+function fdDraw(){const q=$('#fdQ').value,cs=$('#fdCase').checked;found=scan(q,cs);const tot=found.reduce((n,x)=>n+x.n,0);
+ $('#fdCount').textContent=q?(tot?tot+' match'+(tot>1?'es':'')+' in '+found.length+' place'+(found.length>1?'s':''):'No matches.'):'Type something to search every page, the header and the footer.';
+ $('#fdList').innerHTML=found.slice(0,200).map((x,i)=>`<li><label class="check"><input type="checkbox" data-i="${i}" checked> <span><b>${esc(x.zone)} · ${esc(x.name)}</b> <small>${esc(x.label)}${x.n>1?' · '+x.n+' matches':''}</small><br><span class="fctx">${esc(x.ctx.slice(0,x.i))}<mark>${esc(x.ctx.slice(x.i,x.i+x.len))}</mark>${esc(x.ctx.slice(x.i+x.len))}</span></span></label></li>`).join('');
+ $('#fdSel').disabled=$('#fdAll').disabled=!found.length}
+function fdRun(onlySel){const q=$('#fdQ').value,r=$('#fdR').value,cs=$('#fdCase').checked;if(!q)return;const re=new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),cs?'g':'gi');
+ const pick=onlySel?new Set([...fd.querySelectorAll('#fdList input:checked')].map(i=>+i.dataset.i)):null;let n=0;
+ found.forEach((x,i)=>{if(pick&&!pick.has(i))return;const v=String(A.val(x.blk,x.k));x.blk.vals[x.k]=v.replace(re,()=>{n++;return r})});
+ if(!n)return A.say('Nothing selected to replace');A.commit();A.outline();A.render();fdDraw();A.say('Replaced '+n+' match'+(n>1?'es':'')+'. Undo brings them back.')}
+$('#fdQ').oninput=fdDraw;$('#fdCase').onchange=fdDraw;$('#fdSel').onclick=()=>fdRun(true);$('#fdAll').onclick=()=>fdRun(false);
+function find(){if(!fd.open)fd.showModal();const sel=getSelection&&String(getSelection()).trim();if(sel&&sel.length<60&&!$('#fdQ').value)$('#fdQ').value=sel;$('#fdQ').focus();$('#fdQ').select();fdDraw()}
+UX.find=find;
 })();
