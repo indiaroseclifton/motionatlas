@@ -16,11 +16,11 @@ function fromGraph(g){const top=gid=>{let x=g.groups.find(y=>y.id===gid);while(x
  [...g.nodes.values()].sort((a,b)=>a.i-b.i).forEach(n=>{M.nodes.set(n.id,{id:n.id,label:n.label,note:n.note||'',shape:n.shape||'rect',cls:n.cls||null});
   const grp=top(n.group);if(grp){let st=stageOf.get(grp.id);if(!st){st={type:'stage',id:grp.id.replace(/^grp_/,''),title:grp.title||grp.id.replace(/^grp_/,''),steps:[]};stageOf.set(grp.id,st);M.items.push(st);}st.steps.push(n.id);}
   else M.items.push({type:'step',id:n.id});});
- g.edges.forEach(e=>M.edges.push({from:e.from,to:e.to,label:e.label||'',kind:e.kind||'solid',arrow:e.arrow!==false,bi:!!e.bi,...(e.head?{head:e.head}:{})}));
+ g.edges.forEach(e=>M.edges.push({from:e.from,to:e.to,label:e.label||'',kind:e.kind||'solid',arrow:e.arrow!==false}));
  return M;}
 function toSource(M){const L=[`flowchart ${M.dir||'TD'}`];const node=id=>{const n=M.nodes.get(id),w=WRAP[n.shape]||WRAP.rect,keep=!['round','circle'].includes(n.shape),lab=clean(n.label,keep)||'Untitled',note=clean(n.note,keep);return `${id}${w[0]}${lab}${note?' | '+note:''}${w[1]}${n.cls?':::'+n.cls:''}`;};
  for(const it of M.items){if(it.type==='stage'){L.push(`  subgraph ${it.id} [${clean(it.title)||'Stage'}]`);it.steps.forEach(id=>L.push('    '+node(id)));L.push('  end');}else L.push('  '+node(it.id));}
- for(const e of M.edges){const lab=clean(e.label);const op=e.head&&!e.bi?(e.kind==='dashed'?'-.-':e.kind==='thick'?'==':'--')+e.head:e.bi?(e.kind==='dashed'?'<-.->':e.kind==='thick'?'<==>':'<-->'):e.kind==='dashed'?'-.->':e.kind==='thick'?'==>':e.arrow===false?'---':'-->';L.push(`  ${e.from} ${op}${lab?`|${lab}|`:''} ${e.to}`);}
+ for(const e of M.edges){const lab=clean(e.label);const op=e.kind==='dashed'?'-.->':e.kind==='thick'?'==>':e.arrow===false?'---':'-->';L.push(`  ${e.from} ${op}${lab?`|${lab}|`:''} ${e.to}`);}
  return L.join('\n');}
 const slug=(s,taken)=>{let b=String(s||'step').toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'').slice(0,18)||'step';if(/^\d/.test(b))b='s_'+b;let id=b,k=2;while(taken(id))id=b+'_'+k++;return id;};
 const RESERVED=new Set(['end','subgraph','graph','flowchart','class','classdef','style','click','direction']);
@@ -51,8 +51,7 @@ function mount(root,api){let M=null,open=new Set(),lastSrc=null;
  /* ---------- view ---------- */
  const sum=id=>{const outs=M.edges.filter(e=>e.from===id);if(!outs.length)return '<span class="fe-end">ends here</span>';
   return outs.map(e=>`${e.label?`<b>${esc(e.label)}</b> `:''}→ ${esc(M.nodes.get(e.to)?.label||e.to)}`).join(' · ');};
- const hd=n=>{const h=String(n.cls||'').split('.')[0];return h&&h!=='none'?h:null;};
- const dot=n=>`<button type="button" class="fe-dot" data-act="status" data-id="${n.id}" data-k="s:${n.id}" data-st="${hd(n)||''}" aria-label="Status: ${esc((STATUS.find(s=>s[0]===hd(n))||STATUS[0])[1])}. Click to change" title="${esc((STATUS.find(s=>s[0]===hd(n))||STATUS[0])[1])}"></button>`;
+ const dot=n=>`<button type="button" class="fe-dot" data-act="status" data-id="${n.id}" data-k="s:${n.id}" data-st="${n.cls||''}" aria-label="Status: ${esc((STATUS.find(s=>s[0]===n.cls)||STATUS[0])[1])}. Click to change" title="${esc((STATUS.find(s=>s[0]===n.cls)||STATUS[0])[1])}"></button>`;
  function stepRow(id,i,len){const n=M.nodes.get(id),isOpen=open.has(id),outs=M.edges.map((e,k)=>[e,k]).filter(([e])=>e.from===id);
   const opts=sel=>order().filter(x=>x!==id).map(x=>`<option value="${x}"${x===sel?' selected':''}>${esc(M.nodes.get(x).label)}</option>`).join('');
   return `<li class="fe-step${isOpen?' open':''}${n.shape==='decision'?' dec':''}" data-id="${id}">
@@ -93,7 +92,7 @@ function mount(root,api){let M=null,open=new Set(),lastSrc=null;
  root.addEventListener('keydown',e=>{const el=e.target;if(e.key==='Enter'&&el.dataset.act==='label'){e.preventDefault();addStep(el.dataset.id,stageOfStep(el.dataset.id));}
   if(e.key==='Enter'&&el.dataset.act==='title'){e.preventDefault();el.blur();}});
  root.addEventListener('click',e=>{const b=e.target.closest('button[data-act]');if(!b)return;const a=b.dataset.act,id=b.dataset.id,sid=b.dataset.stage;
-  if(a==='status'){const n=M.nodes.get(id),parts=String(n.cls||'').split('.'),head=parts[0]&&parts[0]!=='none'?parts[0]:null,i=STATUS.findIndex(s=>s[0]===head),nx=STATUS[(i+1)%STATUS.length][0],kinds=parts.slice(1);n.cls=kinds.length?[nx||'none',...kinds].join('.'):nx;commit();focusKey(`s:${id}`);}
+  if(a==='status'){const n=M.nodes.get(id),i=STATUS.findIndex(s=>s[0]===n.cls);n.cls=STATUS[(i+1)%STATUS.length][0];commit();focusKey(`s:${id}`);}
   else if(a==='toggle'){open.has(id)?open.delete(id):open.add(id);draw();focusKey(`o:${id}`);}
   else if(a==='add'){const st=M.items.find(it=>it.type==='stage'&&it.id===sid);const last=st.steps[st.steps.length-1];
    if(last)addStep(last,st);else{const prev=order().filter(x=>!st.steps.includes(x));const before=M.items.slice(0,M.items.indexOf(st)).flatMap(it=>it.type==='stage'?it.steps:[it.id]).pop();

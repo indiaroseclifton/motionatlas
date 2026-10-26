@@ -13,120 +13,16 @@ const STATUS={have:'good',done:'good',good:'good',ok:'good',green:'good',yes:'go
 const clean=s=>String(s??'').trim().replace(/^"(.*)"$/,'$1').replace(/<br\s*\/?>/gi,'\n').replace(/&quot;/g,'"').replace(/#quot;/g,'"').replace(/&amp;/g,'&');
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
-/* ---------------- kinds: every kind of element has its own shape, icon, subtle colour and one fixed size ---------------- */
-const KIND={
- rect:{name:'Step',w:176,h:68},
- round:{name:'Soft step',w:176,h:68},
- circle:{name:'Point',w:96,h:96},
- decision:{name:'Decision',w:176,h:68,tint:'#7C3AED',icon:'M6 4v5a4 4 0 0 0 4 4h8M14 9l4 4-4 4'},
- pill:{name:'Start / end',w:152,h:52,tint:'#64748B',icon:'M8 5.5l11 6.5-11 6.5z'},
- data:{name:'Data store',w:176,h:76,tint:'#0E9F9A',icon:'M5 6c0-1.7 3.1-3 7-3s7 1.3 7 3-3.1 3-7 3-7-1.3-7-3zM5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3'},
- io:{name:'Input / output',w:176,h:64,tint:'#D97706',icon:'M4 12h11M11 7l5 5-5 5M20 5v14'},
- sub:{name:'Sub-process',w:176,h:68,tint:'#4F46E5',icon:'M4 5h16v14H4zM8 5v14M16 5v14'},
- person:{name:'Person or team',tag:1,shape:'round',w:168,h:64,tint:'#DB2777',icon:'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0'},
- system:{name:'System or app',tag:1,shape:'tab',w:176,h:68,tint:'#2563EB',icon:'M3 5h18v11H3zM8 20h8M12 16v4'},
- doc:{name:'Document',tag:1,shape:'doc',w:168,h:72,tint:'#78716C',icon:'M7 3h7l4 4v14H7zM14 3v4h4'},
- note:{name:'Note',tag:1,shape:'doc',w:160,h:80,tint:'#CA8A04',icon:'M5 4h14v12l-4 4H5zM15 20v-4h4',noDot:1},
- mod_internal:{name:'Internal connection',tag:1,module:'internal',shape:'hex',w:188,h:72,tint:'#0891B2',icon:'M10 14a4 4 0 0 0 6 0l3-3a4 4 0 0 0-6-6l-1 1M14 10a4 4 0 0 0-6 0l-3 3a4 4 0 0 0 6 6l1-1'},
- mod_external:{name:'External connection',tag:1,module:'external',shape:'hex',w:188,h:72,tint:'#EA580C',icon:'M14 4h6v6M20 4L10 14M18 14v6H4V6h6'},
- mod_flow:{name:'Flow connection',tag:1,module:'flow',shape:'hex',w:188,h:72,tint:'#C026D3',icon:'M4 12h12M12 6l6 6-6 6M4 6v12'},
- delay:{name:'Delay or wait',tag:1,shape:'delay',w:164,h:64,tint:'#B45309',icon:'M12 7v5l3 2M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z',keys:'wait timer pause hold'},
- manual:{name:'Manual step',tag:1,shape:'trap',w:176,h:64,tint:'#9333EA',icon:'M7 11V6a1.5 1.5 0 0 1 3 0v4M10 10V4.5a1.5 1.5 0 0 1 3 0V10M13 10V5.5a1.5 1.5 0 0 1 3 0V12M16 12v-1.5a1.5 1.5 0 0 1 3 0V15a6 6 0 0 1-6 6h-1a6 6 0 0 1-5-2.7L4.5 14a1.5 1.5 0 0 1 2.5-1.7L8 14',keys:'manual operation hand human task'},
- minput:{name:'Manual input',tag:1,shape:'minput',w:176,h:64,tint:'#0369A1',icon:'M3 7h18v12H3zM7 11h.01M11 11h.01M15 11h.01M7 15h10',keys:'keyboard form type enter data entry'},
- display:{name:'Display',tag:1,shape:'display',w:176,h:64,tint:'#0F766E',icon:'M3 5h18v11H3zM8 20h8M12 16v4',keys:'screen show output monitor'},
- offpage:{name:'Off-page link',tag:1,shape:'offpage',w:156,h:80,tint:'#475569',icon:'M5 4h14v10l-7 6-7-6z',keys:'connector page reference continue jump'},
- worker:{name:'Worker',tag:1,worker:1,shape:'oct',w:196,h:76,tint:'#0F766E',icon:'M12 3v3M7 8h10a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2zM9.5 13h.01M14.5 13h.01M9 17h6'}
-};
-const kindOf=n=>n.kind||n.shape||'rect';
-function fixSize(n,t,opt){const K=KIND[kindOf(n)]||KIND[n.shape]||KIND.rect,diamond=n.shape==='decision'&&opt.decision==='diamond';
- const ov=opt.sizes&&opt.sizes[n.id];
- const W=ov?Math.max(96,Math.min(720,ov.w)):(diamond?K.w+28:K.w),H=ov?Math.max(44,Math.min(420,ov.h)):(diamond?K.h+30:K.h),center=n.shape==='pill'||n.shape==='circle'||n.shape==='offpage'||diamond;
- const lead=t.iconTiles?40:(K.icon&&!center?30:0),aw=Math.max(40,W-(diamond?W*.34:32)-lead-(n.status?14:0)),ah=H-(diamond?H*.3:16);
- const lab=t.upper?n.label.toUpperCase():n.label;let fs=13.5,lines,notes;
- for(;fs>=9;fs-=.5){const nfs=Math.max(8.5,fs-1.5);lines=wrap(lab,fs,600,t.font,aw);notes=n.note?wrap(n.note,nfs,400,t.font,aw):[];
-  const need=lines.length*fs*1.3+(notes.length?4+notes.length*nfs*1.3:0);if(need<=ah&&lines.every(l=>measure(l,fs,600,t.font)<=aw))break;}
- const nfs=Math.max(8.5,fs-1.5),room=Math.max(1,Math.floor((ah-(notes.length?4:0)+.5)/(fs*1.3)));
- const ell=l=>{let q=l.replace(/\s*\S*$/,'')||l;while(q.length>1&&measure(q+'…',fs,600,t.font)>aw)q=q.slice(0,-1);return q.trimEnd()+'…';};
- if(lines.length>room){lines=lines.slice(0,room);lines[room-1]=ell(lines[room-1]+' x');notes=[];}
- else{const nr=Math.floor((ah-lines.length*fs*1.3-4)/(nfs*1.3));if(notes.length>Math.max(0,nr)){notes=notes.slice(0,Math.max(0,nr));if(notes.length)notes[notes.length-1]=ell(notes[notes.length-1]+' x');}}
- n.lines=lines;n.noteLines=notes;n.fs=fs;n.nfs=nfs;n.w=W;n.h=H;n.lead=lead;}
-
-/* ---------------- free placement: positions chosen by the person win over the automatic layout ---------------- */
-function routeAll(g){const nodes=g.nodes,all=[...nodes.values()],plan=[],ports=new Map();
- const sp=(n,side,off)=>side==='b'?[n.x+n.w/2+off,n.y+n.h]:side==='t'?[n.x+n.w/2+off,n.y]:side==='r'?[n.x+n.w,n.y+n.h/2+off]:[n.x,n.y+n.h/2+off];
- const isV=s=>s==='b'||s==='t';
- const hit=(p,q,r)=>{const x0=Math.min(p[0],q[0]),x1=Math.max(p[0],q[0]),y0=Math.min(p[1],q[1]),y1=Math.max(p[1],q[1]);return x1>r.x-6&&x0<r.x+r.w+6&&y1>r.y-6&&y0<r.y+r.h+6;};
- const cost=(pts,others,bonus)=>{let c=bonus,len=0;for(let i=0;i<pts.length-1;i++){len+=Math.abs(pts[i+1][0]-pts[i][0])+Math.abs(pts[i+1][1]-pts[i][1]);for(const o of others)if(hit(pts[i],pts[i+1],o))c+=10000;}return c+len+(pts.length-2)*30;};
- const shapes=(A,B,sa,sb)=>{const out=[],vA=isV(sa),vB=isV(sb);
-  if(vA&&vB){for(const f of [.5,.3,.7]){const my=A[1]+(B[1]-A[1])*f;out.push(Math.abs(A[0]-B[0])<1?[A,B]:[A,[A[0],my],[B[0],my],B]);}}
-  else if(!vA&&!vB){for(const f of [.5,.3,.7]){const mx=A[0]+(B[0]-A[0])*f;out.push(Math.abs(A[1]-B[1])<1?[A,B]:[A,[mx,A[1]],[mx,B[1]],B]);}}
-  else if(vA&&!vB)out.push([A,[A[0],B[1]],B]);else out.push([A,[B[0],A[1]],B]);return out;};
- for(const e of g.edges){const a=nodes.get(e.from),b=nodes.get(e.to);if(!a||!b||a.x==null||b.x==null){e.xy=null;continue;}
-  if(a===b){plan.push({e,self:true});continue;}
-  const ax=a.x+a.w/2,ay=a.y+a.h/2,bx=b.x+b.w/2,by=b.y+b.h/2,dx=bx-ax,dy=by-ay;
-  const vert=Math.abs(dy)*(a.w+b.w)>=Math.abs(dx)*(a.h+b.h);
-  const sa=vert?(dy>=0?'b':'t'):(dx>=0?'r':'l'),sb=vert?(dy>=0?'t':'b'):(dx>=0?'l':'r');
-  const P={e,a,b,vert,sa,sb};plan.push(P);
-  for(const [nd,sd,oth,end] of [[a,sa,vert?bx:by,'a'],[b,sb,vert?ax:ay,'b']]){const k=nd.id+'|'+sd;if(!ports.has(k))ports.set(k,[]);ports.get(k).push({P,end,oth});}}
- const off=new Map();
- for(const [k,list] of ports){list.sort((u,v)=>u.oth-v.oth);const n=list.length;list.forEach((it,i)=>off.set(it.P.e.i+it.end,(i-(n-1)/2)*Math.min(18,n>1?44/(n-1):0)));}
- let backK=0;
- for(const P of plan){const e=P.e;
-  if(P.self){const a=nodes.get(e.from),cy=a.y+a.h/2,xr=a.x+a.w;e.xy=[[xr,cy-9],[xr+26,cy-9],[xr+26,cy+9],[xr,cy+9]];continue;}
-  const {a,b,vert,sa,sb}=P,oa=off.get(e.i+'a')||0,ob=off.get(e.i+'b')||0;
-  if(e.back&&vert&&Math.abs((a.x+a.w/2)-(b.x+b.w/2))<(a.w+b.w)/2+40){backK++;const xr=Math.max(a.x+a.w,b.x+b.w)+34+(backK-1)*14;e.xy=[[a.x+a.w,a.y+a.h/2],[xr,a.y+a.h/2],[xr,b.y+b.h/2],[b.x+b.w,b.y+b.h/2]];continue;}
-  const others=all.filter(n=>n!==a&&n!==b&&n.x!=null);let best=null,bc=1e18;
-  const tryC=(pts,bonus)=>{const c=cost(pts,others,bonus);if(c<bc){bc=c;best=pts;}};
-  for(const pts of shapes(sp(a,sa,oa),sp(b,sb,ob),sa,sb))tryC(pts,0);
-  if(bc>=10000){for(const A2 of ['t','b','l','r'])for(const B2 of ['t','b','l','r']){if(A2===sa&&B2===sb)continue;for(const pts of shapes(sp(a,A2,0),sp(b,B2,0),A2,B2))tryC(pts,40);}}
-  e.xy=best;}}
-function applyManual(g,res,opt){const P=opt.positions||{},nodes=[...g.nodes.values()];
- for(const n of nodes){const p=P[n.id];if(p){n.x=p.x;n.y=p.y;}else if(n.x==null){n.x=0;n.y=0;}}
- routeAll(g);if(opt.routes)for(const e of g.edges){const r=opt.routes[e.i];if(r)e.xy=r;}
- const pad=22,head=34,box=new Map(),kids=new Map(g.groups.map(x=>[x.id,[]]));
- for(const x of g.groups)if(x.parent&&kids.has(x.parent))kids.get(x.parent).push(x);
- const fit=grp=>{if(box.has(grp.id))return box.get(grp.id);let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;
-  for(const n of nodes)if(n.group===grp.id){x0=Math.min(x0,n.x);y0=Math.min(y0,n.y);x1=Math.max(x1,n.x+n.w);y1=Math.max(y1,n.y+n.h);}
-  for(const c of kids.get(grp.id)){const b=fit(c);if(b){x0=Math.min(x0,b.x);y0=Math.min(y0,b.y);x1=Math.max(x1,b.x+b.w);y1=Math.max(y1,b.y+b.h);}}
-  const b=x0>x1?null:{x:x0-pad,y:y0-pad-head+12,w:x1-x0+pad*2,h:y1-y0+pad*2+head-12};box.set(grp.id,b);return b;};
- const depth=grp=>{let d=0,x=grp;while(x&&x.parent){d++;x=g.groups.find(y=>y.id===x.parent);}return d;};
- for(const grp of g.groups){const b=fit(grp);grp.lane=false;grp.poly=null;grp.depth=depth(grp);if(!b){grp.empty=true;continue;}grp.empty=false;grp.x=b.x;grp.y=b.y;grp.w=b.w;grp.h=b.h;}
- let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;const add=(x,y)=>{x0=Math.min(x0,x);y0=Math.min(y0,y);x1=Math.max(x1,x);y1=Math.max(y1,y);};
- for(const n of nodes){add(n.x,n.y);add(n.x+n.w,n.y+n.h);}for(const grp of g.groups)if(!grp.empty){add(grp.x,grp.y);add(grp.x+grp.w,grp.y+grp.h);}
- for(const e of g.edges)if(e.xy)for(const q of e.xy)add(q[0],q[1]);
- if(x0>x1){x0=y0=0;x1=y1=1;}
- res.W=x1-x0;res.H=y1-y0;res.dx=-x0;res.dy=-y0;res.horiz=false;}
-
-/* health of each element's connections: green all good, amber partly, red none. Never colour alone: a glyph rides with it. */
-function healthOf(g,n,opt){const K=KIND[kindOf(n)]||KIND.rect;if(K.noDot)return null;
- const ov=opt.health&&opt.health[n.id];if(ov)return ov;
- const ins=g.edges.filter(e=>e.to===n.id&&e.from!==n.id),outs=g.edges.filter(e=>e.from===n.id&&e.to!==n.id);
- const plain=`${ins.length} in · ${outs.length} out`;
- const ltype=opt.nodeTypes&&opt.nodeTypes[n.id];if(!ins.length&&!outs.length)return ['capability','journey','stages'].includes(ltype)?{s:'ok',tip:'Stands on its own'}:{s:'bad',tip:'Nothing connects to this yet'};
- if(n.shape==='decision'){const un=outs.filter(e=>!e.label).length;if(outs.length<2)return {s:'warn',tip:`A decision needs two ways out · ${plain}`};if(un)return {s:'warn',tip:`${un} way out without a label · ${plain}`};return {s:'ok',tip:plain};}
- const lt=opt.nodeTypes&&opt.nodeTypes[n.id];if(lt&&['org','tree','mindmap','timeline','er','sequence','capability','journey','stages'].includes(lt))return {s:'ok',tip:plain};
- if(n.shape==='pill'){if(!ins.length&&outs.length)return {s:'ok',tip:plain};if(ins.length&&!outs.length)return {s:'ok',tip:plain};}
- if(K.module){if(!ins.length)return {s:'warn',tip:`Nothing feeds this connection · ${plain}`};if(!outs.length)return {s:'warn',tip:`This connection leads nowhere · ${plain}`};return {s:'ok',tip:plain};}
- if(!ins.length)return {s:'warn',tip:`Nothing leads in · ${plain}`};if(!outs.length)return {s:'warn',tip:`Nothing leads on · ${plain}`};return {s:'ok',tip:plain};}
-
 /* ---------------- parse ---------------- */
-/* Mermaid 11 shape names (A@{ shape: delay, label: "Wait" }) mapped to our shapes and kinds */
-const MSHAPE={rect:'rect',process:'rect',proc:'rect',rectangle:'rect',rounded:'round',event:'round',stadium:'pill',pill:'pill',terminal:'pill','fr-rect':'sub',subprocess:'sub',subroutine:'sub',framed:'sub',cyl:'data',cylinder:'data',database:'data',db:'data',circle:'circle',circ:'circle','sm-circ':'circle','dbl-circ':'pill','fr-circ':'pill',diam:'decision',diamond:'decision',decision:'decision',question:'decision',hex:'decision',hexagon:'decision',prepare:'decision','lean-r':'io','lean-l':'io','in-out':'io','out-in':'io',doc:'k:doc',document:'k:doc',docs:'k:doc','lin-doc':'k:doc','tag-doc':'k:doc',delay:'k:delay','half-rounded-rectangle':'k:delay','trap-t':'k:manual','manual':'k:manual','inv-trapezoid':'k:manual','trap-b':'k:manual','sl-rect':'k:minput','manual-input':'k:minput','curv-trap':'k:display',display:'k:display',odd:'k:offpage','off-page':'k:offpage',brace:'k:note','brace-r':'k:note',braces:'k:note',comment:'k:note','lin-cyl':'data','h-cyl':'data',das:'data','win-pane':'data','bow-rect':'data','st-rect':'sub','div-rect':'rect','lin-rect':'rect','tag-rect':'rect','notch-rect':'rect','notch-pent':'rect',flag:'rect',text:'rect'};
-const SHAPES=[[/^\[\[(.*?)\]\]/,'sub'],[/^\(\[(.*?)\]\)/,'pill'],[/^\[\((.*?)\)\]/,'data'],[/^\(\((.*?)\)\)/,'circle'],[/^\[\/(.*?)\/\]/,'io'],[/^\[\\(.*?)\\\]/,'io'],[/^\{\{(.*?)\}\}/,'decision'],[/^\{(.*?)\}/,'decision'],[/^\[(.*?)\]/,'rect'],[/^\((.*?)\)/,'round'],[/^>(.*?)\]/,'k:offpage']];
+const SHAPES=[[/^\[\[(.*?)\]\]/,'sub'],[/^\(\[(.*?)\]\)/,'pill'],[/^\[\((.*?)\)\]/,'data'],[/^\(\((.*?)\)\)/,'circle'],[/^\[\/(.*?)\/\]/,'io'],[/^\[\\(.*?)\\\]/,'io'],[/^\{\{(.*?)\}\}/,'decision'],[/^\{(.*?)\}/,'decision'],[/^\[(.*?)\]/,'rect'],[/^\((.*?)\)/,'round'],[/^>(.*?)\]/,'rect']];
 const EDGE=/^\s*(?:(<?)(-{2,}|={2,}|-\.+-)(>|x|o)?\s*(?:\|([^|]*)\|)?|--\s+([^-][^]*?)\s+-->|==\s+(.*?)\s+==>|-\.\s+(.*?)\s+\.->)\s*/;
-/* one status and one kind per element: "have", "person" and "have.person" all combine */
-function mergeCls(old,add){if(!old)return add;const kindOfC=c=>{const p=String(c).split('.');return KIND[p[0]]&&KIND[p[0]].tag?p[0]:p.slice(1).find(k=>KIND[k]&&KIND[k].tag)||'';},statusOfC=c=>{const p0=String(c).split('.')[0];return KIND[p0]&&KIND[p0].tag?'':p0==='none'?'':p0;};
- const st=statusOfC(add)||statusOfC(old),kd=kindOfC(add)||kindOfC(old);return kd?`${st||'none'}.${kd}`:st||null;}
 function parse(src){
  const g={dir:'TB',nodes:new Map(),edges:[],groups:[],order:0};const stack=[];
  const touch=(id,label,shape,cls)=>{let n=g.nodes.get(id);if(!n){n={id,label:id,note:'',shape:'rect',cls:null,group:stack.length?stack[stack.length-1].id:null,i:g.nodes.size};g.nodes.set(id,n);}
-  if(label!=null){const t=clean(label),parts=t.split(/\n| \| /);n.label=parts[0].trim();n.note=parts.slice(1).join(' ').trim();}if(shape)n.shape=shape;if(cls)n.cls=mergeCls(n.cls,cls);if(stack.length&&label!=null&&!n.group)n.group=stack[stack.length-1].id;return n;};
+  if(label!=null){const t=clean(label),parts=t.split(/\n| \| /);n.label=parts[0].trim();n.note=parts.slice(1).join(' ').trim();}if(shape)n.shape=shape;if(cls)n.cls=cls;if(stack.length&&label!=null&&!n.group)n.group=stack[stack.length-1].id;return n;};
  const nodeAt=s=>{const m=s.match(/^\s*([A-Za-z0-9_][\w\-.]*)/);if(!m)return null;let rest=s.slice(m[0].length),label=null,shape=null,cls=null;
   for(const [re,sh] of SHAPES){const mm=rest.match(re);if(mm){label=mm[1];shape=sh;rest=rest.slice(mm[0].length);break;}}
-  const at=!shape&&rest.match(/^@\{([^}]*)\}/);if(at){rest=rest.slice(at[0].length);const kv={};at[1].replace(/(\w+)\s*:\s*("([^"]*)"|[^,]+)/g,(_,k,v,q)=>{kv[k.toLowerCase()]=(q??v).trim();return '';});shape=MSHAPE[(kv.shape||'rect').toLowerCase()]||'rect';if(kv.label!=null)label=kv.label;}
-  let kd=null;if(shape&&shape.startsWith('k:')){kd=shape.slice(2);shape=KIND[kd].shape;}
-  const c=rest.match(/^:::([\w.-]+)/);if(c){cls=c[1];rest=rest.slice(c[0].length);}
-  if(kd){const p0=String(cls||'').split('.');cls=`${p0[0]||'none'}.${kd}`;}
+  const c=rest.match(/^:::([\w-]+)/);if(c){cls=c[1];rest=rest.slice(c[0].length);}
   return {ids:[{id:m[1],label,shape,cls}],rest};};
  const nodesAt=s=>{const first=nodeAt(s);if(!first)return null;let rest=first.rest;const ids=first.ids;let m;
   while((m=rest.match(/^\s*&\s*/))){const nx=nodeAt(rest.slice(m[0].length));if(!nx)break;ids.push(...nx.ids);rest=nx.rest;}return {ids,rest};};
@@ -138,17 +34,13 @@ function parse(src){
   if((m=line.match(/^class\s+([\w,\s-]+?)\s+([\w-]+)\s*$/i))){m[1].split(',').forEach(id=>touch(id.trim(),null,null,m[2]));continue;}
   if(/^(classDef|style|linkStyle|click|direction|title|accTitle|accDescr)\b/i.test(line))continue;
   let cur=nodesAt(line);if(!cur)continue;cur.ids.forEach(x=>touch(x.id,x.label,x.shape,x.cls));let rest=cur.rest;
-  /* a bare id listed inside a subgraph moves that node into it, as in Mermaid */
-  if(stack.length&&!rest.trim())cur.ids.forEach(x=>{const n=g.nodes.get(x.id);if(n&&!n.group)n.group=stack[stack.length-1].id;});
   while(rest.trim()){const e=rest.match(EDGE);if(!e)break;rest=rest.slice(e[0].length);
    const label=clean(e[4]??e[5]??e[6]??e[7]??'');const body=e[2]||(e[6]!=null?'==':e[7]!=null?'-.':'--');
    const kind=/=/.test(body)?'thick':/\./.test(body)?'dashed':'solid';const arrow=!!(e[3]==='>'||e[5]!=null||e[6]!=null||e[7]!=null);
    const nx=nodesAt(rest);if(!nx)break;nx.ids.forEach(x=>touch(x.id,x.label,x.shape,x.cls));
-   const head=e[3]==='o'?'o':e[3]==='x'?'x':null;
-   for(const a of cur.ids)for(const b of nx.ids)g.edges.push({from:a.id,to:b.id,label,kind,arrow:arrow||!e[2]?true:arrow,bi:e[1]==='<',...(head?{head}:{}),i:g.edges.length});
+   for(const a of cur.ids)for(const b of nx.ids)g.edges.push({from:a.id,to:b.id,label,kind,arrow:arrow||!e[2]?true:arrow,i:g.edges.length});
    cur=nx;rest=nx.rest;}}
- for(const n of g.nodes.values()){if(n.cls){const p0=String(n.cls).split('.')[0];if(KIND[p0]&&KIND[p0].tag)n.cls='none.'+String(n.cls);}const parts=String(n.cls||'').split('.');n.status=STATUS[parts[0].toLowerCase().replace(/[^a-z]/g,'')]||null;
-  n.kind=parts.slice(1).find(k=>KIND[k]&&KIND[k].tag)||null;if(n.kind&&KIND[n.kind].shape)n.shape=KIND[n.kind].shape;}
+ for(const n of g.nodes.values())n.status=STATUS[String(n.cls||'').toLowerCase().replace(/[^a-z]/g,'')]||null;
  return g;}
 
 /* ---------------- measuring ---------------- */
@@ -177,7 +69,7 @@ function layout(g,s,opt={}){
   if(n.shape==='pill'||n.shape==='circle')w+=12;if(n.shape==='io')w+=20;if(n.shape==='sub')w+=16;if(n.shape==='data')h+=12;
   if(n.shape==='decision'&&opt.decision==='diamond'){w=w*1.45+10;h=h*1.45+8;}
   if(opt.uniform){w=Math.max(w,opt.uniform);}
-  n.w=Math.ceil(w);n.h=Math.ceil(h);if(opt.canvas||opt.scene)fixSize(n,t,opt);n.cs=horiz?n.h:n.w;n.ms=horiz?n.w:n.h;}
+  n.w=Math.ceil(w);n.h=Math.ceil(h);n.cs=horiz?n.h:n.w;n.ms=horiz?n.w:n.h;}
  /* back edges via DFS */
  const out=new Map(nodes.map(n=>[n.id,[]]));for(const e of g.edges)out.get(e.from)?.push(e);
  const state=new Map();const visit=id=>{state.set(id,1);for(const e of out.get(id)){if(e.from===e.to){e.self=true;continue;}const st=state.get(e.to);if(st===1)e.back=true;else if(!st)visit(e.to);}state.set(id,2);};
@@ -343,7 +235,7 @@ function layout(g,s,opt={}){
   if(grp.bands&&grp.bands.length){const B=grp.bands,P=[];B.forEach(b=>{P.push([b.top,b.b],[b.bot,b.b]);});for(let i=B.length-1;i>=0;i--){P.push([B[i].bot,B[i].a],[B[i].top,B[i].a]);}
    grp.poly=P.map(([mv,cv])=>map(mv,cv));const [lx,ly]=map(flipM?B[0].bot:B[0].top,B[0].a);grp.lx=horiz?Math.min(lx,map(B[0].top,B[0].a)[0]):lx;grp.ly=horiz?ly:Math.min(ly,map(B[0].bot,B[0].a)[1]);}}
  const W=horiz?total-mMin:cMax-cMin,H=horiz?cMax-cMin:total-mMin;
- const res={W,H,horiz,crossings:best,back:back.length,R};if(opt.positions)applyManual(g,res,opt);return res;}
+ return {W,H,horiz,crossings:best,back:back.length,R};}
 
 /* ---------------- drawing helpers ---------------- */
 function simplify(p){const o=[p[0]];for(let i=1;i<p.length;i++){const a=o[o.length-1],b=p[i];if(Math.abs(a[0]-b[0])<.5&&Math.abs(a[1]-b[1])<.5)continue;o.push(b);}
@@ -361,20 +253,19 @@ function render(src,s,opt={}){
  if(window.DVFonts)DVFonts(s);
  if(!g.nodes.size)return {svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120" width="400" height="120"><rect width="400" height="120" fill="${t.bg}"/><text x="200" y="64" text-anchor="middle" font-family="${esc(t.font)}" font-size="14" fill="${t.mute}">Nothing to draw yet</text></svg>`,width:400,height:120,graph:g,notes:[]};
  const L=layout(g,s,opt),uid=(opt.id||'fe')+Math.random().toString(36).slice(2,7);
- const PAD=opt.canvas?0:(opt.pad??36),CV=!!opt.canvas,SC=!!(opt.canvas||opt.scene);
- const statuses=[...new Set([...g.nodes.values()].map(n=>n.status).filter(Boolean))],hasLegend=!CV&&opt.showLegend!==false&&(statuses.length||g.edges.some(e=>e.back||e.self));
- const head=(opt.title&&!CV?(opt.subtitle?66:44)+(t.tag?10:0):0)+(hasLegend?30:0);
- const legendW=hasLegend?[...statuses.map(k=>(opt.legend||{})[k]||{good:'Have',bad:"Don't have",warn:'Partial',accent:'Key step',muted:'Out of scope'}[k]||k),...(L.back?[opt.loopLabel||'Loop back']:[])].reduce((a,l)=>a+measure(l,11.5,500,t.font)+40,0):0,titleW=opt.title&&!CV?measure(opt.title,22,600,t.head)+20:0;
+ const PAD=opt.pad??36;
+ const statuses=[...new Set([...g.nodes.values()].map(n=>n.status).filter(Boolean))],hasLegend=opt.showLegend!==false&&(statuses.length||g.edges.some(e=>e.back||e.self));
+ const head=(opt.title?(opt.subtitle?66:44)+(t.tag?10:0):0)+(hasLegend?30:0);
+ const legendW=hasLegend?[...statuses.map(k=>(opt.legend||{})[k]||{good:'Have',bad:"Don't have",warn:'Partial',accent:'Key step',muted:'Out of scope'}[k]||k),...(L.back?[opt.loopLabel||'Loop back']:[])].reduce((a,l)=>a+measure(l,11.5,500,t.font)+40,0):0,titleW=opt.title?measure(opt.title,22,600,t.head)+20:0;
  const W=Math.ceil(Math.max(L.W,legendW,titleW)+PAD*2),H=Math.ceil(L.H+PAD*2+head+(statuses.length||L.back?0:0));
- const ox=CV?0:PAD+(W-PAD*2-L.W)/2+(L.dx||0),oy=CV?0:PAD+head+(L.dy||0),rough=t.rough>0&&window.DVRough,col={good:t.good,bad:t.bad,warn:t.dark?'#FBBF24':'#D97706',muted:t.mute,accent:t.accent};
+ const ox=PAD+(W-PAD*2-L.W)/2,oy=PAD+head,rough=t.rough>0&&window.DVRough,col={good:t.good,bad:t.bad,warn:t.dark?'#FBBF24':'#D97706',muted:t.mute,accent:t.accent};
  const glyph={good:'M-3 0l2 2.2L3.2-2.4',bad:'M-2.4-2.4l4.8 4.8M2.4-2.4l-4.8 4.8',warn:'M0-3v3.4M0 2.6v.4',accent:'M0-3l.9 2.1 2.2.2-1.7 1.4.5 2.2L0 2.8l-1.9 1.1.5-2.2-1.7-1.4 2.2-.2z',muted:'M-2.6 0h5.2'};
- const tex=window.DVTexture?DVTexture(s,uid+'t',CV?40000:W,CV?40000:H):{defs:'',rect:`<rect width="${W}" height="${H}" fill="${t.bg}"/>`};
+ const tex=window.DVTexture?DVTexture(s,uid+'t',W,H):{defs:'',rect:`<rect width="${W}" height="${H}" fill="${t.bg}"/>`};
  const groupFills=t.fills||null,groupIdx=new Map(g.groups.map((x,i)=>[x.id,i]));const topGroup=gid=>{let x=g.groups.find(y=>y.id===gid);while(x&&x.parent)x=g.groups.find(y=>y.id===x.parent);return x?x.id:gid;};
  let defs=tex.defs,body='';
  /* arrowheads */
  const edgeCol=t.dark?alpha(t.line,.62)||t.line:alpha(t.line,.72),loopCol=t.accent,mk=(id,c)=>t.arrow==='open'?`<marker id="${id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="${7+t.edge*1.5}" markerHeight="${7+t.edge*1.5}" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M1 1L9 5L1 9" fill="none" stroke="${c}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>`:`<marker id="${id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="${6+t.edge*1.6}" markerHeight="${6+t.edge*1.6}" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0.8L10 5L0 9.2z" fill="${c}"/></marker>`;
  defs+=mk(uid+'a',edgeCol)+mk(uid+'l',loopCol)+mk(uid+'k',t.accent);
- if(g.edges.some(e=>e.head))defs+=`<marker id="${uid}o" viewBox="0 0 12 12" refX="10.5" refY="6" markerWidth="${8+t.edge*1.6}" markerHeight="${8+t.edge*1.6}" markerUnits="userSpaceOnUse" orient="auto"><circle cx="6" cy="6" r="4.2" fill="${t.surface&&t.surface.startsWith('#')?t.surface:t.bg}" stroke="${edgeCol}" stroke-width="1.6"/></marker><marker id="${uid}x" viewBox="0 0 12 12" refX="9" refY="6" markerWidth="${8+t.edge*1.6}" markerHeight="${8+t.edge*1.6}" markerUnits="userSpaceOnUse" orient="auto"><path d="M3 2l7 8M10 2l-7 8" stroke="${edgeCol}" stroke-width="1.8" stroke-linecap="round"/></marker>`;
  if(t.hachure)(t.fills||[]).concat(['#B2F2BB','#FFC9C9','#FFEC99']).forEach((f,i)=>defs+=`<pattern id="${uid}h${i}" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(-42)"><rect width="9" height="9" fill="${t.bg}"/><path d="M0 4.5H9" stroke="${f}" stroke-width="1.7"/></pattern>`);
  if(t.glow)defs+=`<filter id="${uid}g" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="6"/></filter><linearGradient id="${uid}n" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".10"/><stop offset="1" stop-color="#ffffff" stop-opacity=".03"/></linearGradient>`;
  if(t.softShadow){const [dx,dy,b,c2,o]=t.softShadow;defs+=`<filter id="${uid}s" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="${dx}" dy="${dy}" stdDeviation="${b/2}" flood-color="${c2}" flood-opacity="${o}"/></filter>`;}
@@ -385,14 +276,14 @@ function render(src,s,opt={}){
  const tintOf=n=>{if(!n)return t.series[1]||t.accent;if(n.status&&n.status!=='muted')return col[n.status];const gi=n.group?groupIdx.get(topGroup(n.group)):-1;return gi>=0?t.series[gi%t.series.length]:t.series[1]||t.accent;};
  const F=`font-family="${esc(t.font)}"`;
  /* title */
- if(opt.title&&!CV){let y=PAD;if(t.tag){body+=`<rect x="${PAD}" y="${y-6}" width="34" height="6" fill="${t.accent}"/>`;y+=10;}
+ if(opt.title){let y=PAD;if(t.tag){body+=`<rect x="${PAD}" y="${y-6}" width="34" height="6" fill="${t.accent}"/>`;y+=10;}
   body+=`<text x="${PAD}" y="${y+20}" font-family="${esc(t.head)}" font-size="${t.id==='tufte'||t.serifTitle?26:21}" font-weight="${t.id==='brutal'?400:600}" fill="${t.ink}">${esc(t.upper?opt.title.toUpperCase():opt.title)}</text>`;
   if(opt.subtitle)body+=`<text x="${PAD}" y="${y+42}" ${F} font-size="12.5" fill="${t.mute}">${esc(opt.subtitle)}</text>`;
   if(t.tag)body+=`<line x1="${PAD}" x2="${W-PAD}" y1="${PAD-6}" y2="${PAD-6}" stroke="${t.ink}" stroke-width="1"/>`;}
  /* legend */
  const legendItems=[];const LBL=opt.legend||{good:'Have',bad:"Don't have",warn:'Partial',accent:'Key step',muted:'Out of scope'};
  statuses.forEach(k=>legendItems.push({k,label:LBL[k]||k}));if(L.back)legendItems.push({k:'loop',label:opt.loopLabel||'Loop back'});
- if(legendItems.length&&opt.showLegend!==false&&!CV){let lx=PAD;const ly=PAD+head-22;const parts=[];
+ if(legendItems.length&&opt.showLegend!==false){let lx=PAD;const ly=PAD+head-22;const parts=[];
   for(const it of legendItems){parts.push(it.k==='loop'?`<path d="M${lx} ${ly}h16" stroke="${loopCol}" stroke-width="${t.edge+.5}" stroke-dasharray="4 3"/>`:`<rect x="${lx+3}" y="${ly-5}" width="10" height="10" rx="${t.nodeRadius?3:0}" fill="${col[it.k]}"/>`);lx+=22;
    const tw=measure(it.label,11.5,500,t.font);parts.push(`<text x="${lx}" y="${ly+4}" ${F} font-size="11.5" font-weight="500" fill="${t.mute}">${esc(it.label)}</text>`);lx+=tw+18;}
   body+=parts.join('');}
@@ -403,29 +294,25 @@ function render(src,s,opt={}){
   body+=`<rect x="${grp.x}" y="${grp.y}" width="${grp.w}" height="${grp.h}" fill="${band}"/>`;if(k)body+=L.horiz?`<line x1="${grp.x}" x2="${grp.x+grp.w}" y1="${grp.y}" y2="${grp.y}" stroke="${div}"/>`:`<line x1="${grp.x}" x2="${grp.x}" y1="${grp.y}" y2="${grp.y+grp.h}" stroke="${div}"/>`;
   const tc=tintOf({group:grp.id});body+=L.horiz?`<text x="${grp.x+14}" y="${grp.y+20}" font-family="${esc(t.mono)}" font-size="11" font-weight="700" letter-spacing="1.2" fill="${t.ink}">${esc((grp.title||'').toUpperCase())}</text><rect x="${grp.x+14}" y="${grp.y+27}" width="22" height="3" rx="1.5" fill="${tc}"/>`
    :`<rect x="${grp.x+12}" y="${grp.y+12}" width="${grp.w-24}" height="30" rx="${Math.min(t.radius,10)}" fill="${t.surface&&t.surface.startsWith('#')?t.surface:t.bg}" stroke="${div}"/><rect x="${grp.x+24}" y="${grp.y+24}" width="7" height="7" rx="2" fill="${tc}"/><text x="${grp.x+38}" y="${grp.y+31.5}" font-family="${esc(t.font)}" font-size="12" font-weight="600" fill="${t.ink}">${esc(grp.title||'')}</text>`;});
- sortedGroups.filter(x=>!x.lane).forEach((grp)=>{body+=`<g class="fc-g" data-gid="${esc(grp.id)}">`;const i=groupIdx.get(grp.id);const fill=t.id==='pastel'&&groupFills?alpha(groupFills[i%groupFills.length].length===7?groupFills[i%groupFills.length]:'#f5f5f5',.55):t.id==='sketch'?'none':t.board&&!t.dark?alpha(tintOf({group:grp.id}),t.neu?.06:.05):alpha(t.dark?'#ffffff':t.ink,t.dark?.035:.028)||'rgba(0,0,0,.03)';
+ sortedGroups.filter(x=>!x.lane).forEach((grp)=>{const i=groupIdx.get(grp.id);const fill=t.id==='pastel'&&groupFills?alpha(groupFills[i%groupFills.length].length===7?groupFills[i%groupFills.length]:'#f5f5f5',.55):t.id==='sketch'?'none':t.board&&!t.dark?alpha(tintOf({group:grp.id}),t.neu?.06:.05):alpha(t.dark?'#ffffff':t.ink,t.dark?.035:.028)||'rgba(0,0,0,.03)';
   const stroke=t.id==='brutal'?t.ink:t.id==='blueprint'?alpha('#F1F6FF',.45):t.board?alpha(tintOf({group:grp.id}),.28):alpha(t.dark?'#ffffff':t.ink,t.dark?.14:.16);
   const dash=t.id==='brutal'||t.board?'':' stroke-dasharray="5 4"',sw=t.id==='brutal'?2:1,r=Math.min(t.radius+4,22);
   if(rough)body+=`<path d="${DVRough([[grp.x,grp.y],[grp.x+grp.w,grp.y],[grp.x+grp.w,grp.y+grp.h],[grp.x,grp.y+grp.h]],i+3,1.2,true)}" fill="none" stroke="${alpha(t.ink,.4)}" stroke-width="1.2" stroke-dasharray="6 5"/>`;
   else if(grp.poly)body+=`<path d="${roundedClosed(grp.poly,r)}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"${dash}/>`;
   else body+=`<rect x="${grp.x}" y="${grp.y}" width="${grp.w}" height="${grp.h}" rx="${r}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"${dash}/>`;
   if(grp.poly){grp.x=grp.lx;grp.y=grp.ly;}
-  const title=(grp.title||'').toUpperCase();body+=t.board?`<rect x="${grp.x+14}" y="${grp.y+13}" width="6" height="6" rx="1.5" fill="${tintOf({group:grp.id})}"/><text x="${grp.x+26}" y="${grp.y+20}" font-family="${esc(t.font)}" font-size="10.5" font-weight="700" letter-spacing="1.1" fill="${t.mute}">${esc(title)}</text>`:`<text x="${grp.x+14}" y="${grp.y+20}" font-family="${esc(t.mono)}" font-size="10.5" font-weight="600" letter-spacing="1.3" fill="${t.mute}">${esc(title)}</text>`;body+='</g>';});
- if(opt.decor)body+=opt.decor;
+  const title=(grp.title||'').toUpperCase();body+=t.board?`<rect x="${grp.x+14}" y="${grp.y+13}" width="6" height="6" rx="1.5" fill="${tintOf({group:grp.id})}"/><text x="${grp.x+26}" y="${grp.y+20}" font-family="${esc(t.font)}" font-size="10.5" font-weight="700" letter-spacing="1.1" fill="${t.mute}">${esc(title)}</text>`:`<text x="${grp.x+14}" y="${grp.y+20}" font-family="${esc(t.mono)}" font-size="10.5" font-weight="600" letter-spacing="1.3" fill="${t.mute}">${esc(title)}</text>`;});
  /* edges */
  const labels=[];const edgesSvg=[];
- for(const e of g.edges){if(!e.xy)continue;const eStart=edgesSvg.length;const p=simplify(e.xy),isLoop=e.back||e.self,thick=e.kind==='thick';
+ for(const e of g.edges){if(!e.xy)continue;const p=simplify(e.xy),isLoop=e.back||e.self,thick=e.kind==='thick';
   const src=g.nodes.get(e.from),lab=(e.label||'').toLowerCase(),branch=/^(yes|pass|approved|ok|true|valid|success)/.test(lab)?t.good:/^(no|fail|reject|false|invalid|error)/.test(lab)?t.bad:null;
   const c=isLoop?loopCol:thick?t.accent:t.edgeTint?(branch||alpha(tintOf(src.status?{group:src.group}:src),.85)):t.neu?'#B3BCCB':edgeCol,w=(thick?t.edge+1:t.edge),dash=isLoop?` stroke-dasharray="${t.id==='brutal'?'7 5':'5 4'}"`:e.kind==='dashed'?' stroke-dasharray="3 4"':'';
-  const marker=e.head?` marker-end="url(#${uid}${e.head})"`:e.arrow===false||t.arrow==='none'?'':` marker-end="url(#${uid}${isLoop?'l':thick?'k':'a'})"`;e.col=c;
+  const marker=e.arrow===false||t.arrow==='none'?'':` marker-end="url(#${uid}${isLoop?'l':thick?'k':'a'})"`;e.col=c;
   /* stop the line where the arrowhead begins */
   const end=p[p.length-1],prev=p[p.length-2]||end,len=Math.hypot(end[0]-prev[0],end[1]-prev[1])||1,cut=Math.min(1.5,len/2),q=[...p];q[q.length-1]=[end[0]-(end[0]-prev[0])/len*cut,end[1]-(end[1]-prev[1])/len*cut];
   const d=rough?DVRough(q,e.i+11,.9,false):rounded(q,t.route==='curve'?(t.curve||22):(t.radius>=8?10:t.nodeRadius?7:3));
   if(s.t.misregister)edgesSvg.push(`<path d="${d}" fill="none" stroke="${t.accent}" stroke-width="${w}" opacity=".55" transform="translate(1.4 1)" style="mix-blend-mode:multiply"/>`);
-  edgesSvg.push(`<path class="fc-line" d="${d}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"${dash}${marker}/>`);
-  if((CV||opt.flow)&&e.arrow!==false&&!rough&&g.edges.length<=120){const fc=isLoop?loopCol:thick?t.accent:t.accent,fw=Math.max(2.4,w+1.2);
-   edgesSvg.push(`<path class="fc-flow" d="${d}" fill="none" stroke="${fc}" stroke-width="${fw}" stroke-linecap="round" pointer-events="none"/>`);
-   if(e.bi)edgesSvg.push(`<path class="fc-flow rev" d="${d}" fill="none" stroke="${fc}" stroke-width="${fw}" stroke-linecap="round" pointer-events="none"/>`);}
+  edgesSvg.push(`<path d="${d}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"${dash}${marker}/>`);
   if(t.arrow==='none')edgesSvg.push(`<circle cx="${p[0][0]}" cy="${p[0][1]}" r="3.4" fill="${t.surface}" stroke="${c}" stroke-width="1.6"/><circle cx="${end[0]}" cy="${end[1]}" r="3.4" fill="${c}"/>`);
   if(e.label){const txt=t.upper?e.label.toUpperCase():e.label,lw=measure(txt,11.5,600,t.font)+14,lh=19;let best=null;
    const segs=[];for(let i=0;i<p.length-1;i++){const [x0,y0]=p[i],[x1,y1]=p[i+1],L2=Math.hypot(x1-x0,y1-y0),hz=Math.abs(y0-y1)<.5;segs.push({i,x0,y0,x1,y1,L:L2,hz});}
@@ -435,12 +322,10 @@ function render(src,s,opt={}){
    if(!best.hz&&best.i===0){ly=Math.min(best.y0,best.y1)+Math.min(Math.abs(best.y1-best.y0)/2,22);if(best.y1<best.y0)ly=Math.max(best.y0,best.y1)-Math.min(Math.abs(best.y1-best.y0)/2,22);}
    lx=Math.max(lx,lw/2-ox+6);lx=Math.min(lx,W-ox-lw/2-6);
    for(const o of labels){if(Math.abs(o.x-lx)<(o.w+lw)/2+4&&Math.abs(o.y-ly)<lh+2){if(best.hz)lx+=(o.w+lw)/2+6;else ly+=lh+4;}}
-   labels.push({x:lx,y:ly,w:lw,txt,e:e.i,c:isLoop?loopCol:thick?t.accent:t.edgeTint?c:t.mute});}
-  edgesSvg.splice(eStart,0,`<g class="fc-e" data-eid="${e.i}" data-from="${esc(e.from)}" data-to="${esc(e.to)}">`);edgesSvg.push(CV?`<path class="fc-hit" d="${d}" fill="none" stroke="transparent" stroke-width="16"/></g>`:'</g>');}
+   labels.push({x:lx,y:ly,w:lw,txt,c:isLoop?loopCol:thick?t.accent:t.edgeTint?c:t.mute});}}
  body+=edgesSvg.join('');
  /* nodes */
- const fillFor=n=>{if(SC&&plainStyle&&!n.status&&/^#[0-9a-f]{6}$/i.test(t.nodeFill||'')){const K=KIND[kindOf(n)];if(K&&K.tint)return mix(t.nodeFill,K.tint,t.dark?.12:.07);}
- if(t.hachure){const k=n.status==='good'?(t.fills||[]).length:n.status==='bad'?(t.fills||[]).length+1:n.status==='warn'?(t.fills||[]).length+2:(groupIdx.get(n.group)??0)%((t.fills||[1]).length);return `url(#${uid}h${k})`;}
+ const fillFor=n=>{if(t.hachure){const k=n.status==='good'?(t.fills||[]).length:n.status==='bad'?(t.fills||[]).length+1:n.status==='warn'?(t.fills||[]).length+2:(groupIdx.get(n.group)??0)%((t.fills||[1]).length);return `url(#${uid}h${k})`;}
   if(t.id==='pastel'){if(n.status==='good')return '#EBFBEE';if(n.status==='bad')return '#FFF1F0';if(n.status==='warn')return '#FFF8E6';if(n.shape==='decision')return '#F3F0FF';return t.nodeFill;}
   if(t.glow)return `url(#${uid}n)`;
   if(t.clay)return clayGrad(n.shape==='decision'&&!n.status?t.series[1]:n.status?col[n.status]:tintOf(n));
@@ -450,27 +335,16 @@ function render(src,s,opt={}){
   if(t.id==='riso')return n.status==='bad'?'#FF48B0':n.status==='good'?'#FFE800':n.shape==='decision'?'#7FC4EA':'#FFE800';
   if(t.id==='brutal'&&(n.shape==='decision'||n.status))return n.status==='bad'?'#FF6B6B':n.status==='good'?'#6BCB77':n.status==='warn'?'#FFD23F':'#FFD23F';
   return t.nodeFill;};
- const plainStyle=!(t.hachure||t.id==='brutal'||t.id==='riso'||t.id==='blueprint'||t.id==='tufte'||t.neu||t.clay||t.frost||t.glow||t.id==='pastel');
- const strokeFor=n=>{if(SC&&plainStyle&&!n.status){const K=KIND[kindOf(n)];if(K&&K.tint)return alpha(K.tint,t.dark?.75:.6);}if(t.id==='pastel')return n.status==='good'?'#8CE99A':n.status==='bad'?'#FFA8A8':n.status==='warn'?'#FFD43B':n.shape==='decision'?'#B197FC':t.nodeStroke;
+ const strokeFor=n=>{if(t.id==='pastel')return n.status==='good'?'#8CE99A':n.status==='bad'?'#FFA8A8':n.status==='warn'?'#FFD43B':n.shape==='decision'?'#B197FC':t.nodeStroke;
   if(t.hachure||t.id==='brutal'||t.id==='riso'||t.id==='blueprint'||t.id==='tufte'||t.neu||t.clay||t.frost)return t.nodeStroke;
   if(t.board&&n.status)return alpha(col[n.status],.45);
   if(n.status&&!t.hachure)return t.dark?alpha(col[n.status],.75):alpha(col[n.status],.85);return t.nodeStroke;};
- const shapePath=(n,x,y,w,h)=>{const r=n.shape==='pill'||n.shape==='circle'?h/2:n.shape==='round'?(SC&&n.kind==='person'?h/2:Math.max(10,t.nodeRadius)):t.nodeRadius;
-  if(n.shape==='oct'){const k=14;return {d:`M${x+k} ${y}H${x+w-k}L${x+w} ${y+k}V${y+h-k}L${x+w-k} ${y+h}H${x+k}L${x} ${y+h-k}V${y+k}Z`,pts:[[x+k,y],[x+w-k,y],[x+w,y+k],[x+w,y+h-k],[x+w-k,y+h],[x+k,y+h],[x,y+h-k],[x,y+k]]};}
-  if(n.shape==='hex'){const k=16;return {d:`M${x+k} ${y}H${x+w-k}L${x+w} ${y+h/2}L${x+w-k} ${y+h}H${x+k}L${x} ${y+h/2}Z`,pts:[[x+k,y],[x+w-k,y],[x+w,y+h/2],[x+w-k,y+h],[x+k,y+h],[x,y+h/2]]};}
-  if(n.shape==='doc'){const k=16;return {d:`M${x} ${y}H${x+w-k}L${x+w} ${y+k}V${y+h}H${x}ZM${x+w-k} ${y}V${y+k}H${x+w}`,pts:[[x,y],[x+w-k,y],[x+w,y+k],[x+w,y+h],[x,y+h]]};}
-  if(n.shape==='tab'){const rr=Math.min(t.nodeRadius,h/2,w/2);return {d:`M${x+rr} ${y}H${x+w-rr}Q${x+w} ${y} ${x+w} ${y+rr}V${y+h-rr}Q${x+w} ${y+h} ${x+w-rr} ${y+h}H${x+rr}Q${x} ${y+h} ${x} ${y+h-rr}V${y+rr}Q${x} ${y} ${x+rr} ${y}ZM${x} ${y+14}H${x+w}`,pts:[[x,y],[x+w,y],[x+w,y+h],[x,y+h]]};}
-  if(n.shape==='delay'){const rr=Math.min(h/2,w/2);return {d:`M${x} ${y}H${x+w-rr}A${rr} ${rr} 0 0 1 ${x+w-rr} ${y+h}H${x}Z`,pts:[[x,y],[x+w-rr,y],[x+w,y+h/2],[x+w-rr,y+h],[x,y+h]]};}
-  if(n.shape==='trap'){const k=Math.min(18,w*.12);return {d:`M${x} ${y}H${x+w}L${x+w-k} ${y+h}H${x+k}Z`,pts:[[x,y],[x+w,y],[x+w-k,y+h],[x+k,y+h]]};}
-  if(n.shape==='minput'){const k=Math.min(14,h*.25);return {d:`M${x} ${y+k}L${x+w} ${y}V${y+h}H${x}Z`,pts:[[x,y+k],[x+w,y],[x+w,y+h],[x,y+h]]};}
-  if(n.shape==='display'){const k=Math.min(22,w*.14),rr=Math.min(h/2,26);return {d:`M${x} ${y+h/2}L${x+k} ${y}H${x+w-rr}Q${x+w} ${y} ${x+w} ${y+h/2}Q${x+w} ${y+h} ${x+w-rr} ${y+h}H${x+k}Z`,pts:[[x,y+h/2],[x+k,y],[x+w-rr,y],[x+w,y+h/2],[x+w-rr,y+h],[x+k,y+h]]};}
-  if(n.shape==='offpage'){const k=Math.min(22,h*.32);return {d:`M${x} ${y}H${x+w}V${y+h-k}L${x+w/2} ${y+h}L${x} ${y+h-k}Z`,pts:[[x,y],[x+w,y],[x+w,y+h-k],[x+w/2,y+h],[x,y+h-k]]};}
+ const shapePath=(n,x,y,w,h)=>{const r=n.shape==='pill'||n.shape==='circle'?h/2:n.shape==='round'?Math.max(10,t.nodeRadius):t.nodeRadius;
   if(n.shape==='io'){const k=10;return {d:`M${x+k} ${y}H${x+w}L${x+w-k} ${y+h}H${x}Z`,pts:[[x+k,y],[x+w,y],[x+w-k,y+h],[x,y+h]]};}
   if(n.shape==='decision'&&opt.decision==='diamond')return {d:`M${x+w/2} ${y}L${x+w} ${y+h/2}L${x+w/2} ${y+h}L${x} ${y+h/2}Z`,pts:[[x+w/2,y],[x+w,y+h/2],[x+w/2,y+h],[x,y+h/2]]};
   if(n.shape==='data'){const e=7;return {d:`M${x} ${y+e}C${x} ${y-e/2} ${x+w} ${y-e/2} ${x+w} ${y+e}V${y+h-e}C${x+w} ${y+h+e/2} ${x} ${y+h+e/2} ${x} ${y+h-e}Z M${x} ${y+e}C${x} ${y+e*2} ${x+w} ${y+e*2} ${x+w} ${y+e}`,pts:[[x,y+e],[x+w/2,y-e/3],[x+w,y+e],[x+w,y+h-e],[x+w/2,y+h+e/3],[x,y+h-e]]};}
   const rr=Math.min(r,h/2,w/2);return {d:`M${x+rr} ${y}H${x+w-rr}Q${x+w} ${y} ${x+w} ${y+rr}V${y+h-rr}Q${x+w} ${y+h} ${x+w-rr} ${y+h}H${x+rr}Q${x} ${y+h} ${x} ${y+h-rr}V${y+rr}Q${x} ${y} ${x+rr} ${y}Z`,pts:[[x,y],[x+w,y],[x+w,y+h],[x,y+h]]};};
  for(const n of g.nodes.values()){const {x,y,w,h}=n,sp=shapePath(n,x,y,w,h),fill=fillFor(n),stroke=strokeFor(n);let sw=t.stroke;
-  body+=`<g class="fc-n" data-nid="${esc(n.id)}" data-kind="${esc(kindOf(n))}"${CV?` tabindex="0" role="button" aria-label="${esc(n.label)}"`:''}><title>${esc(n.label)} · ${esc((KIND[kindOf(n)]||KIND.rect).name)}${n.note?': '+esc(n.note):''}${opt.tips&&opt.tips[n.id]?'. '+esc(opt.tips[n.id]):''}</title>`;
   if(n.status&&!t.hachure&&t.id!=='brutal')sw=Math.max(sw,1.4);
   if(t.hardShadow)body+=`<path d="${sp.d}" transform="translate(4 4)" fill="${t.ink}"/>`;
   if(t.glow&&(n.status||n.shape==='decision'))body+=`<path d="${sp.d}" fill="none" stroke="${n.status?col[n.status]:t.accent}" stroke-width="3" opacity=".45" filter="url(#${uid}g)"/>`;
@@ -484,36 +358,27 @@ function render(src,s,opt={}){
    if(t.misregister)body+=`<path d="${sp.d}" fill="none" stroke="${t.accent}" stroke-width="${t.stroke}" opacity=".6" transform="translate(1.6 1.2)" style="mix-blend-mode:multiply"/>`;}
   if(n.shape==='sub')body+=`<path d="M${x+8} ${y+3}V${y+h-3}M${x+w-8} ${y+3}V${y+h-3}" stroke="${stroke==='none'?t.line:stroke}" stroke-width="1"/>`;
   /* status: a coloured spine plus a glyph, never colour alone */
-  const hasSpine=n.status&&!t.hachure&&!t.neu&&!t.clay&&!t.iconTiles&&t.id!=='pastel'&&t.id!=='brutal'&&t.id!=='riso'&&n.shape!=='pill'&&n.shape!=='decision'&&n.shape!=='io'&&n.shape!=='data'&&!['trap','minput','display','offpage'].includes(n.shape);
+  const hasSpine=n.status&&!t.hachure&&!t.neu&&!t.clay&&!t.iconTiles&&t.id!=='pastel'&&t.id!=='brutal'&&t.id!=='riso'&&n.shape!=='pill'&&n.shape!=='decision'&&n.shape!=='io'&&n.shape!=='data';
   if(hasSpine){const r=Math.min(t.nodeRadius,6);body+=`<path d="M${x+r+1.5} ${y+1}H${x+4}V${y+h-1}H${x+r+1.5}" fill="none"/><rect x="${x+(t.nodeRadius?1:0)}" y="${y+(t.nodeRadius?Math.min(r,4):0)}" width="3.5" height="${h-(t.nodeRadius?Math.min(r,4)*2:0)}" rx="1.5" fill="${col[n.status]}"/>`;}
   if(n.status){const gx=x+w-14,gy=y+14,gc=col[n.status];body+=`<g transform="translate(${gx} ${gy})"><circle r="7" fill="${t.id==='riso'||t.id==='brutal'?t.ink:gc}"/><path d="${glyph[n.status]}" fill="${n.status==='accent'?t.bg:'none'}" stroke="${t.id==='riso'||t.id==='brutal'?'#fff':t.dark?t.bg:'#fff'}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></g>`;}
   /* text */
-  if(t.iconTiles){const KK=SC&&KIND[kindOf(n)],tc=n.status?col[n.status]:(KK&&KK.tint)||tintOf(n),tx0=x+14,ty0=y+h/2-14;const outs=g.edges.some(e=>e.from===n.id);
-   const ic=KK&&KK.icon?KK.icon:n.shape==='decision'?'M6 4v5a4 4 0 0 0 4 4h8M14 9l4 4-4 4':n.shape==='data'?'M5 6c0-1.7 3.1-3 7-3s7 1.3 7 3-3.1 3-7 3-7-1.3-7-3zM5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3':n.shape==='io'?'M4 12h11M11 7l5 5-5 5M20 5v14':(n.shape==='pill'||n.shape==='circle')?(outs?'M8 5.5l11 6.5-11 6.5z':'M6 21V4M6 4h11l-2 4 2 4H6'):'M13 3L5 14h6l-1 7 8-11h-6z';
+  if(t.iconTiles){const tc=n.status?col[n.status]:tintOf(n),tx0=x+14,ty0=y+h/2-14;const outs=g.edges.some(e=>e.from===n.id);
+   const ic=n.shape==='decision'?'M6 4v5a4 4 0 0 0 4 4h8M14 9l4 4-4 4':n.shape==='data'?'M5 6c0-1.7 3.1-3 7-3s7 1.3 7 3-3.1 3-7 3-7-1.3-7-3zM5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3':n.shape==='io'?'M4 12h11M11 7l5 5-5 5M20 5v14':(n.shape==='pill'||n.shape==='circle')?(outs?'M8 5.5l11 6.5-11 6.5z':'M6 21V4M6 4h11l-2 4 2 4H6'):'M13 3L5 14h6l-1 7 8-11h-6z';
    body+=`<rect x="${tx0}" y="${ty0}" width="28" height="28" rx="8" fill="${alpha(tc,.13)}"/><g transform="translate(${tx0+5} ${ty0+5}) scale(.75)"><path d="${ic}" fill="none" stroke="${tc}" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></g>`;}
-  const deco=!SC&&!t.iconTiles&&n.shape==='decision'&&opt.decision!=='diamond',fs=n.fs||13.5,nfs=n.nfs||12,KB=SC&&!t.iconTiles&&KIND[kindOf(n)],center=n.shape==='pill'||n.shape==='circle'||n.shape==='offpage'||(n.shape==='decision'&&opt.decision==='diamond'),badge=KB&&KB.icon&&!center;
-  if(badge){const bx=x+10,by=y+h/2-12;body+=`<rect x="${bx}" y="${by}" width="24" height="24" rx="7" fill="${alpha(KB.tint,.15)}"/><g transform="translate(${bx+4.2} ${by+4.2}) scale(.68)"><path d="${KB.icon}" fill="none" stroke="${KB.tint}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></g>`;}
-  const th=n.lines.length*fs*1.3+(n.noteLines.length?6+n.noteLines.length*nfs*1.35:0);
-  let ty=y+h/2-th/2+fs*1.0;const tx=center&&!t.iconTiles?x+w/2:x+16+(hasSpine?2:0)+(deco?20:0)+(t.iconTiles?40:0)+(badge?22:0);const anchor=center&&!t.iconTiles?'middle':'start';
+  const deco=!t.iconTiles&&n.shape==='decision'&&opt.decision!=='diamond';const th=n.lines.length*13.5*1.3+(n.noteLines.length?6+n.noteLines.length*12*1.35:0);
+  let ty=y+h/2-th/2+13.5*1.0;const center=n.shape==='pill'||n.shape==='circle'||(n.shape==='decision'&&opt.decision==='diamond');const tx=center&&!t.iconTiles?x+w/2:x+16+(hasSpine?2:0)+(deco?20:0)+(t.iconTiles?40:0);const anchor=center&&!t.iconTiles?'middle':'start';
   if(deco){const dx=x+16+(hasSpine?2:0)+6,dy=ty-4.5;body+=`<path d="M${dx} ${dy-6}L${dx+6} ${dy}L${dx} ${dy+6}L${dx-6} ${dy}Z" fill="${t.id==='pastel'?'#7950F2':t.accent}"${rough?'':''}/>`;}
   const ink=t.id==='riso'?'#1B2A6B':t.id==='brutal'&&(n.status||n.shape==='decision')?'#000':t.ink;
-  n.lines.forEach((l,i)=>{body+=`<text x="${tx}" y="${(ty+i*fs*1.3).toFixed(1)}" ${F} font-size="${fs}" font-weight="${t.id==='tufte'?500:600}" fill="${ink}" text-anchor="${anchor}">${esc(l)}</text>`;});
-  ty+=n.lines.length*fs*1.3+4;
-  n.noteLines.forEach((l,i)=>{body+=`<text class="fc-note" x="${tx}" y="${(ty+i*nfs*1.35).toFixed(1)}" ${F} font-size="${nfs}" fill="${t.id==='riso'||t.id==='brutal'&&(n.status||n.shape==='decision')?ink:t.mute}" text-anchor="${anchor}"${t.id==='tufte'?' font-style="italic"':''}>${esc(l)}</text>`;});
-  if(CV&&opt.badges&&opt.badges[n.id]){const bt=String(opt.badges[n.id]),bw=Math.max(26,bt.length*8+14);body+=`<g transform="translate(${x+w-bw-8} ${y+h-9})"><rect width="${bw}" height="18" rx="9" fill="#0F766E"/><text x="${bw/2}" y="12.6" text-anchor="middle" font-family="${esc(t.mono||t.font)}" font-size="10.5" font-weight="700" fill="#fff">${esc(bt)}</text></g>`;}
-  if(CV){const H=healthOf(g,n,opt);if(H){const hx=x+14,hy=y,hc={ok:'#16A34A',warn:'#D97706',bad:'#DC2626'}[H.s],hg={ok:'M-2.6 .2l1.7 1.8 3.4-3.8',warn:'M0-3v3.2M0 2.4v.5',bad:'M-2.3-2.3l4.6 4.6M2.3-2.3l-4.6 4.6'}[H.s];
-   body+=`<g class="fc-h" data-h="${H.s}" transform="translate(${hx} ${hy})"><title>${esc(H.tip)}</title><circle r="9" fill="transparent"/><circle r="6.2" fill="${hc}" stroke="${t.surface&&t.surface.startsWith('#')?t.surface:t.bg}" stroke-width="2"/><path d="${hg}" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>`;}}
-  body+='</g>';}
+  n.lines.forEach((l,i)=>{body+=`<text x="${tx}" y="${(ty+i*13.5*1.3).toFixed(1)}" ${F} font-size="13.5" font-weight="${t.id==='tufte'?500:600}" fill="${ink}" text-anchor="${anchor}">${esc(l)}</text>`;});
+  ty+=n.lines.length*13.5*1.3+4;
+  n.noteLines.forEach((l,i)=>{body+=`<text x="${tx}" y="${(ty+i*12*1.35).toFixed(1)}" ${F} font-size="12" fill="${t.id==='riso'||t.id==='brutal'&&(n.status||n.shape==='decision')?ink:t.mute}" text-anchor="${anchor}"${t.id==='tufte'?' font-style="italic"':''}>${esc(l)}</text>`;});}
  /* edge labels on top */
- for(const l of labels){body+=`<g class="fc-l" data-eid="${l.e}">`;const plate=t.id==='blueprint'?t.bg:t.id==='glass'?'#161B2B':t.id==='sketch'?t.bg:t.surface&&t.surface.startsWith('#')?t.surface:t.bg;
+ for(const l of labels){const plate=t.id==='blueprint'?t.bg:t.id==='glass'?'#161B2B':t.id==='sketch'?t.bg:t.surface&&t.surface.startsWith('#')?t.surface:t.bg;
   if(t.neu)body+=`<rect x="${(l.x-l.w/2).toFixed(1)}" y="${(l.y-10).toFixed(1)}" width="${l.w.toFixed(1)}" height="20" rx="10" fill="#DFE4EB" stroke="url(#${uid}in)" stroke-width="1.6"/><text x="${l.x.toFixed(1)}" y="${(l.y+4).toFixed(1)}" ${F} font-size="11.5" font-weight="600" fill="${l.c===t.mute?t.ink:l.c}" text-anchor="middle">${esc(l.txt)}</text>`;
   else if(t.board)body+=`<rect x="${(l.x-l.w/2).toFixed(1)}" y="${(l.y-10).toFixed(1)}" width="${l.w.toFixed(1)}" height="20" rx="10" fill="${t.frost?'rgba(255,255,255,.85)':t.clay?'#FFFFFF':t.surface}" stroke="${alpha(l.c===t.mute?t.ink:l.c,t.edgeTint?.75:.22)}" stroke-width="${t.edgeTint?1.3:1}"${t.softShadow&&!t.edgeTint?` filter="url(#${uid}s)"`:''}/><text x="${l.x.toFixed(1)}" y="${(l.y+4).toFixed(1)}" ${F} font-size="11.5" font-weight="600" fill="${l.c===t.mute?t.ink:l.c}" text-anchor="middle">${esc(l.txt)}</text>`;
-  else body+=`<rect x="${(l.x-l.w/2).toFixed(1)}" y="${(l.y-10).toFixed(1)}" width="${l.w.toFixed(1)}" height="20" rx="${t.id==='brutal'||t.id==='blueprint'||t.id==='editorial'?0:10}" fill="${plate}" stroke="${t.id==='brutal'?t.ink:alpha(l.c===t.mute?(t.dark?'#ffffff':t.ink):l.c,t.id==='brutal'?1:.28)}" stroke-width="${t.id==='brutal'?2:1}"/><text x="${l.x.toFixed(1)}" y="${(l.y+4).toFixed(1)}" ${F} font-size="11.5" font-weight="600" fill="${l.c===t.mute?t.ink:l.c}" text-anchor="middle">${esc(l.txt)}</text>`;body+='</g>';}
+  else body+=`<rect x="${(l.x-l.w/2).toFixed(1)}" y="${(l.y-10).toFixed(1)}" width="${l.w.toFixed(1)}" height="20" rx="${t.id==='brutal'||t.id==='blueprint'||t.id==='editorial'?0:10}" fill="${plate}" stroke="${t.id==='brutal'?t.ink:alpha(l.c===t.mute?(t.dark?'#ffffff':t.ink):l.c,t.id==='brutal'?1:.28)}" stroke-width="${t.id==='brutal'?2:1}"/><text x="${l.x.toFixed(1)}" y="${(l.y+4).toFixed(1)}" ${F} font-size="11.5" font-weight="600" fill="${l.c===t.mute?t.ink:l.c}" text-anchor="middle">${esc(l.txt)}</text>`;}
  body+='</g>';
- const DOTS=CV&&t.texture!=='dots'&&t.texture!=='blueprint'?`<rect width="40000" height="40000" fill="url(#${uid}dg)"/>`:'';
- const FLOWCSS=`<style>.fc-flow{stroke-dasharray:.1 15;opacity:.9;animation:fcflow 1.4s linear infinite}.fc-flow.rev{animation-direction:reverse}@keyframes fcflow{to{stroke-dashoffset:-30}}@media (prefers-reduced-motion:reduce){.fc-flow{animation:none;opacity:0}}</style>`;
- const svg=CV?`<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1" style="overflow:visible" role="group" aria-label="${esc(opt.title||'Flowchart')}: ${g.nodes.size} elements, ${g.edges.length} connections"><defs>${defs}${CV?`<pattern id="${uid}dg" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.35" fill="${t.dark?'rgba(255,255,255,.22)':'rgba(24,28,45,.22)'}"/></pattern>`:''}${FLOWCSS}</defs><g transform="translate(-20000 -20000)" pointer-events="none">${tex.rect}${DOTS}</g>${body}${tex.over?`<g transform="translate(-20000 -20000)">${tex.over}</g>`:''}</svg>`
-  :`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(opt.title||'Flowchart')}: ${g.nodes.size} steps, ${g.edges.length} connections"><defs>${defs}${opt.flow?FLOWCSS:''}</defs>${tex.rect}${body}${tex.over||''}</svg>`;
+ const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(opt.title||'Flowchart')}: ${g.nodes.size} steps, ${g.edges.length} connections"><defs>${defs}</defs>${tex.rect}${body}${tex.over||''}</svg>`;
  /* what the engine took care of, and what the author should look at */
  const notes=[];const nodesArr=[...g.nodes.values()];
  notes.push({ok:true,text:`Laid out in ${L.R} ranks, ${L.horiz?'left to right':'top to bottom'}, on one grid.`});
@@ -526,5 +391,5 @@ function render(src,s,opt={}){
  if(nodesArr.length>28)notes.push({ok:false,text:`${nodesArr.length} steps on one canvas. Split into an overview and linked detail charts.`});
  return {svg,width:W,height:H,graph:g,notes};}
 
-window.FlowEngine={parse,layout,render,STATUS,KIND,kindOf,healthOf,MSHAPE};
+window.FlowEngine={parse,layout,render,STATUS};
 })();
