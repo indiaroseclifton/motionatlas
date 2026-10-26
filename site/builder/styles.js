@@ -89,5 +89,5 @@ PB.styles={build,list:()=>REG,get:id=>byId[id]||byId.noir||REG[0],has:id=>!!byId
  resolve(id,pair,site){const s=this.get(id);let vars=s.vars,fonts=s.fonts||'',face=s.face?FACE(site):'';
   if(pair&&pair[1]){vars+=`;--head:${stack(pair[1])};--body:${stack(pair[2])}`;fonts=gq([pair[1],pair[2]]);if(/Atlas/.test(pair[1]+pair[2]))face=FACE(site)}
   return {style:s,vars,fonts,face}},
- famName,gq};
+ famName,gq,stack};
 })();

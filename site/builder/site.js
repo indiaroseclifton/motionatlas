@@ -36,7 +36,7 @@ function normalize(x,def){
  if(s.navAuto==null)s.navAuto=x.navAuto!==false;if(s.navSeed==null)s.navSeed=!!x.navSeed;
  if(!s.nav)s.nav=(Array.isArray(x.nav)?x.nav:[]).map(n=>({label:String(n.label||'Link').slice(0,40),link:String(n.link||'').slice(0,500)}));
  const d=DEFAULTS(),st=x.settings||{};s.settings={...d,...st,favicon:{...d.favicon,...(st.favicon||{})},notFound:{...d.notFound,...(st.notFound||{})}};
- if(x.tokens)s.tokens=x.tokens;
+ if(x.tokens&&typeof x.tokens==='object'){const t={},k=x.tokens,hex=v=>/^#[0-9a-f]{6}$/i.test(v);['bg','surface','ink','accent'].forEach(n=>{if(hex(k[n]))t[n]=k[n]});if(k.radius!=null&&+k.radius>=0&&+k.radius<=40)t.radius=+k.radius;if(['sharp','pill'].includes(k.btn))t.btn=k.btn;['fontHead','fontBody'].forEach(n=>{if(/^[\w ]{2,40}$/.test(k[n]||''))t[n]=k[n]});if(Object.keys(t).length)s.tokens=t}
  return s}
 function fix(list,def){return (list||[]).filter(b=>b&&(!def||def(b.id))).map(b=>{const o={uid:b.uid||uid(),id:b.id,vals:b.vals||{}};if(b.set&&typeof b.set==='object')o.set=b.set;if(b.links&&typeof b.links==='object')o.links=b.links;return o})}
 const safeLink=l=>{l=String(l||'').trim();if(!l)return '#';if(/^\s*(javascript|data|vbscript):/i.test(l))return '#';return l};

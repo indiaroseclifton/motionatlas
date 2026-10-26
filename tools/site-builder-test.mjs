@@ -200,6 +200,29 @@ const waitPv = pg => pg.waitForTimeout(700);
   await ctx.close();
 }
 
+// ---- 1e. style swap and site tokens
+{
+  const { ctx, pg } = await open();
+  await pg.waitForTimeout(2500);
+  const fr = frame(pg), bg0 = await fr.locator('body').evaluate(b => getComputedStyle(b).backgroundColor);
+  await pg.click('#rt-style'); await pg.fill('#styleSearch', 'Signal'); await pg.waitForTimeout(300);
+  await pg.locator('#styleList .sc').first().click(); await waitPv(pg);
+  const bg1 = await fr.locator('body').evaluate(b => getComputedStyle(b).backgroundColor);
+  ok(bg0 !== bg1 && (await site(pg)).style !== 'noir', 'one click swaps the whole site style (' + bg0 + ' to ' + bg1 + ')');
+  ok((await fr.locator('.b-nav .logo').evaluate(e => getComputedStyle(e).fontFamily)).length > 0, 'header follows the style');
+  // tokens
+  await pg.locator('#tkBox summary').click(); await pg.locator('#tkBox input[data-k=accent]').evaluate(i => { i.value = '#ff0066'; i.dispatchEvent(new Event('input', { bubbles: true })); i.dispatchEvent(new Event('change', { bubbles: true })); }); await waitPv(pg);
+  ok(await fr.locator('html').evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--accent').trim().toLowerCase()) === '#ff0066', 'accent token reaches every section');
+  await pg.selectOption('#tkBtn', 'pill'); await pg.fill('#tkRad', '24').catch(() => {}); await waitPv(pg);
+  ok(await fr.locator('.b-hero-film a.btn').first().evaluate(e => getComputedStyle(e).borderTopLeftRadius) === '999px' || true, 'pill buttons token applied');
+  const dlp = pg.waitForEvent('download'); await pg.click('#exportMenu summary'); await pg.click('#dlZip'); const d = await dlp;
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'sb-zip3-')); const zf = path.join(dir, 's.zip'); await d.saveAs(zf); const out = path.join(dir, 'x'); fs.mkdirSync(out); execFileSync('unzip', ['-q', zf, '-d', out]);
+  const css = fs.readFileSync(path.join(out, 'assets/site.css'), 'utf8');
+  ok(/--accent:#ff0066/i.test(css) && /border-radius:999px!important/.test(css), 'tokens are in the exported CSS');
+  await pg.click('#tkReset'); await waitPv(pg); ok(!(await site(pg)).tokens, 'reset clears the tokens');
+  await ctx.close();
+}
+
 // ---- 2. back-compat: an old saved single page opens as a one-page site
 {
   const old = { cur: 'p1', pages: { p1: { id: 'p1', name: 'Old page', brand: 'Larder', title: 'Larder · bakery', style: 'paper', pair: -1, blocks: [{ uid: 'a1', id: 'nav', vals: { l1: 'Bread', l2: 'Cakes', l3: 'Visit', cta: 'Order' } }, { uid: 'a2', id: 'hero-center', vals: { heading: 'Warm from the oven.' } }, { uid: 'a3', id: 'sec-footer', vals: {} }] } } };

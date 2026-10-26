@@ -76,12 +76,25 @@ const cache={cl:null,ix:{}};
 let CTX=null;
 const newAcc=()=>({css:new Map(),fonts:new Set(),files:new Map()});
 const pageHrefFor=mode=>p=>mode==='preview'?'#pb-page:'+p.id:S.pageFile(site,p);
+/* site tokens: colour, radius, font and button overrides on top of the chosen style */
+function withTokens(st,acc){const tk=site.tokens;if(!tk||!Object.keys(tk).length)return st;const sw=(st.style&&st.style.sw)||[],C=PB.color;
+ const bg=tk.bg||sw[0]||'#FFFFFF',surf=tk.surface||sw[1]||bg,o=[];
+ if(tk.bg){o.push('--bg:'+tk.bg);o.push('color-scheme:'+(C.lum(tk.bg)<.2?'dark':'light'))}
+ if(tk.surface)o.push('--surface:'+tk.surface);
+ if(tk.ink){o.push('--ink:'+tk.ink,'--mute:'+C.ensure(C.mix(tk.ink,bg,.38),[bg,surf],4.6))}
+ if(tk.accent){o.push('--accent:'+tk.accent,'--on-accent:'+C.best(tk.accent),'--accent-ink:'+C.ensure(tk.accent,[bg,surf],4.5))}
+ if(tk.radius!=null)o.push('--radius:'+tk.radius+'px');
+ let fonts=st.fonts||'',vars=st.vars;const names=[];
+ if(tk.fontHead){o.push('--head:'+PB.styles.stack(tk.fontHead));names.push(tk.fontHead)}if(tk.fontBody){o.push('--body:'+PB.styles.stack(tk.fontBody));names.push(tk.fontBody)}
+ if(names.length)fonts=[fonts,PB.styles.gq(names)].filter(Boolean).join('&');
+ if(tk.btn==='sharp')acc.css.set('pb-tk-btn','.btn{border-radius:0!important}');else if(tk.btn==='pill')acc.css.set('pb-tk-btn','.btn{border-radius:999px!important}');
+ return {...st,vars:vars+';'+o.join(';'),fonts}}
 const buildCSS=(st,acc)=>':root{'+st.vars+'}\n'+(st.face||'')+LIB.base+'.h{text-transform:var(--case,none)}\n'+[...acc.css.values()].join('\n');
 const fontURLOf=acc=>acc.fonts.size?'https://fonts.googleapis.com/css2?'+[...acc.fonts].join('&')+'&display=swap':'';
 function compose(mode,pg,acc,opt){ // mode: preview | html | zip  -> parts for one page (header + page + footer). acc shares css/fonts/files between pages.
  pg=pg||curPage();acc=acc||newAcc();
  const base=mode==='preview'?ABS:SITE;const pair=page.pair>=0?LIB.pairs[page.pair]:null;
- const st=PB.styles.resolve(page.style,pair,base);
+ const st=withTokens(PB.styles.resolve(page.style,pair,base),acc);
  const css=acc.css,fonts=acc.fonts,files=acc.files,needs=new Map(),body=[],js=[];
  (st.fonts||'').split('&').filter(Boolean).forEach(f=>fonts.add(f));
  CTX={mode,current:pg.id,pageHref:pageHrefFor(mode)};
@@ -282,7 +295,7 @@ addEventListener('resize',()=>placeTb(lastRects));
 
 /* ---------- section thumbnails and the section picker ---------- */
 const thumbCache=new Map();
-function thumbHTML(id){const key=page.style+'|'+page.pair+'|'+id;if(thumbCache.has(key))return thumbCache.get(key);
+function thumbHTML(id){const key=page.style+'|'+page.pair+'|'+JSON.stringify(site.tokens||{})+'|'+id;if(thumbCache.has(key))return thumbCache.get(key);
  let h='';try{const P=compose('preview',{id:'__t',name:'t',blocks:[{uid:'tb'+id.replace(/\W/g,''),id,vals:{}}]},undefined,{solo:true});h=swapA(assemble(P,{noagent:true,clSrc:ABS+'component-lab.js'}),ABS+'assets/').replace(/\sautoplay\b/g,'').replace(/<video /g,'<video preload="none" ')}catch(e){h=''}
  thumbCache.set(key,h);if(thumbCache.size>160)thumbCache.delete(thumbCache.keys().next().value);return h}
 let thIO=null;
@@ -386,10 +399,29 @@ function bgThumbsLater(){if(!PB.bgFrag||!PB.src.BGA())return;const todo=$$('#lib
  let i=0;const step=()=>{const end=performance.now()+12;while(i<todo.length&&performance.now()<end){const b=todo[i++],p=PB.src.BGA().ALL.find(x=>x.key===b.dataset.bg);if(p){try{bgThumbs[p.key]=bgR(p);b.style.cssText=`background-image:url(${bgThumbs[p.key]});background-size:cover`}catch(e){}}}if(i<todo.length)requestAnimationFrame(step)};requestAnimationFrame(step)}
 $('#libSearch').oninput=()=>{clearTimeout(library.t);library.t=setTimeout(library,120)};
 
+/* ---------- site tokens ---------- */
+function tokensUI(){const box=$('#tkBox');if(!box)return;const cur=PB.styles.get(page.style),sw=cur.sw||[],tk=site.tokens||{};
+ const eff={bg:tk.bg||sw[0],surface:tk.surface||sw[1],ink:tk.ink||sw[2],accent:tk.accent||sw[3]};const C=PB.color;
+ const cr=(a,b)=>{try{return C.ratio(a,b)}catch(e){return 0}};
+ const fonts=[...new Set([cur.head,cur.body,...LIB.pairs.flatMap(p=>[p[1],p[2]])].filter(Boolean))];
+ const row=(k,l)=>`<label class="tkc"><span>${l}</span><input type="color" data-k="${k}" value="${(/^#[0-9a-f]{6}$/i.test(eff[k]||'')?eff[k]:'#888888').toLowerCase()}"${tk[k]?' data-set="1"':''}></label>`;
+ box.innerHTML=`<details${Object.keys(tk).length?' open':''}><summary>Customise this style${Object.keys(tk).length?' · changed':''}</summary><div class="tkb"><p class="hint">Colours, corners and fonts here apply to every section on every page.</p><div class="tkg">${row('bg','Background')}${row('surface','Panels')}${row('ink','Text')}${row('accent','Accent')}</div>
+ <p class="hint" id="tkCr">Text on background ${cr(eff.ink,eff.bg).toFixed(1)}:1 ${cr(eff.ink,eff.bg)>=4.5?'(passes AA)':'(too low: needs 4.5)'} · button text ${cr(C.best(eff.accent||'#000'),eff.accent||'#000').toFixed(1)}:1</p>
+ <div class="f"><label for="tkRad">Corner radius: <output>${tk.radius!=null?tk.radius:'style default'}</output></label><input id="tkRad" type="range" min="0" max="32" step="2" value="${tk.radius!=null?tk.radius:12}"></div>
+ <div class="f"><label for="tkBtn">Buttons</label><select id="tkBtn"><option value="">As the style</option><option value="sharp">Square</option><option value="pill">Pill</option></select></div>
+ <div class="f"><label for="tkFh">Heading font</label><select id="tkFh"><option value="">Style’s font</option>${fonts.map(f=>`<option>${esc(f)}</option>`).join('')}</select></div>
+ <div class="f"><label for="tkFb">Body font</label><select id="tkFb"><option value="">Style’s font</option>${fonts.map(f=>`<option>${esc(f)}</option>`).join('')}</select></div>
+ <button type="button" class="btn small" id="tkReset">Reset to the style</button></div></details>`;
+ $('#tkBtn').value=tk.btn||'';$('#tkFh').value=tk.fontHead||'';$('#tkFb').value=tk.fontBody||'';
+ const set=(k,v)=>{site.tokens=site.tokens||{};if(v===''||v==null)delete site.tokens[k];else site.tokens[k]=v;if(!Object.keys(site.tokens).length)delete site.tokens};
+ box.querySelectorAll('input[type=color]').forEach(i=>{i.oninput=()=>{set(i.dataset.k,i.value);commitSoon();render()};i.onchange=()=>{commit();tokensUI()}});
+ const r=$('#tkRad');r.oninput=()=>{r.previousElementSibling.querySelector('output').textContent=r.value;set('radius',+r.value);commitSoon();render()};
+ $('#tkBtn').onchange=e=>{set('btn',e.target.value);commit();render()};$('#tkFh').onchange=e=>{set('fontHead',e.target.value);commit();render()};$('#tkFb').onchange=e=>{set('fontBody',e.target.value);commit();render()};
+ $('#tkReset').onclick=()=>{delete site.tokens;commit();tokensUI();render();say('Back to the style’s own look')}}
 /* ---------- style panel ---------- */
 let skind=ui.skind||'all';
 function setStyle(id){if(!PB.styles.has(id))return;page.style=id;commit();styles();render();say('Style: '+PB.styles.get(id).name)}
-function styles(){const S=PB.styles.list(),t=($('#styleSearch').value||'').trim().toLowerCase();
+function styles(){tokensUI();const S=PB.styles.list(),t=($('#styleSearch').value||'').trim().toLowerCase();
  $('#skinds').innerHTML=PB.styles.KINDS.map(([k,l])=>`<button type="button" class="chip" aria-pressed="${k===skind}" data-k="${k}">${l} <small>${k==='all'?S.length:S.filter(s=>s.kind===k).length}</small></button>`).join('');
  $$('#skinds .chip').forEach(b=>b.onclick=()=>{skind=b.dataset.k;ui.skind=skind;saveUI();styles();const n=$(`#skinds [data-k="${skind}"]`);n&&n.focus()});
  const items=S.filter(s=>(skind==='all'||s.kind===skind)&&(!t||(s.name+' '+s.note+' '+s.head+' '+s.body+' '+(s.mood||'')+' '+s.id).toLowerCase().includes(t)));
