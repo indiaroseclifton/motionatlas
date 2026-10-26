@@ -4,13 +4,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap">
 <style>
-:root{--bg:#F4F5F8;--panel:#FFFFFF;--ink:#1C1F2A;--mute:#6B7183;--hair:#E4E7EE;--soft:#F7F8FB;--accent:#5B2DFF;--accent-ink:#FFFFFF;--ok:#1E9E6A;--warn:#C9771C;--shadow:0 1px 2px rgba(20,24,40,.04),0 8px 24px -12px rgba(20,24,40,.12);color-scheme:light}
+:root{--bg:#F4F5F8;--panel:#FFFFFF;--ink:#1C1F2A;--mute:#5F6577;--hair:#E4E7EE;--soft:#F7F8FB;--accent:#5B2DFF;--accent-ink:#FFFFFF;--ok:#1E9E6A;--warn:#C9771C;--shadow:0 1px 2px rgba(20,24,40,.04),0 8px 24px -12px rgba(20,24,40,.12);color-scheme:light}
 *{box-sizing:border-box}html,body{margin:0;height:100%}
 body{background:var(--bg);color:var(--ink);font:14px/1.5 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 a{color:inherit}button,select,input,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
 .app{display:grid;grid-template-columns:minmax(320px,380px) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);height:100vh;height:100dvh}
-header{grid-column:1/-1;display:flex;align-items:center;gap:16px;padding:12px max(18px,env(safe-area-inset-right)) 12px max(18px,env(safe-area-inset-left));background:var(--panel);border-bottom:1px solid var(--hair)}
+header{grid-column:1/-1;position:relative;z-index:20;display:flex;align-items:center;gap:16px;padding:12px max(18px,env(safe-area-inset-right)) 12px max(18px,env(safe-area-inset-left));background:var(--panel);border-bottom:1px solid var(--hair)}
 .brand{display:flex;align-items:baseline;gap:12px;min-width:0}
 .brand a{font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);text-decoration:none;white-space:nowrap}
 .brand a:hover{color:var(--ink)}
@@ -142,8 +142,28 @@ details.help summary::before{content:'+ ';}details.help[open] summary::before{co
 .styleinfo b{display:block;font-size:13px;margin-bottom:2px}.styleinfo span{color:var(--mute)}
 .toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);opacity:0;padding:10px 16px;border-radius:10px;background:var(--ink);color:#fff;font-size:13px;transition:opacity .2s,transform .2s;pointer-events:none;z-index:9}
 .toast.on{opacity:1;transform:translate(-50%,0)}
-@media (max-width:900px){.app{grid-template-columns:1fr;grid-template-rows:auto auto auto;height:auto}header{order:0}.main{order:1}.side{order:2}.side{border-right:0;overflow:visible}.main{grid-template-rows:auto 70vh}.exports .btn span{display:none}.brand h1{font-size:22px}header{flex-wrap:wrap}.exports{margin-left:0;width:100%;justify-content:flex-start}}
+@media (max-width:900px){.motion{max-width:calc(100% - 24px)}.exports .btn{min-height:34px;padding:0 10px}.app{grid-template-columns:1fr;grid-template-rows:auto auto auto;height:auto}header{order:0}.main{order:1}.side{order:2}.side{border-right:0;overflow:visible}.main{grid-template-rows:auto 70vh}.exports .btn span{display:none}.brand h1{font-size:22px}header{flex-wrap:wrap}.exports{margin-left:0;width:100%;justify-content:flex-start}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* menus, dialogs, drag lists */
+.btn.sm{min-height:28px;padding:0 9px;font-size:11.5px;border-radius:8px;text-transform:none;letter-spacing:0}
+details.menu{position:relative}details.menu>summary{list-style:none}details.menu>summary::-webkit-details-marker{display:none}
+.pop{position:absolute;right:0;top:calc(100% + 6px);z-index:30;min-width:220px;max-width:min(320px,calc(100vw - 24px));background:var(--panel);border:1px solid var(--hair);border-radius:12px;box-shadow:0 18px 40px -16px rgba(20,24,40,.35);padding:6px;display:grid;gap:2px}
+.pop button{display:flex;justify-content:space-between;gap:12px;align-items:center;text-align:left;border:0;background:none;border-radius:8px;padding:8px 10px;font-size:13px;min-height:36px}.pop button:hover{background:var(--soft)}
+.pop small{color:var(--mute);font-size:11.5px}.pop hr{border:0;border-top:1px solid var(--hair);margin:4px 2px}.pop .drow{display:grid;grid-template-columns:1fr auto;gap:2px}.pop .drow button:last-child{color:#B42318}
+#impDlg{border:0;border-radius:16px;padding:0;width:min(640px,calc(100vw - 24px));box-shadow:0 30px 80px -20px rgba(20,24,40,.45)}#impDlg::backdrop{background:rgba(20,24,40,.45)}
+.dlg{padding:18px;display:grid;gap:10px}.dlg h2{margin:0;font-size:16px}.dlg .hint{margin:0;font-size:12.5px;color:var(--mute)}.dlg textarea{min-height:260px}
+.ded .drag{flex:none;width:24px;height:32px;border:0;background:none;color:var(--mute);cursor:grab;font-size:14px;border-radius:6px;touch-action:none}
+.ded .drag:hover{background:var(--panel);color:var(--ink)}
+.ded li.dragging{opacity:.45}.ded li.over{box-shadow:0 -3px 0 var(--accent)}
+.ded .item.sel,.ded .line.sel{box-shadow:0 0 0 2px var(--accent);transition:box-shadow .3s}
+.ded .ihead{display:flex;gap:4px;align-items:center}.ded .ihead input{font-weight:600}
+.ded .flds{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px}.ded .flds>*,.ded label,.ded .item{min-width:0}.ded .flds .full{grid-column:1/-1}
+.kinds{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+.kinds .type{grid-template-columns:1fr;justify-items:start;min-height:0;padding:7px 8px;gap:2px}
+.kinds .type svg{grid-row:auto;width:28px;height:22px}.kinds .type span{display:none}
+.paper [data-ref]{cursor:pointer}.paper [data-xy]{cursor:move}
+.paper .hl{outline:none}
 
 /* diagram studio */
 .kinds{display:grid;grid-template-columns:1fr 1fr;gap:6px}
@@ -178,12 +198,20 @@ details.help summary::before{content:'+ ';}details.help[open] summary::before{co
 <div class="app">
  <header>
   <div class="brand"><a href="atlas.html#systems" aria-label="Back to the Visual & Motion Atlas">← Atlas</a><h1>Diagram studio</h1></div>
-  <div class="exports" role="group" aria-label="Export">
+  <div class="exports" role="group" aria-label="Diagram actions">
+   <a class="btn" href="chart-studio.html" style="text-decoration:none">Chart studio</a>
    <a class="btn" href="flowchart-studio.html" style="text-decoration:none">Flowchart studio</a>
-   <button class="btn" id="exSvg" title="Download SVG">SVG <span>file</span></button>
-   <button class="btn" id="exPng" title="Download PNG at 2×">PNG <span>2×</span></button>
-   <button class="btn" id="exCopy" title="Copy SVG markup">Copy <span>SVG</span></button>
-   <button class="btn primary" id="exReset" title="Replace the content with the starter example">Start over</button>
+   <button class="btn" id="undo" type="button" title="Undo (Ctrl+Z)" aria-label="Undo">↶</button><button class="btn" id="redo" type="button" title="Redo (Ctrl+Shift+Z)" aria-label="Redo">↷</button>
+   <button class="btn" id="tplOpen" type="button">Templates</button>
+   <details class="menu" id="draftsMenu"><summary class="btn">Drafts</summary><div class="pop" id="drafts"></div></details>
+   <button class="btn" id="share" type="button">Copy link</button>
+   <details class="menu" id="exportMenu"><summary class="btn primary">Export</summary><div class="pop">
+    <button type="button" id="exSvg">SVG file <small>fonts embedded</small></button>
+    <button type="button" id="exPng">PNG <small>2×</small></button>
+    <button type="button" id="exCopy">Copy SVG <small>markup</small></button>
+    <button type="button" id="exEmbed">Embed HTML <small>with text alternative</small></button>
+    <button type="button" id="exJson">Diagram as text <small>re-importable</small></button>
+    <hr><button type="button" id="exReset">Start over <small>starter content</small></button></div></details>
   </div>
  </header>
  <aside class="side">
@@ -197,7 +225,7 @@ details.help summary::before{content:'+ ';}details.help[open] summary::before{co
    <label class="field">Subtitle<input type="text" id="subtitle" placeholder="Optional one-line subtitle"></label>
   </div>
   <div class="sec">
-   <h2>Content</h2>
+   <h2>Content <small><button class="btn sm" id="importOpen" type="button">Import text</button></small></h2>
    <div class="ded" id="ed"></div>
   </div>
   <div class="sec">
@@ -220,11 +248,14 @@ details.help summary::before{content:'+ ';}details.help[open] summary::before{co
   </div>
  </main>
 </div>
+<dialog id="impDlg" aria-labelledby="impH"><form method="dialog" class="dlg"><h2 id="impH">Import from text</h2><p class="hint" id="impHelp"></p><textarea id="impBox" spellcheck="false" aria-label="Diagram as text"></textarea><div class="row" style="justify-content:flex-end"><button class="btn" value="cancel" type="submit">Cancel</button><button class="btn primary" value="ok" type="submit">Replace the content</button></div></form></dialog>
+<dialog id="tpl" aria-labelledby="tplH"><div class="tpl-in"><div class="tpl-head"><div><h2 id="tplH">Templates</h2><p>Start from a ready-made diagram, drawn in the style you have picked.</p></div><button class="btn" type="button" id="tplClose" aria-label="Close templates">×</button></div><div class="tpl-cats" id="tplCats" role="group" aria-label="Diagram type"></div><div class="tpl-grid" id="tplGrid"></div></div></dialog>
 <div class="toast" id="toast" role="status"></div>
 <script src="dataviz/styles.js"></script>
 <script src="dataviz/flow.js"></script>
 <script src="dataviz/flowtypes.js"></script>
 <script src="dataviz/diagrams.js"></script>
+<script src="dataviz/diagrams-more.js"></script>
 <script src="dataviz/reveal.js"></script>
 <script src="dataviz/export.js"></script>
 <script>
@@ -272,6 +303,8 @@ const ICON={roadmap:'<path d="M1 6h32M1 14h32M1 22h32"/><rect x="3" y="3" width=
  journey:'<path d="M2 18C7 18 8 6 13 6s6 16 11 16 5-10 8-10"/><circle cx="13" cy="6" r="2.5" fill="currentColor"/><circle cx="24" cy="22" r="2.5" fill="currentColor"/>',
  matrix:'<rect x="1" y="2" width="32" height="24" rx="3"/><path d="M1 9h32M12 2v24M23 2v24"/><circle cx="17.5" cy="15" r="2" fill="currentColor"/><circle cx="28" cy="20" r="2" fill="currentColor"/>'};
 
+/* the fourteen kinds from dataviz/diagrams-more.js bring their own starter, icon and editor schema */
+const MORE=Diagrams.more||{};for(const k in MORE){STARTERS[k]={title:MORE[k].starter.title,subtitle:MORE[k].starter.subtitle,data:MORE[k].starter.data};KINDHELP[k]=MORE[k].hint+'.';ICON[k]=MORE[k].icon;}
 const load=()=>{try{return JSON.parse(store.get('state')||'null');}catch{return null;}};
 const S=Object.assign({kind:'roadmap',style:'workflow',docs:{},zoom:1,x:0,y:0,last:null},load()||{});
 for(const k in STARTERS)if(!S.docs[k])S.docs[k]=JSON.parse(JSON.stringify(STARTERS[k]));
@@ -279,26 +312,39 @@ const save=()=>store.set('state',JSON.stringify({kind:S.kind,style:S.style,docs:
 const doc=()=>S.docs[S.kind],D=()=>doc().data;
 
 /* kinds + styles */
-function drawKinds(){$('kinds').innerHTML=Diagrams.KINDS.map(k=>`<button class="type" data-kind="${k.id}" aria-pressed="${k.id===S.kind}"><svg viewBox="0 0 34 28" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">${ICON[k.id]}</svg><b>${k.name}</b><span>${k.hint}</span></button>`).join('');$('why').textContent=KINDHELP[S.kind];}
-$('kinds').onclick=e=>{const b=e.target.closest('[data-kind]');if(!b)return;S.kind=b.dataset.kind;drawKinds();drawEditor();syncTitle();render(true);};
+function drawKinds(){$('kinds').innerHTML=Diagrams.KINDS.map(k=>`<button class="type" data-kind="${k.id}" aria-pressed="${k.id===S.kind}" title="${esc(k.hint)}"><svg viewBox="0 0 34 28" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">${ICON[k.id]}</svg><b>${k.name}</b><span>${k.hint}</span></button>`).join('');$('why').textContent=KINDHELP[S.kind];}
+$('kinds').onclick=e=>{const b=e.target.closest('[data-kind]');if(!b)return;S.kind=b.dataset.kind;drawKinds();drawEditor();syncTitle();render(true);commit();};
 const chipHTML=st=>`<button class="chip" data-style="${st.id}" aria-pressed="${st.id===S.style}" title="${st.kicker}"><span class="sw" style="background:${st.t.bg.startsWith('#')?st.t.bg:'#0B0F1A'}"><i style="background:${st.t.accent}"></i></span>${st.name}</button>`;
 $('styles').innerHTML=`<span class="lbl">Your brand</span>${DVStyles.filter(s=>s.brand).map(chipHTML).join('')}<span class="lbl">From your board</span>${DVStyles.filter(s=>s.board).map(chipHTML).join('')}<span class="lbl">Researched</span>${DVStyles.filter(s=>!s.board&&!s.brand).map(chipHTML).join('')}`;
 $('styles').onclick=e=>{const b=e.target.closest('[data-style]');if(!b)return;S.style=b.dataset.style;$('styles').querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',String(c===b)));render(true);};
+$('guideLink')&&($('guideLink').href='chart-styles.html#s='+S.style);
 function syncTitle(){$('title').value=doc().title||'';$('subtitle').value=doc().subtitle||'';}
 $('title').oninput=()=>{doc().title=$('title').value;later();};$('subtitle').oninput=()=>{doc().subtitle=$('subtitle').value;later();};
 
 /* ---------- editors ---------- */
 const opts=(arr,sel,blank)=>(blank?`<option value=""${sel===''||sel==null?' selected':''}>${blank}</option>`:'')+arr.map((p,i)=>`<option value="${i}"${String(sel)===String(i)?' selected':''}>${esc(p)}</option>`).join('');
-function drawEditor(){const d=D(),ed=$('ed');let h='';
+/* a form built from the kind's schema: fields, then lists of items that can be dragged into a new order */
+function fieldHTML(f,val,attrs){const d=D(),lab=esc(f.label),full=f.half?'':' class="full"';val=val??'';
+ if(f.type==='textarea')return `<label${full}>${lab}<textarea ${attrs}${f.code?' class="code" style="min-height:150px" spellcheck="false"':''}>${esc(val)}</textarea></label>`;
+ if(f.type==='select')return `<label${full}>${lab}<select ${attrs}>${f.options.map(([v,l])=>`<option value="${v}"${String(val)===v?' selected':''}>${esc(l)}</option>`).join('')}</select></label>`;
+ if(f.type==='actor'||f.type==='table'){const names=(f.type==='actor'?(d.actors||[]).map(a=>a.name):(d.tables||[]).map(t=>t.name));return `<label${full}>${lab}<select ${attrs}><option value="">—</option>${names.map(n=>`<option${n===val?' selected':''}>${esc(n)}</option>`).join('')}</select></label>`;}
+ return `<label${full}>${lab}<input type="${f.type==='number'?'number':'text'}" ${attrs} value="${esc(val)}"></label>`;}
+function genEditor(){const k=MORE[S.kind],d=D(),sc=k.schema;let h='';
+ if(sc.fields&&!sc.lists)h+=`<div class="flds">${sc.fields.map(f=>fieldHTML(f,d[f.k],`data-gf="${f.k}"`)).join('')}</div>`;
+ else if(sc.fields)h+=`<div class="flds">${sc.fields.filter(f=>f.type!=='textarea'||f.code).map(f=>fieldHTML(f,d[f.k],`data-gf="${f.k}"`)).join('')}</div>`;
+ (sc.lists||[]).forEach(Ls=>{const arr=d[Ls.k]||[];h+=`<h3>${esc(Ls.label)} <small style="text-transform:none;letter-spacing:0;font-weight:500">drag ⋮⋮ to reorder</small></h3><ul class="list">`+arr.map((it,i)=>`<li class="item" data-drag="${Ls.k}:${i}" data-li="${Ls.k}" data-ix="${i}"><div class="ihead"><button class="drag" type="button" aria-label="Move ${esc(it[Ls.title]||'item')}: drag, or use the up and down arrow keys">⋮⋮</button><span class="ttl" style="flex:1;min-width:0;font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(it[Ls.title]||'')}</span><button class="x" type="button" data-gdel="${Ls.k}:${i}" aria-label="Remove ${esc(it[Ls.title]||'item')}">×</button></div><div class="flds">${Ls.fields.map(f=>fieldHTML(f,it[f.k],`data-gl="${Ls.k}" data-gi="${i}" data-gk="${f.k}"`)).join('')}</div></li>`).join('')+`</ul>${Ls.max&&arr.length>=Ls.max?'':`<button class="add" type="button" data-gadd="${Ls.k}">+ ${esc(Ls.label.replace(/[,(].*$/,'').replace(/s\s*$/,'').trim()||'Item')}</button>`}`;});
+ if(sc.fields&&sc.lists)h+=`<div class="flds">${sc.fields.filter(f=>f.type==='textarea'&&!f.code).map(f=>fieldHTML(f,d[f.k],`data-gf="${f.k}"`)).join('')}</div>`;
+ return h;}
+function drawEditor(){const d=D(),ed=$('ed');let h='';if(MORE[S.kind]){ed.innerHTML=genEditor();return;}
  if(S.kind==='roadmap'){h+=`<label>Periods, comma separated<input type="text" data-f="periods" value="${esc(d.periods.join(', '))}"></label>
   <label>Today marker<select data-f="today">${opts(d.periods,d.today,'None')}</select></label>
   <h3>Workstreams</h3><ul class="list">${d.lanes.map((l,i)=>`<li class="line"><input type="text" data-lane="${i}" value="${esc(l)}" aria-label="Workstream ${i+1}"><button class="x" data-del-lane="${i}" aria-label="Remove ${esc(l)}">×</button></li>`).join('')}</ul><button class="add" data-add="lane">+ Workstream</button>
-  <h3>Items</h3><ul class="list">${d.items.map((it,i)=>`<li class="item"><div class="line"><input type="text" data-item="${i}" data-k="label" value="${esc(it.label)}" aria-label="Item name"><button class="x" data-del-item="${i}" aria-label="Remove item">×</button></div>
+  <h3>Items <small style="text-transform:none;letter-spacing:0;font-weight:500">drag ⋮⋮ to reorder</small></h3><ul class="list">${d.items.map((it,i)=>`<li class="item" data-drag="items:${i}"><div class="line" style="grid-template-columns:auto minmax(0,1fr) auto"><button class="drag" type="button" aria-label="Move ${esc(it.label)}: drag, or use the up and down arrow keys">⋮⋮</button><input type="text" data-item="${i}" data-k="label" value="${esc(it.label)}" aria-label="Item name"><button class="x" data-del-item="${i}" aria-label="Remove item">×</button></div>
    <div class="grid2"><label>Workstream<select data-item="${i}" data-k="lane">${opts(d.lanes,it.lane)}</select></label><label>Status<select data-item="${i}" data-k="status">${['planned','doing','done','risk'].map(s=>`<option value="${s}"${it.status===s?' selected':''}>${{planned:'Planned',doing:'In progress',done:'Done',risk:'At risk'}[s]}</option>`).join('')}</select></label>
    <label>From<select data-item="${i}" data-k="start">${opts(d.periods,it.start)}</select></label><label>To<select data-item="${i}" data-k="end">${opts(d.periods,it.end)}</select></label></div></li>`).join('')}</ul><button class="add" data-add="item">+ Item</button>
   <h3>Milestones</h3><ul class="list">${(d.milestones||[]).map((m,i)=>`<li class="line" style="grid-template-columns:minmax(0,1fr) 96px auto"><input type="text" data-ms="${i}" data-k="label" value="${esc(m.label)}" aria-label="Milestone"><select data-ms="${i}" data-k="at" aria-label="When">${opts(d.periods,m.at)}</select><button class="x" data-del-ms="${i}" aria-label="Remove milestone">×</button></li>`).join('')}</ul><button class="add" data-add="ms">+ Milestone</button>`;}
  else if(S.kind==='org'){h+=`<p class="hint">One person per line: <b>Name — Role [Team]</b>. Indent two spaces under the person they report to. Start a line with “Open role” to show a vacancy.</p><textarea class="code" data-f="text" spellcheck="false" aria-label="People">${esc(d.text)}</textarea>`;}
- else if(S.kind==='journey'){h+=`<label>Persona<input type="text" data-f="persona" value="${esc(d.persona||'')}"></label><p class="hint">One idea per line in each box.</p><ul class="list">${d.stages.map((s,i)=>`<li class="item"><div class="stagehd"><input type="text" data-st="${i}" data-k="name" value="${esc(s.name)}" aria-label="Stage name"><button class="x" data-mv-st="${i}" data-d="-1" aria-label="Move stage earlier"${i?'':' disabled'}>↑</button><button class="x" data-mv-st="${i}" data-d="1" aria-label="Move stage later"${i<d.stages.length-1?'':' disabled'}>↓</button><button class="x" data-del-st="${i}" aria-label="Remove stage">×</button></div>
+ else if(S.kind==='journey'){h+=`<label>Persona<input type="text" data-f="persona" value="${esc(d.persona||'')}"></label><p class="hint">One idea per line in each box.</p><ul class="list">${d.stages.map((s,i)=>`<li class="item" data-drag="stages:${i}"><div class="stagehd"><button class="drag" type="button" aria-label="Move stage ${esc(s.name)}: drag, or use the up and down arrow keys">⋮⋮</button><input type="text" data-st="${i}" data-k="name" value="${esc(s.name)}" aria-label="Stage name"><button class="x" data-mv-st="${i}" data-d="-1" aria-label="Move stage earlier"${i?'':' disabled'}>↑</button><button class="x" data-mv-st="${i}" data-d="1" aria-label="Move stage later"${i<d.stages.length-1?'':' disabled'}>↓</button><button class="x" data-del-st="${i}" aria-label="Remove stage">×</button></div>
    <label>Doing<textarea data-st="${i}" data-k="doing">${esc(s.doing||'')}</textarea></label><label>Touchpoints<textarea data-st="${i}" data-k="touchpoints">${esc(s.touchpoints||'')}</textarea></label><label>Thinking<textarea data-st="${i}" data-k="thinking">${esc(s.thinking||'')}</textarea></label>
    <div class="feel"><span>Feeling</span><input type="range" min="-2" max="2" step="1" data-st="${i}" data-k="feeling" value="${+s.feeling||0}" aria-label="Feeling from very negative to very positive"><input type="text" data-st="${i}" data-k="feelingNote" value="${esc(s.feelingNote||'')}" placeholder="word" style="width:84px" aria-label="Feeling in a word"></div>
    <label>Pain points<textarea data-st="${i}" data-k="pains">${esc(s.pains||'')}</textarea></label><label>Opportunities<textarea data-st="${i}" data-k="ideas">${esc(s.ideas||'')}</textarea></label></li>`).join('')}</ul><button class="add" data-add="stage">+ Stage</button>`;}
@@ -337,8 +383,41 @@ ed.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
  else if(a.delRow!=null)d.rows.splice(+a.delRow,1);
  else return;drawEditor();render(false);if(focus){const els=ed.querySelectorAll(focus.replace(':last-of-type',''));const el=els[els.length-1];if(el){el.focus();el.select&&el.select();}}});
 
+ed.addEventListener('input',e=>{const el=e.target,d=D();if(!MORE[S.kind])return;const num=el.type==='number';const v=num?(el.value===''?'':+el.value):el.value;
+ if(el.dataset.gf){d[el.dataset.gf]=v;later();}else if(el.dataset.gl){const it=d[el.dataset.gl][+el.dataset.gi];it[el.dataset.gk]=v;const li=el.closest('li');const Ls=MORE[S.kind].schema.lists.find(x=>x.k===el.dataset.gl);if(Ls&&Ls.title===el.dataset.gk&&li)li.querySelector('.ttl').textContent=v;later();}});
+ed.addEventListener('change',e=>{const el=e.target;if(!MORE[S.kind])return;if(el.dataset.gl&&((el.dataset.gl==='actors'&&el.dataset.gk==='name')||(el.dataset.gl==='tables'&&el.dataset.gk==='name')))drawEditor();});
+ed.addEventListener('click',e=>{if(!MORE[S.kind])return;const b=e.target.closest('button');if(!b)return;const d=D(),sc=MORE[S.kind].schema;
+ if(b.dataset.gadd){const Ls=sc.lists.find(x=>x.k===b.dataset.gadd);(d[Ls.k]=d[Ls.k]||[]).push(JSON.parse(JSON.stringify(Ls.add)));drawEditor();render(false);commit();const items=ed.querySelectorAll(`li[data-li="${Ls.k}"]`);const last=items[items.length-1];if(last){const i=last.querySelector('input,textarea');i&&i.focus();i&&i.select&&i.select();}}
+ else if(b.dataset.gdel){const [k,i]=b.dataset.gdel.split(':');d[k].splice(+i,1);drawEditor();render(false);commit();}});
+/* reorder by dragging the ⋮⋮ handle (pointer) or with the arrow keys on it */
+function moveItem(k,i,j){const arr=D()[k];if(!arr||j<0||j>=arr.length||i===j)return false;const [x]=arr.splice(i,1);arr.splice(j,0,x);drawEditor();render(false);commit();return true;}
+ed.addEventListener('pointerdown',e=>{const h=e.target.closest('.drag');if(!h)return;const li=h.closest('li[data-drag]');if(!li)return;e.preventDefault();try{h.setPointerCapture(e.pointerId);}catch{}li.classList.add('dragging');let over=null;
+ const mv=ev=>{const el=document.elementFromPoint(ev.clientX,ev.clientY)?.closest('li[data-drag]');ed.querySelectorAll('.over').forEach(x=>x.classList.remove('over'));over=el&&el!==li&&el.parentElement===li.parentElement?el:null;if(over)over.classList.add('over');};
+ const up=()=>{h.removeEventListener('pointermove',mv);h.removeEventListener('pointerup',up);h.removeEventListener('pointercancel',up);li.classList.remove('dragging');ed.querySelectorAll('.over').forEach(x=>x.classList.remove('over'));
+  if(over){const [k,i]=li.dataset.drag.split(':');if(moveItem(k,+i,+over.dataset.drag.split(':')[1]))toast('Moved');}};
+ h.addEventListener('pointermove',mv);h.addEventListener('pointerup',up);h.addEventListener('pointercancel',up);});
+ed.addEventListener('keydown',e=>{const h=e.target.closest('.drag');if(!h||!['ArrowUp','ArrowDown'].includes(e.key))return;e.preventDefault();const [k,i]=h.closest('li[data-drag]').dataset.drag.split(':'),j=+i+(e.key==='ArrowUp'?-1:1);
+ if(moveItem(k,+i,j)){const nh=ed.querySelector(`li[data-drag="${k}:${j}"] .drag`);nh&&nh.focus();}});
+
+/* click an element on the canvas to edit it in the panel */
+function selectRef(ref){if(!ref)return;const [k,i]=ref.split(':');let el=null;
+ if(MORE[S.kind]){el=ed.querySelector(`li[data-li="${k}"][data-ix="${i}"]`);if(!el){const f=ed.querySelector(`[data-gf="${k}"]`)||ed.querySelector(`[data-gf="links"]`)||ed.querySelector(`[data-gf="center"]`);el=f&&f.closest('label');}}
+ else{const sel={items:`[data-item="${i}"]`,stages:`[data-st="${i}"]`,columns:`[data-col="${i}"]`}[k];const f=sel&&ed.querySelector(sel);el=f&&f.closest('li');}
+ if(!el)return;ed.querySelectorAll('.sel').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');el.scrollIntoView({block:'nearest',behavior:'smooth'});const inp=el.matches('input,textarea,select')?el:el.querySelector('input,textarea,select');if(inp)inp.focus({preventScroll:true});setTimeout(()=>el.classList.remove('sel'),1600);}
+
+/* undo / redo: snapshots of the kind and its content */
+const hist={past:[],future:[],last:null};let holding=false;
+const snap=()=>JSON.stringify({kind:S.kind,doc:S.docs[S.kind]});
+function commit(){if(holding)return;const now=snap();if(hist.last===null){hist.last=now;return syncUndo();}if(now===hist.last)return;hist.past.push(hist.last);if(hist.past.length>100)hist.past.shift();hist.future=[];hist.last=now;syncUndo();}
+function restoreSnap(j){const o=JSON.parse(j);S.kind=o.kind;S.docs[o.kind]=o.doc;drawKinds();syncTitle();drawEditor();render(false);}
+function undo(){if(!hist.past.length)return;hist.future.push(hist.last);hist.last=hist.past.pop();restoreSnap(hist.last);syncUndo();toast('Undone');}
+function redo(){if(!hist.future.length)return;hist.past.push(hist.last);hist.last=hist.future.pop();restoreSnap(hist.last);syncUndo();toast('Redone');}
+function syncUndo(){$('undo').disabled=!hist.past.length;$('redo').disabled=!hist.future.length;}
+$('undo').onclick=undo;$('redo').onclick=redo;
+addEventListener('keydown',e=>{if(!(e.ctrlKey||e.metaKey)||e.key.toLowerCase()!=='z'||e.target.closest('input,textarea'))return;e.preventDefault();e.shiftKey?redo():undo();});
+
 /* ---------- render ---------- */
-let timer=0;const later=()=>{clearTimeout(timer);timer=setTimeout(()=>render(false),160);};
+let timer=0;const later=()=>{clearTimeout(timer);timer=setTimeout(()=>{render(false);commit();},220);};
 const order=()=>(Diagrams.KINDS.find(k=>k.id===S.kind)||{}).order||'y';
 const loadedFonts=new Set();
 function render(fit){stopPlay();const st=DVStyle(S.style);DVFonts(st);
@@ -355,9 +434,15 @@ function apply(){paper.style.transform=`translate(${S.x}px,${S.y}px) scale(${S.z
 function fitView(){const r=S.last;if(!r)return;const W=stage.clientWidth,H=stage.clientHeight,pad=40;const all=Math.min((W-pad*2)/r.width,(H-pad*2-40)/r.height);S.zoom=Math.min(1.25,Math.max(.15,Math.min((W-pad*2)/r.width,Math.max(all,.62))));S.x=(W-r.width*S.zoom)/2;S.y=r.height*S.zoom>H-pad*2-40?pad:Math.max(pad,(H-40-r.height*S.zoom)/2);apply();}
 function zoomAt(k,cx,cy){const z=Math.min(3,Math.max(.12,S.zoom*k));S.x=cx-(cx-S.x)*(z/S.zoom);S.y=cy-(cy-S.y)*(z/S.zoom);S.zoom=z;apply();}
 stage.addEventListener('wheel',e=>{if(!(e.ctrlKey||e.metaKey)){S.x-=e.deltaX;S.y-=e.deltaY;apply();e.preventDefault();return;}e.preventDefault();const b=stage.getBoundingClientRect();zoomAt(Math.exp(-e.deltaY*.0022),e.clientX-b.left,e.clientY-b.top);},{passive:false});
-let drag=null;stage.addEventListener('pointerdown',e=>{if(e.target.closest('.zoom,.motion'))return;drag={x:e.clientX,y:e.clientY,sx:S.x,sy:S.y};stage.classList.add('drag');stage.setPointerCapture(e.pointerId);});
-stage.addEventListener('pointermove',e=>{if(!drag)return;S.x=drag.sx+e.clientX-drag.x;S.y=drag.sy+e.clientY-drag.y;apply();});
-stage.addEventListener('pointerup',()=>{drag=null;stage.classList.remove('drag');});
+let drag=null,raf=0;
+stage.addEventListener('pointerdown',e=>{if(e.target.closest('.zoom,.motion'))return;const xy=e.target.closest('[data-xy]');drag={x:e.clientX,y:e.clientY,sx:S.x,sy:S.y,moved:false,ref:e.target.closest('[data-ref]')?.dataset.ref,xy:xy&&S.last&&S.last.box?xy.dataset.xy:null};
+ if(drag.xy)holding=true;else stage.classList.add('drag');stage.setPointerCapture(e.pointerId);});
+stage.addEventListener('pointermove',e=>{if(!drag)return;if(Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>4)drag.moved=true;
+ if(drag.xy){if(!drag.moved)return;const svg=paper.querySelector('svg');if(!svg)return;const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const p=pt.matrixTransform(svg.getScreenCTM().inverse()),b=S.last.box;const [k,i]=drag.xy.split(':'),it=D()[k][+i];
+  it.x=Math.round(Math.max(0,Math.min(100,(p.x-b.x)/b.w*100)));it.y=Math.round(Math.max(0,Math.min(100,100-(p.y-b.y)/b.h*100)));cancelAnimationFrame(raf);raf=requestAnimationFrame(()=>render(false));return;}
+ S.x=drag.sx+e.clientX-drag.x;S.y=drag.sy+e.clientY-drag.y;apply();});
+stage.addEventListener('pointerup',()=>{if(!drag)return;const d=drag;drag=null;stage.classList.remove('drag');if(d.xy){holding=false;if(d.moved){drawEditor();commit();}selectRef(d.xy);return;}if(!d.moved&&d.ref)selectRef(d.ref);});
+stage.addEventListener('pointercancel',()=>{drag=null;holding=false;stage.classList.remove('drag');});
 $('zIn').onclick=()=>zoomAt(1.2,stage.clientWidth/2,stage.clientHeight/2);$('zOut').onclick=()=>zoomAt(1/1.2,stage.clientWidth/2,stage.clientHeight/2);$('zFit').onclick=fitView;
 addEventListener('resize',()=>fitView());
 
@@ -366,7 +451,61 @@ const slug=()=>((doc().title||S.kind).trim().toLowerCase().replace(/[^a-z0-9]+/g
 $('exSvg').onclick=async()=>{DVExport.download(slug()+'.svg',await DVExport.svgWithFonts(S.last.svg,DVStyle(S.style)),'image/svg+xml');toast('SVG downloaded with fonts embedded');};
 $('exPng').onclick=async()=>{try{DVExport.download(slug()+'.png',await DVExport.png(S.last.svg,S.last.width,S.last.height,DVStyle(S.style)));toast('PNG downloaded at 2×');}catch{toast('PNG export failed in this browser; use SVG');}};
 $('exCopy').onclick=async()=>{try{await navigator.clipboard.writeText(S.last.svg);toast('SVG copied');}catch{toast('Copy was blocked by the browser');}};
-$('exReset').onclick=()=>{S.docs[S.kind]=JSON.parse(JSON.stringify(STARTERS[S.kind]));syncTitle();drawEditor();render(true);toast('Back to the starter '+(Diagrams.KINDS.find(k=>k.id===S.kind)||{}).name.toLowerCase());};
+$('exReset').onclick=()=>{S.docs[S.kind]=JSON.parse(JSON.stringify(STARTERS[S.kind]));syncTitle();drawEditor();render(true);commit();toast('Back to the starter '+(Diagrams.KINDS.find(k=>k.id===S.kind)||{}).name.toLowerCase());};
+
+/* text in and out: every kind can be written as plain text (an outline, or Mermaid-like for sequence and ER) */
+const OLDIO={
+ org:{help:'One person per line: <b>Name — Role [Team]</b>, indented two spaces under their manager.',toText:d=>d.text,parse:t=>({text:t})},
+ roadmap:{help:'<b>periods: Nov, Dec, Jan</b> and <b>today: Nov</b>, then <b>## Workstream</b> headings with items like <b>- Item | Nov-Dec | doing</b> (done, doing, planned, risk). <b>milestone: Name | Jan</b>.',
+  toText:d=>`periods: ${d.periods.join(', ')}\n`+(d.today!==''&&d.today!=null?`today: ${d.periods[+d.today]||''}\n`:'')+d.lanes.map((l,li)=>`## ${l}\n`+d.items.filter(it=>(+it.lane||0)===li).map(it=>`- ${it.label} | ${d.periods[+it.start]||''}-${d.periods[+it.end]||''} | ${it.status||'planned'}`).join('\n')).join('\n')+'\n'+(d.milestones||[]).map(m=>`milestone: ${m.label} | ${d.periods[+m.at]||''}`).join('\n'),
+  parse:t=>{const d={periods:[],today:'',lanes:[],items:[],milestones:[]};const P=n=>{const i=d.periods.findIndex(p=>p.toLowerCase()===String(n).trim().toLowerCase());return i<0?0:i;};const lines=t.split('\n').map(l=>l.trim()).filter(Boolean);
+   lines.forEach(l=>{const m=l.match(/^periods?\s*:\s*(.+)/i);if(m)d.periods=m[1].split(',').map(x=>x.trim()).filter(Boolean);});
+   lines.forEach(l=>{let m;if(/^periods?\s*:/i.test(l))return;if((m=l.match(/^today\s*:\s*(.+)/i))){d.today=String(P(m[1]));return;}if((m=l.match(/^#+\s*(.+)/))){d.lanes.push(m[1]);return;}
+    if((m=l.match(/^milestone\s*:\s*(.+?)\s*\|\s*(.+)$/i))){d.milestones.push({label:m[1],at:String(P(m[2]))});return;}
+    const p=l.replace(/^[-*•]\s*/,'').split(/\s*\|\s*/);if(!d.lanes.length)d.lanes.push('Work');const [a,b]=(p[1]||'').split(/\s*[-–]\s*/);d.items.push({label:p[0],lane:d.lanes.length-1,start:P(a||d.periods[0]),end:P(b||a||d.periods[0]),status:(p[2]||'planned').toLowerCase()});});
+   if(!d.periods.length)d.periods=['Now'];return d;}},
+ matrix:{help:'CSV: the first row is <b>Criterion, Option A, Option B*</b> (a * marks the recommendation). A row with only <b>## Group</b> starts a group. Cells: yes, no, partial or any text.',
+  toText:d=>['Criterion,'+d.columns.map(c=>c.name+(c.pick?'*':'')).join(','),...d.rows.map(r=>r.group!=null?'## '+r.group:[r.label,...(r.cells||[])].map(v=>/[,"]/.test(v)?'"'+String(v).replace(/"/g,'""')+'"':v).join(','))].join('\n'),
+  parse:t=>{const rows=t.split('\n').filter(l=>l.trim());const cells=l=>{const o=[];let c='',q=false;for(const ch of l){if(q){if(ch==='"')q=false;else c+=ch;}else if(ch==='"')q=true;else if(ch===','){o.push(c.trim());c='';}else c+=ch;}o.push(c.trim());return o;};
+   const head=cells(rows.shift()||'Criterion,Option');return {columns:head.slice(1).map(n=>({name:n.replace(/\*$/,''),pick:/\*$/.test(n)})),rows:rows.map(l=>/^#+/.test(l.trim())?{group:l.trim().replace(/^#+\s*/,'')}:(()=>{const c=cells(l);return {label:c[0],cells:c.slice(1)};})())};}},
+ journey:{help:'<b>persona: …</b>, then <b>## Stage</b> headings, each with lines like <b>doing:</b>, <b>touchpoints:</b>, <b>thinking:</b>, <b>feeling: 2 hooked</b> (−2 to 2), <b>pains:</b>, <b>ideas:</b>. Repeat a key for more lines.',
+  toText:d=>(d.persona?`persona: ${d.persona}\n`:'')+d.stages.map(s=>`## ${s.name}\n`+['doing','touchpoints','thinking','pains','ideas'].flatMap(k=>String(s[k]||'').split('\n').filter(Boolean).map(v=>`${k}: ${v}`)).join('\n')+`\nfeeling: ${+s.feeling||0}${s.feelingNote?' '+s.feelingNote:''}`).join('\n'),
+  parse:t=>{const d={persona:'',stages:[]};t.split('\n').map(l=>l.trim()).filter(Boolean).forEach(l=>{let m;if((m=l.match(/^persona\s*:\s*(.+)/i))){d.persona=m[1];return;}if((m=l.match(/^#+\s*(.+)/))){d.stages.push({name:m[1],doing:'',touchpoints:'',thinking:'',feeling:0,feelingNote:'',pains:'',ideas:''});return;}
+   if(!d.stages.length)return;const s=d.stages[d.stages.length-1];if((m=l.match(/^feeling\s*:\s*(-?\d)\s*(.*)$/i))){s.feeling=Math.max(-2,Math.min(2,+m[1]));s.feelingNote=m[2];return;}if((m=l.match(/^(doing|touchpoints|thinking|pains|ideas)\s*:\s*(.+)/i))){const k=m[1].toLowerCase();s[k]+=(s[k]?'\n':'')+m[2];}});return d;}}};
+const io=()=>MORE[S.kind]||OLDIO[S.kind];
+$('importOpen').onclick=()=>{const k=io();$('impHelp').innerHTML=k.help;$('impBox').value=k.toText(D());$('impDlg').showModal();$('impBox').focus();};
+$('impDlg').addEventListener('close',()=>{if($('impDlg').returnValue!=='ok')return;try{const d=io().parse($('impBox').value);doc().data=d;drawEditor();render(true);commit();toast('Imported');}catch(err){console.warn(err);toast('Could not read that text: '+(err.message||err));}});
+$('exJson').onclick=()=>{DVExport.download(slug()+'.txt',io().toText(D()),'text/plain');toast('Text version downloaded; paste it into Import text to rebuild');};
+$('exEmbed').onclick=async()=>{const r=S.last,st=DVStyle(S.style);const fonts=st.fonts&&st.fonts.length?`<link rel="stylesheet" href="https://fonts.googleapis.com/css2?${st.fonts.map(f=>'family='+f).join('&')}&display=swap">\n`:'';
+ const svg=r.svg.replace(/<svg([^>]*) width="\d+(\.\d+)?" height="\d+(\.\d+)?"/,'<svg$1 width="100%" style="height:auto;display:block"');const h=`<!-- ${esc(doc().title||S.kind)} · made in Diagram studio -->\n${fonts}<figure style="margin:0;max-width:${r.width}px">\n${svg}\n<details style="margin-top:8px;font:13px system-ui,sans-serif"><summary>Text version</summary><pre style="white-space:pre-wrap">${esc(io().toText(D()))}</pre></details>\n</figure>\n`;
+ try{await navigator.clipboard.writeText(h);toast('Embed HTML copied; a file was downloaded too');}catch{}DVExport.download(slug()+'-embed.html',h,'text/html');};
+document.addEventListener('click',e=>{document.querySelectorAll('details.menu[open]').forEach(d=>{if(!d.contains(e.target))d.open=false;});if(e.target.closest('.pop button')){const m=e.target.closest('details.menu');if(m&&m.id==='exportMenu')m.open=false;}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('details.menu[open]').forEach(d=>{d.open=false;d.querySelector('summary').focus();});});
+
+/* templates gallery */
+let tplKind=null;
+function tplItems(k){const m=MORE[k];const list=[{name:'Starter',title:STARTERS[k].title,subtitle:STARTERS[k].subtitle,data:STARTERS[k].data}];if(m&&m.templates)list.push(...m.templates);return list;}
+function drawTpl(){const st=DVStyle(S.style);$('tplCats').innerHTML=Diagrams.KINDS.map(k=>`<button type="button" data-tk="${k.id}" aria-pressed="${k.id===tplKind}">${esc(k.name)}</button>`).join('');
+ $('tplGrid').innerHTML=tplItems(tplKind).map((t,i)=>{let svg='';try{svg=Diagrams.render(tplKind,JSON.parse(JSON.stringify(t.data)),st,{title:t.title,subtitle:t.subtitle,id:'tp'+i}).svg.replace(/ role="img"/,' aria-hidden="true"');}catch(e){svg='';}
+  return `<button type="button" class="tpl-card" data-ti="${i}"><div class="tpl-thumb">${svg}</div><div class="tpl-meta"><b>${esc(t.title||t.name)}</b><span>${esc(Diagrams.KINDS.find(k=>k.id===tplKind).name)} · ${esc(t.name)}</span></div></button>`;}).join('');}
+$('tplOpen').onclick=()=>{tplKind=S.kind;drawTpl();$('tpl').showModal();};$('tplClose').onclick=()=>$('tpl').close();
+$('tpl').addEventListener('click',e=>{if(e.target===$('tpl'))$('tpl').close();const c=e.target.closest('[data-tk]');if(c){tplKind=c.dataset.tk;drawTpl();return;}const b=e.target.closest('[data-ti]');if(!b)return;const t=tplItems(tplKind)[+b.dataset.ti];
+ S.kind=tplKind;S.docs[S.kind]={title:t.title||'',subtitle:t.subtitle||'',data:JSON.parse(JSON.stringify(t.data))};$('tpl').close();drawKinds();syncTitle();drawEditor();render(true);commit();toast('Template loaded: '+(t.title||t.name));});
+
+/* drafts and share links */
+const b64u={enc:bytes=>{let s='';for(let i=0;i<bytes.length;i+=0x8000)s+=String.fromCharCode.apply(null,bytes.subarray(i,i+0x8000));return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');},dec:str=>Uint8Array.from(atob(str.replace(/-/g,'+').replace(/_/g,'/')),c=>c.charCodeAt(0))};
+async function pack(o){const json=new TextEncoder().encode(JSON.stringify(o));if(window.CompressionStream){try{const buf=await new Response(new Blob([json]).stream().pipeThrough(new CompressionStream('deflate-raw'))).arrayBuffer();return 'z.'+b64u.enc(new Uint8Array(buf));}catch{}}return 'j.'+b64u.enc(json);}
+async function unpack(tok){const bytes=b64u.dec(tok.slice(2));if(tok[0]==='z'){const buf=await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer();return JSON.parse(new TextDecoder().decode(buf));}return JSON.parse(new TextDecoder().decode(bytes));}
+$('share').onclick=async()=>{const tok=await pack({kind:S.kind,style:S.style,doc:doc()});history.replaceState(null,'','#d='+tok);const url=location.href;try{await navigator.clipboard.writeText(url);toast('Link copied: it opens this exact diagram');}catch{toast('Link is in the address bar; copy it from there');}};
+const drafts=()=>{try{return JSON.parse(store.get('drafts')||'[]');}catch{return [];}};
+function drawDrafts(){const d=drafts();$('drafts').innerHTML=`<button type="button" data-save>Save this diagram as a draft</button>${d.length?'<hr>':''}${d.map((x,i)=>`<div class="drow"><button type="button" data-load="${i}"><span>${esc(x.name)}</span><small>${esc((Diagrams.KINDS.find(k=>k.id===x.kind)||{}).name||'')}</small></button><button type="button" data-deld="${i}" aria-label="Delete draft ${esc(x.name)}">×</button></div>`).join('')}`;}
+$('draftsMenu').addEventListener('toggle',()=>{if($('draftsMenu').open)drawDrafts();});
+$('drafts').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=drafts();
+ if(b.hasAttribute('data-save')){const name=(doc().title||(Diagrams.KINDS.find(k=>k.id===S.kind)||{}).name||'Diagram').slice(0,60);const i=d.findIndex(x=>x.name===name&&x.kind===S.kind);const it={name,kind:S.kind,style:S.style,ts:Date.now(),doc:JSON.parse(JSON.stringify(doc()))};if(i>=0)d[i]=it;else d.unshift(it);
+  try{localStorage.setItem('dgs:drafts',JSON.stringify(d.slice(0,40)));toast('Draft saved: '+name);}catch{toast('Could not save: browser storage is full or blocked');}}
+ else if(b.dataset.load!=null){const x=d[+b.dataset.load];S.kind=x.kind;S.style=x.style||S.style;S.docs[x.kind]=JSON.parse(JSON.stringify(x.doc));$('draftsMenu').open=false;$('styles').querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',String(c.dataset.style===S.style)));drawKinds();syncTitle();drawEditor();render(true);commit();toast('Draft opened');return;}
+ else if(b.dataset.deld!=null){d.splice(+b.dataset.deld,1);try{localStorage.setItem('dgs:drafts',JSON.stringify(d));}catch{}}
+ drawDrafts();});
 
 /* animation */
 let play=null;
@@ -380,8 +519,10 @@ $('mvGif').onclick=async()=>{stopPlay();busy(true);try{DVExport.download(slug()+
 
 /* start: #roadmap, #org, #journey or #matrix picks the kind */
 const h=location.hash.slice(1);if(Diagrams.KINDS.some(k=>k.id===h))S.kind=h;
+window.DiagramStudio={get state(){return S;},get last(){return S.last;},set(p){if(p.kind)S.kind=p.kind;if(p.style)S.style=p.style;if(p.data)S.docs[S.kind].data=p.data;$('styles').querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',String(c.dataset.style===S.style)));drawKinds();syncTitle();drawEditor();render(true);commit();return S.last;},selectRef,moveItem,io,pack,unpack};
+if(/^d=[zj]\./.test(h)){unpack(h.slice(2)).then(o=>{if(!o||!o.doc||!Diagrams.KINDS.some(k=>k.id===o.kind))throw new Error('bad link');S.kind=o.kind;if(DVStyles.some(s=>s.id===o.style))S.style=o.style;S.docs[o.kind]=o.doc;$('styles').querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',String(c.dataset.style===S.style)));drawKinds();syncTitle();drawEditor();render(true);hist.last=snap();toast('Opened the shared diagram');}).catch(err=>{console.warn(err);toast('That share link could not be read');});}
 if(!DVStyles.some(s=>s.id===S.style))S.style='workflow';$('styles').querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',String(c.dataset.style===S.style)));
-drawKinds();syncTitle();drawEditor();render(true);document.fonts?.ready.then(()=>setTimeout(()=>render(false),60));
+drawKinds();syncTitle();drawEditor();render(true);commit();document.fonts?.ready.then(()=>setTimeout(()=>render(false),60));
 $('styles').querySelector('[aria-pressed=true]')?.scrollIntoView({block:'nearest',inline:'center'});
 })();
 </script>

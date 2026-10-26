@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cross-document view transition: index</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=Manrope:wght@400;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* 1. Both pages opt in. That is the whole API for a basic crossfade. */
+@view-transition{navigation:auto}
+:root{--fx-duration:900ms;--fx-ease:cubic-bezier(.2,.7,.1,1)}
+::view-transition-group(*){animation-duration:var(--fx-duration);animation-timing-function:var(--fx-ease)}
+*{box-sizing:border-box}
+body{margin:0;height:100vh;display:grid;grid-template-rows:1fr auto;background:#0b0d12;color:#f2f4f8;font-family:"Manrope",system-ui,sans-serif}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:12px;min-height:0}
+.cards a{position:relative;display:block;border-radius:22px;overflow:hidden;color:#fff;text-decoration:none}
+.cards img{width:100%;height:100%;object-fit:cover;display:block}
+.cards span{position:absolute;left:20px;bottom:18px;font:300 clamp(28px,2.6vw,44px)/1 "Cormorant Garamond",serif;text-shadow:0 2px 20px rgba(0,0,0,.6)}
+.cards a:focus-visible{outline:3px solid #7dd3fc;outline-offset:-6px}
+footer{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:10px 26px 22px}
+footer h1{margin:0;font:300 clamp(40px,5vw,76px)/1 "Cormorant Garamond",serif}
+.kicker{font:500 12px "JetBrains Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:#7dd3fc}
+@media(max-width:720px){.cards{grid-template-columns:1fr 1fr}}
+@media(prefers-reduced-motion:reduce){@view-transition{navigation:none}}
+</style>
+</head>
+<body>
+<main class="cards">
+ <a href="detail.html?p=cathedral" data-p="cathedral"><img src="../cathedral.webp" alt=""><span>Green cathedral</span></a>
+ <a href="detail.html?p=lighthouse" data-p="lighthouse"><img src="../lighthouse.webp" alt=""><span>Storm light</span></a>
+ <a href="detail.html?p=coast" data-p="coast"><img src="../coast.webp" alt=""><span>Coastal town</span></a>
+ <a href="detail.html?p=synthwave" data-p="synthwave"><img src="../synthwave.webp" alt=""><span>Night drive</span></a>
+</main>
+<footer><h1>Two pages, one motion.</h1><p class="kicker">@view-transition · pageswap · pagereveal</p></footer>
+<script>
+/* Settings passed in by the atlas preview (duration, easing, reduced motion). Safe to delete. */
+const q=new URLSearchParams(location.search);if(q.get('d'))document.documentElement.style.setProperty('--fx-duration',q.get('d')+'ms');if(q.get('e'))document.documentElement.style.setProperty('--fx-ease',q.get('e'));
+if(q.get('r')==='1')document.documentElement.classList.add('reduce');
+if(location.search)document.querySelectorAll('.cards a').forEach(a=>{const u=new URL(a.href);q.forEach((v,k)=>u.searchParams.set(k,v));a.href=u.href;});
+const reduce=()=>document.documentElement.classList.contains('reduce');
+
+/* 2. Leaving this page: name the image that was clicked, so it morphs into the detail hero. */
+addEventListener('pageswap',e=>{
+ if(!e.viewTransition)return;
+ if(reduce()){e.viewTransition.skipTransition();return;}
+ const p=new URL(e.activation.entry.url).searchParams.get('p');
+ const card=document.querySelector('[data-p="'+p+'"]');if(!card)return;
+ card.querySelector('img').style.viewTransitionName='hero';card.querySelector('span').style.viewTransitionName='title';
+});
+/* 3. Arriving back from a detail page: name the matching card so the hero flies home. */
+addEventListener('pagereveal',e=>{
+ if(!e.viewTransition)return;
+ if(reduce()){e.viewTransition.skipTransition();return;}
+ const from=window.navigation?.activation?.from?.url;if(!from)return;
+ const p=new URL(from).searchParams.get('p');const card=document.querySelector('[data-p="'+p+'"]');if(!card)return;
+ const img=card.querySelector('img'),span=card.querySelector('span');img.style.viewTransitionName='hero';span.style.viewTransitionName='title';
+ e.viewTransition.finished.then(()=>{img.style.viewTransitionName='';span.style.viewTransitionName='';});
+});
+/* Clear names if this page is restored from the back/forward cache. */
+addEventListener('pageshow',()=>document.querySelectorAll('.cards img,.cards span').forEach(el=>el.style.viewTransitionName=''));
+</script>
+</body>
+</html>

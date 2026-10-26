@@ -146,7 +146,7 @@ const iconRow={id:'x-icons',name:'Icon features',group:'Icons',desc:'A row of fe
 /* ---------- landing effects, films, type ---------- */
 const effOpts=()=>(PB.effects||[]).map(e=>[e.id,e.id+' · '+e.title]);
 const effect={id:'x-effect',name:'Landing effect clip',group:'Media',desc:'A short looping clip of a landing-page effect from the atlas, beside its notes. Good for a design showcase.',
- fields:[{k:'lid',label:'Effect',type:'select',options:effOpts,def:'L06'},{k:'kicker',label:'Kicker',type:'text',def:'Effect study'},{k:'heading',label:'Heading',type:'text',def:''},{k:'text',label:'Text',type:'long',def:''},
+ fields:[{k:'lid',label:'Effect',type:'select',options:effOpts,def:'L19'},{k:'kicker',label:'Kicker',type:'text',def:'Effect study'},{k:'heading',label:'Heading',type:'text',def:''},{k:'text',label:'Text',type:'long',def:''},
   {k:'side',label:'Clip side',type:'select',options:()=>[['left','Left'],['right','Right']],def:'left'}],
  render(v,ctx){const e=(PB.effects||[]).find(x=>x.id===v.lid)||(PB.effects||[])[0];if(!e)return {html:NOTE('The landing effects have not loaded.')};
   const src=e.film.src.replace(/^assets\//,''),poster=(e.film.poster||'').replace(/^assets\//,'');

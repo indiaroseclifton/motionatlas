@@ -20,7 +20,7 @@ function roadmap(d,s,opt){const {ctx,frame,heading,wrap,measure,esc,alpha,mix}=K
  y=headY+26+msTrack;
  /* pack items into rows per lane */
  const rowsTop=y,BAR=34,GAP=8;let laneY=[];
- lanes.forEach((ln,li)=>{const its=d.items.filter(it=>(+it.lane||0)===li).map(it=>({...it,s:Math.max(0,Math.min(P.length-1,+it.start||0)),e:Math.max(0,Math.min(P.length-1,+(it.end??it.start)||0))})).sort((a,b)=>a.s-b.s);
+ lanes.forEach((ln,li)=>{const its=d.items.filter(it=>(+it.lane||0)===li).map(it=>({...it,_i:d.items.indexOf(it),s:Math.max(0,Math.min(P.length-1,+it.start||0)),e:Math.max(0,Math.min(P.length-1,+(it.end??it.start)||0))})).sort((a,b)=>a.s-b.s);
   const rowsEnd=[];its.forEach(it=>{if(it.e<it.s)[it.s,it.e]=[it.e,it.s];let r=rowsEnd.findIndex(e=>e<it.s);if(r<0){r=rowsEnd.length;rowsEnd.push(-1);}rowsEnd[r]=it.e;it.row=r;});
   const nRows=Math.max(1,rowsEnd.length),h=nRows*(BAR+GAP)+GAP*2;laneY.push({y,h,its});y+=h;});
  const gridBottom=y;
@@ -35,11 +35,11 @@ function roadmap(d,s,opt){const {ctx,frame,heading,wrap,measure,esc,alpha,mix}=K
  /* bars */
  laneY.forEach((L,li)=>{const tint=C.tint(li);L.its.forEach(it=>{const x=gx+it.s*colW+5,w=(it.e-it.s+1)*colW-10,by=L.y+GAP+it.row*(BAR+GAP)+GAP/2;const st=it.status||'planned';
   const c=st==='risk'?t.bad:tint,fill=st==='planned'?(t.dark?alpha(c,.08):mix(c.startsWith('#')?c:'#888888',C.surf.startsWith('#')?C.surf:'#FFFFFF',.94)):st==='done'?(t.dark?alpha(c,.32):mix(c.startsWith('#')?c:'#888888','#FFFFFF',.62)):(t.dark?alpha(c,.2):mix(c.startsWith('#')?c:'#888888','#FFFFFF',.8));
-  const r=Math.min(t.nodeRadius||8,10);o+=`<rect x="${x}" y="${by}" width="${w}" height="${BAR}" rx="${r}" fill="${fill}" stroke="${c}" stroke-width="${t.id==='brutal'?2.2:1.3}"${st==='planned'?' stroke-dasharray="5 3"':''}${t.softShadow&&st!=='planned'?` filter="url(#${C.uid}s)"`:''}/>`;
+  const r=Math.min(t.nodeRadius||8,10);o+=`<g data-ref="items:${it._i}"><rect x="${x}" y="${by}" width="${w}" height="${BAR}" rx="${r}" fill="${fill}" stroke="${c}" stroke-width="${t.id==='brutal'?2.2:1.3}"${st==='planned'?' stroke-dasharray="5 3"':''}${t.softShadow&&st!=='planned'?` filter="url(#${C.uid}s)"`:''}/>`;
   if(st==='doing')o+=`<rect x="${x}" y="${by+BAR-4}" width="${w*Math.max(.08,Math.min(1,+(it.progress??.5)))}" height="4" rx="2" fill="${c}"/>`;
   const glyph=st==='done'?'✓ ':st==='risk'?'! ':'';const lab=glyph+it.label;const fits=measure(lab,12.5,600,t.font)<=w-20;
   let txt=fits?lab:lab;if(!fits){while(txt.length>3&&measure(txt+'…',12.5,600,t.font)>w-20)txt=txt.slice(0,-1);txt=txt.trimEnd()+'…';}
-  o+=`<text x="${x+10}" y="${by+BAR/2+4.5}" ${C.F} font-size="12.5" font-weight="600" fill="${t.dark?t.ink:mix(c.startsWith('#')?c:'#444444','#000000',.55)}"><title>${esc(it.label)}</title>${esc(txt)}</text>`;});});
+  o+=`<text x="${x+10}" y="${by+BAR/2+4.5}" ${C.F} font-size="12.5" font-weight="600" fill="${t.dark?t.ink:mix(c.startsWith('#')?c:'#444444','#000000',.55)}"><title>${esc(it.label)}</title>${esc(txt)}</text></g>`;});});
  /* milestones */
  (d.milestones||[]).forEach(m=>{const x=gx+(+m.at||0)*colW,yy=headY+26+msTrack/2;o+=`<line x1="${x}" y1="${yy+6}" x2="${x}" y2="${gridBottom}" stroke="${alpha(t.ink,.35)}" stroke-width="1" stroke-dasharray="3 3"/><path d="M${x} ${yy-7}l7 7-7 7-7-7z" fill="${t.ink}"/>`;
   o+=`<text x="${x+11}" y="${yy+4}" ${C.F} font-size="11.5" font-weight="700" fill="${t.ink}">${esc(C.T(m.label))}</text>`;});
@@ -93,9 +93,9 @@ function journey(d,s,opt){const {ctx,frame,heading,wrap,measure,esc,alpha,mix}=K
  const gx=PAD+gut,cx=i=>gx+i*colW;const tw=colW-24;
  const rows=[];const add=(label,h,draw)=>{rows.push({label,h,draw});};
  /* stage header */
- add('',46,(yy)=>{let s='';st.forEach((x,i)=>{const c=C.tint(i);s+=`<rect x="${cx(i)+4}" y="${yy}" width="${colW-8}" height="36" rx="${Math.min(t.nodeRadius||10,18)}" fill="${t.dark?alpha(c,.3):mix(c.startsWith('#')?c:'#888888','#FFFFFF',.8)}" stroke="${alpha(c,.6)}"/>`;
+ add('',46,(yy)=>{let s='';st.forEach((x,i)=>{const c=C.tint(i);s+=`<g data-ref="stages:${i}"><rect x="${cx(i)+4}" y="${yy}" width="${colW-8}" height="36" rx="${Math.min(t.nodeRadius||10,18)}" fill="${t.dark?alpha(c,.3):mix(c.startsWith('#')?c:'#888888','#FFFFFF',.8)}" stroke="${alpha(c,.6)}"/>`;
   if(i<n-1)s+=`<path d="M${cx(i)+colW-6} ${yy+18}l8 0" stroke="${t.ink}" stroke-width="1.5"${C.arrow('ink')}/>`;
-  s+=`<text x="${cx(i)+16}" y="${yy+23}" ${C.F} font-size="13" font-weight="700" fill="${t.dark?t.ink:mix(c.startsWith('#')?c:'#444444','#000000',.5)}">${String(i+1).padStart(2,'0')}  ${esc(C.T(wrap(x.name,13,700,t.font,colW-60)[0]))}</text>`;});return s;});
+  s+=`<text x="${cx(i)+16}" y="${yy+23}" ${C.F} font-size="13" font-weight="700" fill="${t.dark?t.ink:mix(c.startsWith('#')?c:'#444444','#000000',.5)}">${String(i+1).padStart(2,'0')}  ${esc(C.T(wrap(x.name,13,700,t.font,colW-60)[0]))}</text></g>`;});return s;});
  const textRow=(label,key,opts={})=>{const cells=st.map(x=>lines(x[key]));const hh=Math.max(...cells.map(c=>c.reduce((a,l)=>a+wrap(l,12.5,400,t.font,tw-(opts.chip?0:12)).length*17+(opts.box?10:4),0)),18)+(opts.box?14:8);
   add(label,hh+8,(yy)=>{let s='';cells.forEach((c,i)=>{let ly=yy+(opts.box?6:0);c.forEach(l=>{const wl=wrap(l,12.5,400,t.font,tw-(opts.box?16:12));
     if(opts.box){const bh=wl.length*17+10,col=opts.box;s+=`<rect x="${cx(i)+8}" y="${ly}" width="${colW-16}" height="${bh}" rx="8" fill="${t.dark?alpha(col,.16):mix(col.startsWith('#')?col:'#888888','#FFFFFF',.9)}" stroke="${alpha(col,.35)}"/>`;
@@ -132,7 +132,7 @@ function matrix(d,s,opt){const {ctx,frame,heading,wrap,measure,esc,alpha,mix}=K(
  const H=yy+PAD+10;
  if(pick>=0)o+=`<rect x="${cx(pick)+3}" y="${tableTop-4}" width="${colW-6}" height="${yy-tableTop+12}" rx="14" fill="${t.dark?alpha(t.accent,.12):mix(t.accent.startsWith('#')?t.accent:'#888888','#FFFFFF',.92)}" stroke="${t.accent}" stroke-width="1.6"/>`;
  cols.forEach((c,i)=>{const x=cx(i)+colW/2;if(i===pick){const lab=C.T('Recommended'),w=measure(lab,10,700,t.font)+16;o+=`<rect x="${x-w/2}" y="${tableTop-14}" width="${w}" height="20" rx="10" fill="${t.accent}"/><text x="${x}" y="${tableTop}" ${C.F} font-size="10" font-weight="700" fill="#fff" text-anchor="middle" letter-spacing=".4">${esc(lab)}</text>`;}
-  o+=`<text x="${x}" y="${tableTop+24}" ${C.F} font-size="13.5" font-weight="700" fill="${t.ink}" text-anchor="middle">${esc(C.T(c.name))}</text>`;if(c.note)o+=`<text x="${x}" y="${tableTop+42}" ${C.F} font-size="12" fill="${t.mute}" text-anchor="middle">${esc(c.note)}</text>`;});
+  o+=`<text data-ref="columns:${i}" x="${x}" y="${tableTop+24}" ${C.F} font-size="13.5" font-weight="700" fill="${t.ink}" text-anchor="middle">${esc(C.T(c.name))}</text>`;if(c.note)o+=`<text x="${x}" y="${tableTop+42}" ${C.F} font-size="12" fill="${t.mute}" text-anchor="middle">${esc(c.note)}</text>`;});
  o+=`<line x1="${PAD}" y1="${y+headH-6}" x2="${W-PAD}" y2="${y+headH-6}" stroke="${t.ink}" stroke-width="1.4"/>`;
  let zebra=0;body.forEach(b=>{if(b.g){o+=`<text x="${PAD+4}" y="${b.y+20}" ${C.FM} font-size="10.5" font-weight="700" letter-spacing="1.2" fill="${t.mute}">${esc(b.g.toUpperCase())}</text>`;zebra=0;return;}
   if(zebra++%2)o+=`<rect x="${PAD}" y="${b.y}" width="${W-PAD*2}" height="${b.h}" fill="${alpha(t.ink,t.dark?.035:.025)}"/>`;

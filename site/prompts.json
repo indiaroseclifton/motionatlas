@@ -1596,18 +1596,6 @@
     "alternative": "Try the same example on a narrow phone viewport with keyboard navigation."
   },
   {
-    "id": "L06",
-    "title": "Kinetic hero typography",
-    "prompts": {
-      "Still image": "Create a detailed reference of kinetic hero typography. Show Short movement and a stable reading hold. in a realistic project-library context.",
-      "Video": "Demonstrate kinetic hero typography with a clear initial state, one purposeful change and a readable completed state.",
-      "Working interface": "Implement kinetic hero typography. Transform word groups with bounded timing. Test: Build kinetic hero typography for a project library with three realistic records and long labels. Checks: Verify the primary action, focus order, readable labels, overflow, empty state and reduced-motion alternative."
-    },
-    "test": "Build kinetic hero typography for a project library with three realistic records and long labels.",
-    "checks": "Verify the primary action, focus order, readable labels, overflow, empty state and reduced-motion alternative.",
-    "alternative": "Try the same example on a narrow phone viewport with keyboard navigation."
-  },
-  {
     "id": "L07",
     "title": "Scroll progress landmarks",
     "prompts": {
@@ -1724,18 +1712,6 @@
       "Working interface": "Implement particle field heroes. Draw particles on canvas; cap work and provide a still state. Test: Build particle field heroes for a project library with three realistic records and long labels. Checks: Verify the primary action, focus order, readable labels, overflow, empty state and reduced-motion alternative."
     },
     "test": "Build particle field heroes for a project library with three realistic records and long labels.",
-    "checks": "Verify the primary action, focus order, readable labels, overflow, empty state and reduced-motion alternative.",
-    "alternative": "Try the same example on a narrow phone viewport with keyboard navigation."
-  },
-  {
-    "id": "L17",
-    "title": "Split-screen before and after",
-    "prompts": {
-      "Still image": "Create a detailed reference of split-screen before and after. Show Matched composition and adjustable split. in a realistic project-library context.",
-      "Video": "Demonstrate split-screen before and after with a clear initial state, one purposeful change and a readable completed state.",
-      "Working interface": "Implement split-screen before and after. Use a labelled range control to set an image clip. Test: Build split-screen before and after for a project library with three realistic records and long labels. Checks: Verify the primary action, focus order, readable labels, overflow, empty state and reduced-motion alternative."
-    },
-    "test": "Build split-screen before and after for a project library with three realistic records and long labels.",
     "checks": "Verify the primary action, focus order, readable labels, overflow, empty state and reduced-motion alternative.",
     "alternative": "Try the same example on a narrow phone viewport with keyboard navigation."
   },
