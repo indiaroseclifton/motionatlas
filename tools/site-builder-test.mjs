@@ -492,6 +492,27 @@ if (axeSrc) {
   ok(ov, 'zoom controls sit in the bar above the canvas, clear of the right panel');
   await ctx.close();
 }
+// ---- 5d. blog collection: posts, latest-posts list, story syntax, feed, forms markup
+{
+  const { ctx, pg } = await open();
+  await pg.evaluate(() => PB.ux.useTemplate(PB.templates.findIndex(t => t.id === 'blog'))); await waitPv(pg); await pg.waitForTimeout(700);
+  ok(await pg.evaluate(() => PB.site.posts(PB.app.site).length) === 3, 'the blog template has three real post pages');
+  ok(await frame(pg).locator('.x-pl li').count() === 3, 'the latest-posts section lists the posts on the home page');
+  const n0 = await pg.evaluate(() => PB.app.site.pages.length);
+  await pg.click('#rt-page'); await pg.click('#addPost'); await waitPv(pg); await pg.waitForTimeout(500);
+  ok(await pg.evaluate(() => PB.app.site.pages.length) === n0 + 1 && await pg.evaluate(() => PB.app.curPage().kind) === 'post', '"Add a blog post" adds a post page');
+  ok(await frame(pg).locator('.bp .body h2').count() >= 1 && await frame(pg).locator('.bp .body blockquote').count() === 1 && await frame(pg).locator('.bp .body li').count() === 2, 'story syntax renders headings, quotes and lists');
+  ok(!(await pg.evaluate(() => document.querySelector('#pgDateF').hidden)), 'a post has a publish date field');
+  await pg.evaluate(() => { PB.app.goPage(PB.app.site.home); });
+  await waitPv(pg); ok(await frame(pg).locator('.x-pl li').count() === 3, 'the home list shows the newest three of four posts');
+  const files = await pg.evaluate(async () => (await PB.buildSiteFiles()).map(([n, c]) => [n, typeof c === 'string' ? c : null]));
+  const feed = files.find(f => f[0] === 'feed.xml'); ok(feed && (feed[1].match(/<item>/g) || []).length === 4, 'the export has a feed.xml with every post');
+  const idx = files.find(f => f[0] === 'index.html')[1]; ok(/rel="alternate" type="application\/rss\+xml"/.test(idx), 'pages link to the feed');
+  ok(/post-/.test(files.find(f => f[0] === 'sitemap.xml')[1]), 'posts are in the sitemap');
+  const contact = files.map(f => f[1] || '').find(h => /name="contact"/.test(h)) || '';
+  ok(/_gotcha/.test(contact) && /data-netlify="true"/.test(contact) && /novalidate/.test(contact), 'contact forms carry a honeypot, Netlify attributes and inline validation');
+  await ctx.close();
+}
 // ---- 5a. site file backup, import, My projects sync
 {
   const { ctx, pg } = await open();

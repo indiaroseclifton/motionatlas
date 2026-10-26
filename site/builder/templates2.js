@@ -254,7 +254,7 @@ L({id:'lp-bio',name:'Landing: link in bio',desc:'A narrow page of links for soci
  ['quote',{quote:'The calmest hour of my week.',name:'A listener',role:'Apple Podcasts review',initials:'L'}]]);
 
 L({id:'lp-soon',name:'Landing: coming soon',desc:'A single hero and an email box while you build.',brand:'Harbor',style:'kit:nordic',siteDesc:'Harbor is a new studio for slow furniture, launching this spring.',line:'Launching this spring.'},[
- ['hero-center',{badge:'Coming spring 2027',news:'Something slow is on its way',heading:'Furniture made to be repaired.',intro:'Harbor is a new workshop making simple, repairable furniture from local timber. Leave your email and we will tell you first.',b1:'Tell me first',b2:'',proof:'Made in Aberdeen'}],
+ ['hero-center',{badge:'Coming spring 2027',news:'Something slow is on its way',heading:'Furniture made to be repaired.',intro:'Harbor is a new workshop making simple, repairable furniture from local timber. Leave your email and we will tell you first.',b1:'Tell me first',b2:'Why Harbor?',proof:'Made in Aberdeen'}],
  ['countdown',{kicker:'Opening',heading:'Not long now.',intro:'Our first collection is nearly finished.',date:'2027-04-01',button:'Tell me first'}],
  NEWS('Be the first to know.','One email when the workshop opens, and nothing else.','Notify me')]);
 })();

@@ -10,7 +10,7 @@ const NEWS=(h,i,b)=>['newsletter',{kicker:'Newsletter',heading:h,intro:i,button:
 const FOOT=(line,c1,l1,c2,l2,c3,l3,legal)=>['footer-columns',{line,c1,links1:l1,c2,links2:l2,c3,links3:l3,legal}];
 const ENDS=new Set(['cta-band','newsletter','contact-form','donate','app-download','sec-cta','footer-columns']);
 const finish=(o,p)=>{const last=p.blocks[p.blocks.length-1];if(p.id===o.cta[1]||ENDS.has(last[0]))return p.blocks;return [...p.blocks,CTA(o.ctaLine||'Let’s get started.',o.cta[0],'page:'+o.cta[1])]};
-const site=(o)=>()=>({name:o.name,brand:o.brand,style:o.style,desc:o.desc,pages:o.pages.map(p=>({id:p.id,name:p.name,title:p.title||'',desc:p.desc||'',blocks:finish(o,p).map(b=>({id:b[0],vals:b[1]||{},...(b[2]?{links:b[2]}:{})}))})),
+const site=(o)=>()=>({name:o.name,brand:o.brand,style:o.style,desc:o.desc,pages:o.pages.map(p=>({id:p.id,name:p.name,...(p.kind?{kind:p.kind,date:p.date,inNav:false,slug:'post-'+p.id}:{}),title:p.title||'',desc:p.desc||'',blocks:finish(o,p).map(b=>({id:b[0],vals:b[1]||{},...(b[2]?{links:b[2]}:{})}))})),
  header:o.header===null?[]:[{id:'nav',vals:{cta:o.cta[0],ctaHref:'page:'+o.cta[1]}}],
  footer:[{id:'footer-columns',vals:o.footer[1]}],navAuto:true,settings:{description:o.siteDesc,lang:'en'},fresh:true,home:o.pages[0].id,tplId:o.id,pageCount:o.pages.length});
 
@@ -162,14 +162,19 @@ add({id:'blog',ctaLine:'Never miss a note.',name:'Personal blog',desc:'Index, an
  pages:[
  {id:'home',name:'Home',title:'Field Notes · Slow cooking, small gardens, long walks',desc:'A blog about the small things.',blocks:[
   H('Field Notes','Slow cooking, small gardens, long walks.','Notes from a kitchen in the north of England. New posts most weeks.'),
-  ['blog',{kicker:'Latest',heading:'New this month.',button:'All articles',posts:'Technique | 12 March | Why we rest every steak for exactly as long as it cooked | films/smoke-plume.jpg\nSeasonal | 4 March | Forced rhubarb, and four things to do with it | films/pigment-bloom.jpg\nGarden | 26 February | A small garden in a very large wind | films/petal-swirl.jpg'},{0:'page:articles',1:'page:post',2:'page:post',3:'page:post'}],
+  ['x-posts',{kicker:'Latest',heading:'New this month.',count:'3'}],
   NEWS('Notes in your inbox.','One email a month with the best of the blog.')]},
  {id:'articles',name:'Articles',title:'Articles · Field Notes',desc:'Every post.',blocks:[
   H('Archive','All articles.','Everything, newest first.'),
-  ['blog',{kicker:'2027',heading:'This year.',button:'Subscribe',posts:'Technique | 12 March | Why we rest every steak for exactly as long as it cooked | films/smoke-plume.jpg\nSeasonal | 4 March | Forced rhubarb, and four things to do with it | films/pigment-bloom.jpg\nGarden | 26 February | A small garden in a very large wind | films/petal-swirl.jpg'},{0:'page:about',1:'page:post',2:'page:post',3:'page:post'}],
-  ['blog',{kicker:'2026',heading:'Last year.',button:'Subscribe',posts:'Walks | 14 December | Eleven miles to a good pie | films/light-mesh.jpg\nBaking | 2 November | The one-bowl loaf | films/sand-drawing.jpg\nHome | 9 October | A kitchen that fits one person and a dog | films/suminagashi.jpg'},{0:'page:about'}]]},
- {id:'post',name:'Why we rest steak',title:'Why we rest every steak · Field Notes',desc:'On resting meat.',blocks:[
-  ['blog-post',{}],
+  ['x-posts',{kicker:'Everything',heading:'Every post.',count:'100'}]]},
+ {id:'steak',name:'Why we rest every steak',kind:'post',date:'2027-03-12',title:'Why we rest every steak for exactly as long as it cooked · Field Notes',desc:'Why we rest every steak for exactly as long as it cooked',blocks:[
+  ['blog-post',{tag:'Technique',heading:'Why we rest every steak for exactly as long as it cooked',author:'Maya Okafor',date:'12 March 2027',read:'5 min read',img:'films/smoke-plume.jpg',alt:'Steam rising from a pan',paras:'Resting meat is the oldest advice in the kitchen and the least followed. The reason is simple: heat pushes juice towards the centre, and a few quiet minutes let it spread back out.\n## What we tested\nWe cut forty steaks at one, five and ten minutes. The difference in what ended up on the board was not subtle.\n> Rest for as long as it cooked, loosely covered, somewhere warm. Then slice.\n## The rule\n- Cook to a few degrees under your target\n- Rest loosely covered, for as long as it cooked\n- Slice across the grain',initials:'MO',bio:'Writes Field Notes from a kitchen in the north of England.'}],
+  NEWS('Liked this?','The next one lands next month.')]},
+ {id:'rhubarb',name:'Forced rhubarb, four ways',kind:'post',date:'2027-03-04',title:'Forced rhubarb, and four things to do with it · Field Notes',desc:'Forced rhubarb, and four things to do with it',blocks:[
+  ['blog-post',{tag:'Seasonal',heading:'Forced rhubarb, and four things to do with it',author:'Maya Okafor',date:'4 March 2027',read:'4 min read',img:'films/pigment-bloom.jpg',alt:'Pink and magenta pigment blooming in water',paras:'Forced rhubarb is the brightest thing in the market in February, and it asks for very little.\n## Roast it\nToss in sugar and orange zest and roast until it just gives. Spoon over yoghurt.\n## Pickle it\nA quick pickle makes a sharp, pink relish for fish and rich meats.\n> The trick is to stop a minute before you think you should.\n## And the other two\n- Poach it in elderflower syrup\n- Fold it into a crumble with oats and butter',initials:'MO',bio:'Writes Field Notes from a kitchen in the north of England.'}],
+  NEWS('Liked this?','The next one lands next month.')]},
+ {id:'wind',name:'A small garden in a very large wind',kind:'post',date:'2027-02-26',title:'A small garden in a very large wind · Field Notes',desc:'A small garden in a very large wind',blocks:[
+  ['blog-post',{tag:'Garden',heading:'A small garden in a very large wind',author:'Maya Okafor',date:'26 February 2027',read:'3 min read',img:'films/petal-swirl.jpg',alt:'Petals swirling in the wind',paras:'Our garden is eleven paces long and faces the sea. Everything that grows here has learned to lean.\n## What survives\nSea kale, rosemary, hardy geraniums and one stubborn fig that sulks every March.\n## What does not\nAnything tall. Anything proud. Anything that cost more than a fiver.\n> A windbreak is not a wall. It is a conversation with the weather.',initials:'MO',bio:'Writes Field Notes from a kitchen in the north of England.'}],
   NEWS('Liked this?','The next one lands next month.')]},
  {id:'about',name:'About',title:'About · Field Notes',desc:'About the blog.',blocks:[
   H('About','Hello, I’m Maya.','I write about the small things that make a day better.'),
@@ -230,7 +235,7 @@ add({id:'course',ctaLine:'Your first cylinder awaits.',name:'Online course',desc
   H('Curriculum','Six modules, thirty-six lessons.','Everything you need from clay to kiln.'),
   ['curriculum',{}],
   ['feature-grid',{kicker:'Included',heading:'What comes with it.',intro:'',items:'film | 36 filmed lessons | Close to the hands, no rushing.\nusers | A friendly community | Share your work and get kind feedback.\ncheck | A certificate | When you finish module six.\nclock | Lifetime access | Come back whenever.'}]]},
- {id:'instructor',name:'Instructor',title:'Instructor · Clay School',desc:'Meet Ana.',blocks:[
+ {id:'instructor',name:'Instructor',title:'Instructor · Clay School',desc:'Meet Ana, a potter for fifteen years and the teacher of Clay School.',blocks:[
   H('Instructor','Hi, I’m Ana.','Potter for fifteen years, teacher for ten.'),
   ['rich-text',{kicker:'About',heading:'I teach the way I wish I’d been taught.',paras:'I learned to throw in a cold garage with a library book. It took me three years to centre properly.\nThe course is what I wish I’d had: slow, close to the hands and honest about mistakes.\nI reply to every question myself.'}],
   ['quote',{quote:'Ana explains things in a way my hands actually understand.',name:'Chris M.',role:'Student, module 4',initials:'CM'}]]},

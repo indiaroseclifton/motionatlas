@@ -12,6 +12,9 @@ function uniqueSlug(site,base,exceptId){let s=slugify(base)||'page';if(RESERVED.
 const DEFAULTS=()=>({lang:'en',url:'',description:'',favicon:{set:'glyphs',name:'spark'},ogImage:'',analytics:'',formAction:'',
  notFound:{on:true,title:'This page has wandered off',text:'The page you were looking for isn’t here. It may have moved, or the link may have a typo.',button:'Back to the home page'}});
 const NAV_DEF={nav:['Episodes','Pricing','Questions'],'nav-center':['Work','Studio','Journal']};
+const isPost=p=>!!p&&p.kind==='post';
+const posts=site=>site.pages.filter(isPost).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+function rfc822(d){const t=new Date((d||'')+'T09:00:00Z');return isNaN(t)?new Date().toUTCString():t.toUTCString()}
 function newPage(site,name,blocks){const p={id:uid('pg'),name:name||'New page',slug:'',title:'',desc:'',og:'',inNav:true,blocks:blocks||[]};p.slug=uniqueSlug(site,p.name);return p}
 const isTop=d=>!!d&&(d.place==='top'||d.id==='announce'),isEnd=d=>!!d&&d.place==='end';
 /* split a flat block list into shared header, page and shared footer */
@@ -20,7 +23,7 @@ function split(blocks,def){const header=[],body=[],footer=[];(blocks||[]).forEac
 function normalize(x,def){
  x=x||{};const s={id:x.id||uid('s'),name:x.name||x.brand||'My site',brand:x.brand||'Brand',style:x.style||'studio',pair:x.pair==null?-1:x.pair,updated:x.updated||0};if(x.rich===2)s.rich=2;if(typeof x.logo==='string'&&/^data:image\/svg\+xml/.test(x.logo)&&x.logo.length<30000)s.logo=x.logo;
  if(Array.isArray(x.pages)&&x.pages.length){
-  s.pages=x.pages.map(p=>({id:p.id||uid('pg'),name:String(p.name||'Page').slice(0,60),slug:slugify(p.slug)||'',title:String(p.title||'').slice(0,80),desc:String(p.desc||'').slice(0,300),og:String(p.og||'').slice(0,300),inNav:p.inNav!==false,blocks:fix(p.blocks,def)}));
+  s.pages=x.pages.map(p=>({id:p.id||uid('pg'),name:String(p.name||'Page').slice(0,60),slug:slugify(p.slug)||'',title:String(p.title||'').slice(0,80),desc:String(p.desc||'').slice(0,300),og:String(p.og||'').slice(0,300),inNav:p.inNav!==false,...(p.kind==='post'?{kind:'post',date:/^\d{4}-\d{2}-\d{2}$/.test(p.date||'')?p.date:new Date().toISOString().slice(0,10)}:{}),blocks:fix(p.blocks,def)}));
   s.header=fix(x.header,def);s.footer=fix(x.footer,def);
  }else{ // old single page: nav and footer blocks become the shared header and footer
   const sp=split(fix(x.blocks,def),def);
@@ -60,7 +63,7 @@ function faviconSVG(site,accent,PBL){const f=(site.settings||{}).favicon||{};acc
  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="${accent}"/><svg x="14" y="14" width="36" height="36" viewBox="0 0 24 24">${inner}</svg></svg>`}
 const svgDataURL=s=>'data:image/svg+xml,'+encodeURIComponent(s).replace(/'/g,'%27').replace(/\(/g,'%28').replace(/\)/g,'%29');
 const escX=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function sitemap(site,base,today){const u=base.replace(/\/?$/,'/');return '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+site.pages.map(p=>`  <url><loc>${escX(u+(p.id===site.home?'':p.slug+'.html'))}</loc><lastmod>${today}</lastmod><priority>${p.id===site.home?'1.0':'0.7'}</priority></url>`).join('\n')+'\n</urlset>\n'}
+function sitemap(site,base,today){const u=base.replace(/\/?$/,'/');return '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+site.pages.map(p=>`  <url><loc>${escX(u+(p.id===site.home?'':p.slug+'.html'))}</loc><lastmod>${p.date||today}</lastmod><priority>${p.id===site.home?'1.0':'0.7'}</priority></url>`).join('\n')+'\n</urlset>\n'}
 const robots=base=>`User-agent: *\nAllow: /\n`+(base?`Sitemap: ${base.replace(/\/?$/,'/')}sitemap.xml\n`:'');
-PB.site={uid,slugify,uniqueSlug,newPage,normalize,split,menu,pageOf,pageFile,href,menuHTML,linkPages,faviconSVG,svgDataURL,sitemap,robots,safeLink,DEFAULTS,isTop,isEnd};
+PB.site={isPost,posts,rfc822,uid,slugify,uniqueSlug,newPage,normalize,split,menu,pageOf,pageFile,href,menuHTML,linkPages,faviconSVG,svgDataURL,sitemap,robots,safeLink,DEFAULTS,isTop,isEnd};
 })();

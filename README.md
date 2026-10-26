@@ -264,6 +264,16 @@ static site or publish it to a live address. Old single-page saves open as one-p
   blocks) and "Open a site file…" (adds it as a new site). Autosave keeps an existing My projects entry up to date;
   "Sync all sites to My projects" in the start dialog creates a Website project for every site (cloud sync of projects
   follows the projects page when signed in; nothing happens silently when not).
+- **Blog:** "Add a blog post" (Outline tab) adds a post page (slug `post-…`, publish date, left out of the menu) built
+  from the Article section; its story is one block per line (`## heading`, `> quote`, `- list item`, `![caption](image)`,
+  anything else a paragraph). The "Latest posts" section lists posts newest first on any page. The export adds `feed.xml`
+  (RSS), a feed link on every page and the posts in `sitemap.xml`. The Blog template ships three posts.
+- **Forms:** contact and newsletter forms validate inline, carry a hidden spam trap, Netlify attributes and a success or
+  error message, and send by `fetch` to a Formspree address, by `mailto:`, or to Netlify when the form address is the word
+  `netlify`; with no address they only confirm.
+- **Export QA:** `BASE=http://localhost:8797/ node tools/site-export-qa.mjs [templateId...]` builds every template, serves
+  the files and checks each page at desktop and phone width (console errors, links, anchors, images and alt text, metas,
+  one h1, balanced HTML, no editor code left behind, axe, mobile menu, accordions, lightbox, forms and honeypot).
 - **Speed:** films in the canvas load their poster first and start when they scroll into view; library previews and
   embedded frames are lazy.
 - **Pages and sites:** a site has pages (add, rename, duplicate, reorder, delete, home page, file names), a shared

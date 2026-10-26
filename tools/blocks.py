@@ -204,7 +204,7 @@ for sid, (title, css, body, js) in S.items():
                    'js': jsx, 'fields': flds, 'prompt': PROMPTS[sid]})
 
 for b in blocks:
-    missing = [f['k'] for f in b['fields'] if '{{' + f['k'] + '}}' not in b['html'] and '{{each:' + f['k'] + '}}' not in b['html']]
+    missing = [f['k'] for f in b['fields'] if '{{' + f['k'] + '}}' not in b['html'] and '{{each:' + f['k'] + '}}' not in b['html'] and '{{rich:' + f['k'] + '}}' not in b['html']]
     assert not missing, (b['id'], missing)
 
 # Where a block belongs when added: navigation on top, heroes after it, footers last

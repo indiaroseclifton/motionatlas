@@ -42,12 +42,13 @@
  <div class="scroll">
   <section class="rpanel" id="rp-page" role="tabpanel" aria-labelledby="rt-page">
    <details class="pgbox" id="pgBox" open><summary>Pages <small id="pgCount"></small></summary>
-<div class="sec"><ul id="pgList" class="pgl"></ul><button class="btn" id="addPage" type="button">Add a page</button></div>
+<div class="sec"><ul id="pgList" class="pgl"></ul><div class="btools"><button class="btn" id="addPage" type="button">Add a page</button><button class="btn" id="addPost" type="button">Add a blog post</button></div></div>
    </details>
    <h3 class="vh">Sections, top to bottom</h3><ol id="ol" aria-label="Sections, top to bottom"></ol>
    <details class="pgbox" id="pgSettings"><summary>This page’s name, address and search settings</summary><div class="pgsb"><div class="sec"><h3>This page</h3>
     <div class="f"><label for="pgName">Page name</label><input id="pgName" maxlength="60"></div>
     <div class="f"><label for="pgSlug">File name</label><input id="pgSlug" maxlength="48" autocapitalize="off" spellcheck="false"><p class="hint">Becomes the address: yoursite.com/<em>file-name</em>. The home page is always index.</p></div>
+    <div class="f" id="pgDateF" hidden><label for="pgDate">Publish date</label><input id="pgDate" type="date"></div>
     <label class="check"><input type="checkbox" id="pgNav"> Show in the menu</label></div>
    <div class="sec"><h3>Search and sharing</h3>
     <div class="f"><label for="ptitle">Page title</label><input id="ptitle" maxlength="80" placeholder="Shown in the browser tab and search results"></div>
@@ -92,7 +93,7 @@
    <div class="sec"><h3>404 page</h3><label class="check"><input type="checkbox" id="nfOn"> Include a 404 page</label>
     <div class="f"><label for="nfTitle">Heading</label><input id="nfTitle" maxlength="80"></div><div class="f"><label for="nfText">Text</label><textarea id="nfText" rows="2" maxlength="300"></textarea></div><div class="f"><label for="nfBtn">Button</label><input id="nfBtn" maxlength="40"></div></div>
    <div class="sec"><h3>Forms and analytics</h3>
-    <div class="f"><label for="sForm">Contact form address</label><input id="sForm" placeholder="https://formspree.io/f/… or mailto:you@example.com"><p class="hint">Where contact forms send. Leave empty and forms only show a confirmation.</p></div>
+    <div class="f"><label for="sForm">Contact form address</label><input id="sForm" placeholder="https://formspree.io/f/…, mailto:you@example.com or netlify"><p class="hint">Where contact and newsletter forms send: a Formspree address, <code>mailto:you@example.com</code>, or the word <code>netlify</code> when you host on Netlify. Leave it empty and forms only show a confirmation. Forms include a hidden spam trap and check every field before sending.</p></div>
     <div class="f"><label for="sAnalytics">Analytics snippet</label><textarea id="sAnalytics" rows="3" spellcheck="false" placeholder="Paste the script tag from Plausible, Fathom or Google Analytics"></textarea><p class="hint">Added to every exported page. Not run in the editor.</p></div></div>
    <div class="sec"><h3>Sites and templates</h3><p class="hint">Switch between your sites, start a new one or pick a template.</p><button class="btn" id="openStart" type="button">Open sites &amp; templates</button></div>
   </section>

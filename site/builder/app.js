@@ -80,9 +80,20 @@ const glyph=n=>{const d=LIB.glyphs[n]||LIB.glyphs.spark;return `<svg viewBox="0 
 const initials=s=>String(s).split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase();
 const TICK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>',CROSS='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M7 7l10 10M17 7 7 17"/></svg>';
 const tick=c=>/^(yes|y|true|✓|✔|1|included)$/i.test(String(c).trim())?`<span class="y">${TICK}<span class="vh">Yes</span></span>`:/^(no|n|false|✗|✕|0|-|—)$/i.test(String(c).trim())?`<span class="n">${CROSS}<span class="vh">No</span></span>`:esc(c);
+/* a story body: one block per line. ## heading, ### subheading, > quote, - list item, ![caption](image), anything else a paragraph */
+function storyHTML(raw){const lines=String(raw||'').split('\n').map(x=>x.trim()).filter(Boolean);let out='',list=false;const close=()=>{if(list){out+='</ul>';list=false}};
+ lines.forEach(l=>{let m;
+  if((m=/^-\s+(.+)$/.exec(l))){if(!list){out+='<ul>';list=true}out+='<li>'+esc(m[1])+'</li>';return}close();
+  if((m=/^###\s+(.+)$/.exec(l)))out+='<h3>'+esc(m[1])+'</h3>';
+  else if((m=/^##\s+(.+)$/.exec(l)))out+='<h2>'+esc(m[1])+'</h2>';
+  else if((m=/^>\s+(.+)$/.exec(l)))out+='<blockquote><p>'+esc(m[1])+'</p></blockquote>';
+  else if((m=/^!\[([^\]]*)\]\(([^)\s]+)\)$/.exec(l))){const src=m[2];const u=/^user:[\w-]+$/.test(src)?'\u0002U:'+src.slice(5)+'\u0002':/^https?:\/\//i.test(src)?esc(src):/^[\w\/.-]+$/.test(src)?'\u0001A/'+src:'';
+   out+=u?`<figure class="pf"><img src="${u}" alt="${esc(m[1])}" loading="lazy">${m[1]?'<figcaption>'+esc(m[1])+'</figcaption>':''}</figure>`:''}
+  else out+='<p>'+esc(l)+'</p>'});close();return out}
 function fill(str,blk,A){const d=def(blk.id),keys=new Set(fieldsOf(d).map(f=>f.k));
  str=str.replace(/\{\{each:(\w+)\}\}([\s\S]*?)\{\{\/each\}\}/g,(m,k,body)=>rows(val(blk,k)).map((cells,i)=>body.replace(/\{\{n\}\}|\{\{(g|i|t|list)?(\d+)\}\}/g,(mm,kind,num)=>{if(mm==='{{n}}')return String(i+1);const c=cells[+num]||'';
   if(!kind)return esc(c);if(kind==='g')return glyph(c);if(kind==='i')return esc(initials(c));if(kind==='t')return tick(c);return c.split(';').map(x=>x.trim()).filter(Boolean).map(x=>'<li>'+esc(x)+'</li>').join('')})).join(''));
+ str=str.replace(/\{\{rich:(\w+)\}\}/g,(m,k)=>storyHTML(val(blk,k)));
  return str.replace(/\{\{(\w+)\}\}/g,(m,k,off)=>{if(k==='A')return A;if(k==='brand'){const pre=str.slice(0,off);if(site.logo&&pre.lastIndexOf('<')<=pre.lastIndexOf('>'))return `<img class="pb-logo" src="${esc(site.logo)}" alt="" style="height:1.1em;width:auto;vertical-align:-.18em;margin-right:.45em">`+esc(page.brand||'Brand');return esc(page.brand||'Brand')}if(k==='formAction')return esc(CTX&&CTX.mode==='preview'?'#':(site.settings.formAction||'#'));if(k==='home')return esc(CTX?CTX.pageHref(S.pageOf(site,site.home)):'#');
   if(k==='menu'||k==='menuL'||k==='menuR'){const it=S.menu(site),h=Math.ceil(it.length/2),sub=k==='menu'?it:k==='menuL'?it.slice(0,h):it.slice(h);return CTX?S.menuHTML(site,sub,CTX,esc):''}
   if(!keys.has(k))return m;const f=fieldsOf(d).find(f=>f.k===k);if(f.type==='link')return esc(CTX?S.href(site,val(blk,k),CTX):'#');if(f.type==='image'&&/^user:[\w-]+$/.test(val(blk,k)))return '\u0002U:'+val(blk,k).slice(5)+'\u0002';
@@ -109,7 +120,7 @@ function withTokens(st,acc){const tk=site.tokens;if(!tk||!Object.keys(tk).length
  if(names.length)fonts=[fonts,PB.styles.gq(names)].filter(Boolean).join('&');
  if(tk.btn==='sharp')acc.css.set('pb-tk-btn','.btn{border-radius:0!important}');else if(tk.btn==='pill')acc.css.set('pb-tk-btn','.btn{border-radius:999px!important}');
  return {...st,vars:vars+';'+o.join(';'),fonts}}
-const buildCSS=(st,acc)=>':root{'+st.vars+'}\n'+(st.face||'')+LIB.base+'.h{text-transform:var(--case,none)}\n'+[...acc.css.values()].join('\n');
+const buildCSS=(st,acc)=>':root{'+st.vars+'}\n'+(st.face||'')+LIB.base+'.h{text-transform:var(--case,none)}h1,h2,h3{overflow-wrap:anywhere}@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}html{scroll-padding-top:72px}@media print{.pb-sticky{position:static!important}video,.ctrl,form{display:none!important}body{background:#fff!important;color:#000!important}a{text-decoration:underline}.x-nf{min-height:0!important}}\n'+[...acc.css.values()].join('\n');
 const fontURLOf=acc=>acc.fonts.size?'https://fonts.googleapis.com/css2?'+[...acc.fonts].join('&')+'&display=swap':'';
 function compose(mode,pg,acc,opt){ // mode: preview | html | zip  -> parts for one page (header + page + footer). acc shares css/fonts/files between pages.
  pg=pg||curPage();acc=acc||newAcc();
@@ -118,7 +129,7 @@ function compose(mode,pg,acc,opt){ // mode: preview | html | zip  -> parts for o
  const css=acc.css,fonts=acc.fonts,files=acc.files,needs=new Map(),body=[],js=[];
  (st.fonts||'').split('&').filter(Boolean).forEach(f=>fonts.add(f));
  CTX={mode,current:pg.id,pageHref:pageHrefFor(mode)};
- const ctx={mode,A:AT,site:base,uid:'',home:CTX.pageHref(S.pageOf(site,site.home)),need:(k,v)=>{if(!needs.has(k))needs.set(k,v)},font:q=>{(q||'').split('&').filter(Boolean).forEach(f=>fonts.add(f))},
+ const ctx={mode,A:AT,site:base,siteData:site,pageHref:p=>CTX.pageHref(p),uid:'',home:CTX.pageHref(S.pageOf(site,site.home)),need:(k,v)=>{if(!needs.has(k))needs.set(k,v)},font:q=>{(q||'').split('&').filter(Boolean).forEach(f=>fonts.add(f))},
   interactionSrc:id=>{if(mode==='preview')return `src="${ABS}interactions/demos/${esc(id)}.html"`;const t=cache.ix[id];
    if(mode==='zip'&&t){files.set('interactions/'+id+'.html',t);return `src="interactions/${esc(id)}.html"`}
    if(mode==='html'&&t)return `srcdoc="${t.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}"`;return `src="${SITE}interactions/demos/${esc(id)}.html"`}};
@@ -156,7 +167,7 @@ function assemble(P,opt={}){ // opt: {cssHref, jsHref, clSrc, clInline, favHref,
  const title=opt.title||pg.title||(home?(site.brand||pg.name):pg.name+' · '+(site.brand||''));
  const desc=pg.desc||stg.description||'',og=ogURL(pg.og||stg.ogImage);
  let head=`<!doctype html>\n<html lang="${esc(stg.lang||'en')}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">\n<title>${esc(title)}</title>\n`;
- if(!pre){head+=(desc?`<meta name="description" content="${esc(desc)}">\n`:'')+`<meta property="og:title" content="${esc(title)}">\n<meta property="og:type" content="website">\n<meta property="og:site_name" content="${esc(site.brand||'')}">\n`+(desc?`<meta property="og:description" content="${esc(desc)}">\n`:'')+(og?`<meta property="og:image" content="${esc(og)}">\n<meta name="twitter:card" content="summary_large_image">\n`:'<meta name="twitter:card" content="summary">\n')+(pg.noindex?'<meta name="robots" content="noindex">\n':'')+(opt.canonical?`<link rel="canonical" href="${esc(opt.canonical)}">\n<meta property="og:url" content="${esc(opt.canonical)}">\n`:'')+(opt.favHref?`<link rel="icon" href="${esc(opt.favHref)}" type="image/svg+xml">\n`:'')}
+ if(!pre){head+=(desc?`<meta name="description" content="${esc(desc)}">\n`:'')+`<meta property="og:title" content="${esc(title)}">\n<meta property="og:type" content="website">\n<meta property="og:site_name" content="${esc(site.brand||'')}">\n`+(desc?`<meta property="og:description" content="${esc(desc)}">\n`:'')+(og?`<meta property="og:image" content="${esc(og)}">\n<meta name="twitter:card" content="summary_large_image">\n`:'<meta name="twitter:card" content="summary">\n')+(pg.noindex?'<meta name="robots" content="noindex">\n':'')+(opt.canonical?`<link rel="canonical" href="${esc(opt.canonical)}">\n<meta property="og:url" content="${esc(opt.canonical)}">\n`:'')+(opt.favHref?`<link rel="icon" href="${esc(opt.favHref)}" type="image/svg+xml">\n`:'')+(opt.feedHref&&S.posts(site).length?`<link rel="alternate" type="application/rss+xml" title="${esc(site.brand||site.name)}" href="${esc(opt.feedHref)}">\n`:'')}
  head+=(P.fontURL?`<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link rel="stylesheet" href="${P.fontURL}">\n`:'')+
   (pre?'':`<!-- Built with the Visual & Motion Atlas site builder. Style: ${esc(P.st.style.name)}. -->\n`)+(opt.cssHref?`<link rel="stylesheet" href="${opt.cssHref}">`:`<style>\n${P.cssText}\n</style>`)+(!pre&&stg.analytics?'\n'+stg.analytics+'\n':'')+'</head><body>\n';
  let scripts='';
@@ -168,6 +179,10 @@ function assemble(P,opt={}){ // opt: {cssHref, jsHref, clSrc, clInline, favHref,
  const emptyMsg=pre&&!pg.blocks.length&&!site.header.length&&!site.footer.length?'<div id="pb-empty" style="padding:14vh 24px;text-align:center;font:500 16px/1.5 system-ui,sans-serif;color:#555"><p style="font:italic 500 30px/1.1 Georgia,serif;margin:0 0 10px;color:#1C1F2A">This page is empty.</p><p style="margin:0 0 18px">Add a section, or start from a template.</p><button type="button" style="font:600 14px system-ui;padding:11px 18px;border-radius:10px;border:0;background:#5B2DFF;color:#fff;cursor:pointer" onclick="parent.postMessage({pb:\'empty\'},\'*\')">Add a section</button> <button type="button" style="font:600 14px system-ui;padding:11px 18px;border-radius:10px;border:1px solid #ccc;background:#fff;color:#1C1F2A;cursor:pointer" onclick="parent.postMessage({pb:\'emptyTpl\'},\'*\')">Browse templates</button></div>':'';
  return head+P.body+emptyMsg+'\n'+scripts+'</body></html>\n';
 }
+const xe=t=>String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function feedXML(base){const u=base.replace(/\/?$/,'/'),items=S.posts(site).slice(0,50).map(p=>{const b=p.blocks.find(x=>x.id==='blog-post'),v=(b&&b.vals)||{},ex=String(v.paras||'').split('\n').find(l=>l.trim()&&!/^(#|>|-|!)/.test(l.trim()))||'';
+  return `<item><title>${xe(v.heading||p.name)}</title><link>${xe(u+S.pageFile(site,p))}</link><guid isPermaLink="true">${xe(u+S.pageFile(site,p))}</guid><pubDate>${S.rfc822(p.date)}</pubDate>${v.tag?`<category>${xe(v.tag)}</category>`:''}<description>${xe(ex)}</description></item>`}).join('\n');
+ return `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"><channel><title>${xe(site.brand||site.name)}</title><link>${xe(u)}</link><description>${xe(site.settings.description||site.brand||'')}</description><language>${xe(site.settings.lang||'en')}</language>\n${items}\n</channel></rss>\n`}
 const swapA=(s,base)=>s.split(AT).join(base);
 
 /* ---------- preview ---------- */
@@ -337,7 +352,7 @@ function mountThumbs(root,scroller){if(!('IntersectionObserver' in window))retur
  root.querySelectorAll('[data-sth]').forEach(b=>thIO.observe(b))}
 const pk=$('#picker');let pkGroup='All',pkTarget=null;
 function openPicker(target){pkTarget=target;$('#pickQ').value='';pkGroup='All';pickDraw();pk.showModal();$('#pickQ').focus()}
-function pickDraw(){const all=[...LIB.blocks,PB.extraById['x-type']],gs=['All',...GROUPS.filter(g=>all.some(b=>b.group===g))],t=($('#pickQ').value||'').trim().toLowerCase();
+function pickDraw(){const all=[...LIB.blocks,PB.extraById['x-posts'],PB.extraById['x-type']],gs=['All',...GROUPS.filter(g=>all.some(b=>b.group===g))],t=($('#pickQ').value||'').trim().toLowerCase();
  $('#pickChips').innerHTML=gs.map(g=>`<button type="button" class="chip" aria-pressed="${g===pkGroup}" data-g="${esc(g)}">${esc(g)}</button>`).join('');
  $$('#pickChips .chip').forEach(b=>b.onclick=()=>{pkGroup=b.dataset.g;pickDraw();$(`#pickChips [data-g="${CSS.escape(pkGroup)}"]`).focus()});
  const items=all.filter(b=>(pkGroup==='All'||b.group===pkGroup)&&(!t||(b.name+' '+b.group+' '+b.desc).toLowerCase().includes(t)));
@@ -381,7 +396,7 @@ const SEC_ICON={Navigation:'M3 6h18M3 6v4h18V6',Heroes:'M3 4h18v12H3zM6 19h12',F
 const secThumb=g=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="${SEC_ICON[g]||SEC_ICON.Content}"/></svg>`;
 let ixIO=null,bgThumbs={};
 function library(){const L=$('#libList');let h='';if(ixIO){ixIO.disconnect();ixIO=null}
- if(ltab==='sections'){const all=[...LIB.blocks,PB.extraById['x-type']];const gs=['All',...GROUPS.filter(g=>all.some(b=>b.group===g))];h+=chips(gs);
+ if(ltab==='sections'){const all=[...LIB.blocks,PB.extraById['x-posts'],PB.extraById['x-type']];const gs=['All',...GROUPS.filter(g=>all.some(b=>b.group===g))];h+=chips(gs);
   const items=all.filter(b=>(lgroup==='All'||b.group===lgroup)&&match(b.name,b.group,b.desc));
   h+=`<p class="lcount">${items.length} sections · previews use your style</p><ul class="lgrid tiles">`+items.map(b=>card({id:b.id,title:b.name,meta:b.group,thumb:`<div class="sth" data-sth="${esc(b.id)}" data-sw="${thumbW(b.id)}"></div>`,cls:'sec'})).join('')+'</ul>'+(items.length?'':'<p class="hint">No section matches “'+esc($('#libSearch').value)+'”. Try a shorter word such as “price”, “team” or “form”, or clear the search.</p>')}
  else if(ltab==='components'){const L2=PB.src.CL();if(!L2)h+='<p class="hint">The UI component lab has not loaded, so components are unavailable right now.</p>';else{
@@ -494,7 +509,7 @@ $('#pageSel').onchange=e=>goPage(e.target.value);
 function siteChanged(msg){commit();pageSelUI();outline();render();if(rtabCur==='page')pagesPanel();if(rtabCur==='site')sitePanel();if(msg)say(msg)}
 const uniqueName=base=>{let n=base,i=2;while(site.pages.some(p=>p.name===n))n=base+' '+i++;return n};
 function pgListHTML(){const cp=curPage(),L=$('#pgList');
- L.innerHTML=site.pages.map((p,i)=>`<li class="pgrow${p.id===cp.id?' cur':''}" data-id="${esc(p.id)}"><button type="button" class="pgname" data-a="go"${p.id===cp.id?' aria-current="true"':''}><b>${esc(p.name||'Untitled')}${p.id===site.home?' <em>Home</em>':''}</b><small>${esc(S.pageFile(site,p))} · ${p.blocks.length} sections${p.inNav?'':' · not in menu'}</small></button><span class="pgact"><button type="button" class="ib" data-a="up" aria-label="Move ${esc(p.name)} up"${i?'':' disabled'}>↑</button><button type="button" class="ib" data-a="down" aria-label="Move ${esc(p.name)} down"${i<site.pages.length-1?'':' disabled'}>↓</button><button type="button" class="ib" data-a="dup" aria-label="Duplicate ${esc(p.name)}">⧉</button><button type="button" class="ib" data-a="home" aria-label="Make ${esc(p.name)} the home page"${p.id===site.home?' disabled':''}>⌂</button><button type="button" class="ib" data-a="rm" aria-label="Delete ${esc(p.name)}"${site.pages.length<2?' disabled':''}>✕</button></span></li>`).join('');
+ L.innerHTML=site.pages.map((p,i)=>`<li class="pgrow${p.id===cp.id?' cur':''}" data-id="${esc(p.id)}"><button type="button" class="pgname" data-a="go"${p.id===cp.id?' aria-current="true"':''}><b>${esc(p.name||'Untitled')}${p.id===site.home?' <em>Home</em>':''}${p.kind==='post'?' <em>Post</em>':''}</b><small>${esc(S.pageFile(site,p))} · ${p.blocks.length} sections${p.inNav?'':' · not in menu'}</small></button><span class="pgact"><button type="button" class="ib" data-a="up" aria-label="Move ${esc(p.name)} up"${i?'':' disabled'}>↑</button><button type="button" class="ib" data-a="down" aria-label="Move ${esc(p.name)} down"${i<site.pages.length-1?'':' disabled'}>↓</button><button type="button" class="ib" data-a="dup" aria-label="Duplicate ${esc(p.name)}">⧉</button><button type="button" class="ib" data-a="home" aria-label="Make ${esc(p.name)} the home page"${p.id===site.home?' disabled':''}>⌂</button><button type="button" class="ib" data-a="rm" aria-label="Delete ${esc(p.name)}"${site.pages.length<2?' disabled':''}>✕</button></span></li>`).join('');
  L.querySelectorAll('.pgrow').forEach(li=>{const id=li.dataset.id;li.querySelectorAll('button').forEach(b=>b.onclick=()=>pageAct(id,b.dataset.a))})}
 function pageAct(id,a){const i=site.pages.findIndex(p=>p.id===id),p=site.pages[i];if(!p)return;
  if(a==='go')return goPage(id);
@@ -505,11 +520,15 @@ function pageAct(id,a){const i=site.pages.findIndex(p=>p.id===id),p=site.pages[i
 function serp(){const cp=curPage(),stg=site.settings,t=cp.title||(cp.id===site.home?site.brand:cp.name+' · '+site.brand),d=cp.desc||stg.description||'Add a description: it is what search results show under the title.';
  $('#serp').innerHTML=`<b>${esc(t)}</b><span>${esc((stg.url||'https://yoursite.com').replace(/\/$/,''))}/${cp.id===site.home?'':esc(cp.slug)}</span><p>${esc(d)}</p>`}
 function pagesPanel(){const cp=curPage();pgListHTML();
- $('#pgName').value=cp.name;$('#pgSlug').value=cp.id===site.home?'index':cp.slug;$('#pgSlug').disabled=cp.id===site.home;$('#pgNav').checked=cp.inNav;$('#ptitle').value=cp.title||'';$('#pgDesc').value=cp.desc||'';$('#pgOg').value=cp.og||'';serp()}
+ $('#pgName').value=cp.name;$('#pgSlug').value=cp.id===site.home?'index':cp.slug;$('#pgSlug').disabled=cp.id===site.home;$('#pgNav').checked=cp.inNav;{const pf=$('#pgDateF');pf.hidden=cp.kind!=='post';$('#pgDate').value=cp.date||''}$('#ptitle').value=cp.title||'';$('#pgDesc').value=cp.desc||'';$('#pgOg').value=cp.og||'';serp()}
+$('#addPost').onclick=()=>{const n=uniqueName('New post'),today=new Date(),iso=today.toISOString().slice(0,10),nice=today.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+ const p=S.newPage(site,n,[{uid:uidGen(),id:'blog-post',vals:{tag:'News',heading:n,author:site.brand||'Author',date:nice,read:'3 min read',img:'films/smoke-plume.jpg',alt:'Soft smoke drifting upwards',paras:'Start with a sentence that makes someone want the second one.\n## A heading for the next part\nWrite the story one block per line.\n> A line worth quoting.\n- A point\n- Another point',initials:String(site.brand||'A')[0].toUpperCase(),bio:'About the author in one line.'}},{uid:uidGen(),id:'newsletter',vals:{kicker:'Newsletter',heading:'Liked this?',intro:'One email when there is something new.',button:'Subscribe',small:'Unsubscribe whenever you like.'}}]);
+ p.name=n;p.kind='post';p.date=iso;p.inNav=false;p.slug=S.uniqueSlug(site,'post-'+n,p.id);site.pages.push(p);if(site.navSeed){site.navAuto=true;site.navSeed=false}curId=p.id;open=null;siteChanged('Added the post “'+n+'”. Write it in the outline, then put “Latest posts” on a page.');const e=$('#pgName');if(e){const d=$('#pgSettings');if(d)d.open=true;e.focus();e.select()}};
 $('#addPage').onclick=()=>{const name=uniqueName('New page'),p=S.newPage(site,name,[{uid:uidGen(),id:'rich-text',vals:{kicker:'',heading:name,paras:'Write something here.'}}]);p.name=name;site.pages.push(p);if(site.navSeed){site.navAuto=true;site.navSeed=false}curId=p.id;open=null;siteChanged('Added '+name);const n=$('#pgName');if(n){n.focus();n.select()}};
 $('#pgName').oninput=e=>{const cp=curPage(),old=cp.name;cp.name=e.target.value;if(cp.id!==site.home&&cp.slug===S.slugify(old)){cp.slug=S.uniqueSlug(site,cp.name||'page',cp.id);$('#pgSlug').value=cp.slug}commitSoon();pgListHTML();pageSelUI();status();serp();render()};
 $('#pgName').onchange=e=>{if(!e.target.value.trim()){e.target.value=curPage().name='Untitled page';siteChanged()}};
 $('#pgSlug').onchange=e=>{const cp=curPage();cp.slug=S.uniqueSlug(site,e.target.value||cp.name,cp.id);e.target.value=cp.slug;commit();pgListHTML();serp();say('Address: '+S.pageFile(site,cp))};
+$('#pgDate').onchange=e=>{const cp=curPage();if(cp.kind!=='post'||!/^\d{4}-\d{2}-\d{2}$/.test(e.target.value))return;cp.date=e.target.value;const b=cp.blocks.find(x=>x.id==='blog-post');if(b)b.vals.date=new Date(e.target.value+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});commit();render();outline()};
 $('#pgNav').onchange=e=>{curPage().inNav=e.target.checked;commit();pgListHTML();render()};
 $('#ptitle').oninput=e=>{curPage().title=e.target.value;commitSoon();serp()};
 $('#pgDesc').oninput=e=>{curPage().desc=e.target.value;commitSoon();serp()};
@@ -595,7 +614,7 @@ async function buildSiteFiles(opt={}){await prefetch();const acc=newAcc(),assets
  const base=((stg.url||'').trim()||(opt.pub?opt.pub.origin+opt.pub.base:'')),canon=it=>base&&!it.pg.noindex?base.replace(/\/?$/,'/')+(it.file==='index.html'?'':it.file):'';
  let anyCl=false;
  items.forEach(it=>{const P=it.P;anyCl=anyCl||P.cl;const code=swapA((P.runtime?P.runtime+'\n':'')+P.js,SITE+'assets/');
-  const html=assemble({...P,fontURL,cssText:css,body:fix(P.body),runtime:'',js:code},{cssHref:pubBase+'assets/site.css',jsHref:code.trim()?pubBase+'assets/'+it.js+'.js':null,clSrc:pubBase+'assets/component-lab.js',favHref:pubBase+'assets/favicon.svg',canonical:canon(it)});
+  const html=assemble({...P,fontURL,cssText:css,body:fix(P.body),runtime:'',js:code},{cssHref:pubBase+'assets/site.css',jsHref:code.trim()?pubBase+'assets/'+it.js+'.js':null,clSrc:pubBase+'assets/component-lab.js',favHref:pubBase+'assets/favicon.svg',feedHref:pubBase+'feed.xml',canonical:canon(it)});
   out.push([it.file,html]);if(code.trim())out.push(['assets/'+it.js+'.js',code])});
  out.push(['assets/site.css',css],['assets/favicon.svg',S.faviconSVG(site,accentOf())]);
  if(anyCl)out.push(['assets/component-lab.js',cache.cl||'/* component-lab.js could not be copied; load it from '+SITE+'component-lab.js */']);
@@ -604,6 +623,7 @@ async function buildSiteFiles(opt={}){await prefetch();const acc=newAcc(),assets
  for(const p of assets.keys()){try{const r=await fetch('assets/'+p);if(r.ok)out.push(['assets/'+p,new Uint8Array(await r.arrayBuffer())])}catch(e){}}
  const today=new Date().toISOString().slice(0,10);
  out.push(['sitemap.xml',S.sitemap(site,base||'https://example.com/',today)],['robots.txt',S.robots(base)]);
+ if(S.posts(site).length)out.push(['feed.xml',feedXML(base||'https://example.com/')]);
  out.push(['README.txt',`${brand}: a static website made with the Visual & Motion Atlas site builder.\n\n${site.pages.length} page${site.pages.length>1?'s':''}: ${site.pages.map(p=>S.pageFile(site,p)).join(', ')}.\nOpen index.html in a browser. Styles are in assets/site.css, behaviour in assets/*.js, images in assets/.\nFilms still stream from ${SITE}assets/films/ so the download stays small; copy them next to your site and change the paths before you publish.\nForms${stg.formAction?' post to '+stg.formAction:' are placeholders and send nothing until you set a form address in Site settings'}.\n\nPublish it: drag this folder onto Netlify Drop, or run "vercel" inside it, or push it to GitHub Pages. To use your own domain, add it in that host's settings and set the Site address in the builder so sitemap.xml and canonical links use it${(stg.url||'').trim()?'':' (it is empty now, so sitemap.xml uses https://example.com/: replace it)'}.\nStyle: ${st.style?st.style.name:''}.\n`]);
  return out}finally{pubBase=''}}
 $('#mkShare').onclick=async()=>{closeMenu();say('Preparing the page…');try{const h=await htmlFile();await MockupHandoff.send({html:h,title:($('#ptitle').value||$('#brand').value||'').slice(0,100),from:'page builder'})}catch(e){say(e.message||'Could not open the Mockup studio')}};
