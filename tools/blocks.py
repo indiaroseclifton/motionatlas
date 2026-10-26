@@ -150,7 +150,7 @@ FIELDS = {
  'sec-pricing': [('kicker', 'Kicker', 'text', '<p class="k">Pricing</p>', '<p class="k">{{kicker}}</p>', 'Pricing'), ('heading', 'Headline', 'text', 'Pay for the kitchen you have.'), ('intro', 'Intro', 'long', 'Every plan includes recipe cards, shot lists and the colour grade. Change or cancel at any time.'), ('p1', 'Plan 1 name', 'text', 'Home cook'), ('p2', 'Plan 2 name', 'text', 'Head chef'), ('p3', 'Plan 3 name', 'text', 'Restaurant')],
  'sec-bento': [('kicker', 'Kicker', 'text', 'What you get'), ('heading', 'Headline', 'text', 'Everything a recipe channel needs.'), ('intro', 'Intro', 'long', 'One place for the chef, the dish, the shot list and the post. Each card is a feature; the large one is the one to lead with.'), ('lead', 'Lead feature', 'text', 'Every dish, filmed like a still life'), ('leadText', 'Lead feature text', 'long', 'Shot lists that frame hands, steam and the final plate the same way every time.')],
  'sec-testimonials': [('kicker', 'Kicker', 'text', 'Loved by cooks'), ('heading', 'Headline', 'long', 'Twelve thousand kitchens, one recurring complaint: they wish they’d started sooner.')],
- 'sec-faq': [('kicker', 'Kicker', 'text', 'Questions'), ('heading', 'Headline', 'text', 'Before you start cooking.'), ('intro', 'Intro', 'long', 'Can’t find what you need? A real person answers within a working day.'), ('button', 'Button', 'text', 'Ask us')],
+ 'sec-faq': [('qa', 'Questions (question | answer)', 'list', 'Do I need my own footage? | No. You can start from a recipe and a character bible; we generate the shots. If you have footage, upload it and we’ll match the grade.\nWho owns what I make? | You do. Episodes, thumbnails and recipe cards are yours to post anywhere, including after you cancel.\nHow do recipe credits work? | When a recipe comes from a known chef or book, we add an on-screen credit and a line in the description, and hold the post until someone approves it.\nCan my chef look the same every time? | Yes. A character bible fixes the face, hands, clothes and kitchen, and every shot is checked against it before it renders.\nWhat happens if I cancel? | Your library stays downloadable for 90 days. We’ll email you before anything is deleted.'), ('kicker', 'Kicker', 'text', 'Questions'), ('heading', 'Headline', 'text', 'Before you start cooking.'), ('intro', 'Intro', 'long', 'Can’t find what you need? A real person answers within a working day.'), ('button', 'Button', 'text', 'Ask us')],
  'sec-contact': [('kicker', 'Kicker', 'text', 'Contact'), ('heading', 'Headline', 'text', 'Tell us what you’re cooking.'), ('intro', 'Intro', 'long', 'A short note is plenty. We reply within a working day, usually with questions about the dish.'), ('email', 'Email address', 'text', 'hello@example.kitchen'), ('address', 'Address', 'text', '14 Market Row, London E8')],
  'sec-footer': [('news', 'Newsletter heading', 'text', 'One recipe, every Sunday.')],
  'sec-logos': [('kicker', 'Kicker', 'text', 'Trusted by'), ('heading', 'Headline', 'text', 'Cooks, chefs and food brands in 31 countries.')],
@@ -252,7 +252,12 @@ with open(os.path.join(SITE, 'builder', 'blocks.js'), 'w') as fh:
 
 def fill(s, b, extra=None):
     vals = {f['k']: f['def'] for f in b['fields']}
-    vals.update({'A': '../../assets/', 'brand': 'Saffron'})
+
+    def each(m):
+        rows = [[c.strip() for c in r.split('|')] for r in vals[m.group(1)].split('\n') if r.strip()]
+        return ''.join(re.sub(r'\{\{(\d+)\}\}', lambda mm: rows[i][int(mm.group(1))] if int(mm.group(1)) < len(rows[i]) else '', m.group(2)) for i in range(len(rows)))
+    s = re.sub(r'\{\{each:(\w+)\}\}(.*?)\{\{/each\}\}', each, s, flags=re.S)
+    vals.update({'A': '../../assets/', 'brand': 'Saffron', 'formAction': '#'})
     vals.update(extra or {})
     return re.sub(r'\{\{(\w+)\}\}', lambda m: vals[m.group(1)], s)
 

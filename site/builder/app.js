@@ -65,7 +65,7 @@ const tick=c=>/^(yes|y|true|✓|✔|1|included)$/i.test(String(c).trim())?`<span
 function fill(str,blk,A){const d=def(blk.id),keys=new Set(fieldsOf(d).map(f=>f.k));
  str=str.replace(/\{\{each:(\w+)\}\}([\s\S]*?)\{\{\/each\}\}/g,(m,k,body)=>rows(val(blk,k)).map((cells,i)=>body.replace(/\{\{n\}\}|\{\{(g|i|t|list)?(\d+)\}\}/g,(mm,kind,num)=>{if(mm==='{{n}}')return String(i+1);const c=cells[+num]||'';
   if(!kind)return esc(c);if(kind==='g')return glyph(c);if(kind==='i')return esc(initials(c));if(kind==='t')return tick(c);return c.split(';').map(x=>x.trim()).filter(Boolean).map(x=>'<li>'+esc(x)+'</li>').join('')})).join(''));
- return str.replace(/\{\{(\w+)\}\}/g,(m,k)=>{if(k==='A')return A;if(k==='brand')return esc(page.brand||'Brand');if(k==='home')return esc(CTX?CTX.pageHref(S.pageOf(site,site.home)):'#');
+ return str.replace(/\{\{(\w+)\}\}/g,(m,k)=>{if(k==='A')return A;if(k==='brand')return esc(page.brand||'Brand');if(k==='formAction')return esc(CTX&&CTX.mode==='preview'?'#':(site.settings.formAction||'#'));if(k==='home')return esc(CTX?CTX.pageHref(S.pageOf(site,site.home)):'#');
   if(k==='menu'||k==='menuL'||k==='menuR'){const it=S.menu(site),h=Math.ceil(it.length/2),sub=k==='menu'?it:k==='menuL'?it.slice(0,h):it.slice(h);return CTX?S.menuHTML(site,sub,CTX,esc):''}
   if(!keys.has(k))return m;const f=fieldsOf(d).find(f=>f.k===k);if(f.type==='link')return esc(CTX?S.href(site,val(blk,k),CTX):'#');if(f.type==='image'&&/^user:[\w-]+$/.test(val(blk,k)))return '\u0002U:'+val(blk,k).slice(5)+'\u0002';
   return esc(f.type==='list'?rows(val(blk,k)).map(r=>r.join(' ')).join(', '):val(blk,k))})}
@@ -522,9 +522,12 @@ function sitesList(){const P=Object.values(store.pages).sort((a,b)=>(b.updated||
  $$('#siteList [data-open]').forEach(b=>b.onclick=()=>switchTo(b.dataset.open));
  $$('#siteList [data-dup]').forEach(b=>b.onclick=()=>{const c=clone(store.pages[b.dataset.dup]);c.id=S.uid('s');c.name=(c.name||'Site')+' copy';store.pages[c.id]=c;switchTo(c.id);say('Duplicated')});
  $$('#siteList [data-del]').forEach(b=>b.onclick=()=>{const p=store.pages[b.dataset.del];if(!confirm('Delete “'+(p.name||'this site')+'”? This cannot be undone.'))return;delete store.pages[p.id];if(site.id===p.id)switchTo(Object.keys(store.pages)[0]);else{persist();sitesList()}say('Site deleted')});
- $('#tplList').innerHTML=TEMPLATES.map((t,i)=>{const x=t();return `<li><button type="button" class="chip" data-t="${i}">${esc(x.name)}</button></li>`}).join('');
+ const NT=PB.templates||[];
+ $('#tplList').innerHTML=NT.map((t,i)=>`<li class="tpl"><button type="button" data-n="${i}"><b>${esc(t.name)}</b><small>${t.pages} pages · ${esc(PB.styles.has(t.style)?PB.styles.get(t.style).name:t.style)}</small><span>${esc(t.desc)}</span></button></li>`).join('')+TEMPLATES.map((t,i)=>{const x=t();return `<li><button type="button" class="chip" data-t="${i}">${esc(x.name)} · one page</button></li>`}).join('');
+ $$('#tplList [data-n]').forEach(b=>b.onclick=()=>{const t=NT[+b.dataset.n],p=S.normalize(t.make(),def);p.name=t.name;store.pages[p.id]=p;switchTo(p.id);showPane('preview');say('New site from '+t.name)});
  $$('#tplList [data-t]').forEach(b=>b.onclick=()=>{const t=TEMPLATES[+b.dataset.t]();const p=S.normalize(t,def);store.pages[p.id]=p;switchTo(p.id);say('New site from '+t.name)})}
 function switchTo(id){clearTimeout(typing);commit();site=store.pages[id];store.cur=id;curId=site.home;hist=[];fut=[];lastSnap=snap();open=null;persist();refresh();histUI()}
+$('#tplBtn').onclick=()=>{showPane('page');rtab('site');const el=$('#tplList');el&&el.scrollIntoView({block:'start'})};
 $('#newSite').onclick=()=>{const p=blank();store.pages[p.id]=p;switchTo(p.id);say('New blank site');showPane('lib')};
 
 /* ---------- right panel tabs, panes ---------- */

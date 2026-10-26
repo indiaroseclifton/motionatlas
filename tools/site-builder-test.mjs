@@ -192,11 +192,11 @@ const waitPv = pg => pg.waitForTimeout(700);
   const n0 = (await site(pg)).pages[0].blocks.length;
   await pg.click('#cvTb [aria-label="Add a section after this one"]');
   ok(await pg.locator('#picker[open]').count() === 1, 'the plus button opens the section picker');
-  await pg.fill('#pickQ', 'contact form'); await pg.waitForTimeout(1500);
+  await pg.fill('#pickQ', 'Simple contact form'); await pg.waitForTimeout(1500);
   ok(await pg.locator('#pickGrid .pkcard').count() >= 1 && await pg.locator('#pickGrid .pkth iframe').count() >= 1, 'picker shows searchable cards with live thumbnails');
   await pg.locator('#pickGrid .pkcard').first().click(); await waitPv(pg);
   const s = await site(pg); const ids = s.pages[0].blocks.map(b => b.id);
-  ok(s.pages[0].blocks.length === n0 + 1 && ids[ids.indexOf('sec-pricing') + 1] === 'sec-contact', 'picked section is inserted right after the selected one');
+  ok(s.pages[0].blocks.length === n0 + 1 && ids[ids.indexOf('sec-pricing') + 1] === 'contact-form', 'picked section is inserted right after the selected one');
   await ctx.close();
 }
 
@@ -242,6 +242,29 @@ const waitPv = pg => pg.waitForTimeout(700);
   const dlp = pg.waitForEvent('download'); await pg.click('#exportMenu summary'); await pg.click('#dlZip'); const d = await dlp;
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'sb-zip4-')); const zf = path.join(dir, 's.zip'); await d.saveAs(zf); const out = path.join(dir, 'x'); fs.mkdirSync(out); execFileSync('unzip', ['-q', zf, '-d', out]);
   ok(/@media \(max-width:640px\)\{#\w+\{text-align:center\}/.test(fs.readFileSync(path.join(out, 'assets/site.css'), 'utf8')), 'phone-only alignment is a media query in the export');
+  await ctx.close();
+}
+
+// ---- 1g. every template: loads, every page renders, export links resolve
+{
+  const { ctx, pg } = await open();
+  await pg.waitForTimeout(2000);
+  const n = await pg.evaluate(() => PB.templates.length);
+  ok(n >= 12, 'at least 12 multi-page templates (' + n + ')');
+  for (let i = 0; i < n; i++) {
+    await pg.evaluate(i => { const t = PB.templates[i]; document.querySelector('#rt-site').click(); document.querySelector('#tplList [data-n="' + i + '"]').click(); }, i);
+    await waitPv(pg);
+    const s = await site(pg), nm = s.name;
+    ok(s.pages.length >= 3 && s.pages.length <= 6, nm + ': ' + s.pages.length + ' pages');
+    ok(s.header.length === 1 && s.footer.length === 1 && s.pages.every(p => p.blocks.length >= 1), nm + ': shared header/footer and content on every page');
+    const files = await pg.evaluate(async () => (await PB.buildSiteFiles()).map(([n, c]) => [n, typeof c === 'string' ? c : null]));
+    const names = new Set(files.map(f => f[0]));
+    let broken = [];
+    for (const [n, c] of files) if (c && n.endsWith('.html')) for (const m of c.matchAll(/href="([\w-]+\.html)"/g)) if (!names.has(m[1])) broken.push(n + ' -> ' + m[1]);
+    ok(!broken.length && names.has('index.html') && names.has('sitemap.xml'), nm + ': export links resolve ' + broken.slice(0, 3));
+    ok(files.every(([n, c]) => !c || !/\{\{|undefined|\[object/.test(c.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, ''))), nm + ': no unfilled placeholders');
+    for (const p of s.pages) { await pg.selectOption('#pageSel', p.id); await pg.waitForTimeout(350); }
+  }
   await ctx.close();
 }
 
