@@ -82,7 +82,8 @@ Live: https://motionatlas-ten.vercel.app (`/` rewrites to `/atlas`).
 
 ```
 api/                     Vercel serverless functions
-  ai.js                  page-builder AI (Claude Haiku 5.5)
+  ai.js                  site-builder AI (Claude Haiku 5.5)
+  site.js                site publishing (/site/<id>/)
   share.js, upload.js    project sharing (Vercel Blob)
   apply.js               "Staged application" form → email via Resend
   _lib/                  shared helpers for share/upload
@@ -226,25 +227,54 @@ Lists, Controls, Buttons, Type, Feedback, Scroll stories, Sections, Signal & dat
 it New. `hash` picks a style for `sec-*` pieces. The page builder picks it up automatically
 (sections excluded). Update the count in the `interactions.html` meta description and `home.js`.
 
-## Page builder (`site/page-builder.html`, `site/builder/`)
+## Site builder (`site/page-builder.html`, `site/builder/`)
 
-Build a page from the library, choose a style, write or generate copy, export.
+A website builder that runs in the browser: multi-page sites, edit on the canvas, one design system, export a
+static site or publish it to a live address. Old single-page saves open as one-page sites.
 
-- **Library:** 44 sections, all 64 components, the interactions, backgrounds, films, effects,
-  images, icon families and theme-kit assets.
-- **Styles (144):** 4 builder styles, 48 theme kits, 48 design systems, and 22 atlas themes in
-  light and dark.
-- **Pages, templates and undo:** pages are saved in this browser, there are five templates, and
-  undo covers every change.
-- **Export:** one HTML file, a ZIP, copied HTML, or an AI prompt.
+- **Pages and sites:** a site has pages (add, rename, duplicate, reorder, delete, home page, file names), a shared
+  header and footer, a menu that lists the pages (or a custom list) and a mobile menu. Site settings cover the brand,
+  favicon (icon library), language, site address, default description and social image, a 404 page, a form address
+  (Formspree URL or `mailto:`) and an analytics snippet. Every page has its own title, description and social image.
+- **Editing on the canvas:** click text to edit it in place (plain text only), click a section for its toolbar (move,
+  duplicate, delete, settings, add), drag a section by its handle, replace images (upload, kept in IndexedDB, or pick from
+  the atlas), set where a button links, and use the searchable section picker with live thumbnails. Per section: spacing,
+  width, alignment, background (soft, accent, inverted, gradient, image, film), tablet and phone tweaks, hide on a
+  breakpoint, reveal animation. Shortcuts: Delete, Alt+Up/Down, Ctrl/Cmd+D (duplicate), Ctrl/Cmd+K (add), Ctrl/Cmd+Z/Y, Esc.
+  Everything autosaves to this browser.
+- **Design system:** 144 styles (4 builder styles, 48 theme kits, 48 design systems, 22 atlas themes in light and dark)
+  swap the whole site in one click; site tokens (colours, corner radius, button shape, fonts) sit on top of any style.
+- **Responsive and accessibility:** desktop, tablet and phone previews; a Check tab lists low contrast, heading order,
+  missing alt text, unnamed links and unlabelled fields, with fixes where they can be automatic.
+- **Library:** 54 sections (including article, find-us map, menu, schedule, product grid, course outline, contact form,
+  donate, countdown), 64 components, interactions, backgrounds, films, icons and theme-kit assets, plus 12 multi-page
+  templates (portfolio, agency, SaaS, restaurant, photographer, event, blog, shop, nonprofit, course, app, studio).
+- **Export and publish:** Export downloads a clean static site as a ZIP (every page, `assets/`, `sitemap.xml`,
+  `robots.txt`, `404.html`, favicon, canonical and Open Graph tags, no builder code), a single HTML file for the current
+  page, or an AI prompt. **Publish** puts the site at `/site/<id>/` on this domain through `api/site.js` (Vercel Blob; the
+  same store as shares). The edit key stays in the browser (`atlas-site-publish-v1`); published HTML is served with a
+  sandboxing `Content-Security-Policy`, so a site's own scripts cannot reach the atlas. Limit about 3.8 MB per site.
+- **My projects:** "Save to My projects" adds a Website project whose hub links to `page-builder.html?site=<id>`
+  (and to the live address once published). Sites are stored in this browser (`atlas-page-builder-v2`).
+- **AI:** "Rewrite with AI" per section and "Generate" via `api/ai.js` when `ANTHROPIC_API_KEY` is set; without it
+  the builder explains that AI is off and everything else works.
+
+**Your own domain.** Hosting custom domains is out of scope here. Download the ZIP, then deploy the folder to Vercel
+(`vercel` inside it), Netlify (drag it onto Netlify Drop) or GitHub Pages, and add your domain in that host's settings.
+Set the Site address in Site settings first so `sitemap.xml` and canonical links use your domain.
 
 | File | Role |
 | --- | --- |
 | `builder/blocks.js` | **Generated.** Run `python3 tools/blocks.py`; it reads `tools/sections_src.py` (`HEAD`, the eight `S` sections, `MORE`) and also writes `interactions/demos/sec-*.html` |
+| `builder/site.js` | The site model: pages, shared header and footer, menu, slugs, links, favicon, sitemap and robots helpers |
+| `builder/canvas.js` | Template markers, the editing agent that runs inside the preview, uploaded-image store, per-section settings |
 | `builder/styles.js` | Style registry, mapping every source onto the builder variables |
-| `builder/extras.js` | Code-drawn library blocks (components, interactions, media, icons, kit assets) |
-| `builder/app.js` | UI, editing, pages, AI panel, export |
+| `builder/extras.js` | Code-drawn library blocks (components, interactions, media, icons, kit assets, 404) |
+| `builder/templates.js` | The 12 multi-page site templates |
+| `builder/app.js` | UI: library, outline, panels, preview, export and publish |
 | `builder/zip.js` | Stored-zip writer (same as the kits') |
+| `api/site.js`, `api/_lib/site.js` | Publishing: create, update, unpublish and serve `/site/<id>/<file>` (rewrites in `vercel.json`) |
+| `tools/site-builder-test.mjs`, `tools/site-api-test.mjs` | End-to-end editor test (Playwright, API mocked) and the publishing API test |
 
 Block CSS is scoped under `.b-<id>`, so a block can appear more than once. Edit sections in
 `tools/sections_src.py`, never in `blocks.js`.

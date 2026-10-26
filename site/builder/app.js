@@ -75,7 +75,8 @@ const AT='\u0001A/';
 const cache={cl:null,ix:{}};
 let CTX=null;
 const newAcc=()=>({css:new Map(),fonts:new Set(),files:new Map()});
-const pageHrefFor=mode=>p=>mode==='preview'?'#pb-page:'+p.id:S.pageFile(site,p);
+let pubBase='';
+const pageHrefFor=mode=>p=>mode==='preview'?'#pb-page:'+p.id:(mode==='zip'?pubBase:'')+S.pageFile(site,p);
 /* site tokens: colour, radius, font and button overrides on top of the chosen style */
 function withTokens(st,acc){const tk=site.tokens;if(!tk||!Object.keys(tk).length)return st;const sw=(st.style&&st.style.sw)||[],C=PB.color;
  const bg=tk.bg||sw[0]||'#FFFFFF',surf=tk.surface||sw[1]||bg,o=[];
@@ -124,7 +125,7 @@ function anchors(html,blk,mode){let i=0;return html.replace(/<a\s([^>]*)>/g,(m,a
   if(ov!==undefined){const h='href="'+esc(S.href(site,ov,CTX))+'"';a=/href="[^"]*"/.test(a)?a.replace(/href="[^"]*"/,h):h+' '+a}
   if(mode==='preview')a+=` data-pba="${idx}"`;return '<a '+a+'>'})}
 const dcache=new Map();
-function upURL(id,mode,acc){if(mode==='preview')return PB.images.url(id);if(mode==='zip'){(acc.uploads=acc.uploads||new Set()).add(id);return 'assets/uploads/'+id+'.'+PB.images.ext(id)}return dcache.get(id)||''}
+function upURL(id,mode,acc){if(mode==='preview')return PB.images.url(id);if(mode==='zip'){(acc.uploads=acc.uploads||new Set()).add(id);return pubBase+'assets/uploads/'+id+'.'+PB.images.ext(id)}return dcache.get(id)||''}
 const ogURL=v=>!v?'':/^(https?:|data:)/.test(v)?v:SITE+'assets/'+v.replace(/^\/+/,'');
 function assemble(P,opt={}){ // opt: {cssHref, jsHref, clSrc, clInline, favHref, canonical, title}
  const pg=P.pg,stg=site.settings,pre=P.mode==='preview',home=pg.id===site.home;
@@ -555,18 +556,19 @@ async function htmlFile(){await prefetch();const P=compose('html');return swapA(
 $('#dlHtml').onclick=async()=>{closeMenu();try{const h=await htmlFile();dl(new Blob([h],{type:'text/html'}),slug()+'.html');say('Downloading '+slug()+'.html')}catch(e){console.error(e);say('Export failed')}};
 $('#copyHtml').onclick=async()=>{closeMenu();copy(await htmlFile(),'HTML copied')};
 $('#openTab').onclick=async()=>{closeMenu();const w=window.open('','_blank');const h=await htmlFile();const u=URL.createObjectURL(new Blob([h],{type:'text/html'}));if(w)w.location=u;else window.open(u,'_blank');setTimeout(()=>URL.revokeObjectURL(u),60000)};
-/* the whole site as files: [[path, string|Uint8Array]] */
-async function buildSiteFiles(){await prefetch();const acc=newAcc(),assets=new Map(),out=[];
- const fix=s=>s.replace(/\u0001A\/([^"')\s]+)/g,(m,p)=>{if(/\.(mp4|webm|mov)$/i.test(p)||/[$`{]/.test(p))return SITE+'assets/'+p;assets.set(p,1);return 'assets/'+p});
+/* the whole site as files: [[path, string|Uint8Array]]. opt.pub = {base:'/site/<id>/', origin} makes every link absolute for publishing. */
+async function buildSiteFiles(opt={}){await prefetch();const acc=newAcc(),assets=new Map(),out=[];pubBase=opt.pub?opt.pub.base:'';
+ try{
+ const fix=s=>s.replace(/\u0001A\/([^"')\s]+)/g,(m,p)=>{if(/\.(mp4|webm|mov)$/i.test(p)||/[$`{]/.test(p))return SITE+'assets/'+p;assets.set(p,1);return pubBase+'assets/'+p});
  const stg=site.settings,nf=stg.notFound,brand=site.brand||site.name;
  const items=site.pages.map(pg=>({pg,file:S.pageFile(site,pg),js:pg.id===site.home?'index':pg.slug}));
  if(nf.on)items.push({pg:{id:'__404',name:'Page not found',slug:'404',title:nf.title+' · '+brand,desc:'',og:'',inNav:false,noindex:true,blocks:[{uid:'nf404',id:'x-notfound',vals:{title:nf.title,text:nf.text,button:nf.button}}]},file:'404.html',js:'404'});
  items.forEach(it=>{it.P=compose('zip',it.pg,acc)});
- const st=items[0].P.st,css=fix(buildCSS(st,acc)),fontURL=fontURLOf(acc),base=(stg.url||'').trim();
- const canon=it=>base&&!it.pg.noindex?base.replace(/\/?$/,'/')+(it.file==='index.html'?'':it.file):'';
+ const st=items[0].P.st,css=fix(buildCSS(st,acc)),fontURL=fontURLOf(acc);
+ const base=((stg.url||'').trim()||(opt.pub?opt.pub.origin+opt.pub.base:'')),canon=it=>base&&!it.pg.noindex?base.replace(/\/?$/,'/')+(it.file==='index.html'?'':it.file):'';
  let anyCl=false;
  items.forEach(it=>{const P=it.P;anyCl=anyCl||P.cl;const code=swapA((P.runtime?P.runtime+'\n':'')+P.js,SITE+'assets/');
-  const html=assemble({...P,fontURL,cssText:css,body:fix(P.body),runtime:'',js:code},{cssHref:'assets/site.css',jsHref:code.trim()?'assets/'+it.js+'.js':null,clSrc:'assets/component-lab.js',favHref:'assets/favicon.svg',canonical:canon(it)});
+  const html=assemble({...P,fontURL,cssText:css,body:fix(P.body),runtime:'',js:code},{cssHref:pubBase+'assets/site.css',jsHref:code.trim()?pubBase+'assets/'+it.js+'.js':null,clSrc:pubBase+'assets/component-lab.js',favHref:pubBase+'assets/favicon.svg',canonical:canon(it)});
   out.push([it.file,html]);if(code.trim())out.push(['assets/'+it.js+'.js',code])});
  out.push(['assets/site.css',css],['assets/favicon.svg',S.faviconSVG(site,accentOf())]);
  if(anyCl)out.push(['assets/component-lab.js',cache.cl||'/* component-lab.js could not be copied; load it from '+SITE+'component-lab.js */']);
@@ -575,10 +577,53 @@ async function buildSiteFiles(){await prefetch();const acc=newAcc(),assets=new M
  for(const p of assets.keys()){try{const r=await fetch('assets/'+p);if(r.ok)out.push(['assets/'+p,new Uint8Array(await r.arrayBuffer())])}catch(e){}}
  const today=new Date().toISOString().slice(0,10);
  out.push(['sitemap.xml',S.sitemap(site,base||'https://example.com/',today)],['robots.txt',S.robots(base)]);
- out.push(['README.txt',`${brand}: a static website made with the Visual & Motion Atlas site builder.\n\n${site.pages.length} page${site.pages.length>1?'s':''}: ${site.pages.map(p=>S.pageFile(site,p)).join(', ')}.\nOpen index.html in a browser. Styles are in assets/site.css, behaviour in assets/*.js, images in assets/.\nFilms still stream from ${SITE}assets/films/ so the download stays small; copy them next to your site and change the paths before you publish.\nForms${stg.formAction?' post to '+stg.formAction:' are placeholders and send nothing until you set a form address in Site settings'}.\n\nPublish it: drag this folder onto Netlify Drop, or run "vercel" inside it, or push it to GitHub Pages. To use your own domain, add it in that host's settings and set the Site address in the builder so sitemap.xml and canonical links use it${base?'':' (it is empty now, so sitemap.xml uses https://example.com/: replace it)'}.\nStyle: ${st.style?st.style.name:''}.\n`]);
- return out}
+ out.push(['README.txt',`${brand}: a static website made with the Visual & Motion Atlas site builder.\n\n${site.pages.length} page${site.pages.length>1?'s':''}: ${site.pages.map(p=>S.pageFile(site,p)).join(', ')}.\nOpen index.html in a browser. Styles are in assets/site.css, behaviour in assets/*.js, images in assets/.\nFilms still stream from ${SITE}assets/films/ so the download stays small; copy them next to your site and change the paths before you publish.\nForms${stg.formAction?' post to '+stg.formAction:' are placeholders and send nothing until you set a form address in Site settings'}.\n\nPublish it: drag this folder onto Netlify Drop, or run "vercel" inside it, or push it to GitHub Pages. To use your own domain, add it in that host's settings and set the Site address in the builder so sitemap.xml and canonical links use it${(stg.url||'').trim()?'':' (it is empty now, so sitemap.xml uses https://example.com/: replace it)'}.\nStyle: ${st.style?st.style.name:''}.\n`]);
+ return out}finally{pubBase=''}}
 $('#dlZip').onclick=async()=>{closeMenu();const zip=(window.ThemeKits&&window.ThemeKits.zip)||PB.zip;say('Building the site ZIP…');try{const files=await buildSiteFiles();dl(zip(files),slug()+'-site.zip');say('Downloading '+slug()+'-site.zip')}catch(e){console.error(e);say('ZIP export failed')}};
 PB.buildSiteFiles=buildSiteFiles;PB.getSite=()=>site;
+
+/* ---------- publish to a shareable address (api/site.js) ---------- */
+const PUBKEY='atlas-site-publish-v1',pubDlg=$('#pubDlg');
+const pubGet=()=>{try{return (JSON.parse(localStorage.getItem(PUBKEY))||{})[site.id]||null}catch(e){return null}};
+const pubSet=r=>{try{const a=JSON.parse(localStorage.getItem(PUBKEY))||{};if(r)a[site.id]=r;else delete a[site.id];localStorage.setItem(PUBKEY,JSON.stringify(a))}catch(e){}};
+async function apiSite(method,qs,body,key){let r;try{r=await fetch('/api/site'+qs,{method,headers:{'content-type':'application/json',...(key?{'x-edit-key':key}:{})},body:body?JSON.stringify(body):undefined})}catch(e){return {ok:false,status:0,j:null}}
+ let j=null;try{j=await r.json()}catch(e){}return {ok:r.ok,status:r.status,j}}
+const b64=u8=>{let s='';for(let i=0;i<u8.length;i+=0x8000)s+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000));return btoa(s)};
+let pubAvail=null;
+async function pubStatus(){const r=await apiSite('GET','?status');pubAvail=r.ok&&r.j&&typeof r.j.enabled==='boolean'?(r.j.enabled?'on':'off'):'none';return pubAvail}
+async function pubDraw(msg){const rec=pubGet(),st=pubAvail||await pubStatus();const state=$('#pubState'),link=$('#pubLink');
+ $('#pubGo').textContent=rec?'Update the live site':'Publish';$('#pubGo').disabled=st!=='on';$('#pubOff').hidden=!rec;$('#pubCopy').hidden=!rec;$('#pubOpen').hidden=!rec;
+ if(st==='none')state.textContent='Publishing runs on the live site only, so it is switched off in this copy. Download the ZIP instead: it works anywhere.';
+ else if(st==='off')state.textContent='Publishing is not switched on yet: the site owner needs to connect a Vercel Blob store to this project. You can still download the ZIP and host it anywhere.';
+ else state.textContent=msg||(rec?'Published. Update it after you make changes.':'Publish this site to a shareable address on the atlas. You can unpublish any time.');
+ if(rec&&rec.url){link.innerHTML=`<a href="${esc(rec.url)}" target="_blank" rel="noopener">${esc(rec.url)}</a>${rec.at?' · '+new Date(rec.at).toLocaleString():''}`;$('#pubOpen').href=rec.url}else link.textContent=''}
+async function publishSite(){const go=$('#pubGo');go.disabled=true;let rec=pubGet();
+ try{
+  for(let attempt=0;attempt<2;attempt++){
+   if(!rec){await pubDraw('Creating the address…');const c=await apiSite('POST','',{name:site.name,files:[]});if(!c.ok)throw new Error((c.j&&c.j.error)||'Publishing failed ('+c.status+')');rec={id:c.j.id,key:c.j.key};pubSet(rec)}
+   $('#pubState').textContent='Building the site…';const base='/site/'+rec.id+'/',files=await buildSiteFiles({pub:{base,origin:location.origin}});
+   const payload=files.filter(([p])=>!/^README/.test(p)).map(([p,c])=>typeof c==='string'?{path:p,text:c}:{path:p,b64:b64(c)});
+   $('#pubState').textContent='Uploading '+payload.length+' files…';const u=await apiSite('PUT','?id='+rec.id,{name:site.name,files:payload},rec.key);
+   if(u.status===403||u.status===404){pubSet(null);rec=null;continue}
+   if(!u.ok)throw new Error((u.j&&u.j.error)||'Publishing failed ('+u.status+')');
+   rec.url=location.origin+base;rec.at=Date.now();pubSet(rec);await pubDraw('Published. Share the link below.');say('Site published');return}
+  throw new Error('Could not publish. Try again.')}
+ catch(e){await pubDraw(e.message||'Publishing failed');$('#pubGo').disabled=false}}
+$('#pubBtn').onclick=async()=>{closeMenu();pubDlg.showModal();await pubDraw()};
+$('#pubClose').onclick=()=>pubDlg.close();$('#pubGo').onclick=publishSite;
+$('#pubCopy').onclick=()=>{const r=pubGet();r&&copy(r.url,'Link copied')};
+$('#pubOff').onclick=async()=>{const r=pubGet();if(!r||!confirm('Unpublish this site? The link stops working.'))return;const d=await apiSite('DELETE','?id='+r.id,null,r.key);if(d.ok||d.status===404){pubSet(null);await pubDraw('Unpublished.')}else await pubDraw((d.j&&d.j.error)||'Could not unpublish')};
+
+/* ---------- save into My projects (local first) ---------- */
+function saveToProjects(){const K='atlas-projects-v1';let list=[];try{list=JSON.parse(localStorage.getItem(K)||'[]');if(!Array.isArray(list))list=[]}catch(e){list=[]}
+ const origin='site-'+site.id.replace(/[^\w-]/g,''),rec=pubGet(),links=[{id:'site-edit',title:'Edit in the site builder',url:'page-builder.html?site='+encodeURIComponent(site.id),kind:'page',text:site.pages.length+' page'+(site.pages.length>1?'s':'')+', saved in this browser.'}];
+ if(rec&&rec.url)links.push({id:'site-live',title:'Published site',url:rec.url,kind:'page',text:'The live address.'});
+ let p=list.find(x=>x&&x.origin===origin);const now=Date.now();
+ if(!p){p={id:(crypto.randomUUID?crypto.randomUUID():'p'+now.toString(36)),name:site.name||site.brand,brief:'A website made in the site builder: '+site.pages.map(x=>x.name).join(', ')+'.',platform:'Website',stage:'Designing',entries:[],icons:[],references:[],decisions:'',notes:{},directions:[],created:now,updated:now,origin,isPublic:false,files:[],hub:{links:[]}};list.push(p)}
+ p.name=site.name||site.brand;p.updated=now;p.hub=p.hub&&typeof p.hub==='object'?p.hub:{links:[]};const keep=(p.hub.links||[]).filter(l=>!/^site-(edit|live)$/.test(l.id));p.hub.links=[...links,...keep];
+ try{localStorage.setItem(K,JSON.stringify(list));say('Saved to My projects');return true}catch(e){say('Could not save: storage is full');return false}}
+$('#projBtn').onclick=()=>{closeMenu();saveToProjects()};
+{const q=new URLSearchParams(location.search).get('site');if(q&&store.pages[q]&&site.id!==q){site=store.pages[q];store.cur=q;curId=site.home;lastSnap=snap()}}
 
 $('#copyPrompt').onclick=()=>{closeMenu();const st=PB.styles.get(page.style),pair=page.pair>=0?LIB.pairs[page.pair]:null;
  const lines=page.blocks.map((b,i)=>{const d=def(b.id);const v=vals(b);const words=fieldsOf(d).filter(f=>['text','long','list'].includes(f.type)).map(f=>f.label.replace(/\s*\(.*\)/,'').toLowerCase()+' “'+String(v[f.k]).replace(/\n/g,' / ')+'”').filter(x=>!/“”$/.test(x)).join('; ');

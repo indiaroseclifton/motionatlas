@@ -268,6 +268,48 @@ const waitPv = pg => pg.waitForTimeout(700);
   await ctx.close();
 }
 
+// ---- 1h. publish (api mocked), save to My projects
+{
+  const { ctx, pg } = await open();
+  await pg.waitForTimeout(2000);
+  const store = { files: null, created: 0, puts: 0, enabled: true };
+  await pg.route('**/api/site*', async r => {
+    const req = r.request(), u = new URL(req.url()), m = req.method();
+    const J = (code, o) => r.fulfill({ status: code, contentType: 'application/json', body: JSON.stringify(o) });
+    if (m === 'GET' && u.searchParams.has('status')) return J(200, { enabled: store.enabled });
+    if (m === 'POST') { store.created++; return J(201, { id: 'AbCdEfGhIjKlMnOp', key: 'secretkey' + store.created, url: '/site/AbCdEfGhIjKlMnOp/' }); }
+    if (m === 'PUT') { if (req.headers()['x-edit-key'] !== 'secretkey1') return J(403, { error: 'no' }); store.puts++; store.files = req.postDataJSON().files; return J(200, { id: 'AbCdEfGhIjKlMnOp', url: '/site/AbCdEfGhIjKlMnOp/' }); }
+    if (m === 'DELETE') { store.files = null; return J(200, { deleted: true }); }
+    return J(404, {});
+  });
+  await pg.click('#rt-site'); await pg.click('#tplList [data-n="0"]'); await waitPv(pg);
+  await pg.click('#exportMenu summary'); await pg.click('#pubBtn'); await pg.waitForTimeout(500);
+  ok(await pg.locator('#pubDlg[open]').count() === 1 && !(await pg.locator('#pubGo').isDisabled()), 'publish dialog opens and is ready');
+  await pg.click('#pubGo'); await pg.waitForFunction(() => /Published/.test(document.querySelector('#pubState').textContent), null, { timeout: 30000 });
+  ok(store.created === 1 && store.puts === 1 && store.files && store.files.length > 5, 'publish created the site and uploaded ' + (store.files && store.files.length) + ' files');
+  const idx = store.files.find(f => f.path === 'index.html').text;
+  ok(/href="\/site\/AbCdEfGhIjKlMnOp\/[\w-]+\.html"/.test(idx) && /href="\/site\/AbCdEfGhIjKlMnOp\/assets\/site\.css"/.test(idx), 'published pages use absolute /site/<id>/ links');
+  ok(!store.files.some(f => /^README/.test(f.path)), 'README is not uploaded');
+  ok(/AbCdEfGhIjKlMnOp/.test(await pg.textContent('#pubLink')) && !(await pg.locator('#pubOff').isHidden()), 'live link shown with unpublish');
+  const keyStored = await pg.evaluate(() => localStorage.getItem('atlas-site-publish-v1') || '');
+  ok(/secretkey1/.test(keyStored) && !(await pg.evaluate(() => JSON.stringify(PB.getSite()))).includes('secretkey'), 'the edit key stays in this browser, not in the site');
+  await pg.click('#pubGo'); await pg.waitForTimeout(1500); ok(store.puts === 2 && store.created === 1, 'updating reuses the same address');
+  await pg.evaluate(() => { const a = JSON.parse(localStorage.getItem('atlas-site-publish-v1')); Object.values(a)[0].key = 'stale'; localStorage.setItem('atlas-site-publish-v1', JSON.stringify(a)); });
+  await pg.click('#pubGo'); await pg.waitForTimeout(2000); ok(store.created === 2, 'a refused key falls back to a fresh publish');
+  await pg.click('#pubClose');
+  await pg.click('#exportMenu summary'); await pg.click('#projBtn'); await pg.waitForTimeout(300);
+  const proj = await pg.evaluate(() => JSON.parse(localStorage.getItem('atlas-projects-v1') || '[]'));
+  ok(proj.length === 1 && proj[0].platform === 'Website' && proj[0].hub.links.some(l => /page-builder\.html\?site=/.test(l.url)), 'Save to My projects adds a website project with an edit link');
+  // opening the edit link switches to that site
+  const sid = (await site(pg)).id; await pg.goto(BASE + 'page-builder.html?site=' + sid); await pg.waitForFunction(() => document.body.classList.contains('ready'));
+  ok((await site(pg)).id === sid, 'page-builder.html?site=<id> opens that site');
+  // publishing not available
+  store.enabled = false; await pg.evaluate(() => 0); await pg.reload(); await pg.waitForFunction(() => document.body.classList.contains('ready'));
+  await pg.click('#exportMenu summary'); await pg.click('#pubBtn'); await pg.waitForTimeout(600);
+  ok(/not switched on|switched off/.test(await pg.textContent('#pubState')) && await pg.locator('#pubGo').isDisabled(), 'when publishing is off the dialog explains and offers the ZIP');
+  await ctx.close();
+}
+
 // ---- 2. back-compat: an old saved single page opens as a one-page site
 {
   const old = { cur: 'p1', pages: { p1: { id: 'p1', name: 'Old page', brand: 'Larder', title: 'Larder · bakery', style: 'paper', pair: -1, blocks: [{ uid: 'a1', id: 'nav', vals: { l1: 'Bread', l2: 'Cakes', l3: 'Visit', cta: 'Order' } }, { uid: 'a2', id: 'hero-center', vals: { heading: 'Warm from the oven.' } }, { uid: 'a3', id: 'sec-footer', vals: {} }] } } };

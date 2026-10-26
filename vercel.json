@@ -7,6 +7,14 @@
     {
       "source": "/",
       "destination": "/atlas"
+    },
+    {
+      "source": "/site/:id",
+      "destination": "/api/site?id=:id"
+    },
+    {
+      "source": "/site/:id/:path*",
+      "destination": "/api/site?id=:id&path=:path*"
     }
   ],
   "headers": [
