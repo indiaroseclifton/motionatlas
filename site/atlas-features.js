@@ -51,7 +51,7 @@
   ['What are you making?',[['A product or app','app'],['An editorial or portfolio site','editorial'],['A launch or campaign','launch'],['A tool for experts','tool']]]];
  const W={S01:'calm paper light still editorial',S02:'precise paper light subtle editorial raw',S03:'warm paper earth subtle editorial',S04:'calm soft light subtle app',S05:'calm glass light subtle app',S06:'calm soft light lively app launch',S07:'precise paper light subtle app tool',S08:'bold raw vivid lively launch',S09:'warm paper light lively editorial',S10:'precise dark still tool raw',S11:'bold glass dark cinema launch vivid',S12:'precise paper light still tool',S13:'calm glass vivid subtle app',S14:'bold glass dark cinema launch vivid',S15:'warm soft vivid lively app',S16:'bold paper earth cinema editorial',S17:'bold raw light lively editorial',S18:'warm paper earth subtle app launch',S19:'precise dark still tool raw',S20:'bold raw vivid lively editorial launch',S21:'precise paper light still tool editorial',S22:'calm paper earth still editorial'};
  const MOTION={still:['Decelerate',[0,0,.2,1],200],subtle:['Standard',[.4,0,.2,1],280],lively:['Gentle overshoot',[.34,1.56,.64,1],450],cinema:['Expressive',[.2,.7,.1,1],900]};
- const FXBY={still:'L19',subtle:'L24',lively:'L08',cinema:'L22'};
+ const FXBY={still:'L19',subtle:'L24',lively:'L08',cinema:'L33'};
  let fdlg;
  function finder(){
   if(!fdlg){fdlg=document.createElement('dialog');fdlg.className='finder';fdlg.setAttribute('aria-labelledby','finderTitle');document.body.append(fdlg);fdlg.addEventListener('click',e=>{if(e.target===fdlg)fdlg.close();});}

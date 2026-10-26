@@ -23,7 +23,7 @@
    ['#pairings','Style pairings','Styles that work together, and why.','lion-phoenix']]},
   {name:'Motion',items:[
    ['#motion','Animation studio','Live studies, films, simulations and an easing lab.','bioluminescent-trails'],
-   ['#effects','Landing effects','Scroll and hover effects you can copy.','light-ribbons'],
+   ['#effects','Landing effects','The techniques: scroll-driven CSS, View Transitions, shaders, with code.','light-ribbons'],
    ['#showcase','Showcase reels','Motion templates for portfolios and launches.','golden-figure'],
    ['particle-studio.html','Particle studio','Turn any picture into moving particles.','particle-tree']]},
   {name:'Interface',items:[

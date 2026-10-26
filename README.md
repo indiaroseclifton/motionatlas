@@ -7,14 +7,27 @@ The library holds:
 
 | What | Count | Where it lives |
 | --- | --- | --- |
-| Catalogue entries (styles, art, animation, motion, components, effects, systems, films) | 337 | `site/catalogue.json` + `site/expansion.json` |
+| Catalogue entries (styles, art, animation, motion, components, effects, systems, films) | 381 | `site/catalogue.json` + `site/expansion.json` |
 | Theme kits | 48 | `site/kits/` |
 | Atlas design systems | 48 (D01–D48) | `site/expansion.json`, `systems.js`, `system-previews.js`, `system-kits.js` |
 | UI components | 64 (C01–C64) | `site/component-lab.js` |
 | Interactions | 70 | `site/interactions/` |
-| Landing effects | 37 (L01–L37) | `site/effects-lab.js`, `site/expansion.json` |
+| Landing effects (techniques) | 41 (L01–L49, with gaps where older effects were retired) | `site/effects-data.js` (the techniques), `site/effects-lab.js` (the lab UI), `site/expansion.json`, clips in `site/assets/fx/clips/` |
 | Atlas themes (component lab skins) | 22 | `site/atlas-themes.js` |
 | Page-builder sections / styles | 44 / 144 | `site/builder/` |
+
+### Landing effects and the Interactions shelf
+
+Two sections with a clear split. **Landing effects** (`atlas.html#effects`) are the techniques: one reusable technique per
+entry (CSS scroll-driven animation, View Transitions, `@starting-style`, scroll snap, clip-path and masks, SVG path
+drawing, split text, variable fonts, WebGL shaders, canvas particles, pointer effects, video scrub, blur-up loading,
+reduced-motion strategies…). Each runs full screen with intensity, duration, easing and reduced-motion controls, a guide
+(what it is, when to use it, performance, accessibility, browser support) and the exact code it runs. The
+**Interactions shelf** (`interactions.html`) holds finished pieces built from them: every entry in
+`site/interactions/manifest.js` has `uses:['L..']`, shown as "Built with" on the shelf and "Used in" on each technique.
+Retired effect IDs (L06, L17, L22, L28, L31, L35–L37) were merged into techniques or left to the shelf. Card clips
+(`assets/fx/clips/Lxx.{mp4,webm,webp}`, 1280×800, about 5 s, each video under 700 KB) are recorded with Playwright in
+virtual time and encoded with ffmpeg.
 
 If you change one of these, update the numbers in this table, the page `<meta name="description">`
 tags and the few hard-coded labels (`atlas.html` noscript and catalogue rail, `home.js`,
@@ -40,8 +53,6 @@ Live: https://motionatlas-ten.vercel.app (`/` rewrites to `/atlas`).
 - **Workers.** A worker is an element that does a job. Adding one shows the workflow it runs; setting "How many" shows one lane of that workflow per worker. Elements can also record what they kick-start (saved with the chart).
 - **Workspace feeds.** Where the host serves `/_01/feeds/index.json` (the 01 Design Suite) a Workspace button loads a model of a client's workspace onto the canvas. This site serves none, so the button stays hidden.
 - Files: `dataviz/flow.js` (engine, kinds, free placement, routing), `dataviz/presets.js` (layouts, templates, workers), `dataviz/canvas.js` (canvas controller, history, clipboard, menus, panel).
-
----
 
 ## Chart studio
 

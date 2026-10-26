@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cross-document view transition: detail</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=Manrope:wght@400;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+@view-transition{navigation:auto}
+:root{--fx-duration:900ms;--fx-ease:cubic-bezier(.2,.7,.1,1)}
+::view-transition-group(*){animation-duration:var(--fx-duration);animation-timing-function:var(--fx-ease)}
+*{box-sizing:border-box}
+body{margin:0;height:100vh;overflow:hidden;background:#0b0d12;color:#f2f4f8;font-family:"Manrope",system-ui,sans-serif}
+/* The hero always carries the name, so it pairs with whichever card the index page named. */
+.hero{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;view-transition-name:hero}
+body::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(11,13,18,.85),transparent 60%);pointer-events:none}
+.copy{position:absolute;left:6vw;bottom:9vh;z-index:1;display:grid;gap:18px;justify-items:start}
+h1{margin:0;font:300 clamp(64px,10vw,160px)/.92 "Cormorant Garamond",serif;view-transition-name:title}
+p{margin:0;font-size:clamp(17px,1.5vw,21px);max-width:40ch;color:#dbe2ec}
+.back{display:inline-flex;align-items:center;min-height:44px;padding:0 20px;border-radius:999px;border:1px solid #fff;color:#fff;text-decoration:none;font-weight:600}
+.back:focus-visible{outline:3px solid #7dd3fc;outline-offset:3px}
+@media(prefers-reduced-motion:reduce){@view-transition{navigation:none}}
+</style>
+</head>
+<body>
+<img class="hero" alt="">
+<div class="copy"><a class="back" href="index.html">← All worlds</a><h1></h1><p>This is a separate HTML page. The browser morphed the card you clicked into this hero across the navigation.</p></div>
+<script>
+const WORLDS={cathedral:'Green cathedral',lighthouse:'Storm light',coast:'Coastal town',synthwave:'Night drive'};
+const q=new URLSearchParams(location.search),p=WORLDS[q.get('p')]?q.get('p'):'cathedral';
+document.querySelector('.hero').src='../'+p+'.webp';document.querySelector('h1').textContent=WORLDS[p];document.title=WORLDS[p];
+/* Settings passed in by the atlas preview. Safe to delete. */
+if(q.get('d'))document.documentElement.style.setProperty('--fx-duration',q.get('d')+'ms');if(q.get('e'))document.documentElement.style.setProperty('--fx-ease',q.get('e'));
+const back=new URL('index.html',location.href);q.forEach((v,k)=>{if(k!=='p')back.searchParams.set(k,v);});document.querySelector('.back').href=back.href;
+addEventListener('pagereveal',e=>{if(e.viewTransition&&q.get('r')==='1')e.viewTransition.skipTransition();});
+addEventListener('pageswap',e=>{if(e.viewTransition&&q.get('r')==='1')e.viewTransition.skipTransition();});
+</script>
+</body>
+</html>
