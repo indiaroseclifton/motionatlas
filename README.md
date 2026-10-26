@@ -257,7 +257,7 @@ static site or publish it to a live address. Old single-page saves open as one-p
   the footer. Select words on the canvas for the B / I / Link bar (or Ctrl+B / Ctrl+I): the plain text stays in the field and the
   formatting is stored beside it as sanitized inline HTML (`b`, `i`, `a` only), so literal asterisks and brackets stay
   literal; editing the words in the side panel drops stale formatting. Hidden sections show as dashed ghost bars on the
-  canvas with a Show button. Zoom (40 to 150%) with the buttons, + and -, or Ctrl+wheel; drag a library card onto the canvas to see a drop line.
+  canvas with a Show button. Zoom (40 to 150%) with the buttons, + and -, or Ctrl+wheel; drag a library card onto the canvas to see a drop line (checked at 100% and zoomed out).
 - **Backup and My projects:** Export has "Download site file (.json)" (the whole site plus uploaded images and saved
   blocks) and "Open a site file…" (adds it as a new site). Autosave keeps an existing My projects entry up to date;
   "Sync all sites to My projects" in the start dialog creates a Website project for every site (cloud sync of projects

@@ -530,7 +530,7 @@ function favUI(){const f=site.settings.favicon;$('#favSet').innerHTML=FAVSETS().
  if(f.set!=='letter'&&f.set!=='glyphs'&&f.name&&PB.loadIcon)PB.loadIcon(f.set,f.name+'.svg');
  $('#favPrev').src=S.svgDataURL(S.faviconSVG(site,accentOf()))}
 function navRows(){const box=$('#navRows');box.innerHTML='';$('#navAuto').checked=site.navAuto;
- if(site.navAuto){const it=S.menu(site);box.innerHTML=`<p class="hint">The menu lists: ${it.length?it.map(i=>esc(i.label)).join(', '):'no pages yet'}. Hide a page from it in Pages.</p>`;return}
+ if(site.navAuto){const it=S.menu(site);box.innerHTML=`<p class="hint">The menu lists: ${it.length?it.map(i=>esc(i.label)).join(', '):'no pages yet'}. Hide a page from it in the Outline tab, under “This page’s name, address and search settings”.</p>`;return}
  site.nav.forEach((n,i)=>{const r=document.createElement('div');r.className='navrow';const li=document.createElement('input');li.value=n.label;li.setAttribute('aria-label','Menu item '+(i+1)+' text');li.oninput=()=>{site.navSeed=false;n.label=li.value;commitSoon();render()};
   const lp=linkPicker(n.link,v=>{site.navSeed=false;n.link=v;commitSoon();render()},'Menu item '+(i+1)+' link');
   const act=document.createElement('span');act.className='pgact';act.innerHTML=`<button type="button" class="ib" data-a="up" aria-label="Move ${esc(n.label)} up"${i?'':' disabled'}>↑</button><button type="button" class="ib" data-a="down" aria-label="Move ${esc(n.label)} down"${i<site.nav.length-1?'':' disabled'}>↓</button><button type="button" class="ib" data-a="rm" aria-label="Remove ${esc(n.label)}">✕</button>`;
@@ -564,7 +564,7 @@ const W=[['desk','Desktop','100%'],['tab','Tablet','820px'],['phone','Phone','39
 $('#widths').innerHTML=W.map(([k,l])=>`<button type="button" data-w="${k}" aria-pressed="${k===(ui.w||'desk')}">${l}</button>`).join('');
 function setW(k){ui.w=k;saveUI();const w=W.find(x=>x[0]===k)||W[0];frameWrap.dataset.w=k;pv.style.width=w[2];applyZoom();$$('#widths button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.w===k))}
 function applyZoom(){const z=ZOOM,w=(W.find(x=>x[0]===(ui.w||'desk'))||W[0])[2];frameWrap.classList.toggle('zoomed',z!==1);
- if(z===1){pv.style.transform='';pv.style.width=w;pv.style.height='';pv.style.transformOrigin='';frameWrap.style.removeProperty('--zh')}
+ pv.style.maxWidth=z===1?'':'none';pv.style.flex=z===1?'':'none';if(z===1){pv.style.transform='';pv.style.width=w;pv.style.height='';pv.style.transformOrigin='';frameWrap.style.removeProperty('--zh')}
  else{const px=/px$/.test(w)?parseFloat(w):null;pv.style.width=px?px+'px':(100/z)+'%';pv.style.height=(100/z)+'%';pv.style.transformOrigin='top '+(px?'center':'left');pv.style.transform='scale('+z+')'}
  const o=$('#zoomVal');if(o)o.textContent=Math.round(z*100)+'%';placeTb(lastRects)}
 function setZoom(z){ZOOM=Math.max(.4,Math.min(1.5,Math.round(z*20)/20));ui.zoom=ZOOM;saveUI();applyZoom()}

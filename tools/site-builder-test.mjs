@@ -469,6 +469,24 @@ if (axeSrc) {
   ok(dr, 'canvas has a drop overlay and indicator');
   await ctx.close();
 }
+// ---- 5c. drag a library card onto the canvas: drop line and position, zoom keeps the canvas aligned
+{
+  const { ctx, pg } = await open();
+  await pg.evaluate(() => PB.ux.useTemplate(0)); await waitPv(pg); await pg.waitForTimeout(800);
+  const geo = () => pg.evaluate(() => { const d = PB.app.pv.contentDocument, z = PB.app.zoom, ir = PB.app.pv.getBoundingClientRect(); return { x: ir.left + ir.width / 2, l: ir.left, w: ir.width, bs: [...d.querySelectorAll('[data-pb][data-zone=page]')].map(b => { const r = b.getBoundingClientRect(); return [r.top * z + ir.top, r.height * z]; }) }; });
+  async function drag(y) { const cb = await pg.locator('#libList .lc').nth(3).boundingBox(); const g = await geo(); await pg.mouse.move(cb.x + 30, cb.y + 30); await pg.mouse.down(); await pg.mouse.move(cb.x + 60, cb.y + 60, { steps: 3 }); await pg.mouse.move(g.x, y, { steps: 10 }); await pg.waitForTimeout(250); const ind = await pg.evaluate(() => { const i = document.querySelector('.dropind'); const r = i.getBoundingClientRect(); return { hidden: i.hidden, top: r.top, left: r.left, w: r.width }; }); return ind; }
+  let g = await geo(); const [t0, h0] = g.bs[0];
+  let ind = await drag(Math.min(t0 + h0 * 0.2, 400)); ok(!ind.hidden && Math.abs(ind.top - t0) < 6, 'drop line shows before the first section when dragging over its top half');
+  await pg.mouse.up(); await pg.waitForTimeout(500); ok((await pg.evaluate(() => PB.app.curPage().blocks[0].id)) !== 'hero-image', 'dropping above a section inserts before it'); await pg.evaluate(() => PB.app.undo());
+  await pg.evaluate(() => { PB.app.setZoom(.6); PB.app.pv.contentWindow.scrollTo(0, 0); }); await pg.waitForTimeout(900);
+  g = await geo(); const wr = await pg.evaluate(() => document.querySelector('#wrap').getBoundingClientRect().left);
+  ok(Math.abs(g.l - wr) < 3 && g.w > 600, 'zoomed canvas keeps its full width and left edge (' + Math.round(g.l) + ' vs ' + Math.round(wr) + ', width ' + Math.round(g.w) + ')');
+  const [t1, h1] = g.bs[0]; ind = await drag(Math.min(t1 + h1 * 0.8, 700)); ok(!ind.hidden && Math.abs(ind.top - (t1 + h1)) < 8, 'drop line lines up with the section boundary while zoomed');
+  await pg.mouse.up(); await pg.waitForTimeout(500); ok((await pg.evaluate(() => PB.app.curPage().blocks[1].id)) === (await pg.evaluate(() => PB.app.curPage().blocks[1].id)) && (await pg.evaluate(() => PB.app.curPage().blocks.length)) === 6, 'dropping below a section adds one section after it');
+  const ov = await pg.evaluate(() => { const z = document.querySelector('#zoomSeg').getBoundingClientRect(), r = document.querySelector('.right').getBoundingClientRect(), p = document.querySelector('#wrap').getBoundingClientRect(); return z.right <= r.left && z.top < p.top; });
+  ok(ov, 'zoom controls sit in the bar above the canvas, clear of the right panel');
+  await ctx.close();
+}
 // ---- 5a. site file backup, import, My projects sync
 {
   const { ctx, pg } = await open();

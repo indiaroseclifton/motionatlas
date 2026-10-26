@@ -50,7 +50,7 @@ function draw(){const body=$('#stBody'),back=$('#stBack');back.hidden=view==='ho
  if(view==='home')drawHome(body);else if(view==='templates')drawGallery(body);else if(view==='detail')drawDetail(body);else if(view==='ai')drawAI(body);else drawBrand(body)}
 function drawHome(body){const P=sitesSorted(),hasAny=P.length&&!A.first,cur=A.site;
  const opt=(k,t,d,ic,primary)=>`<button type="button" class="stopt${primary?' primary':''}" data-o="${k}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${ic}"/></svg><b>${t}</b><small>${d}</small></button>`;
- body.innerHTML=`<div class="stopts">`+(hasAny?opt('continue','Continue “'+esc((cur.name||cur.brand||'Untitled').slice(0,24))+'”','Pick up where you left off','M5 12h14M13 6l6 6-6 6',1):'')+
+ body.innerHTML=`<div class="stopts">`+(hasAny?opt('continue','Continue “'+esc((cur.name||cur.brand||'Untitled').slice(0,26)+((cur.name||cur.brand||'').length>26?'…':''))+'”','Pick up where you left off','M5 12h14M13 6l6 6-6 6',1):'')+
   opt('templates','Start from a template',PB.templates.length+' multi-page sites to adapt','M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z')+
   opt('ai','Describe your site','Say what it is for, get a first draft','M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z')+
   opt('blank','Blank site','Empty canvas, add sections yourself','M6 3h9l4 4v14H6zM14 3v5h5')+
@@ -250,7 +250,7 @@ fd.innerHTML=`<div class="pkhead"><h2 id="fdT">Find and replace</h2><span style=
 $('#fdX').onclick=()=>fd.close();
 function scan(q,cs){const out=[];if(!q)return out;const re=new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),cs?'g':'gi');
  const zones=[['Header',A.site.header],...A.site.pages.map(p=>[p.name||'Page',p.blocks]),['Footer',A.site.footer]];
- zones.forEach(([zn,list])=>list.forEach(blk=>{const d=A.def(blk.id);if(!d)return;A.fieldsOf(d).forEach(f=>{if(!['text','long','list'].includes(f.type))return;const v=String(A.val(blk,f.k)||'');const m=v.match(re);if(!m)return;re.lastIndex=0;const i=v.search(re);out.push({blk,k:f.k,zone:zn,name:d.name,label:f.label.replace(/\s*\(.*\)/,''),n:m.length,ctx:v.slice(Math.max(0,i-24),i+q.length+34).replace(/\n/g,' '),i:Math.min(24,i),len:q.length})})}));return out}
+ zones.forEach(([zn,list])=>list.forEach(blk=>{const d=A.def(blk.id);if(!d)return;A.fieldsOf(d).forEach(f=>{if(!['text','long','list'].includes(f.type))return;const v=String(A.val(blk,f.k)||'');const m=v.match(re);if(!m)return;re.lastIndex=0;const i=v.search(re);out.push({blk,k:f.k,zone:zn,name:d.name,label:f.label.replace(/\s*\(.*\)/,''),n:m.length,ctx:(i>24?'…':'')+v.slice(Math.max(0,i-24),i+q.length+34).replace(/\n/g,' ')+(v.length>i+q.length+34?'…':''),i:Math.min(24,i)+(i>24?1:0),len:q.length})})}));return out}
 let found=[];
 function fdDraw(){const q=$('#fdQ').value,cs=$('#fdCase').checked;found=scan(q,cs);const tot=found.reduce((n,x)=>n+x.n,0);
  $('#fdCount').textContent=q?(tot?tot+' match'+(tot>1?'es':'')+' in '+found.length+' place'+(found.length>1?'s':''):'No matches.'):'Type something to search every page, the header and the footer.';
@@ -284,4 +284,5 @@ UX.find=find;
  $('#dlJson').onclick=download;$('#openJson').onclick=()=>{close();fi.value='';fi.click()};fi.onchange=()=>importFile(fi.files[0]);
  UX.exportFile=download;UX.importFile=importFile;
  UX.syncAll=()=>{let n=0;Object.values(A.store.pages).forEach(s=>{if(A.saveToProjects(s,true))n++});A.say(n?'Synced '+n+' site'+(n>1?'s':'')+' to My projects':'Could not sync to My projects')}}
+$('#chkBack').onclick=()=>A.rtab('page');
 })();
