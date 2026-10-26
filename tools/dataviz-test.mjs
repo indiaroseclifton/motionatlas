@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* QA for the chart studio, the diagram studio and the chart style guides.
+/* QA for the chart studio, the diagram studio, the flowchart studio and the chart style guides.
    For 1440×900 and 390×844: every chart type and every diagram type renders in three styles without console
    errors or NaN, exports produce non-empty files, axe finds no serious or critical issues, and nothing scrolls
    sideways. Also checks share links round-trip, the text import round-trips, the keyboard cursor and canvas
@@ -161,6 +161,130 @@ for (const [vw, vh] of VIEWPORTS) {
     }
     if (vw >= 1000) await download(page, async () => { await page.evaluate(() => DiagramStudio.set({ kind: 'cycle' })); await page.click('#mvGif'); }, `${tag} diagram studio export GIF build-up`, 5000);
     note(!errors.length, `${tag} diagram studio: console errors ${errors.length ? errors.slice(0, 3).join(' | ') : 'none'}`);
+    await ctx.close();
+  }
+  /* ---------------- flowchart studio ---------------- */
+  {
+    const { ctx, page, errors } = await newPage(vw, vh);
+    await page.goto(`${BASE}/flowchart-canvas.html`); await page.waitForTimeout(1500);
+    /* every element kind renders in three styles, on the canvas and in the framed export */
+    const kinds = await page.evaluate(() => Object.keys(FlowEngine.KIND).filter(k => FlowEngine.KIND[k].tag || ['rect', 'decision', 'pill', 'data', 'io', 'sub', 'round', 'circle'].includes(k)));
+    const shapeBad = await page.evaluate(([kinds, styles]) => { const bad = []; const W = { rect: ['[', ']'], decision: ['{', '}'], pill: ['([', '])'], data: ['[(', ')]'], io: ['[/', '/]'], sub: ['[[', ']]'], round: ['(', ')'], circle: ['((', '))'] };
+      const src = 'flowchart TD\n' + kinds.map((k, i) => { const K = FlowEngine.KIND[k]; return K.tag ? `  n${i}[${K.name}]:::none.${k}` : `  n${i}${W[k][0]}${K.name}${W[k][1]}`; }).join('\n') + '\n' + kinds.slice(1).map((k, i) => `  n${i} --> n${i + 1}`).join('\n');
+      for (const st of styles) for (const canvas of [true, false]) { const r = FlowEngine.render(src, DVStyle(st), { canvas, title: 'Shapes' }); const kindsIn = (r.svg.match(/data-kind="/g) || []).length; if (/NaN|undefined/.test(r.svg) || kindsIn !== kinds.length) bad.push(`${st}/${canvas ? 'canvas' : 'framed'} kinds=${kindsIn}`); }
+      return bad; }, [kinds, ['workflow', 'paper', 'blueprint']]);
+    note(!shapeBad.length, `${tag} flowchart studio: ${kinds.length} element kinds render in 3 styles${shapeBad.length ? ': ' + shapeBad.join(', ') : ''}`);
+    /* shape picker: search, then add */
+    await page.click('.rail [data-fly=add]'); await page.waitForTimeout(200);
+    await page.fill('#addQ', 'delay'); await page.waitForTimeout(100);
+    const found = await page.evaluate(() => [...document.querySelectorAll('#addList [data-add]')].map(b => b.dataset.add));
+    await page.keyboard.press('Enter'); await page.waitForTimeout(300);
+    const added = await page.evaluate(() => document.querySelectorAll('#paper .fc-n[data-kind="delay"]').length);
+    note(found.length === 1 && found[0] === 'delay' && added === 1, `${tag} flowchart studio: shape search finds “delay” and adds it (${found.join(',')}, ${added} on canvas)`);
+    await page.keyboard.press('Escape');
+    if (vw >= 1000) await axe(page, `${tag} flowchart studio (canvas)`);
+    /* Mermaid in, Mermaid out, outline round trip, for every template */
+    const rt = await page.evaluate(() => { const bad = []; const sig = src => { const g = FlowEngine.parse(src); return [...g.nodes.values()].map(n => n.label + '/' + FlowEngine.kindOf(n)).sort().join('|') + '#' + g.edges.map(e => e.from + '>' + e.to + ':' + (e.label || '')).sort().join('|'); };
+      const sigL = src => { const g = FlowEngine.parse(src); return [...g.nodes.values()].length + '#' + g.edges.length + '#' + g.edges.filter(e => e.label).length; };
+      const all = [...FlowTemplates, ...FlowExamples];
+      for (const t of all) { try { const a = FlowText.fromMermaid(FlowText.toMermaid(t.src)); if (sig(a) !== sig(FlowText.fromMermaid(t.src))) bad.push('mermaid:' + t.id); const o = FlowText.fromOutline(FlowText.toOutline(t.src)); if (sigL(o) !== sigL(t.src)) bad.push('outline:' + t.id); } catch (e) { bad.push(t.id + ' ' + e.message); } }
+      return { n: all.length, bad }; });
+    note(!rt.bad.length, `${tag} flowchart studio: Mermaid and outline round-trip for ${rt.n} templates${rt.bad.length ? ': ' + rt.bad.slice(0, 5).join(', ') : ''}`);
+    const mm = await page.evaluate(() => { const src = FlowText.fromMermaid('graph LR\nA[Christmas] -->|Get money| B(Go shopping)\nB --> C{Let me think}\nC -->|One| D[Laptop]\nC -->|Two| E[iPhone]\nsubgraph s1 [Shop]\nD\nE\nend\nW@{ shape: delay, label: "Wait" } --> A\nE --o F[(Orders)]'); const g = FlowEngine.parse(src); return [g.dir, g.nodes.size, g.edges.length, g.groups.length, FlowEngine.kindOf(g.nodes.get('W')), g.nodes.get('C').shape, g.edges.find(e => e.to === 'F').head]; });
+    note(JSON.stringify(mm) === JSON.stringify(['LR', 7, 6, 1, 'delay', 'decision', 'o']), `${tag} flowchart studio: Mermaid import reads direction, shapes, @{shape}, subgraphs and arrowheads ${JSON.stringify(mm)}`);
+    /* import through the panel, then the connectors stay clear of other elements */
+    await page.click('.rail [data-fly=text]'); await page.waitForTimeout(150);
+    await page.fill('#txIn', 'Customer asks for a refund\nSupport checks the order\nOlder than 30 days?\n  Yes: Explain the policy\n  No: Approve the refund\nFinance pays it back\nCustomer is told [end]');
+    await page.click('[data-tx=replace]'); await page.waitForTimeout(500);
+    const imp = await page.evaluate(() => { const g = FlowStudio.cv.last().g; return [g.nodes.size, g.edges.length, document.getElementById('title').value]; });
+    note(imp[0] === 7 && imp[1] === 6, `${tag} flowchart studio: outline import builds ${imp[0]} elements and ${imp[1]} connections`);
+    const cross = await page.evaluate(() => { const L = FlowStudio.cv.last(), g = L.g; let hits = 0, segs = 0; for (const e of g.edges) { if (!e.xy) continue; for (let i = 0; i < e.xy.length - 1; i++) { const [p, q] = [e.xy[i], e.xy[i + 1]]; segs++; for (const n of g.nodes.values()) { if (n.id === e.from || n.id === e.to) continue; const x0 = Math.min(p[0], q[0]), x1 = Math.max(p[0], q[0]), y0 = Math.min(p[1], q[1]), y1 = Math.max(p[1], q[1]); if (x1 > n.x + 2 && x0 < n.x + n.w - 2 && y1 > n.y + 2 && y0 < n.y + n.h - 2) hits++; } } } return { hits, segs }; });
+    note(cross.hits === 0 && cross.segs > 0, `${tag} flowchart studio: connectors route round elements (${cross.segs} segments, ${cross.hits} through an element)`);
+    /* layout both ways */
+    const lay = await page.evaluate(async () => { const r = []; for (const d of ['TB', 'LR']) { document.querySelector(`#dir [data-v="${d}"]`).click(); FlowStudio.cv.unfreeze(); await new Promise(r => setTimeout(r, 250)); const b = FlowStudio.cv.last().bbox; r.push((b.x1 - b.x0) / (b.y1 - b.y0)); } return r; });
+    note(lay[1] > lay[0], `${tag} flowchart studio: top-down and left-right layouts (aspect ${lay.map(x => x.toFixed(2)).join(' → ')})`);
+    /* align, distribute, group */
+    const arr = await page.evaluate(async () => { const cv = FlowStudio.cv, ids = [...cv.last().g.nodes.keys()].slice(0, 3); cv.select(ids); cv.align('left'); await new Promise(r => setTimeout(r, 100)); const xs = ids.map(id => cv.last().g.nodes.get(id).x); const gid = cv.groupSelection('Intake'); await new Promise(r => setTimeout(r, 100)); const g = cv.last().g; return { same: new Set(xs).size === 1, grouped: g.groups.length === 1 && ids.every(id => g.nodes.get(id).group === 'grp_' + gid), bar: !document.getElementById('selbar').hidden || innerWidth < 600 }; });
+    note(arr.same && arr.grouped, `${tag} flowchart studio: align left lines up 3 elements and Group wraps them ${JSON.stringify(arr)}`);
+    await page.keyboard.press('Escape'); await page.evaluate(() => FlowStudio.cv.close());
+    /* templates gallery: 20+ processes, each with a live thumbnail, searchable */
+    await page.evaluate(() => FlowStudio.cv.close());
+    await page.click('.rail [data-fly=templates]'); await page.click('[data-examples]'); await page.waitForTimeout(900);
+    const tpl = await page.evaluate(() => { const cards = [...document.querySelectorAll('#tplGrid .tpl-card')]; return { n: cards.length, thumbs: cards.filter(c => (c.querySelector('svg')?.outerHTML.length || 0) > 1500 && !/NaN/.test(c.innerHTML)).length }; });
+    note(tpl.n >= 20 && tpl.thumbs === tpl.n, `${tag} flowchart studio: ${tpl.n} process templates in the gallery, ${tpl.thumbs} with a live thumbnail`);
+    await page.fill('#tplQ', 'invoice'); await page.waitForTimeout(250);
+    const tq = await page.evaluate(() => [...document.querySelectorAll('#tplGrid .tpl-card b')].map(b => b.textContent));
+    note(tq.includes('Invoice approval'), `${tag} flowchart studio: template search “invoice” finds ${tq.join(', ')}`);
+    await axe(page, `${tag} flowchart studio (templates dialog)`);
+    await page.click('#tplGrid .tpl-card'); await page.waitForTimeout(500);
+    /* describe a process: AI is not reachable here, so the rule-based reading draws it and says so */
+    await page.click('.rail [data-fly=assist]'); await page.waitForTimeout(200);
+    await page.fill('#aiIn', 'A customer asks for a refund. Support finds the order. If it is older than 30 days, explain the policy. Otherwise approve the refund. Then finance pays it back.');
+    const aimsg = await page.evaluate(() => document.getElementById('aiMsg').textContent);
+    await page.click('[data-aigo=replace]'); await page.waitForTimeout(700);
+    const drawn = await page.evaluate(() => { const g = FlowStudio.cv.last().g; return [g.nodes.size, g.edges.length, [...g.nodes.values()].filter(n => n.shape === 'decision').length]; });
+    note(drawn[0] === 6 && drawn[1] === 5 && drawn[2] === 1 && /rules/.test(aimsg), `${tag} flowchart studio: “Describe a process” falls back to rules when AI is unavailable (${drawn.join('/')}; “${aimsg.slice(0, 60)}”)`);
+    /* presentation steps through every element */
+    const pres = await page.evaluate(async () => { FlowStudio.presentStart(); const n = FlowStudio.presenting.order.length; for (let i = 0; i < n; i++) document.getElementById('pNext').click(); await new Promise(r => setTimeout(r, 100)); return [n, FlowStudio.presenting === null]; });
+    note(pres[0] === 6 && pres[1], `${tag} flowchart studio: presentation steps through ${pres[0]} elements and ends`);
+    const ov = await overflow(page); note(ov <= 0, `${tag} flowchart studio: horizontal overflow ${ov}px`);
+    /* exports */
+    for (const [id, min, label] of [['exSvg', 2000, 'SVG'], ['exPng', 4000, 'PNG'], ['exMmd', 150, 'Mermaid'], ['exOutline', 100, 'outline'], ['exJson', 300, 'JSON']]) {
+      await download(page, async () => { await page.click('#exportBtn'); await page.click('#' + id); }, `${tag} flowchart studio export ${label}`, min);
+    }
+    note(!errors.length, `${tag} flowchart studio: console errors ${errors.length ? errors.slice(0, 3).join(' | ') : 'none'}`);
+    await ctx.close();
+  }
+  /* ---------------- flowchart studio (the full studio with canvas editing) ---------------- */
+  {
+    const { ctx, page, errors } = await newPage(vw, vh);
+    await page.goto(`${BASE}/flowchart-studio.html`); await page.waitForTimeout(1500);
+    const nEdges = () => page.evaluate(() => FlowStudio.cv.last().g.edges.length);
+    const nNodes = () => page.evaluate(() => FlowStudio.cv.last().g.nodes.size);
+    const box = async i => (await page.$$('#paper .fc-n'))[i].boundingBox();
+    note(await page.evaluate(() => !!document.querySelector('#types [data-type=cycle]') && !!document.querySelector('#styles .chip') && !!document.querySelector('#tplSide') && !!document.querySelector('#mvPlay')), `${tag} full studio: type grid, style chips, templates and Play/Video/GIF are all there`);
+    /* click an element: details and its connections */
+    await (await page.$$('#paper .fc-n'))[2].click(); await page.waitForTimeout(400);
+    const det = await page.evaluate(() => { const i = document.getElementById('insp'); return { open: !i.hidden, text: i.innerText, conn: [...i.querySelectorAll('h3')].map(h => h.innerText).find(t => /^CONNECTIONS/i.test(t)) || '', rows: i.querySelectorAll('.ic').length }; });
+    note(det.open && /Concept approved/.test(det.text) && /\d+ in/.test(det.conn) && det.rows >= 2, `${tag} full studio: clicking an element opens its details and ${det.rows} connections (${det.conn.replace(/\s+/g, ' ')})`);
+    if (vw < 1000) { await page.click('#insp .x'); await page.waitForTimeout(200); }
+    /* drag moves it */
+    const b0 = await box(2); await page.mouse.move(b0.x + b0.width / 2, b0.y + b0.height / 2); await page.mouse.down(); await page.mouse.move(b0.x + b0.width / 2 + 120, b0.y + b0.height / 2 + 10, { steps: 8 }); await page.mouse.up(); await page.waitForTimeout(500);
+    const b1 = await box(2); note(Math.abs(b1.x - b0.x - 120) < 6, `${tag} full studio: dragging moves the element (${Math.round(b1.x - b0.x)}px)`);
+    /* connect two elements, steps text follows, undo and redo */
+    const e0 = await nEdges(); const hb = await (await page.$$('#paper .fc-handle'))[0].boundingBox(); const tb = await box(0);
+    await page.mouse.move(hb.x + hb.width / 2, hb.y + hb.height / 2); await page.mouse.down(); await page.mouse.move(tb.x + tb.width / 2, tb.y + tb.height / 2, { steps: 10 }); await page.mouse.up(); await page.waitForTimeout(500);
+    const e1 = await nEdges(); await page.click('#mode [data-v=code]'); const code = await page.inputValue('#src');
+    note(e1 === e0 + 1 && code.split('\n').filter(l => /-->/.test(l)).length === e1, `${tag} full studio: a new connection is added (${e0} → ${e1}) and the steps text follows`);
+    await page.evaluate(() => FlowStudio.cv.close());
+    await page.click('#undoBtn'); await page.waitForTimeout(300); const eU = await nEdges(); await page.click('#redoBtn'); await page.waitForTimeout(300); const eR = await nEdges();
+    note(eU === e0 && eR === e1, `${tag} full studio: undo and redo (${eU}, ${eR})`);
+    /* editing the steps edits the canvas */
+    await page.click('#mode [data-v=visual]'); await page.waitForTimeout(200);
+    await page.fill('#visual .fe-label >> nth=0', 'Brief arrives'); await page.waitForTimeout(500);
+    note(await page.evaluate(() => [...FlowStudio.cv.last().g.nodes.values()].some(n => n.label === 'Brief arrives')), `${tag} full studio: renaming a step in the steps list renames it on the canvas`);
+    /* every diagram type keeps the content and stays selectable */
+    const n0 = await nNodes(), bad = [];
+    for (const t of ['stepper', 'stages', 'cycle', 'tree', 'capability', 'swimlanes', 'mindmap', 'flow']) {
+      await page.click(`#types [data-type=${t}]`); await page.waitForTimeout(450);
+      const r = await page.evaluate(() => ({ n: FlowStudio.cv.last().g.nodes.size, fc: document.querySelectorAll('#paper .fc-n').length }));
+      if (r.n !== n0 || r.fc < n0) bad.push(`${t}:${r.n}/${r.fc}`);
+    }
+    note(!bad.length, `${tag} full studio: all 8 diagram types keep ${n0} elements, each selectable${bad.length ? ' (' + bad.join(', ') + ')' : ''}`);
+    /* click an element in a non-flow type */
+    await page.click('#types [data-type=stages]'); await page.waitForTimeout(450); await page.mouse.click(5, 5);
+    await (await page.$$('#paper .fc-n'))[1].click(); await page.waitForTimeout(400);
+    note(await page.evaluate(() => !document.getElementById('insp').hidden), `${tag} full studio: stage columns elements open their details too`);
+    await page.click('#types [data-type=flow]'); await page.waitForTimeout(300);
+    /* Play build-up and exports */
+    await page.evaluate(() => FlowStudio.cv.close()); await page.click('#mvPlay'); await page.waitForTimeout(600); const playing = await page.textContent('#mvPlay'); await page.click('#mvPlay');
+    note(/Stop/.test(playing), `${tag} full studio: Play runs the build-up on the canvas`);
+    for (const [id, min, label] of [['exSvg', 2000, 'SVG'], ['exPng', 5000, 'PNG'], ['exHtml', 2000, 'HTML'], ['exGuide', 5000, 'style guide']]) {
+      await download(page, async () => { await page.click('#exportBtn'); await page.click('#' + id); }, `${tag} full studio export ${label}`, min);
+    }
+    note((await overflow(page)) <= 0, `${tag} full studio: horizontal overflow ${await overflow(page)}px`);
+    await axe(page, `${tag} full studio`);
+    note(!errors.length, `${tag} full studio: console errors ${errors.length ? errors.slice(0, 3).join(' | ') : 'none'}`);
     await ctx.close();
   }
   /* ---------------- chart style guides ---------------- */
