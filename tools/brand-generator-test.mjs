@@ -46,7 +46,7 @@ const url=await pg.evaluate(()=>Brandgen.shareURL());const pg2=await ctx.newPage
 const same=await Promise.all([pg,pg2].map(p=>p.evaluate(()=>JSON.stringify([Brandgen.brand.pal.brand,Brandgen.brand.type.id,Brandgen.brand.name]))));ok(same[0]===same[1],'share link round trip');await pg2.close();
 ok(await pg.evaluate(()=>!!localStorage.getItem('brandgen-draft-v1')),'localStorage draft saved');
 /* 8. site builder handoff */
-await pg.click('#toSite');await pg.waitForURL(/page-builder\.html\?site=/);ok(true,'handoff opens the site builder');await pg.waitForTimeout(1500);ok(await pg.evaluate(()=>/Saffron/.test(document.body.innerText)||true),'builder loaded');
+await pg.click('#toSite');await pg.waitForURL(/page-builder\.html\?brand=1/);ok(true,'handoff opens the site builder');await pg.waitForSelector('#brandGrid');ok(await pg.locator('#brandGrid .sugg').count()===1,'handoff asks which template and suggests one from the description');await pg.click('#brGo');await pg.waitForTimeout(1800);ok(await pg.evaluate(()=>PB.app.site.pages.length>=3&&!!PB.app.site.logo&&PB.app.site.tokens&&!!PB.app.site.tokens.accent),'handoff builds a populated multi-page site with the brand mark and colours');await pg.waitForTimeout(1500);ok(await pg.evaluate(()=>/Saffron/.test(document.body.innerText)||true),'builder loaded');
 /* 9. keyboard / axe / mobile */
 await pg.goto(URL);await pg.waitForFunction(()=>window.Brandgen&&Brandgen.brand);await pg.waitForTimeout(1200);
 await pg.addScriptTag({content:axeSrc});const ax=await pg.evaluate(()=>axe.run(document,{runOnly:['wcag2a','wcag2aa']}));const sv=ax.violations.filter(v=>['serious','critical'].includes(v.impact));ok(sv.length===0,'axe no serious/critical '+sv.map(v=>v.id+':'+v.nodes.length+' '+v.nodes[0].target).join('; '));

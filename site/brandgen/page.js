@@ -167,10 +167,9 @@ function saveProject(){const b=cur(),K='atlas-projects-v1';let list=[];try{list=
 $('#saveProj').onclick=saveProject;
 
 /* Site builder handoff: a new site whose tokens are the brand's */
-$('#toSite').onclick=()=>{const b=cur(),M=b.modes[b.mode],K='atlas-page-builder-v2',id='brand'+Date.now().toString(36);let st;try{st=JSON.parse(localStorage.getItem(K)||'null')}catch(e){st=null}
- if(!st||!st.pages)st={cur:null,pages:{}};const ok=f=>/^[\w ]{2,40}$/.test(f)?f:'';const fh=ok(b.type.head),fb=ok(b.type.body);
- st.pages[id]={id,name:b.name,brand:b.name,style:'studio',blocks:[],tokens:{bg:M.bg,surface:M.surface,ink:M.ink,accent:M.primary,radius:Math.min(40,b.radius),...(fh?{fontHead:fh}:{}),...(fb?{fontBody:fb}:{})}};st.cur=id;
- try{localStorage.setItem(K,JSON.stringify(st));say('Opening the site builder with your brand');location.href='page-builder.html?site='+id}catch(e){say('Could not hand off: storage is full or blocked')}};
+$('#toSite').onclick=()=>{const b=cur(),M=b.modes[b.mode],ok=f=>/^[\w ]{2,40}$/.test(f)?f:'';let mark='';try{mark='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(BG.monogram(b,64,{bg:false}))}catch(e){}
+ const h={name:b.name,desc:(window.__brandState||{}).desc||'',audience:(window.__brandState||{}).audience||'',feels:(window.__brandState||{}).feels||[],tagline:b.copy&&b.copy.tagline||'',headline:b.copy&&b.copy.headline||'',voice:b.copy&&b.copy.voice||[],group:b.copy&&b.copy.group||'',mode:b.mode,t:{bg:M.bg,surface:M.surface,ink:M.ink,primary:M.primary},head:ok(b.type.head),body:ok(b.type.body),radius:Math.min(40,b.radius),mark,at:Date.now()};
+ try{localStorage.setItem('atlas-pb-brand-handoff',JSON.stringify(h));say('Opening the site builder with your brand');location.href='page-builder.html?brand=1'}catch(e){say('Could not hand off: storage is full or blocked')}};
 
 /* AI refine */
 let aiOn=null;
