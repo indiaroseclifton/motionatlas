@@ -95,7 +95,7 @@ NOHASH = "root.querySelectorAll('a[href=\"#\"]').forEach(a=>a.onclick=e=>e.preve
 # id, name, group, description, css, html, js, fields [(key,label,type,default)], prompt
 NEW = [
  ('nav', 'Navigation bar', 'Top', 'A sticky bar with the brand, your site menu and a call to action; a menu button opens it on phones.', '''
-.bar{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 84%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.bar{background:color-mix(in srgb,var(--bg) 84%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
 .in{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:24px;padding:10px max(16px,4vw)}
 .logo{font-family:var(--head);font-weight:var(--hw);font-style:var(--hs);font-size:26px;letter-spacing:var(--track);text-decoration:none}
 .links{display:flex;gap:22px;margin-left:auto;font-size:15px;flex-wrap:wrap}.links a{text-decoration:none;color:var(--mute)}.links a:hover,.links a[aria-current=page]{color:var(--ink)}

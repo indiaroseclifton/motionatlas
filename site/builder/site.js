@@ -47,7 +47,7 @@ const pageOf=(site,id)=>site.pages.find(p=>p.id===id)||site.pages[0];
 const pageFile=(site,p)=>p.id===site.home?'index.html':p.slug+'.html';
 /* resolve a link for a context: ctx.pageHref(page) -> string */
 function href(site,link,ctx){link=String(link||'');if(/^page:/.test(link)){const p=site.pages.find(x=>x.id===link.slice(5));return p&&ctx&&ctx.pageHref?ctx.pageHref(p):'#'}return safeLink(link)}
-function menuHTML(site,items,ctx,esc){return items.map(it=>{const cur=it.pageId&&ctx.current===it.pageId;return `<a href="${esc(href(site,it.link,ctx))}"${cur?' aria-current="page"':''}>${esc(it.label)}</a>`}).join('')}
+function menuHTML(site,items,ctx,esc){return items.map(it=>{const cur=it.pageId&&ctx.current===it.pageId;return `<a href="${esc(href(site,it.link,ctx))}"${cur?' aria-current="page"':''}${ctx.mode==='preview'?' data-pbm':''}>${esc(it.label)}</a>`}).join('')}
 /* generic: a button or link whose text is exactly a page's name goes to that page */
 function linkPages(site,html,ctx,esc){const by=new Map(site.pages.map(p=>[p.name.trim().toLowerCase(),p]));
  return html.replace(/<a ([^>]*?)href="#"([^>]*)>([^<]{1,60})<\/a>/g,(m,a,b,t)=>{const p=by.get(t.replace(/\s*→\s*$/,'').trim().toLowerCase());return p?`<a ${a}href="${esc(ctx.pageHref(p))}"${b}>${t}</a>`:m})}

@@ -154,3 +154,8 @@ details.menu .mlist{position:absolute;right:0;top:calc(100% + 6px);z-index:60;mi
 .navrow{display:grid;gap:6px;padding:8px;border:1px solid var(--hair);border-radius:10px;margin-bottom:6px}.navrow>input,.lp input,.lp select{width:100%;min-height:34px;padding:6px 9px;border:1px solid var(--hair);border-radius:9px;background:var(--panel)}
 .lp{display:grid;gap:6px}
 .serp{border:1px solid var(--hair);border-radius:10px;padding:10px 12px;background:var(--soft);display:grid;gap:2px;font-size:13px}.serp b{color:#1A4DB3;font-weight:500;font-size:15px}.serp span{color:#2D6A3E;font-size:12px}.serp p{margin:0;color:var(--mute);font-size:12.5px}
+
+.stage{position:relative}
+.cvtb{position:absolute;z-index:30;display:flex;align-items:center;gap:2px;padding:4px;border-radius:12px;background:var(--ink);color:#fff;box-shadow:0 14px 34px -12px rgba(20,20,40,.5);max-width:calc(100% - 16px)}
+.cvtb[hidden]{display:none}.tbn{font-size:12px;font-weight:600;padding:0 8px 0 6px;white-space:nowrap;max-width:150px;overflow:hidden;text-overflow:ellipsis}
+.tbb{min-width:32px;height:32px;border:0;border-radius:8px;background:transparent;color:#fff;font-size:15px;padding:0 6px}.tbb:hover:not(:disabled){background:rgba(255,255,255,.16)}.tbb:disabled{opacity:.35;cursor:default}.cvtb :focus-visible{outline-color:#fff}

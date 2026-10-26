@@ -60,7 +60,11 @@ const waitPv = pg => pg.waitForTimeout(700);
   ok((await frame(pg).locator('h2,h1').first().textContent()).trim().length > 0, 'page 2 renders its own content');
   // clicking a menu link in the preview switches page
   await frame(pg).locator('.b-nav .links a', { hasText: 'Contact' }).click(); await waitPv(pg);
+  ok(await pg.inputValue('#pageSel') === (await site(pg)).pages[1].id, 'in Edit mode a menu link only selects it');
+  await pg.click('#modeSeg [data-m=view]'); await waitPv(pg);
+  await frame(pg).locator('.b-nav .links a', { hasText: 'Contact' }).click(); await waitPv(pg);
   ok(await pg.inputValue('#pageSel') === (await site(pg)).pages[2].id, 'clicking a menu link in the preview opens that page');
+  await pg.click('#modeSeg [data-m=edit]'); await waitPv(pg);
   // hide from the menu
   await pg.click('#rt-pages'); await pg.uncheck('#pgNav'); await waitPv(pg);
   ok((await frame(pg).locator('.b-nav .links a').count()) === 2, 'page hidden from the menu');
@@ -106,6 +110,37 @@ const waitPv = pg => pg.waitForTimeout(700);
   await p2.click('.b-nav .links a:has-text("About us")'); await p2.waitForURL(/about-us\.html/);
   ok(pe.length === 0, 'exported site runs without script errors ' + pe.join());
   if (axeSrc) { await p2.goto('file://' + path.join(out, 'index.html')); await p2.addScriptTag({ content: axeSrc }); const r = await p2.evaluate(() => axe.run(document, { resultTypes: ['violations'] })); const bad = r.violations.filter(v => ['serious', 'critical'].includes(v.impact)); ok(bad.length === 0, 'axe: exported page has no serious or critical issues ' + bad.map(v => v.id + ' ' + v.nodes.length)); }
+  await ctx.close();
+}
+
+// ---- 1b. canvas editing: select, edit in place, toolbar, shortcuts
+{
+  const { ctx, pg } = await open();
+  await pg.waitForTimeout(2500); // let the icon cache warm up, which redraws the preview once
+  const fr = frame(pg), head = fr.locator('.b-hero-film [data-pbf=heading]');
+  await head.click({ position: { x: 12, y: 12 } }); await pg.waitForTimeout(400);
+  ok(await pg.isVisible('#cvTb'), 'clicking the preview shows the floating toolbar');
+  ok((await pg.textContent('#cvTb .tbn')).includes('Film hero'), 'toolbar names the selected section');
+  await pg.keyboard.press('Control+A'); await pg.keyboard.type('Pots, made slowly'); await pg.waitForTimeout(700);
+  let s = await site(pg);
+  ok(s.pages[0].blocks[0].vals.heading === 'Pots, made slowly', 'text edited in place is stored in the section');
+  await pg.keyboard.press('Control+A'); await pg.keyboard.insertText('<img src=x onerror=alert(1)> & more'); await pg.waitForTimeout(500); await pg.keyboard.press('Escape'); await waitPv(pg);
+  s = await site(pg);
+  ok(s.pages[0].blocks[0].vals.heading.includes('<img') && (await fr.locator('.b-hero-film img[src=x]').count()) === 0, 'pasted markup stays text (sanitised)');
+  // list cell edit: the FAQ questions are list rows, stats are list rows
+  const n0 = s.pages[0].blocks.length;
+  await pg.waitForTimeout(300); await pg.click('#cvTb [aria-label="Move section down"]'); await waitPv(pg); s = await site(pg);
+  ok(s.pages[0].blocks[1].id === 'hero-film', 'toolbar moves the section down');
+  await pg.keyboard.press('Control+z'); await pg.click('#undoBtn'); await waitPv(pg);
+  await fr.locator('.b-hero-film').first().click({ position: { x: 5, y: 5 } });
+  await pg.waitForTimeout(400); await pg.click('#cvTb [aria-label="Duplicate section"]'); await waitPv(pg); s = await site(pg);
+  ok(s.pages[0].blocks.length === n0 + 1, 'toolbar duplicates the section');
+  await fr.locator('.b-hero-film').first().click({ position: { x: 5, y: 5 } }); await pg.waitForTimeout(400);
+  await pg.click('#cvTb [aria-label="Delete section"]'); await waitPv(pg); s = await site(pg);
+  ok(s.pages[0].blocks.length === n0, 'toolbar deletes the section');
+  await pg.click('#undoBtn'); s = await site(pg); ok(s.pages[0].blocks.length === n0 + 1, 'undo brings a deleted section back');
+  await pg.click('#modeSeg [data-m=view]'); await waitPv(pg);
+  ok(!(await pg.isVisible('#cvTb')) && (await fr.locator('[contenteditable]').count()) === 0, 'Preview mode has no editing chrome');
   await ctx.close();
 }
 

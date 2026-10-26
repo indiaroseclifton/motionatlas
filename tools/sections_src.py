@@ -291,7 +291,7 @@ MORE = [
   'A slim full-width bar in the accent colour with one centred line of news and an underlined link.'),
 
  ('nav-center', 'Centred navigation', 'Navigation', 'Brand in the middle, links either side, and a menu button that opens a panel on phones.', '''
-.bar{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.bar{background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
 .in{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:20px;padding:12px max(16px,4vw)}
 .l,.r{display:flex;gap:22px;font-size:15px}.r{justify-content:flex-end;align-items:center}
 .l a,.r a:not(.btn){text-decoration:none;color:var(--mute)}.l a:hover,.r a:not(.btn):hover{color:var(--ink)}

@@ -67,7 +67,7 @@ function fill(str,blk,A){const d=def(blk.id),keys=new Set(fieldsOf(d).map(f=>f.k
   if(!kind)return esc(c);if(kind==='g')return glyph(c);if(kind==='i')return esc(initials(c));if(kind==='t')return tick(c);return c.split(';').map(x=>x.trim()).filter(Boolean).map(x=>'<li>'+esc(x)+'</li>').join('')})).join(''));
  return str.replace(/\{\{(\w+)\}\}/g,(m,k)=>{if(k==='A')return A;if(k==='brand')return esc(page.brand||'Brand');if(k==='home')return esc(CTX?CTX.pageHref(S.pageOf(site,site.home)):'#');
   if(k==='menu'||k==='menuL'||k==='menuR'){const it=S.menu(site),h=Math.ceil(it.length/2),sub=k==='menu'?it:k==='menuL'?it.slice(0,h):it.slice(h);return CTX?S.menuHTML(site,sub,CTX,esc):''}
-  if(!keys.has(k))return m;const f=fieldsOf(d).find(f=>f.k===k);if(f.type==='link')return esc(CTX?S.href(site,val(blk,k),CTX):'#');
+  if(!keys.has(k))return m;const f=fieldsOf(d).find(f=>f.k===k);if(f.type==='link')return esc(CTX?S.href(site,val(blk,k),CTX):'#');if(f.type==='image'&&/^user:[\w-]+$/.test(val(blk,k)))return '\u0002U:'+val(blk,k).slice(5)+'\u0002';
   return esc(f.type==='list'?rows(val(blk,k)).map(r=>r.join(' ')).join(', '):val(blk,k))})}
 
 /* ---------- compose ---------- */
@@ -91,15 +91,26 @@ function compose(mode,pg,acc){ // mode: preview | html | zip  -> parts for one p
    if(mode==='html'&&t)return `srcdoc="${t.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}"`;return `src="${SITE}interactions/demos/${esc(id)}.html"`}};
  [...site.header.map(b=>[b,'header']),...pg.blocks.map(b=>[b,'page']),...site.footer.map(b=>[b,'footer'])].forEach(([blk,zone])=>{const d=def(blk.id);if(!d)return;ctx.uid=blk.uid;let html='',bjs='';
   try{if(isX(blk.id)){const r=d.render(vals(blk),ctx)||{};html=r.html||'';bjs=r.js||'';(r.css||[]).forEach(([k,c])=>{if(!css.has(k))css.set(k,c)});if(!css.has('x-base'))css.set('x-base',PB.extraBase)}
-   else{html=fill(d.html,blk,AT);bjs=d.js?fill(d.js,blk,AT):'';if(!css.has('b:'+d.id))css.set('b:'+d.id,d.css)}}
+   else{html=fill(mode==='preview'?PB.canvas.mark(d):d.html,blk,AT);bjs=d.js?fill(d.js,blk,AT):'';if(!css.has('b:'+d.id))css.set('b:'+d.id,d.css)}}
   catch(e){console.warn('Page builder: block failed',blk.id,e);html='<section class="wrap"><p>This section could not be drawn.</p></section>'}
-  html=S.linkPages(site,html.split(AT+'http').join('http'),CTX,esc);
-  body.push(`<div class="b-${isX(blk.id)?'x':d.id}" id="${blk.uid}"${mode==='preview'?' data-pb data-zone="'+zone+'"':''}>${html}</div>`);
+  html=anchors(S.linkPages(site,html.split(AT+'http').join('http'),CTX,esc),blk,mode);
+  html=html.replace(/\u0001A\/\u0002U:([\w-]+)\u0002|\u0002U:([\w-]+)\u0002/g,(m,a,b)=>upURL(a||b,mode,acc));
+  const sb=PB.sec.build(blk,{mode,A:AT,asset:v=>/^user:/.test(v)?upURL(v.slice(5),mode,acc):AT+v});
+  if(sb.css)css.set('set:'+blk.uid,sb.css);if(sb.rt)ctx.need(sb.rt,PB.sec.runtime[sb.rt]);
+  if(!css.has('pb-base'))css.set('pb-base',PB.sec.base);
+  const sticky=S.isTop(d)&&d.id!=='announce';
+  body.push(`<div class="b-${isX(blk.id)?'x':d.id}${sticky?' pb-sticky':''}${sb.cls?' '+sb.cls:''}" id="${blk.uid}"${mode==='preview'?' data-pb data-zone="'+zone+'" data-name="'+esc(d.name)+'"':''}>${sb.inner}${sb.flip?`<div class="pb-in" style="${sb.flip}">${html}</div>`:html}</div>`);
   if(bjs)js.push(`(()=>{const root=document.getElementById(${JSON.stringify(blk.uid)});if(!root)return;try{${bjs}}catch(e){console.error(e)}})();`)});
  const rt=[];let cl=false;
  needs.forEach((v,k)=>{if(v&&v.componentLab)cl=true;else rt.push(v)});
  return {st,acc,pg,cssText:buildCSS(st,acc),body:body.join('\n'),runtime:rt.join('\n'),js:js.join('\n'),cl,fontURL:fontURLOf(acc),files,mode};
 }
+/* anchors: per-link overrides (blk.links[index]) and preview ids */
+function anchors(html,blk,mode){let i=0;return html.replace(/<a\s([^>]*)>/g,(m,attrs)=>{const idx=i++;const ov=blk.links&&blk.links[idx];let a=attrs;
+  if(ov!==undefined){const h='href="'+esc(S.href(site,ov,CTX))+'"';a=/href="[^"]*"/.test(a)?a.replace(/href="[^"]*"/,h):h+' '+a}
+  if(mode==='preview')a+=` data-pba="${idx}"`;return '<a '+a+'>'})}
+const dcache=new Map();
+function upURL(id,mode,acc){if(mode==='preview')return PB.images.url(id);if(mode==='zip'){(acc.uploads=acc.uploads||new Set()).add(id);return 'assets/uploads/'+id+'.'+PB.images.ext(id)}return dcache.get(id)||''}
 const ogURL=v=>!v?'':/^(https?:|data:)/.test(v)?v:SITE+'assets/'+v.replace(/^\/+/,'');
 function assemble(P,opt={}){ // opt: {cssHref, jsHref, clSrc, clInline, favHref, canonical, title}
  const pg=P.pg,stg=site.settings,pre=P.mode==='preview',home=pg.id===site.home;
@@ -114,18 +125,16 @@ function assemble(P,opt={}){ // opt: {cssHref, jsHref, clSrc, clInline, favHref,
   scripts+=`<script>/* wake the component behaviours */document.body.appendChild(document.createElement('span')).hidden=true;<\/script>\n`}
  const code=(P.runtime?P.runtime+'\n':'')+P.js;
  if(code)scripts+=opt.jsHref?`<script src="${opt.jsHref}"><\/script>\n`:`<script>\n${code.replace(/<\/script/gi,'<\\/script')}\n<\/script>\n`;
- if(pre)scripts+=`<script>document.addEventListener('click',function(e){var p=e.target.closest('a[href^="#pb-page:"]');if(p){e.preventDefault();parent.postMessage({pb:'page',id:p.getAttribute('href').slice(9)},'*');return}var b=e.target.closest('[data-pb]');if(b)parent.postMessage({pb:'select',uid:b.id},'*')},true);document.addEventListener('click',function(e){var a=e.target.closest('a[href="#"]');if(a)e.preventDefault()});<\/script>\n`;
+ if(pre&&!opt.noagent)scripts+=`<script>window.__PB_EDIT=${opt.edit?'true':'false'};${PB.agentSrc}<\/script>\n`;
  return head+P.body+'\n'+scripts+'</body></html>\n';
 }
 const swapA=(s,base)=>s.split(AT).join(base);
 
 /* ---------- preview ---------- */
 const pv=$('#pv');let rt=0,lastY=0,jump=null;
-function render(){clearTimeout(rt);rt=setTimeout(()=>{try{lastY=pv.contentWindow.scrollY||0}catch(e){}const P=compose('preview');pv.srcdoc=swapA(assemble(P,{clSrc:ABS+'component-lab.js'}),ABS+'assets/');status()},160)}
+let editingText=false,rendPending=false;
+function render(){clearTimeout(rt);rt=setTimeout(()=>{if(editingText){rendPending=true;return}try{lastY=pv.contentWindow.scrollY||0}catch(e){}const P=compose('preview');pv.srcdoc=swapA(assemble(P,{clSrc:ABS+'component-lab.js',edit:EDIT}),ABS+'assets/');status()},160)}
 pv.addEventListener('load',()=>{try{const w=pv.contentWindow;if(jump){const el=w.document.getElementById(jump);if(el)el.scrollIntoView();jump=null}else w.scrollTo(0,lastY)}catch(e){}});
-addEventListener('message',e=>{if(e.source!==pv.contentWindow||!e.data)return;
- if(e.data.pb==='page'){const p=site.pages.find(x=>x.id===e.data.id);if(p)goPage(p.id);return}
- if(e.data.pb!=='select')return;const f=findBlk(e.data.uid);if(f){open=f.blk.uid;showPane('page');rtab('page');outline();const el=$(`#ol [data-uid="${f.blk.uid}"] .bname`);el&&el.scrollIntoView({block:'nearest'})}});
 function status(){$('#status').textContent=curPage().name+' · '+page.blocks.length+' sections · '+PB.styles.get(page.style).name}
 function scrollPreviewTo(uid){jump=uid;try{const t=pv.contentWindow.document.getElementById(uid);if(t){t.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});jump=null}}catch(e){}}
 
@@ -141,7 +150,9 @@ function placeIndex(id){const d=def(id),bl=listFor(id);
  if(d&&d.place==='hero'){let i=0;while(i<bl.length&&def(bl[i].id).place==='hero')i++;return i}
  return bl.length}
 function dropAt(i,list){const items=$$('#ol .blk');if(i<items.length){const t=findBlk(items[i].dataset.uid);return t&&t.list===list?t.i:-1}const l=items[items.length-1],t=l&&findBlk(l.dataset.uid);return t&&t.list===list?list.length:-1}
-function addBlock(id,valsIn,at){if(!def(id))return;const b={uid:uidGen(),id,vals:valsIn||{}};const list=listFor(id);let i=at==null?-1:dropAt(at,list);if(i<0)i=placeIndex(id);
+function addBlock(id,valsIn,at){if(!def(id))return;const b={uid:uidGen(),id,vals:valsIn||{}};let list=listFor(id),i=-1;
+ if(addTarget){const t=findBlk(addTarget.uid),w=addTarget.where;addTarget=null;if(t&&t.list===list){i=t.i+(w==='before'?0:1)}}
+ if(i<0&&at!=null)i=dropAt(at,list);if(i<0)i=placeIndex(id);
  list.splice(i,0,b);open=b.uid;commit();outline();render();jump=b.uid;say('Added '+def(id).name+(list===page.blocks?'':list===site.header?' to the header (every page)':' to the footer (every page)'));return b}
 function move(list,i,j){if(j<0||j>=list.length||i===j)return;const [b]=list.splice(i,1);list.splice(j,0,b);commit();outline();render()}
 
@@ -188,6 +199,50 @@ function editor(blk){const d=def(blk.id),bb=document.createElement('div');bb.cla
  if(!isX(blk.id)||blk.id==='x-background'||blk.id==='x-kitbg'){const ai=document.createElement('button');ai.className='btn small';ai.type='button';ai.textContent='Rewrite with AI';ai.onclick=()=>aiSection(blk,ai);tools.append(ai)}
  const rs=document.createElement('button');rs.className='btn small';rs.type='button';rs.textContent='Reset words';rs.onclick=()=>{blk.vals={...(blk.id==='x-component'?{cid:blk.vals.cid}:{}),...(['x-interaction','x-background','x-kitbg','x-kitasset','x-icons','x-effect'].includes(blk.id)?Object.fromEntries(Object.entries(blk.vals).filter(([k])=>['iid','bg','kit','asset','family','lid'].includes(k))):{})};commit();outline();render();say('Back to the default words')};tools.append(rs);
  bb.append(tools);return bb}
+
+/* ---------- canvas controller: selection, in-place editing, floating toolbar ---------- */
+let EDIT=ui.edit!==false,csel=null,addTarget=null;
+const stage=document.querySelector('main.stage'),tb=$('#cvTb');
+function setMode(edit){EDIT=edit;ui.edit=edit;saveUI();$$('#modeSeg button').forEach(b=>b.setAttribute('aria-pressed',(b.dataset.m==='edit')===edit));if(!edit)csel=null;hideTb();render()}
+$$('#modeSeg button').forEach(b=>{b.onclick=()=>setMode(b.dataset.m==='edit');b.setAttribute('aria-pressed',(b.dataset.m==='edit')===EDIT)});
+function hideTb(){tb.hidden=true}
+function toAgent(m){try{pv.contentWindow.postMessage(m,'*')}catch(e){}}
+function applyText(m){const f=findBlk(m.uid);if(!f)return;const blk=f.blk;
+ if(m.r!=null){const r=rows(val(blk,m.k)),ri=+m.r-1,ci=+m.c;if(!r[ri])return;while(r[ri].length<=ci)r[ri].push('');r[ri][ci]=m.v.replace(/\|/g,'/');blk.vals[m.k]=r.map(x=>x.join(' | ')).join('\n')}
+ else blk.vals[m.k]=m.v;commitSoon();status()}
+function tbBtn(label,aria,fn,dis){const b=document.createElement('button');b.type='button';b.className='tbb';b.textContent=label;b.setAttribute('aria-label',aria);b.title=aria;if(dis)b.disabled=true;b.onclick=fn;return b}
+function buildTb(){const f=csel&&findBlk(csel.uid);if(!f||!EDIT){hideTb();return null}
+ const d=def(f.blk.id);tb.innerHTML='';const name=document.createElement('span');name.className='tbn';name.textContent=d.name+(f.kind==='page'?'':' · shared');tb.append(name);
+ const L=f.list,i=f.i;
+ tb.append(tbBtn('↑','Move section up',()=>move(L,i,i-1),i===0),tbBtn('↓','Move section down',()=>move(L,i,i+1),i===L.length-1),tbBtn('⧉','Duplicate section',()=>dupBlk(csel.uid)),tbBtn('✕','Delete section',()=>rmBlk(csel.uid)),tbBtn('⚙','Section settings and words',()=>{open=csel.uid;showPane('page');rtab('page');outline();const el=$(`#ol [data-uid="${csel.uid}"]`);el&&el.scrollIntoView({block:'nearest'})}),tbBtn('＋','Add a section after this one',()=>askAdd(csel.uid,'after')));
+ return f}
+function placeTb(m){if(!EDIT||!csel||!m){hideTb();return}const f=buildTb();if(!f)return;tb.hidden=false;
+ const ir=pv.getBoundingClientRect(),sr=stage.getBoundingClientRect(),r=m.el||m.sec;if(!r||r.top+r.height<0||r.top>ir.height){hideTb();return}
+ const h=tb.offsetHeight||40,w=tb.offsetWidth||260,top0=ir.top-sr.top;let y=ir.top-sr.top+r.top-h-8;if(y<top0+4)y=top0+Math.max(r.top,0)+8;
+ let x=ir.left-sr.left+Math.max(r.left,0);x=Math.max(8,Math.min(x,sr.width-w-8));tb.style.left=x+'px';tb.style.top=Math.min(y,sr.height-h-8)+'px'}
+function dupBlk(uid){const f=findBlk(uid);if(!f)return;const c={uid:uidGen(),id:f.blk.id,vals:clone(f.blk.vals)};if(f.blk.set)c.set=clone(f.blk.set);if(f.blk.links)c.links=clone(f.blk.links);f.list.splice(f.i+1,0,c);csel=null;open=c.uid;commit();outline();render();say('Duplicated '+def(f.blk.id).name)}
+function rmBlk(uid){const f=findBlk(uid);if(!f)return;f.list.splice(f.i,1);if(open===uid)open=null;csel=null;hideTb();commit();outline();render();say('Removed '+def(f.blk.id).name+'. Undo brings it back.')}
+function askAdd(uid,where){addTarget={uid,where};showPane('lib');say('Pick a section: it will be added '+(where==='before'?'above':'below')+' the selected one');$('#libSearch').focus()}
+let lastRects=null;
+addEventListener('message',e=>{if(e.source!==pv.contentWindow||!e.data)return;const m=e.data;
+ switch(m.pb){
+  case 'ready':if(csel&&EDIT)toAgent({pb:'reselect',...csel});break;
+  case 'page':{const p=site.pages.find(x=>x.id===m.id);if(p)goPage(p.id);break}
+  case 'sel':{csel={uid:m.uid,kind:m.kind,k:m.k,r:m.r,c:m.c,a:m.a};if(open!==m.uid){open=m.uid;outline();const el=$(`#ol [data-uid="${m.uid}"]`);el&&el.scrollIntoView({block:'nearest'})}break}
+  case 'rects':lastRects=m;placeTb(m);break;
+  case 'text':applyText(m);break;
+  case 'focus':editingText=true;break;
+  case 'blur':editingText=false;if(rendPending){rendPending=false;render()}if(open)outline();break;
+  case 'add':askAdd(m.uid,m.where);break;
+  case 'move':{const f=findBlk(m.uid);if(!f)break;let t=m.before?f.list.findIndex(b=>b.uid===m.before):f.list.length;if(t<0)break;move(f.list,f.i,t>f.i?t-1:t);break}
+  case 'key':{if(!csel)break;const f=findBlk(csel.uid);
+   if(m.key==='Escape'){csel=null;hideTb();toAgent({pb:'clear'})}
+   else if(!f)break;else if(m.key==='Delete'||m.key==='Backspace')rmBlk(csel.uid);
+   else if(m.alt&&m.key==='ArrowUp')move(f.list,f.i,f.i-1);else if(m.alt&&m.key==='ArrowDown')move(f.list,f.i,f.i+1);
+   else if(m.mod&&/^d$/i.test(m.key))dupBlk(csel.uid);else if(m.mod&&/^k$/i.test(m.key))askAdd(csel.uid,'after');
+   else if(m.mod&&/^z$/i.test(m.key)&&!m.shift)undo();else if(m.mod&&(/^y$/i.test(m.key)||(m.shift&&/^z$/i.test(m.key))))redo();break}}});
+pv.addEventListener('load',()=>{lastRects=null;editingText=false;if(!csel||!findBlk(csel.uid)){csel=null;hideTb()}});
+addEventListener('resize',()=>placeTb(lastRects));
 
 /* drag and drop: library cards and outline rows */
 let dragUid=null;
@@ -381,6 +436,7 @@ function dl(blob,name){const u=URL.createObjectURL(blob);const a=document.create
 async function prefetch(){const all=[...site.header,...site.pages.flatMap(p=>p.blocks),...site.footer],jobs=[];
  if(cache.cl==null&&all.some(b=>b.id==='x-component'))jobs.push(fetch('component-lab.js').then(r=>r.ok?r.text():null).then(t=>{cache.cl=t}).catch(()=>{}));
  all.filter(b=>b.id==='x-interaction').forEach(b=>{const id=val(b,'iid');if(cache.ix[id]!=null)return;jobs.push(fetch('interactions/demos/'+id+'.html').then(r=>r.ok?r.text():null).then(t=>{if(t)cache.ix[id]=t.split('../../assets/').join(SITE+'assets/')}).catch(()=>{}))});
+ [...JSON.stringify(site).matchAll(/user:([\w-]+)/g)].forEach(m=>{if(!dcache.has(m[1]))jobs.push(PB.images.dataURL(m[1]).then(u=>{dcache.set(m[1],u)}))});
  await Promise.all(jobs)}
 const favHref=()=>S.svgDataURL(S.faviconSVG(site,accentOf()));
 async function htmlFile(){await prefetch();const P=compose('html');return swapA(assemble(P,{clInline:cache.cl||null,favHref:favHref()}),SITE+'assets/')}
@@ -403,6 +459,7 @@ async function buildSiteFiles(){await prefetch();const acc=newAcc(),assets=new M
  out.push(['assets/site.css',css],['assets/favicon.svg',S.faviconSVG(site,accentOf())]);
  if(anyCl)out.push(['assets/component-lab.js',cache.cl||'/* component-lab.js could not be copied; load it from '+SITE+'component-lab.js */']);
  acc.files.forEach((t,n)=>out.push([n,t]));
+ for(const id of (acc.uploads||[])){const b=await PB.images.bytes(id);if(b)out.push(['assets/uploads/'+id+'.'+PB.images.ext(id),b])}
  for(const p of assets.keys()){try{const r=await fetch('assets/'+p);if(r.ok)out.push(['assets/'+p,new Uint8Array(await r.arrayBuffer())])}catch(e){}}
  const today=new Date().toISOString().slice(0,10);
  out.push(['sitemap.xml',S.sitemap(site,base||'https://example.com/',today)],['robots.txt',S.robots(base)]);
@@ -471,6 +528,6 @@ PB.dbg=()=>({hist:hist.map(h=>JSON.parse(h).blocks.length),fut:fut.length,last:J
 /* ---------- boot ---------- */
 try{const CLX=PB.src.CL();if(CLX){const st=document.createElement('style');st.textContent=CLX.css();document.head.append(st)}}catch(e){}
 PB.styles.build();if(!PB.styles.has(page.style)&&!/^ds:/.test(page.style))page.style='studio';
-imagesList();libTabs();library();rtab(rtabCur);refresh();histUI();showPane(ui.pane||'page');
+PB.images.load().then(n=>{if(n)render()});imagesList();libTabs();library();rtab(rtabCur);refresh();histUI();showPane(ui.pane||'page');
 document.body.classList.add('ready');
 })();
