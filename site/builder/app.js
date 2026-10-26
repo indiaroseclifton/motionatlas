@@ -456,7 +456,7 @@ $('#pairSel').onchange=e=>{page.pair=+e.target.value;commit();render();say(page.
 /* ---------- pages of this site ---------- */
 const accentOf=()=>{const st=PB.styles.get(page.style);return (st&&st.sw&&st.sw[3])||'#5B2DFF'};
 function goPage(id){if(!site.pages.some(p=>p.id===id))return;curId=id;open=null;pageSelUI();outline();render();if(rtabCur==='pages')pagesPanel()}
-function pageSelUI(){const sel=$('#pageSel'),cp=curPage();sel.innerHTML=site.pages.map(p=>`<option value="${esc(p.id)}"${p.id===cp.id?' selected':''}>${esc(p.name||'Untitled')}${p.id===site.home?' (home)':''}</option>`).join('')}
+function pageSelUI(){const sel=$('#pageSel'),cp=curPage();sel.innerHTML=site.pages.map(p=>`<option value="${esc(p.id)}"${p.id===cp.id?' selected':''}>${esc(p.name||'Untitled')}${p.id===site.home&&(p.name||'').trim().toLowerCase()!=='home'?' (home)':''}</option>`).join('')}
 $('#pageSel').onchange=e=>goPage(e.target.value);
 function siteChanged(msg){commit();pageSelUI();outline();render();if(rtabCur==='pages')pagesPanel();if(rtabCur==='site')sitePanel();if(msg)say(msg)}
 const uniqueName=base=>{let n=base,i=2;while(site.pages.some(p=>p.name===n))n=base+' '+i++;return n};
