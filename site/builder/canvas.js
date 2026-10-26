@@ -155,16 +155,29 @@ const IMG={cache:new Map(),dbp:null,
  db(){return this.dbp||(this.dbp=new Promise((res,rej)=>{try{const r=indexedDB.open('atlas-site-images',1);r.onupgradeneeded=()=>r.result.createObjectStore('img',{keyPath:'id'});r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}catch(e){rej(e)}}))},
  async tx(mode,fn){const d=await this.db();return new Promise((res,rej)=>{const t=d.transaction('img',mode),q=fn(t.objectStore('img'));t.oncomplete=()=>res(q&&q.result);t.onerror=()=>rej(t.error)})},
  async load(){try{const all=await this.tx('readonly',s=>s.getAll())||[];all.forEach(r=>{this.cache.set(r.id,{...r,url:URL.createObjectURL(r.blob)})})}catch(e){}return this.cache.size},
- async add(file){const blob=await downscale(file),id='u'+Math.random().toString(36).slice(2,9);const rec={id,name:file.name||'image',type:blob.type||file.type,blob,added:Date.now()};
-  this.cache.set(id,{...rec,url:URL.createObjectURL(blob)});try{await this.tx('readwrite',s=>s.put(rec))}catch(e){PB.imgWarn=true}return id},
- async putData(id,u){const blob=await (await fetch(u)).blob(),rec={id,name:'image',type:blob.type,blob,added:Date.now()};this.cache.set(id,{...rec,url:URL.createObjectURL(blob)});try{await this.tx('readwrite',s=>s.put(rec))}catch(e){PB.imgWarn=true}},
+ async add(file){const r=await downscale(file),blob=r.blob,id='u'+Math.random().toString(36).slice(2,9);const rec={id,name:(file.name||'image').replace(/\.\w+$/,''),alt:'',type:blob.type||file.type,blob,w:r.w,h:r.h,added:Date.now()};
+  this.cache.set(id,{...rec,url:URL.createObjectURL(blob)});try{await this.tx('readwrite',s=>s.put(rec))}catch(e){PB.imgWarn=true;throw e}return id},
+ list(){return [...this.cache.values()].sort((a,b)=>(b.added||0)-(a.added||0))},
+ async save(id){const r=this.cache.get(id);if(!r)return;const {url,...rec}=r;try{await this.tx('readwrite',s=>s.put(rec))}catch(e){PB.imgWarn=true}},
+ async rename(id,name){const r=this.cache.get(id);if(!r)return;r.name=String(name||'').slice(0,80)||r.name;await this.save(id)},
+ async setAlt(id,alt){const r=this.cache.get(id);if(!r)return;r.alt=String(alt||'').slice(0,200);await this.save(id)},
+ async remove(id){const r=this.cache.get(id);if(r&&r.url)URL.revokeObjectURL(r.url);this.cache.delete(id);try{await this.tx('readwrite',s=>s.delete(id))}catch(e){}},
+ async dims(id){const r=this.cache.get(id);if(!r)return null;if(r.w&&r.h)return [r.w,r.h];try{const bm=await createImageBitmap(r.blob);r.w=bm.width;r.h=bm.height;return [r.w,r.h]}catch(e){return null}},
  url(id){const r=this.cache.get(id);return r?r.url:''},
  ext(id){const r=this.cache.get(id),t=r&&r.type||'';return t.includes('png')?'png':t.includes('webp')?'webp':t.includes('svg')?'svg':t.includes('gif')?'gif':'jpg'},
  async bytes(id){const r=this.cache.get(id);return r?new Uint8Array(await r.blob.arrayBuffer()):null},
  async dataURL(id){const r=this.cache.get(id);if(!r)return '';return new Promise(res=>{const f=new FileReader();f.onload=()=>res(f.result);f.readAsDataURL(r.blob)})}};
-async function downscale(file){if(!/^image\/(png|jpe?g|webp)$/.test(file.type)||file.size<350e3)return file;
- try{const bm=await createImageBitmap(file),k=Math.min(1,2000/Math.max(bm.width,bm.height));if(k>=1&&file.size<2e6)return file;const c=document.createElement('canvas');c.width=Math.round(bm.width*k);c.height=Math.round(bm.height*k);c.getContext('2d').drawImage(bm,0,0,c.width,c.height);
-  return await new Promise(r=>c.toBlob(b=>r(b||file),file.type==='image/png'?'image/png':'image/jpeg',.86))}catch(e){return file}}
+/* optimise on upload: at most 2400 px on the long side, re-encoded as WebP (or PNG when it has transparency) at quality .82 */
+async function downscale(file){const none={blob:file,w:0,h:0};if(!/^image\/(png|jpe?g|webp)$/.test(file.type))return none;
+ try{const bm=await createImageBitmap(file),MAX=2400,k=Math.min(1,MAX/Math.max(bm.width,bm.height)),w=Math.round(bm.width*k),h=Math.round(bm.height*k);
+  if(k>=1&&file.size<160e3&&file.type!=='image/png')return {blob:file,w:bm.width,h:bm.height};
+  const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');g.drawImage(bm,0,0,w,h);
+  let alpha=false;if(file.type==='image/png'){try{const t=document.createElement('canvas');t.width=t.height=48;const tg=t.getContext('2d');tg.drawImage(bm,0,0,48,48);const d=tg.getImageData(0,0,48,48).data;for(let i=3;i<d.length;i+=4)if(d[i]<250){alpha=true;break}}catch(e){}}
+  const out=await new Promise(r=>c.toBlob(b=>r(b),alpha?'image/png':'image/webp',.82));
+  if(!out)return {blob:file,w:bm.width,h:bm.height};
+  let best=out;if(!alpha&&out.type!=='image/webp'){const j=await new Promise(r=>c.toBlob(b=>r(b),'image/jpeg',.82));if(j)best=j}
+  if(k>=1&&best.size>=file.size&&file.type!=='image/png')return {blob:file,w:bm.width,h:bm.height};
+  return {blob:best,w,h}}catch(e){return none}}
 PB.images=IMG;
 
 /* ---------- 4. per-section settings ---------- */

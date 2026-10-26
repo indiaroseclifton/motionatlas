@@ -32,3 +32,13 @@ use them in a site they export or publish. The same data drives `site/builder/cr
 * Templates prefer real photographs where one fits (step 3 of the photo work), so generated art is now used mainly
   where no photograph does.
 * Any asset path the credits table does not know is reported as "Other files" and flagged as not cleared in the export QA.
+
+## Photo library (`site/assets/photos/`)
+
+82 photographs, 16 categories. Source: Wikimedia Commons, selected with the search filter `incategory:CC-Zero` and then
+checked by eye (no identifiable faces, logos or text as the subject). Commons labels every file CC0; many are
+Unsplash uploads from before Unsplash changed its licence (the individual Commons file page, recorded in
+`photos.json` as `source`, shows the CC0 template). Authors are listed in `photos.json` and in each export's
+`assets/CREDITS.txt`. **Not independently verified:** that each uploader had the right to dedicate the work to CC0
+(we rely on Commons' licence review); a few images show hands or people from behind and none shows an identifiable face
+as the subject. To remove one, delete its files and its `photos.json` entry.

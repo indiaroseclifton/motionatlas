@@ -274,6 +274,14 @@ static site or publish it to a live address. Old single-page saves open as one-p
 - **Export QA:** `BASE=http://localhost:8797/ node tools/site-export-qa.mjs [templateId...]` builds every template, serves
   the files and checks each page at desktop and phone width (console errors, links, anchors, images and alt text, metas,
   one h1, balanced HTML, no editor code left behind, axe, mobile menu, accordions, lightbox, forms and honeypot).
+- **Photos and images:** the Photos tab (and a Photos source in every image picker) offers 82 CC0 photographs
+  from Wikimedia Commons (category CC-Zero, mostly former Unsplash CC0 uploads) in 16 categories, with tag search.
+  Files live in `site/assets/photos/` (1400 px WebP, `-640` variants and `th/` thumbnails) and `photos.json` records title,
+  author, source URL and licence; every export credits the photos it uses in `assets/CREDITS.txt`. Uploaded images
+  are resized to 2400 px and stored as WebP (PNG when transparent); "My images" lists them with rename, alt text, add and
+  delete. Each image has a focus point (click the part that must stay in view; stored as `<field>_fp`, rendered as
+  `object-position`). Exports add width and height, async decoding and `srcset` (640 / 1280 px copies of uploads, 640 px
+  copies of photos). Licence table: `docs/image-licences.md`.
 - **Speed:** films in the canvas load their poster first and start when they scroll into view; library previews and
   embedded frames are lazy.
 - **Pages and sites:** a site has pages (add, rename, duplicate, reorder, delete, home page, file names), a shared

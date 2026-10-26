@@ -514,6 +514,45 @@ if (axeSrc) {
   ok(/_gotcha/.test(contact) && /data-netlify="true"/.test(contact) && /novalidate/.test(contact), 'contact forms carry a honeypot, Netlify attributes and inline validation');
   await ctx.close();
 }
+// ---- 5e. photo library, image library, focus point, responsive export
+{
+  const { ctx, pg } = await open();
+  await pg.evaluate(() => PB.ux.useTemplate(0)); await waitPv(pg);
+  await pg.click('#lt-photos'); await pg.waitForSelector('#libList .lc.tile');
+  ok(await pg.locator('#libList .lc.tile').count() >= 60, 'the Photos tab lists the curated photos');
+  ok(await pg.locator('#libList .chip').count() >= 12, 'photos have category chips');
+  await pg.fill('#libSearch', 'coffee'); await pg.waitForTimeout(400); const nC = await pg.locator('#libList .lc.tile').count(); ok(nC >= 3 && nC < 60, 'photo search by tag narrows the list (' + nC + ')');
+  await pg.locator('#libList .lc.tile .add').first().click(); await waitPv(pg);
+  const last = await pg.evaluate(() => { const b = PB.app.curPage().blocks.find(b => b.id === 'image-full' && /^photos\//.test(b.vals.img)); return b ? b.vals : null; });
+  ok(last && last.alt && last.alt.length > 3, 'adding a photo creates an image section with alt text');
+  ok(await frame(pg).locator('img[src*="assets/photos/"]').first().evaluate(i => new Promise(r => { if (i.complete) return r(i.naturalWidth > 100); i.onload = () => r(true); i.onerror = () => r(false); })), 'the photo loads in the preview');
+  // upload: optimised, listed, renamed, alt, focus point, responsive export
+  const id = await pg.evaluate(async () => { const c = document.createElement('canvas'); c.width = 3000; c.height = 2000; const g = c.getContext('2d'); const gr = g.createLinearGradient(0, 0, 3000, 2000); gr.addColorStop(0, '#d33'); gr.addColorStop(1, '#36c'); g.fillStyle = gr; g.fillRect(0, 0, 3000, 2000); for (let i = 0; i < 400; i++) { g.fillStyle = 'hsl(' + (i * 7 % 360) + ',70%,50%)'; g.fillRect(Math.random() * 3000, Math.random() * 2000, 80, 80); } const blob = await new Promise(r => c.toBlob(r, 'image/png')); return PB.images.add(new File([blob], 'Big Photo.png', { type: 'image/png' })); });
+  const rec = await pg.evaluate(id => { const r = PB.images.cache.get(id); return { w: r.w, h: r.h, type: r.type, name: r.name }; }, id);
+  ok(rec.w === 2400 && rec.type === 'image/webp', 'uploads are resized to 2400 px and stored as WebP (' + rec.w + ' ' + rec.type + ')');
+  await pg.click('#lt-uploads'); ok(await pg.locator('.myimg li').count() >= 1, 'My images lists uploaded pictures');
+  await pg.fill('.myimg li [data-f=name]', 'Hero shot'); await pg.dispatchEvent('.myimg li [data-f=name]', 'change'); await pg.fill('.myimg li [data-f=alt]', 'A red and blue gradient'); await pg.dispatchEvent('.myimg li [data-f=alt]', 'change');
+  ok(await pg.evaluate(id => PB.images.cache.get(id).name === 'Hero shot' && PB.images.cache.get(id).alt === 'A red and blue gradient', id), 'rename and alt text are saved on the image');
+  await pg.click('.myimg li [data-a=add]'); await waitPv(pg); await pg.waitForTimeout(500);
+  const ub = await pg.evaluate(id => PB.app.curPage().blocks.find(b => b.vals && b.vals.img === 'user:' + id), id); ok(ub && ub.vals.alt === 'A red and blue gradient', 'adding an uploaded image uses its saved alt text');
+  await pg.evaluate(id => { const b = PB.app.curPage().blocks.find(b => b.vals && b.vals.img === 'user:' + id); b.vals.img_fp = '20% 80%'; PB.app.commit(); PB.app.render(); }, id); await waitPv(pg);
+  ok(await frame(pg).locator('img[style*="object-position: 20% 80%"], img[style*="object-position:20% 80%"]').count() >= 1, 'the focus point becomes object-position');
+  const files = await pg.evaluate(async () => (await PB.buildSiteFiles()).map(([n, c]) => [n, typeof c === 'string' ? c : null]));
+  const names = files.map(f => f[0]); ok(names.some(n => /uploads\/.*-640\.webp$/.test(n)) && names.some(n => /uploads\/.*-1280\.webp$/.test(n)), 'export makes 640 and 1280 versions of uploaded images');
+  const idx = files.find(f => f[0] === 'index.html')[1];
+  ok(/srcset="[^"]*-640\.webp 640w/.test(idx) && /width="2400" height="1600"/.test(idx), 'uploaded images get srcset, width and height in the export');
+  ok(/object-position:\s*20% 80%/.test(idx), 'the focus point survives the export');
+  const cr = files.find(f => f[0] === 'assets/CREDITS.txt')[1]; ok(/Photographs/.test(cr) && /CC0/.test(cr), 'CREDITS.txt credits the photos used');
+  ok(names.some(n => /^assets\/photos\/[\w-]+-640\.webp$/.test(n)) && /srcset="assets\/photos\/[\w-]+-640\.webp 640w/.test(idx), 'photos get a 640 px version and srcset in the export');
+  pg.once('dialog', d => d.accept()); await pg.click('.myimg li [data-a=del]'); await pg.waitForTimeout(400); ok(await pg.evaluate(id => !PB.images.cache.has(id), id), 'deleting an image removes it');
+  // the image picker offers photos
+  await pg.evaluate(() => PB.ux.useTemplate(0)); await waitPv(pg); await pg.waitForTimeout(500);
+  await frame(pg).locator('[data-pbimg]').first().click(); await pg.waitForTimeout(300); await pg.click('.tbb:has-text("Image")'); await pg.waitForTimeout(300);
+  ok(await pg.locator('.cvpop .seg button:has-text("Photos")').count() === 1 && await pg.locator('.cvpop .pimg').count() > 10, 'the image picker has a Photos source');
+  await pg.locator('.cvpop .pimg').first().click(); await waitPv(pg);
+  ok(await pg.evaluate(() => PB.app.curPage().blocks.some(b => b.vals && /^photos\//.test(b.vals.img || ''))), 'choosing a photo in the picker sets the image');
+  await ctx.close();
+}
 // ---- 5a. site file backup, import, My projects sync
 {
   const { ctx, pg } = await open();

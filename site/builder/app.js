@@ -138,6 +138,7 @@ function compose(mode,pg,acc,opt){ // mode: preview | html | zip  -> parts for o
   try{if(isX(blk.id)){const r=d.render(vals(blk),ctx)||{};html=r.html||'';bjs=r.js||'';(r.css||[]).forEach(([k,c])=>{if(!css.has(k))css.set(k,c)});if(!css.has('x-base'))css.set('x-base',PB.extraBase)}
    else{html=fill(mode==='preview'?PB.canvas.mark(d):d.html,blk,AT);bjs=d.js?fill(d.js,blk,AT):'';if(!css.has('b:'+d.id))css.set('b:'+d.id,d.css)}}
   catch(e){console.warn('Page builder: block failed',blk.id,e);html='<section class="wrap"><p>This section could not be drawn.</p></section>'}
+  html=applyFocal(html,blk);
   if(mode==='preview')html=lazyMedia(html);
   html=anchors(S.linkPages(site,html.split(AT+'http').join('http'),CTX,esc),blk,mode);
   html=html.replace(/\u0001A\/\u0002U:([\w-]+)\u0002|\u0002U:([\w-]+)\u0002/g,(m,a,b)=>upURL(a||b,mode,acc));
@@ -153,6 +154,9 @@ function compose(mode,pg,acc,opt){ // mode: preview | html | zip  -> parts for o
  needs.forEach((v,k)=>{if(v&&v.componentLab)cl=true;else rt.push(v)});
  return {st,acc,pg,cssText:buildCSS(st,acc),body:body.join('\n'),runtime:rt.join('\n'),js:js.join('\n'),cl,fontURL:fontURLOf(acc),files,mode};
 }
+/* focus point: vals[k+'_fp'] = 'x% y%' becomes object-position on the image that shows field k */
+function applyFocal(html,blk){const v=blk.vals;if(!v)return html;Object.keys(v).filter(k=>/_fp$/.test(k)&&v[k]).forEach(k=>{const fp=String(v[k]);if(!/^\d{1,3}% \d{1,3}%$/.test(fp))return;const val=v[k.slice(0,-3)];if(!val)return;const needle=/^user:/.test(val)?'U:'+String(val).slice(5)+'\u0002':val;
+  html=html.replace(/<img\b[^>]*>/g,tag=>tag.includes(needle)?(/style="/.test(tag)?tag.replace('style="','style="object-position:'+fp+';'):tag.replace('<img','<img style="object-position:'+fp+'"')):tag)});return html}
 /* poster first: in the editor, films wait for a poster frame and start when they scroll into view; frames load lazily */
 function lazyMedia(h){if(!h||h.indexOf('<')<0)return h;return h.replace(/<video\b([^>]*)>/g,(m,a)=>'<video data-pbv preload="none"'+a.replace(/\sautoplay(="[^"]*")?/g,'')+'>').replace(/<iframe\b(?![^>]*loading=)/g,'<iframe loading="lazy"')}
 /* anchors: per-link overrides (blk.links[index]) and preview ids */
@@ -311,11 +315,23 @@ function imgPop(f){const blk=f.blk,d=def(blk.id),key=csel.k;const w=document.cre
  const afterImg=()=>{if(altInput&&!altInput.value.trim()){altInput.focus();say('Describe the image for people who cannot see it')}else closePop()};
  const up=document.createElement('button');up.type='button';up.className='btn small pk';up.textContent='Upload from your device';const fi=document.createElement('input');fi.type='file';fi.accept='image/*';fi.hidden=true;fi.setAttribute('aria-label','Choose an image file');
  up.onclick=()=>fi.click();fi.onchange=async()=>{const file=fi.files[0];if(!file)return;if(!/^image\//.test(file.type))return say('That file is not an image. Try a JPG, PNG or WebP.');if(file.size>25e6)return say('Choose an image under 25 MB');try{const id=await PB.images.add(file);blk.vals[key]='user:'+id;commit();render();say('Image replaced. It is saved in this browser.');afterImg()}catch(e){say(e&&e.name==='QuotaExceededError'?'This browser has no room left to keep that image. Try a smaller one.':'Could not read that image. Try a JPG, PNG or WebP.')}};
- const q=document.createElement('input');q.type='search';q.placeholder='Search the atlas images';q.setAttribute('aria-label','Search the atlas images');
- const g=document.createElement('div');g.className='pgrid';
- const draw=()=>{const t=q.value.trim().toLowerCase();g.innerHTML='';LIB.images.filter(i=>!t||i.toLowerCase().includes(t)).slice(0,90).forEach(i=>{const b=document.createElement('button');b.type='button';b.className='pimg';b.title=i;b.setAttribute('aria-label','Use '+i);b.innerHTML=`<img src="assets/${esc(i)}" alt="" loading="lazy">`;b.onclick=()=>{blk.vals[key]=i;commit();render();afterImg()};g.append(b)})};
- q.oninput=draw;draw();w.append(up,fi,q,g);
+ const q=document.createElement('input');q.type='search';q.placeholder='Search photos and atlas art';q.setAttribute('aria-label','Search photos and atlas art');
+ const g=document.createElement('div');g.className='pgrid';let src=ui.imgsrc==='art'?'art':'photos',pcat='all';
+ const seg=document.createElement('div');seg.className='seg';seg.setAttribute('role','group');seg.setAttribute('aria-label','Image source');const catSel=document.createElement('select');catSel.setAttribute('aria-label','Photo category');
+ const catOpts=()=>{catSel.innerHTML='<option value="all">All photo categories</option>'+(PB.photos?PB.photos.cats.map(c=>`<option value="${esc(c)}">${esc(PB.photos.catName(c))}</option>`).join(''):'');catSel.value=pcat;catSel.hidden=src!=='photos'};
+ [['photos','Photos'],['art','Atlas art']].forEach(([k,l])=>{const b=document.createElement('button');b.type='button';b.textContent=l;b.setAttribute('aria-pressed',k===src);b.onclick=()=>{src=k;ui.imgsrc=k;saveUI();[...seg.children].forEach(x=>x.setAttribute('aria-pressed',x===b));catOpts();draw()};seg.append(b)});
+ const setAlt=t=>{if(altInput&&t&&!altInput.value.trim()){altInput.value=t;blk.vals.alt=t}};
+ const draw=()=>{const t=q.value.trim().toLowerCase();g.innerHTML='';
+  if(src==='photos'&&PB.photos){const L=PB.photos.match(t,pcat).slice(0,90);if(!L.length)g.innerHTML='<p class="hint">'+(PB.photos.list.length?'No photo matches.':'Loading photos…')+'</p>';
+   L.forEach(p=>{const b=document.createElement('button');b.type='button';b.className='pimg';b.title=p.title;b.setAttribute('aria-label','Use the photo '+p.title);b.innerHTML=`<img src="${esc(PB.photos.thumb(p))}" alt="" loading="lazy">`;b.onclick=()=>{blk.vals[key]=PB.photos.path(p);setAlt(p.alt||p.title);if(!blk.vals.alt&&fieldsOf(d).some(x=>x.k==='alt'))blk.vals.alt=p.alt||p.title;delete blk.vals[key+'_fp'];commit();render();afterImg()};g.append(b)});return}
+  LIB.images.filter(i=>!t||i.toLowerCase().includes(t)).slice(0,90).forEach(i=>{const b=document.createElement('button');b.type='button';b.className='pimg';b.title=i;b.setAttribute('aria-label','Use '+i);b.innerHTML=`<img src="assets/${esc(i)}" alt="" loading="lazy">`;b.onclick=()=>{blk.vals[key]=i;commit();render();afterImg()};g.append(b)})};
+ q.oninput=draw;catSel.onchange=()=>{pcat=catSel.value;draw()};catOpts();draw();if(PB.photos)PB.photos.onload.push(()=>{catOpts();draw()});w.append(up,fi,seg,q,catSel,g);
  const altF=fieldsOf(d).find(x=>x.k==='alt');if(altF){const l=document.createElement('label');l.className='f';l.textContent='Describe the image (alt text)';const ai=document.createElement('input');ai.value=val(blk,'alt');ai.oninput=()=>{blk.vals.alt=ai.value;commitSoon();render()};altInput=ai;l.append(ai);w.append(l)}
+ if(blk.vals[key]){const fw=document.createElement('div');fw.className='fpw';const cur=blk.vals[key],id0=/^user:/.test(cur)?cur.slice(5):'',url=id0?PB.images.url(id0):'assets/'+cur;
+  fw.innerHTML='<p class="hint">Focus point: click the part of the picture that must stay in view when it is cropped.</p><div class="fpbox"><img alt="" src="'+esc(url)+'"><i></i></div><button type="button" class="btn small">Centre it</button>';
+  const box=fw.querySelector('.fpbox'),dot=box.querySelector('i'),place=()=>{const m=/^(\d+)% (\d+)%$/.exec(blk.vals[key+'_fp']||'');dot.style.left=(m?m[1]:50)+'%';dot.style.top=(m?m[2]:50)+'%'};place();
+  box.onclick=e=>{const r=box.getBoundingClientRect();blk.vals[key+'_fp']=Math.round((e.clientX-r.left)/r.width*100)+'% '+Math.round((e.clientY-r.top)/r.height*100)+'%';place();commitSoon();render()};
+  fw.querySelector('button').onclick=()=>{delete blk.vals[key+'_fp'];place();commit();render()};w.append(fw)}
  showPop('Image',w)}
 let lastRects=null;
 addEventListener('message',e=>{if(e.source!==pv.contentWindow||!e.data)return;const m=e.data;
@@ -382,7 +398,7 @@ frameWrap.addEventListener('dragleave',()=>frameWrap.classList.remove('drop'));
 frameWrap.addEventListener('drop',e=>{frameWrap.classList.remove('drop');if(dragUid)return;e.preventDefault();try{const x=JSON.parse(e.dataTransfer.getData('application/x-pb')||'null');if(x&&x.id)addBlock(x.id,x.vals,null,x)}catch(err){}});
 
 /* ---------- library ---------- */
-const LTABS=[['sections','Sections'],['components','Components'],['interactions','Interactions'],['media','Media & backgrounds'],['icons','Icons'],['kit','Kit assets'],['mine','My blocks']];
+const LTABS=[['sections','Sections'],['components','Components'],['interactions','Interactions'],['photos','Photos'],['uploads','My images'],['media','Media & backgrounds'],['icons','Icons'],['kit','Kit assets'],['mine','My blocks']];
 let ltab=LTABS.some(t=>t[0]===ui.ltab)?ui.ltab:'sections',lgroup='All';
 function libTabs(){const tl=$('#ltabs');tl.innerHTML=LTABS.map(([k,l])=>`<button role="tab" type="button" id="lt-${k}" aria-controls="libList" aria-selected="${k===ltab}" tabindex="${k===ltab?0:-1}">${l}</button>`).join('');
  tl.querySelectorAll('[role=tab]').forEach((b,i,all)=>{b.onclick=()=>{ltab=b.id.slice(3);ui.ltab=ltab;saveUI();lgroup='All';libTabs();library()};
@@ -404,6 +420,8 @@ function library(){const L=$('#libList');let h='';if(ixIO){ixIO.disconnect();ixI
  else if(ltab==='interactions'){const X=(window.INTERACTIONS||[]).filter(x=>!/^sec-/.test(x.id));if(!X.length)h+='<p class="hint">The interactions shelf has not loaded.</p>';else{
   const cats=['All',...new Set(X.map(x=>x.cat))];h+=chips(cats);const items=X.filter(x=>(lgroup==='All'||x.cat===lgroup)&&match(x.t,x.cat,x.d,x.use));
   h+=`<p class="lcount">${items.length} interactions · embedded as frames, inlined in the export</p><ul class="lgrid ix">`+items.map(x=>card({id:'x-interaction',vals:{iid:x.id,height:/^story-/.test(x.id)?'800':'640'},title:x.t,meta:x.cat,desc:x.d,thumb:`<div class="ixthumb ${x.tone==='light'?'light':''}" data-ix="${esc(x.id)}"><span>${esc(x.cat)}</span></div>`,cls:'ixc'})).join('')+'</ul>'}}
+ else if(ltab==='photos'){const P=PB.photos;if(!P||!P.list.length)h+='<p class="hint">'+(P&&P.ready?'The photo library could not be loaded.':'Loading photos…')+'</p>';else{const items=P.match(q(),lgroup==='All'?'all':lgroup);
+  h+=`<div class="gchips" role="group" aria-label="Photo category">${['All',...P.cats].map(c=>`<button type="button" class="chip" aria-pressed="${c===lgroup}" data-g="${esc(c)}">${esc(c==='All'?'All':P.catName(c))}</button>`).join('')}</div><p class="lcount">${items.length} of ${P.list.length} photos · public domain or CC0, credited for you in exports</p><ul class="lgrid tiles">`+items.map(p=>card({id:'image-full',vals:{img:P.path(p),alt:p.alt||p.title,caption:''},title:p.title,meta:P.catName(p.cat)+' · photo',thumb:`<img src="${esc(P.thumb(p))}" alt="" loading="lazy">`,cls:'tile'})).join('')+'</ul>'+(items.length?'':'<p class="hint">No photo matches “'+esc(q())+'”. Try “coffee”, “house” or “flowers”.</p>')}}
  else if(ltab==='media'){const BG=PB.src.BGA();const gs=['All','Backgrounds','Films','Landing effects','Images'];h+=chips(gs);
   if(lgroup==='All'||lgroup==='Backgrounds'){if(!BG)h+='<p class="hint">The backgrounds library has not loaded.</p>';else{const items=BG.ALL.filter(p=>match(p.name,BG.FAMILIES[p.mode],p.collection,'background'));
    h+=`<h3 class="lh">Generated backgrounds <small>${items.length}</small></h3><ul class="lgrid tiles">`+items.map(p=>card({id:'x-background',vals:{bg:p.key},title:p.name,meta:BG.FAMILIES[p.mode]+' · live shader',thumb:`<div class="bgthumb" data-bg="${esc(p.key)}" style="${esc(bgThumbs[p.key]?`background-image:url(${bgThumbs[p.key]});background-size:cover`:PB.bgFallback(p))}"></div>`,cls:'tile'})).join('')+'</ul>'}}
@@ -414,6 +432,7 @@ function library(){const L=$('#libList');let h='';if(ixIO){ixIO.disconnect();ixI
   const items=fams.filter(([f,n,names])=>match(f,n,names.join(' '),'icon'));
   h+=`<p class="lcount">${items.length} icon families · adds an icon feature row you can edit</p><ul class="lgrid icons">`+items.map(([f,n,names])=>card({id:'x-icons',vals:{family:f,items:iconItems(f)},title:n,meta:names.length+' icons',thumb:`<div class="icstrip" data-fam="${esc(f)}">${names.slice(0,8).map(x=>`<span>${PB.iconSVG(f,x,{site:ABS})}</span>`).join('')}</div>`,cls:'icf'})).join('')+'</ul>'}
  else if(ltab==='mine'){h+=PB.ux&&PB.ux.mineHTML?PB.ux.mineHTML(card):''}
+ else if(ltab==='uploads'){h+=PB.ux&&PB.ux.uploadsHTML?PB.ux.uploadsHTML():''}
  else if(ltab==='kit'){const TK=PB.src.TK();if(!TK)h+='<p class="hint">The theme kits have not loaded.</p>';else{
   const kits=TK.list.filter(k=>match(k.name,k.mood||'',k.tagline||'',k.id));const sel=kits.find(k=>k.id===ui.kit)||kits[0]||TK.list[0];
   h+=`<div class="f"><label for="kitSel">Theme kit (${kits.length})</label><select id="kitSel">${kits.map(k=>`<option value="${esc(k.id)}"${k===sel?' selected':''}>${esc((k.no?k.no+' · ':'')+k.name)}</option>`).join('')}</select></div>`;
@@ -433,6 +452,7 @@ function library(){const L=$('#libList');let h='';if(ixIO){ixIO.disconnect();ixI
  const ks=$('#kitSel');if(ks){ks.onchange=()=>{ui.kit=ks.value;saveUI();library();$('#kitSel').focus()};
   $('#kitStyle').onclick=()=>{setStyle('kit:'+ks.value)};const z=$('#kitZip');z.onclick=async()=>{const TK=PB.src.TK(),k=TK.list.find(x=>x.id===ks.value);z.disabled=true;say('Building the kit ZIP…');try{dl(await TK.zipKit(k),k.id+'-theme-kit.zip')}catch(e){say('Could not build the kit ZIP')}z.disabled=false}}
  if(ltab==='mine'&&PB.ux&&PB.ux.mineAfter)PB.ux.mineAfter(L);
+ if(ltab==='uploads'&&PB.ux&&PB.ux.uploadsAfter)PB.ux.uploadsAfter(L);
  if(ltab==='sections')mountThumbs($('#libList'),$('#libScroll'));
  if(ltab==='interactions')mountIx();if(ltab==='media')bgThumbsLater();
 }
@@ -619,8 +639,17 @@ async function buildSiteFiles(opt={}){await prefetch();const acc=newAcc(),assets
  out.push(['assets/site.css',css],['assets/favicon.svg',S.faviconSVG(site,accentOf())]);
  if(anyCl)out.push(['assets/component-lab.js',cache.cl||'/* component-lab.js could not be copied; load it from '+SITE+'component-lab.js */']);
  acc.files.forEach((t,n)=>out.push([n,t]));
- for(const id of (acc.uploads||[])){const b=await PB.images.bytes(id);if(b)out.push(['assets/uploads/'+id+'.'+PB.images.ext(id),b])}
- for(const p of assets.keys()){try{const r=await fetch('assets/'+p);if(r.ok)out.push(['assets/'+p,new Uint8Array(await r.arrayBuffer())])}catch(e){}}
+ const dims=new Map(),vars=new Map(),mime=e=>e==='png'?'image/png':e==='webp'?'image/webp':'image/jpeg';
+ const shrink=async(blob,w,type)=>{try{const bm=await createImageBitmap(blob);if(bm.width<=w*1.15)return null;const k=w/bm.width,c=document.createElement('canvas');c.width=w;c.height=Math.round(bm.height*k);c.getContext('2d').drawImage(bm,0,0,c.width,c.height);const o=await new Promise(r=>c.toBlob(r,type,.82));return o?new Uint8Array(await o.arrayBuffer()):null}catch(e){return null}};
+ for(const id of (acc.uploads||[])){const b=await PB.images.bytes(id);if(!b)continue;const ext=PB.images.ext(id),base='assets/uploads/'+id,path=base+'.'+ext;out.push([path,b]);const d=await PB.images.dims(id);if(d)dims.set(path,d);
+  if(ext!=='svg'&&ext!=='gif'){const rec=PB.images.cache.get(id),list=[];for(const w of [640,1280]){const v=await shrink(rec.blob,w,mime(ext));if(v){out.push([base+'-'+w+'.'+ext,v]);list.push([w,base+'-'+w+'.'+ext])}}if(list.length&&d){list.push([d[0],path]);vars.set(path,list)}}}
+ for(const p of assets.keys()){try{const r=await fetch('assets/'+p);if(!r.ok)continue;const bytes=new Uint8Array(await r.arrayBuffer());out.push(['assets/'+p,bytes]);const ext=(p.match(/\.(\w+)$/)||[])[1];
+   if(/^(png|jpe?g|webp)$/i.test(ext||'')){try{const bm=await createImageBitmap(new Blob([bytes]));dims.set('assets/'+p,[bm.width,bm.height])}catch(e){}}
+   const m=/^photos\/([\w-]+)\.webp$/.exec(p);if(m){try{const r2=await fetch('assets/photos/'+m[1]+'-640.webp');if(r2.ok){out.push(['assets/photos/'+m[1]+'-640.webp',new Uint8Array(await r2.arrayBuffer())]);const d=dims.get('assets/'+p);if(d)vars.set('assets/'+p,[[640,'assets/photos/'+m[1]+'-640.webp'],[d[0],'assets/'+p]])}}catch(e){}}}catch(e){}}
+ /* images get their size (no layout shift), async decoding and, where we made smaller copies, a srcset */
+ for(const o of out){if(!/\.html$/.test(o[0])||typeof o[1]!=='string')continue;
+  o[1]=o[1].replace(/<img\b([^>]*)>/g,(m,at)=>{const sm=/\ssrc="([^"]+)"/.exec(at);if(!sm)return m;let src=sm[1];if(pubBase&&src.startsWith(pubBase))src=src.slice(pubBase.length);src=src.replace(/^\.\//,'');let add='';const d=dims.get(src),vv=vars.get(src);
+   if(d&&!/\swidth=/.test(at))add+=` width="${d[0]}" height="${d[1]}"`;if(vv&&!/\ssrcset=/.test(at))add+=` srcset="${vv.map(([w,pp])=>pubBase+pp+' '+w+'w').join(', ')}" sizes="(max-width: 700px) 100vw, 1200px"`;if(!/\sdecoding=/.test(at))add+=' decoding="async"';if(!add)return m;const self=/\/\s*$/.test(at);return '<img'+(self?at.replace(/\s*\/\s*$/,''):at)+add+(self?' /':'')+'>'})}
  const today=new Date().toISOString().slice(0,10);
  {const all=[...site.header,...site.pages.flatMap(p=>p.blocks),...site.footer],fams=new Set(all.filter(b=>b.id==='x-icons').map(b=>(b.vals&&b.vals.family)||'regular'));if(site.settings.favicon&&site.settings.favicon.set&&!['glyphs','letter'].includes(site.settings.favicon.set))fams.add(site.settings.favicon.set);
   const used=[...assets.keys(),...vids];const ph=(PB.photos&&PB.photos.used?PB.photos.used(used):[]);
@@ -776,6 +805,6 @@ PB.app={saveToProjects,hasProject,setZoom,get zoom(){return ZOOM},addBlockAfter:
 /* ---------- boot ---------- */
 try{const CLX=PB.src.CL();if(CLX){const st=document.createElement('style');st.textContent=CLX.css();document.head.append(st)}}catch(e){}
 PB.styles.build();if(!PB.styles.has(page.style)&&!/^ds:/.test(page.style))page.style='studio';
-PB.images.load().then(n=>{if(n)render()});imagesList();libTabs();library();rtab(rtabCur);refresh();histUI();showPane(ui.pane||'page');
+PB.images.load().then(n=>{if(n)render()});if(PB.photos)PB.photos.load().then(()=>{if(ltab==='photos')library()});imagesList();libTabs();library();rtab(rtabCur);refresh();histUI();showPane(ui.pane||'page');
 document.body.classList.add('ready');
 })();
