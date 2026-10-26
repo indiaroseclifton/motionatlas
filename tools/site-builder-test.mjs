@@ -184,6 +184,22 @@ const waitPv = pg => pg.waitForTimeout(700);
   await ctx.close();
 }
 
+// ---- 1d. section picker with thumbnails
+{
+  const { ctx, pg } = await open();
+  await pg.waitForTimeout(2500);
+  const fr = frame(pg); await fr.locator('.b-sec-pricing [data-pbf=heading]').first().click({ position: { x: 10, y: 10 } }); await pg.waitForTimeout(400);
+  const n0 = (await site(pg)).pages[0].blocks.length;
+  await pg.click('#cvTb [aria-label="Add a section after this one"]');
+  ok(await pg.locator('#picker[open]').count() === 1, 'the plus button opens the section picker');
+  await pg.fill('#pickQ', 'contact form'); await pg.waitForTimeout(1500);
+  ok(await pg.locator('#pickGrid .pkcard').count() >= 1 && await pg.locator('#pickGrid .pkth iframe').count() >= 1, 'picker shows searchable cards with live thumbnails');
+  await pg.locator('#pickGrid .pkcard').first().click(); await waitPv(pg);
+  const s = await site(pg); const ids = s.pages[0].blocks.map(b => b.id);
+  ok(s.pages[0].blocks.length === n0 + 1 && ids[ids.indexOf('sec-pricing') + 1] === 'sec-contact', 'picked section is inserted right after the selected one');
+  await ctx.close();
+}
+
 // ---- 2. back-compat: an old saved single page opens as a one-page site
 {
   const old = { cur: 'p1', pages: { p1: { id: 'p1', name: 'Old page', brand: 'Larder', title: 'Larder · bakery', style: 'paper', pair: -1, blocks: [{ uid: 'a1', id: 'nav', vals: { l1: 'Bread', l2: 'Cakes', l3: 'Visit', cta: 'Order' } }, { uid: 'a2', id: 'hero-center', vals: { heading: 'Warm from the oven.' } }, { uid: 'a3', id: 'sec-footer', vals: {} }] } } };

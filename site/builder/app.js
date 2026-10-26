@@ -78,7 +78,7 @@ const newAcc=()=>({css:new Map(),fonts:new Set(),files:new Map()});
 const pageHrefFor=mode=>p=>mode==='preview'?'#pb-page:'+p.id:S.pageFile(site,p);
 const buildCSS=(st,acc)=>':root{'+st.vars+'}\n'+(st.face||'')+LIB.base+'.h{text-transform:var(--case,none)}\n'+[...acc.css.values()].join('\n');
 const fontURLOf=acc=>acc.fonts.size?'https://fonts.googleapis.com/css2?'+[...acc.fonts].join('&')+'&display=swap':'';
-function compose(mode,pg,acc){ // mode: preview | html | zip  -> parts for one page (header + page + footer). acc shares css/fonts/files between pages.
+function compose(mode,pg,acc,opt){ // mode: preview | html | zip  -> parts for one page (header + page + footer). acc shares css/fonts/files between pages.
  pg=pg||curPage();acc=acc||newAcc();
  const base=mode==='preview'?ABS:SITE;const pair=page.pair>=0?LIB.pairs[page.pair]:null;
  const st=PB.styles.resolve(page.style,pair,base);
@@ -89,7 +89,8 @@ function compose(mode,pg,acc){ // mode: preview | html | zip  -> parts for one p
   interactionSrc:id=>{if(mode==='preview')return `src="${ABS}interactions/demos/${esc(id)}.html"`;const t=cache.ix[id];
    if(mode==='zip'&&t){files.set('interactions/'+id+'.html',t);return `src="interactions/${esc(id)}.html"`}
    if(mode==='html'&&t)return `srcdoc="${t.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}"`;return `src="${SITE}interactions/demos/${esc(id)}.html"`}};
- [...site.header.map(b=>[b,'header']),...pg.blocks.map(b=>[b,'page']),...site.footer.map(b=>[b,'footer'])].forEach(([blk,zone])=>{const d=def(blk.id);if(!d)return;ctx.uid=blk.uid;let html='',bjs='';
+
+ [...(opt&&opt.solo?[]:site.header).map(b=>[b,'header']),...pg.blocks.map(b=>[b,'page']),...(opt&&opt.solo?[]:site.footer).map(b=>[b,'footer'])].forEach(([blk,zone])=>{const d=def(blk.id);if(!d)return;ctx.uid=blk.uid;let html='',bjs='';
   try{if(isX(blk.id)){const r=d.render(vals(blk),ctx)||{};html=r.html||'';bjs=r.js||'';(r.css||[]).forEach(([k,c])=>{if(!css.has(k))css.set(k,c)});if(!css.has('x-base'))css.set('x-base',PB.extraBase)}
    else{html=fill(mode==='preview'?PB.canvas.mark(d):d.html,blk,AT);bjs=d.js?fill(d.js,blk,AT):'';if(!css.has('b:'+d.id))css.set('b:'+d.id,d.css)}}
   catch(e){console.warn('Page builder: block failed',blk.id,e);html='<section class="wrap"><p>This section could not be drawn.</p></section>'}
@@ -236,7 +237,7 @@ function placeTb(m){if(!EDIT||!csel||!m){hideTb();return}const f=buildTb();if(!f
  let x=ir.left-sr.left+Math.max(r.left,0);x=Math.max(8,Math.min(x,sr.width-w-8));tb.style.left=x+'px';tb.style.top=Math.min(y,sr.height-h-8)+'px'}
 function dupBlk(uid){const f=findBlk(uid);if(!f)return;const c={uid:uidGen(),id:f.blk.id,vals:clone(f.blk.vals)};if(f.blk.set)c.set=clone(f.blk.set);if(f.blk.links)c.links=clone(f.blk.links);f.list.splice(f.i+1,0,c);csel=null;open=c.uid;commit();outline();render();say('Duplicated '+def(f.blk.id).name)}
 function rmBlk(uid){const f=findBlk(uid);if(!f)return;f.list.splice(f.i,1);if(open===uid)open=null;csel=null;hideTb();commit();outline();render();say('Removed '+def(f.blk.id).name+'. Undo brings it back.')}
-function askAdd(uid,where){addTarget={uid,where};showPane('lib');say('Pick a section: it will be added '+(where==='before'?'above':'below')+' the selected one');$('#libSearch').focus()}
+function askAdd(uid,where){openPicker({uid,where})}
 /* element tools: links, images, menu */
 const pop=document.createElement('div');pop.id='cvPop';pop.className='cvpop';pop.hidden=true;stage.append(pop);
 function closePop(){pop.hidden=true;pop.innerHTML=''}
@@ -279,6 +280,28 @@ addEventListener('message',e=>{if(e.source!==pv.contentWindow||!e.data)return;co
 pv.addEventListener('load',()=>{lastRects=null;editingText=false;if(!csel||!findBlk(csel.uid)){csel=null;hideTb()}});
 addEventListener('resize',()=>placeTb(lastRects));
 
+/* ---------- section thumbnails and the section picker ---------- */
+const thumbCache=new Map();
+function thumbHTML(id){const key=page.style+'|'+page.pair+'|'+id;if(thumbCache.has(key))return thumbCache.get(key);
+ let h='';try{const P=compose('preview',{id:'__t',name:'t',blocks:[{uid:'tb'+id.replace(/\W/g,''),id,vals:{}}]},undefined,{solo:true});h=swapA(assemble(P,{noagent:true,clSrc:ABS+'component-lab.js'}),ABS+'assets/').replace(/\sautoplay\b/g,'').replace(/<video /g,'<video preload="none" ')}catch(e){h=''}
+ thumbCache.set(key,h);if(thumbCache.size>160)thumbCache.delete(thumbCache.keys().next().value);return h}
+let thIO=null;
+function mountThumbs(root,scroller){if(!('IntersectionObserver' in window))return;if(thIO)thIO.disconnect();
+ thIO=new IntersectionObserver(es=>es.forEach(e=>{const box=e.target;if(!e.isIntersecting||box.firstChild)return;const f=document.createElement('iframe');f.tabIndex=-1;f.setAttribute('aria-hidden','true');f.setAttribute('inert','');f.title='';f.style.transform='scale('+(box.clientWidth/1200)+')';f.srcdoc=thumbHTML(box.dataset.sth);box.append(f);thIO.unobserve(box)}),{root:scroller,rootMargin:'160px'});
+ root.querySelectorAll('[data-sth]').forEach(b=>thIO.observe(b))}
+const pk=$('#picker');let pkGroup='All',pkTarget=null;
+function openPicker(target){pkTarget=target;$('#pickQ').value='';pkGroup='All';pickDraw();pk.showModal();$('#pickQ').focus()}
+function pickDraw(){const all=[...LIB.blocks,PB.extraById['x-type']],gs=['All',...GROUPS.filter(g=>all.some(b=>b.group===g))],t=($('#pickQ').value||'').trim().toLowerCase();
+ $('#pickChips').innerHTML=gs.map(g=>`<button type="button" class="chip" aria-pressed="${g===pkGroup}" data-g="${esc(g)}">${esc(g)}</button>`).join('');
+ $$('#pickChips .chip').forEach(b=>b.onclick=()=>{pkGroup=b.dataset.g;pickDraw();$(`#pickChips [data-g="${CSS.escape(pkGroup)}"]`).focus()});
+ const items=all.filter(b=>(pkGroup==='All'||b.group===pkGroup)&&(!t||(b.name+' '+b.group+' '+b.desc).toLowerCase().includes(t)));
+ $('#pickCount').textContent=items.length+' sections';
+ $('#pickGrid').innerHTML=items.map(b=>`<li><button type="button" class="pkcard" data-id="${esc(b.id)}"><span class="pkth" data-sth="${esc(b.id)}"></span><b>${esc(b.name)}</b><small>${esc(b.desc)}</small></button></li>`).join('')||'<li class="hint">No section matches.</li>';
+ $$('#pickGrid .pkcard').forEach(b=>b.onclick=()=>{addTarget=pkTarget;const id=b.dataset.id;pk.close();addBlock(id,{},null)});
+ mountThumbs($('#pickGrid'),$('#pickScroll'))}
+$('#pickQ').oninput=()=>{clearTimeout(pickDraw.t);pickDraw.t=setTimeout(pickDraw,120)};
+$('#pickClose').onclick=()=>pk.close();
+$('#addSecBtn').onclick=()=>openPicker(csel&&findBlk(csel.uid)?{uid:csel.uid,where:'after'}:null);
 /* drag and drop: library cards and outline rows */
 let dragUid=null;
 const ol=$('#ol');
@@ -314,7 +337,7 @@ let ixIO=null,bgThumbs={};
 function library(){const L=$('#libList');let h='';if(ixIO){ixIO.disconnect();ixIO=null}
  if(ltab==='sections'){const all=[...LIB.blocks,PB.extraById['x-type']];const gs=['All',...GROUPS.filter(g=>all.some(b=>b.group===g))];h+=chips(gs);
   const items=all.filter(b=>(lgroup==='All'||b.group===lgroup)&&match(b.name,b.group,b.desc));
-  h+=`<p class="lcount">${items.length} sections</p><ul class="lgrid">`+items.map(b=>card({id:b.id,title:b.name,meta:b.group,desc:b.desc,thumb:secThumb(b.group),cls:'sec'})).join('')+'</ul>'}
+  h+=`<p class="lcount">${items.length} sections · previews use your style</p><ul class="lgrid tiles">`+items.map(b=>card({id:b.id,title:b.name,meta:b.group,thumb:`<div class="sth" data-sth="${esc(b.id)}"></div>`,cls:'sec'})).join('')+'</ul>'}
  else if(ltab==='components'){const L2=PB.src.CL();if(!L2)h+='<p class="hint">The UI component lab has not loaded, so components are unavailable right now.</p>';else{
   const items=L2.components.filter(c=>match(c.id,c.name));h+=`<p class="lcount">${items.length} of ${L2.components.length} components · each one is themed by your page style</p><ul class="lgrid comp">`+items.map(c=>card({id:'x-component',vals:{cid:c.id},title:c.name,meta:c.id+(c.live?' · interactive':''),thumb:`<div class="cthumb pb-cl"><div class="cl-root" inert>${PB.componentHTML(c,c.thumb||c.v[0][0],'t'+c.id)}</div></div>`,cls:'comp'})).join('')+'</ul>'}}
  else if(ltab==='interactions'){const X=(window.INTERACTIONS||[]).filter(x=>!/^sec-/.test(x.id));if(!X.length)h+='<p class="hint">The interactions shelf has not loaded.</p>';else{
@@ -347,6 +370,7 @@ function library(){const L=$('#libList');let h='';if(ixIO){ixIO.disconnect();ixI
   li.addEventListener('dragstart',e=>{e.dataTransfer.effectAllowed='copy';e.dataTransfer.setData('application/x-pb',li.dataset.add);e.dataTransfer.setData('text/plain',x.id)})});
  const ks=$('#kitSel');if(ks){ks.onchange=()=>{ui.kit=ks.value;saveUI();library();$('#kitSel').focus()};
   $('#kitStyle').onclick=()=>{setStyle('kit:'+ks.value)};const z=$('#kitZip');z.onclick=async()=>{const TK=PB.src.TK(),k=TK.list.find(x=>x.id===ks.value);z.disabled=true;say('Building the kit ZIP…');try{dl(await TK.zipKit(k),k.id+'-theme-kit.zip')}catch(e){say('Could not build the kit ZIP')}z.disabled=false}}
+ if(ltab==='sections')mountThumbs($('#libList'),$('#libScroll'));
  if(ltab==='interactions')mountIx();if(ltab==='media')bgThumbsLater();
 }
 function iconItems(f){const names=PB.iconNames(f);const base=rows(PB.extraById['x-icons'].fields.find(x=>x.k==='items').def);return base.map((r,i)=>[names[i%Math.max(1,names.length)]||r[0],r[1],r[2]].join(' | ')).join('\n')}
