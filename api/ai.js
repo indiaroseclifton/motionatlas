@@ -79,6 +79,25 @@ async function flow(req, res, b) {
   return send(res, 200, { flow: out, usage: { input: r.usage.input_tokens, output: r.usage.output_tokens } });
 }
 
+const SCHEMA_SITE = {
+  type: 'object', additionalProperties: false, required: ['brand', 'style', 'cta', 'note', 'pages'],
+  properties: {
+    brand: { type: 'string' }, style: { type: 'string' }, cta: { type: 'string' }, note: { type: 'string' }, description: { type: 'string' },
+    pages: { type: 'array', items: {
+      type: 'object', additionalProperties: false, required: ['name', 'title', 'description', 'blocks'],
+      properties: { name: { type: 'string' }, title: { type: 'string' }, description: { type: 'string' },
+        blocks: { type: 'array', items: {
+          type: 'object', additionalProperties: false, required: ['id', 'fields'],
+          properties: { id: { type: 'string' }, fields: { type: 'array', items: {
+            type: 'object', additionalProperties: false, required: ['key', 'value'],
+            properties: { key: { type: 'string' }, value: { type: 'string' } } } } } } } } } }
+  }
+};
+const SYSTEM_SITE = `You design small multi-page websites inside a site builder. Use only the sections in the catalogue, by exact id, and only the field keys each lists.
+Return 3 to 5 pages; the first is the home page. Page names are short menu words (Home, About, Menu, Contact). The builder adds a shared navigation bar and footer, so never use navigation or footer sections.
+Start the home page with a hero section and every other page with the "page-head" section. Use 3 to 6 sections per page, each page different, ending the home page with a call to action.
+Write real, specific copy for the brief: concrete nouns, numbers where they help, short headlines, no lorem ipsum. "cta" is the label of the header button (2 to 3 words). "note" is one sentence about what you chose.`;
+
 export default async function handler(req, res) {
   const url = new URL(req.url, 'http://x');
   if (req.method === 'GET' && url.searchParams.has('status')) return send(res, 200, { enabled: !!process.env.ANTHROPIC_API_KEY, model: MODEL });
@@ -94,23 +113,31 @@ export default async function handler(req, res) {
     const styles = (Array.isArray(b.styles) ? b.styles : []).slice(0, 200).map(s => str(s, 40));
     if (!catalog.length) return send(res, 400, { error: 'No sections were sent.' });
     const ids = new Set(catalog.map(s => s.id));
-    const mode = b.mode === 'section' ? 'section' : 'page';
+    const mode = b.mode === 'section' ? 'section' : b.mode === 'site' ? 'site' : 'page';
     const current = b.current ? JSON.stringify(b.current).slice(0, 12000) : '';
     const ask = mode === 'section'
       ? `Rewrite only the copy of this one section for the brief. Return it as the single item in "blocks", keep its id. Keep title, brand and style unchanged.\nSection: ${current}\nBrief: ${brief}`
+      : mode === 'site' ? `Build a website for this brief.\nBrief: ${brief}`
       : `Build a page for this brief.\nBrief: ${brief}${current ? `\nCurrent page (improve it rather than start over if the brief asks for changes): ${current}` : ''}`;
 
     const client = new Anthropic();
     const r = await client.messages.create({
       model: MODEL, max_tokens: 8000,
-      output_config: { effort: 'low', format: { type: 'json_schema', schema: SCHEMA } },
-      system: [{ type: 'text', text: SYSTEM }, { type: 'text', text: `Catalogue: ${JSON.stringify(catalog)}\nStyles: ${JSON.stringify(styles)}`, cache_control: { type: 'ephemeral' } }],
+      output_config: { effort: 'low', format: { type: 'json_schema', schema: mode === 'site' ? SCHEMA_SITE : SCHEMA } },
+      system: [{ type: 'text', text: mode === 'site' ? SYSTEM_SITE : SYSTEM }, { type: 'text', text: `Catalogue: ${JSON.stringify(catalog)}\nStyles: ${JSON.stringify(styles)}`, cache_control: { type: 'ephemeral' } }],
       messages: [{ role: 'user', content: ask }],
     });
     if (r.stop_reason === 'refusal') return send(res, 422, { error: 'The AI declined that brief. Try describing the page differently.' });
     if (r.stop_reason === 'max_tokens') return send(res, 502, { error: 'The answer was too long. Try a shorter brief.' });
     const text = r.content.filter(c => c.type === 'text').map(c => c.text).join('');
     const out = JSON.parse(text);
+    if (mode === 'site') {
+      out.pages = (out.pages || []).slice(0, 6).map(p => ({ name: str(p.name, 40), title: str(p.title, 80), description: str(p.description, 200), blocks: (p.blocks || []).filter(x => ids.has(x.id)).slice(0, 10).map(x => ({ id: x.id, fields: Object.fromEntries((x.fields || []).map(f => [str(f.key, 30), str(f.value, 600)])) })) })).filter(p => p.blocks.length);
+      if (!out.pages.length) return send(res, 502, { error: 'The AI returned no pages. Try a more specific brief.' });
+      out.brand = str(out.brand, 40); out.cta = str(out.cta, 30);
+      if (!styles.includes(out.style)) out.style = styles[0] || '';
+      return send(res, 200, { page: out, usage: { input: r.usage.input_tokens, output: r.usage.output_tokens } });
+    }
     out.blocks = (out.blocks || []).filter(x => ids.has(x.id)).slice(0, 14).map(x => ({ id: x.id, fields: Object.fromEntries((x.fields || []).map(f => [str(f.key, 30), str(f.value, 600)])) }));
     if (!styles.includes(out.style)) out.style = styles[0] || '';
     return send(res, 200, { page: out, usage: { input: r.usage.input_tokens, output: r.usage.output_tokens } });

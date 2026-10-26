@@ -642,7 +642,7 @@ async function aiStatus(){const box=$('#aiState');if(aiOn===null){box.textConten
    if(!j){aiOn=false;aiMsg='The AI service isn’t reachable from this copy of the site (it runs on the live site). Everything else works as normal.'}
    else{aiOn=!!j.enabled;aiMsg=aiOn?'Ready. Describe the page and the AI picks sections, a style and writes the words.':'The AI isn’t switched on yet: the site owner needs to add an ANTHROPIC_API_KEY to the Vercel project. Everything else works as normal.'}}
   catch(e){aiOn=false;aiMsg='The AI service isn’t reachable right now. Everything else works as normal.'}}
- box.textContent=aiMsg;box.className='aistate '+(aiOn?'on':'off');$('#aiGo').disabled=!aiOn;$('#aiBrief').disabled=!aiOn;$('#aiKeep').disabled=!aiOn}
+ box.textContent=aiOn?aiMsg:aiMsg+' You can still describe a site: the closest template is filled with your name and words.';box.className='aistate '+(aiOn?'on':'off');$('#aiGo').disabled=false;$('#aiBrief').disabled=false;$('#aiKeep').disabled=!aiOn}
 const AI_X=['x-background','x-kitbg'];
 function catalog(only){return [...LIB.blocks,...AI_X.map(x=>PB.extraById[x])].filter(d=>!only||d.id===only).map(d=>({id:d.id,name:d.name,group:d.group,fields:fieldsOf(d).filter(f=>['text','long','list','film','image'].includes(f.type)||(d.id==='x-background'&&f.k==='bg')||(d.id==='x-kitbg'&&f.k==='kit')).map(f=>(f.type==='list'?f.k+'['+(f.label.match(/\(([^)]*)\)/)||[,'one per line'])[1]+']':f.k).slice(0,30))}))}
 const aiStyleIds=()=>{const S=PB.styles.list();const pick=[...S.filter(s=>s.kind==='builder'),...S.filter(s=>s.kind==='kit'),...S.filter(s=>s.kind==='ds'),...S.filter(s=>!['builder','kit','ds'].includes(s.kind))].slice(0,200);return pick.map(s=>(s.id+'|'+s.name.toLowerCase().replace(/[^a-z0-9]+/g,'-')).slice(0,40))};
@@ -651,7 +651,7 @@ function toVals(d,fields){const out={};const F=fieldsOf(d);Object.entries(fields
  if(f.type==='list'&&!v.includes('\n')){const multi=/\|/.test(f.label);if(v.includes(' || '))v=v.split(/\s*\|\|\s*/).join('\n');else if(!multi)v=v.split(/\s*\|\s*/).join('\n');else if(v.includes('; '))v=v.split(/\s*;\s+/).join('\n')}
  if(f.type==='film'&&!LIB.films.includes(v))return;if(f.type==='select'&&f.options&&!f.options({}).some(o=>o[0]===v))return;out[key]=v});return out}
 async function aiCall(body){const r=await fetch('/api/ai',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)});let j=null;try{j=await r.json()}catch(e){}if(!r.ok||!j||!j.page)throw new Error((j&&j.error)||'The AI did not answer ('+r.status+').');return j.page}
-$('#aiGo').onclick=async()=>{const brief=$('#aiBrief').value.trim();if(!brief){say('Describe the page first');$('#aiBrief').focus();return}const go=$('#aiGo');go.disabled=true;$('#aiOut').textContent='Writing your page…';
+const aiPageGo=async()=>{const brief=$('#aiBrief').value.trim();if(!brief){say('Describe the page first');$('#aiBrief').focus();return}const go=$('#aiGo');go.disabled=true;$('#aiOut').textContent='Writing your page…';
  try{const keep=$('#aiKeep').checked;const p=await aiCall({mode:'page',brief:(brief+LIST_NOTE).slice(0,1500),catalog:catalog(),styles:aiStyleIds(),current:keep?{title:page.title,brand:page.brand,style:page.style,blocks:page.blocks.filter(b=>B[b.id]||AI_X.includes(b.id)).map(b=>({id:b.id,fields:vals(b)}))}:undefined});
   const blocks=(p.blocks||[]).filter(b=>def(b.id)).map(b=>({uid:uidGen(),id:b.id,vals:toVals(def(b.id),b.fields)}));if(!blocks.length)throw new Error('The AI returned no sections. Try a more specific brief.');
   const sid=String(p.style||'').split('|')[0];{const sp=S.split(blocks,def);if(sp.header.length)site.header=sp.header;if(sp.footer.length)site.footer=sp.footer;page.blocks=sp.body}if(p.brand)page.brand=p.brand.slice(0,40);if(p.title)page.title=p.title.slice(0,80);if(PB.styles.has(sid))page.style=sid;open=null;commit();refresh();
@@ -663,6 +663,35 @@ async function aiSection(blk,btn){if(aiOn===null)await aiStatus();if(!aiOn){say(
 async function aiSectionGo(blk,form){const brief=form.querySelector('textarea').value.trim()||('For '+(page.brand||'this brand'));const btn=form.querySelector('button');btn.disabled=true;btn.textContent='Rewriting…';
  try{const p=await aiCall({mode:'section',brief:(brief+LIST_NOTE).slice(0,1500),catalog:catalog(blk.id),styles:[page.style],current:{id:blk.id,fields:vals(blk)}});const b=(p.blocks||[]).find(x=>x.id===blk.id);if(!b)throw new Error('The AI returned nothing for this section.');
   Object.assign(blk.vals,toVals(def(blk.id),b.fields));commit();outline();render();say('Section rewritten. Undo brings the old words back.')}catch(e){say(e.message||'Rewrite failed');btn.disabled=false;btn.textContent='Rewrite this section'}}
+
+/* ---------- generate a whole site: AI when it is on, otherwise the closest template filled with your words ---------- */
+const KEYWORDS=[['restaurant',/restaurant|caf[eé]|bistro|bakery|kitchen|menu|dinner|brunch|coffee|pizza|bar and|pub\b|diner/],['photographer',/photograph|camera|portrait|wedding photo|shoot/],['event',/event|conference|festival|meetup|summit|gig|concert|tickets/],['blog',/\bblog\b|writer|writing|journal|diary|newsletter|essays|notes from/],['shop',/\bshop\b|\bstore\b|product|boutique|handmade|e-?commerce|sell\b|gifts?\b/],['nonprofit',/charity|non-?profit|volunteer|foundation|donat|fundrais|community group/],['course',/course|teach|lessons?|learn|tutor|academy|school|class(es)?\b|training|workshops?/],['app',/\bapp\b|mobile|ios\b|android|download/],['saas',/saas|software|platform|dashboard|\bapi\b|startup|tool for|analytics|automation/],['agency',/agency|consult|firm\b|b2b|marketing|branding studio|digital/],['portfolio',/portfolio|designer|freelanc|illustrat|developer|artist|architect/],['studio',/studio|maker|craft|ceramic|pottery|sculpt|paper|workshop space|atelier/]];
+function pickTemplate(brief){const t=brief.toLowerCase();let best=null,score=0;KEYWORDS.forEach(([id,re])=>{const m=t.match(new RegExp(re.source,'g'));const n=m?m.length:0;if(n>score){score=n;best=id}});return best||'portfolio'}
+const sentence=s=>{s=s.trim().replace(/\s+/g,' ');return s?s[0].toUpperCase()+s.slice(1):s};
+function briefBits(brief){const named=brief.match(/(?:called|named|is|for)\s+(?:the\s+)?([A-Z][\w&’' -]{1,28}?)(?=[,.:;]|\s+(?:a|an|the|is|that|which|in|with|who|from)\b|$)/);const first=brief.split(/(?<=[.!?])\s+/)[0].replace(/\s*[.!?]+$/,'');
+ const short=first.split(/\s+/).length<=10?sentence(first)+'.':'';return {brand:named?named[1].trim():'',summary:sentence(brief.replace(/\s+/g,' ').trim()).slice(0,170),heading:short}}
+function siteFromTemplate(brief){const id=pickTemplate(brief),t=(PB.templates||[]).find(x=>x.id===id)||PB.templates[0],raw=t.make(),bits=briefBits(brief);
+ let json=JSON.stringify(raw);if(bits.brand&&raw.brand){json=json.split(raw.brand).join(bits.brand.replace(/["\\]/g,''))}
+ const x=JSON.parse(json);if(bits.brand)x.brand=bits.brand.replace(/["\\]/g,'');
+ const f=x.pages[0].blocks.find(b=>b.vals&&'intro' in b.vals);if(f&&bits.summary)f.vals.intro=bits.summary;
+ const h=x.pages[0].blocks.find(b=>b.vals&&'heading' in b.vals&&['hero-image','hero-center','hero-film','hero-split','hero-3d','page-head'].includes(b.id));if(h&&bits.heading)h.vals.heading=bits.heading;
+ x.settings=Object.assign({},x.settings,{description:bits.summary});x.name=(bits.brand||t.name);return {site:x,template:t}}
+async function aiSiteGo(brief){const cat=catalog().filter(d=>!['nav','nav-center','announce','footer-columns','sec-footer'].includes(d.id));
+ const p=await aiCall({mode:'site',brief:(brief+LIST_NOTE).slice(0,1500),catalog:cat,styles:aiStyleIds()});
+ const pages=(p.pages||[]).map((pg,i)=>({id:i?undefined:'home',name:pg.name||'Page',title:pg.title,desc:pg.description,blocks:(pg.blocks||[]).filter(b=>def(b.id)&&!S.isTop(def(b.id))&&!S.isEnd(def(b.id))).map(b=>({id:b.id,vals:toVals(def(b.id),b.fields)}))})).filter(pg=>pg.blocks.length);
+ if(!pages.length)throw new Error('The AI returned no pages. Try a more specific brief.');
+ const sid=String(p.style||'').split('|')[0],brand=(p.brand||'My site').slice(0,40),last=pages[pages.length-1];
+ return S.normalize({name:brand,brand,style:PB.styles.has(sid)?sid:'studio',pages:pages.map((pg,i)=>({...pg,id:pg.id||'p'+i})),
+  header:[{id:'nav',vals:{cta:p.cta||'Get in touch',ctaHref:'page:'+(last.id||'p'+(pages.length-1))}}],footer:[{id:'footer-columns',vals:{line:(p.description||'').slice(0,80),c1:'Pages',links1:pages.map(x=>x.name).join('\n'),c2:'',links2:'',c3:'',links3:'',legal:'© '+new Date().getFullYear()+' '+brand}}],
+  settings:{description:(p.description||pages[0].desc||'').slice(0,300)},navAuto:true,fresh:true},def)}
+$('#aiGo').onclick=async()=>{const brief=$('#aiBrief').value.trim();if(!brief){say('Describe the site first');$('#aiBrief').focus();return}
+ if($('#aiKeep').checked&&aiOn)return aiPageGo();
+ const go=$('#aiGo');go.disabled=true;$('#aiOut').textContent=aiOn?'Writing your site…':'Building from the closest template…';
+ try{let ns,note;
+  if(aiOn){ns=await aiSiteGo(brief);note='Done. It is a new site, so your current one is untouched.'}
+  else{const r=siteFromTemplate(brief);ns=S.normalize(r.site,def);note='The AI is off, so this is the '+r.template.name+' template with your name and words. Edit anything on the canvas.'}
+  store.pages[ns.id]=ns;switchTo(ns.id);$('#aiOut').textContent=note;say('Site ready');showPane('preview')}
+ catch(e){$('#aiOut').textContent=e.message||'Something went wrong.'}go.disabled=false};
 
 /* ---------- keyboard ---------- */
 document.addEventListener('keydown',e=>{const mod=e.metaKey||e.ctrlKey;if(!mod)return;const inField=/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName);if(inField)return;

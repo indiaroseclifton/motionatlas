@@ -310,6 +310,35 @@ const waitPv = pg => pg.waitForTimeout(700);
   await ctx.close();
 }
 
+// ---- 1i. generate a site: fallback without AI, and with a mocked AI
+{
+  const { ctx, pg } = await open();
+  await pg.waitForTimeout(1500);
+  await pg.click('#rt-ai'); await pg.waitForTimeout(400);
+  ok(!(await pg.locator('#aiGo').isDisabled()), 'Generate site works while the AI is off');
+  await pg.fill('#aiBrief', 'A website for a weekend pottery school in Leeds called Clay & Co. Classes for beginners, prices and the teachers.');
+  await pg.click('#aiGo'); await pg.waitForTimeout(1500);
+  let s = await site(pg);
+  ok(s.pages.length >= 3 && s.brand === 'Clay & Co' && /pottery school in Leeds/i.test(JSON.stringify(s)), 'fallback fills the closest template with the brand and the description (' + s.pages.map(p => p.name) + ')');
+  ok((await frame(pg).locator('.b-nav .logo').first().textContent()) === 'Clay & Co', 'brand reaches the header');
+  // mocked AI
+  await pg.route('**/api/ai*', async r => {
+    if (r.request().method() === 'GET') return r.fulfill({ status: 200, contentType: 'application/json', body: '{"enabled":true}' });
+    return r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ page: { brand: 'Bean There', style: 'paper', cta: 'Order now', note: 'ok', description: 'Coffee roasters.', pages: [
+      { name: 'Home', title: 'Bean There', description: 'Roasters in Leeds', blocks: [{ id: 'hero-center', fields: { heading: 'Coffee, roasted slowly.', intro: 'Small batches every Tuesday.', b1: 'Shop beans', b2: 'Visit', badge: 'New', news: 'Spring blend', proof: 'Loved by 900 locals' } }, { id: 'stats', fields: { stats: '900 | regulars\n6 | origins' } }] },
+      { name: 'Beans', title: 'Beans', description: 'Our beans', blocks: [{ id: 'page-head', fields: { heading: 'Six origins.' } }, { id: 'product-grid', fields: {} }] },
+      { name: 'Visit', title: 'Visit', description: 'Find us', blocks: [{ id: 'page-head', fields: { heading: 'Come by.' } }, { id: 'map-embed', fields: {} }] }] } }) });
+  });
+  await pg.goto(BASE + 'page-builder.html?ai=1'); await pg.waitForFunction(() => document.body.classList.contains('ready'));
+  await pg.click('#rt-ai'); await pg.waitForTimeout(600);
+  ok(/Ready/.test(await pg.textContent('#aiState')), 'AI status shows ready');
+  await pg.fill('#aiBrief', 'A coffee roaster in Leeds'); await pg.click('#aiGo'); await pg.waitForTimeout(2000);
+  s = await site(pg);
+  ok(s.brand === 'Bean There' && s.pages.map(p => p.name).join() === 'Home,Beans,Visit' && s.header[0].vals.cta === 'Order now' && s.footer[0].id === 'footer-columns', 'AI site becomes pages with a shared header and footer');
+  ok(Object.keys(JSON.parse(await pg.evaluate(() => localStorage.getItem('atlas-page-builder-v2'))).pages).length >= 2, 'the AI site is added, the previous site is kept');
+  await ctx.close();
+}
+
 // ---- 2. back-compat: an old saved single page opens as a one-page site
 {
   const old = { cur: 'p1', pages: { p1: { id: 'p1', name: 'Old page', brand: 'Larder', title: 'Larder · bakery', style: 'paper', pair: -1, blocks: [{ uid: 'a1', id: 'nav', vals: { l1: 'Bread', l2: 'Cakes', l3: 'Visit', cta: 'Order' } }, { uid: 'a2', id: 'hero-center', vals: { heading: 'Warm from the oven.' } }, { uid: 'a3', id: 'sec-footer', vals: {} }] } } };
