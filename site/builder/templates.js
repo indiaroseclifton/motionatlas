@@ -8,7 +8,9 @@ const H=(k,h,i)=>['page-head',{kicker:k,heading:h,intro:i}];
 const CTA=(h,b,to)=>['cta-band',{heading:h,button:b},{0:to}];
 const NEWS=(h,i,b)=>['newsletter',{kicker:'Newsletter',heading:h,intro:i,button:b||'Subscribe',small:'One email a month. Unsubscribe whenever you like.'}];
 const FOOT=(line,c1,l1,c2,l2,c3,l3,legal)=>['footer-columns',{line,c1,links1:l1,c2,links2:l2,c3,links3:l3,legal}];
-const site=(o)=>()=>({name:o.name,brand:o.brand,style:o.style,desc:o.desc,pages:o.pages.map(p=>({id:p.id,name:p.name,title:p.title||'',desc:p.desc||'',blocks:p.blocks.map(b=>({id:b[0],vals:b[1]||{},...(b[2]?{links:b[2]}:{})}))})),
+const ENDS=new Set(['cta-band','newsletter','contact-form','donate','app-download','sec-cta','footer-columns']);
+const finish=(o,p)=>{const last=p.blocks[p.blocks.length-1];if(p.id===o.cta[1]||ENDS.has(last[0]))return p.blocks;return [...p.blocks,CTA(o.ctaLine||('Ready when you are.'),o.cta[0],'page:'+o.cta[1])]};
+const site=(o)=>()=>({name:o.name,brand:o.brand,style:o.style,desc:o.desc,pages:o.pages.map(p=>({id:p.id,name:p.name,title:p.title||'',desc:p.desc||'',blocks:finish(o,p).map(b=>({id:b[0],vals:b[1]||{},...(b[2]?{links:b[2]}:{})}))})),
  header:[{id:'nav',vals:{cta:o.cta[0],ctaHref:'page:'+o.cta[1]}}],
  footer:[{id:'footer-columns',vals:o.footer[1]}],navAuto:true,settings:{description:o.siteDesc,lang:'en'},fresh:true,home:o.pages[0].id,tplId:o.id,pageCount:o.pages.length});
 
@@ -43,7 +45,7 @@ add({id:'portfolio',name:'Portfolio',desc:'A designer’s work, a case study, ab
 add({id:'agency',name:'Agency',desc:'Services, case studies, the team and a contact page.',brand:'Northfield',style:'kit:swiss',cta:['Start a project','contact'],siteDesc:'Northfield is a digital product agency for ambitious companies.',footer:[0,{line:'Digital product agency.',c1:'Agency',links1:'Home\nServices\nWork\nTeam\nContact',c2:'Follow',links2:'LinkedIn\nInstagram',c3:'Contact',links3:'hello@northfield.example',legal:'© 2027 Northfield Ltd'}],
  pages:[
  {id:'home',name:'Home',title:'Northfield · Digital product agency',desc:'We design and build websites and apps for ambitious companies.',blocks:[
-  ['hero-center',{badge:'New',news:'Our 2027 field report is out',heading:'We build products people keep.',intro:'Strategy, design and engineering in one small team, from the first sketch to the thousandth release.',b1:'See our work',b2:'Our services',proof:'Trusted by 40+ product teams'},{1:'page:work',2:'page:services'}],
+  ['hero-3d',{kicker:'Digital product agency · Leeds',heading:'We build products people keep.',intro:'Strategy, design and engineering in one small team, from the first sketch to the thousandth release.',b1:'See our work',b2:'Our services',img1:'shelf/threads.webp',img2:'shelf/nebula.webp',img3:'shelf/ferro.webp'},{0:'page:work',1:'page:services'}],
   ['sec-logos',{kicker:'Clients',heading:'Product teams in 14 countries.'}],
   ['stats',{label:'Since 2016',stats:'140 | products shipped\n96% | clients who come back\n14 | countries\n38 | people'}],
   ['feature-grid',{kicker:'What we do',heading:'One team, the whole journey.',intro:'You talk to the people who build it.',items:'search | Research | Interviews, audits and prototypes that settle arguments early.\nspark | Design | Brand, interface and motion that feel like one thing.\ncode | Engineering | Fast, accessible web and mobile apps that last.\nchart | Growth | Measured launches and the improvements that follow.'}],
@@ -71,7 +73,7 @@ add({id:'agency',name:'Agency',desc:'Services, case studies, the team and a cont
 add({id:'saas',name:'SaaS product',desc:'Product, pricing, customers and docs links.',brand:'Signal',style:'signal',cta:['Start free','pricing'],siteDesc:'Signal turns customer calls into a roadmap.',footer:[0,{line:'Find the signal in every call.',c1:'Product',links1:'Home\nFeatures\nPricing\nCustomers',c2:'Company',links2:'About\nCareers\nPress',c3:'Help',links3:'Docs\nStatus\nPrivacy',legal:'© 2027 Signal Labs'}],
  pages:[
  {id:'home',name:'Home',title:'Signal · Find the signal in every call',desc:'Signal listens to customer calls and threads what people ask for into your roadmap.',blocks:[
-  ['hero-center',{badge:'v3',news:'Themes that grow on their own',heading:'Find the signal in every call.',intro:'Signal transcribes your customer calls, pulls out what people asked for and threads it into your roadmap.',b1:'Start free',b2:'See features',proof:'Rated 4.9 by 2,300 product teams'},{1:'page:pricing',2:'page:features'}],
+  ['hero-film',{film:'light-threads',kicker:'Version 3 · themes that grow on their own',heading:'Find the signal in every call.',intro:'Signal transcribes your customer calls, pulls out what people asked for and threads it into your roadmap.',b1:'Start free',b2:'See features'},{0:'page:pricing',1:'page:features'}],
   ['sec-logos',{kicker:'Trusted by',heading:'Product teams in 31 countries.'}],
   ['feature-grid',{kicker:'Product',heading:'Every conversation, untangled.',intro:'Transcripts, themes and quotes in one place.',items:'chat | Every call, transcribed | Zoom, Meet and phone calls become searchable text in minutes.\nspark | Themes that grow | Requests branch into themes as calls come in.\nusers | Quotes with context | Every quote links to the second it was said.\nchart | Weekly digest | A Friday summary for the whole team.\nlock | Private by default | Recordings stay in your region.\nbolt | Roadmap sync | Push themes to Linear or Jira with evidence attached.'}],
   ['stats',{label:'Results',stats:'3.2x | faster customer research\n68% | fewer “what did they say?” meetings\n2,300 | teams\n31 | countries'}],
@@ -97,7 +99,7 @@ add({id:'restaurant',name:'Restaurant',desc:'Menu, story, bookings and a find-us
  {id:'home',name:'Home',title:'Saffron & Salt · Fire-cooked food in East London',desc:'A neighbourhood restaurant cooking over fire. Book a table.',blocks:[
   ['hero-film',{film:'smoke-plume',kicker:'Tuesday to Sunday',heading:'Cooked over fire, shared at the table.',intro:'Seasonal plates from a wood-burning kitchen in Hackney. Good wine, no fuss.',b1:'Book a table',b2:'See the menu'},{0:'page:visit',1:'page:menu'}],
   ['statement',{kicker:'Our idea',text:'We cook what the market has on the day, over embers, and put it in the middle of the table so everyone can reach it.'}],
-  ['feature-rows',{kicker:'The kitchen',heading:'Simple, then smoky.',rows:'Fire first | Everything touches the embers: bread, fish, vegetables and the occasional pudding. | shelf/amber.webp\nMarket led | We buy from three farms and one fishmonger, and print the menu each morning. | shelf/bloom.webp\nPour well | A short list of small growers, natural where it’s good and classic where it’s better. | shelf/tree.webp'}],
+  ['feature-rows',{kicker:'The kitchen',heading:'Simple, then smoky.',rows:'Fire first | Everything touches the embers: bread, fish, vegetables and the occasional pudding. | shelf/amber.webp\nMarket led | We buy from three farms and one fishmonger, and print the menu each morning. | shelf/bloom.webp\nPour well | A short list of small growers, natural where it’s good and classic where it’s better. | shelf/smoke.webp'}],
   ['press',{label:'Said about us',quotes:'The best bread basket in Hackney. | London Eats\nFire, salt and nothing to hide behind. | The Weekend Paper'}],
   CTA('Come hungry.','Book a table','page:visit')]},
  {id:'menu',name:'Menu',title:'Menu · Saffron & Salt',desc:'This week’s menu.',blocks:[
@@ -140,6 +142,7 @@ add({id:'event',name:'Event',desc:'Countdown, schedule, speakers and tickets.',b
  pages:[
  {id:'home',name:'Home',title:'Paper Weight · A day of paper, print and pattern',desc:'A festival of printmakers and paper artists, 14 June 2027, Leeds.',blocks:[
   ['hero-kinetic',{kicker:'14 June 2027 · Leeds',lead:'A day of',words:'paper\nprint\npattern\nplay',intro:'Talks, workshops and a market of over sixty makers in the old mill.',b1:'Get tickets',b2:'See the schedule'},{0:'page:tickets',1:'page:schedule'}],
+  ['x-film',{film:'paper-bird',caption:'A paper bird, mid-flight: one of this year’s commissions.'}],
   ['countdown',{kicker:'Save the date',heading:'The doors open soon.',intro:'Two days of making in the old mill.',date:'2027-06-14',button:'Get tickets'},{0:'page:tickets'}],
   ['stats',{label:'Last year',stats:'2,400 | visitors\n62 | makers\n18 | workshops\n1 | very good canteen'}],
   ['sec-logos',{kicker:'With',heading:'Supported by print studios and paper mills.'}]]},
@@ -197,7 +200,7 @@ add({id:'shop',name:'Shop / product launch',desc:'Product grid, story, shipping 
 add({id:'nonprofit',name:'Nonprofit',desc:'Mission, programmes, donate and get involved.',brand:'Open Door',style:'kit:civic',cta:['Donate','donate'],siteDesc:'Open Door provides warm meals, a quiet room and someone to talk to.',footer:[0,{line:'Warm meals and someone to talk to.',c1:'About',links1:'Home\nProgrammes\nGet involved\nDonate',c2:'Follow',links2:'Facebook\nInstagram',c3:'Contact',links3:'hello@opendoor.example\n020 7946 0000',legal:'Registered charity 000000'}],
  pages:[
  {id:'home',name:'Home',title:'Open Door · Warm meals and someone to talk to',desc:'A neighbourhood charity for people who are lonely, hungry or in between homes.',blocks:[
-  ['hero-center',{badge:'Spring appeal',news:'£36,400 raised so far',heading:'Warm meals, and someone to talk to.',intro:'Open Door has been a neighbourhood table for 18 years. Everyone is welcome and nobody is asked why.',b1:'Donate',b2:'Our programmes',proof:'12,000 meals served last year'},{1:'page:donate',2:'page:programmes'}],
+  ['hero-image',{kicker:'Spring appeal · £36,400 raised so far',heading:'Warm meals, and someone to talk to.',intro:'Open Door has been a neighbourhood table for 18 years. Everyone is welcome and nobody is asked why.',b1:'Donate',b2:'Our programmes',img:'shelf/dove.webp',alt:'A white dove in soft light, a symbol of welcome'},{0:'page:donate',1:'page:programmes'}],
   ['stats',{label:'Last year',stats:'12,000 | hot meals\n420 | people welcomed\n86 | volunteers\n18 | years open'}],
   ['feature-grid',{kicker:'What we do',heading:'Three ways we help.',intro:'',items:'home | A warm place | A quiet room open six days a week.\nheart | A hot meal | Cooked fresh, every lunchtime.\nchat | Someone to talk to | Trained volunteers and a friendly ear.'}],
   ['quote',{quote:'I walked in for soup and left with a friend.',name:'Gerry',role:'Guest since 2021',initials:'G'}],
@@ -205,7 +208,7 @@ add({id:'nonprofit',name:'Nonprofit',desc:'Mission, programmes, donate and get i
  {id:'programmes',name:'Programmes',title:'Programmes · Open Door',desc:'What we run each week.',blocks:[
   H('Programmes','What happens at Open Door.','Free, drop-in and open to everyone.'),
   ['schedule',{kicker:'Every week',heading:'The week at a glance.',rows:'Mon | Lunch and chat | Volunteers | Hall\nWed | Advice drop-in | Citizens Advice | Room 2\nThu | Choir | Open to all | Hall\nSat | Big breakfast | Everyone | Hall'}],
-  ['feature-rows',{kicker:'Stories',heading:'What it looks like.',rows:'Lunch for everyone | Hot, fresh and served at tables with real plates. | shelf/amber.webp\nA quiet room | Books, tea and time. | shelf/tree.webp'}]]},
+  ['feature-rows',{kicker:'Stories',heading:'What it looks like.',rows:'Lunch for everyone | Hot, fresh and served at tables with real plates. | shelf/amber.webp\nA quiet room | Books, tea and time. | shelf/sumi.webp'}]]},
  {id:'involved',name:'Get involved',title:'Get involved · Open Door',desc:'Volunteer or fundraise.',blocks:[
   H('Get involved','Give an afternoon.','Volunteers are the heart of Open Door.'),
   ['steps',{kicker:'Volunteer',heading:'How it works.',steps:'Say hello | Fill in a short form or drop in on a Monday.\nGet to know us | A chat and a shadowing shift.\nJoin the rota | Pick a regular slot that suits you.'}],
@@ -240,7 +243,7 @@ add({id:'course',name:'Online course',desc:'Landing, curriculum, instructor and 
 add({id:'app',name:'App landing',desc:'Hero, features, pricing and download.',brand:'Ledger',style:'ds:D46',cta:['Get the app','download'],siteDesc:'Ledger sorts every payment and shows what is safe to spend.',footer:[0,{line:'Calm personal finance.',c1:'App',links1:'Home\nFeatures\nPricing\nDownload',c2:'Company',links2:'About\nCareers\nPress',c3:'Legal',links3:'Privacy\nTerms\nSecurity',legal:'© 2027 Ledger Ltd. Authorised by the FCA.'}],
  pages:[
  {id:'home',name:'Home',title:'Ledger · Calm personal finance',desc:'Ledger sorts every payment and shows what is safe to spend.',blocks:[
-  ['hero-center',{badge:'New',news:'Shared budgets for couples',heading:'Money, without the knot in your stomach.',intro:'Ledger sorts every payment, shows what’s safe to spend and nudges you before bills land.',b1:'Get the app',b2:'See features',proof:'Rated 4.8 by 22,000 people'},{1:'page:download',2:'page:features'}],
+  ['hero-image',{kicker:'New · shared budgets for couples',heading:'Money, without the knot in your stomach.',intro:'Ledger sorts every payment, shows what’s safe to spend and nudges you before bills land. Rated 4.8 by 22,000 people.',b1:'Get the app',b2:'See features',img:'shelf/bloom.webp',alt:'Soft colour blooming outwards, calm and unhurried'},{0:'page:download',1:'page:features'}],
   ['stats',{label:'Results',stats:'£412 | saved in the first three months, on average\n22,000 | people budgeting with Ledger\n0 | adverts, ever\n4.8 | average rating'}],
   ['quote',{quote:'For the first time I know what I can spend on a Thursday without opening four apps.',name:'Hannah Cole',role:'Teacher, Manchester',initials:'HC'}],
   ['app-download',{film:'light-threads',kicker:'On your phone',heading:'Take it with you.',intro:'Free on iPhone and Android.'}]]},

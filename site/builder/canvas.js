@@ -16,9 +16,9 @@ function mark(d){if(markCache.has(d.id))return markCache.get(d.id);
  const re=/\{\{(each:(\w+)|\/each|\w+)\}\}/g;let m;
  while((m=re.exec(html))){const tok=m[1],idx=m.index,before=html.slice(0,idx),text=before.lastIndexOf('<')<=before.lastIndexOf('>');
   if(m[2]){curEach=m[2];continue}if(tok==='/each'){curEach=null;continue}
-  if(/^\d+$/.test(tok)){if(curEach&&text)edits.push({pos:idx,len:m[0].length,repl:`<span data-pbf="${curEach}" data-r="{{n}}" data-c="${tok}">${m[0]}</span>`});continue}
+  if(/^\d+$/.test(tok)){if(curEach&&text)edits.push({pos:idx,len:m[0].length,repl:`<pb-t data-pbf="${curEach}" data-r="{{n}}" data-c="${tok}">${m[0]}</pb-t>`});continue}
   const f=F.get(tok);if(!f)continue;
-  if((f.type==='text'||f.type==='long')&&text)edits.push({pos:idx,len:m[0].length,repl:`<span data-pbf="${tok}">${m[0]}</span>`});
+  if((f.type==='text'||f.type==='long')&&text)edits.push({pos:idx,len:m[0].length,repl:`<pb-t data-pbf="${tok}">${m[0]}</pb-t>`});
   else if(f.type==='image'&&!text){const ts=before.lastIndexOf('<');if(!tagDone.has(ts)){const tn=/^<\w+/.exec(html.slice(ts));if(tn){tagDone.add(ts);edits.push({pos:ts+tn[0].length,len:0,repl:` data-pbimg="${tok}"`})}}}}
  let out=html;edits.sort((a,b)=>b.pos-a.pos).forEach(e=>{out=out.slice(0,e.pos)+e.repl+out.slice(e.pos+e.len)});
  markCache.set(d.id,out);return out}
@@ -195,7 +195,7 @@ function secBuild(blk,o){const s=blk.set;if(!s||!Object.keys(s).length)return {c
  let rt='';if(s.anim==='rise'&&o.mode!=='preview'){cls.push('pb-rise');rt='pbrise'}
  return {cls:cls.join(' '),css:r.join('\n'),inner,flip,rt}}
 PB.sec={build:secBuild,SPACING,WIDTH,ALIGN,BG,ANIM,
- base:`@media (min-width:1025px){.pbh-d{display:none!important}}@media (min-width:641px) and (max-width:1024px){.pbh-t{display:none!important}}@media (max-width:640px){.pbh-p{display:none!important}}.pb-sticky{position:sticky;top:0;z-index:40}.pb-rise{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)}.pb-rise.in{opacity:1;transform:none}@media (prefers-reduced-motion:reduce){.pb-rise{opacity:1;transform:none;transition:none}}`,
+ base:`pb-t{display:inline}@media (min-width:1025px){.pbh-d{display:none!important}}@media (min-width:641px) and (max-width:1024px){.pbh-t{display:none!important}}@media (max-width:640px){.pbh-p{display:none!important}}.pb-sticky{position:sticky;top:0;z-index:40}.pb-rise{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)}.pb-rise.in{opacity:1;transform:none}@media (prefers-reduced-motion:reduce){.pb-rise{opacity:1;transform:none;transition:none}}`,
  runtime:{pbrise:`(function(){var els=document.querySelectorAll('.pb-rise');if(!('IntersectionObserver' in window)){els.forEach(function(x){x.classList.add('in')});return}var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.1});els.forEach(function(x){io.observe(x)})})();`}};
 
 PB.canvas={mark,agent,esc};
