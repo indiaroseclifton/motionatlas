@@ -1,0 +1,92 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Brand kit generator · Visual & Motion Atlas</title>
+<meta name="description" content="Name, a sentence and a few feel words in; a complete brand out: an OKLCH palette checked for WCAG contrast and colour blindness, a Google Fonts pairing with rationale, logo lockups, CSS, JSON and Tailwind tokens, applied previews and a downloadable theme kit.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap">
+<link rel="stylesheet" href="kits/kits.css">
+<style>
+:root{--pbg:#F4F5F8;--ppanel:#FFFFFF;--pink:#1C1F2A;--pmute:#5A6072;--phair:#DCE0E8;--paccent:#5B2DFF;--ok:#17633A;--okbg:#EAF7EF;--bad:#A3221B;--badbg:#FDECEA;--warn:#8A5300;--warnbg:#FFF4E2;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--pbg);color:var(--pink);font:15px/1.55 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}button,input,select,textarea{font:inherit;color:inherit}[hidden]{display:none!important}
+.skip{position:absolute;left:-999px}.skip:focus{left:12px;top:12px;z-index:50;background:#fff;padding:8px 12px;border-radius:8px}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.top{display:flex;align-items:center;gap:8px 16px;flex-wrap:wrap;padding:12px max(16px,4vw);background:var(--ppanel);border-bottom:1px solid var(--phair)}
+.top a.back{font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--pmute);text-decoration:none;padding:8px 0}
+.top nav{margin-left:auto;display:flex;gap:14px;font-size:13px;flex-wrap:wrap}.top nav a{color:var(--pmute);text-decoration:none;padding:6px 0}.top nav a:hover{color:var(--pink)}
+.wrap{max-width:1360px;margin:0 auto;padding:0 max(16px,4vw)}
+.intro{padding:clamp(24px,5vh,44px) 0 12px}.intro h1{margin:0;font:italic 500 clamp(40px,6vw,72px)/.95 'Cormorant Garamond',Georgia,serif;letter-spacing:-.02em}.intro p{margin:10px 0 0;color:var(--pmute);max-width:70ch}
+.app{display:grid;grid-template-columns:minmax(300px,380px) minmax(0,1fr);gap:24px;align-items:start;padding-bottom:48px}
+.panel{background:var(--ppanel);border:1px solid var(--phair);border-radius:14px;padding:16px;display:grid;gap:14px}
+.side{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow:auto}
+.f{display:grid;gap:5px}.f>label,.f>span.l,legend{font-size:13px;font-weight:600}.f small{color:var(--pmute);font-size:12px}
+fieldset{border:0;padding:0;margin:0;display:grid;gap:6px}
+input[type=text],input[type=search],textarea,select{width:100%;min-height:40px;padding:8px 12px;border:1px solid #B8BECB;border-radius:10px;background:#fff}
+textarea{min-height:64px;resize:vertical}
+:focus-visible{outline:3px solid var(--paccent);outline-offset:2px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{min-height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--phair);background:#fff;font-size:13px;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--pink);color:#fff;border-color:var(--pink)}
+.seg{display:inline-flex;border:1px solid var(--phair);border-radius:10px;overflow:hidden}.seg button{border:0;background:#fff;padding:0 14px;min-height:38px;font-size:13.5px;cursor:pointer;color:var(--pmute)}.seg button+button{border-left:1px solid var(--phair)}.seg button[aria-pressed=true]{background:var(--pink);color:#fff}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{min-height:38px;padding:0 14px;border-radius:10px;border:1px solid var(--pink);background:var(--pink);color:#fff;font-weight:600;font-size:13.5px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn.ghost{background:#fff;color:var(--pink);border-color:#B8BECB}.btn.sm{min-height:32px;padding:0 10px;font-size:12.5px}.btn:disabled{opacity:.5;cursor:default}
+.btn[aria-pressed=true]{background:#E9E4FF;border-color:var(--paccent);color:#2A0FB0}
+.swatch{width:36px;height:36px;border-radius:8px;border:1px solid var(--phair);flex:none}
+.sec{background:var(--ppanel);border:1px solid var(--phair);border-radius:14px;padding:18px;margin-bottom:18px;display:grid;gap:14px;min-width:0}
+.sec>header{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:space-between}
+.sec h2{margin:0;font:italic 500 clamp(26px,3vw,36px)/1 'Cormorant Garamond',Georgia,serif}
+.lede{margin:0;color:var(--pmute);font-size:14px;max-width:75ch}
+.ro{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.sw{display:grid;border:1px solid var(--phair);border-radius:10px;overflow:hidden;text-align:left;cursor:pointer;background:#fff;padding:0}
+.sw i{display:block;height:54px}.sw span{padding:6px 8px;display:grid;font-size:12px}.sw b{font-size:13px}.sw code{font:500 11.5px 'JetBrains Mono',monospace;color:var(--pmute)}
+.ramp{display:flex;border-radius:8px;overflow:hidden;border:1px solid var(--phair)}.ramp button{flex:1;height:34px;border:0;cursor:pointer;font:500 9px 'JetBrains Mono',monospace;padding:0}
+table.ct{width:100%;border-collapse:collapse;font-size:13px}.ct th,.ct td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--phair)}.ct td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
+.tbl{overflow-x:auto}
+.pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:600}.pass{background:var(--okbg);color:var(--ok)}.fail{background:var(--badbg);color:var(--bad)}.warn{background:var(--warnbg);color:var(--warn)}
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mode{border-radius:12px;padding:16px;border:1px solid var(--phair);display:grid;gap:8px;min-width:0}
+.mode h3{margin:0;font-size:22px}.mode p{margin:0}
+.btnx{display:inline-flex;align-items:center;min-height:38px;padding:0 14px;font-weight:600;border:0}
+.fixes{margin:0;padding-left:18px;font-size:13px;color:var(--pmute)}
+.specs{display:grid;grid-template-columns:1fr 1fr;gap:12px}.specbox{border:1px solid var(--phair);border-radius:12px;padding:16px;min-width:0;overflow-wrap:anywhere}
+.lockups{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.lk{border:1px solid var(--phair);border-radius:12px;padding:14px;display:grid;gap:8px;min-width:0}.lk .v{display:grid;place-items:center;min-height:130px;border-radius:10px;overflow:hidden}.lk .v svg,.lk .v img{max-width:100%;height:auto;max-height:120px}
+pre{margin:0;background:#12141C;color:#E8EBF3;border-radius:10px;padding:12px;font:12px/1.5 'JetBrains Mono',monospace;max-height:340px;overflow:auto;white-space:pre}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}.tabs button{border:1px solid var(--phair);background:#fff;border-radius:8px;min-height:34px;padding:0 12px;cursor:pointer;font-size:13px}.tabs button[aria-selected=true]{background:var(--pink);color:#fff;border-color:var(--pink)}
+.note{font-size:13px;color:var(--pmute);margin:0}
+.drop{border:2px dashed #B8BECB;border-radius:12px;padding:12px;text-align:center;font-size:13px;color:var(--pmute)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1C1F2A;color:#fff;padding:10px 16px;border-radius:999px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:100;max-width:calc(100vw - 32px)}.toast.on{opacity:1}
+#kitBox{border:1px solid var(--phair);border-radius:12px;overflow:hidden}
+@media (max-width:980px){.app{grid-template-columns:1fr}.side{position:static;max-height:none}.modes,.specs{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+</style></head><body>
+<a class="skip" href="#out">Skip to the brand</a>
+<header class="top"><a class="back" href="atlas.html#systems">← Atlas / Design systems</a><nav aria-label="Related"><a href="theme-kits.html">Theme kits</a><a href="page-builder.html">Page builder</a><a href="chart-studio.html">Chart studio</a><a href="atlas.html#projects">My projects</a></nav></header>
+<div class="wrap">
+<section class="intro" aria-labelledby="ttl"><h1 id="ttl">Brand kit generator.</h1><p>Give it a name, a sentence and a few feel words. It builds a palette in OKLCH (every text pair pushed to WCAG AA, colour-blind checked, light and dark), a Google Fonts pairing with the reason for it, logo lockups, tokens for CSS, JSON and Tailwind, and a full theme kit you can download. Same inputs always give the same brand; shuffle for another.</p></section>
+<div class="app">
+<form class="panel side" id="form" aria-label="Brand inputs" onsubmit="return false">
+ <div class="f"><label for="name">Brand name</label><input id="name" type="text" maxlength="60" autocomplete="off" value="Saffron &amp; Salt"></div>
+ <div class="f"><label for="desc">What is it, in a sentence</label><textarea id="desc" maxlength="400">A neighbourhood bakery and coffee bar with slow-fermented bread.</textarea></div>
+ <fieldset><legend>Feel words (pick 3 to 5)</legend><div class="chips" id="chips" role="group" aria-label="Feel words"></div>
+  <div class="f"><label for="own">Or add your own</label><div class="row"><input id="own" type="text" maxlength="24" placeholder="e.g. cheeky" style="flex:1;min-width:0"><button class="btn ghost sm" type="button" id="addOwn">Add</button></div><small id="ownNote" role="status"></small></div></fieldset>
+ <div class="f"><label for="aud">Audience</label><input id="aud" type="text" maxlength="80" placeholder="e.g. local families, developers" autocomplete="off"></div>
+ <div class="f"><span class="l" id="lblBase">Base colour (optional)</span><div class="row"><input id="base" type="color" value="#9a4a38" aria-labelledby="lblBase" style="width:48px;height:38px;padding:2px;border-radius:8px"><input id="baseTxt" type="text" maxlength="7" placeholder="#RRGGBB" aria-label="Base colour hex" style="flex:1;min-width:0"><button class="btn ghost sm" type="button" id="baseClear">Clear</button></div></div>
+ <div class="f"><label for="logoIn">Logo (SVG or PNG, optional)</label><input id="logoIn" type="file" accept="image/svg+xml,image/png,.svg,.png"><div class="row" id="logoInfo" hidden><span id="logoSw" class="row"></span><button class="btn ghost sm" type="button" id="logoClear">Remove logo</button></div><small id="logoNote" role="status">Dominant colours are read in your browser and become the primary, secondary and accent.</small></div>
+ <div class="f"><span class="l">Light or dark</span><div class="seg" role="group" aria-label="Preferred mode"><button type="button" data-mode="auto" aria-pressed="true">Auto</button><button type="button" data-mode="light" aria-pressed="false">Light</button><button type="button" data-mode="dark" aria-pressed="false">Dark</button></div></div>
+ <div class="row"><button class="btn" type="button" id="shuffleAll">Shuffle everything</button><button class="btn ghost" type="button" id="undo" disabled>Undo</button><button class="btn ghost" type="button" id="share">Copy share link</button></div>
+ <p class="note" id="draftNote">Drafts are kept in this browser.</p>
+</form>
+<main id="out" tabindex="-1" aria-label="Your brand">
+ <section class="sec" aria-labelledby="hPal"><header><h2 id="hPal">Palette</h2><div class="row"><button class="btn ghost sm" type="button" id="shPal">Shuffle palette</button><button class="btn ghost sm" type="button" id="lkPal" aria-pressed="false">Lock palette</button></div></header><div id="palBox"></div></section>
+ <section class="sec" aria-labelledby="hTyp"><header><h2 id="hTyp">Type</h2><div class="row"><button class="btn ghost sm" type="button" id="shTyp">Shuffle type</button><button class="btn ghost sm" type="button" id="lkTyp" aria-pressed="false">Lock type</button></div></header><div id="typBox"></div></section>
+ <section class="sec" aria-labelledby="hLg"><header><h2 id="hLg">Logo lockups</h2><div class="row"><button class="btn ghost sm" type="button" id="shLg">Shuffle logo</button><button class="btn ghost sm" type="button" id="lkLg" aria-pressed="false">Lock logo</button></div></header><div id="lgBox"></div></section>
+ <section class="sec" aria-labelledby="hTok"><header><h2 id="hTok">Tokens</h2><div class="row"><button class="btn sm" type="button" id="copyTok">Copy</button><button class="btn ghost sm" type="button" id="dlTok">Download</button></div></header><div class="tabs" role="tablist" aria-label="Token format" id="tokTabs"><button role="tab" type="button" data-t="css" aria-selected="true">CSS variables</button><button role="tab" type="button" data-t="json" aria-selected="false">JSON (W3C)</button><button role="tab" type="button" data-t="tw" aria-selected="false">Tailwind</button></div><pre id="tokPre" tabindex="0" aria-label="Token code"></pre></section>
+ <section class="sec" aria-labelledby="hKit"><header><h2 id="hKit">Theme kit</h2><div class="row"><button class="btn sm" type="button" id="kitZip">Download theme kit (.zip)</button></div></header><p class="lede">Your brand rendered through the atlas theme-kit system: the same page, components, assets and guidelines as the forty-eight built-in kits, and the same ZIP.</p><div id="kitBox" class="tkwrap"></div></section>
+</main></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="kits/themes.js"></script><script src="kits/kits-a.js"></script><script src="kits/kits-b.js"></script><script src="kits/brand.js"></script><script src="kits/render.js"></script>
+<script src="dataviz/styles.js"></script><script src="dataviz/chartmaker.js"></script>
+<script src="brandgen/engine.js"></script><script src="brandgen/page.js"></script>
+</body></html>

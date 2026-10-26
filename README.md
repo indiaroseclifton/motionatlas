@@ -166,6 +166,10 @@ exported with `Function.prototype.toString()`), plus `PAT`, `MARK` and `DIV` gen
 return SVG strings. Check the contrast labels on the page and run axe. Then update the counts
 (the theme-kits meta description says "Forty-eight").
 
+## Brand kit generator (`site/brand-generator.html`, `site/brandgen/`)
+
+Name, a sentence and 3–5 feel words (plus optional logo, base colour, mode, audience) give a deterministic brand: OKLCH palette with automatic WCAG fixes and colour-blind checks (`brandgen/engine.js`, `window.BrandGen`), one of ~45 Google Fonts pairings with rationale, logo lockups (SVG), CSS/JSON/Tailwind tokens, and a theme-kit object rendered by `ThemeKits.render` and downloadable with `ThemeKits.zipKit`. State lives in the URL hash (`#s=`) and a localStorage draft.
+
 ## Design systems D01–D48
 
 Every atlas design system is a catalogue entry in `expansion.json` (`group: "Design systems"`,
