@@ -7,7 +7,7 @@ const PB=window.PB,LIB=window.PB_LIB;if(!PB||!LIB||!PB.styles){document.body.ins
 const SITE='https://motionatlas-ten.vercel.app/',ABS=new URL('./',location.href).href;
 const KEY='atlas-page-builder-v2',OLD='atlas-page-builder',UIKEY='atlas-page-builder-ui';
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
-const esc=PB.esc,rows=PB.rows;
+const esc=PB.esc,rows=PB.rows,S=PB.site;
 const B=Object.fromEntries(LIB.blocks.map(b=>[b.id,b]));
 const def=id=>B[id]||PB.extraById[id];
 const isX=id=>!!PB.extraById[id];
@@ -26,25 +26,30 @@ const TEMPLATES=[
 ];
 
 /* ---------- storage ---------- */
-let store,page,open=null,hist=[],fut=[],lastSnap='';
-function blank(){return {id:'p'+Date.now().toString(36),name:'Untitled page',brand:'Brand',title:'',style:'studio',pair:-1,blocks:[]}}
-function fixBlocks(p){p.blocks=(p.blocks||[]).filter(b=>b&&def(b.id)).map(b=>({uid:b.uid||uidGen(),id:b.id,vals:b.vals||{}}));if(p.pair==null)p.pair=-1;return p}
-function loadStore(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.pages&&Object.keys(s.pages).length){Object.values(s.pages).forEach(fixBlocks);return s}}catch(e){}
+/* A saved item is a whole site (see site.js). `page` below is a view onto it: site-wide keys (brand, style, pair,
+   menu, settings, header, footer) read and write the site, every other key (blocks, title, desc) the page being edited. */
+let store,site,curId,open=null,hist=[],fut=[],lastSnap='';
+const GK=new Set(['navSeed','id','name','brand','style','pair','updated','home','pages','header','footer','navAuto','nav','settings','tokens']);
+const curPage=()=>site.pages.find(p=>p.id===curId)||site.pages[0];
+const page=new Proxy({},{get:(_,k)=>GK.has(k)?site[k]:curPage()[k],set:(_,k,v)=>{(GK.has(k)?site:curPage())[k]=v;return true}});
+function blank(){return S.normalize({name:'Untitled site',brand:'Brand',style:'studio',blocks:[]},def)}
+function loadStore(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.pages&&Object.keys(s.pages).length){Object.keys(s.pages).forEach(k=>{s.pages[k]=S.normalize(s.pages[k],def)});return s}}catch(e){}
  const s={cur:null,pages:{}};let first=null;
- try{const o=JSON.parse(localStorage.getItem(OLD));if(o&&o.blocks){first={...blank(),name:o.brand||'My page',brand:o.brand,title:o.title,style:o.style||'noir',blocks:o.blocks}}}catch(e){}
- if(!first){const t=TEMPLATES[0]();first={...blank(),...t}}
- fixBlocks(first);s.pages[first.id]=first;s.cur=first.id;return s}
-function persist(){page.updated=Date.now();try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}}
-store=loadStore();page=store.pages[store.cur]||Object.values(store.pages)[0];store.cur=page.id;
+ try{const o=JSON.parse(localStorage.getItem(OLD));if(o&&o.blocks){first=S.normalize({name:o.brand||'My site',brand:o.brand,title:o.title,style:o.style||'noir',blocks:o.blocks},def)}}catch(e){}
+ if(!first)first=S.normalize(TEMPLATES[0](),def);
+ s.pages[first.id]=first;s.cur=first.id;return s}
+function persist(){site.updated=Date.now();try{localStorage.setItem(KEY,JSON.stringify(store));saved('Saved in this browser')}catch(e){saved('Could not save: storage is full or blocked')}}
+function saved(t){const el=$('#saveState');if(el)el.textContent=t}
+store=loadStore();site=store.pages[store.cur]||Object.values(store.pages)[0];store.cur=site.id;curId=site.home;
 const ui=(()=>{try{return JSON.parse(localStorage.getItem(UIKEY))||{}}catch(e){return {}}})();
 const saveUI=()=>{try{localStorage.setItem(UIKEY,JSON.stringify(ui))}catch(e){}};
 
 /* ---------- history ---------- */
-const snap=()=>JSON.stringify({...page,updated:0});
+const snap=()=>JSON.stringify({...site,updated:0});
 lastSnap=snap();
 function commit(){const s=snap();if(s===lastSnap)return;hist.push(lastSnap);if(hist.length>80)hist.shift();fut=[];lastSnap=s;persist();histUI()}
 let typing=0;function commitSoon(){clearTimeout(typing);typing=setTimeout(commit,600)}
-function restore(s){const p=JSON.parse(s);Object.keys(page).forEach(k=>delete page[k]);Object.assign(page,p);store.pages[page.id]=page;lastSnap=s;persist();refresh()}
+function restore(s){site=JSON.parse(s);store.pages[site.id]=site;if(!site.pages.some(p=>p.id===curId))curId=site.home;lastSnap=s;persist();refresh()}
 function undo(){clearTimeout(typing);commit();if(!hist.length)return say('Nothing to undo');fut.push(lastSnap);restore(hist.pop());histUI();say('Undone')}
 function redo(){if(!fut.length)return say('Nothing to redo');hist.push(lastSnap);restore(fut.pop());histUI();say('Redone')}
 function histUI(){$('#undoBtn').disabled=!hist.length;$('#redoBtn').disabled=!fut.length}
@@ -60,43 +65,56 @@ const tick=c=>/^(yes|y|true|✓|✔|1|included)$/i.test(String(c).trim())?`<span
 function fill(str,blk,A){const d=def(blk.id),keys=new Set(fieldsOf(d).map(f=>f.k));
  str=str.replace(/\{\{each:(\w+)\}\}([\s\S]*?)\{\{\/each\}\}/g,(m,k,body)=>rows(val(blk,k)).map((cells,i)=>body.replace(/\{\{n\}\}|\{\{(g|i|t|list)?(\d+)\}\}/g,(mm,kind,num)=>{if(mm==='{{n}}')return String(i+1);const c=cells[+num]||'';
   if(!kind)return esc(c);if(kind==='g')return glyph(c);if(kind==='i')return esc(initials(c));if(kind==='t')return tick(c);return c.split(';').map(x=>x.trim()).filter(Boolean).map(x=>'<li>'+esc(x)+'</li>').join('')})).join(''));
- return str.replace(/\{\{(\w+)\}\}/g,(m,k)=>k==='A'?A:k==='brand'?esc(page.brand||'Brand'):keys.has(k)?esc(fieldsOf(d).find(f=>f.k===k).type==='list'?rows(val(blk,k)).map(r=>r.join(' ')).join(', '):val(blk,k)):m)}
+ return str.replace(/\{\{(\w+)\}\}/g,(m,k)=>{if(k==='A')return A;if(k==='brand')return esc(page.brand||'Brand');if(k==='home')return esc(CTX?CTX.pageHref(S.pageOf(site,site.home)):'#');
+  if(k==='menu'||k==='menuL'||k==='menuR'){const it=S.menu(site),h=Math.ceil(it.length/2),sub=k==='menu'?it:k==='menuL'?it.slice(0,h):it.slice(h);return CTX?S.menuHTML(site,sub,CTX,esc):''}
+  if(!keys.has(k))return m;const f=fieldsOf(d).find(f=>f.k===k);if(f.type==='link')return esc(CTX?S.href(site,val(blk,k),CTX):'#');
+  return esc(f.type==='list'?rows(val(blk,k)).map(r=>r.join(' ')).join(', '):val(blk,k))})}
 
 /* ---------- compose ---------- */
 const AT='\u0001A/';
 const cache={cl:null,ix:{}};
-function compose(mode){ // mode: preview | html | zip  -> parts
- const site=mode==='preview'?ABS:SITE;const pair=page.pair>=0?LIB.pairs[page.pair]:null;
- const st=PB.styles.resolve(page.style,pair,site);
- const css=new Map(),needs=new Map(),fonts=new Set(),files=new Map(),body=[],js=[];
+let CTX=null;
+const newAcc=()=>({css:new Map(),fonts:new Set(),files:new Map()});
+const pageHrefFor=mode=>p=>mode==='preview'?'#pb-page:'+p.id:S.pageFile(site,p);
+const buildCSS=(st,acc)=>':root{'+st.vars+'}\n'+(st.face||'')+LIB.base+'.h{text-transform:var(--case,none)}\n'+[...acc.css.values()].join('\n');
+const fontURLOf=acc=>acc.fonts.size?'https://fonts.googleapis.com/css2?'+[...acc.fonts].join('&')+'&display=swap':'';
+function compose(mode,pg,acc){ // mode: preview | html | zip  -> parts for one page (header + page + footer). acc shares css/fonts/files between pages.
+ pg=pg||curPage();acc=acc||newAcc();
+ const base=mode==='preview'?ABS:SITE;const pair=page.pair>=0?LIB.pairs[page.pair]:null;
+ const st=PB.styles.resolve(page.style,pair,base);
+ const css=acc.css,fonts=acc.fonts,files=acc.files,needs=new Map(),body=[],js=[];
  (st.fonts||'').split('&').filter(Boolean).forEach(f=>fonts.add(f));
- const ctx={mode,A:AT,site,uid:'',need:(k,v)=>{if(!needs.has(k))needs.set(k,v)},font:q=>{(q||'').split('&').filter(Boolean).forEach(f=>fonts.add(f))},
+ CTX={mode,current:pg.id,pageHref:pageHrefFor(mode)};
+ const ctx={mode,A:AT,site:base,uid:'',home:CTX.pageHref(S.pageOf(site,site.home)),need:(k,v)=>{if(!needs.has(k))needs.set(k,v)},font:q=>{(q||'').split('&').filter(Boolean).forEach(f=>fonts.add(f))},
   interactionSrc:id=>{if(mode==='preview')return `src="${ABS}interactions/demos/${esc(id)}.html"`;const t=cache.ix[id];
    if(mode==='zip'&&t){files.set('interactions/'+id+'.html',t);return `src="interactions/${esc(id)}.html"`}
    if(mode==='html'&&t)return `srcdoc="${t.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}"`;return `src="${SITE}interactions/demos/${esc(id)}.html"`}};
- page.blocks.forEach(blk=>{const d=def(blk.id);if(!d)return;ctx.uid=blk.uid;let html='',bjs='';
+ [...site.header.map(b=>[b,'header']),...pg.blocks.map(b=>[b,'page']),...site.footer.map(b=>[b,'footer'])].forEach(([blk,zone])=>{const d=def(blk.id);if(!d)return;ctx.uid=blk.uid;let html='',bjs='';
   try{if(isX(blk.id)){const r=d.render(vals(blk),ctx)||{};html=r.html||'';bjs=r.js||'';(r.css||[]).forEach(([k,c])=>{if(!css.has(k))css.set(k,c)});if(!css.has('x-base'))css.set('x-base',PB.extraBase)}
    else{html=fill(d.html,blk,AT);bjs=d.js?fill(d.js,blk,AT):'';if(!css.has('b:'+d.id))css.set('b:'+d.id,d.css)}}
   catch(e){console.warn('Page builder: block failed',blk.id,e);html='<section class="wrap"><p>This section could not be drawn.</p></section>'}
-  html=html.split(AT+'http').join('http');
-  body.push(`<div class="b-${isX(blk.id)?'x':d.id}" id="${blk.uid}"${mode==='preview'?' data-pb':''}>${html}</div>`);
+  html=S.linkPages(site,html.split(AT+'http').join('http'),CTX,esc);
+  body.push(`<div class="b-${isX(blk.id)?'x':d.id}" id="${blk.uid}"${mode==='preview'?' data-pb data-zone="'+zone+'"':''}>${html}</div>`);
   if(bjs)js.push(`(()=>{const root=document.getElementById(${JSON.stringify(blk.uid)});if(!root)return;try{${bjs}}catch(e){console.error(e)}})();`)});
  const rt=[];let cl=false;
  needs.forEach((v,k)=>{if(v&&v.componentLab)cl=true;else rt.push(v)});
- const fontURL=fonts.size?'https://fonts.googleapis.com/css2?'+[...fonts].join('&')+'&display=swap':'';
- const cssText=':root{'+st.vars+'}\n'+(st.face||'')+LIB.base+'.h{text-transform:var(--case,none)}\n'+[...css.values()].join('\n');
- return {st,cssText,body:body.join('\n'),runtime:rt.join('\n'),js:js.join('\n'),cl,fontURL,files,mode};
+ return {st,acc,pg,cssText:buildCSS(st,acc),body:body.join('\n'),runtime:rt.join('\n'),js:js.join('\n'),cl,fontURL:fontURLOf(acc),files,mode};
 }
-function assemble(P,opt={}){ // opt: {cssHref, jsHref, clSrc, clInline}
- const head=`<!doctype html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">\n<title>${esc(page.title||page.brand||'Page')}</title>\n`+
-  (P.fontURL?`<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link rel="stylesheet" href="${P.fontURL}">\n`:'')+
-  `<!-- Built with the Visual & Motion Atlas page builder. Style: ${esc(P.st.name)}. -->\n`+(opt.cssHref?`<link rel="stylesheet" href="${opt.cssHref}">`:`<style>\n${P.cssText}\n</style>`)+'</head><body>\n';
+const ogURL=v=>!v?'':/^(https?:|data:)/.test(v)?v:SITE+'assets/'+v.replace(/^\/+/,'');
+function assemble(P,opt={}){ // opt: {cssHref, jsHref, clSrc, clInline, favHref, canonical, title}
+ const pg=P.pg,stg=site.settings,pre=P.mode==='preview',home=pg.id===site.home;
+ const title=opt.title||pg.title||(home?(site.brand||pg.name):pg.name+' · '+(site.brand||''));
+ const desc=pg.desc||stg.description||'',og=ogURL(pg.og||stg.ogImage);
+ let head=`<!doctype html>\n<html lang="${esc(stg.lang||'en')}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">\n<title>${esc(title)}</title>\n`;
+ if(!pre){head+=(desc?`<meta name="description" content="${esc(desc)}">\n`:'')+`<meta property="og:title" content="${esc(title)}">\n<meta property="og:type" content="website">\n<meta property="og:site_name" content="${esc(site.brand||'')}">\n`+(desc?`<meta property="og:description" content="${esc(desc)}">\n`:'')+(og?`<meta property="og:image" content="${esc(og)}">\n<meta name="twitter:card" content="summary_large_image">\n`:'<meta name="twitter:card" content="summary">\n')+(pg.noindex?'<meta name="robots" content="noindex">\n':'')+(opt.canonical?`<link rel="canonical" href="${esc(opt.canonical)}">\n<meta property="og:url" content="${esc(opt.canonical)}">\n`:'')+(opt.favHref?`<link rel="icon" href="${esc(opt.favHref)}" type="image/svg+xml">\n`:'')}
+ head+=(P.fontURL?`<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link rel="stylesheet" href="${P.fontURL}">\n`:'')+
+  (pre?'':`<!-- Built with the Visual & Motion Atlas site builder. Style: ${esc(P.st.style.name)}. -->\n`)+(opt.cssHref?`<link rel="stylesheet" href="${opt.cssHref}">`:`<style>\n${P.cssText}\n</style>`)+(!pre&&stg.analytics?'\n'+stg.analytics+'\n':'')+'</head><body>\n';
  let scripts='';
  if(P.cl){scripts+=opt.clInline?`<script>${opt.clInline.replace(/<\/script/gi,'<\\/script')}<\/script>\n`:`<script src="${opt.clSrc||SITE+'component-lab.js'}"><\/script>\n`;
   scripts+=`<script>/* wake the component behaviours */document.body.appendChild(document.createElement('span')).hidden=true;<\/script>\n`}
  const code=(P.runtime?P.runtime+'\n':'')+P.js;
  if(code)scripts+=opt.jsHref?`<script src="${opt.jsHref}"><\/script>\n`:`<script>\n${code.replace(/<\/script/gi,'<\\/script')}\n<\/script>\n`;
- if(P.mode==='preview')scripts+=`<script>document.addEventListener('click',function(e){var b=e.target.closest('[data-pb]');if(b)parent.postMessage({pb:'select',uid:b.id},'*')},true);document.addEventListener('click',function(e){var a=e.target.closest('a[href="#"]');if(a)e.preventDefault()});<\/script>\n`;
+ if(pre)scripts+=`<script>document.addEventListener('click',function(e){var p=e.target.closest('a[href^="#pb-page:"]');if(p){e.preventDefault();parent.postMessage({pb:'page',id:p.getAttribute('href').slice(9)},'*');return}var b=e.target.closest('[data-pb]');if(b)parent.postMessage({pb:'select',uid:b.id},'*')},true);document.addEventListener('click',function(e){var a=e.target.closest('a[href="#"]');if(a)e.preventDefault()});<\/script>\n`;
  return head+P.body+'\n'+scripts+'</body></html>\n';
 }
 const swapA=(s,base)=>s.split(AT).join(base);
@@ -105,39 +123,47 @@ const swapA=(s,base)=>s.split(AT).join(base);
 const pv=$('#pv');let rt=0,lastY=0,jump=null;
 function render(){clearTimeout(rt);rt=setTimeout(()=>{try{lastY=pv.contentWindow.scrollY||0}catch(e){}const P=compose('preview');pv.srcdoc=swapA(assemble(P,{clSrc:ABS+'component-lab.js'}),ABS+'assets/');status()},160)}
 pv.addEventListener('load',()=>{try{const w=pv.contentWindow;if(jump){const el=w.document.getElementById(jump);if(el)el.scrollIntoView();jump=null}else w.scrollTo(0,lastY)}catch(e){}});
-addEventListener('message',e=>{if(e.source!==pv.contentWindow||!e.data||e.data.pb!=='select')return;const b=page.blocks.find(x=>x.uid===e.data.uid);if(b){open=b.uid;showPane('page');rtab('page');outline();const el=$(`#ol [data-uid="${b.uid}"] .bname`);el&&el.scrollIntoView({block:'nearest'})}});
-function status(){$('#status').textContent=page.blocks.length+' sections · '+PB.styles.get(page.style).name}
+addEventListener('message',e=>{if(e.source!==pv.contentWindow||!e.data)return;
+ if(e.data.pb==='page'){const p=site.pages.find(x=>x.id===e.data.id);if(p)goPage(p.id);return}
+ if(e.data.pb!=='select')return;const f=findBlk(e.data.uid);if(f){open=f.blk.uid;showPane('page');rtab('page');outline();const el=$(`#ol [data-uid="${f.blk.uid}"] .bname`);el&&el.scrollIntoView({block:'nearest'})}});
+function status(){$('#status').textContent=curPage().name+' · '+page.blocks.length+' sections · '+PB.styles.get(page.style).name}
 function scrollPreviewTo(uid){jump=uid;try{const t=pv.contentWindow.document.getElementById(uid);if(t){t.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});jump=null}}catch(e){}}
 
 /* ---------- toast ---------- */
 const toast=$('#toast');function say(m){toast.textContent=m;toast.classList.add('on');clearTimeout(say.t);say.t=setTimeout(()=>toast.classList.remove('on'),2200)}
 
 /* ---------- adding, moving ---------- */
-function placeIndex(id){const d=def(id),pl=d&&d.place,bl=page.blocks;
- const tops=()=>{let i=0;while(i<bl.length&&def(bl[i].id).place==='top')i++;return i};
- if(id==='announce')return 0;if(pl==='top')return tops();if(pl==='hero'){let i=tops();while(i<bl.length&&def(bl[i].id).place==='hero')i++;return i}
- if(pl==='end')return bl.length;let i=bl.length;while(i>0&&def(bl[i-1].id).place==='end')i--;return i}
-function addBlock(id,valsIn,at){if(!def(id))return;const b={uid:uidGen(),id,vals:valsIn||{}};const i=at==null?placeIndex(id):Math.max(0,Math.min(at,page.blocks.length));
- page.blocks.splice(i,0,b);open=b.uid;commit();outline();render();jump=b.uid;say('Added '+def(id).name+(at==null?'':' at position '+(i+1)));return b}
-function move(i,j){if(j<0||j>=page.blocks.length||i===j)return;const [b]=page.blocks.splice(i,1);page.blocks.splice(j,0,b);commit();outline();render()}
+const lists=()=>[['header',site.header],['page',page.blocks],['footer',site.footer]];
+function findBlk(u){for(const [kind,list] of lists()){const i=list.findIndex(b=>b.uid===u);if(i>=0)return {blk:list[i],list,i,kind}}return null}
+const listFor=id=>{const d=def(id);return S.isTop(d)?site.header:S.isEnd(d)?site.footer:page.blocks};
+function placeIndex(id){const d=def(id),bl=listFor(id);
+ if(id==='announce')return 0;if(S.isTop(d)){let i=0;while(i<bl.length&&def(bl[i].id).place==='top')i++;return i}
+ if(d&&d.place==='hero'){let i=0;while(i<bl.length&&def(bl[i].id).place==='hero')i++;return i}
+ return bl.length}
+function dropAt(i,list){const items=$$('#ol .blk');if(i<items.length){const t=findBlk(items[i].dataset.uid);return t&&t.list===list?t.i:-1}const l=items[items.length-1],t=l&&findBlk(l.dataset.uid);return t&&t.list===list?list.length:-1}
+function addBlock(id,valsIn,at){if(!def(id))return;const b={uid:uidGen(),id,vals:valsIn||{}};const list=listFor(id);let i=at==null?-1:dropAt(at,list);if(i<0)i=placeIndex(id);
+ list.splice(i,0,b);open=b.uid;commit();outline();render();jump=b.uid;say('Added '+def(id).name+(list===page.blocks?'':list===site.header?' to the header (every page)':' to the footer (every page)'));return b}
+function move(list,i,j){if(j<0||j>=list.length||i===j)return;const [b]=list.splice(i,1);list.splice(j,0,b);commit();outline();render()}
 
 /* ---------- outline + editor ---------- */
 function outline(){const ol=$('#ol');ol.innerHTML='';
- if(!page.blocks.length)ol.innerHTML='<li class="empty">No sections yet. Add some from the library, or drag them here.</li>';
- page.blocks.forEach((blk,i)=>{const d=def(blk.id);const li=document.createElement('li');li.className='blk'+(open===blk.uid?' open':'');li.dataset.uid=blk.uid;li.draggable=true;
+ lists().forEach(([kind,list])=>{const h=document.createElement('li');h.className='grp';h.innerHTML=kind==='page'?`<b>This page: ${esc(curPage().name)}</b>`:`<b>${kind==='header'?'Header':'Footer'}</b><small>Shown on every page</small>`;ol.append(h);
+  if(!list.length){const e=document.createElement('li');e.className='empty';e.textContent=kind==='page'?'No sections yet. Add some from the library, or drag them here.':kind==='header'?'No header yet. Add a navigation bar from the library.':'No footer yet. Add a footer from the library.';ol.append(e)}
+  list.forEach((blk,i)=>ol.append(outRow(blk,list,i)))});
+ status()}
+function outRow(blk,list,i){const d=def(blk.id);const li=document.createElement('li');li.className='blk'+(open===blk.uid?' open':'');li.dataset.uid=blk.uid;li.draggable=true;
   const sub=isX(blk.id)?xLabel(blk):d.group;
   li.innerHTML=`<div class="bh"><span class="grip" aria-hidden="true">⋮⋮</span><button class="bname" aria-expanded="${open===blk.uid}" aria-keyshortcuts="Alt+ArrowUp Alt+ArrowDown" title="Alt + ↑/↓ moves this section"><b>${esc(d.name)}</b><small>${esc(sub)}</small></button>
-   <button class="ib" data-a="up" aria-label="Move ${esc(d.name)} up"${i?'':' disabled'}>↑</button><button class="ib" data-a="down" aria-label="Move ${esc(d.name)} down"${i<page.blocks.length-1?'':' disabled'}>↓</button><button class="ib" data-a="dup" aria-label="Duplicate ${esc(d.name)}">⧉</button><button class="ib" data-a="rm" aria-label="Remove ${esc(d.name)}">✕</button></div>`;
+   <button class="ib" data-a="up" aria-label="Move ${esc(d.name)} up"${i?'':' disabled'}>↑</button><button class="ib" data-a="down" aria-label="Move ${esc(d.name)} down"${i<list.length-1?'':' disabled'}>↓</button><button class="ib" data-a="dup" aria-label="Duplicate ${esc(d.name)}">⧉</button><button class="ib" data-a="rm" aria-label="Remove ${esc(d.name)}">✕</button></div>`;
   if(open===blk.uid)li.append(editor(blk));
   const nb=li.querySelector('.bname');
   nb.onclick=()=>{open=open===blk.uid?null:blk.uid;outline();if(open)scrollPreviewTo(blk.uid);const again=$(`#ol [data-uid="${blk.uid}"] .bname`);again&&again.focus()};
-  nb.onkeydown=e=>{if(e.altKey&&(e.key==='ArrowUp'||e.key==='ArrowDown')){e.preventDefault();const j=e.key==='ArrowUp'?i-1:i+1;if(j<0||j>=page.blocks.length)return;move(i,j);say(d.name+' moved to position '+(j+1));const el=$(`#ol [data-uid="${blk.uid}"] .bname`);el&&el.focus()}};
+  nb.onkeydown=e=>{if(e.altKey&&(e.key==='ArrowUp'||e.key==='ArrowDown')){e.preventDefault();const j=e.key==='ArrowUp'?i-1:i+1;if(j<0||j>=list.length)return;move(list,i,j);say(d.name+' moved to position '+(j+1));const el=$(`#ol [data-uid="${blk.uid}"] .bname`);el&&el.focus()}};
   li.querySelectorAll('.ib').forEach(b=>b.onclick=()=>{const a=b.dataset.a;
-   if(a==='rm'){page.blocks.splice(i,1);if(open===blk.uid)open=null;commit();outline();render();say('Removed '+d.name+'. Undo brings it back.');const n=$$('#ol .blk')[Math.min(i,page.blocks.length-1)];(n?n.querySelector('.bname'):$('#libSearch')).focus();return}
-   if(a==='dup'){const c={uid:uidGen(),id:blk.id,vals:clone(blk.vals)};page.blocks.splice(i+1,0,c);commit();outline();render();say('Duplicated '+d.name);return}
-   const j=a==='up'?i-1:i+1;move(i,j);const el=$(`#ol [data-uid="${blk.uid}"] [data-a="${a}"]:not(:disabled)`)||$(`#ol [data-uid="${blk.uid}"] .bname`);el&&el.focus()});
-  ol.append(li)});
- status()}
+   if(a==='rm'){list.splice(i,1);if(open===blk.uid)open=null;commit();outline();render();say('Removed '+d.name+'. Undo brings it back.');const n=$$('#ol .blk')[Math.min(i,$$('#ol .blk').length-1)];(n?n.querySelector('.bname'):$('#libSearch')).focus();return}
+   if(a==='dup'){const c={uid:uidGen(),id:blk.id,vals:clone(blk.vals)};list.splice(i+1,0,c);commit();outline();render();say('Duplicated '+d.name);return}
+   const j=a==='up'?i-1:i+1;move(list,i,j);const el=$(`#ol [data-uid="${blk.uid}"] [data-a="${a}"]:not(:disabled)`)||$(`#ol [data-uid="${blk.uid}"] .bname`);el&&el.focus()});
+  return li}
 function xLabel(blk){const v=vals(blk);try{if(blk.id==='x-component'){const c=PB.src.CL()&&PB.src.CL().components.find(x=>x.id===v.cid);return c?c.id+' · '+c.name:'Component'}
  if(blk.id==='x-interaction'){const x=(window.INTERACTIONS||[]).find(x=>x.id===v.iid);return x?x.t:'Interaction'}
  if(blk.id==='x-background'){const p=PB.src.BGA()&&PB.src.BGA().ALL.find(p=>p.key===v.bg);return p?p.name:'Background'}
@@ -146,6 +172,7 @@ function xLabel(blk){const v=vals(blk);try{if(blk.id==='x-component'){const c=PB
 let fid=0;
 function editor(blk){const d=def(blk.id),bb=document.createElement('div');bb.className='bb';bb.innerHTML=`<p class="hint">${esc(d.desc)}</p>`;
  fieldsOf(d).forEach(f=>{const id='f'+(++fid),wrap=document.createElement('div');wrap.className='f';const lab=document.createElement('label');lab.htmlFor=id;lab.textContent=f.label;let inp;
+  if(f.type==='link'){const lp=linkPicker(val(blk,f.k),v=>{blk.vals[f.k]=v;commitSoon();render()},f.label,id);wrap.append(lab,lp);bb.append(wrap);return}
   if(f.type==='select'||f.type==='film'){inp=document.createElement('select');const opts=f.type==='film'?LIB.films.map(n=>[n,n.replace(/-/g,' ')]):(f.options?f.options(vals(blk)):[]);
    opts.forEach(([v,l])=>{const o=document.createElement('option');o.value=v;o.textContent=l;inp.append(o)});if(!opts.length){const o=document.createElement('option');o.textContent='Not available yet';inp.append(o);inp.disabled=true}}
   else if(f.type==='long'||f.type==='list'){inp=document.createElement('textarea');if(f.type==='list'){inp.rows=Math.min(8,Math.max(3,rows(val(blk,f.k)).length+1));inp.spellcheck=true}}
@@ -173,7 +200,7 @@ function mark(i){clearMark();const items=$$('#ol .blk');if(!items.length)return;
 ol.addEventListener('dragover',e=>{e.preventDefault();e.dataTransfer.dropEffect=dragUid?'move':'copy';mark(dropIndex(e.clientY))});
 ol.addEventListener('dragleave',e=>{if(!ol.contains(e.relatedTarget))clearMark()});
 ol.addEventListener('drop',e=>{e.preventDefault();const i=dropIndex(e.clientY);clearMark();
- if(dragUid){const from=page.blocks.findIndex(b=>b.uid===dragUid);if(from<0)return;move(from,i>from?i-1:i);return}
+ if(dragUid){const f=findBlk(dragUid);if(!f)return;const t=dropAt(i,f.list);if(t<0)return say('A section can only move within its own area');move(f.list,f.i,t>f.i?t-1:t);return}
  try{const x=JSON.parse(e.dataTransfer.getData('application/x-pb')||'null');if(x&&x.id)addBlock(x.id,x.vals,i)}catch(err){}});
 const frameWrap=$('#wrap');
 frameWrap.addEventListener('dragover',e=>{if(dragUid)return;e.preventDefault();frameWrap.classList.add('drop')});
@@ -261,24 +288,84 @@ function styles(){const S=PB.styles.list(),t=($('#styleSearch').value||'').trim(
 $('#styleSearch').oninput=()=>styles();
 $('#pairSel').onchange=e=>{page.pair=+e.target.value;commit();render();say(page.pair<0?'Using the style’s fonts':'Fonts: '+LIB.pairs[page.pair][0])};
 
-/* ---------- pages ---------- */
-function pages(){const P=Object.values(store.pages).sort((a,b)=>(b.updated||0)-(a.updated||0));
- $('#pageList').innerHTML=P.map(p=>`<li class="${p.id===page.id?'cur':''}"><div><b>${esc(p.name||p.brand||'Untitled')}</b><small>${p.blocks.length} sections · ${esc(PB.styles.has(p.style)?PB.styles.get(p.style).name:p.style)}${p.updated?' · '+new Date(p.updated).toLocaleDateString():''}</small></div><span>${p.id===page.id?'<em>Open now</em>':`<button type="button" class="btn small" data-open="${p.id}">Open</button>`}<button type="button" class="btn small" data-dup="${p.id}" aria-label="Duplicate ${esc(p.name)}">Duplicate</button>${P.length>1?`<button type="button" class="btn small" data-del="${p.id}" aria-label="Delete ${esc(p.name)}">Delete</button>`:''}</span></li>`).join('');
- $$('#pageList [data-open]').forEach(b=>b.onclick=()=>switchTo(b.dataset.open));
- $$('#pageList [data-dup]').forEach(b=>b.onclick=()=>{const c=clone(store.pages[b.dataset.dup]);c.id='p'+Date.now().toString(36);c.name=(c.name||'Page')+' copy';store.pages[c.id]=c;switchTo(c.id);say('Duplicated')});
- $$('#pageList [data-del]').forEach(b=>b.onclick=()=>{const p=store.pages[b.dataset.del];if(!confirm('Delete “'+(p.name||'this page')+'”? This cannot be undone.'))return;delete store.pages[p.id];if(page.id===p.id)switchTo(Object.keys(store.pages)[0]);else{persist();pages()}say('Page deleted')});
+/* ---------- pages of this site ---------- */
+const accentOf=()=>{const st=PB.styles.get(page.style);return (st&&st.sw&&st.sw[3])||'#5B2DFF'};
+function goPage(id){if(!site.pages.some(p=>p.id===id))return;curId=id;open=null;pageSelUI();outline();render();if(rtabCur==='pages')pagesPanel()}
+function pageSelUI(){const sel=$('#pageSel'),cp=curPage();sel.innerHTML=site.pages.map(p=>`<option value="${esc(p.id)}"${p.id===cp.id?' selected':''}>${esc(p.name||'Untitled')}${p.id===site.home?' (home)':''}</option>`).join('')}
+$('#pageSel').onchange=e=>goPage(e.target.value);
+function siteChanged(msg){commit();pageSelUI();outline();render();if(rtabCur==='pages')pagesPanel();if(rtabCur==='site')sitePanel();if(msg)say(msg)}
+const uniqueName=base=>{let n=base,i=2;while(site.pages.some(p=>p.name===n))n=base+' '+i++;return n};
+function pgListHTML(){const cp=curPage(),L=$('#pgList');
+ L.innerHTML=site.pages.map((p,i)=>`<li class="pgrow${p.id===cp.id?' cur':''}" data-id="${esc(p.id)}"><button type="button" class="pgname" data-a="go"${p.id===cp.id?' aria-current="true"':''}><b>${esc(p.name||'Untitled')}${p.id===site.home?' <em>Home</em>':''}</b><small>${esc(S.pageFile(site,p))} · ${p.blocks.length} sections${p.inNav?'':' · not in menu'}</small></button><span class="pgact"><button type="button" class="ib" data-a="up" aria-label="Move ${esc(p.name)} up"${i?'':' disabled'}>↑</button><button type="button" class="ib" data-a="down" aria-label="Move ${esc(p.name)} down"${i<site.pages.length-1?'':' disabled'}>↓</button><button type="button" class="ib" data-a="dup" aria-label="Duplicate ${esc(p.name)}">⧉</button><button type="button" class="ib" data-a="home" aria-label="Make ${esc(p.name)} the home page"${p.id===site.home?' disabled':''}>⌂</button><button type="button" class="ib" data-a="rm" aria-label="Delete ${esc(p.name)}"${site.pages.length<2?' disabled':''}>✕</button></span></li>`).join('');
+ L.querySelectorAll('.pgrow').forEach(li=>{const id=li.dataset.id;li.querySelectorAll('button').forEach(b=>b.onclick=()=>pageAct(id,b.dataset.a))})}
+function pageAct(id,a){const i=site.pages.findIndex(p=>p.id===id),p=site.pages[i];if(!p)return;
+ if(a==='go')return goPage(id);
+ if(a==='up'||a==='down'){const j=a==='up'?i-1:i+1;if(j<0||j>=site.pages.length)return;site.pages.splice(j,0,site.pages.splice(i,1)[0]);return siteChanged('Moved '+p.name)}
+ if(a==='dup'){const c=clone(p);c.id=S.uid('pg');c.name=uniqueName(p.name+' copy');c.slug=S.uniqueSlug(site,c.name);c.blocks.forEach(b=>b.uid=uidGen());site.pages.splice(i+1,0,c);curId=c.id;return siteChanged('Duplicated '+p.name)}
+ if(a==='home'){site.home=id;return siteChanged(p.name+' is now the home page')}
+ if(a==='rm'){if(site.pages.length<2)return;if(!confirm('Delete the page “'+p.name+'”? Undo brings it back.'))return;site.pages.splice(i,1);site.nav=site.nav.filter(n=>n.link!=='page:'+id);if(site.home===id)site.home=site.pages[0].id;if(curId===id)curId=site.home;open=null;return siteChanged('Deleted '+p.name)}}
+function serp(){const cp=curPage(),stg=site.settings,t=cp.title||(cp.id===site.home?site.brand:cp.name+' · '+site.brand),d=cp.desc||stg.description||'Add a description: it is what search results show under the title.';
+ $('#serp').innerHTML=`<b>${esc(t)}</b><span>${esc((stg.url||'https://yoursite.com').replace(/\/$/,''))}/${cp.id===site.home?'':esc(cp.slug)}</span><p>${esc(d)}</p>`}
+function pagesPanel(){const cp=curPage();pgListHTML();
+ $('#pgName').value=cp.name;$('#pgSlug').value=cp.id===site.home?'index':cp.slug;$('#pgSlug').disabled=cp.id===site.home;$('#pgNav').checked=cp.inNav;$('#ptitle').value=cp.title||'';$('#pgDesc').value=cp.desc||'';$('#pgOg').value=cp.og||'';serp()}
+$('#addPage').onclick=()=>{const name=uniqueName('New page'),p=S.newPage(site,name,[{uid:uidGen(),id:'rich-text',vals:{kicker:'',heading:name,paras:'Write something here.'}}]);p.name=name;site.pages.push(p);if(site.navSeed){site.navAuto=true;site.navSeed=false}curId=p.id;open=null;siteChanged('Added '+name);const n=$('#pgName');if(n){n.focus();n.select()}};
+$('#pgName').oninput=e=>{const cp=curPage(),old=cp.name;cp.name=e.target.value;if(cp.id!==site.home&&cp.slug===S.slugify(old)){cp.slug=S.uniqueSlug(site,cp.name||'page',cp.id);$('#pgSlug').value=cp.slug}commitSoon();pgListHTML();pageSelUI();status();serp();render()};
+$('#pgName').onchange=e=>{if(!e.target.value.trim()){e.target.value=curPage().name='Untitled page';siteChanged()}};
+$('#pgSlug').onchange=e=>{const cp=curPage();cp.slug=S.uniqueSlug(site,e.target.value||cp.name,cp.id);e.target.value=cp.slug;commit();pgListHTML();serp();say('Address: '+S.pageFile(site,cp))};
+$('#pgNav').onchange=e=>{curPage().inNav=e.target.checked;commit();pgListHTML();render()};
+$('#ptitle').oninput=e=>{curPage().title=e.target.value;commitSoon();serp()};
+$('#pgDesc').oninput=e=>{curPage().desc=e.target.value;commitSoon();serp()};
+$('#pgOg').oninput=e=>{curPage().og=e.target.value.trim();commitSoon()};
+
+/* ---------- link picker: none, a page of this site, or any address ---------- */
+function linkPicker(value,on,label,id){const w=document.createElement('div');w.className='lp';const sel=document.createElement('select');if(id)sel.id=id;sel.setAttribute('aria-label',label||'Link target');
+ [['','No link'],...site.pages.map(p=>['page:'+p.id,'Page: '+p.name]),['custom','A web address, email or #anchor…']].forEach(([v,l])=>{const o=document.createElement('option');o.value=v;o.textContent=l;sel.append(o)});
+ const isPage=site.pages.some(p=>'page:'+p.id===value),custom=!!value&&!isPage;sel.value=custom?'custom':isPage?value:'';
+ const inp=document.createElement('input');inp.placeholder='https://…, mailto:…, tel:… or #section';inp.value=custom?value:'';inp.hidden=!custom;inp.setAttribute('aria-label','Link address');
+ sel.onchange=()=>{if(sel.value==='custom'){inp.hidden=false;inp.focus();on(inp.value.trim())}else{inp.hidden=true;on(sel.value)}};inp.oninput=()=>on(inp.value.trim());
+ w.append(sel,inp);return w}
+
+/* ---------- site settings ---------- */
+const FAVSETS=()=>[['glyphs','Builder icons'],['letter','First letter of the brand'],...Object.keys(LIB.iconFiles).map(f=>[f,f.replace(/-/g,' ')+' icons'])];
+function favUI(){const f=site.settings.favicon;$('#favSet').innerHTML=FAVSETS().map(([k,l])=>`<option value="${esc(k)}">${esc(l)}</option>`).join('');$('#favSet').value=f.set;
+ const names=f.set==='letter'?[]:PB.iconNames(f.set);$('#favName').innerHTML=names.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');$('#favName').disabled=!names.length;$('#favName').value=f.name||names[0]||'';
+ if(f.set!=='letter'&&f.set!=='glyphs'&&f.name&&PB.loadIcon)PB.loadIcon(f.set,f.name+'.svg');
+ $('#favPrev').src=S.svgDataURL(S.faviconSVG(site,accentOf()))}
+function navRows(){const box=$('#navRows');box.innerHTML='';$('#navAuto').checked=site.navAuto;
+ if(site.navAuto){const it=S.menu(site);box.innerHTML=`<p class="hint">The menu lists: ${it.length?it.map(i=>esc(i.label)).join(', '):'no pages yet'}. Hide a page from it in Pages.</p>`;return}
+ site.nav.forEach((n,i)=>{const r=document.createElement('div');r.className='navrow';const li=document.createElement('input');li.value=n.label;li.setAttribute('aria-label','Menu item '+(i+1)+' text');li.oninput=()=>{site.navSeed=false;n.label=li.value;commitSoon();render()};
+  const lp=linkPicker(n.link,v=>{site.navSeed=false;n.link=v;commitSoon();render()},'Menu item '+(i+1)+' link');
+  const act=document.createElement('span');act.className='pgact';act.innerHTML=`<button type="button" class="ib" data-a="up" aria-label="Move ${esc(n.label)} up"${i?'':' disabled'}>↑</button><button type="button" class="ib" data-a="down" aria-label="Move ${esc(n.label)} down"${i<site.nav.length-1?'':' disabled'}>↓</button><button type="button" class="ib" data-a="rm" aria-label="Remove ${esc(n.label)}">✕</button>`;
+  act.querySelectorAll('button').forEach(b=>b.onclick=()=>{const a=b.dataset.a;if(a==='rm')site.nav.splice(i,1);else{const j=a==='up'?i-1:i+1;site.nav.splice(j,0,site.nav.splice(i,1)[0])}commit();navRows();render()});
+  r.append(li,lp,act);box.append(r)});
+ const add=document.createElement('button');add.type='button';add.className='btn small';add.textContent='Add menu item';add.onclick=()=>{site.nav.push({label:'New link',link:''});commit();navRows();render()};box.append(add)}
+function sitePanel(){const st=site.settings;
+ $('#brand').value=site.brand||'';$('#sname').value=site.name||'';$('#slang').value=st.lang||'en';$('#surl').value=st.url||'';$('#sdesc').value=st.description||'';$('#sog').value=st.ogImage||'';
+ $('#nfOn').checked=st.notFound.on;$('#nfTitle').value=st.notFound.title;$('#nfText').value=st.notFound.text;$('#nfBtn').value=st.notFound.button;$('#sAnalytics').value=st.analytics||'';$('#sForm').value=st.formAction||'';
+ favUI();navRows();sitesList()}
+const bindSite=(sel,fn,live)=>{$(sel).oninput=e=>{fn(e.target.value,e.target);commitSoon();if(live)render()}};
+bindSite('#brand',v=>{site.brand=v},1);bindSite('#sname',v=>{site.name=v});bindSite('#slang',v=>{site.settings.lang=v.trim().slice(0,12)||'en'});bindSite('#surl',v=>{site.settings.url=v.trim()});
+bindSite('#sdesc',v=>{site.settings.description=v});bindSite('#sog',v=>{site.settings.ogImage=v.trim()});bindSite('#sAnalytics',v=>{site.settings.analytics=v});bindSite('#sForm',v=>{site.settings.formAction=v.trim()},1);
+bindSite('#nfTitle',v=>{site.settings.notFound.title=v});bindSite('#nfText',v=>{site.settings.notFound.text=v});bindSite('#nfBtn',v=>{site.settings.notFound.button=v});
+$('#nfOn').onchange=e=>{site.settings.notFound.on=e.target.checked;commit()};
+$('#favSet').onchange=e=>{const f=site.settings.favicon;f.set=e.target.value;f.name=f.set==='letter'?'':(PB.iconNames(f.set)[0]||'');commit();favUI()};
+$('#favName').onchange=e=>{site.settings.favicon.name=e.target.value;commit();favUI();setTimeout(favUI,500)};
+$('#navAuto').onchange=e=>{site.navSeed=false;site.navAuto=e.target.checked;if(!site.navAuto&&!site.nav.length)site.nav=S.menu(site).map(i=>({label:i.label,link:i.link}));commit();navRows();render()};
+
+/* ---------- saved sites and templates ---------- */
+function sitesList(){const P=Object.values(store.pages).sort((a,b)=>(b.updated||0)-(a.updated||0));
+ $('#siteList').innerHTML=P.map(p=>`<li class="${p.id===site.id?'cur':''}"><div><b>${esc(p.name||p.brand||'Untitled')}</b><small>${p.pages.length} page${p.pages.length>1?'s':''} · ${esc(PB.styles.has(p.style)?PB.styles.get(p.style).name:p.style)}${p.updated?' · '+new Date(p.updated).toLocaleDateString():''}</small></div><span>${p.id===site.id?'<em>Open now</em>':`<button type="button" class="btn small" data-open="${esc(p.id)}">Open</button>`}<button type="button" class="btn small" data-dup="${esc(p.id)}" aria-label="Duplicate ${esc(p.name)}">Duplicate</button>${P.length>1?`<button type="button" class="btn small" data-del="${esc(p.id)}" aria-label="Delete ${esc(p.name)}">Delete</button>`:''}</span></li>`).join('');
+ $$('#siteList [data-open]').forEach(b=>b.onclick=()=>switchTo(b.dataset.open));
+ $$('#siteList [data-dup]').forEach(b=>b.onclick=()=>{const c=clone(store.pages[b.dataset.dup]);c.id=S.uid('s');c.name=(c.name||'Site')+' copy';store.pages[c.id]=c;switchTo(c.id);say('Duplicated')});
+ $$('#siteList [data-del]').forEach(b=>b.onclick=()=>{const p=store.pages[b.dataset.del];if(!confirm('Delete “'+(p.name||'this site')+'”? This cannot be undone.'))return;delete store.pages[p.id];if(site.id===p.id)switchTo(Object.keys(store.pages)[0]);else{persist();sitesList()}say('Site deleted')});
  $('#tplList').innerHTML=TEMPLATES.map((t,i)=>{const x=t();return `<li><button type="button" class="chip" data-t="${i}">${esc(x.name)}</button></li>`}).join('');
- $$('#tplList [data-t]').forEach(b=>b.onclick=()=>{const t=TEMPLATES[+b.dataset.t]();const p={...blank(),...t};store.pages[p.id]=p;switchTo(p.id);say('New page from '+t.name)})}
-function switchTo(id){clearTimeout(typing);commit();page=store.pages[id];store.cur=id;hist=[];fut=[];lastSnap=snap();open=null;persist();refresh();histUI()}
-$('#newPage').onclick=()=>{const p=blank();store.pages[p.id]=p;switchTo(p.id);say('New blank page');showPane('lib')};
-$('#pname').oninput=e=>{page.name=e.target.value;commitSoon()};
-$('#pname').onchange=()=>pages();
-$('#brand').oninput=e=>{page.brand=e.target.value;commitSoon();render()};
-$('#ptitle').oninput=e=>{page.title=e.target.value;commitSoon();render()};
+ $$('#tplList [data-t]').forEach(b=>b.onclick=()=>{const t=TEMPLATES[+b.dataset.t]();const p=S.normalize(t,def);store.pages[p.id]=p;switchTo(p.id);say('New site from '+t.name)})}
+function switchTo(id){clearTimeout(typing);commit();site=store.pages[id];store.cur=id;curId=site.home;hist=[];fut=[];lastSnap=snap();open=null;persist();refresh();histUI()}
+$('#newSite').onclick=()=>{const p=blank();store.pages[p.id]=p;switchTo(p.id);say('New blank site');showPane('lib')};
 
 /* ---------- right panel tabs, panes ---------- */
-const RT=[['page','Page'],['style','Style'],['ai','AI'],['pages','Pages']];let rtabCur=RT.some(t=>t[0]===ui.rtab)?ui.rtab:'page';
-function rtab(k){rtabCur=k;ui.rtab=k;saveUI();$$('#rtabs [role=tab]').forEach(b=>{const on=b.dataset.t===k;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1});$$('.rpanel').forEach(p=>p.hidden=p.id!=='rp-'+k);if(k==='style')styles();if(k==='pages')pages();if(k==='ai')aiStatus()}
+const RT=[['page','Page'],['pages','Pages'],['site','Site'],['style','Style'],['ai','AI']];let rtabCur=RT.some(t=>t[0]===ui.rtab)?ui.rtab:'page';
+function rtab(k){rtabCur=k;ui.rtab=k;saveUI();$$('#rtabs [role=tab]').forEach(b=>{const on=b.dataset.t===k;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1});$$('.rpanel').forEach(p=>p.hidden=p.id!=='rp-'+k);if(k==='style')styles();if(k==='pages')pagesPanel();if(k==='site')sitePanel();if(k==='ai')aiStatus()}
 $('#rtabs').innerHTML=RT.map(([k,l])=>`<button role="tab" type="button" id="rt-${k}" data-t="${k}" aria-controls="rp-${k}">${l}</button>`).join('');
 $$('#rtabs [role=tab]').forEach((b,i,all)=>{b.onclick=()=>rtab(b.dataset.t);b.onkeydown=e=>{const n=all.length;let j=null;if(e.key==='ArrowRight')j=(i+1)%n;if(e.key==='ArrowLeft')j=(i-1+n)%n;if(j!=null){e.preventDefault();rtab(all[j].dataset.t);all[j].focus()}}});
 function showPane(k){document.body.dataset.pane=k;$$('#panes button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.p===k))}
@@ -291,24 +378,39 @@ $$('#widths button').forEach(b=>b.onclick=()=>setW(b.dataset.w));setW(ui.w||'des
 /* ---------- export ---------- */
 const slug=()=>(page.brand||page.name||'page').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'page';
 function dl(blob,name){const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000)}
-async function prefetch(){const need=compose('preview');const jobs=[];
- if(need.cl&&cache.cl==null)jobs.push(fetch('component-lab.js').then(r=>r.ok?r.text():null).then(t=>{cache.cl=t}).catch(()=>{}));
- page.blocks.filter(b=>b.id==='x-interaction').forEach(b=>{const id=val(b,'iid');if(cache.ix[id]!=null)return;jobs.push(fetch('interactions/demos/'+id+'.html').then(r=>r.ok?r.text():null).then(t=>{if(t)cache.ix[id]=t.split('../../assets/').join(SITE+'assets/')}).catch(()=>{}))});
+async function prefetch(){const all=[...site.header,...site.pages.flatMap(p=>p.blocks),...site.footer],jobs=[];
+ if(cache.cl==null&&all.some(b=>b.id==='x-component'))jobs.push(fetch('component-lab.js').then(r=>r.ok?r.text():null).then(t=>{cache.cl=t}).catch(()=>{}));
+ all.filter(b=>b.id==='x-interaction').forEach(b=>{const id=val(b,'iid');if(cache.ix[id]!=null)return;jobs.push(fetch('interactions/demos/'+id+'.html').then(r=>r.ok?r.text():null).then(t=>{if(t)cache.ix[id]=t.split('../../assets/').join(SITE+'assets/')}).catch(()=>{}))});
  await Promise.all(jobs)}
-async function htmlFile(){await prefetch();const P=compose('html');return swapA(assemble(P,{clInline:cache.cl||null}),SITE+'assets/')}
+const favHref=()=>S.svgDataURL(S.faviconSVG(site,accentOf()));
+async function htmlFile(){await prefetch();const P=compose('html');return swapA(assemble(P,{clInline:cache.cl||null,favHref:favHref()}),SITE+'assets/')}
 $('#dlHtml').onclick=async()=>{closeMenu();try{const h=await htmlFile();dl(new Blob([h],{type:'text/html'}),slug()+'.html');say('Downloading '+slug()+'.html')}catch(e){console.error(e);say('Export failed')}};
 $('#copyHtml').onclick=async()=>{closeMenu();copy(await htmlFile(),'HTML copied')};
 $('#openTab').onclick=async()=>{closeMenu();const w=window.open('','_blank');const h=await htmlFile();const u=URL.createObjectURL(new Blob([h],{type:'text/html'}));if(w)w.location=u;else window.open(u,'_blank');setTimeout(()=>URL.revokeObjectURL(u),60000)};
-$('#dlZip').onclick=async()=>{closeMenu();const zip=(window.ThemeKits&&window.ThemeKits.zip)||PB.zip;say('Building the ZIP…');try{await prefetch();const P=compose('zip');
- const assets=new Map();const fix=s=>s.replace(/\u0001A\/([^"')\s]+)/g,(m,p)=>{if(/\.(mp4|webm|mov)$/i.test(p)||/[$`{]/.test(p))return SITE+'assets/'+p;assets.set(p,1);return 'assets/'+p});
- const css=fix(P.cssText),body=fix(P.body),js=swapA((P.runtime?P.runtime+'\n':'')+P.js,SITE+'assets/');
- const html=assemble({...P,cssText:css,body,runtime:'',js},{cssHref:'assets/page.css',jsHref:js.trim()?'assets/page.js':null,clSrc:'assets/component-lab.js'});
- const files=[['index.html',html],['assets/page.css',css]];if(js.trim())files.push(['assets/page.js',js]);
- if(P.cl)files.push(['assets/component-lab.js',cache.cl||'/* component-lab.js could not be copied; load it from '+SITE+'component-lab.js */']);
- P.files.forEach((t,n)=>files.push([n,t]));
- for(const p of assets.keys()){try{const r=await fetch('assets/'+p);if(r.ok)files.push(['assets/'+p,new Uint8Array(await r.arrayBuffer())])}catch(e){}}
- files.push(['README.txt',`${page.brand||'Page'}, built with the Visual & Motion Atlas page builder.\n\nOpen index.html in a browser. Styles are in assets/page.css and behaviour in assets/page.js.\nImages are in assets/. Films still stream from ${SITE}assets/films/ so the download stays small; download them from there and change the paths before you publish.\nInteraction demos are in interactions/. Forms and buttons are placeholders and send nothing.\nStyle: ${P.st.name}.\n`]);
- dl(zip(files),slug()+'.zip');say('Downloading '+slug()+'.zip')}catch(e){console.error(e);say('ZIP export failed')}};
+/* the whole site as files: [[path, string|Uint8Array]] */
+async function buildSiteFiles(){await prefetch();const acc=newAcc(),assets=new Map(),out=[];
+ const fix=s=>s.replace(/\u0001A\/([^"')\s]+)/g,(m,p)=>{if(/\.(mp4|webm|mov)$/i.test(p)||/[$`{]/.test(p))return SITE+'assets/'+p;assets.set(p,1);return 'assets/'+p});
+ const stg=site.settings,nf=stg.notFound,brand=site.brand||site.name;
+ const items=site.pages.map(pg=>({pg,file:S.pageFile(site,pg),js:pg.id===site.home?'index':pg.slug}));
+ if(nf.on)items.push({pg:{id:'__404',name:'Page not found',slug:'404',title:nf.title+' · '+brand,desc:'',og:'',inNav:false,noindex:true,blocks:[{uid:'nf404',id:'x-notfound',vals:{title:nf.title,text:nf.text,button:nf.button}}]},file:'404.html',js:'404'});
+ items.forEach(it=>{it.P=compose('zip',it.pg,acc)});
+ const st=items[0].P.st,css=fix(buildCSS(st,acc)),fontURL=fontURLOf(acc),base=(stg.url||'').trim();
+ const canon=it=>base&&!it.pg.noindex?base.replace(/\/?$/,'/')+(it.file==='index.html'?'':it.file):'';
+ let anyCl=false;
+ items.forEach(it=>{const P=it.P;anyCl=anyCl||P.cl;const code=swapA((P.runtime?P.runtime+'\n':'')+P.js,SITE+'assets/');
+  const html=assemble({...P,fontURL,cssText:css,body:fix(P.body),runtime:'',js:code},{cssHref:'assets/site.css',jsHref:code.trim()?'assets/'+it.js+'.js':null,clSrc:'assets/component-lab.js',favHref:'assets/favicon.svg',canonical:canon(it)});
+  out.push([it.file,html]);if(code.trim())out.push(['assets/'+it.js+'.js',code])});
+ out.push(['assets/site.css',css],['assets/favicon.svg',S.faviconSVG(site,accentOf())]);
+ if(anyCl)out.push(['assets/component-lab.js',cache.cl||'/* component-lab.js could not be copied; load it from '+SITE+'component-lab.js */']);
+ acc.files.forEach((t,n)=>out.push([n,t]));
+ for(const p of assets.keys()){try{const r=await fetch('assets/'+p);if(r.ok)out.push(['assets/'+p,new Uint8Array(await r.arrayBuffer())])}catch(e){}}
+ const today=new Date().toISOString().slice(0,10);
+ out.push(['sitemap.xml',S.sitemap(site,base||'https://example.com/',today)],['robots.txt',S.robots(base)]);
+ out.push(['README.txt',`${brand}: a static website made with the Visual & Motion Atlas site builder.\n\n${site.pages.length} page${site.pages.length>1?'s':''}: ${site.pages.map(p=>S.pageFile(site,p)).join(', ')}.\nOpen index.html in a browser. Styles are in assets/site.css, behaviour in assets/*.js, images in assets/.\nFilms still stream from ${SITE}assets/films/ so the download stays small; copy them next to your site and change the paths before you publish.\nForms${stg.formAction?' post to '+stg.formAction:' are placeholders and send nothing until you set a form address in Site settings'}.\n\nPublish it: drag this folder onto Netlify Drop, or run "vercel" inside it, or push it to GitHub Pages. To use your own domain, add it in that host's settings and set the Site address in the builder so sitemap.xml and canonical links use it${base?'':' (it is empty now, so sitemap.xml uses https://example.com/: replace it)'}.\nStyle: ${st.style?st.style.name:''}.\n`]);
+ return out}
+$('#dlZip').onclick=async()=>{closeMenu();const zip=(window.ThemeKits&&window.ThemeKits.zip)||PB.zip;say('Building the site ZIP…');try{const files=await buildSiteFiles();dl(zip(files),slug()+'-site.zip');say('Downloading '+slug()+'-site.zip')}catch(e){console.error(e);say('ZIP export failed')}};
+PB.buildSiteFiles=buildSiteFiles;PB.getSite=()=>site;
+
 $('#copyPrompt').onclick=()=>{closeMenu();const st=PB.styles.get(page.style),pair=page.pair>=0?LIB.pairs[page.pair]:null;
  const lines=page.blocks.map((b,i)=>{const d=def(b.id);const v=vals(b);const words=fieldsOf(d).filter(f=>['text','long','list'].includes(f.type)).map(f=>f.label.replace(/\s*\(.*\)/,'').toLowerCase()+' “'+String(v[f.k]).replace(/\n/g,' / ')+'”').filter(x=>!/“”$/.test(x)).join('; ');
   const film=fieldsOf(d).find(f=>f.type==='film');return (i+1)+'. '+d.name+(isX(b.id)?' ('+xLabel(b)+')':'')+'. '+(d.prompt||d.desc)+(film?' Background film: '+SITE+'assets/films/'+v[film.k]+'-720.mp4 (poster '+SITE+'assets/films/'+v[film.k]+'.jpg).':'')+(words?' Words: '+words+'.':'')});
@@ -338,7 +440,7 @@ async function aiCall(body){const r=await fetch('/api/ai',{method:'POST',headers
 $('#aiGo').onclick=async()=>{const brief=$('#aiBrief').value.trim();if(!brief){say('Describe the page first');$('#aiBrief').focus();return}const go=$('#aiGo');go.disabled=true;$('#aiOut').textContent='Writing your page…';
  try{const keep=$('#aiKeep').checked;const p=await aiCall({mode:'page',brief:(brief+LIST_NOTE).slice(0,1500),catalog:catalog(),styles:aiStyleIds(),current:keep?{title:page.title,brand:page.brand,style:page.style,blocks:page.blocks.filter(b=>B[b.id]||AI_X.includes(b.id)).map(b=>({id:b.id,fields:vals(b)}))}:undefined});
   const blocks=(p.blocks||[]).filter(b=>def(b.id)).map(b=>({uid:uidGen(),id:b.id,vals:toVals(def(b.id),b.fields)}));if(!blocks.length)throw new Error('The AI returned no sections. Try a more specific brief.');
-  const sid=String(p.style||'').split('|')[0];page.blocks=blocks;if(p.brand)page.brand=p.brand.slice(0,40);if(p.title)page.title=p.title.slice(0,80);if(PB.styles.has(sid))page.style=sid;open=null;commit();refresh();
+  const sid=String(p.style||'').split('|')[0];{const sp=S.split(blocks,def);if(sp.header.length)site.header=sp.header;if(sp.footer.length)site.footer=sp.footer;page.blocks=sp.body}if(p.brand)page.brand=p.brand.slice(0,40);if(p.title)page.title=p.title.slice(0,80);if(PB.styles.has(sid))page.style=sid;open=null;commit();refresh();
   $('#aiOut').textContent=(p.note||'Done.')+' Undo brings your previous page back.';say('AI page ready')}
  catch(e){$('#aiOut').textContent=e.message||'Something went wrong.'}go.disabled=!aiOn};
 async function aiSection(blk,btn){if(aiOn===null)await aiStatus();if(!aiOn){say('The AI is not available here: '+aiMsg);return}
@@ -354,7 +456,7 @@ document.addEventListener('keydown',e=>{const mod=e.metaKey||e.ctrlKey;if(!mod)r
 $('#undoBtn').onclick=undo;$('#redoBtn').onclick=redo;
 
 /* ---------- refresh ---------- */
-function refresh(){$('#brand').value=page.brand||'';$('#ptitle').value=page.title||'';$('#pname').value=page.name||'';outline();render();if(rtabCur==='style')styles();if(rtabCur==='pages')pages()}
+function refresh(){pageSelUI();outline();render();if(rtabCur==='style')styles();if(rtabCur==='pages')pagesPanel();if(rtabCur==='site')sitePanel()}
 function imagesList(){$('#pbImages').innerHTML=LIB.images.map(i=>`<option value="${esc(i)}">`).join('')}
 
 /* ---------- async sources (read-only) ---------- */

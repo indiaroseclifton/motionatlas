@@ -94,16 +94,18 @@ NOHASH = "root.querySelectorAll('a[href=\"#\"]').forEach(a=>a.onclick=e=>e.preve
 
 # id, name, group, description, css, html, js, fields [(key,label,type,default)], prompt
 NEW = [
- ('nav', 'Navigation bar', 'Top', 'A sticky bar with the brand, three links and a call to action.', '''
+ ('nav', 'Navigation bar', 'Top', 'A sticky bar with the brand, your site menu and a call to action; a menu button opens it on phones.', '''
 .bar{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 84%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
 .in{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:24px;padding:10px max(16px,4vw)}
 .logo{font-family:var(--head);font-weight:var(--hw);font-style:var(--hs);font-size:26px;letter-spacing:var(--track);text-decoration:none}
-.links{display:flex;gap:22px;margin-left:auto;font-size:15px}.links a{text-decoration:none;color:var(--mute)}.links a:hover{color:var(--ink)}
+.links{display:flex;gap:22px;margin-left:auto;font-size:15px;flex-wrap:wrap}.links a{text-decoration:none;color:var(--mute)}.links a:hover,.links a[aria-current=page]{color:var(--ink)}
 .btn{min-height:42px}
-@media (max-width:680px){.links{display:none}.in .btn{margin-left:auto}}''',
-  '<header class="bar"><div class="in"><a class="logo" href="#">{{brand}}</a><nav class="links" aria-label="Main"><a href="#">{{l1}}</a><a href="#">{{l2}}</a><a href="#">{{l3}}</a></nav><a class="btn p" href="#">{{cta}}</a></div></header>',
-  NOHASH, [('l1', 'Link 1', 'text', 'Episodes'), ('l2', 'Link 2', 'text', 'Pricing'), ('l3', 'Link 3', 'text', 'Questions'), ('cta', 'Button', 'text', 'Start free')],
-  'A sticky top bar with a translucent blurred background: the brand name in the heading font, three quiet links on the right and a solid accent button. Links hide on phones.'),
+.menu{display:none;width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--surface);cursor:pointer;place-items:center;margin-left:auto}.menu svg{width:20px;height:20px}
+.panel{display:none;padding:8px max(16px,4vw) 18px;border-top:1px solid var(--line)}.panel a{display:block;padding:12px 0;text-decoration:none;border-bottom:1px solid var(--line)}.panel.open{display:block}
+@media (max-width:720px){.links,.cta{display:none}.menu{display:grid}}''',
+  '<header class="bar"><div class="in"><a class="logo" href="{{home}}">{{brand}}</a><nav class="links" aria-label="Main">{{menu}}</nav><a class="btn p cta" href="{{ctaHref}}">{{cta}}</a><button class="menu" type="button" aria-expanded="false" aria-label="Open menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></div><nav class="panel" aria-label="Menu">{{menu}}<a href="{{ctaHref}}">{{cta}}</a></nav></header>',
+  NOHASH + "const m=root.querySelector('.menu'),p=root.querySelector('.panel');m.onclick=()=>{const o=m.getAttribute('aria-expanded')!=='true';m.setAttribute('aria-expanded',o);m.setAttribute('aria-label',o?'Close menu':'Open menu');p.classList.toggle('open',o)};", [('cta', 'Button', 'text', 'Start free'), ('ctaHref', 'Button links to', 'link', '')],
+  'A sticky top bar with a translucent blurred background: the brand name in the heading font, the site menu as quiet links on the right and a solid accent button. On phones a menu button opens a stacked panel.'),
  ('hero-film', 'Film hero', 'Top', 'A full-bleed looping film that fades into the page, with a big headline and two buttons.', '''
 .hero{position:relative;min-height:min(92vh,880px);display:grid;align-items:end;overflow:hidden;isolation:isolate}
 .hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}

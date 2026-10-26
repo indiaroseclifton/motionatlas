@@ -164,6 +164,9 @@ const typeSpec={id:'x-type',name:'Type specimen',group:'Fonts',desc:'Shows the p
 .x-tysc{list-style:none;margin:0;padding:0;display:grid;gap:4px;border-top:1px solid var(--line)}.x-tysc li{display:flex;gap:16px;align-items:baseline;border-bottom:1px solid var(--line);padding:6px 0;overflow:hidden;white-space:nowrap}.x-tysc li>span:first-child{flex:0 0 44px;color:var(--mute);font-size:12px}@media (max-width:760px){.x-tyg{grid-template-columns:1fr}}`]],
   js:`var f=getComputedStyle(document.documentElement).getPropertyValue('--head').split(',')[0].replace(/['"]/g,'').trim();var e=root.querySelector('[data-font]');if(e)e.textContent=f;`}}};
 
-PB.extraTypes=[comp,inter,bgHero,kitBg,kitAsset,iconRow,effect,filmBand,typeSpec];
+const notFound={id:'x-notfound',name:'Page not found',group:'Content',desc:'The 404 page.',
+ fields:[{k:'title',label:'Heading',type:'text',def:'This page has wandered off'},{k:'text',label:'Text',type:'long',def:''},{k:'button',label:'Button',type:'text',def:'Back to the home page'}],
+ render(v,ctx){return {html:`<section class="wrap x-nf"><p class="k">404</p><h1 class="h">${esc(v.title)}</h1><p class="x-intro">${esc(v.text)}</p><p><a class="btn p" href="${esc(ctx.home||'index.html')}">${esc(v.button)}</a></p></section>`,css:[['x-nf','.x-nf{min-height:60vh;display:grid;align-content:center;gap:14px;justify-items:start}.x-nf .h{font-size:clamp(40px,7vw,96px);margin:0}']]}}};
+PB.extraTypes=[comp,inter,bgHero,kitBg,kitAsset,iconRow,effect,filmBand,typeSpec,notFound];
 PB.extraById=Object.fromEntries(PB.extraTypes.map(t=>[t.id,t]));
 })();

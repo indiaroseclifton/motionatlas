@@ -302,9 +302,9 @@ MORE = [
 .panel a{display:block;padding:12px 0;text-decoration:none;border-bottom:1px solid var(--line)}
 .panel.open{display:block}
 @media (max-width:760px){.in{grid-template-columns:auto 1fr auto}.l,.r a:not(.btn){display:none}.menu{display:grid}.logo{text-align:left}.r .btn{display:none}}''',
-  '<header class="bar"><div class="in"><nav class="l" aria-label="Primary"><a href="#">{{l1}}</a><a href="#">{{l2}}</a></nav><a class="logo" href="#">{{brand}}</a><div class="r"><a href="#">{{l3}}</a><a class="btn p" href="#">{{cta}}</a><button class="menu" aria-expanded="false" aria-label="Open menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></div></div><nav class="panel" aria-label="Menu"><a href="#">{{l1}}</a><a href="#">{{l2}}</a><a href="#">{{l3}}</a><a href="#">{{cta}}</a></nav></header>',
+  '<header class="bar"><div class="in"><nav class="l" aria-label="Primary">{{menuL}}</nav><a class="logo" href="{{home}}">{{brand}}</a><div class="r">{{menuR}}<a class="btn p" href="{{ctaHref}}">{{cta}}</a><button class="menu" aria-expanded="false" aria-label="Open menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></div></div><nav class="panel" aria-label="Menu">{{menu}}<a href="{{ctaHref}}">{{cta}}</a></nav></header>',
   NOHASH_M + "const m=root.querySelector('.menu'),p=root.querySelector('.panel');m.onclick=()=>{const o=m.getAttribute('aria-expanded')!=='true';m.setAttribute('aria-expanded',o);m.setAttribute('aria-label',o?'Close menu':'Open menu');p.classList.toggle('open',o)};",
-  [('l1', 'Link 1', 'text', 'Work'), ('l2', 'Link 2', 'text', 'Studio'), ('l3', 'Link 3', 'text', 'Journal'), ('cta', 'Button', 'text', 'Get in touch')],
+  [('cta', 'Button', 'text', 'Get in touch'), ('ctaHref', 'Button links to', 'link', '')],
   'A sticky three-column header: two links on the left, the brand name centred in the heading font, a link and accent button on the right; on phones a menu button toggles a stacked link panel.'),
 
  ('hero-center', 'Centred hero', 'Heroes', 'A centred headline with a news pill, two buttons and a row of faces with a line of proof.', '''
