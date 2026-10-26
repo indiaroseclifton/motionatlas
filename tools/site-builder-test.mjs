@@ -252,13 +252,13 @@ const waitPv = pg => pg.waitForTimeout(700);
   const { ctx, pg } = await open();
   await pg.waitForTimeout(2000);
   const n = await pg.evaluate(() => PB.templates.length);
-  ok(n >= 12, 'at least 12 multi-page templates (' + n + ')');
+  ok(n >= 26, 'at least 26 templates (' + n + ')');
   for (let i = 0; i < n; i++) {
     await pg.evaluate(i => { const t = PB.templates[i]; PB.ux.useTemplate(i); }, i);
     await waitPv(pg);
     const s = await site(pg), nm = s.name;
-    ok(s.pages.length >= 3 && s.pages.length <= 6, nm + ': ' + s.pages.length + ' pages');
-    ok(s.header.length === 1 && s.footer.length === 1 && s.pages.every(p => p.blocks.length >= 1), nm + ': shared header/footer and content on every page');
+    const lp = await pg.evaluate(i => PB.templates[i].cat === 'landing', i); ok(lp ? s.pages.length === 1 : s.pages.length >= 3 && s.pages.length <= 6, nm + ': ' + s.pages.length + ' pages');
+    ok((lp ? s.header.length === 0 : s.header.length === 1) && s.footer.length === 1 && s.pages.every(p => p.blocks.length >= 1), nm + ': shared header/footer and content on every page');
     const files = await pg.evaluate(async () => (await PB.buildSiteFiles()).map(([n, c]) => [n, typeof c === 'string' ? c : null]));
     const names = new Set(files.map(f => f[0]));
     let broken = [];
@@ -391,8 +391,8 @@ if (axeSrc) {
   ok(await pg.evaluate(() => document.activeElement && document.querySelector('#startDlg').contains(document.activeElement)), 'focus moves into the start screen');
   await pg.keyboard.press('Escape'); ok(await pg.locator('#startDlg[open]').count() === 0, 'Escape closes the start screen'); await pg.click('#tplBtn');
   await pg.click('[data-o=templates]');
-  ok(await pg.locator('#tplGallery .tplcard').count() >= 12, 'template gallery lists every template');
-  await pg.click('#tcats [data-c=shop]'); ok(await pg.locator('#tplGallery .tplcard').count() === 2, 'category filter narrows the gallery');
+  ok(await pg.locator('#tplGallery .tplcard').count() >= 26, 'template gallery lists every template');
+  await pg.click('#tcats [data-c=landing]'); ok(await pg.locator('#tplGallery .tplcard').count() === 6, 'the landing category lists the six one-pagers'); await pg.click('#tcats [data-c=all]');
   await pg.click('#tplGallery .tplbtn'); await pg.waitForTimeout(300);
   ok(await pg.locator('#tpImg img').count() === 1 && await pg.locator('#tPages .tpgb').count() >= 3, 'template detail shows a thumbnail and its pages');
   const okImg = await pg.evaluate(() => new Promise(r => { const i = document.querySelector('#tpImg img'); if (!i) return r(false); if (i.complete) return r(i.naturalWidth > 100); i.onload = () => r(i.naturalWidth > 100); i.onerror = () => r(false); }));
@@ -414,9 +414,14 @@ if (axeSrc) {
   await pg.click('#tplBtn'); await pg.click('[data-o=ai]'); await pg.fill('#stBrief', 'A website for a weekend pottery school in Leeds called Clay & Co with classes and a gallery'); await pg.click('#stGo'); await pg.waitForTimeout(1200);
   ok((await site(pg)).pages.length >= 3, 'describe-your-site builds a site even when the AI is off');
   // brand kit import
-  await pg.evaluate(() => localStorage.setItem('brandgen-draft-v1', JSON.stringify({ name: 'Moss', mode: 'light', modes: { light: { bg: '#F4F1E8', surface: '#FFFFFF', ink: '#1F2A20', primary: '#2F6B3F' } }, type: { head: 'Fraunces', body: 'Inter' }, radius: 10 })));
-  await pg.click('#tplBtn'); await pg.click('[data-o=brand]'); await pg.click('#brGo'); await waitPv(pg);
-  const bs = await site(pg); ok(bs.name === 'Moss' && bs.tokens && bs.tokens.accent === '#2F6B3F', 'brand kit becomes a site with its colours');
+  await pg.evaluate(() => localStorage.setItem('atlas-pb-brand-handoff', JSON.stringify({ name: 'Moss & Co', desc: 'A neighbourhood bakery and coffee bar with slow-fermented bread.', audience: 'locals', feels: ['warm', 'friendly'], tagline: 'Slow bread, warm mornings.', mode: 'light', t: { bg: '#F4F1E8', surface: '#FFFFFF', ink: '#1F2A20', primary: '#2F6B3F' }, head: 'Fraunces', body: 'Inter', radius: 10, mark: 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><circle cx="32" cy="32" r="24" fill="#2F6B3F"/></svg>') })));
+  await pg.click('#tplBtn'); await pg.click('[data-o=brand]'); ok(await pg.locator('#brandGrid .tplbtn').count() >= 12, 'brand hand-off lists templates to build from');
+  ok(await pg.locator('#brandGrid .sugg').count() === 1, 'one template is suggested from the brand description');
+  await pg.click('#brGo'); await waitPv(pg);
+  const bs = await site(pg); ok(bs.name === 'Moss & Co' && bs.tokens && bs.tokens.accent === '#2F6B3F' && bs.tokens.fontHead === 'Fraunces' && bs.tokens.radius === 10, 'brand kit becomes a site with its name, colours, fonts and corners');
+  ok(bs.pages.length >= 3 && bs.pages[0].blocks.length >= 3, 'the brand site is populated and multi-page');
+  ok(JSON.stringify(bs).includes('Slow bread, warm mornings.') && !!bs.logo, 'the tagline and mark are used');
+  ok(await frame(pg).locator('img.pb-logo').count() >= 1, 'the brand mark appears next to the name in the header');
   // version history
   await pg.evaluate(() => PB.ux.captureVersion(true)); await pg.click('#histBtn'); await pg.waitForSelector('#histDlg .histl li'); ok(await pg.locator('#histDlg .histl li').count() >= 1, 'history lists snapshots');
   const bigOk = await pg.evaluate(async () => { const A = PB.app; A.curPage().blocks.push({ uid: 'big1', id: 'rich-text', vals: { kicker: '', heading: 'Big', paras: 'x'.repeat(900000) } }); const r = await PB.ux.captureVersion(true); A.curPage().blocks.pop(); return r; });

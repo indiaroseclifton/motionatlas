@@ -239,8 +239,10 @@ static site or publish it to a live address. Old single-page saves open as one-p
 - **Start screen and sites home:** first-time visitors (no saved site) get a start dialog; "Sites & templates" in the
   header reopens it. Paths: **Continue** the last site, **Start from a template** (gallery with category filter, a large
   preview and a page list per template), **Describe your site** (AI when on, otherwise the closest template filled with
-  your words), **Blank site** (the empty page explains how to begin) and **From a brand kit** (reads the Brand
-  generator's draft, `brandgen-draft-v1`). Your sites are listed with thumbnails drawn from their own colours and
+  your words), **Blank site** (the empty page explains how to begin) and **From a brand kit** (the Brand generator's
+  "Use in the site builder" hands over its name, tagline, description, feel words, colours, corners, fonts and mark via
+  `atlas-pb-brand-handoff`; the builder suggests a template from the description and builds a populated multi-page site
+  with the brand's tokens and the mark next to the name). Your sites are listed with thumbnails drawn from their own colours and
   headline; rename, duplicate and delete (with undo). Template thumbnails are pre-rendered WebP files in
   `site/builder/thumbs/<template>-<page>.webp` (about 10 KB each); regenerate them after editing a template with
   `BASE=http://localhost:8797/ node tools/builder-thumbs.mjs [templateId...]` (needs Playwright and Pillow).
@@ -279,8 +281,11 @@ static site or publish it to a live address. Old single-page saves open as one-p
 - **Responsive and accessibility:** desktop, tablet and phone previews; the Checks list shows low contrast, heading order,
   missing alt text, unnamed links and unlabelled fields, with fixes where they can be automatic.
 - **Library:** 54 sections (including article, find-us map, menu, schedule, product grid, course outline, contact form,
-  donate, countdown), 64 components, interactions, backgrounds, films, icons and theme-kit assets, plus 12 multi-page
-  templates (portfolio, agency, SaaS, restaurant, photographer, event, blog, shop, nonprofit, course, app, studio).
+  donate, countdown), 64 components, interactions, backgrounds, films, icons and theme-kit assets, plus 26 templates: 20 multi-page
+  sites (portfolio, agency, SaaS, restaurant, photographer, event, blog, shop, nonprofit, course, app, studio, coffee shop and
+  bakery, fitness studio, law firm, estate agent, wedding, podcast, documentation, conference; files `builder/templates.js` and
+  `templates2.js`) and 6 one-page landings (waitlist, product launch, app download, webinar, link in bio, coming soon).
+  Every page of a template ends with a call to action, and photographs come from the atlas image library, chosen per template.
 - **Export and publish:** Export downloads a clean static site as a ZIP (every page, `assets/`, `sitemap.xml`,
   `robots.txt`, `404.html`, favicon, canonical and Open Graph tags, no builder code), a single HTML file for the current
   page, or an AI prompt. **Publish** puts the site at `/site/<id>/` on this domain through `api/site.js` (Vercel Blob; the

@@ -18,7 +18,7 @@ const isTop=d=>!!d&&(d.place==='top'||d.id==='announce'),isEnd=d=>!!d&&d.place==
 function split(blocks,def){const header=[],body=[],footer=[];(blocks||[]).forEach(b=>{const d=def(b.id);if(!d)return;(isTop(d)?header:isEnd(d)?footer:body).push(b)});return {header,body,footer}}
 /* Build a clean site from anything: a whole site, an old single page {blocks,title,brand,style,...}, or a template. */
 function normalize(x,def){
- x=x||{};const s={id:x.id||uid('s'),name:x.name||x.brand||'My site',brand:x.brand||'Brand',style:x.style||'studio',pair:x.pair==null?-1:x.pair,updated:x.updated||0};if(x.rich===2)s.rich=2;
+ x=x||{};const s={id:x.id||uid('s'),name:x.name||x.brand||'My site',brand:x.brand||'Brand',style:x.style||'studio',pair:x.pair==null?-1:x.pair,updated:x.updated||0};if(x.rich===2)s.rich=2;if(typeof x.logo==='string'&&/^data:image\/svg\+xml/.test(x.logo)&&x.logo.length<30000)s.logo=x.logo;
  if(Array.isArray(x.pages)&&x.pages.length){
   s.pages=x.pages.map(p=>({id:p.id||uid('pg'),name:String(p.name||'Page').slice(0,60),slug:slugify(p.slug)||'',title:String(p.title||'').slice(0,80),desc:String(p.desc||'').slice(0,300),og:String(p.og||'').slice(0,300),inNav:p.inNav!==false,blocks:fix(p.blocks,def)}));
   s.header=fix(x.header,def);s.footer=fix(x.footer,def);

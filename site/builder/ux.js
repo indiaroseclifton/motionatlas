@@ -32,8 +32,8 @@ function miniThumb(s){const c=palette(s),n=Math.min(8,(s.pages.find(p=>p.id===s.
  return `<div class="mini" aria-hidden="true" style="background:${c.bg};color:${c.ink}"><div class="mn"><b>${esc(s.brand||'')}</b><span><u style="background:${c.ink}"></u><u style="background:${c.ink}"></u><u style="background:${c.ink}"></u></span><em style="background:${c.accent}"></em></div><div class="mh"><strong>${esc(h.slice(0,70))}</strong><span style="background:${c.accent}"></span></div><div class="mb">${bars}</div></div>`}
 
 /* ---------- start dialog ---------- */
-const CATS=[['all','All'],['creative','Portfolio & creative'],['business','Business & product'],['shop','Food & shop'],['community','Content & community']];
-const TCAT={portfolio:'creative',photographer:'creative',studio:'creative',agency:'business',saas:'business',app:'business',restaurant:'shop',shop:'shop',blog:'community',event:'community',nonprofit:'community',course:'community'};
+const CATS=[['all','All'],['creative','Portfolio & creative'],['business','Business & product'],['shop','Food, shop & places'],['community','Content & community'],['landing','One-page landings']];
+const TCAT={portfolio:'creative',photographer:'creative',studio:'creative',agency:'business',saas:'business',app:'business',restaurant:'shop',shop:'shop',blog:'community',event:'community',nonprofit:'community',course:'community',coffee:'shop',fitness:'shop',law:'business',realestate:'shop',wedding:'community',podcast:'community',docs:'business',conference:'community'};
 const thumbURL=(t,pid)=>'builder/thumbs/'+t.id+'-'+pid+'.webp';
 let view='home',tcat='all',tsel=null,tpage=0;
 const dlg=dialog('startDlg','startdlg','Sites and templates');
@@ -73,12 +73,12 @@ function siteAct(id,a,btn){const st=A.store,s=st.pages[id];if(!s)return;
   const sub=$('.sth3 small');if(sub)sub.textContent=Object.keys(st.pages).length;return}}
 
 /* template gallery */
-function tplList(){return PB.templates.map((t,i)=>({t,i,cat:TCAT[t.id]||'business'}))}
+function tplList(){return PB.templates.map((t,i)=>({t,i,cat:t.cat==='landing'?'landing':(TCAT[t.id]||'business')}))}
 function thumbImg(t,pid,cls){const i=mk('img',cls||'');i.alt='';i.loading='lazy';i.decoding='async';i.src=thumbURL(t,pid);i.onerror=()=>{i.onerror=null;i.replaceWith(mk('div','nothumb',`<span>${esc(t.name)}</span>`))};return i}
 function drawGallery(body){body.innerHTML=`<div class="gchips" id="tcats" role="group" aria-label="Template category">${CATS.map(([k,l])=>`<button type="button" class="chip" data-c="${k}" aria-pressed="${k===tcat}">${l}</button>`).join('')}</div><p class="lcount" id="tcount" role="status"></p><ul class="tplgrid" id="tplGallery"></ul>`;
  const L=$("#tplGallery"),items=tplList().filter(x=>tcat==='all'||x.cat===tcat);$('#tcount').textContent=items.length+' template'+(items.length===1?'':'s')+' · each one is a complete, editable site';
  items.forEach(({t,i})=>{const li=mk('li','tplcard');const b=mk('button','tplbtn');b.type='button';b.dataset.n=i;b.setAttribute('aria-label',t.name+', '+t.pages+' pages. Preview');
-  const th=mk('span','tplth');th.append(thumbImg(t,'home'));b.append(th);b.insertAdjacentHTML('beforeend',`<b>${esc(t.name)}</b><small>${t.pages} pages · ${esc(PB.styles.has(t.style)?PB.styles.get(t.style).name:t.style)}</small><span class="tpld">${esc(t.desc)}</span>`);
+  const th=mk('span','tplth');th.append(thumbImg(t,'home'));b.append(th);b.insertAdjacentHTML('beforeend',`<b>${esc(t.name)}</b><small>${t.pages} page${t.pages>1?'s':''} · ${esc(PB.styles.has(t.style)?PB.styles.get(t.style).name:t.style)}</small><span class="tpld">${esc(t.desc)}</span>`);
   b.onclick=()=>{tsel=i;tpage=0;view='detail';draw()};li.append(b);L.append(li)});
  $$('#tcats .chip').forEach(b=>b.onclick=()=>{tcat=b.dataset.c;drawGallery(body);const n=$(`#tcats [data-c="${b.dataset.c}"]`);n&&n.focus()})}
 function drawDetail(body){const t=PB.templates[tsel];if(!t){view='templates';return draw()}let raw;try{raw=t.make()}catch(e){raw={pages:[{id:'home',name:'Home',blocks:[]}]}}
@@ -100,16 +100,32 @@ function drawAI(body){body.innerHTML=`<div class="staiw"><p class="aistate" id="
    A.store.pages[ns.id]=ns;A.switchTo(ns.id);dlg.close();A.showPane('preview');A.say(A.aiOn?'Site ready. Your other sites are untouched.':'Built from the closest template. Edit anything on the canvas.')}
   catch(e){$('#stOut').textContent=(e&&e.message)||'Something went wrong. Try a more specific brief.';go.disabled=false}}}
 
-/* brand kit from the Brand generator */
-function drawBrand(body){const d=tryJSON('brandgen-draft-v1',null),M=d&&d.modes&&d.modes[d.mode||'light'];
- if(!d||!M){body.innerHTML=`<div class="staiw"><p>No brand kit found in this browser yet.</p><p class="hint">Make one in the Brand generator, then press “Use in the site builder” there, or come back here to pick it up.</p><div class="btools"><a class="btn primary" href="brand-generator.html">Open the Brand generator</a></div></div>`;return}
- body.innerHTML=`<div class="staiw"><div class="brandrow"><span class="sw">${[M.bg,M.surface,M.ink,M.primary].filter(Boolean).map(c=>`<i style="background:${esc(c)}"></i>`).join('')}</span><span><b>${esc(d.name||'Your brand')}</b><small>${esc((d.type&&d.type.head)||'')}${d.type&&d.type.body?' + '+esc(d.type.body):''}</small></span></div><p class="hint">Creates a new site with these colours, corners and fonts, on top of a starter layout you can change.</p><div class="btools"><button type="button" class="btn primary" id="brGo">Create the site</button><a class="btn" href="brand-generator.html">Open the Brand generator</a></div></div>`;
- $('#brGo').onclick=()=>{const ok=f=>/^[\w ]{2,40}$/.test(f||'')?f:'';const t=PB.templates.find(x=>x.id==='portfolio')||PB.templates[0],raw=t.make();raw.name=d.name||'My brand';raw.brand=(d.name||raw.brand||'Brand').slice(0,40);
-  const p=A.S.normalize(raw,A.def);p.tokens={bg:M.bg,surface:M.surface,ink:M.ink,accent:M.primary,...(d.radius!=null?{radius:Math.min(40,d.radius)}:{}),...(ok(d.type&&d.type.head)?{fontHead:d.type.head}:{}),...(ok(d.type&&d.type.body)?{fontBody:d.type.body}:{})};
-  A.store.pages[p.id]=p;A.switchTo(p.id);dlg.close();A.showPane('preview');A.say('New site with your brand')}}
+/* brand kit from the Brand generator: a populated multi-page site in the brand's colours, fonts, corners and mark */
+const HK='atlas-pb-brand-handoff';
+const KW={portfolio:/portfolio|designer|freelanc|illustrat|artist|architect|creative|developer/,agency:/agency|consult|b2b|marketing|digital|branding|product team/,saas:/saas|software|platform|dashboard|\bapi\b|startup|analytics|automation|tool/,restaurant:/restaurant|bistro|dinner|supper|kitchen|chef|pub\b|diner/,photographer:/photograph|camera|portrait|wedding photo/,event:/event|festival|meetup|summit|gig|concert|tickets/,blog:/\bblog\b|writer|journal|essays|notes|newsletter/,shop:/\bshop\b|\bstore\b|boutique|handmade|e-?commerce|gifts?|products?/,nonprofit:/charity|non-?profit|volunteer|foundation|donat|community group/,course:/course|teach|lessons?|learn|tutor|academy|school|training|workshop/,app:/\bapp\b|mobile|ios|android|download|fintech/,studio:/studio|maker|craft|ceramic|pottery|paper|atelier/,coffee:/coffee|caf[eé]|bakery|bread|pastry|tea\b|roast/,fitness:/fitness|gym|yoga|pilates|training|wellness|climb|run club/,law:/law|legal|solicitor|accountan|advis|consultancy|finance firm/,realestate:/real estate|estate agent|property|homes?\b|letting|architect/,wedding:/wedding|bride|celebrant|florist|ceremony/,podcast:/podcast|creator|show\b|episode|youtuber|newsletter/,docs:/documentation|docs\b|help centre|developer|api|support/,conference:/conference|summit|speakers|agenda|congress/};
+function suggest(h){const t=[h.name,h.desc,h.audience,h.tagline,(h.feels||[]).join(' ')].join(' ').toLowerCase();return PB.templates.map((tp,i)=>{const re=KW[tp.id];const n=re?(t.match(new RegExp(re.source,'g'))||[]).length:0;return {i,n,id:tp.id}}).sort((a,b)=>b.n-a.n||a.i-b.i)}
+function createBrandSite(h,i){const t=PB.templates[i],raw=t.make(),old=raw.brand,nm=String(h.name||'My brand').replace(/["\\]/g,'').slice(0,40)||'My brand';let json=JSON.stringify(raw);if(old)json=json.split(old).join(nm);const x=JSON.parse(json);
+ x.name=nm;x.brand=nm;const tag=String(h.tagline||'').trim(),HERO=new Set(['hero-image','hero-center','hero-film','hero-split','hero-3d','hero-video','hero-kinetic','page-head']);
+ const hero=x.pages[0].blocks.find(b=>b.vals&&'heading' in b.vals&&HERO.has(b.id));if(hero&&tag&&tag.length<=72)hero.vals.heading=tag;
+ const intro=x.pages[0].blocks.find(b=>b.vals&&'intro' in b.vals&&HERO.has(b.id));if(intro&&h.desc)intro.vals.intro=String(h.desc).slice(0,200);
+ x.settings=Object.assign({},x.settings,{description:String(h.desc||tag).slice(0,300)});if(x.footer&&x.footer[0]&&x.footer[0].vals&&tag)x.footer[0].vals.line=tag.slice(0,80);
+ const T=h.t||{};x.tokens={bg:T.bg,surface:T.surface,ink:T.ink,accent:T.primary,...(h.radius!=null?{radius:h.radius}:{}),...(h.head?{fontHead:h.head}:{}),...(h.body?{fontBody:h.body}:{})};if(h.mark)x.logo=h.mark;
+ const ns=A.S.normalize(x,A.def);ns.name=nm;A.store.pages[ns.id]=ns;A.switchTo(ns.id);try{localStorage.removeItem(HK)}catch(e){}return ns}
+let brandSel=null;
+function drawBrand(body){const h=tryJSON(HK,null);
+ if(!h||!h.t){body.innerHTML=`<div class="staiw"><p>No brand kit is waiting in this browser.</p><p class="hint">Make one in the Brand generator, then press “Use in the site builder” there. You will pick a template here and get a populated site in your colours, fonts and mark.</p><div class="btools"><a class="btn primary" href="brand-generator.html">Open the Brand generator</a></div></div>`;return}
+ const sg=suggest(h);if(brandSel==null)brandSel=sg[0].i;
+ body.innerHTML=`<div class="brandrow"><span class="sw">${[h.t.bg,h.t.surface,h.t.ink,h.t.primary].map(c=>`<i style="background:${esc(c)}"></i>`).join('')}</span>${h.mark?`<img src="${esc(h.mark)}" alt="" width="36" height="36" style="background:${esc(h.t.bg)};border-radius:8px;padding:4px">`:''}<span><b>${esc(h.name)}</b><small>${esc(h.head||'')}${h.body?' + '+esc(h.body):''} · ${esc((h.feels||[]).join(', '))}</small></span></div>
+  <p class="hint" style="margin:10px 0">Pick the kind of site you need. It becomes a complete multi-page site using ${esc(h.name)}’s name, tagline, colours, corners, fonts and mark. ${sg[0].n?'We suggest <b>'+esc(PB.templates[sg[0].i].name)+'</b> from your description.':'Nothing in your description points to one type, so start with any of these.'}</p>
+  <ul class="tplgrid brandgrid" id="brandGrid">${PB.templates.map((tp,i)=>`<li class="tplcard"><button type="button" class="tplbtn${i===brandSel?' sel':''}" data-i="${i}" aria-pressed="${i===brandSel}"><span class="tplth"></span><b>${esc(tp.name)}${i===sg[0].i&&sg[0].n?' <em class="sugg">Suggested</em>':''}</b><small>${tp.pages} page${tp.pages>1?'s':''}</small></button></li>`).join('')}</ul>
+  <div class="btools" style="margin-top:14px"><button type="button" class="btn primary" id="brGo">Build the site</button><a class="btn" href="brand-generator.html">Back to the Brand generator</a></div>`;
+ body.querySelectorAll('#brandGrid .tplbtn').forEach(b=>{const tp=PB.templates[+b.dataset.i],th=b.querySelector('.tplth');th.append(thumbImg(tp,tp.pages&&'home'));b.onclick=()=>{brandSel=+b.dataset.i;body.querySelectorAll('#brandGrid .tplbtn').forEach(x=>{x.classList.toggle('sel',x===b);x.setAttribute('aria-pressed',x===b)})}});
+ $('#brGo').onclick=()=>{createBrandSite(h,brandSel);brandSel=null;dlg.close();A.showPane('preview');A.say('Built a site for '+h.name+'. Edit anything on the canvas.')}}
+UX.createBrandSite=createBrandSite;UX.suggest=suggest;
 
 /* first run: a start screen for visitors with no saved site */
-if(A.first&&!/[?&](site|nostart)=?/.test(location.search))setTimeout(()=>openStart('home'),50);
+if(/[?&]brand=1/.test(location.search)&&tryJSON(HK,null))setTimeout(()=>openStart('brand'),50);
+else if(A.first&&!/[?&](site|nostart)=?/.test(location.search))setTimeout(()=>openStart('home'),50);
 
 /* ---------- version history: last 20 autosaves per site, kept in IndexedDB (no size cap) ---------- */
 const MAXV=20;

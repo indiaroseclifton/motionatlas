@@ -45,7 +45,7 @@ const TEMPLATES=[
 /* A saved item is a whole site (see site.js). `page` below is a view onto it: site-wide keys (brand, style, pair,
    menu, settings, header, footer) read and write the site, every other key (blocks, title, desc) the page being edited. */
 let store,site,curId,open=null,hist=[],fut=[],lastSnap='';
-const GK=new Set(['navSeed','id','name','brand','style','pair','updated','home','pages','header','footer','navAuto','nav','settings','tokens']);
+const GK=new Set(['logo','navSeed','id','name','brand','style','pair','updated','home','pages','header','footer','navAuto','nav','settings','tokens']);
 const curPage=()=>site.pages.find(p=>p.id===curId)||site.pages[0];
 const page=new Proxy({},{get:(_,k)=>GK.has(k)?site[k]:curPage()[k],set:(_,k,v)=>{(GK.has(k)?site:curPage())[k]=v;return true}});
 function blank(){return S.normalize({name:'Untitled site',brand:'Brand',style:'studio',blocks:[]},def)}
@@ -83,7 +83,7 @@ const tick=c=>/^(yes|y|true|✓|✔|1|included)$/i.test(String(c).trim())?`<span
 function fill(str,blk,A){const d=def(blk.id),keys=new Set(fieldsOf(d).map(f=>f.k));
  str=str.replace(/\{\{each:(\w+)\}\}([\s\S]*?)\{\{\/each\}\}/g,(m,k,body)=>rows(val(blk,k)).map((cells,i)=>body.replace(/\{\{n\}\}|\{\{(g|i|t|list)?(\d+)\}\}/g,(mm,kind,num)=>{if(mm==='{{n}}')return String(i+1);const c=cells[+num]||'';
   if(!kind)return esc(c);if(kind==='g')return glyph(c);if(kind==='i')return esc(initials(c));if(kind==='t')return tick(c);return c.split(';').map(x=>x.trim()).filter(Boolean).map(x=>'<li>'+esc(x)+'</li>').join('')})).join(''));
- return str.replace(/\{\{(\w+)\}\}/g,(m,k,off)=>{if(k==='A')return A;if(k==='brand')return esc(page.brand||'Brand');if(k==='formAction')return esc(CTX&&CTX.mode==='preview'?'#':(site.settings.formAction||'#'));if(k==='home')return esc(CTX?CTX.pageHref(S.pageOf(site,site.home)):'#');
+ return str.replace(/\{\{(\w+)\}\}/g,(m,k,off)=>{if(k==='A')return A;if(k==='brand'){const pre=str.slice(0,off);if(site.logo&&pre.lastIndexOf('<')<=pre.lastIndexOf('>'))return `<img class="pb-logo" src="${esc(site.logo)}" alt="" style="height:1.1em;width:auto;vertical-align:-.18em;margin-right:.45em">`+esc(page.brand||'Brand');return esc(page.brand||'Brand')}if(k==='formAction')return esc(CTX&&CTX.mode==='preview'?'#':(site.settings.formAction||'#'));if(k==='home')return esc(CTX?CTX.pageHref(S.pageOf(site,site.home)):'#');
   if(k==='menu'||k==='menuL'||k==='menuR'){const it=S.menu(site),h=Math.ceil(it.length/2),sub=k==='menu'?it:k==='menuL'?it.slice(0,h):it.slice(h);return CTX?S.menuHTML(site,sub,CTX,esc):''}
   if(!keys.has(k))return m;const f=fieldsOf(d).find(f=>f.k===k);if(f.type==='link')return esc(CTX?S.href(site,val(blk,k),CTX):'#');if(f.type==='image'&&/^user:[\w-]+$/.test(val(blk,k)))return '\u0002U:'+val(blk,k).slice(5)+'\u0002';
   if(f.type==='text'||f.type==='long'){const pre=str.slice(0,off),inTag=pre.lastIndexOf('<')>pre.lastIndexOf('>');return inTag?esc(val(blk,k)):richOf(blk,k,val(blk,k),pre)}
