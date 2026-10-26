@@ -43,6 +43,10 @@
    <div class="gchips" id="skinds" role="group" aria-label="Style source" style="margin-top:8px"></div>
    <p class="lcount" id="styleCount"></p><ul id="styleList"></ul>
   </section>
+  <section class="rpanel" id="rp-check" role="tabpanel" aria-labelledby="rt-check" hidden>
+   <div class="sec"><p class="hint">Scans the page you are editing for low contrast, heading order, missing image descriptions, unnamed links and unlabelled form fields.</p><button class="btn primary" id="chkRun" type="button">Check this page</button><p id="chkSum" role="status"></p></div>
+   <ul id="chkList" class="chkl"></ul>
+  </section>
   <section class="rpanel" id="rp-ai" role="tabpanel" aria-labelledby="rt-ai" hidden>
    <div class="sec"><p class="aistate" id="aiState" role="status">Checking…</p>
     <div class="f"><label for="aiBrief">Describe the page</label><textarea id="aiBrief" rows="5" maxlength="1300" placeholder="A landing page for a weekend pottery school in Leeds: classes, prices, the teachers, a gallery and a booking form. Warm and calm."></textarea></div>

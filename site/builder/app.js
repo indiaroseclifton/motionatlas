@@ -205,6 +205,9 @@ function settingsUI(blk){const det=document.createElement('details');det.classNa
   box.append(w);
   const oid='f'+(++fid),ow=document.createElement('div');ow.className='f';ow.innerHTML=`<label for="${oid}">Tint over the background: <output>${S0.ov>=0&&S0.ov!=null?S0.ov:55}%</output></label><input id="${oid}" type="range" min="0" max="90" step="5" value="${S0.ov>=0&&S0.ov!=null?S0.ov:55}">`;const r=ow.querySelector('input');r.oninput=()=>{ow.querySelector('output').textContent=r.value+'%'};r.onchange=()=>{blk.set=blk.set||{};blk.set.ov=+r.value;commit();render()};box.append(ow)}
  const hs=document.createElement('fieldset');hs.className='hidef';hs.innerHTML='<legend>Hide on</legend>';[['d','Desktop'],['t','Tablet'],['p','Phone']].forEach(([k,t])=>{const lb=document.createElement('label');lb.className='check';const c=document.createElement('input');c.type='checkbox';c.checked=!!(S0.hide&&S0.hide[k]);c.onchange=()=>{blk.set=blk.set||{};const h=Object.assign({},blk.set.hide);if(c.checked)h[k]=1;else delete h[k];if(Object.keys(h).length)blk.set.hide=h;else delete blk.set.hide;if(!Object.keys(blk.set).length)delete blk.set;commit();render()};lb.append(c,' '+t);hs.append(lb)});box.append(hs);
+ const bpd=document.createElement('details');bpd.className='setd bpd';if(S0.t||S0.p)bpd.open=true;bpd.innerHTML='<summary>Tablet and phone tweaks</summary>';const bpb=document.createElement('div');bpb.className='setb';bpd.append(bpb);
+ [['t','Tablet (641 to 1024 px)'],['p','Phone (up to 640 px)']].forEach(([bp,title])=>{const h=document.createElement('p');h.className='hint';h.textContent=title;bpb.append(h);
+  [['Spacing',PB.sec.SPACING,'pad'],['Width',PB.sec.WIDTH,'width'],['Alignment',PB.sec.ALIGN,'align']].forEach(([label,opts,key])=>{const id='f'+(++fid),w=document.createElement('div');w.className='f';const l=document.createElement('label');l.htmlFor=id;l.textContent=label;const sl=document.createElement('select');sl.id=id;[['','Same as desktop'],...opts.filter(o=>o[0]!==''&&!(key==='pad'&&false))].forEach(([v,t])=>{const o=document.createElement('option');o.value=v;o.textContent=t;sl.append(o)});sl.value=(S0[bp]||{})[key]||'';sl.onchange=()=>{blk.set=blk.set||{};const x=Object.assign({},blk.set[bp]);if(sl.value)x[key]=sl.value;else delete x[key];if(Object.keys(x).length)blk.set[bp]=x;else delete blk.set[bp];if(!Object.keys(blk.set).length)delete blk.set;commit();render()};w.append(l,sl);bpb.append(w)})});box.append(bpd);
  sel('Reveal animation',PB.sec.ANIM,'anim');
  const rs=document.createElement('button');rs.type='button';rs.className='btn small';rs.textContent='Reset settings';rs.onclick=()=>{delete blk.set;commit();outline();render()};box.append(rs);return det}
 
@@ -399,6 +402,21 @@ function bgThumbsLater(){if(!PB.bgFrag||!PB.src.BGA())return;const todo=$$('#lib
  let i=0;const step=()=>{const end=performance.now()+12;while(i<todo.length&&performance.now()<end){const b=todo[i++],p=PB.src.BGA().ALL.find(x=>x.key===b.dataset.bg);if(p){try{bgThumbs[p.key]=bgR(p);b.style.cssText=`background-image:url(${bgThumbs[p.key]});background-size:cover`}catch(e){}}}if(i<todo.length)requestAnimationFrame(step)};requestAnimationFrame(step)}
 $('#libSearch').oninput=()=>{clearTimeout(library.t);library.t=setTimeout(library,120)};
 
+/* ---------- accessibility checks ---------- */
+let checkTimer=0,lastIssues=null;
+function runCheck(){$('#chkList').innerHTML='<li class="hint">Checking this page…</li>';toAgent({pb:'check'})}
+function chkDraw(issues){lastIssues=issues;const L=$('#chkList'),groups={contrast:'Colour contrast',heading:'Headings',alt:'Image descriptions',link:'Links and buttons',form:'Form fields'};
+ $('#chkSum').textContent=issues.length?issues.length+' thing'+(issues.length>1?'s':'')+' to fix on “'+curPage().name+'”':'No problems found on “'+curPage().name+'”. Run it again on every page.';
+ L.innerHTML='';Object.keys(groups).forEach(t=>{const items=issues.filter(i=>i.type===t);if(!items.length)return;const h=document.createElement('li');h.className='grp';h.innerHTML=`<b>${groups[t]}</b><small>${items.length}</small>`;L.append(h);
+  items.forEach(it=>{const li=document.createElement('li');li.className='chk';const m=document.createElement('p');m.textContent=it.msg+(it.name?' ('+it.name+')':'');li.append(m);const act=document.createElement('div');act.className='btools';
+   if(it.uid){const b=document.createElement('button');b.type='button';b.className='btn small';b.textContent='Show';b.onclick=()=>{open=it.uid;csel={uid:it.uid,kind:'section'};showPane('preview');toAgent({pb:'scrollTo',uid:it.uid,smooth:true});toAgent({pb:'reselect',uid:it.uid,kind:'section'});outline()};act.append(b)}
+   if(it.type==='contrast'){const b=document.createElement('button');b.type='button';b.className='btn small primary';b.textContent='Fix site colours';b.onclick=fixContrast;act.append(b)}
+   if(it.type==='alt'){const f=findBlk(it.uid),d=f&&def(f.blk.id),has=d&&fieldsOf(d).some(x=>x.k==='alt');if(has){const i=document.createElement('input');i.placeholder='Describe the image';i.setAttribute('aria-label','Alt text');const b=document.createElement('button');b.type='button';b.className='btn small primary';b.textContent='Save';b.onclick=()=>{if(!i.value.trim())return i.focus();f.blk.vals.alt=i.value.trim();commit();render();say('Alt text saved');setTimeout(runCheck,900)};act.append(i,b)}}
+   li.append(act);L.append(li)})})}
+function fixContrast(){const cur=PB.styles.get(page.style),sw=cur.sw||[],tk=Object.assign({},site.tokens),C=PB.color;const bg=tk.bg||sw[0],surf=tk.surface||sw[1]||bg,ink=tk.ink||sw[2],acc=tk.accent||sw[3];
+ tk.ink=C.ensure(ink,[bg,surf],7);tk.accent=acc;site.tokens=tk;commit();render();tokensUI();say('Text colours adjusted to meet AA');setTimeout(runCheck,900)}
+addEventListener('message',e=>{if(e.source===pv.contentWindow&&e.data&&e.data.pb==='checked'&&rtabCur==='check')chkDraw(e.data.issues||[])});
+$('#chkRun').onclick=runCheck;
 /* ---------- site tokens ---------- */
 function tokensUI(){const box=$('#tkBox');if(!box)return;const cur=PB.styles.get(page.style),sw=cur.sw||[],tk=site.tokens||{};
  const eff={bg:tk.bg||sw[0],surface:tk.surface||sw[1],ink:tk.ink||sw[2],accent:tk.accent||sw[3]};const C=PB.color;
@@ -510,8 +528,8 @@ function switchTo(id){clearTimeout(typing);commit();site=store.pages[id];store.c
 $('#newSite').onclick=()=>{const p=blank();store.pages[p.id]=p;switchTo(p.id);say('New blank site');showPane('lib')};
 
 /* ---------- right panel tabs, panes ---------- */
-const RT=[['page','Page'],['pages','Pages'],['site','Site'],['style','Style'],['ai','AI']];let rtabCur=RT.some(t=>t[0]===ui.rtab)?ui.rtab:'page';
-function rtab(k){rtabCur=k;ui.rtab=k;saveUI();$$('#rtabs [role=tab]').forEach(b=>{const on=b.dataset.t===k;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1});$$('.rpanel').forEach(p=>p.hidden=p.id!=='rp-'+k);if(k==='style')styles();if(k==='pages')pagesPanel();if(k==='site')sitePanel();if(k==='ai')aiStatus()}
+const RT=[['page','Page'],['pages','Pages'],['site','Site'],['style','Style'],['check','Check'],['ai','AI']];let rtabCur=RT.some(t=>t[0]===ui.rtab)?ui.rtab:'page';
+function rtab(k){rtabCur=k;ui.rtab=k;saveUI();$$('#rtabs [role=tab]').forEach(b=>{const on=b.dataset.t===k;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1});$$('.rpanel').forEach(p=>p.hidden=p.id!=='rp-'+k);if(k==='style')styles();if(k==='pages')pagesPanel();if(k==='site')sitePanel();if(k==='check')runCheck();if(k==='ai')aiStatus()}
 $('#rtabs').innerHTML=RT.map(([k,l])=>`<button role="tab" type="button" id="rt-${k}" data-t="${k}" aria-controls="rp-${k}">${l}</button>`).join('');
 $$('#rtabs [role=tab]').forEach((b,i,all)=>{b.onclick=()=>rtab(b.dataset.t);b.onkeydown=e=>{const n=all.length;let j=null;if(e.key==='ArrowRight')j=(i+1)%n;if(e.key==='ArrowLeft')j=(i-1+n)%n;if(j!=null){e.preventDefault();rtab(all[j].dataset.t);all[j].focus()}}});
 function showPane(k){document.body.dataset.pane=k;$$('#panes button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.p===k))}

@@ -168,7 +168,7 @@ const waitPv = pg => pg.waitForTimeout(700);
   ok((await fr.locator('a.btn[href="https://example.com/book"]').count()) >= 1, 'button can link to a web address');
   // section settings: hide on phone + accent background
   await pg.click('#cvTb [aria-label="Section settings and words"]'); await pg.waitForTimeout(300);
-  await pg.locator('#ol .blk.open details.setd summary').click();
+  await pg.locator('#ol .blk.open details.setd summary').first().click();
   await pg.locator('#ol .blk.open .setb select').nth(3).selectOption('accent'); await waitPv(pg);
   ok((await fr.locator('.pb-in').count()) === 1, 'accent background wraps the section in a re-themed container');
   await pg.locator('#ol .blk.open .hidef input').nth(2).check(); await waitPv(pg);
@@ -220,6 +220,28 @@ const waitPv = pg => pg.waitForTimeout(700);
   const css = fs.readFileSync(path.join(out, 'assets/site.css'), 'utf8');
   ok(/--accent:#ff0066/i.test(css) && /border-radius:999px!important/.test(css), 'tokens are in the exported CSS');
   await pg.click('#tkReset'); await waitPv(pg); ok(!(await site(pg)).tokens, 'reset clears the tokens');
+  await ctx.close();
+}
+
+// ---- 1f. accessibility checks and per-breakpoint tweaks
+{
+  const { ctx, pg } = await open();
+  await pg.waitForTimeout(2500);
+  await pg.click('#libSearch'); await pg.fill('#libSearch', 'Full-width image'); await pg.waitForTimeout(400); await pg.click('#libList .lc .add'); await waitPv(pg);
+  if (!(await pg.getByLabel('Image description', { exact: true }).count())) await pg.locator('#ol .blk', { hasText: 'Full-width image' }).locator('.bname').click(); await pg.getByLabel('Image description', { exact: true }).first().fill(''); await waitPv(pg);
+  await pg.click('#rt-check'); await pg.waitForTimeout(1200);
+  ok((await pg.textContent('#chkSum')).length > 0 && await pg.locator('#chkList .chk').count() >= 1, 'check lists problems with a fix list');
+  ok(await pg.locator('#chkList .chk', { hasText: 'alt text' }).count() >= 1, 'missing alt text is reported');
+  const n0 = await pg.locator('#chkList .chk', { hasText: 'alt text' }).count();
+  await pg.locator('#chkList .chk:has(input)').first().locator('input').fill('A bowl on a table'); await pg.locator('#chkList .chk:has(input)').first().locator('button', { hasText: 'Save' }).click(); await pg.waitForTimeout(2500);
+  ok(await pg.locator('#chkList .chk', { hasText: 'alt text' }).count() === n0 - 1, 'saving alt text clears that issue');
+  // phone tweak
+  await pg.click('#rt-page'); await pg.locator('#ol .blk .bname').nth(2).click();
+  await pg.locator('#ol .blk.open details.setd summary').first().click(); await pg.locator('#ol .blk.open details.bpd summary').click();
+  await pg.locator('#ol .blk.open details.bpd select').nth(5).selectOption('center'); await waitPv(pg);
+  const dlp = pg.waitForEvent('download'); await pg.click('#exportMenu summary'); await pg.click('#dlZip'); const d = await dlp;
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'sb-zip4-')); const zf = path.join(dir, 's.zip'); await d.saveAs(zf); const out = path.join(dir, 'x'); fs.mkdirSync(out); execFileSync('unzip', ['-q', zf, '-d', out]);
+  ok(/@media \(max-width:640px\)\{#\w+\{text-align:center\}/.test(fs.readFileSync(path.join(out, 'assets/site.css'), 'utf8')), 'phone-only alignment is a media query in the export');
   await ctx.close();
 }
 
