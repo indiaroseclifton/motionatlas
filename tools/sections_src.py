@@ -394,7 +394,7 @@ s.parentNode.addEventListener('pointerleave',()=>{r.style.transform=''});''',
 .num{font-size:13px;font-weight:600;color:var(--accent-ink,var(--accent))}
 @media (max-width:760px){.row{grid-template-columns:1fr}.row:nth-of-type(even) .pic{order:0}}
 ''' + REVEAL_CSS,
-  '<section class="wrap fr"><div><p class="k">{{kicker}}</p><h2 class="h">{{heading}}</h2></div>{{each:rows}}<div class="row" data-rv><div class="pic"><img src="{{A}}{{2}}" alt="" loading="lazy"></div><div><span class="num">0{{n}}</span><h3>{{0}}</h3><p>{{1}}</p></div></div>{{/each}}</section>',
+  '<section class="wrap fr"><div><p class="k">{{kicker}}</p><h2 class="h">{{heading}}</h2></div>{{each:rows}}<div class="row" data-rv><div class="pic"><img src="{{A}}{{2}}" alt="{{0}}" loading="lazy"></div><div><span class="num">0{{n}}</span><h3>{{0}}</h3><p>{{1}}</p></div></div>{{/each}}</section>',
   REVEAL_JS,
   [('kicker', 'Kicker', 'text', 'How it’s made'), ('heading', 'Headline', 'text', 'From a sketch to your shelf in three weeks.'),
    ('rows', 'Rows (title | text | image)', 'list', 'Drawn by hand | Every piece starts as a pencil drawing at full size, pinned to the studio wall for a few days before we commit. | shelf/sumi.webp\nThrown and trimmed | Bodies are thrown on the wheel, left to firm overnight, then trimmed so the foot and rim feel right in the hand. | shelf/sand.webp\nGlazed and fired twice | A bisque firing, then glaze and a slow second firing to 1260°C. The kiln decides the last ten per cent. | shelf/amber.webp')],
@@ -542,7 +542,7 @@ d.querySelector('button').onclick=()=>d.close();d.onclick=e=>{if(e.target===d)d.
 a.card:hover img{transform:scale(1.04)}
 .meta{display:flex;gap:10px;font-size:13px;color:var(--mute)}.meta b{color:var(--accent-ink,var(--accent));font-weight:600}
 .bl h3{margin:0;font-size:21px;line-height:1.25}a.card:hover h3{text-decoration:underline;text-underline-offset:4px}''',
-  '<section class="wrap bl"><div class="top"><div><p class="k">{{kicker}}</p><h2 class="h">{{heading}}</h2></div><a class="btn" href="#">{{button}}</a></div><ul>{{each:posts}}<li><a class="card" href="#"><span class="pic"><img src="{{A}}{{3}}" alt="" loading="lazy"></span><span class="meta"><b>{{0}}</b><span>{{1}}</span></span><h3>{{2}}</h3></a></li>{{/each}}</ul></section>', NOHASH_M,
+  '<section class="wrap bl"><div class="top"><div><p class="k">{{kicker}}</p><h2 class="h">{{heading}}</h2></div><a class="btn" href="#">{{button}}</a></div><ul>{{each:posts}}<li><a class="card" href="#"><span class="pic"><img src="{{A}}{{3}}" alt="{{2}}" loading="lazy"></span><span class="meta"><b>{{0}}</b><span>{{1}}</span></span><h3>{{2}}</h3></a></li>{{/each}}</ul></section>', NOHASH_M,
   [('kicker', 'Kicker', 'text', 'Journal'), ('heading', 'Headline', 'text', 'Notes from the kitchen.'), ('button', 'Button', 'text', 'All articles'),
    ('posts', 'Posts (tag | date | title | image)', 'list', 'Technique | 12 March | Why we rest every steak for exactly as long as it cooked | films/smoke-plume.jpg\nSeasonal | 4 March | Forced rhubarb, and four things to do with it this month | films/pigment-bloom.jpg\nBehind the scenes | 26 Feb | How we film steam without a smoke machine | films/light-threads.jpg')],
   'A section header with a button on the right, then a responsive row of article cards: a 16:10 image that zooms slightly on hover, an accent tag and a date, and a two-line headline that underlines on hover.'),
@@ -644,7 +644,7 @@ f.onsubmit=e=>{e.preventDefault();const ok=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(i.v
 [role=tabpanel] p{margin:0;color:var(--mute);font-size:17px}
 .pic{aspect-ratio:4/3;border-radius:var(--radius);overflow:hidden;background:var(--bg)}.pic img{width:100%;height:100%;object-fit:cover;display:block}
 @media (max-width:760px){[role=tabpanel]{grid-template-columns:1fr}}''',
-  '<section class="wrap tb"><p class="k">{{kicker}}</p><h2 class="h">{{heading}}</h2><div role="tablist" aria-label="{{heading}}">{{each:tabs}}<button role="tab" type="button">{{0}}</button>{{/each}}</div>{{each:tabs}}<div role="tabpanel" tabindex="0"><div><h3>{{1}}</h3><p>{{2}}</p></div><div class="pic"><img src="{{A}}{{3}}" alt="" loading="lazy"></div></div>{{/each}}</section>',
+  '<section class="wrap tb"><p class="k">{{kicker}}</p><h2 class="h">{{heading}}</h2><div role="tablist" aria-label="{{heading}}">{{each:tabs}}<button role="tab" type="button">{{0}}</button>{{/each}}</div>{{each:tabs}}<div role="tabpanel" tabindex="0"><div><h3>{{1}}</h3><p>{{2}}</p></div><div class="pic"><img src="{{A}}{{3}}" alt="{{1}}" loading="lazy"></div></div>{{/each}}</section>',
   r'''const T=[...root.querySelectorAll('[role=tab]')],P=[...root.querySelectorAll('[role=tabpanel]')];const id=root.id||'tb';
 T.forEach((t,i)=>{t.id=id+'-t'+i;P[i].id=id+'-p'+i;t.setAttribute('aria-controls',P[i].id);P[i].setAttribute('aria-labelledby',t.id)});
 const pick=(i,f)=>{T.forEach((t,k)=>{t.setAttribute('aria-selected',k===i);t.tabIndex=k===i?0:-1;P[k].hidden=k!==i});if(f)T[i].focus()};pick(0);
@@ -782,7 +782,7 @@ MORE += [
 .pg h2{font-size:clamp(34px,4.6vw,60px);margin:10px 0 30px;max-width:18ch}.pg ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px}
 .pc{display:grid;gap:8px;text-decoration:none;position:relative}.pc .pic{aspect-ratio:1;border-radius:var(--radius);overflow:hidden;background:var(--surface)}.pc img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s}.pc:hover img{transform:scale(1.05)}
 .pc .bd{position:absolute;left:10px;top:10px;background:var(--accent);color:var(--on-accent);border-radius:999px;font-size:12px;font-weight:600;padding:4px 10px}.pc .bd:empty{display:none}.pc b{font-size:17px}.pc .pr{color:var(--mute)}''',
-  '<section class="wrap pg"><p class="k">{{kicker}}</p><h2 class="h">{{heading}}</h2><ul>{{each:items}}<li><a class="pc" href="#"><span class="pic"><img src="{{A}}{{3}}" alt="" loading="lazy"></span><span class="bd">{{2}}</span><b>{{0}}</b><span class="pr">{{1}}</span></a></li>{{/each}}</ul></section>', NOHASH_M,
+  '<section class="wrap pg"><p class="k">{{kicker}}</p><h2 class="h">{{heading}}</h2><ul>{{each:items}}<li><a class="pc" href="#"><span class="pic"><img src="{{A}}{{3}}" alt="{{0}}" loading="lazy"></span><span class="bd">{{2}}</span><b>{{0}}</b><span class="pr">{{1}}</span></a></li>{{/each}}</ul></section>', NOHASH_M,
   [('kicker', 'Kicker', 'text', 'The shop'), ('heading', 'Headline', 'text', 'Made in small batches.'), ('items', 'Products (name | price | badge | image)', 'list', 'Paper bird, small | £48 | New | shelf/dove.webp\nOrigami fox | £62 |  | shelf/origami.webp\nNight owl print | £35 | Last few | shelf/owl.webp\nEmbroidered leaf | £54 |  | shelf/embroidery.webp\nSand drawing | £120 | Limited | shelf/sand.webp\nSoap film study | £40 |  | shelf/soap.webp')],
   'A shop grid: kicker and headline, then square product images with a hover zoom, an optional accent badge pill in the corner, the name and a muted price; each card is one link.'),
 

@@ -217,7 +217,7 @@ add({id:'conference',ctaLine:'Join 600 product people in Glasgow.',name:'Confere
   ['sec-faq',{kicker:'Questions',heading:'Before you buy.',intro:'Refunds, transfers and invoices.',button:'Ask us',qa:'Can I get a refund? | Yes, up to 30 days before the event.\nCan I transfer my ticket? | Yes; email us the new name.\nDo you offer invoices? | Yes, for any ticket, at checkout.'}]]}]});
 
 /* ---------- landing pages (one page each) ---------- */
-const LF=(brand,line)=>F('© 2027 '+brand,line,'Links','Privacy\nTerms','Contact','hello@example.com','','');
+const LF=(brand,line)=>F('© 2027 '+brand,line,'Legal','Privacy\nTerms','Contact','hello@example.com','More','Back to top');
 const L=(o,blocks)=>add({cat:'landing',cta:['Join','home'],header:null,pages:[{id:'home',name:'Home',title:o.title||o.brand,desc:o.siteDesc,blocks}],footer:LF(o.brand,o.line||''),...o});
 
 L({id:'lp-waitlist',name:'Landing: waitlist',desc:'One page to collect sign-ups before you launch.',brand:'Orbit',style:'signal',siteDesc:'Orbit is a calendar that plans your week around the work that matters. Join the waitlist.',line:'A calmer calendar.'},[
