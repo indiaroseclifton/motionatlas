@@ -5,19 +5,21 @@
    diagram type each cluster uses are saved alongside it. */
 (()=>{
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const KIND_ORDER=['rect','decision','pill','data','io','sub','round','person','system','doc','note','worker','mod_internal','mod_external','mod_flow'];
+const KIND_ORDER=['rect','decision','pill','data','io','sub','round','doc','delay','manual','minput','display','offpage','person','system','note','worker','mod_internal','mod_external','mod_flow'];
 const SHAPE_FOR_KIND={rect:'rect',decision:'decision',pill:'pill',data:'data',io:'io',sub:'sub',round:'round'};
 const STATUSES=[['','No status'],['have','Have'],['partial','Partial'],['dont',"Don't have"],['accent','Key step']];
 const MODFIELDS=[['system','Connects to','e.g. Stripe, our CRM, a supplier'],['payload','What moves across','e.g. orders, invoices, stock counts'],['method','How it connects','',['','API','Webhook','File drop','Email','Manual','Database','Other']],['owner','Who owns it','Name or team'],['freq','How often','e.g. every order, nightly'],['creds','Where access is kept','Say where, never paste a key']];
 const MSTATUS=[['planned','Planned'],['building','Building'],['live','Live'],['broken','Broken']];
 const WSTATUS=[['idle','Idle'],['running','Running'],['paused','Paused'],['broken','Broken']];
 const TRIGGERS=[['','Not set'],['prev','When the step before it finishes'],['request','When a client request arrives'],['schedule','On a schedule'],['manual','When someone starts it']];
+const EDIRS=[['fwd','Arrow, one way'],['bi','Arrows both ways'],['o','Ends in a circle'],['x','Ends in a cross'],['none','Plain line']];
+const edir=e=>e.head&&!e.bi?e.head:e.bi?'bi':e.arrow===false?'none':'fwd';
 const MOD=navigator.platform&&/mac|iphone|ipad/i.test(navigator.platform)?'⌘':'Ctrl+';
 
 function create(host){
  const FE=window.FlowEngine,FP=window.FlowPresets;
  const st={pos:{},size:{},meta:{},cl:{},ct:{},frozen:false,pending:[]};
- let sel=new Set(),selEdge=null,primary=null,clip=null,pasteN=0;
+ let sel=new Set(),selEdge=null,primary=null,clip=null,pasteN=0,snapOn=false,guides=null;const GRID=24;
  let last=null,raf=0,drag=null,insp=null,menu=null,tap=null,press=null;
  const stage=host.stage,paper=host.paper,panel=host.panel;
  stage.tabIndex=0;
@@ -113,6 +115,7 @@ function create(host){
  function paintOverlay(tmp){const ov=paper.querySelector('.fc-ov');if(!ov||!last)return;const z=Math.max(.25,host.view().zoom),acc='#5B2DFF';let h='';
   const hr=Math.max(6,8/z);
   for(const id of sel){const n=last.g.nodes.get(id);if(!n)continue;h+=`<rect x="${n.x-5}" y="${n.y-5}" width="${n.w+10}" height="${n.h+10}" rx="${Math.max(8,(last.style.t.nodeRadius||8)+4)}" fill="none" stroke="${acc}" stroke-width="${2/Math.min(1,z)*.7+.6}" stroke-dasharray="5 4" pointer-events="none"/>`;}
+  if(guides&&drag)for(const gd of guides)h+=gd.v?`<line x1="${gd.at}" x2="${gd.at}" y1="${gd.a-16}" y2="${gd.b+16}" stroke="#E5398F" stroke-width="${1.2/Math.min(1,z)}" stroke-dasharray="4 3" pointer-events="none"/>`:`<line y1="${gd.at}" y2="${gd.at}" x1="${gd.a-16}" x2="${gd.b+16}" stroke="#E5398F" stroke-width="${1.2/Math.min(1,z)}" stroke-dasharray="4 3" pointer-events="none"/>`;
   if(!canEdit()){ov.innerHTML=h;return;}
   if(sel.size===1&&!selEdge&&!tmp){const n=last.g.nodes.get(primary);if(n){for(const [sd,x,y] of [['t',n.x+n.w/2,n.y-14],['b',n.x+n.w/2,n.y+n.h+14],['l',n.x-14,n.y+n.h/2],['r',n.x+n.w+14,n.y+n.h/2]])
    h+=`<g class="fc-handle" data-side="${sd}" data-nid="${esc(n.id)}"><title>Drag to another element to connect. Drop on empty space to add a new one.</title><circle cx="${x}" cy="${y}" r="${hr*1.9}" fill="transparent"/><circle cx="${x}" cy="${y}" r="${hr}" fill="#fff" stroke="${acc}" stroke-width="2"/><path d="M${x-hr*.45} ${y}H${x+hr*.45}M${x} ${y-hr*.45}V${y+hr*.45}" stroke="${acc}" stroke-width="1.6" stroke-linecap="round"/></g>`;}}
@@ -166,7 +169,7 @@ function create(host){
   return `<li class="ic" data-e="${esc(edgeKey(e))}"><button type="button" class="ic-head" data-act="e-open" aria-expanded="false">${dotHtml(H.s,H.tip)}<span class="ic-name">${esc(other.label)}</span><span class="ic-dir">${dir==='in'?'comes in':'goes out'}${e.label?' · '+esc(e.label):''}</span><span class="ic-caret" aria-hidden="true">▾</span></button>
    <div class="ic-more" hidden><label class="f">Label<input type="text" data-act="e-label" data-ek="${esc(edgeKey(e))}" value="${esc(e.label||'')}" placeholder="${dir==='out'?'Yes / No / what happens':'optional'}"></label>
     <div class="two"><label class="f">Line<select data-act="e-kind" data-ek="${esc(edgeKey(e))}">${[['solid','Solid'],['dashed','Dashed (optional)'],['thick','Thick (main path)']].map(([v,l])=>`<option value="${v}"${(e.kind||'solid')===v?' selected':''}>${l}</option>`).join('')}</select></label>
-    <label class="f">Direction<select data-act="e-dir" data-ek="${esc(edgeKey(e))}">${[['fwd','One way'],['bi','Both ways'],['none','No arrow']].map(([v,l])=>`<option value="${v}"${(e.bi?'bi':e.arrow===false?'none':'fwd')===v?' selected':''}>${l}</option>`).join('')}</select></label></div>
+    <label class="f">Direction<select data-act="e-dir" data-ek="${esc(edgeKey(e))}">${EDIRS.map(([v,l])=>`<option value="${v}"${edir(e)===v?' selected':''}>${l}</option>`).join('')}</select></label></div>
     <p class="note">${esc(H.tip||'')}</p>
     <div class="acts"><button type="button" class="b" data-act="e-swap" data-ek="${esc(edgeKey(e))}">Reverse</button><button type="button" class="b danger" data-act="e-del" data-ek="${esc(edgeKey(e))}">Disconnect</button></div></div></li>`;}
  function kickHtml(m){return `<section class="mod"><h3>Kick-start</h3><p class="sub">Say when this should start something. It is saved with the diagram; running it comes with the Workspace connection.</p>
@@ -205,7 +208,7 @@ function create(host){
    panel.innerHTML=`<header class="ph"><span class="pk"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 12h14M13 6l6 6-6 6"/></svg></span><div><b>Connection</b><small>${esc(a.label)} → ${esc(b.label)}</small></div><button type="button" class="x" data-act="close" aria-label="Close panel">×</button></header><div class="pb">
     <label class="f">Label<input type="text" data-act="e-label" data-ek="${ek}" value="${esc(e.label||'')}" placeholder="What happens along this line"></label>
     <div class="two"><label class="f">Line<select data-act="e-kind" data-ek="${ek}">${[['solid','Solid'],['dashed','Dashed (optional)'],['thick','Thick (main path)']].map(([v,l])=>`<option value="${v}"${(e.kind||'solid')===v?' selected':''}>${l}</option>`).join('')}</select></label>
-    <label class="f">Direction<select data-act="e-dir" data-ek="${ek}">${[['fwd','One way'],['bi','Both ways'],['none','No arrow']].map(([v,l])=>`<option value="${v}"${(e.bi?'bi':e.arrow===false?'none':'fwd')===v?' selected':''}>${l}</option>`).join('')}</select></label></div>
+    <label class="f">Direction<select data-act="e-dir" data-ek="${ek}">${EDIRS.map(([v,l])=>`<option value="${v}"${edir(e)===v?' selected':''}>${l}</option>`).join('')}</select></label></div>
     <section><h3>Ends</h3><ul class="ics"><li class="ic"><button type="button" class="ic-head" data-act="goto" data-id="${esc(a.id)}">${Ha?dotHtml(Ha.s,Ha.tip):''}<span class="ic-name">${esc(a.label)}</span><span class="ic-dir">starts here</span></button></li><li class="ic"><button type="button" class="ic-head" data-act="goto" data-id="${esc(b.id)}">${Hb?dotHtml(Hb.s,Hb.tip):''}<span class="ic-name">${esc(b.label)}</span><span class="ic-dir">ends here</span></button></li></ul></section>
     <div class="acts"><button type="button" class="b" data-act="e-swap" data-ek="${ek}">Reverse</button><button type="button" class="b danger" data-act="e-del" data-ek="${ek}">Disconnect</button></div></div>`;}
   else if(insp.kind==='group'){const grp=g.groups.find(x=>x.id===insp.id);if(!grp){close();return;}const mem=[...g.nodes.values()].filter(n=>n.group===grp.id);
@@ -245,7 +248,7 @@ function create(host){
    else if(a==='k-trigger'){pushUndo();metaOf(id).trigger=el.value;store();host.rerender(true);}
    else if(a.startsWith('m-')){pushUndo();metaOf(id)[a.slice(2)]=el.value;store();}}
   if(a==='e-kind'){mut(M=>{const i=edgeIndex(M,el.dataset.ek);if(i>=0)M.edges[i].kind=el.value;});after();}
-  if(a==='e-dir'){mut(M=>{const i=edgeIndex(M,el.dataset.ek);if(i>=0){M.edges[i].bi=el.value==='bi';M.edges[i].arrow=el.value!=='none';}});after();}});
+  if(a==='e-dir'){mut(M=>{const i=edgeIndex(M,el.dataset.ek);if(i>=0){const v=el.value,x=M.edges[i];x.bi=v==='bi';x.arrow=v!=='none';if(v==='o'||v==='x')x.head=v;else delete x.head;}});after();}});
  panel.addEventListener('click',ev=>{const b=ev.target.closest('[data-act]');if(!b||!insp)return;const a=b.dataset.act;
   if(a==='close'){close();paintOverlay();return;}
   if(a==='goto'){open('node',b.dataset.id);return;}
@@ -277,7 +280,27 @@ function create(host){
  function deleteSelection(){if(selEdge){const k=selEdge;selEdge=null;removeEdges([k]);close();host.rerender();return;}
   if(!sel.size)return;const ids=[...sel];mut(M=>{for(const id of ids)removeNode(M,id);});for(const id of ids){delete st.pos[id];delete st.meta[id];delete st.size[id];}store();sel=new Set();primary=null;close();host.rerender();}
  function selectAll(){if(!last)return;setSel([...last.g.nodes.keys()]);}
- function nudge(dx,dy){if(!sel.size)return;freeze();pushUndo('nudge');for(const id of sel){const p=posOf(id);if(p)st.pos[id]={x:p.x+dx,y:p.y+dy};}store();host.rerender(true);}
+ function nudge(dx,dy){if(!sel.size)return;freeze();pushUndo('nudge');for(const id of sel){const p=posOf(id);if(!p)continue;let x=p.x+dx,y=p.y+dy;if(snapOn&&Math.abs(dx||dy)>=GRID){if(dx)x=Math.round(x/GRID)*GRID;if(dy)y=Math.round(y/GRID)*GRID;}st.pos[id]={x,y};}store();host.rerender(true);}
+
+ /* ---------- arrange: align, distribute, group ---------- */
+ const boxOf=id=>{const n=last&&last.g.nodes.get(id),p=posOf(id);return n&&p?{id,x:p.x,y:p.y,w:n.w,h:n.h}:null;};
+ function align(how){const bs=[...sel].map(boxOf).filter(Boolean);if(bs.length<2){host.toast('Select two or more elements to align');return;}freeze();pushUndo();
+  const x0=Math.min(...bs.map(b=>b.x)),x1=Math.max(...bs.map(b=>b.x+b.w)),y0=Math.min(...bs.map(b=>b.y)),y1=Math.max(...bs.map(b=>b.y+b.h));
+  for(const b of bs){let {x,y}=b;if(how==='left')x=x0;else if(how==='right')x=x1-b.w;else if(how==='center')x=(x0+x1)/2-b.w/2;else if(how==='top')y=y0;else if(how==='bottom')y=y1-b.h;else if(how==='middle')y=(y0+y1)/2-b.h/2;st.pos[b.id]={x:Math.round(x),y:Math.round(y)};}
+  store();host.rerender(true);paintOverlay();}
+ function distribute(axis){const bs=[...sel].map(boxOf).filter(Boolean);if(bs.length<3){host.toast('Select three or more elements to space them evenly');return;}freeze();pushUndo();
+  const H=axis==='h',k=H?'x':'y',d=H?'w':'h';bs.sort((a,b)=>a[k]-b[k]);const first=bs[0],lastB=bs[bs.length-1],span=lastB[k]+lastB[d]-first[k],used=bs.reduce((a,b)=>a+b[d],0),gap=(span-used)/(bs.length-1);
+  let at=first[k];for(const b of bs){st.pos[b.id]={...st.pos[b.id]||{x:b.x,y:b.y},[k]:Math.round(at)};at+=b[d]+gap;}
+  store();host.rerender(true);paintOverlay();}
+ function groupSelection(title){let ids=[...sel].filter(id=>last&&last.g.nodes.has(id));if(!ids.length){const id=addElement('rect');ids=[id];}let gid;
+  mut(M=>{const taken=takenId(M);gid=slug(title||'group',taken);const stg={type:'stage',id:gid,title:title||'Group',steps:[]};const at=M.items.findIndex(it=>(it.type==='step'&&ids.includes(it.id))||(it.type==='stage'&&it.steps.some(x=>ids.includes(x))));
+   for(const id of ids){const from=stageOf(M,id);if(from)from.steps=from.steps.filter(x=>x!==id);else M.items=M.items.filter(it=>!(it.type==='step'&&it.id===id));stg.steps.push(id);}
+   M.items=M.items.filter(it=>it.type!=='stage'||it.steps.length);M.items.splice(Math.max(0,Math.min(at,M.items.length)),0,stg);});
+  host.rerender();open('group','grp_'+gid,'[data-act=g-title]');host.toast('Grouped. Drag the group’s edge to move everything inside');return gid;}
+ function ungroupSelection(){const gids=new Set();for(const id of sel){const n=last&&last.g.nodes.get(id);if(n&&n.group)gids.add(n.group);}if(insp&&insp.kind==='group')gids.add(insp.id);if(!gids.size){host.toast('Nothing selected is in a group');return;}
+  mut(M=>{for(const gid of gids){const i=M.items.findIndex(x=>x.type==='stage'&&('grp_'+x.id)===gid);if(i>=0){const s0=M.items[i];M.items.splice(i,1,...s0.steps.map(x=>({type:'step',id:x})));}}});if(insp&&insp.kind==='group')close();host.rerender();host.toast('Ungrouped');}
+ function selectionBox(){const bs=(sel.size?[...sel]:[]).map(boxOf).filter(Boolean);if(!bs.length)return null;return {x0:Math.min(...bs.map(b=>b.x)),y0:Math.min(...bs.map(b=>b.y)),x1:Math.max(...bs.map(b=>b.x+b.w)),y1:Math.max(...bs.map(b=>b.y+b.h))};}
+ function zoomToSelection(){const b=selectionBox();if(!b){host.fit&&host.fit();return;}host.zoomTo&&host.zoomTo(b);}
 
  /* ---------- adding things ---------- */
  const viewCentre=()=>{const v=host.view(),r=stage.getBoundingClientRect();return {x:(r.width/2-v.x)/v.zoom,y:(r.height/2-v.y)/v.zoom};};
@@ -327,11 +350,13 @@ function create(host){
  function contextItems(T,w){const items=[];
   if(T.n){const id=T.n.dataset.nid;if(!sel.has(id))setSel([id]);const many=sel.size>1;
    items.push({label:'Edit details',key:'Enter',run:()=>open('node',primary,'[data-act=n-label]'),off:many},{label:'Add a connected element',key:MOD+'↵',run:()=>addConnected(primary),off:many},{sep:'Element'},
-    {label:many?`Duplicate ${sel.size}`:'Duplicate',key:MOD+'D',run:duplicate},{label:'Copy',key:MOD+'C',run:copy},{label:'Cut',key:MOD+'X',run:cut},{label:many?`Delete ${sel.size}`:'Delete',key:'⌫',run:deleteSelection});}
+    {label:many?`Duplicate ${sel.size}`:'Duplicate',key:MOD+'D',run:duplicate},{label:'Copy',key:MOD+'C',run:copy},{label:'Cut',key:MOD+'X',run:cut},{label:many?`Delete ${sel.size}`:'Delete',key:'⌫',run:deleteSelection},
+    {label:many?`Group ${sel.size}`:'Put in a group',key:MOD+'G',run:()=>groupSelection()},{label:'Ungroup',key:MOD+'⇧G',run:ungroupSelection,off:![...sel].some(id=>last.g.nodes.get(id)&&last.g.nodes.get(id).group)},{label:'Zoom to selection',key:'⇧2',run:zoomToSelection});
+   if(many)items.push({sep:'Arrange'},{label:'Align left',key:'⌥A',run:()=>align('left')},{label:'Align centres',key:'⌥H',run:()=>align('center')},{label:'Align right',key:'⌥D',run:()=>align('right')},{label:'Align tops',key:'⌥W',run:()=>align('top')},{label:'Align middles',key:'⌥V',run:()=>align('middle')},{label:'Align bottoms',key:'⌥S',run:()=>align('bottom')},{label:'Space evenly across',key:'⌥⇧H',run:()=>distribute('h'),off:sel.size<3},{label:'Space evenly down',key:'⌥⇧V',run:()=>distribute('v'),off:sel.size<3});}
   else if(T.e){const e=T.e.dataset.eid!=null?last.g.edges.find(x=>String(x.i)===String(T.e.dataset.eid)):null;if(e){setSel([],edgeKey(e));
    items.push({label:'Edit connection',run:()=>open('edge',edgeKey(e))},{label:'Reverse direction',run:()=>{mut(M=>{const i=edgeIndex(M,edgeKey(e));if(i>=0){const x=M.edges[i];[x.from,x.to]=[x.to,x.from];}});setSel([],e.to+'>'+e.from);}},{label:'Disconnect',key:'⌫',run:deleteSelection});}}
   else{items.push({label:'Paste here',key:MOD+'V',run:()=>paste(w),off:!clip},{label:'Select all',key:MOD+'A',run:selectAll},{label:'Fit to screen',key:'0',run:()=>host.fit&&host.fit()},{sep:'Add an element here'});
-   for(const k of ['rect','decision','pill','data','io','sub','person','system','doc','note','mod_internal','mod_external','mod_flow'])items.push({label:FE.KIND[k].name,run:()=>addElement(k,w)});
+   for(const k of ['rect','decision','pill','data','io','sub','doc','delay','manual','offpage','person','system','note','mod_internal','mod_external','mod_flow'])items.push({label:FE.KIND[k].name,run:()=>addElement(k,w)});
    items.push({sep:'Add a worker here'});for(const W of FP.WORKERS)items.push({label:W.name,run:()=>addWorker(W.id,w)});}
   return items;}
 
@@ -362,11 +387,23 @@ function create(host){
   if(ev.shiftKey){const w=world(ev);drag={kind:'marquee',start:w,ox:ev.clientX,oy:ev.clientY,moved:false,pid:ev.pointerId,box:null};stage.setPointerCapture(ev.pointerId);return;}
   drag={kind:'pan',ox:ev.clientX,oy:ev.clientY,sx:host.view().x,sy:host.view().y,moved:false,pid:ev.pointerId};stage.classList.add('drag');stage.setPointerCapture(ev.pointerId);
   if(ev.pointerType!=='mouse')armPress(ev);});
+ /* smart guides: line the moving piece up with the edges and centres of the others; the grid when nothing is near. Alt turns both off. */
+ function snapMove(d,mx,my,off){if(off||!last)return {mx,my,guides:null};const ids=Object.keys(d.orig);const moving=new Set(ids);
+  let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;for(const id of ids){const n=last.g.nodes.get(id),o=d.orig[id];if(!n||!o)continue;x0=Math.min(x0,o.x+mx);y0=Math.min(y0,o.y+my);x1=Math.max(x1,o.x+mx+n.w);y1=Math.max(y1,o.y+my+n.h);}
+  if(x0>x1)return {mx,my,guides:null};const tol=6/Math.max(.25,host.view().zoom);
+  const xs=[x0,(x0+x1)/2,x1],ys=[y0,(y0+y1)/2,y1];let bx=null,by=null;
+  for(const n of last.g.nodes.values()){if(moving.has(n.id))continue;const p=posOf(n.id);if(!p)continue;const ox=[p.x,p.x+n.w/2,p.x+n.w],oy=[p.y,p.y+n.h/2,p.y+n.h];
+   for(let i=0;i<3;i++)for(let j=0;j<3;j++){const dx=ox[j]-xs[i];if(Math.abs(dx)<=tol&&(!bx||Math.abs(dx)<Math.abs(bx.d)))bx={d:dx,at:ox[j],n,p};const dy=oy[j]-ys[i];if(Math.abs(dy)<=tol&&(!by||Math.abs(dy)<Math.abs(by.d)))by={d:dy,at:oy[j],n,p};}}
+  const g=[];
+  if(bx){mx+=bx.d;g.push({v:1,at:bx.at,a:Math.min(y0+(by?by.d:0),bx.p.y),b:Math.max(y1+(by?by.d:0),bx.p.y+bx.n.h)});}else if(snapOn){mx+=Math.round(x0/GRID)*GRID-x0;}
+  if(by){my+=by.d;g.push({v:0,at:by.at,a:Math.min(x0+(bx?bx.d:0),by.p.x),b:Math.max(x1+(bx?bx.d:0),by.p.x+by.n.w)});}else if(snapOn){my+=Math.round(y0/GRID)*GRID-y0;}
+  return {mx,my,guides:g.length?g:null};}
  function armPress(ev){if(!canEdit())return;clearTimeout(press);const cx=ev.clientX,cy=ev.clientY,w=world(ev);press=setTimeout(()=>{if(drag&&!drag.moved){const T=target({target:topEl({clientX:cx,clientY:cy}),clientX:cx,clientY:cy});drag=null;stage.classList.remove('drag');showMenu(cx,cy,contextItems(T,w));}},560);}
  stage.addEventListener('pointermove',ev=>{if(!drag||!mode())return;const dx=ev.clientX-drag.ox,dy=ev.clientY-drag.oy;if(!drag.moved&&Math.hypot(dx,dy)<4)return;
   if(!drag.moved){drag.moved=true;clearTimeout(press);if(drag.kind==='node'||drag.kind==='group'||drag.kind==='resize'){freeze();pushUndo();}}
   if(drag.kind==='pan'){host.pan(drag.sx+dx,drag.sy+dy);return;}
-  if(drag.kind==='node'||drag.kind==='group'){const w=world(ev),mx=w.x-drag.start.x,my=w.y-drag.start.y;
+  if(drag.kind==='node'||drag.kind==='group'){const w=world(ev);let mx=w.x-drag.start.x,my=w.y-drag.start.y;
+   const sn=snapMove(drag,mx,my,ev.altKey);mx=sn.mx;my=sn.my;guides=sn.guides;
    for(const [id,o] of Object.entries(drag.orig))st.pos[id]={x:Math.round(o.x+mx),y:Math.round(o.y+my)};
    if(!raf)raf=requestAnimationFrame(()=>{raf=0;host.rerender(true);});return;}
   if(drag.kind==='resize'){const w=world(ev),o=drag.orig;let dx=w.x-drag.start.x,dy=w.y-drag.start.y;const c=drag.corner,west=c==='nw'||c==='sw',north=c==='nw'||c==='ne';
@@ -381,7 +418,7 @@ function create(host){
   if(drag.kind==='marquee'){const w=world(ev),x=Math.min(drag.start.x,w.x),y=Math.min(drag.start.y,w.y),ww=Math.abs(w.x-drag.start.x),hh=Math.abs(w.y-drag.start.y);drag.box={x,y,w:ww,h:hh};
    const v=host.view();let mq=stage.querySelector('.mq');if(!mq){mq=document.createElement('div');mq.className='mq';stage.appendChild(mq);}
    mq.style.cssText=`left:${x*v.zoom+v.x}px;top:${y*v.zoom+v.y}px;width:${ww*v.zoom}px;height:${hh*v.zoom}px`;}});
- stage.addEventListener('pointerup',ev=>{clearTimeout(press);if(!drag||!mode())return;const d=drag;drag=null;stage.classList.remove('drag');try{stage.releasePointerCapture(ev.pointerId);}catch{}
+ stage.addEventListener('pointerup',ev=>{clearTimeout(press);if(!drag||!mode())return;const d=drag;drag=null;if(guides){guides=null;paintOverlay();}stage.classList.remove('drag');try{stage.releasePointerCapture(ev.pointerId);}catch{}
   const mq=stage.querySelector('.mq');if(mq)mq.remove();
   if(d.kind==='resize'){paintOverlay();return;}
   if(d.kind==='connect'){const tid=nodeAt(ev),w=world(ev);if(!d.moved){paintOverlay();return;}
@@ -410,6 +447,7 @@ function create(host){
  stage.addEventListener('focusin',ev=>{if(!mode())return;const n=ev.target.closest&&ev.target.closest('.fc-n');if(n&&!sel.has(n.dataset.nid)){sel=new Set([n.dataset.nid]);selEdge=null;primary=n.dataset.nid;paintOverlay();}});
 
  /* ---------- keyboard ---------- */
+ const ALIGNK={KeyA:'left',KeyH:'center',KeyD:'right',KeyW:'top',KeyV:'middle',KeyS:'bottom'};
  const editable=t=>t&&(/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)||t.isContentEditable);
  document.addEventListener('keydown',ev=>{if(!mode()||ev.defaultPrevented)return;const t=ev.target;if(editable(t)||(t.closest&&t.closest('dialog,.dd-list,.cmenu,.insp,.toolbar,.pickers,.side,header')))return;
   const mod=ev.metaKey||ev.ctrlKey,k=ev.key.toLowerCase();let used=true;
@@ -418,6 +456,10 @@ function create(host){
   else if(mod&&k==='c'){if(!copy())used=false;}else if(mod&&k==='x'){if(sel.size)cut();else used=false;}
   else if(mod&&k==='v'){if(clip)paste();else{used=false;pasteFromSystem();}}
   else if(mod&&k==='d')duplicate();else if(mod&&k==='a')selectAll();
+  else if(mod&&k==='g'){if(ev.shiftKey)ungroupSelection();else groupSelection();}
+  else if(ev.altKey&&!mod&&sel.size>1&&ALIGNK[ev.code]){const a=ALIGNK[ev.code];if(ev.shiftKey&&(a==='center'||a==='middle'))distribute(a==='center'?'h':'v');else align(a);}
+  else if(ev.shiftKey&&(ev.code==='Digit2'||k==='@')){zoomToSelection();}
+  else if(ev.shiftKey&&(ev.code==='Digit1'||k==='!')){host.fit&&host.fit();}
   else if(mod&&k==='enter'){if(primary)addConnected(primary);}
   else if(k==='delete'||k==='backspace'){if(sel.size||selEdge)deleteSelection();else used=false;}
   else if(k==='enter'){if(primary&&sel.size===1)open('node',primary,'[data-act=n-label]');else if(selEdge)open('edge',selEdge);else used=false;}
@@ -430,7 +472,7 @@ function create(host){
   if(used)ev.preventDefault();});
  async function pasteFromSystem(){try{const txt=await navigator.clipboard.readText();if(txt&&txt.startsWith('atlas-canvas ')){clip=JSON.parse(txt.slice(13));paste();}}catch{}}
 
- return {draw,exportSvg,load,getState,setState,store,reset(){setState(null);close();sel=new Set();selEdge=null;primary=null;hist.u=[];hist.r=[];notify();},open,close,addElement,addWorker,addDiagram,setClusterType,removeCluster,undo,redo,copy,cut,paste,duplicate,deleteSelection,selectAll,
+ return {draw,exportSvg,load,getState,setState,store,align,distribute,groupSelection,ungroupSelection,zoomToSelection,selectionBox,setSnap(on){snapOn=!!on;},get selection(){return [...sel];},select(ids){setSel(ids);},reset(){setState(null);close();sel=new Set();selEdge=null;primary=null;hist.u=[];hist.r=[];notify();},open,close,addElement,addWorker,addDiagram,setClusterType,removeCluster,undo,redo,copy,cut,paste,duplicate,deleteSelection,selectAll,
   clusters:()=>last?last.clusters.map(c=>({id:c.id,type:c.type,count:c.nodes.length})):[],workers:()=>FP.WORKERS,
   last:()=>last,get frozen(){return st.frozen;},unfreeze(){pushUndo();st.pos={};st.frozen=false;store();host.rerender();},
   inspectorOpen:()=>!!insp,refreshPanel(){if(insp)renderPanel();},repaint(){paintOverlay();},viewMode(){close();closeMenu();setSel([]);},

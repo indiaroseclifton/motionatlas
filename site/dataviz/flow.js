@@ -30,12 +30,17 @@ const KIND={
  mod_internal:{name:'Internal connection',tag:1,module:'internal',shape:'hex',w:188,h:72,tint:'#0891B2',icon:'M10 14a4 4 0 0 0 6 0l3-3a4 4 0 0 0-6-6l-1 1M14 10a4 4 0 0 0-6 0l-3 3a4 4 0 0 0 6 6l1-1'},
  mod_external:{name:'External connection',tag:1,module:'external',shape:'hex',w:188,h:72,tint:'#EA580C',icon:'M14 4h6v6M20 4L10 14M18 14v6H4V6h6'},
  mod_flow:{name:'Flow connection',tag:1,module:'flow',shape:'hex',w:188,h:72,tint:'#C026D3',icon:'M4 12h12M12 6l6 6-6 6M4 6v12'},
+ delay:{name:'Delay or wait',tag:1,shape:'delay',w:164,h:64,tint:'#B45309',icon:'M12 7v5l3 2M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z',keys:'wait timer pause hold'},
+ manual:{name:'Manual step',tag:1,shape:'trap',w:176,h:64,tint:'#9333EA',icon:'M7 11V6a1.5 1.5 0 0 1 3 0v4M10 10V4.5a1.5 1.5 0 0 1 3 0V10M13 10V5.5a1.5 1.5 0 0 1 3 0V12M16 12v-1.5a1.5 1.5 0 0 1 3 0V15a6 6 0 0 1-6 6h-1a6 6 0 0 1-5-2.7L4.5 14a1.5 1.5 0 0 1 2.5-1.7L8 14',keys:'manual operation hand human task'},
+ minput:{name:'Manual input',tag:1,shape:'minput',w:176,h:64,tint:'#0369A1',icon:'M3 7h18v12H3zM7 11h.01M11 11h.01M15 11h.01M7 15h10',keys:'keyboard form type enter data entry'},
+ display:{name:'Display',tag:1,shape:'display',w:176,h:64,tint:'#0F766E',icon:'M3 5h18v11H3zM8 20h8M12 16v4',keys:'screen show output monitor'},
+ offpage:{name:'Off-page link',tag:1,shape:'offpage',w:156,h:80,tint:'#475569',icon:'M5 4h14v10l-7 6-7-6z',keys:'connector page reference continue jump'},
  worker:{name:'Worker',tag:1,worker:1,shape:'oct',w:196,h:76,tint:'#0F766E',icon:'M12 3v3M7 8h10a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2zM9.5 13h.01M14.5 13h.01M9 17h6'}
 };
 const kindOf=n=>n.kind||n.shape||'rect';
 function fixSize(n,t,opt){const K=KIND[kindOf(n)]||KIND[n.shape]||KIND.rect,diamond=n.shape==='decision'&&opt.decision==='diamond';
  const ov=opt.sizes&&opt.sizes[n.id];
- const W=ov?Math.max(96,Math.min(720,ov.w)):(diamond?K.w+28:K.w),H=ov?Math.max(44,Math.min(420,ov.h)):(diamond?K.h+30:K.h),center=n.shape==='pill'||n.shape==='circle'||diamond;
+ const W=ov?Math.max(96,Math.min(720,ov.w)):(diamond?K.w+28:K.w),H=ov?Math.max(44,Math.min(420,ov.h)):(diamond?K.h+30:K.h),center=n.shape==='pill'||n.shape==='circle'||n.shape==='offpage'||diamond;
  const lead=t.iconTiles?40:(K.icon&&!center?30:0),aw=Math.max(40,W-(diamond?W*.34:32)-lead-(n.status?14:0)),ah=H-(diamond?H*.3:16);
  const lab=t.upper?n.label.toUpperCase():n.label;let fs=13.5,lines,notes;
  for(;fs>=9;fs-=.5){const nfs=Math.max(8.5,fs-1.5);lines=wrap(lab,fs,600,t.font,aw);notes=n.note?wrap(n.note,nfs,400,t.font,aw):[];
@@ -105,7 +110,9 @@ function healthOf(g,n,opt){const K=KIND[kindOf(n)]||KIND.rect;if(K.noDot)return 
  if(!ins.length)return {s:'warn',tip:`Nothing leads in · ${plain}`};if(!outs.length)return {s:'warn',tip:`Nothing leads on · ${plain}`};return {s:'ok',tip:plain};}
 
 /* ---------------- parse ---------------- */
-const SHAPES=[[/^\[\[(.*?)\]\]/,'sub'],[/^\(\[(.*?)\]\)/,'pill'],[/^\[\((.*?)\)\]/,'data'],[/^\(\((.*?)\)\)/,'circle'],[/^\[\/(.*?)\/\]/,'io'],[/^\[\\(.*?)\\\]/,'io'],[/^\{\{(.*?)\}\}/,'decision'],[/^\{(.*?)\}/,'decision'],[/^\[(.*?)\]/,'rect'],[/^\((.*?)\)/,'round'],[/^>(.*?)\]/,'rect']];
+/* Mermaid 11 shape names (A@{ shape: delay, label: "Wait" }) mapped to our shapes and kinds */
+const MSHAPE={rect:'rect',process:'rect',proc:'rect',rectangle:'rect',rounded:'round',event:'round',stadium:'pill',pill:'pill',terminal:'pill','fr-rect':'sub',subprocess:'sub',subroutine:'sub',framed:'sub',cyl:'data',cylinder:'data',database:'data',db:'data',circle:'circle',circ:'circle','sm-circ':'circle','dbl-circ':'pill','fr-circ':'pill',diam:'decision',diamond:'decision',decision:'decision',question:'decision',hex:'decision',hexagon:'decision',prepare:'decision','lean-r':'io','lean-l':'io','in-out':'io','out-in':'io',doc:'k:doc',document:'k:doc',docs:'k:doc','lin-doc':'k:doc','tag-doc':'k:doc',delay:'k:delay','half-rounded-rectangle':'k:delay','trap-t':'k:manual','manual':'k:manual','inv-trapezoid':'k:manual','trap-b':'k:manual','sl-rect':'k:minput','manual-input':'k:minput','curv-trap':'k:display',display:'k:display',odd:'k:offpage','off-page':'k:offpage',brace:'k:note','brace-r':'k:note',braces:'k:note',comment:'k:note','lin-cyl':'data','h-cyl':'data',das:'data','win-pane':'data','bow-rect':'data','st-rect':'sub','div-rect':'rect','lin-rect':'rect','tag-rect':'rect','notch-rect':'rect','notch-pent':'rect',flag:'rect',text:'rect'};
+const SHAPES=[[/^\[\[(.*?)\]\]/,'sub'],[/^\(\[(.*?)\]\)/,'pill'],[/^\[\((.*?)\)\]/,'data'],[/^\(\((.*?)\)\)/,'circle'],[/^\[\/(.*?)\/\]/,'io'],[/^\[\\(.*?)\\\]/,'io'],[/^\{\{(.*?)\}\}/,'decision'],[/^\{(.*?)\}/,'decision'],[/^\[(.*?)\]/,'rect'],[/^\((.*?)\)/,'round'],[/^>(.*?)\]/,'k:offpage']];
 const EDGE=/^\s*(?:(<?)(-{2,}|={2,}|-\.+-)(>|x|o)?\s*(?:\|([^|]*)\|)?|--\s+([^-][^]*?)\s+-->|==\s+(.*?)\s+==>|-\.\s+(.*?)\s+\.->)\s*/;
 function parse(src){
  const g={dir:'TB',nodes:new Map(),edges:[],groups:[],order:0};const stack=[];
@@ -113,7 +120,10 @@ function parse(src){
   if(label!=null){const t=clean(label),parts=t.split(/\n| \| /);n.label=parts[0].trim();n.note=parts.slice(1).join(' ').trim();}if(shape)n.shape=shape;if(cls)n.cls=cls;if(stack.length&&label!=null&&!n.group)n.group=stack[stack.length-1].id;return n;};
  const nodeAt=s=>{const m=s.match(/^\s*([A-Za-z0-9_][\w\-.]*)/);if(!m)return null;let rest=s.slice(m[0].length),label=null,shape=null,cls=null;
   for(const [re,sh] of SHAPES){const mm=rest.match(re);if(mm){label=mm[1];shape=sh;rest=rest.slice(mm[0].length);break;}}
+  const at=!shape&&rest.match(/^@\{([^}]*)\}/);if(at){rest=rest.slice(at[0].length);const kv={};at[1].replace(/(\w+)\s*:\s*("([^"]*)"|[^,]+)/g,(_,k,v,q)=>{kv[k.toLowerCase()]=(q??v).trim();return '';});shape=MSHAPE[(kv.shape||'rect').toLowerCase()]||'rect';if(kv.label!=null)label=kv.label;}
+  let kd=null;if(shape&&shape.startsWith('k:')){kd=shape.slice(2);shape=KIND[kd].shape;}
   const c=rest.match(/^:::([\w.-]+)/);if(c){cls=c[1];rest=rest.slice(c[0].length);}
+  if(kd){const p0=String(cls||'').split('.');cls=`${p0[0]||'none'}.${kd}`;}
   return {ids:[{id:m[1],label,shape,cls}],rest};};
  const nodesAt=s=>{const first=nodeAt(s);if(!first)return null;let rest=first.rest;const ids=first.ids;let m;
   while((m=rest.match(/^\s*&\s*/))){const nx=nodeAt(rest.slice(m[0].length));if(!nx)break;ids.push(...nx.ids);rest=nx.rest;}return {ids,rest};};
@@ -125,11 +135,14 @@ function parse(src){
   if((m=line.match(/^class\s+([\w,\s-]+?)\s+([\w-]+)\s*$/i))){m[1].split(',').forEach(id=>touch(id.trim(),null,null,m[2]));continue;}
   if(/^(classDef|style|linkStyle|click|direction|title|accTitle|accDescr)\b/i.test(line))continue;
   let cur=nodesAt(line);if(!cur)continue;cur.ids.forEach(x=>touch(x.id,x.label,x.shape,x.cls));let rest=cur.rest;
+  /* a bare id listed inside a subgraph moves that node into it, as in Mermaid */
+  if(stack.length&&!rest.trim())cur.ids.forEach(x=>{const n=g.nodes.get(x.id);if(n&&!n.group)n.group=stack[stack.length-1].id;});
   while(rest.trim()){const e=rest.match(EDGE);if(!e)break;rest=rest.slice(e[0].length);
    const label=clean(e[4]??e[5]??e[6]??e[7]??'');const body=e[2]||(e[6]!=null?'==':e[7]!=null?'-.':'--');
    const kind=/=/.test(body)?'thick':/\./.test(body)?'dashed':'solid';const arrow=!!(e[3]==='>'||e[5]!=null||e[6]!=null||e[7]!=null);
    const nx=nodesAt(rest);if(!nx)break;nx.ids.forEach(x=>touch(x.id,x.label,x.shape,x.cls));
-   for(const a of cur.ids)for(const b of nx.ids)g.edges.push({from:a.id,to:b.id,label,kind,arrow:arrow||!e[2]?true:arrow,bi:e[1]==='<',i:g.edges.length});
+   const head=e[3]==='o'?'o':e[3]==='x'?'x':null;
+   for(const a of cur.ids)for(const b of nx.ids)g.edges.push({from:a.id,to:b.id,label,kind,arrow:arrow||!e[2]?true:arrow,bi:e[1]==='<',...(head?{head}:{}),i:g.edges.length});
    cur=nx;rest=nx.rest;}}
  for(const n of g.nodes.values()){const parts=String(n.cls||'').split('.');n.status=STATUS[parts[0].toLowerCase().replace(/[^a-z]/g,'')]||null;
   n.kind=parts.slice(1).find(k=>KIND[k]&&KIND[k].tag)||null;if(n.kind&&KIND[n.kind].shape)n.shape=KIND[n.kind].shape;}
@@ -358,6 +371,7 @@ function render(src,s,opt={}){
  /* arrowheads */
  const edgeCol=t.dark?alpha(t.line,.62)||t.line:alpha(t.line,.72),loopCol=t.accent,mk=(id,c)=>t.arrow==='open'?`<marker id="${id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="${7+t.edge*1.5}" markerHeight="${7+t.edge*1.5}" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M1 1L9 5L1 9" fill="none" stroke="${c}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>`:`<marker id="${id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="${6+t.edge*1.6}" markerHeight="${6+t.edge*1.6}" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0.8L10 5L0 9.2z" fill="${c}"/></marker>`;
  defs+=mk(uid+'a',edgeCol)+mk(uid+'l',loopCol)+mk(uid+'k',t.accent);
+ if(g.edges.some(e=>e.head))defs+=`<marker id="${uid}o" viewBox="0 0 12 12" refX="10.5" refY="6" markerWidth="${8+t.edge*1.6}" markerHeight="${8+t.edge*1.6}" markerUnits="userSpaceOnUse" orient="auto"><circle cx="6" cy="6" r="4.2" fill="${t.surface&&t.surface.startsWith('#')?t.surface:t.bg}" stroke="${edgeCol}" stroke-width="1.6"/></marker><marker id="${uid}x" viewBox="0 0 12 12" refX="9" refY="6" markerWidth="${8+t.edge*1.6}" markerHeight="${8+t.edge*1.6}" markerUnits="userSpaceOnUse" orient="auto"><path d="M3 2l7 8M10 2l-7 8" stroke="${edgeCol}" stroke-width="1.8" stroke-linecap="round"/></marker>`;
  if(t.hachure)(t.fills||[]).concat(['#B2F2BB','#FFC9C9','#FFEC99']).forEach((f,i)=>defs+=`<pattern id="${uid}h${i}" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(-42)"><rect width="9" height="9" fill="${t.bg}"/><path d="M0 4.5H9" stroke="${f}" stroke-width="1.7"/></pattern>`);
  if(t.glow)defs+=`<filter id="${uid}g" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="6"/></filter><linearGradient id="${uid}n" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".10"/><stop offset="1" stop-color="#ffffff" stop-opacity=".03"/></linearGradient>`;
  if(t.softShadow){const [dx,dy,b,c2,o]=t.softShadow;defs+=`<filter id="${uid}s" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="${dx}" dy="${dy}" stdDeviation="${b/2}" flood-color="${c2}" flood-opacity="${o}"/></filter>`;}
@@ -400,7 +414,7 @@ function render(src,s,opt={}){
  for(const e of g.edges){if(!e.xy)continue;const eStart=edgesSvg.length;const p=simplify(e.xy),isLoop=e.back||e.self,thick=e.kind==='thick';
   const src=g.nodes.get(e.from),lab=(e.label||'').toLowerCase(),branch=/^(yes|pass|approved|ok|true|valid|success)/.test(lab)?t.good:/^(no|fail|reject|false|invalid|error)/.test(lab)?t.bad:null;
   const c=isLoop?loopCol:thick?t.accent:t.edgeTint?(branch||alpha(tintOf(src.status?{group:src.group}:src),.85)):t.neu?'#B3BCCB':edgeCol,w=(thick?t.edge+1:t.edge),dash=isLoop?` stroke-dasharray="${t.id==='brutal'?'7 5':'5 4'}"`:e.kind==='dashed'?' stroke-dasharray="3 4"':'';
-  const marker=e.arrow===false||t.arrow==='none'?'':` marker-end="url(#${uid}${isLoop?'l':thick?'k':'a'})"`;e.col=c;
+  const marker=e.head?` marker-end="url(#${uid}${e.head})"`:e.arrow===false||t.arrow==='none'?'':` marker-end="url(#${uid}${isLoop?'l':thick?'k':'a'})"`;e.col=c;
   /* stop the line where the arrowhead begins */
   const end=p[p.length-1],prev=p[p.length-2]||end,len=Math.hypot(end[0]-prev[0],end[1]-prev[1])||1,cut=Math.min(1.5,len/2),q=[...p];q[q.length-1]=[end[0]-(end[0]-prev[0])/len*cut,end[1]-(end[1]-prev[1])/len*cut];
   const d=rough?DVRough(q,e.i+11,.9,false):rounded(q,t.route==='curve'?(t.curve||22):(t.radius>=8?10:t.nodeRadius?7:3));
@@ -443,6 +457,11 @@ function render(src,s,opt={}){
   if(n.shape==='hex'){const k=16;return {d:`M${x+k} ${y}H${x+w-k}L${x+w} ${y+h/2}L${x+w-k} ${y+h}H${x+k}L${x} ${y+h/2}Z`,pts:[[x+k,y],[x+w-k,y],[x+w,y+h/2],[x+w-k,y+h],[x+k,y+h],[x,y+h/2]]};}
   if(n.shape==='doc'){const k=16;return {d:`M${x} ${y}H${x+w-k}L${x+w} ${y+k}V${y+h}H${x}ZM${x+w-k} ${y}V${y+k}H${x+w}`,pts:[[x,y],[x+w-k,y],[x+w,y+k],[x+w,y+h],[x,y+h]]};}
   if(n.shape==='tab'){const rr=Math.min(t.nodeRadius,h/2,w/2);return {d:`M${x+rr} ${y}H${x+w-rr}Q${x+w} ${y} ${x+w} ${y+rr}V${y+h-rr}Q${x+w} ${y+h} ${x+w-rr} ${y+h}H${x+rr}Q${x} ${y+h} ${x} ${y+h-rr}V${y+rr}Q${x} ${y} ${x+rr} ${y}ZM${x} ${y+14}H${x+w}`,pts:[[x,y],[x+w,y],[x+w,y+h],[x,y+h]]};}
+  if(n.shape==='delay'){const rr=Math.min(h/2,w/2);return {d:`M${x} ${y}H${x+w-rr}A${rr} ${rr} 0 0 1 ${x+w-rr} ${y+h}H${x}Z`,pts:[[x,y],[x+w-rr,y],[x+w,y+h/2],[x+w-rr,y+h],[x,y+h]]};}
+  if(n.shape==='trap'){const k=Math.min(18,w*.12);return {d:`M${x} ${y}H${x+w}L${x+w-k} ${y+h}H${x+k}Z`,pts:[[x,y],[x+w,y],[x+w-k,y+h],[x+k,y+h]]};}
+  if(n.shape==='minput'){const k=Math.min(14,h*.25);return {d:`M${x} ${y+k}L${x+w} ${y}V${y+h}H${x}Z`,pts:[[x,y+k],[x+w,y],[x+w,y+h],[x,y+h]]};}
+  if(n.shape==='display'){const k=Math.min(22,w*.14),rr=Math.min(h/2,26);return {d:`M${x} ${y+h/2}L${x+k} ${y}H${x+w-rr}Q${x+w} ${y} ${x+w} ${y+h/2}Q${x+w} ${y+h} ${x+w-rr} ${y+h}H${x+k}Z`,pts:[[x,y+h/2],[x+k,y],[x+w-rr,y],[x+w,y+h/2],[x+w-rr,y+h],[x+k,y+h]]};}
+  if(n.shape==='offpage'){const k=Math.min(22,h*.32);return {d:`M${x} ${y}H${x+w}V${y+h-k}L${x+w/2} ${y+h}L${x} ${y+h-k}Z`,pts:[[x,y],[x+w,y],[x+w,y+h-k],[x+w/2,y+h],[x,y+h-k]]};}
   if(n.shape==='io'){const k=10;return {d:`M${x+k} ${y}H${x+w}L${x+w-k} ${y+h}H${x}Z`,pts:[[x+k,y],[x+w,y],[x+w-k,y+h],[x,y+h]]};}
   if(n.shape==='decision'&&opt.decision==='diamond')return {d:`M${x+w/2} ${y}L${x+w} ${y+h/2}L${x+w/2} ${y+h}L${x} ${y+h/2}Z`,pts:[[x+w/2,y],[x+w,y+h/2],[x+w/2,y+h],[x,y+h/2]]};
   if(n.shape==='data'){const e=7;return {d:`M${x} ${y+e}C${x} ${y-e/2} ${x+w} ${y-e/2} ${x+w} ${y+e}V${y+h-e}C${x+w} ${y+h+e/2} ${x} ${y+h+e/2} ${x} ${y+h-e}Z M${x} ${y+e}C${x} ${y+e*2} ${x+w} ${y+e*2} ${x+w} ${y+e}`,pts:[[x,y+e],[x+w/2,y-e/3],[x+w,y+e],[x+w,y+h-e],[x+w/2,y+h+e/3],[x,y+h-e]]};}
@@ -462,14 +481,14 @@ function render(src,s,opt={}){
    if(t.misregister)body+=`<path d="${sp.d}" fill="none" stroke="${t.accent}" stroke-width="${t.stroke}" opacity=".6" transform="translate(1.6 1.2)" style="mix-blend-mode:multiply"/>`;}
   if(n.shape==='sub')body+=`<path d="M${x+8} ${y+3}V${y+h-3}M${x+w-8} ${y+3}V${y+h-3}" stroke="${stroke==='none'?t.line:stroke}" stroke-width="1"/>`;
   /* status: a coloured spine plus a glyph, never colour alone */
-  const hasSpine=n.status&&!t.hachure&&!t.neu&&!t.clay&&!t.iconTiles&&t.id!=='pastel'&&t.id!=='brutal'&&t.id!=='riso'&&n.shape!=='pill'&&n.shape!=='decision'&&n.shape!=='io'&&n.shape!=='data';
+  const hasSpine=n.status&&!t.hachure&&!t.neu&&!t.clay&&!t.iconTiles&&t.id!=='pastel'&&t.id!=='brutal'&&t.id!=='riso'&&n.shape!=='pill'&&n.shape!=='decision'&&n.shape!=='io'&&n.shape!=='data'&&!['trap','minput','display','offpage'].includes(n.shape);
   if(hasSpine){const r=Math.min(t.nodeRadius,6);body+=`<path d="M${x+r+1.5} ${y+1}H${x+4}V${y+h-1}H${x+r+1.5}" fill="none"/><rect x="${x+(t.nodeRadius?1:0)}" y="${y+(t.nodeRadius?Math.min(r,4):0)}" width="3.5" height="${h-(t.nodeRadius?Math.min(r,4)*2:0)}" rx="1.5" fill="${col[n.status]}"/>`;}
   if(n.status){const gx=x+w-14,gy=y+14,gc=col[n.status];body+=`<g transform="translate(${gx} ${gy})"><circle r="7" fill="${t.id==='riso'||t.id==='brutal'?t.ink:gc}"/><path d="${glyph[n.status]}" fill="${n.status==='accent'?t.bg:'none'}" stroke="${t.id==='riso'||t.id==='brutal'?'#fff':t.dark?t.bg:'#fff'}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></g>`;}
   /* text */
   if(t.iconTiles){const KK=SC&&KIND[kindOf(n)],tc=n.status?col[n.status]:(KK&&KK.tint)||tintOf(n),tx0=x+14,ty0=y+h/2-14;const outs=g.edges.some(e=>e.from===n.id);
    const ic=KK&&KK.icon?KK.icon:n.shape==='decision'?'M6 4v5a4 4 0 0 0 4 4h8M14 9l4 4-4 4':n.shape==='data'?'M5 6c0-1.7 3.1-3 7-3s7 1.3 7 3-3.1 3-7 3-7-1.3-7-3zM5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3':n.shape==='io'?'M4 12h11M11 7l5 5-5 5M20 5v14':(n.shape==='pill'||n.shape==='circle')?(outs?'M8 5.5l11 6.5-11 6.5z':'M6 21V4M6 4h11l-2 4 2 4H6'):'M13 3L5 14h6l-1 7 8-11h-6z';
    body+=`<rect x="${tx0}" y="${ty0}" width="28" height="28" rx="8" fill="${alpha(tc,.13)}"/><g transform="translate(${tx0+5} ${ty0+5}) scale(.75)"><path d="${ic}" fill="none" stroke="${tc}" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></g>`;}
-  const deco=!SC&&!t.iconTiles&&n.shape==='decision'&&opt.decision!=='diamond',fs=n.fs||13.5,nfs=n.nfs||12,KB=SC&&!t.iconTiles&&KIND[kindOf(n)],center=n.shape==='pill'||n.shape==='circle'||(n.shape==='decision'&&opt.decision==='diamond'),badge=KB&&KB.icon&&!center;
+  const deco=!SC&&!t.iconTiles&&n.shape==='decision'&&opt.decision!=='diamond',fs=n.fs||13.5,nfs=n.nfs||12,KB=SC&&!t.iconTiles&&KIND[kindOf(n)],center=n.shape==='pill'||n.shape==='circle'||n.shape==='offpage'||(n.shape==='decision'&&opt.decision==='diamond'),badge=KB&&KB.icon&&!center;
   if(badge){const bx=x+10,by=y+h/2-12;body+=`<rect x="${bx}" y="${by}" width="24" height="24" rx="7" fill="${alpha(KB.tint,.15)}"/><g transform="translate(${bx+4.2} ${by+4.2}) scale(.68)"><path d="${KB.icon}" fill="none" stroke="${KB.tint}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></g>`;}
   const th=n.lines.length*fs*1.3+(n.noteLines.length?6+n.noteLines.length*nfs*1.35:0);
   let ty=y+h/2-th/2+fs*1.0;const tx=center&&!t.iconTiles?x+w/2:x+16+(hasSpine?2:0)+(deco?20:0)+(t.iconTiles?40:0)+(badge?22:0);const anchor=center&&!t.iconTiles?'middle':'start';
@@ -504,5 +523,5 @@ function render(src,s,opt={}){
  if(nodesArr.length>28)notes.push({ok:false,text:`${nodesArr.length} steps on one canvas. Split into an overview and linked detail charts.`});
  return {svg,width:W,height:H,graph:g,notes};}
 
-window.FlowEngine={parse,layout,render,STATUS,KIND,kindOf,healthOf};
+window.FlowEngine={parse,layout,render,STATUS,KIND,kindOf,healthOf,MSHAPE};
 })();

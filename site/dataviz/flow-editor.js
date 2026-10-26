@@ -16,11 +16,11 @@ function fromGraph(g){const top=gid=>{let x=g.groups.find(y=>y.id===gid);while(x
  [...g.nodes.values()].sort((a,b)=>a.i-b.i).forEach(n=>{M.nodes.set(n.id,{id:n.id,label:n.label,note:n.note||'',shape:n.shape||'rect',cls:n.cls||null});
   const grp=top(n.group);if(grp){let st=stageOf.get(grp.id);if(!st){st={type:'stage',id:grp.id.replace(/^grp_/,''),title:grp.title||grp.id.replace(/^grp_/,''),steps:[]};stageOf.set(grp.id,st);M.items.push(st);}st.steps.push(n.id);}
   else M.items.push({type:'step',id:n.id});});
- g.edges.forEach(e=>M.edges.push({from:e.from,to:e.to,label:e.label||'',kind:e.kind||'solid',arrow:e.arrow!==false,bi:!!e.bi}));
+ g.edges.forEach(e=>M.edges.push({from:e.from,to:e.to,label:e.label||'',kind:e.kind||'solid',arrow:e.arrow!==false,bi:!!e.bi,...(e.head?{head:e.head}:{})}));
  return M;}
 function toSource(M){const L=[`flowchart ${M.dir||'TD'}`];const node=id=>{const n=M.nodes.get(id),w=WRAP[n.shape]||WRAP.rect,keep=!['round','circle'].includes(n.shape),lab=clean(n.label,keep)||'Untitled',note=clean(n.note,keep);return `${id}${w[0]}${lab}${note?' | '+note:''}${w[1]}${n.cls?':::'+n.cls:''}`;};
  for(const it of M.items){if(it.type==='stage'){L.push(`  subgraph ${it.id} [${clean(it.title)||'Stage'}]`);it.steps.forEach(id=>L.push('    '+node(id)));L.push('  end');}else L.push('  '+node(it.id));}
- for(const e of M.edges){const lab=clean(e.label);const op=e.bi?(e.kind==='dashed'?'<-.->':e.kind==='thick'?'<==>':'<-->'):e.kind==='dashed'?'-.->':e.kind==='thick'?'==>':e.arrow===false?'---':'-->';L.push(`  ${e.from} ${op}${lab?`|${lab}|`:''} ${e.to}`);}
+ for(const e of M.edges){const lab=clean(e.label);const op=e.head&&!e.bi?(e.kind==='dashed'?'-.-':e.kind==='thick'?'==':'--')+e.head:e.bi?(e.kind==='dashed'?'<-.->':e.kind==='thick'?'<==>':'<-->'):e.kind==='dashed'?'-.->':e.kind==='thick'?'==>':e.arrow===false?'---':'-->';L.push(`  ${e.from} ${op}${lab?`|${lab}|`:''} ${e.to}`);}
  return L.join('\n');}
 const slug=(s,taken)=>{let b=String(s||'step').toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'').slice(0,18)||'step';if(/^\d/.test(b))b='s_'+b;let id=b,k=2;while(taken(id))id=b+'_'+k++;return id;};
 const RESERVED=new Set(['end','subgraph','graph','flowchart','class','classdef','style','click','direction']);
