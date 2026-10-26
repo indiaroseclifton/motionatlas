@@ -166,7 +166,7 @@ for (const [vw, vh] of VIEWPORTS) {
   /* ---------------- flowchart studio ---------------- */
   {
     const { ctx, page, errors } = await newPage(vw, vh);
-    await page.goto(`${BASE}/flowchart-studio.html`); await page.waitForTimeout(1500);
+    await page.goto(`${BASE}/flowchart-canvas.html`); await page.waitForTimeout(1500);
     /* every element kind renders in three styles, on the canvas and in the framed export */
     const kinds = await page.evaluate(() => Object.keys(FlowEngine.KIND).filter(k => FlowEngine.KIND[k].tag || ['rect', 'decision', 'pill', 'data', 'io', 'sub', 'round', 'circle'].includes(k)));
     const shapeBad = await page.evaluate(([kinds, styles]) => { const bad = []; const W = { rect: ['[', ']'], decision: ['{', '}'], pill: ['([', '])'], data: ['[(', ')]'], io: ['[/', '/]'], sub: ['[[', ']]'], round: ['(', ')'], circle: ['((', '))'] };

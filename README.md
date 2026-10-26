@@ -37,7 +37,7 @@ Live: https://motionatlas-ten.vercel.app (`/` rewrites to `/atlas`).
 
 ## Flowchart studio (canvas)
 
-`site/flowchart-studio.html` is a live canvas, not a single picture. Every element is its own piece you can drag, and a double-click (or double-tap) opens a side panel to edit it and its connections.
+`site/flowchart-studio.html` is the full studio (diagram types, visual steps editor, templates, styles, build-up export). The free-form canvas editor now lives at `site/flowchart-canvas.html`:  Every element is its own piece you can drag, and a double-click (or double-tap) opens a side panel to edit it and its connections.
 
 - **One canvas.** Starting from a template, adding an element or combining another diagram puts separate elements on the same canvas. Positions are saved with the chart and travel in share links.
 - **Start from** lists diagram templates (one per type, plus combinations). **Process templates** is a searchable gallery of 29 real processes with live thumbnails (incident response, refund handling, purchase and invoice approval, hiring, onboarding and offboarding, lead qualification, A/B tests, data pipeline, password reset, returns, support escalation, social scheduling, CI release, sign-up with email verification and more; `dataviz/templates.js`, `dataviz/templates-more.js`, `dataviz/examples.js`).
@@ -393,4 +393,4 @@ Short notes on parts of the atlas that are easy to miss:
 
 ### Video, GIF and view-only mode (Flowchart Studio)
 - Export menu: **Canvas video (MP4)** and **Canvas GIF** play the diagram building up element by element.
-- `flowchart-studio.html?view=1` opens the studio read-only (pan, open panels, no editing); the Viewing/Editing switch toggles it otherwise.
+- `flowchart-canvas.html?view=1` opens the studio read-only (pan, open panels, no editing); the Viewing/Editing switch toggles it otherwise.

@@ -39,6 +39,7 @@
    ['interactions.html','Interactions shelf','Showpieces, scroll stories and sections to copy.','golden-dove'],
    ['page-builder.html','Page builder','Stack sections, pick a style, download one HTML file.','paper-bird'],
    ['flowchart-studio.html','Flowchart studio','Draw, animate and export flowcharts.','light-mesh'],
+   ['flowchart-canvas.html','Flowchart canvas','A free canvas: drag, resize and connect every element.','light-mesh'],
    ['chart-studio.html','Chart studio','Your data as a chart: 26 forms, any style.','pigment-bloom'],
    ['diagram-studio.html','Diagram studio','Eighteen diagram types: roadmaps to sequence and ER.','swan-construction'],
    ['chart-styles.html','Chart style guides','Chart palettes and rules for every style.','game-of-life']]},
