@@ -53,7 +53,7 @@ function dominant(img){const c=document.createElement('canvas'),n=64;c.width=c.h
  let d;try{d=x.getImageData(0,0,n,n).data}catch(e){return []}const bins=new Map();
  for(let i=0;i<d.length;i+=4){if(d[i+3]<200)continue;const h=BG.normHex('#'+[d[i],d[i+1],d[i+2]].map(v=>v.toString(16).padStart(2,'0')).join(''));const [L,C,H]=BG.oklch(h);if(L>.97||L<.06)continue;const k=Math.round(H/24)+'|'+Math.round(L*4)+'|'+(C>.05?1:0);const o=bins.get(k)||{n:0,r:0,g:0,b:0};o.n++;o.r+=d[i];o.g+=d[i+1];o.b+=d[i+2];bins.set(k,o)}
  const cand=[...bins.values()].map(o=>{const h=BG.normHex('#'+[o.r/o.n,o.g/o.n,o.b/o.n].map(v=>Math.round(v).toString(16).padStart(2,'0')).join(''));const [L,C,H]=BG.oklch(h);return {h,H,C,s:o.n*(.25+Math.min(C,.2)*5)}}).sort((a,b)=>b.s-a.s);
- const out=[];for(const c of cand){if(out.every(o=>Math.abs(((o.H-c.H+540)%360)-180)>22||Math.abs(o.C-c.C)>.07)&&BG.dE(o?.h||c.h,c.h)>8||!out.length)out.push(c);if(out.length>=3)break}return out.map(o=>o.h)}
+ const out=[];for(const c of cand){if(out.every(o=>BG.dE(o.h,c.h)>12))out.push(c);if(out.length>=3)break}return out.map(o=>o.h)}
 $('#logoIn').onchange=async e=>{const f=e.target.files[0];if(!f)return;if(f.size>2e6){$('#logoNote').textContent='That file is over 2 MB. Use a smaller one.';return}
  const ok=/svg|png/.test(f.type)||/\.(svg|png)$/i.test(f.name);if(!ok){$('#logoNote').textContent='Use an SVG or PNG file.';return}
  let url;if(/svg/.test(f.type)||/\.svg$/i.test(f.name)){let t=await f.text();if(!/\swidth=/.test(t.match(/<svg[^>]*>/)?.[0]||'')){const vb=t.match(/viewBox="[\d.\s-]*?(-?[\d.]+)\s+(-?[\d.]+)\s*"/);const wh=(t.match(/viewBox="([^"]+)"/)||[])[1];const p=wh?wh.split(/[\s,]+/):[];t=t.replace(/<svg/,`<svg width="${p[2]||256}" height="${p[3]||256}"`)}url='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(t)}
@@ -121,4 +121,67 @@ window.Brandgen={get brand(){return B},get state(){return S},setState(o){S=BG.no
 const h=fromHash(),d=readDraft();if(h)S=BG.norm(h);else if(d)S=BG.norm(d);
 sync();$('#undo').disabled=true;run();
 addEventListener('hashchange',()=>{const x=fromHash();if(x){S=BG.norm(x);sync();run()}});
+})();
+
+/* ---------- step 2: applied previews, guide, projects, site builder, AI ---------- */
+(()=>{
+const BG=window.BrandGen,TK=window.ThemeKits,$=s=>document.querySelector(s),esc=BG.esc;
+let pm='light';
+const say=m=>{const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(say.t);say.t=setTimeout(()=>t.classList.remove('on'),2400)};
+const cur=()=>window.Brandgen.brand,slug=()=>(cur().name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'brand');
+const vars=(b,t)=>`--bg:${t.bg};--sf:${t.surface};--ink:${t.ink};--mute:${t.mute};--ln:${t.line};--bd:${t.border};--p:${t.primary};--onp:${t.onPrimary};--pt:${t.primaryText};--s:${t.secondary};--ons:${t.onSecondary};--a:${t.accent};--ona:${t.onAccent};--ok:${t.successText};--okt:${t.successTint};--r:${b.radius}px;--fh:${b.type.headStack};--fb:${b.type.bodyStack};--hw:${b.type.hw};--cs:${b.type.case==='upper'?'uppercase':'none'}`;
+const mono=(b,t,sz)=>`<span style="display:inline-block;width:${sz}px;height:${sz}px;vertical-align:middle">${BG.monogram(b,sz,{t}).replace('width="'+sz+'" height="'+sz+'"','width="100%" height="100%"')}</span>`;
+function applied(){const b=cur(),t=b.modes[pm],c=b.copy;
+ const css=`<style>.ap{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:16px}.ap>div{min-width:0}.ap h3{margin:0 0 6px;font:600 12px/1 Inter;letter-spacing:.1em;text-transform:uppercase;color:var(--pmute)}.ap .frame{${vars(b,t)};background:var(--bg);color:var(--ink);font-family:var(--fb);border-radius:12px;border:1px solid var(--phair);overflow:hidden}.ap .hd{font-family:var(--fh);font-weight:var(--hw);text-transform:var(--cs)}.ap .bt{display:inline-flex;align-items:center;min-height:40px;padding:0 16px;border-radius:var(--r);background:var(--p);color:var(--onp);font-weight:600;font-size:14px}.ap .bt.g{background:transparent;color:var(--ink);border:1px solid var(--bd)}</style>`;
+ const hero=`<div class="frame"><div style="display:flex;gap:10px;align-items:center;padding:14px 18px;border-bottom:1px solid var(--ln)">${mono(b,t,28)}<b class="hd" style="font-size:18px">${esc(b.name)}</b><span style="margin-left:auto;font-size:13px;color:var(--mute)">Menu · About · Visit</span></div><div style="padding:clamp(22px,5vw,44px) 22px;background:linear-gradient(135deg,var(--sf),var(--bg))"><p class="hd" style="margin:0;font-size:clamp(30px,5vw,48px);line-height:1.04">${esc(c.voice[0])}</p><p style="margin:12px 0 18px;max-width:46ch;font-size:16px;color:var(--mute)">${esc(c.tagline)}</p><div style="display:flex;gap:10px;flex-wrap:wrap"><span class="bt">Get started</span><span class="bt g">Learn more</span></div></div></div>`;
+ const card=`<div class="frame" style="display:grid;grid-template-columns:1fr 1fr;aspect-ratio:7/4"><div style="padding:6%;display:grid;align-content:space-between;background:var(--bg)"><span style="width:44px;display:block">${mono(b,t,44)}</span><div><b class="hd" style="font-size:22px;display:block">${esc(b.name)}</b><span style="font-size:12px;color:var(--mute)">${esc(c.voice[2])}</span></div></div><div style="padding:6%;display:grid;align-content:center;gap:4px;background:var(--p);color:var(--onp);font-size:12px"><b class="hd" style="font-size:16px">Alex Morgan</b><span>Founder</span><span style="margin-top:8px">hello@${esc(slug())}.com</span><span>+00 0000 000000</span></div></div>`;
+ const post=`<div class="frame" style="aspect-ratio:1/1;max-width:420px;display:grid;place-items:center;text-align:center;padding:8%;background:var(--p);color:var(--onp)"><div style="display:grid;gap:14px;justify-items:center">${mono(b,{...t,primary:t.onPrimary,onPrimary:t.primary,primaryText:t.onPrimary},52)}<p class="hd" style="margin:0;font-size:clamp(26px,5vw,38px);line-height:1.08">${esc(c.voice[1])}</p><span style="background:var(--a);color:var(--ona);padding:6px 14px;border-radius:999px;font-weight:600;font-size:13px">${esc(b.name)}</span></div></div>`;
+ const app=`<div class="frame" style="max-width:340px;margin:0 auto"><div style="padding:16px 16px 10px;display:flex;align-items:center;justify-content:space-between"><b class="hd" style="font-size:20px">Today</b>${mono(b,t,26)}</div><div style="padding:0 16px 16px;display:grid;gap:10px"><div style="background:var(--sf);border:1px solid var(--ln);border-radius:var(--r);padding:12px"><span style="font-size:12px;color:var(--mute)">Next up</span><p class="hd" style="margin:2px 0 8px;font-size:20px">${esc(c.voice[2])}</p><span class="bt" style="min-height:34px;font-size:13px">Continue</span></div>${['Saved','Updated','Shared'].map((x,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border:1px solid var(--ln);border-radius:var(--r);font-size:14px"><span>${x} item ${i+1}</span><span style="background:${i?'var(--sf)':'var(--okt)'};color:${i?'var(--mute)':'var(--ok)'};padding:2px 10px;border-radius:999px;font-size:12px;font-weight:600">${i?'Draft':'Done'}</span></div>`).join('')}</div><div style="display:flex;justify-content:space-around;padding:10px;border-top:1px solid var(--ln);font-size:12px;color:var(--mute)"><b style="color:var(--pt)">Home</b><span>Search</span><span>Profile</span></div></div>`;
+ $('#appBox').innerHTML=css+`<div class="ap"><div><h3>Landing hero</h3>${hero}</div><div><h3>Business card</h3>${card}</div><div><h3>Social post</h3>${post}</div><div><h3>App screen</h3>${app}</div></div>`}
+document.querySelectorAll('[data-pm]').forEach(x=>x.onclick=()=>{pm=x.dataset.pm;document.querySelectorAll('[data-pm]').forEach(y=>y.setAttribute('aria-pressed',y===x));applied()});
+
+/* guide */
+const guide=()=>BG.guideHTML(cur());
+function showGuide(){$('#gdFrame').srcdoc=guide()}
+const save=(b,n)=>TK.save(b,n);
+$('#gdHtml').onclick=()=>{save(new Blob([guide()],{type:'text/html'}),slug()+'-brand-guide.html');say('Downloaded the guide')};
+$('#gdPrint').onclick=()=>{const f=$('#gdFrame');try{f.contentWindow.focus();f.contentWindow.print()}catch(e){say('Open the downloaded HTML and print it')}};
+$('#gdPng').onclick=async()=>{const f=$('#gdFrame'),d=f.contentDocument;if(!d||!d.body){say('The guide is still loading');return}
+ try{const W=1000,H=Math.ceil(d.documentElement.scrollHeight),css=[...d.querySelectorAll('style')].map(s=>s.textContent).join('\n').replace(/@import[^;]+;/g,'');
+  const imgs=await Promise.all([...d.images].map(async i=>[i.src,i.src]));let body=d.body.innerHTML;
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}"><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml"><style>${css.replace(/&/g,'&amp;').replace(/</g,'&lt;')}</style>${new XMLSerializer().serializeToString(d.body).replace(/^<body[^>]*>/,'<div class="b" style="background:'+cur().modes.light.bg+'">').replace(/<\/body>$/,'</div>')}</div></foreignObject></svg>`;
+  const img=new Image();await new Promise((res,rej)=>{img.onload=res;img.onerror=rej;img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)});
+  const c=document.createElement('canvas');c.width=W*2;c.height=H*2;const x=c.getContext('2d');x.scale(2,2);x.fillStyle=cur().modes.light.bg;x.fillRect(0,0,W,H);x.drawImage(img,0,0);
+  c.toBlob(b=>{if(!b){say('Could not make the PNG');return}save(b,slug()+'-brand-guide.png');say('Downloaded the PNG (system fonts stand in for web fonts)')},'image/png')}catch(e){say('Could not make the PNG here. Use the HTML download and print.')}};
+
+/* My projects */
+function saveProject(){const b=cur(),K='atlas-projects-v1';let list=[];try{list=JSON.parse(localStorage.getItem(K)||'[]');if(!Array.isArray(list))list=[]}catch(e){list=[]}
+ const origin='brand-'+slug().slice(0,40),now=Date.now(),M=b.modes[b.mode],url=window.Brandgen.shareURL().replace(location.origin+location.pathname.replace(/[^/]*$/,''),'');
+ const links=[{id:'brand-gen',title:'Open in the Brand kit generator',url:'brand-generator.html#s='+url.split('#s=')[1],kind:'brand',text:`${b.type.head} + ${b.type.body} · primary ${b.pal.brand} · ${b.mode} first`},{id:'brand-kits',title:'Theme kits',url:'theme-kits.html',kind:'brand',text:'The forty-eight built-in kits, for comparison.'}];
+ let p=list.find(x=>x&&x.origin===origin);
+ if(!p){p={id:(crypto.randomUUID?crypto.randomUUID():'p'+now.toString(36)),name:b.name,brief:b.copy.tagline,platform:'Website',stage:'Designing',entries:[],icons:[],references:[],decisions:`Brand kit: ${b.type.head} + ${b.type.body}; primary ${b.pal.brand}, secondary ${b.pal.secondary}, accent ${b.pal.accent}.`,notes:{},directions:[],created:now,updated:now,origin,isPublic:false,files:[],hub:{links:[]}};list.push(p)}
+ p.name=b.name;p.updated=now;p.decisions=`Brand kit: ${b.type.head} + ${b.type.body}; primary ${b.pal.brand}, secondary ${b.pal.secondary}, accent ${b.pal.accent}.`;p.hub=p.hub&&typeof p.hub==='object'?p.hub:{links:[]};
+ p.hub.lede=b.copy.tagline;p.hub.kitSnap={id:'',no:b.initials.slice(0,2),name:b.name,tagline:b.copy.tagline,head:b.type.headStack,body:b.type.bodyStack,css:b.type.css,t:{bg:M.bg,surface:M.surface,ink:M.ink,mute:M.mute,line:M.line,accent:M.primary,accent2:M.secondary,onAccent:M.onPrimary}};
+ p.hub.links=[...links,...(p.hub.links||[]).filter(l=>!/^brand-(gen|kits)$/.test(l.id))];
+ try{localStorage.setItem(K,JSON.stringify(list));$('#projLink').hidden=false;$('#projLink').href='atlas.html#projects?id='+p.id+'&view=hub';$('#svNote').textContent=`Saved “${b.name}” to My projects (in this browser). Its hub has a link back here.`;say('Saved to My projects')}catch(e){say('Could not save: storage is full or blocked')}}
+$('#saveProj').onclick=saveProject;
+
+/* Site builder handoff: a new site whose tokens are the brand's */
+$('#toSite').onclick=()=>{const b=cur(),M=b.modes[b.mode],K='atlas-page-builder-v2',id='brand'+Date.now().toString(36);let st;try{st=JSON.parse(localStorage.getItem(K)||'null')}catch(e){st=null}
+ if(!st||!st.pages)st={cur:null,pages:{}};const ok=f=>/^[\w ]{2,40}$/.test(f)?f:'';const fh=ok(b.type.head),fb=ok(b.type.body);
+ st.pages[id]={id,name:b.name,brand:b.name,style:'studio',blocks:[],tokens:{bg:M.bg,surface:M.surface,ink:M.ink,accent:M.primary,radius:Math.min(40,b.radius),...(fh?{fontHead:fh}:{}),...(fb?{fontBody:fb}:{})}};st.cur=id;
+ try{localStorage.setItem(K,JSON.stringify(st));say('Opening the site builder with your brand');location.href='page-builder.html?site='+id}catch(e){say('Could not hand off: storage is full or blocked')}};
+
+/* AI refine */
+let aiOn=null;
+async function aiStatus(){if(aiOn!=null)return aiOn;try{const r=await fetch('/api/ai?status',{headers:{accept:'application/json'}});const j=r.ok&&/json/.test(r.headers.get('content-type')||'')?await r.json():null;aiOn=!!(j&&j.enabled)}catch(e){aiOn=false}return aiOn}
+$('#aiBtn').onclick=async()=>{const n=$('#svNote');n.textContent='Checking the AI…';if(!await aiStatus()){n.textContent='AI refinement is not switched on for this site yet (the server has no API key). Everything above works without it: the generator is deterministic from your inputs, and shuffle gives variations.';return}
+ const b=cur();n.textContent='Asking the AI to refine the voice…';try{const r=await fetch('/api/ai',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({mode:'brand',brief:`Brand ${b.name}: ${b.state.desc}. Feel: ${b.state.feels.join(', ')}. Audience: ${b.state.audience}. Pairing: ${b.type.id} (options: ${b.type.alternatives.join(', ')}).`,catalog:[],styles:[]})});const j=await r.json().catch(()=>null);
+  if(!r.ok||!j||!j.brand)throw new Error((j&&j.error)||'The AI endpoint does not support brand refinement yet.');window.Brandgen.setState({...window.Brandgen.state,ai:j.brand});n.textContent='Refined with AI: tagline, voice and guidance updated.'}catch(e){n.textContent='AI refinement is unavailable: '+e.message+' Your brand is unchanged.'}};
+
+/* re-render the new sections whenever the main run() happens */
+const run0=window.Brandgen.run;window.Brandgen.run=()=>{run0();applied();showGuide()};
+const mo=new MutationObserver(()=>{});
+applied();showGuide();
+const orig=document.querySelector('#palBox');new MutationObserver(()=>{applied();clearTimeout(showGuide.t);showGuide.t=setTimeout(showGuide,200)}).observe(orig,{childList:true});
 })();
