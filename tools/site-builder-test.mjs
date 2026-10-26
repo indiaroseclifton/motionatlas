@@ -144,6 +144,46 @@ const waitPv = pg => pg.waitForTimeout(700);
   await ctx.close();
 }
 
+// ---- 1c. images, links, section settings
+{
+  const { ctx, pg } = await open();
+  await pg.waitForTimeout(2500);
+  const fr = frame(pg);
+  await pg.click('#rt-pages'); await pg.click('#addPage'); await waitPv(pg); await pg.click('#rt-page');
+  // add a hero with an image through the library
+  await pg.click('#libSearch'); await pg.fill('#libSearch', '3D card'); await pg.waitForTimeout(400); await pg.click('#libList .lc .add'); await waitPv(pg);
+  let img = fr.locator('[data-pbimg=img3]'); await img.scrollIntoViewIfNeeded(); await img.click(); await pg.waitForTimeout(400);
+  ok(await pg.isVisible('#cvTb [aria-label="Replace the image"]'), 'selecting an image shows the image tool');
+  await pg.click('#cvTb [aria-label="Replace the image"]');
+  const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mP8z8BQz0AEYBxVSF+FABJADveWkH6oAAAAAElFTkSuQmCC', 'base64');
+  await pg.setInputFiles('#cvPop input[type=file]', { name: 'dot.png', mimeType: 'image/png', buffer: png }); await waitPv(pg); await pg.waitForTimeout(500);
+  let s = await site(pg);
+  ok(JSON.stringify(s).includes('"user:u'), 'uploaded image stored as user:<id>');
+  ok((await fr.locator('img[src^="blob:"], [style*="blob:"]').count()) > 0, 'uploaded image shows in the preview');
+  // button link
+  const btn = fr.locator('a.btn').first(); await btn.scrollIntoViewIfNeeded(); await btn.click({ position: { x: 4, y: 4 } }); await pg.waitForTimeout(400);
+  await pg.click('#cvTb [aria-label="Change where this links"]'); await pg.selectOption('#cvPop select', { index: 1 }); await waitPv(pg);
+  ok((await fr.locator('a.btn[href="#pb-page:' + s.pages[0].id + '"]').count()) >= 1, 'button can link to a page of the site');
+  await pg.selectOption('#cvPop select', 'custom'); await pg.fill('#cvPop input[aria-label="Link address"]', 'https://example.com/book'); await waitPv(pg);
+  ok((await fr.locator('a.btn[href="https://example.com/book"]').count()) >= 1, 'button can link to a web address');
+  // section settings: hide on phone + accent background
+  await pg.click('#cvTb [aria-label="Section settings and words"]'); await pg.waitForTimeout(300);
+  await pg.locator('#ol .blk.open details.setd summary').click();
+  await pg.locator('#ol .blk.open .setb select').nth(3).selectOption('accent'); await waitPv(pg);
+  ok((await fr.locator('.pb-in').count()) === 1, 'accent background wraps the section in a re-themed container');
+  await pg.locator('#ol .blk.open .hidef input').nth(2).check(); await waitPv(pg);
+  s = await site(pg); ok(JSON.stringify(s).includes('"hide":{"p":1}'), 'hide on phone stored');
+  // export honours uploads, links, settings
+  const dlp = pg.waitForEvent('download'); await pg.click('#exportMenu summary'); await pg.click('#dlZip'); const d = await dlp;
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'sb-zip2-')); const zf = path.join(dir, 's.zip'); await d.saveAs(zf); const out = path.join(dir, 'x'); fs.mkdirSync(out); execFileSync('unzip', ['-q', zf, '-d', out]);
+  const names = execFileSync('unzip', ['-Z1', zf]).toString();
+  const html = fs.readFileSync(path.join(out, 'new-page.html'), 'utf8'), css = fs.readFileSync(path.join(out, 'assets/site.css'), 'utf8');
+  ok(/assets\/uploads\/u\w+\.png/.test(names) && /assets\/uploads\/u\w+\.png/.test(html), 'uploaded image is bundled and referenced');
+  ok(/href="https:\/\/example\.com\/book"/.test(html) && /pbh-p/.test(html) && /\.pbh-p\{display:none/.test(css), 'link override and phone visibility are in the export');
+  ok(!/data-pbf|contenteditable|data-pbimg|data-pba/.test(html), 'no editing markers in the export');
+  await ctx.close();
+}
+
 // ---- 2. back-compat: an old saved single page opens as a one-page site
 {
   const old = { cur: 'p1', pages: { p1: { id: 'p1', name: 'Old page', brand: 'Larder', title: 'Larder · bakery', style: 'paper', pair: -1, blocks: [{ uid: 'a1', id: 'nav', vals: { l1: 'Bread', l2: 'Cakes', l3: 'Visit', cta: 'Order' } }, { uid: 'a2', id: 'hero-center', vals: { heading: 'Warm from the oven.' } }, { uid: 'a3', id: 'sec-footer', vals: {} }] } } };

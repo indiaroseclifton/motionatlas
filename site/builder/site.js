@@ -38,7 +38,7 @@ function normalize(x,def){
  const d=DEFAULTS(),st=x.settings||{};s.settings={...d,...st,favicon:{...d.favicon,...(st.favicon||{})},notFound:{...d.notFound,...(st.notFound||{})}};
  if(x.tokens)s.tokens=x.tokens;
  return s}
-function fix(list,def){return (list||[]).filter(b=>b&&(!def||def(b.id))).map(b=>({uid:b.uid||uid(),id:b.id,vals:b.vals||{}}))}
+function fix(list,def){return (list||[]).filter(b=>b&&(!def||def(b.id))).map(b=>{const o={uid:b.uid||uid(),id:b.id,vals:b.vals||{}};if(b.set&&typeof b.set==='object')o.set=b.set;if(b.links&&typeof b.links==='object')o.links=b.links;return o})}
 const safeLink=l=>{l=String(l||'').trim();if(!l)return '#';if(/^\s*(javascript|data|vbscript):/i.test(l))return '#';return l};
 /* menu: the pages (in order) or the custom list; each item {label,link} */
 function menu(site){if(site.navAuto)return site.pages.filter(p=>p.inNav).map(p=>({label:p.name,link:'page:'+p.id,pageId:p.id}));

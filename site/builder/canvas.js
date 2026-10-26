@@ -13,11 +13,10 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const markCache=new Map();
 function mark(d){if(markCache.has(d.id))return markCache.get(d.id);
  const F=new Map((d.fields||[]).map(f=>[f.k,f])),html=d.html,edits=[],tagDone=new Set();let curEach=null;
- const re=/\{\{(each:(\w+)|\/each|(?:[a-z]+)?\d+|\w+)\}\}/g;let m;
+ const re=/\{\{(each:(\w+)|\/each|\w+)\}\}/g;let m;
  while((m=re.exec(html))){const tok=m[1],idx=m.index,before=html.slice(0,idx),text=before.lastIndexOf('<')<=before.lastIndexOf('>');
   if(m[2]){curEach=m[2];continue}if(tok==='/each'){curEach=null;continue}
   if(/^\d+$/.test(tok)){if(curEach&&text)edits.push({pos:idx,len:m[0].length,repl:`<span data-pbf="${curEach}" data-r="{{n}}" data-c="${tok}">${m[0]}</span>`});continue}
-  if(/^[a-z]+\d+$/.test(tok))continue;
   const f=F.get(tok);if(!f)continue;
   if((f.type==='text'||f.type==='long')&&text)edits.push({pos:idx,len:m[0].length,repl:`<span data-pbf="${tok}">${m[0]}</span>`});
   else if(f.type==='image'&&!text){const ts=before.lastIndexOf('<');if(!tagDone.has(ts)){const tn=/^<\w+/.exec(html.slice(ts));if(tn){tagDone.add(ts);edits.push({pos:ts+tn[0].length,len:0,repl:` data-pbimg="${tok}"`})}}}}
