@@ -51,6 +51,11 @@ for (let ti = 0; ti < ids.length; ti++) {
   const names = new Set(files.map(f => f[0])); const server = await serve(dir); const origin = 'http://localhost:' + server.address().port + '/';
   const htmls = files.filter(f => f[0].endsWith('.html')).map(f => f[0]);
   ok(names.has('sitemap.xml') && names.has('robots.txt') && names.has('index.html'), ids[ti] + ': index, sitemap and robots present');
+  ok(names.has('assets/CREDITS.txt'), ids[ti] + ': export carries assets/CREDITS.txt');
+  { const cred = (files.find(f => f[0] === 'assets/CREDITS.txt') || [0, ''])[1]; const css = (files.find(f => f[0] === 'assets/site.css') || [0, ''])[1]; const refs = new Set(); for (const [n, c] of files) if (c && /\.(html|css|js)$/.test(n)) for (const m of c.matchAll(/assets\/((?:shelf|photos|fx|art-refs)\/[\w./-]+)/g)) refs.add(m[1]);
+    for (const r of refs) { ok(names.has('assets/' + r), ids[ti] + ': referenced asset is in the export: ' + r); }
+    ok(await builder.evaluate(list => list.every(p => PB.credits.exportable(p)), [...refs]), ids[ti] + ': every library asset used is cleared for export');
+    const ph = [...refs].filter(r => /^photos\//.test(r)); ok(ph.length === 0 || /Photographs/.test(cred), ids[ti] + ': photos used are credited'); ok(/Fonts/.test(cred) || !/fonts.googleapis/.test(css + files.map(f => f[1] || '').join('')), ids[ti] + ': fonts are credited'); }
   for (const [n, c] of files) if (c && n.endsWith('.html')) for (const e of lint(c, ids[ti] + '/' + n)) bad(e);
   const sm = files.find(f => f[0] === 'sitemap.xml')[1]; for (const f of htmls) if (f !== '404.html') ok(sm.includes(f === 'index.html' ? 'https://example.org/</loc>' : f), ids[ti] + ': sitemap lists ' + f);
   if (names.has('feed.xml')) { const fx = files.find(f => f[0] === 'feed.xml')[1]; ok(/<rss/.test(fx) && /<item>/.test(fx), ids[ti] + ': feed.xml has items'); }

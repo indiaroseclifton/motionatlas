@@ -264,6 +264,7 @@ const waitPv = pg => pg.waitForTimeout(700);
     let broken = [];
     for (const [n, c] of files) if (c && n.endsWith('.html')) for (const m of c.matchAll(/href="([\w-]+\.html)"/g)) if (!names.has(m[1])) broken.push(n + ' -> ' + m[1]);
     ok(!broken.length && names.has('index.html') && names.has('sitemap.xml'), nm + ': export links resolve ' + broken.slice(0, 3));
+    ok(names.has('assets/CREDITS.txt'), nm + ': export includes assets/CREDITS.txt');
     ok(files.every(([n, c]) => !c || !/\{\{|undefined|\[object/.test(c.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, ''))), nm + ': no unfilled placeholders');
     for (const p of s.pages) { await pg.selectOption('#pageSel', p.id); await pg.waitForTimeout(350); }
   }
