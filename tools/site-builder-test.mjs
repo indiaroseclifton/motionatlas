@@ -553,6 +553,15 @@ if (axeSrc) {
   ok(await pg.evaluate(() => PB.app.curPage().blocks.some(b => b.vals && /^photos\//.test(b.vals.img || ''))), 'choosing a photo in the picker sets the image');
   await ctx.close();
 }
+// ---- 5f. templates use real photographs where one fits
+{
+  const { ctx, pg } = await open();
+  await pg.waitForFunction(() => PB.photos && PB.photos.list.length > 60);
+  const r = await pg.evaluate(() => { const used = {}, missing = []; PB.templates.forEach(t => { const j = JSON.stringify(t.make()); (j.match(/photos\/[\w-]+\.webp/g) || []).forEach(p => { used[t.id] = (used[t.id] || 0) + 1; if (!PB.photos.byPath(p)) missing.push(t.id + ':' + p); }); }); return { n: Object.keys(used).length, missing }; });
+  ok(r.n >= 10, 'at least ten templates use photographs (' + r.n + ')');
+  ok(!r.missing.length, 'every photo a template references exists in the library ' + r.missing.slice(0, 3));
+  await ctx.close();
+}
 // ---- 5a. site file backup, import, My projects sync
 {
   const { ctx, pg } = await open();

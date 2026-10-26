@@ -281,7 +281,7 @@ static site or publish it to a live address. Old single-page saves open as one-p
   are resized to 2400 px and stored as WebP (PNG when transparent); "My images" lists them with rename, alt text, add and
   delete. Each image has a focus point (click the part that must stay in view; stored as `<field>_fp`, rendered as
   `object-position`). Exports add width and height, async decoding and `srcset` (640 / 1280 px copies of uploads, 640 px
-  copies of photos). Licence table: `docs/image-licences.md`.
+  copies of photos). Templates for places, food, property, fitness, weddings, podcasts, documentation and offices use these photographs (the abstract atlas art stays on the design, paper and product templates). Licence table: `docs/image-licences.md`.
 - **Speed:** films in the canvas load their poster first and start when they scroll into view; library previews and
   embedded frames are lazy.
 - **Pages and sites:** a site has pages (add, rename, duplicate, reorder, delete, home page, file names), a shared

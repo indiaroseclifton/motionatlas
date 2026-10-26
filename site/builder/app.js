@@ -120,7 +120,7 @@ function withTokens(st,acc){const tk=site.tokens;if(!tk||!Object.keys(tk).length
  if(names.length)fonts=[fonts,PB.styles.gq(names)].filter(Boolean).join('&');
  if(tk.btn==='sharp')acc.css.set('pb-tk-btn','.btn{border-radius:0!important}');else if(tk.btn==='pill')acc.css.set('pb-tk-btn','.btn{border-radius:999px!important}');
  return {...st,vars:vars+';'+o.join(';'),fonts}}
-const buildCSS=(st,acc)=>':root{'+st.vars+'}\n'+(st.face||'')+LIB.base+'.h{text-transform:var(--case,none)}h1,h2,h3{overflow-wrap:anywhere}@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}html{scroll-padding-top:72px}@media print{.pb-sticky{position:static!important}video,.ctrl,form{display:none!important}body{background:#fff!important;color:#000!important}a{text-decoration:underline}.x-nf{min-height:0!important}}\n'+[...acc.css.values()].join('\n');
+const buildCSS=(st,acc)=>':root{'+st.vars+'}\n'+(st.face||'')+LIB.base+'.h{text-transform:var(--case,none)}@media (max-width:700px){h1,h2,h3{overflow-wrap:anywhere}}@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}html{scroll-padding-top:72px}@media print{.pb-sticky{position:static!important}video,.ctrl,form{display:none!important}body{background:#fff!important;color:#000!important}a{text-decoration:underline}.x-nf{min-height:0!important}}\n'+[...acc.css.values()].join('\n');
 const fontURLOf=acc=>acc.fonts.size?'https://fonts.googleapis.com/css2?'+[...acc.fonts].join('&')+'&display=swap':'';
 function compose(mode,pg,acc,opt){ // mode: preview | html | zip  -> parts for one page (header + page + footer). acc shares css/fonts/files between pages.
  pg=pg||curPage();acc=acc||newAcc();
