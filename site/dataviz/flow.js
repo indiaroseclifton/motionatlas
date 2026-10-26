@@ -114,10 +114,13 @@ function healthOf(g,n,opt){const K=KIND[kindOf(n)]||KIND.rect;if(K.noDot)return 
 const MSHAPE={rect:'rect',process:'rect',proc:'rect',rectangle:'rect',rounded:'round',event:'round',stadium:'pill',pill:'pill',terminal:'pill','fr-rect':'sub',subprocess:'sub',subroutine:'sub',framed:'sub',cyl:'data',cylinder:'data',database:'data',db:'data',circle:'circle',circ:'circle','sm-circ':'circle','dbl-circ':'pill','fr-circ':'pill',diam:'decision',diamond:'decision',decision:'decision',question:'decision',hex:'decision',hexagon:'decision',prepare:'decision','lean-r':'io','lean-l':'io','in-out':'io','out-in':'io',doc:'k:doc',document:'k:doc',docs:'k:doc','lin-doc':'k:doc','tag-doc':'k:doc',delay:'k:delay','half-rounded-rectangle':'k:delay','trap-t':'k:manual','manual':'k:manual','inv-trapezoid':'k:manual','trap-b':'k:manual','sl-rect':'k:minput','manual-input':'k:minput','curv-trap':'k:display',display:'k:display',odd:'k:offpage','off-page':'k:offpage',brace:'k:note','brace-r':'k:note',braces:'k:note',comment:'k:note','lin-cyl':'data','h-cyl':'data',das:'data','win-pane':'data','bow-rect':'data','st-rect':'sub','div-rect':'rect','lin-rect':'rect','tag-rect':'rect','notch-rect':'rect','notch-pent':'rect',flag:'rect',text:'rect'};
 const SHAPES=[[/^\[\[(.*?)\]\]/,'sub'],[/^\(\[(.*?)\]\)/,'pill'],[/^\[\((.*?)\)\]/,'data'],[/^\(\((.*?)\)\)/,'circle'],[/^\[\/(.*?)\/\]/,'io'],[/^\[\\(.*?)\\\]/,'io'],[/^\{\{(.*?)\}\}/,'decision'],[/^\{(.*?)\}/,'decision'],[/^\[(.*?)\]/,'rect'],[/^\((.*?)\)/,'round'],[/^>(.*?)\]/,'k:offpage']];
 const EDGE=/^\s*(?:(<?)(-{2,}|={2,}|-\.+-)(>|x|o)?\s*(?:\|([^|]*)\|)?|--\s+([^-][^]*?)\s+-->|==\s+(.*?)\s+==>|-\.\s+(.*?)\s+\.->)\s*/;
+/* one status and one kind per element: "have", "person" and "have.person" all combine */
+function mergeCls(old,add){if(!old)return add;const kindOfC=c=>{const p=String(c).split('.');return KIND[p[0]]&&KIND[p[0]].tag?p[0]:p.slice(1).find(k=>KIND[k]&&KIND[k].tag)||'';},statusOfC=c=>{const p0=String(c).split('.')[0];return KIND[p0]&&KIND[p0].tag?'':p0==='none'?'':p0;};
+ const st=statusOfC(add)||statusOfC(old),kd=kindOfC(add)||kindOfC(old);return kd?`${st||'none'}.${kd}`:st||null;}
 function parse(src){
  const g={dir:'TB',nodes:new Map(),edges:[],groups:[],order:0};const stack=[];
  const touch=(id,label,shape,cls)=>{let n=g.nodes.get(id);if(!n){n={id,label:id,note:'',shape:'rect',cls:null,group:stack.length?stack[stack.length-1].id:null,i:g.nodes.size};g.nodes.set(id,n);}
-  if(label!=null){const t=clean(label),parts=t.split(/\n| \| /);n.label=parts[0].trim();n.note=parts.slice(1).join(' ').trim();}if(shape)n.shape=shape;if(cls)n.cls=cls;if(stack.length&&label!=null&&!n.group)n.group=stack[stack.length-1].id;return n;};
+  if(label!=null){const t=clean(label),parts=t.split(/\n| \| /);n.label=parts[0].trim();n.note=parts.slice(1).join(' ').trim();}if(shape)n.shape=shape;if(cls)n.cls=mergeCls(n.cls,cls);if(stack.length&&label!=null&&!n.group)n.group=stack[stack.length-1].id;return n;};
  const nodeAt=s=>{const m=s.match(/^\s*([A-Za-z0-9_][\w\-.]*)/);if(!m)return null;let rest=s.slice(m[0].length),label=null,shape=null,cls=null;
   for(const [re,sh] of SHAPES){const mm=rest.match(re);if(mm){label=mm[1];shape=sh;rest=rest.slice(mm[0].length);break;}}
   const at=!shape&&rest.match(/^@\{([^}]*)\}/);if(at){rest=rest.slice(at[0].length);const kv={};at[1].replace(/(\w+)\s*:\s*("([^"]*)"|[^,]+)/g,(_,k,v,q)=>{kv[k.toLowerCase()]=(q??v).trim();return '';});shape=MSHAPE[(kv.shape||'rect').toLowerCase()]||'rect';if(kv.label!=null)label=kv.label;}
@@ -144,7 +147,7 @@ function parse(src){
    const head=e[3]==='o'?'o':e[3]==='x'?'x':null;
    for(const a of cur.ids)for(const b of nx.ids)g.edges.push({from:a.id,to:b.id,label,kind,arrow:arrow||!e[2]?true:arrow,bi:e[1]==='<',...(head?{head}:{}),i:g.edges.length});
    cur=nx;rest=nx.rest;}}
- for(const n of g.nodes.values()){const parts=String(n.cls||'').split('.');n.status=STATUS[parts[0].toLowerCase().replace(/[^a-z]/g,'')]||null;
+ for(const n of g.nodes.values()){if(n.cls){const p0=String(n.cls).split('.')[0];if(KIND[p0]&&KIND[p0].tag)n.cls='none.'+String(n.cls);}const parts=String(n.cls||'').split('.');n.status=STATUS[parts[0].toLowerCase().replace(/[^a-z]/g,'')]||null;
   n.kind=parts.slice(1).find(k=>KIND[k]&&KIND[k].tag)||null;if(n.kind&&KIND[n.kind].shape)n.shape=KIND[n.kind].shape;}
  return g;}
 

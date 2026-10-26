@@ -42,6 +42,8 @@ details.help summary::before{content:'+ ';}details.help[open] summary::before{co
 .tpl-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}
 .tpl-in h2{margin:0;font:600 22px/1.2 'Instrument Serif',Georgia,serif;letter-spacing:0;text-transform:none;color:var(--ink)}
 .tpl-in p{margin:4px 0 0;font-size:13px;color:#525868}
+.tpl-tools{display:flex;gap:10px;align-items:center;margin-top:14px}.tpl-tools input{flex:1;min-width:0;min-height:42px;border:1px solid var(--hair);border-radius:10px;padding:0 12px;background:var(--panel);font-size:13.5px}.tpl-tools span{font-size:12px;color:#4A5063;white-space:nowrap;font-variant-numeric:tabular-nums}
+.tpl-none{grid-column:1/-1;margin:20px 0;color:var(--mute);font-size:13px}
 .tpl-cats{display:flex;flex-wrap:wrap;gap:6px;margin:16px 0}
 .tpl-cats button{border:1px solid var(--hair);background:var(--panel);border-radius:999px;min-height:32px;padding:0 12px;font-size:12.5px;cursor:pointer}
 .tpl-cats button[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
@@ -229,6 +231,7 @@ body{overflow:hidden}
 .fly-foot{padding:6px 2px 2px}
 .fly-search{padding:2px 2px 4px}.fly-search input{width:100%;min-height:40px;border:1px solid var(--hair);border-radius:10px;padding:0 12px;background:var(--soft);font-size:13px}
 .fly-ta{display:block;width:calc(100% - 4px);margin:0 2px;min-height:180px;font-size:12px;white-space:pre;resize:vertical}
+.fly-prose{white-space:pre-wrap;font:13px/1.5 Inter,sans-serif;min-height:130px}
 .fly-row{display:flex;flex-wrap:wrap;gap:6px;padding:6px 2px 2px}.fly-row .btn{flex:1 1 auto;justify-content:center}.fly-file{cursor:pointer}
 .fly-note code{font:11.5px 'JetBrains Mono',monospace;background:var(--soft);border-radius:4px;padding:0 4px}.fly-foot .btn{width:100%;justify-content:center}
 .swrow{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:56px;padding:8px 12px;border:1px solid var(--hair);background:var(--panel);border-radius:12px;text-align:left;font-size:13px;font-weight:600}
@@ -445,13 +448,15 @@ body.presenting .rail,body.presenting .dock,body.presenting .selbar,body.present
 <dialog id="keys" aria-labelledby="keysT"><div class="keys"><div style="display:flex;justify-content:space-between;align-items:center"><h2 id="keysT">Keyboard and mouse</h2><button type="button" class="fe-ic" id="keysClose" aria-label="Close" style="width:44px;height:44px">×</button></div>
 <dl id="keysList"></dl></div></dialog>
 <dialog id="tpl" aria-labelledby="tplTitle"><div class="tpl-in">
- <div class="tpl-head"><div><h2 id="tplTitle">Examples</h2><p>Real processes to learn from, each drawn in the layout that suits it. To start your own diagram, use Start from.</p></div><button type="button" class="fe-ic" id="tplClose" aria-label="Close templates">×</button></div>
+ <div class="tpl-head"><div><h2 id="tplTitle">Process templates</h2><p>Real processes, ready to use or adapt, each drawn in the layout that suits it.</p></div><button type="button" class="fe-ic" id="tplClose" aria-label="Close templates">×</button></div>
+ <div class="tpl-tools"><input type="search" id="tplQ" placeholder="Search processes: refund, hiring, incident…" aria-label="Search templates" autocomplete="off"><span id="tplCount" aria-live="polite"></span></div>
  <div class="tpl-cats" id="tplCats" role="group" aria-label="Filter templates"></div>
  <div class="tpl-grid" id="tplGrid"></div></div></dialog>
 <script src="dataviz/styles.js"></script>
 <script src="dataviz/flow.js"></script>
 <script src="dataviz/examples.js"></script>
 <script src="dataviz/templates.js"></script>
+<script src="dataviz/templates-more.js"></script>
 <script src="dataviz/flowtypes.js"></script>
 <script src="dataviz/flow-editor.js"></script>
 <script src="dataviz/flow-text.js"></script>
@@ -530,15 +535,17 @@ function loadChart(x){$('src').value=x.src;$('title').value=x.title||x.name;$('s
  S.type=x.type||(x.id==='release'?'swimlanes':'auto');store.set('type',S.type);setSeg('dir',/flowchart\s+LR/.test(x.src)?'LR':'TB');cv.reset();cv.store();if(S.mode==='visual')editor.load(x.src);render(true);}
 function loadTemplate(x){$('src').value=x.src;$('title').value=x.id==='blank'?'':x.name;$('subtitle').value='';S.type=x.type;store.set('type',S.type);setSeg('dir',/flowchart\s+LR/.test(x.src)?'LR':'TB');
  cv.reset();cv.setState({cl:x.cl||{},ct:x.ct||{}});cv.store();if(S.view!=='canvas'){S.view='canvas';syncView();}if(S.mode==='visual')editor.load(x.src);render(true);}
-let tplCat='All';
+let tplCat='All',tplQ='';
 function drawTemplates(){const cats=['All',...new Set(ALL.map(x=>x.cat))];
  $('tplCats').innerHTML=cats.map(c=>`<button type="button" data-cat="${c}" aria-pressed="${c===tplCat}">${c}</button>`).join('');
- const st=DVStyle(S.style);$('tplGrid').innerHTML=ALL.filter(x=>tplCat==='All'||x.cat===tplCat).map((x,i)=>{let svg='';const ty=x.type||(x.id==='release'?'swimlanes':FlowTypes.suggest(FlowEngine.parse(x.src))[0].id);
+ const q=tplQ.trim().toLowerCase(),list=ALL.filter(x=>(tplCat==='All'||x.cat===tplCat)&&(!q||[x.name,x.cat,x.title,x.subtitle,x.src].join(' ').toLowerCase().includes(q)));$('tplCount').textContent=`${list.length} of ${ALL.length}`;
+ const st=DVStyle(S.style);$('tplGrid').innerHTML=(list.length?'':`<p class="tpl-none">Nothing matches “${q.replace(/</g,'&lt;')}”. Try another word, or describe the process in Assist.</p>`)+list.map((x,i)=>{let svg='';const ty=x.type||(x.id==='release'?'swimlanes':FlowTypes.suggest(FlowEngine.parse(x.src))[0].id);
   try{svg=FlowTypes.render(ty,x.src,st,{title:x.title||x.name,id:'tp'+i,showLegend:false}).svg;}catch{}
   const nm=(FlowTypes.TYPES.find(t=>t.id===ty)||{}).name||'';return `<button type="button" class="tpl-card" data-tpl="${x.id}"><span class="tpl-thumb" aria-hidden="true">${svg}</span><span class="tpl-meta"><b>${x.name}</b><span>${x.cat} · ${nm}</span></span></button>`;}).join('');}
 function openExamples(){drawTemplates();$('tpl').showModal();}
 $('tplClose').onclick=()=>$('tpl').close();
 $('tpl').addEventListener('click',e=>{if(e.target===$('tpl'))$('tpl').close();});
+$('tplQ').addEventListener('input',e=>{tplQ=e.target.value;drawTemplates();});
 $('tplCats').onclick=e=>{const b=e.target.closest('[data-cat]');if(!b)return;tplCat=b.dataset.cat;drawTemplates();};
 $('tplGrid').onclick=e=>{const b=e.target.closest('[data-tpl]');if(!b)return;const x=ALL.find(y=>y.id===b.dataset.tpl);$('tpl').close();loadChart(x);toast(`Loaded “${x.name}”`);};
 const editor=FlowEditor.mount($('visual'),{set(src){$('src').value=src;later();}});
@@ -630,10 +637,14 @@ function drawFly(){const f=$('fly');let h='',title='';
  else if(flyName==='templates'){title='Templates';h=`<div class="seg"><button type="button" data-tplmode="new" aria-pressed="${tplMode==='new'}">Start a new chart</button><button type="button" data-tplmode="add" aria-pressed="${tplMode==='add'}">Add to this canvas</button></div>`;
   h+=`<div class="fly-sec">Diagram types</div><div class="fly-grid">${TPL.filter(x=>tplMode==='new'||x.id!=='blank').map(x=>`<button type="button" class="fly-it" data-tpl2="${x.id}"><span>${x.name}</span></button>`).join('')}</div>`;
   if(tplMode==='new')h+=`<div class="fly-sec">Several types together</div><div class="fly-list">${COMBO.map(x=>`<button type="button" class="fly-it" data-tpl2="${x.id}"><span>${x.name}</span></button>`).join('')}</div>`;
-  h+=`<div class="fly-foot"><button type="button" class="btn" data-examples>Browse worked examples</button></div>`;}
+  h+=`<div class="fly-foot"><button type="button" class="btn" data-examples>Browse ${ALL.length} process templates</button></div>`;}
  else if(flyName==='text'){title='Import text';h=drawTextFly();}
  else if(flyName==='workspace'){title='Workspace';h=feedIndex?feedIndex.feeds.map(fd=>`<div class="fly-sec">${fd.name}</div><div class="fly-list">${fd.views.map(v=>`<button type="button" class="fly-it" data-feed="${fd.id}:${v.id}"><span>${v.name}${v.hint?`<small>${v.hint}</small>`:''}</span></button>`).join('')}</div>`).join(''):'<p class="fly-note">No workspace is connected to this page.</p>';}
- else if(flyName==='assist'){title='Assist';h=`<div class="fly-list"><button type="button" class="swrow" role="switch" data-ai="check" aria-checked="${S.ai.check}"><span>AI check<small>Judges whether each connection exists and is needed</small></span><i></i></button><button type="button" class="swrow" role="switch" data-ai="suggest" aria-checked="${S.ai.suggest}"><span>AI suggest<small>Suggests how to make each connection better</small></span><i></i></button></div><p class="fly-note">No AI service is connected yet. Your choice is remembered, and the built-in rule check runs in the meantime.</p>`;}
+ else if(flyName==='assist'){title='Assist';h=`<div class="fly-sec">Describe a process</div><p class="fly-note">Write what happens, in sentences or as a list. Include who does what and any “if… otherwise…” and the AI draws it.</p>
+  <textarea id="aiIn" class="fly-ta fly-prose" aria-label="Describe a process" placeholder="A customer asks for a refund. Support finds the order. If it is older than 30 days, explain the policy. Otherwise approve the refund, then finance pays it back and the customer gets an email.">${aiDraft.replace(/</g,'&lt;')}</textarea>
+  <div class="fly-row"><button type="button" class="btn primary" id="aiGo" data-aigo="replace">Draw it</button><button type="button" class="btn" data-aigo="add">Add to the canvas</button></div>
+  <p class="fly-note" id="aiMsg" aria-live="polite">${aiState.msg}</p>
+  <div class="fly-sec">Checks</div><div class="fly-list"><button type="button" class="swrow" role="switch" data-ai="check" aria-checked="${S.ai.check}"><span>AI check<small>Judges whether each connection exists and is needed</small></span><i></i></button><button type="button" class="swrow" role="switch" data-ai="suggest" aria-checked="${S.ai.suggest}"><span>AI suggest<small>Suggests how to make each connection better</small></span><i></i></button></div><p class="fly-note">The connection checks use the built-in rule check. Your choice is remembered for when an AI review is connected.</p>`;}
  f.innerHTML=`<div class="fly-h"><b>${title}</b><button type="button" data-close aria-label="Close">×</button></div>${h}`;}
 function addList(){const q=addQ.trim().toLowerCase(),hit=(...w)=>!q||w.join(' ').toLowerCase().includes(q);let h='',n=0;
  for(const [name,ks] of ELEMENT_KINDS){const list=ks.filter(k=>hit(FlowEngine.KIND[k].name,KIND_WORDS[k]||'',FlowEngine.KIND[k].keys||'',name));n+=list.length;if(list.length)h+=`<div class="fly-sec">${name}</div><div class="fly-grid">${list.map(k=>`<button type="button" class="fly-it" data-add="${k}"><span class="ic">${kindIcon(k)}</span><span>${FlowEngine.KIND[k].name}</span></button>`).join('')}</div>`;}
@@ -651,9 +662,30 @@ function importText(how){const ta=$('txIn');let r;try{r=FlowText.anyText(ta.valu
  closeFly();cv.reset();$('src').value=r.source;if(r.kind==='json'){$('title').value=r.title||'';$('subtitle').value=r.subtitle||'';if(r.style&&DVStyles.some(x=>x.id===r.style)){S.style=r.style;drawPickers();}if(r.state)cv.setState(r.state);S.type=r.type||'flow';}
  else{const t=(ta.value.match(/^\s*title:\s*(.+)$/m)||ta.value.match(/^\s*#\s+(.+)$/)||[])[1];$('title').value=t?t.trim():'';$('subtitle').value='';S.type='flow';}
  store.set('type',S.type);setSeg('dir',/flowchart\s+LR/.test(r.source)?'LR':'TB');cv.store();if(S.view!=='canvas'){S.view='canvas';syncView();}if(S.mode==='visual')editor.load(r.source);render(true);toast(`Imported ${TEXT_HINT[r.kind].split(':')[0].toLowerCase()}`);}
-function openFly(name,btn){if(flyName===name){closeFly();return;}closeFly();flyName=name;btn.setAttribute('aria-expanded','true');drawFly();$('fly').hidden=false;const f=$('fly').querySelector('#addQ,#txIn');if(f&&matchMedia('(pointer:fine)').matches)f.focus();}
-$('fly').addEventListener('input',e=>{if(e.target.id==='addQ'){addQ=e.target.value;$('addList').innerHTML=addList();}else if(e.target.id==='txIn'){const k=FlowText.sniff(e.target.value);$('txKind').textContent=(k==='empty'?'':'Reads as: ')+TEXT_HINT[k];}});
-$('fly').addEventListener('keydown',e=>{if(e.target.id==='addQ'&&e.key==='Enter'){const b=$('fly').querySelector('[data-add],[data-cont]');if(b){e.preventDefault();b.click();}}});
+/* describe a process: the AI when it is reachable, a rule-based reading otherwise */
+let aiDraft='';const aiState={on:null,msg:'Checking whether the AI is available…'};
+async function aiStatus(){if(aiState.on!==null)return aiState.on;
+ if(/^(localhost|127\.|0\.0\.0\.0|\[::1\])/.test(location.hostname)||location.protocol==='file:'){aiState.on=false;aiState.msg='The AI runs on the live site, not on this copy. Drawing from your text by rules instead.';const m0=$('aiMsg');if(m0)m0.textContent=aiState.msg;return false;}
+ try{const r=await fetch('/api/ai?status',{headers:{accept:'application/json'}});const j=r.ok&&/json/.test(r.headers.get('content-type')||'')?await r.json():null;
+  if(!j){aiState.on=false;aiState.msg='The AI service is not reachable from this copy of the site. Drawing from your text by rules instead.';}
+  else{aiState.on=!!j.enabled;aiState.msg=aiState.on?'Ready. The AI drafts the chart; you can edit everything after.':'The AI is not switched on yet (the site owner adds an API key). Drawing from your text by rules instead.';}}
+ catch{aiState.on=false;aiState.msg='The AI service is not reachable right now. Drawing from your text by rules instead.';}
+ const m=$('aiMsg');if(m)m.textContent=aiState.msg;return aiState.on;}
+async function describeProcess(how){const text=($('aiIn')?.value||'').trim();aiDraft=text;const msg=$('aiMsg');if(!text){msg.textContent='Describe the process first.';$('aiIn').focus();return;}
+ const go=[...document.querySelectorAll('[data-aigo]')];go.forEach(b=>b.disabled=true);let src=null,title='',how2='rules',why='';
+ try{if(await aiStatus()){msg.textContent='Drawing your process…';
+   try{const r=await fetch('/api/ai',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({mode:'flow',brief:text.slice(0,3000)})});let j=null;try{j=await r.json();}catch{}
+    if(!r.ok||!j||!j.flow)throw new Error((j&&j.error)||'The AI did not answer ('+r.status+').');src=FlowText.fromSpec(j.flow);title=j.flow.title||'';how2='ai';why=j.flow.note||'';}
+   catch(err){why=String(err.message||err)+' Drawn from your text by rules instead.';}}
+  if(!src){src=FlowText.describe(text);title='';}}
+ catch(err){msg.textContent=String(err.message||err);go.forEach(b=>b.disabled=false);return;}
+ go.forEach(b=>b.disabled=false);closeFly();
+ if(how==='add'){if(S.view!=='canvas'){S.view='canvas';syncView();render(true);}cv.addDiagram({src,type:'flow'});}
+ else{cv.reset();$('src').value=src;$('title').value=title;$('subtitle').value='';S.type=/subgraph/.test(src)&&/flowchart LR/.test(src)?'swimlanes':'flow';store.set('type',S.type);setSeg('dir',/flowchart\s+LR/.test(src)?'LR':'TB');cv.store();if(S.view!=='canvas'){S.view='canvas';syncView();}if(S.mode==='visual')editor.load(src);render(true);}
+ aiDraft='';toast(how2==='ai'?'Drawn by the AI. Check it, then edit anything':'Drawn from your text by rules');if(why&&how2!=='ai')setTimeout(()=>toast(why),1900);}
+function openFly(name,btn){if(flyName===name){closeFly();return;}closeFly();flyName=name;btn.setAttribute('aria-expanded','true');drawFly();$('fly').hidden=false;const f=$('fly').querySelector('#addQ,#txIn,#aiIn');if(f&&matchMedia('(pointer:fine)').matches)f.focus();if(name==='assist')aiStatus();}
+$('fly').addEventListener('input',e=>{if(e.target.id==='addQ'){addQ=e.target.value;$('addList').innerHTML=addList();}else if(e.target.id==='txIn'){const k=FlowText.sniff(e.target.value);$('txKind').textContent=(k==='empty'?'':'Reads as: ')+TEXT_HINT[k];}else if(e.target.id==='aiIn')aiDraft=e.target.value;});
+$('fly').addEventListener('keydown',e=>{if((e.target.id==='aiIn'||e.target.id==='txIn')&&e.key==='Enter'&&(e.metaKey||e.ctrlKey)){e.preventDefault();if(e.target.id==='aiIn')describeProcess('replace');else importText('replace');return;}if(e.target.id==='addQ'&&e.key==='Enter'){const b=$('fly').querySelector('[data-add],[data-cont]');if(b){e.preventDefault();b.click();}}});
 $('fly').addEventListener('change',e=>{if(e.target.id!=='txFile'||!e.target.files[0])return;e.target.files[0].text().then(t=>{$('txIn').value=t;$('txIn').dispatchEvent(new Event('input',{bubbles:true}));});});
 $('rail').addEventListener('click',e=>{const b=e.target.closest('[data-fly]');if(b)openFly(b.dataset.fly,b);});
 $('fly').addEventListener('click',e=>{const t=e.target;let b;
@@ -663,6 +695,7 @@ $('fly').addEventListener('click',e=>{const t=e.target;let b;
  if((b=t.closest('[data-add]'))){closeFly();cv.addElement(b.dataset.add);return;}
  if((b=t.closest('[data-cont]'))){closeFly();if(b.dataset.cont==='group')cv.groupSelection();else{cv.addDiagram({src:POOL_SRC,type:'swimlanes'});toast('Swimlane pool added: rename the lanes, drag steps between them');}return;}
  if((b=t.closest('[data-tx]'))){importText(b.dataset.tx);return;}
+ if((b=t.closest('[data-aigo]'))){describeProcess(b.dataset.aigo);return;}
  if((b=t.closest('[data-worker]'))){closeFly();cv.addWorker(b.dataset.worker);return;}
  if((b=t.closest('[data-tpl2]'))){const x=[...TPL,...COMBO].find(y=>y.id===b.dataset.tpl2);closeFly();if(!x)return;
   if(tplMode==='add'&&x.id!=='blank'){if(S.view!=='canvas'){S.view='canvas';syncView();render(true);}cv.addDiagram(x);toast(`Added “${x.name}” to the canvas`);}else{loadTemplate(x);toast(`Started from “${x.name}”`);}return;}

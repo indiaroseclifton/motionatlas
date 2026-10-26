@@ -1,4 +1,4 @@
-// AI page engine. GET ?status | POST {mode:'page'|'section', brief, catalog, styles, current?}
+// AI page engine. GET ?status | POST {mode:'page'|'section', brief, catalog, styles, current?} | POST {mode:'flow', brief} (flowchart studio)
 // Runs on Claude Haiku 5.5. The key lives in the ANTHROPIC_API_KEY env var and never reaches the browser.
 // Guard rails: per-IP hourly limit, a daily request cap (AI_DAILY_LIMIT), size limits on everything sent in.
 import Anthropic from '@anthropic-ai/sdk';
@@ -45,6 +45,40 @@ Pick a style id from the styles list that suits the brief. Choose 5 to 9 section
 Keep each field value to the length its field name implies: headlines under 9 words, body text under 45 words, list items separated by " | ".
 "note" is one sentence telling the person what you chose and why.`;
 
+/* Flowchart studio: a written process in, a flowchart as structured JSON out */
+const FLOW_SCHEMA = {
+  type: 'object', additionalProperties: false, required: ['title', 'direction', 'nodes', 'edges', 'note'],
+  properties: {
+    title: { type: 'string' }, direction: { type: 'string', enum: ['TD', 'LR'] }, note: { type: 'string' },
+    nodes: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['id', 'label', 'kind', 'note', 'lane'],
+      properties: { id: { type: 'string' }, label: { type: 'string' }, note: { type: 'string' }, lane: { type: 'string' },
+        kind: { type: 'string', enum: ['start', 'end', 'step', 'decision', 'data', 'io', 'document', 'subprocess', 'delay', 'manual', 'person', 'system', 'note'] } } } },
+    edges: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['from', 'to', 'label'],
+      properties: { from: { type: 'string' }, to: { type: 'string' }, label: { type: 'string' } } } }
+  }
+};
+const FLOW_SYSTEM = `You turn a description of a process into a clear flowchart.
+Use one "start" node and at least one "end" node. Steps are short verb phrases (under 7 words); put detail in "note" (under 10 words) or leave it empty.
+Every "decision" is a short question ending in "?" with two or more labelled ways out (Yes/No, or the real options). Loops go back to an earlier step.
+Use "lane" only when the description names who does what (a person, team or system); otherwise leave it empty. Use the other kinds only when they clearly fit.
+Keep it to the process described: 4 to 25 nodes. ids are short snake_case. "direction" is LR when lanes are used, otherwise TD. "note" is one sentence about what you assumed.`;
+async function flow(req, res, b) {
+  const brief = str(b.brief, 3000).trim(); if (!brief) return send(res, 400, { error: 'Describe the process first.' });
+  const client = new Anthropic();
+  const r = await client.messages.create({
+    model: MODEL, max_tokens: 4000,
+    output_config: { effort: 'low', format: { type: 'json_schema', schema: FLOW_SCHEMA } },
+    system: FLOW_SYSTEM, messages: [{ role: 'user', content: `Process: ${brief}` }],
+  });
+  if (r.stop_reason === 'refusal') return send(res, 422, { error: 'The AI declined that description. Try describing the process differently.' });
+  if (r.stop_reason === 'max_tokens') return send(res, 502, { error: 'The answer was too long. Try a shorter description.' });
+  const out = JSON.parse(r.content.filter(c => c.type === 'text').map(c => c.text).join(''));
+  out.nodes = (out.nodes || []).slice(0, 60).map(n => ({ id: str(n.id, 40), label: str(n.label, 90), kind: str(n.kind, 20), note: str(n.note, 90), lane: str(n.lane, 40) }));
+  const ids = new Set(out.nodes.map(n => n.id));
+  out.edges = (out.edges || []).filter(e => ids.has(e.from) && ids.has(e.to)).slice(0, 120).map(e => ({ from: e.from, to: e.to, label: str(e.label, 30) }));
+  return send(res, 200, { flow: out, usage: { input: r.usage.input_tokens, output: r.usage.output_tokens } });
+}
+
 export default async function handler(req, res) {
   const url = new URL(req.url, 'http://x');
   if (req.method === 'GET' && url.searchParams.has('status')) return send(res, 200, { enabled: !!process.env.ANTHROPIC_API_KEY, model: MODEL });
@@ -54,6 +88,7 @@ export default async function handler(req, res) {
   const stop = allowed(ip); if (stop) return send(res, 429, { error: stop });
   try {
     const b = await body(req);
+    if (b.mode === 'flow') return await flow(req, res, b);
     const brief = str(b.brief, 1500).trim(); if (!brief) return send(res, 400, { error: 'Describe the page you want first.' });
     const catalog = (Array.isArray(b.catalog) ? b.catalog : []).slice(0, 160).map(s => ({ id: str(s.id, 40), name: str(s.name, 60), group: str(s.group, 30), fields: (Array.isArray(s.fields) ? s.fields : []).slice(0, 16).map(f => str(f, 30)) }));
     const styles = (Array.isArray(b.styles) ? b.styles : []).slice(0, 200).map(s => str(s, 40));

@@ -11,6 +11,7 @@
 const FE=()=>window.FlowEngine,ED=()=>window.FlowEditor;
 const q=s=>String(s??'').replace(/"/g,'#quot;').replace(/\n/g,'<br/>');
 const KSHAPE={doc:'doc',delay:'delay',manual:'trap-t',minput:'sl-rect',display:'curv-trap',offpage:'odd',note:'brace'};
+const KIND_CSS={person:'stroke:#DB2777',system:'stroke:#2563EB',mod_internal:'stroke:#0891B2',mod_external:'stroke:#EA580C',mod_flow:'stroke:#C026D3',worker:'stroke:#0F766E'};
 const STATUS_CSS={have:'fill:#E8F7EE,stroke:#16A34A',dont:'fill:#FDECEC,stroke:#DC2626',partial:'fill:#FFF6E5,stroke:#D97706',accent:'fill:#EEE9FF,stroke:#5B2DFF,stroke-width:2px'};
 
 function canonical(g){return ED().toSource(ED().fromGraph(g));}
@@ -32,8 +33,8 @@ function toMermaid(src,opt={}){const g=FE().parse(src),L=[];
  for(const e of g.edges){const k=e.kind==='dashed'?'d':e.kind==='thick'?'t':'s';
   const op=e.bi?{s:'<-->',d:'<-.->',t:'<==>'}[k]:e.head?{s:'--',d:'-.-',t:'=='}[k]+e.head:e.arrow===false?{s:'---',d:'-.-',t:'==='}[k]:{s:'-->',d:'-.->',t:'==>'}[k];
   L.push(`  ${e.from} ${op}${e.label?`|"${q(e.label)}"|`:''} ${e.to}`);}
- const by={};for(const n of nodes){const s=String(n.cls||'').split('.')[0];if(STATUS_CSS[s])(by[s]=by[s]||[]).push(n.id);}
- for(const [s,ids] of Object.entries(by))L.push(`  classDef ${s} ${STATUS_CSS[s]}`,`  class ${ids.join(',')} ${s}`);
+ const by={};for(const n of nodes){const s=String(n.cls||'').split('.')[0];if(STATUS_CSS[s])(by[s]=by[s]||[]).push(n.id);const k=FE().kindOf(n);if(KIND_CSS[k])(by[k]=by[k]||[]).push(n.id);}
+ for(const [s,ids] of Object.entries(by))L.push(`  classDef ${s} ${STATUS_CSS[s]||KIND_CSS[s]}`,`  class ${ids.join(',')} ${s}`);
  return L.join('\n');}
 
 /* ---------- Mermaid in ---------- */
@@ -80,24 +81,28 @@ function fromOutline(text,opt={}){const lines=String(text||'').replace(/\r/g,'')
   if(!make)return null;
   const id=slug(s);M.nodes.set(id,{id,label:clean(s)||'Step',note:'',shape:'rect',cls:null});set(id,true);
   if(stage)stage.steps.push(id);else M.items.push({type:'step',id});byLabel.set(key,id);if(!top)implicit.add(id);return id;};
- const edge=(from,to,label,kind)=>{if(!from||!to||from===to)return;if(M.edges.some(e=>e.from===from&&e.to===to))return;M.edges.push({from,to,label:clean(label||''),kind:kind||'solid',arrow:true});};
+ const edge=(from,to,label,kind)=>{if(!from||!to||from===to)return;if(M.edges.some(e=>e.from===from&&e.to===to&&e.label===clean(label||'')))return;M.edges.push({from,to,label:clean(label||''),kind:kind||'solid',arrow:true});};
+ /* "back to Review" points at Review; a step really called "Back to stock" keeps its name */
+ const target=(t,loose)=>{const bare=t.replace(/^(?:go back to|back to|go to|goto|return to|loop back to)\s+(?:step\s+)?/i,'');if(bare===t)return t;const k=x=>clean(x).toLowerCase().replace(/[?.!]+$/,'').replace(/\s*\[[^\]]*\]$/,'');if(byLabel.has(k(t)))return t;if(byLabel.has(k(bare)))return bare;return loose?bare:t;};
  const OPP={yes:'No',no:'Yes',true:'False',false:'True',pass:'Fail',fail:'Pass',approved:'Not approved',ok:'Not OK',valid:'Invalid',invalid:'Valid'};
- let prev=null,arrowed=false,branches=[],lastTop=null;
+ let prev=null,arrowed=false,branches=[],lastTop=null,lastBranch=null;
  const firstLine=lines.findIndex(l=>l.trim());if(firstLine>=0&&/^#\s+/.test(lines[firstLine]))lines.splice(firstLine,1);
  for(const raw of lines){if(!raw.trim())continue;const ind=/^\s+/.test(raw);let line=raw.trim();
   const h=line.match(/^#{1,3}\s+(.+)$/);if(h){const title=h[1].trim();if(/^\(no group\)$/i.test(title)){stage=null;continue;}stage={type:'stage',id:slug(title),title,steps:[]};M.items.push(stage);continue;}
   line=line.replace(/^(?:[-*•+]|\d+[.)]|[a-z][.)])\s+/i,'');
+  const deep=(raw.match(/^\s*/)[0].replace(/\t/g,'  ').length)>=4&&lastBranch;
+  if(deep){const am=line.match(/^(.*?)\s*(→|->|⇢|-\.->|⇒|==>)\s*(.+)$/),bm=!am&&line.match(/^([^:]{1,28}):\s*(.+)$/);const tgt=target(am?am[3]:bm?bm[2]:line,!am);const to=node(tgt);edge(lastBranch,to,am?am[1]:bm?bm[1]:'',am&&/⇢|-\.->/.test(am[2])?'dashed':'solid');if(to&&to!==lastBranch&&!am)lastBranch=to;continue;}
   if(ind&&lastTop){if(/^\(end\)$/i.test(line)){arrowed=true;continue;}
    const am=line.match(/^(.*?)\s*(→|->|⇢|-\.->|⇒|==>)\s*(.+)$/);
-   if(am){const kind=/⇢|-\.->/.test(am[2])?'dashed':/⇒|==>/.test(am[2])?'thick':'solid';const to=node(am[3].replace(/^(back to|go to|goto|return to)\s+/i,''));edge(lastTop,to,am[1],kind);arrowed=true;continue;}
+   if(am){const kind=/⇢|-\.->/.test(am[2])?'dashed':/⇒|==>/.test(am[2])?'thick':'solid';const to=node(target(am[3],false));edge(lastTop,to,am[1],kind);arrowed=true;continue;}
    const bm=line.match(/^([^:]{1,28}):\s*(.+)$/);
-   if(bm){const tgt=bm[2].replace(/^(?:back to|go to|goto|return to|loop back to)\s+(?:step\s+)?/i,'');const existed=!!node(tgt,false);const to=node(tgt);edge(lastTop,to,bm[1].trim(),'solid');branches.push({to,fresh:!existed,label:bm[1].trim()});continue;}
+   if(bm){const tgt=target(bm[2],true);const existed=!!node(tgt,false);const to=node(tgt);edge(lastTop,to,bm[1].trim(),'solid');branches.push({to,fresh:!existed,label:bm[1].trim()});lastBranch=to;continue;}
    const to=node(line);edge(lastTop,to,'','solid');arrowed=true;continue;}
   const id=node(line,true,true);if(!id)continue;
   if(!arrowed){if(branches.length===1){const l=branches[0].label.toLowerCase();edge(lastTop,id,OPP[l]||'Otherwise','solid');}
-   else if(branches.length>1){const f=[...branches].reverse().find(b=>b.fresh);if(f)edge(f.to,id,'','solid');}
+   else if(branches.length>1){const fr=[...branches].reverse().filter(b=>b.fresh),f=fr.find(b=>!M.edges.some(e=>e.from===b.to))||fr[0];if(f)edge(f.to,id,'','solid');}
    else if(prev)edge(prev,id,'','solid');}
-  prev=id;lastTop=id;arrowed=false;branches=[];}
+  prev=id;lastTop=id;arrowed=false;branches=[];lastBranch=null;}
  /* first and last steps read as start and end */
  const ids=[...M.nodes.keys()];if(opt.ends!==false&&ids.length>1){for(const id of [ids[0],ids[ids.length-1]]){const n=M.nodes.get(id);if(n.shape==='rect'&&!n.cls&&(id===ids[0]?!M.edges.some(e=>e.to===id):!M.edges.some(e=>e.from===id)))n.shape='pill';}}
  if(!M.nodes.size)throw new Error('Write one step per line.');
@@ -107,17 +112,21 @@ function fromOutline(text,opt={}){const lines=String(text||'').replace(/\r/g,'')
 function describe(text){let t=String(text||'').replace(/\r/g,'').trim();if(!t)throw new Error('Describe the process first.');
  /* one paragraph: split into sentences and "then" clauses */
  const many=t.split('\n').filter(l=>l.trim()).length>1;
- let parts=many?t.split('\n'):t.split(/(?<=[.;!])\s+|,\s*(?:and\s+)?then\s+|\s+then\s+(?=[a-z])/i);
+ let parts=many?t.split('\n'):t.split(/(?<=[.;!])\s+|,\s*(?:and\s+)?then\s+|\s+then\s+(?=[a-z])|,\s+and\s+(?=(?:the|a|an|they|we|it|he|she)\s)/i);
  const out=[];let lastDec=null;
+ const BACK=/^(?:go back to|return to|loop back to|back to|go to)\s+(?:step\s+)?(.+)$/i;
+ /* "send a reminder and go back to step 2" is a step, then a loop */
+ const branch=(lab,act)=>{act=act.trim();const back=act.match(BACK);if(back){out.push(`  ${lab}: ${back[1]}`);return;}const m=act.match(/^(.*?)(?:,\s*|\s+)(?:and\s+|then\s+)+(go back to|return to|loop back to|back to)\s+(?:step\s+)?(.+)$/i);
+  if(m){out.push(`  ${lab}: ${cap(m[1])}`,`      → ${m[3]}`);}else out.push(`  ${lab}: ${cap(act)}`);};
  const tidy=s=>s.trim().replace(/^(?:[-*•+]|\d+[.)])\s+/,'').replace(/^(?:first|next|then|after that|afterwards|finally|lastly|and)\s*,?\s+/i,'').replace(/[.;]+$/,'').trim();
  const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
  for(const raw of parts){const ind=/^\s+/.test(raw);let s=tidy(raw);if(!s)continue;
   let m;
   if((m=s.match(/^if\s+(.+?)(?:,\s*|\s+then\s+)(.+)$/i))){const cond=cap(m[1].replace(/\?$/,''))+'?';out.push(cond);lastDec=cond;
-   const act=m[2].replace(/^then\s+/i,'');const back=act.match(/^(?:go back to|return to|loop back to|back to|go to)\s+(?:step\s+)?(.+)$/i);out.push(`  Yes: ${back?back[1]:cap(act)}`);continue;}
-  if(lastDec&&(m=s.match(/^(?:otherwise|else|if not|if no)\s*,?\s*(.+)$/i))){const back=m[1].match(/^(?:go back to|return to|loop back to|back to|go to)\s+(?:step\s+)?(.+)$/i);out.push(`  No: ${back?back[1]:cap(m[1])}`);continue;}
+   branch('Yes',m[2].replace(/^then\s+/i,''));continue;}
+  if(lastDec&&(m=s.match(/^(?:otherwise|else|if not|if no)\s*,?\s*(.+)$/i))){branch('No',m[1]);continue;}
   if((m=s.match(/^(?:go back to|return to|loop back to|back to)\s+(?:step\s+)?(.+)$/i))&&out.length){out.push(`  → ${m[1]}`);continue;}
-  if(ind){out.push('  '+s);continue;}
+  if(ind){out.push(raw.match(/^\s*/)[0].replace(/\t/g,'  ')+s);continue;}
   lastDec=/\?$/.test(s)?s:null;out.push(cap(s));}
  /* numbered references ("go back to step 2") point at the second step */
  const tops=out.filter(l=>!/^\s/.test(l));

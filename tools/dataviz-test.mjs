@@ -207,9 +207,26 @@ for (const [vw, vh] of VIEWPORTS) {
     const arr = await page.evaluate(async () => { const cv = FlowStudio.cv, ids = [...cv.last().g.nodes.keys()].slice(0, 3); cv.select(ids); cv.align('left'); await new Promise(r => setTimeout(r, 100)); const xs = ids.map(id => cv.last().g.nodes.get(id).x); const gid = cv.groupSelection('Intake'); await new Promise(r => setTimeout(r, 100)); const g = cv.last().g; return { same: new Set(xs).size === 1, grouped: g.groups.length === 1 && ids.every(id => g.nodes.get(id).group === 'grp_' + gid), bar: !document.getElementById('selbar').hidden || innerWidth < 600 }; });
     note(arr.same && arr.grouped, `${tag} flowchart studio: align left lines up 3 elements and Group wraps them ${JSON.stringify(arr)}`);
     await page.keyboard.press('Escape'); await page.evaluate(() => FlowStudio.cv.close());
+    /* templates gallery: 20+ processes, each with a live thumbnail, searchable */
+    await page.evaluate(() => FlowStudio.cv.close());
+    await page.click('.rail [data-fly=templates]'); await page.click('[data-examples]'); await page.waitForTimeout(900);
+    const tpl = await page.evaluate(() => { const cards = [...document.querySelectorAll('#tplGrid .tpl-card')]; return { n: cards.length, thumbs: cards.filter(c => (c.querySelector('svg')?.outerHTML.length || 0) > 1500 && !/NaN/.test(c.innerHTML)).length }; });
+    note(tpl.n >= 20 && tpl.thumbs === tpl.n, `${tag} flowchart studio: ${tpl.n} process templates in the gallery, ${tpl.thumbs} with a live thumbnail`);
+    await page.fill('#tplQ', 'invoice'); await page.waitForTimeout(250);
+    const tq = await page.evaluate(() => [...document.querySelectorAll('#tplGrid .tpl-card b')].map(b => b.textContent));
+    note(tq.includes('Invoice approval'), `${tag} flowchart studio: template search “invoice” finds ${tq.join(', ')}`);
+    await axe(page, `${tag} flowchart studio (templates dialog)`);
+    await page.click('#tplGrid .tpl-card'); await page.waitForTimeout(500);
+    /* describe a process: AI is not reachable here, so the rule-based reading draws it and says so */
+    await page.click('.rail [data-fly=assist]'); await page.waitForTimeout(200);
+    await page.fill('#aiIn', 'A customer asks for a refund. Support finds the order. If it is older than 30 days, explain the policy. Otherwise approve the refund. Then finance pays it back.');
+    const aimsg = await page.evaluate(() => document.getElementById('aiMsg').textContent);
+    await page.click('[data-aigo=replace]'); await page.waitForTimeout(700);
+    const drawn = await page.evaluate(() => { const g = FlowStudio.cv.last().g; return [g.nodes.size, g.edges.length, [...g.nodes.values()].filter(n => n.shape === 'decision').length]; });
+    note(drawn[0] === 6 && drawn[1] === 5 && drawn[2] === 1 && /rules/.test(aimsg), `${tag} flowchart studio: “Describe a process” falls back to rules when AI is unavailable (${drawn.join('/')}; “${aimsg.slice(0, 60)}”)`);
     /* presentation steps through every element */
     const pres = await page.evaluate(async () => { FlowStudio.presentStart(); const n = FlowStudio.presenting.order.length; for (let i = 0; i < n; i++) document.getElementById('pNext').click(); await new Promise(r => setTimeout(r, 100)); return [n, FlowStudio.presenting === null]; });
-    note(pres[0] === 7 && pres[1], `${tag} flowchart studio: presentation steps through ${pres[0]} elements and ends`);
+    note(pres[0] === 6 && pres[1], `${tag} flowchart studio: presentation steps through ${pres[0]} elements and ends`);
     const ov = await overflow(page); note(ov <= 0, `${tag} flowchart studio: horizontal overflow ${ov}px`);
     /* exports */
     for (const [id, min, label] of [['exSvg', 2000, 'SVG'], ['exPng', 4000, 'PNG'], ['exMmd', 150, 'Mermaid'], ['exOutline', 100, 'outline'], ['exJson', 300, 'JSON']]) {
