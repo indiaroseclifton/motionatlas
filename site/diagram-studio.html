@@ -208,6 +208,7 @@ details.menu{position:relative}details.menu>summary{list-style:none}details.menu
    <details class="menu" id="exportMenu"><summary class="btn primary">Export</summary><div class="pop">
     <button type="button" id="exSvg">SVG file <small>fonts embedded</small></button>
     <button type="button" id="exPng">PNG <small>2×</small></button>
+    <button type="button" id="exShare">Make share image <small>Mockup studio</small></button>
     <button type="button" id="exCopy">Copy SVG <small>markup</small></button>
     <button type="button" id="exEmbed">Embed HTML <small>with text alternative</small></button>
     <button type="button" id="exJson">Diagram as text <small>re-importable</small></button>
@@ -449,6 +450,7 @@ addEventListener('resize',()=>fitView());
 /* exports */
 const slug=()=>((doc().title||S.kind).trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''))||S.kind;
 $('exSvg').onclick=async()=>{DVExport.download(slug()+'.svg',await DVExport.svgWithFonts(S.last.svg,DVStyle(S.style)),'image/svg+xml');toast('SVG downloaded with fonts embedded');};
+$('exShare').onclick=async()=>{try{if(!window.MockupHandoff)await new Promise((r,j)=>{const t=document.createElement('script');t.src='mockup/handoff.js';t.onload=r;t.onerror=j;document.head.append(t)});MockupHandoff.send({blob:await DVExport.png(S.last.svg,S.last.width,S.last.height,DVStyle(S.style)),title:'',from:'diagram studio'})}catch{toast('Could not open the Mockup studio')}};
 $('exPng').onclick=async()=>{try{DVExport.download(slug()+'.png',await DVExport.png(S.last.svg,S.last.width,S.last.height,DVStyle(S.style)));toast('PNG downloaded at 2×');}catch{toast('PNG export failed in this browser; use SVG');}};
 $('exCopy').onclick=async()=>{try{await navigator.clipboard.writeText(S.last.svg);toast('SVG copied');}catch{toast('Copy was blocked by the browser');}};
 $('exReset').onclick=()=>{S.docs[S.kind]=JSON.parse(JSON.stringify(STARTERS[S.kind]));syncTitle();drawEditor();render(true);commit();toast('Back to the starter '+(Diagrams.KINDS.find(k=>k.id===S.kind)||{}).name.toLowerCase());};

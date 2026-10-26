@@ -130,6 +130,7 @@ dialog .in{padding:18px;display:grid;gap:10px}dialog h2{margin:0;font-size:16px}
   <details class="menu" id="exportMenu"><summary class="btn primary">Export</summary><div class="pop">
    <button type="button" data-ex="svg">SVG file <small>fonts embedded</small></button>
    <button type="button" data-ex="png">PNG <small>2×</small></button>
+   <button type="button" data-ex="share">Make share image <small>Mockup studio</small></button>
    <button type="button" data-ex="copy">Copy SVG <small>markup</small></button>
    <button type="button" data-ex="embed">Embed HTML <small>chart + table</small></button>
    <button type="button" data-ex="csv">Data as CSV</button>
@@ -399,9 +400,11 @@ function embedHTML(){const r=last,st=r.style,tb=S.table,fonts=st.fonts&&st.fonts
  const svg=r.svg.replace(/<svg([^>]*) width="\d+" height="\d+"/,'<svg$1 width="100%" style="height:auto;display:block"');
  return `<!-- ${esc(S.opt.title||'Chart')} · made in Chart studio -->\n${fonts}<figure style="margin:0;max-width:${r.width}px;font-family:${esc(st.t.font)}">\n${svg}\n<details style="margin-top:8px;font-size:13px"><summary>Data table</summary>\n<table style="border-collapse:collapse;font-variant-numeric:tabular-nums"><thead><tr>${tb.columns.map(c=>`<th scope="col" style="text-align:left;padding:4px 10px;border-bottom:1px solid #ccc">${esc(c)}</th>`).join('')}</tr></thead><tbody>${tb.rows.map(row=>`<tr>${row.map(c=>`<td style="padding:4px 10px;border-bottom:1px solid #eee">${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></details>\n${S.opt.source?`<figcaption style="font-size:12px;color:#666">Source: ${esc(S.opt.source)}</figcaption>\n`:''}</figure>\n`;}
 const animOpts=()=>({svgEl:$('chart').querySelector('svg'),width:last.width,height:last.height,style:last.style,speed:+$('speed').value,plan:M.plan,onProgress:p=>{$('prog').textContent=`Rendering ${Math.round(p*100)}%`;}});
+const loadMock=()=>window.MockupHandoff?Promise.resolve():new Promise((r,j)=>{const t=document.createElement('script');t.src='mockup/handoff.js';t.onload=r;t.onerror=()=>j(Error('Could not load the hand-off'));document.head.append(t)});
 const EX={
  svg:async()=>{DVExport.download(slug()+'.svg',await DVExport.svgWithFonts(last.svg,last.style),'image/svg+xml');toast('SVG downloaded with fonts embedded');},
  png:async()=>{DVExport.download(slug()+'.png',await DVExport.png(last.svg,last.width,last.height,last.style));toast('PNG downloaded at 2×');},
+ share:async()=>{try{await loadMock();MockupHandoff.send({blob:await DVExport.png(last.svg,last.width,last.height,last.style),title:S.opt.title||'',from:'chart studio'})}catch(e){toast(e.message||'Could not open the Mockup studio')}},
  copy:async()=>{try{await navigator.clipboard.writeText(last.svg);toast('SVG copied');}catch{DVExport.download(slug()+'.svg',last.svg,'image/svg+xml');toast('Copy was blocked, so the SVG was downloaded');}},
  embed:async()=>{const h=embedHTML();try{await navigator.clipboard.writeText(h);toast('Embed HTML copied; a file was downloaded too');}catch{}DVExport.download(slug()+'-embed.html',h,'text/html');},
  csv:async()=>{DVExport.download(slug()+'.csv',csv(),'text/csv');toast('CSV downloaded');},
