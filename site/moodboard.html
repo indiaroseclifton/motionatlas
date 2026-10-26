@@ -1,0 +1,55 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Moodboards · Visual & Motion Atlas</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<meta name="description" content="A free canvas for a project: pin atlas styles, theme kits, icons, colours, notes, links and your own pictures, arrange them, pull a palette, turn the board into a theme kit and export it as an image or a share link.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap">
+<link rel="stylesheet" href="moodboard/board.css">
+</head><body>
+<a class="skip" href="#mbView">Skip to the board</a>
+<header class="top">
+ <div class="brand"><a href="atlas.html#projects">Atlas</a><h1>Moodboards</h1></div>
+ <label class="nameWrap"><span class="sr">Board name</span><input id="mbName" type="text" maxlength="100" aria-label="Board name"></label>
+ <span class="proj" id="mbProj" hidden></span>
+ <div class="acts">
+  <details class="menu" id="mbBoardsMenu"><summary class="btn">Boards</summary><div class="pop"><ul id="mbBoards" class="plain"></ul><button class="btn sm" type="button" id="mbNew">New board…</button><button class="btn sm danger" type="button" id="mbDelBoard">Delete this board</button></div></details>
+  <button class="btn" type="button" id="mbShare">Share link</button>
+  <button class="btn primary" type="button" id="mbPng">Export PNG</button>
+ </div>
+</header>
+<div class="roBar" id="mbRoBar" hidden><span>You are viewing a shared moodboard (read only).</span><button class="btn sm" type="button" id="mbSaveCopy">Save a copy to this browser</button></div>
+<div class="tools" role="toolbar" aria-label="Board tools">
+ <div class="grp" role="group" aria-label="Add"><button class="btn sm" type="button" id="mbAddAtlas">Atlas entry</button><button class="btn sm" type="button" id="mbAddKit">Theme kit</button><button class="btn sm" type="button" id="mbAddIcon">Icon</button><button class="btn sm" type="button" id="mbAddColour">Colour</button><button class="btn sm" type="button" id="mbAddNote">Note</button><button class="btn sm" type="button" id="mbAddLink">Link</button><span class="btn sm fileBtn">Picture<input type="file" id="mbUpload" accept="image/*" multiple aria-label="Add your own pictures"></span></div>
+ <div class="grp" role="group" aria-label="Arrange"><button class="btn sm" type="button" id="mbGrid">Grid</button><button class="btn sm" type="button" id="mbMasonry">Masonry</button><button class="btn sm" type="button" data-align="l" aria-label="Align left" title="Align left">⇤</button><button class="btn sm" type="button" data-align="c" aria-label="Align centres horizontally" title="Centre horizontally">↔</button><button class="btn sm" type="button" data-align="r" aria-label="Align right" title="Align right">⇥</button><button class="btn sm" type="button" data-align="t" aria-label="Align top" title="Align top">⤒</button><button class="btn sm" type="button" data-align="m" aria-label="Align centres vertically" title="Centre vertically">↕</button><button class="btn sm" type="button" data-align="b" aria-label="Align bottom" title="Align bottom">⤓</button></div>
+ <div class="grp" role="group" aria-label="Selection"><button class="btn sm" type="button" id="mbGroup">Group</button><button class="btn sm" type="button" id="mbUngroup">Ungroup</button><button class="btn sm" type="button" id="mbFront">Front</button><button class="btn sm" type="button" id="mbBack">Back</button><button class="btn sm" type="button" id="mbDup">Duplicate</button><button class="btn sm" type="button" id="mbDel">Delete</button><button class="btn sm" type="button" id="mbUndo">Undo</button><button class="btn sm" type="button" id="mbRedo">Redo</button></div>
+ <div class="grp" role="group" aria-label="Palette and style"><button class="btn sm accent" type="button" id="mbPalette">Palette and style</button></div>
+</div>
+<main class="stageWrap" id="main">
+ <div id="mbView" class="view" tabindex="-1" aria-label="Moodboard canvas. Drag to pan, Control and scroll to zoom, Shift and drag to select several items. Arrow keys nudge the selected item.">
+  <div id="mbWorld" class="world"><div id="mbFrame" class="frame" hidden></div><button id="mbHandle" class="mbHandle" aria-label="Resize the selected item" hidden></button></div>
+  <div id="mbMarq" class="marq" hidden></div>
+  <div class="empty" id="mbEmpty" hidden><p><b>An empty board.</b> Add atlas entries, colours, notes or your own pictures, or start from a template.</p><button class="btn primary" type="button" id="mbEmptyNew">New board from a template</button></div>
+  <div class="zoom" role="group" aria-label="Zoom"><button class="btn sm" type="button" id="mbOut" aria-label="Zoom out">−</button><output id="mbZoom">100%</output><button class="btn sm" type="button" id="mbIn" aria-label="Zoom in">+</button><button class="btn sm" type="button" id="mbFit">Fit</button></div>
+  <aside class="insp" id="mbInsp" aria-label="Selected item" hidden></aside>
+ </div>
+ <p class="status"><span id="mbCount"></span> · Drop pictures or paste a screenshot, link or text onto the board.</p>
+</main>
+<div id="mbLive" class="sr" role="status" aria-live="polite"></div>
+<div class="toast" id="mbToast" role="status" aria-live="polite"></div>
+
+<dialog id="mbAtlasDlg" aria-labelledby="mbAtlasH"><div class="dIn"><div class="dHead"><h2 id="mbAtlasH">Pin an atlas entry</h2><button class="btn sm" type="button" data-close>Done</button></div>
+ <label class="f"><span>Search the catalogue</span><input type="search" id="mbAtlasQ" placeholder="Name, mood, group or code" autocomplete="off"></label><ul class="pick" id="mbAtlasList"></ul></div></dialog>
+<dialog id="mbKitDlg" aria-labelledby="mbKitH"><div class="dIn"><div class="dHead"><h2 id="mbKitH">Pin a theme kit</h2><button class="btn sm" type="button" data-close>Done</button></div><ul class="pick" id="mbKitList"><li class="hint">Loading kits…</li></ul></div></dialog>
+<dialog id="mbIconDlg" aria-labelledby="mbIconH"><div class="dIn"><div class="dHead"><h2 id="mbIconH">Add an icon</h2><button class="btn sm" type="button" data-close>Done</button></div>
+ <div class="g2"><label class="f"><span>Family</span><select id="mbIconFam"></select></label><label class="f"><span>Search</span><input type="search" id="mbIconQ" autocomplete="off" placeholder="home, arrow, camera"></label></div><ul class="icons" id="mbIconList"></ul></div></dialog>
+<dialog id="mbPalDlg" aria-labelledby="mbPalH"><div class="dIn"><div class="dHead"><h2 id="mbPalH">Palette from this board</h2><button class="btn sm" type="button" data-close>Done</button></div>
+ <ul class="pal" id="mbPalList"></ul><p class="hint">Swatches, kits and notes count first, then the colours found in your pictures and entries.</p>
+ <div class="row"><button class="btn" type="button" id="mbPalAdd">Add as swatches</button><button class="btn primary" type="button" id="mbStyle">Make this a style</button></div></div></dialog>
+<dialog id="mbStyleDlg" aria-labelledby="mbStyleH"><div class="dIn"><div class="dHead"><h2 id="mbStyleH">Your style</h2><button class="btn sm" type="button" data-close>Close</button></div><div id="mbStyleBody"></div>
+ <div class="row"><button class="btn primary" type="button" id="mbKitZip">Download the theme kit ZIP</button><button class="btn" type="button" id="mbKitCss">Copy tokens as CSS</button><button class="btn" type="button" id="mbKitPin">Add it to the board</button></div></div></dialog>
+<dialog id="mbShareDlg" aria-labelledby="mbShareH"><div class="dIn"><div class="dHead"><h2 id="mbShareH">Share this board</h2><button class="btn sm" type="button" data-close>Done</button></div>
+ <label class="f"><span>View-only link</span><input type="text" id="mbShareUrl" readonly></label><p class="hint" id="mbShareNote"></p><button class="btn primary" type="button" id="mbShareCopy">Copy link</button></div></dialog>
+<dialog id="mbNewDlg" aria-labelledby="mbNewH"><form class="dIn" id="mbNewForm" method="dialog"><div class="dHead"><h2 id="mbNewH">New moodboard</h2><button class="btn sm" type="button" data-close>Cancel</button></div>
+ <label class="f"><span>Name</span><input type="text" id="mbNewName" maxlength="100" placeholder="e.g. Spring campaign"></label><fieldset class="tpls"><legend>Start from</legend><div id="mbNewTpl"></div></fieldset><button class="btn primary" type="submit">Create board</button></form></dialog>
+<script src="moodboard/store.js"></script>
+<script src="moodboard/board.js"></script>
+</body></html>
