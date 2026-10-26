@@ -33,13 +33,15 @@ const GK=new Set(['navSeed','id','name','brand','style','pair','updated','home',
 const curPage=()=>site.pages.find(p=>p.id===curId)||site.pages[0];
 const page=new Proxy({},{get:(_,k)=>GK.has(k)?site[k]:curPage()[k],set:(_,k,v)=>{(GK.has(k)?site:curPage())[k]=v;return true}});
 function blank(){return S.normalize({name:'Untitled site',brand:'Brand',style:'studio',blocks:[]},def)}
-function loadStore(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.pages&&Object.keys(s.pages).length){Object.keys(s.pages).forEach(k=>{s.pages[k]=S.normalize(s.pages[k],def)});return s}}catch(e){}
+let hasSaved=false;
+function loadStore(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.pages&&Object.keys(s.pages).length){hasSaved=true;Object.keys(s.pages).forEach(k=>{s.pages[k]=S.normalize(s.pages[k],def)});return s}}catch(e){}
  const s={cur:null,pages:{}};let first=null;
- try{const o=JSON.parse(localStorage.getItem(OLD));if(o&&o.blocks){first=S.normalize({name:o.brand||'My site',brand:o.brand,title:o.title,style:o.style||'noir',blocks:o.blocks},def)}}catch(e){}
+ try{const o=JSON.parse(localStorage.getItem(OLD));if(o&&o.blocks){hasSaved=true;first=S.normalize({name:o.brand||'My site',brand:o.brand,title:o.title,style:o.style||'noir',blocks:o.blocks},def)}}catch(e){}
  if(!first)first=S.normalize(TEMPLATES[0](),def);
  s.pages[first.id]=first;s.cur=first.id;return s}
-function persist(){site.updated=Date.now();try{localStorage.setItem(KEY,JSON.stringify(store));saved('Saved in this browser')}catch(e){saved('Could not save: storage is full or blocked')}}
-function saved(t){const el=$('#saveState');if(el)el.textContent=t}
+let persistedOnce=false;
+function persist(){site.updated=Date.now();try{localStorage.setItem(KEY,JSON.stringify(store));persistedOnce=true;saved('Saved','ok');if(PB.app&&PB.app.onSaved)PB.app.onSaved()}catch(e){saved('Not saved: storage is full or blocked','bad')}}
+function saved(t,st){const el=$('#saveInd');if(!el)return;el.dataset.s=st||'ok';el.lastElementChild.textContent=t;el.title=st==='ok'?'Saved in this browser':t}
 store=loadStore();site=store.pages[store.cur]||Object.values(store.pages)[0];store.cur=site.id;curId=site.home;
 const ui=(()=>{try{return JSON.parse(localStorage.getItem(UIKEY))||{}}catch(e){return {}}})();
 const saveUI=()=>{try{localStorage.setItem(UIKEY,JSON.stringify(ui))}catch(e){}};
@@ -48,7 +50,7 @@ const saveUI=()=>{try{localStorage.setItem(UIKEY,JSON.stringify(ui))}catch(e){}}
 const snap=()=>JSON.stringify({...site,updated:0});
 lastSnap=snap();
 function commit(){const s=snap();if(s===lastSnap)return;hist.push(lastSnap);if(hist.length>80)hist.shift();fut=[];lastSnap=s;persist();histUI()}
-let typing=0;function commitSoon(){clearTimeout(typing);typing=setTimeout(commit,600)}
+let typing=0;function commitSoon(){clearTimeout(typing);saved('Unsaved changes…','dirty');typing=setTimeout(commit,600)}
 function restore(s){site=JSON.parse(s);store.pages[site.id]=site;if(!site.pages.some(p=>p.id===curId))curId=site.home;lastSnap=s;persist();refresh()}
 function undo(){clearTimeout(typing);commit();if(!hist.length)return say('Nothing to undo');fut.push(lastSnap);restore(hist.pop());histUI();say('Undone')}
 function redo(){if(!fut.length)return say('Nothing to redo');hist.push(lastSnap);restore(fut.pop());histUI();say('Redone')}
@@ -294,17 +296,19 @@ addEventListener('message',e=>{if(e.source!==pv.contentWindow||!e.data)return;co
    else if(m.alt&&m.key==='ArrowUp')move(f.list,f.i,f.i-1);else if(m.alt&&m.key==='ArrowDown')move(f.list,f.i,f.i+1);
    else if(m.mod&&/^d$/i.test(m.key))dupBlk(csel.uid);else if(m.mod&&/^k$/i.test(m.key))askAdd(csel.uid,'after');
    else if(m.mod&&/^z$/i.test(m.key)&&!m.shift)undo();else if(m.mod&&(/^y$/i.test(m.key)||(m.shift&&/^z$/i.test(m.key))))redo();break}}});
-pv.addEventListener('load',()=>{lastRects=null;editingText=false;if(!csel||!findBlk(csel.uid)){csel=null;hideTb()}});
+let chkT=0;pv.addEventListener('load',()=>{clearTimeout(chkT);chkT=setTimeout(()=>toAgent({pb:'check'}),1400);lastRects=null;editingText=false;if(!csel||!findBlk(csel.uid)){csel=null;hideTb()}});
 addEventListener('resize',()=>placeTb(lastRects));
 
 /* ---------- section thumbnails and the section picker ---------- */
 const thumbCache=new Map();
+const thumbW=id=>{const d=def(id);return d&&(S.isTop(d)||d.id==='announce')?600:1200};
+const PH='<div aria-hidden="true" style="padding:36px 6%;display:grid;gap:14px;color:var(--ink,#888)"><i style="display:block;height:10px;width:20%;background:var(--accent,currentColor);opacity:.55;border-radius:4px"></i><i style="display:block;height:30px;width:70%;background:currentColor;opacity:.16;border-radius:6px"></i><i style="display:block;height:30px;width:52%;background:currentColor;opacity:.16;border-radius:6px"></i><i style="display:block;height:12px;width:80%;background:currentColor;opacity:.1;border-radius:4px"></i><i style="display:block;height:12px;width:64%;background:currentColor;opacity:.1;border-radius:4px"></i><i style="display:block;height:34px;width:22%;background:var(--accent,currentColor);opacity:.35;border-radius:8px"></i></div>';
 function thumbHTML(id){const key=page.style+'|'+page.pair+'|'+JSON.stringify(site.tokens||{})+'|'+id;if(thumbCache.has(key))return thumbCache.get(key);
- let h='';try{const P=compose('preview',{id:'__t',name:'t',blocks:[{uid:'tb'+id.replace(/\W/g,''),id,vals:{}}]},undefined,{solo:true});h=swapA(assemble(P,{noagent:true,clSrc:ABS+'component-lab.js'}),ABS+'assets/').replace(/\sautoplay\b/g,'').replace(/<video /g,'<video preload="none" ')}catch(e){h=''}
+ let h='';try{const P=compose('preview',{id:'__t',name:'t',blocks:[{uid:'tb'+id.replace(/\W/g,''),id,vals:{}}]},undefined,{solo:true});h=swapA(assemble(P,{noagent:true,clSrc:ABS+'component-lab.js'}),ABS+'assets/').replace(/\sautoplay\b/g,'').replace(/<video /g,'<video preload="none" ');if(thumbW(id)<1200)h=h.replace('</body>',PH+'</body>')}catch(e){h=''}
  thumbCache.set(key,h);if(thumbCache.size>160)thumbCache.delete(thumbCache.keys().next().value);return h}
 let thIO=null;
 function mountThumbs(root,scroller){if(!('IntersectionObserver' in window))return;if(thIO)thIO.disconnect();
- thIO=new IntersectionObserver(es=>es.forEach(e=>{const box=e.target;if(!e.isIntersecting||box.firstChild)return;const f=document.createElement('iframe');f.tabIndex=-1;f.setAttribute('aria-hidden','true');f.setAttribute('inert','');f.title='';f.style.transform='scale('+(box.clientWidth/1200)+')';f.srcdoc=thumbHTML(box.dataset.sth);box.append(f);thIO.unobserve(box)}),{root:scroller,rootMargin:'160px'});
+ thIO=new IntersectionObserver(es=>es.forEach(e=>{const box=e.target;if(!e.isIntersecting||box.firstChild)return;const f=document.createElement('iframe');f.tabIndex=-1;f.setAttribute('aria-hidden','true');f.setAttribute('inert','');f.title='';const W=+box.dataset.sw||1200;f.style.width=W+'px';f.style.height=(W*5/8)+'px';f.style.transform='scale('+(box.clientWidth/W)+')';f.srcdoc=thumbHTML(box.dataset.sth);box.append(f);thIO.unobserve(box)}),{root:scroller,rootMargin:'160px'});
  root.querySelectorAll('[data-sth]').forEach(b=>thIO.observe(b))}
 const pk=$('#picker');let pkGroup='All',pkTarget=null;
 function openPicker(target){pkTarget=target;$('#pickQ').value='';pkGroup='All';pickDraw();pk.showModal();$('#pickQ').focus()}
@@ -313,7 +317,7 @@ function pickDraw(){const all=[...LIB.blocks,PB.extraById['x-type']],gs=['All',.
  $$('#pickChips .chip').forEach(b=>b.onclick=()=>{pkGroup=b.dataset.g;pickDraw();$(`#pickChips [data-g="${CSS.escape(pkGroup)}"]`).focus()});
  const items=all.filter(b=>(pkGroup==='All'||b.group===pkGroup)&&(!t||(b.name+' '+b.group+' '+b.desc).toLowerCase().includes(t)));
  $('#pickCount').textContent=items.length+' sections';
- $('#pickGrid').innerHTML=items.map(b=>`<li><button type="button" class="pkcard" data-id="${esc(b.id)}"><span class="pkth" data-sth="${esc(b.id)}"></span><b>${esc(b.name)}</b><small>${esc(b.desc)}</small></button></li>`).join('')||'<li class="hint">No section matches.</li>';
+ $('#pickGrid').innerHTML=items.map(b=>`<li><button type="button" class="pkcard" data-id="${esc(b.id)}"><span class="pkth" data-sth="${esc(b.id)}" data-sw="${thumbW(b.id)}"></span><b>${esc(b.name)}</b><small>${esc(b.desc)}</small></button></li>`).join('')||'<li class="hint">No section matches.</li>';
  $$('#pickGrid .pkcard').forEach(b=>b.onclick=()=>{addTarget=pkTarget;const id=b.dataset.id;pk.close();addBlock(id,{},null)});
  mountThumbs($('#pickGrid'),$('#pickScroll'))}
 $('#pickQ').oninput=()=>{clearTimeout(pickDraw.t);pickDraw.t=setTimeout(pickDraw,120)};
@@ -354,7 +358,7 @@ let ixIO=null,bgThumbs={};
 function library(){const L=$('#libList');let h='';if(ixIO){ixIO.disconnect();ixIO=null}
  if(ltab==='sections'){const all=[...LIB.blocks,PB.extraById['x-type']];const gs=['All',...GROUPS.filter(g=>all.some(b=>b.group===g))];h+=chips(gs);
   const items=all.filter(b=>(lgroup==='All'||b.group===lgroup)&&match(b.name,b.group,b.desc));
-  h+=`<p class="lcount">${items.length} sections · previews use your style</p><ul class="lgrid tiles">`+items.map(b=>card({id:b.id,title:b.name,meta:b.group,thumb:`<div class="sth" data-sth="${esc(b.id)}"></div>`,cls:'sec'})).join('')+'</ul>'}
+  h+=`<p class="lcount">${items.length} sections · previews use your style</p><ul class="lgrid tiles">`+items.map(b=>card({id:b.id,title:b.name,meta:b.group,thumb:`<div class="sth" data-sth="${esc(b.id)}" data-sw="${thumbW(b.id)}"></div>`,cls:'sec'})).join('')+'</ul>'}
  else if(ltab==='components'){const L2=PB.src.CL();if(!L2)h+='<p class="hint">The UI component lab has not loaded, so components are unavailable right now.</p>';else{
   const items=L2.components.filter(c=>match(c.id,c.name));h+=`<p class="lcount">${items.length} of ${L2.components.length} components · each one is themed by your page style</p><ul class="lgrid comp">`+items.map(c=>card({id:'x-component',vals:{cid:c.id},title:c.name,meta:c.id+(c.live?' · interactive':''),thumb:`<div class="cthumb pb-cl"><div class="cl-root" inert>${PB.componentHTML(c,c.thumb||c.v[0][0],'t'+c.id)}</div></div>`,cls:'comp'})).join('')+'</ul>'}}
  else if(ltab==='interactions'){const X=(window.INTERACTIONS||[]).filter(x=>!/^sec-/.test(x.id));if(!X.length)h+='<p class="hint">The interactions shelf has not loaded.</p>';else{
@@ -416,7 +420,9 @@ function chkDraw(issues){lastIssues=issues;const L=$('#chkList'),groups={contras
    li.append(act);L.append(li)})})}
 function fixContrast(){const cur=PB.styles.get(page.style),sw=cur.sw||[],tk=Object.assign({},site.tokens),C=PB.color;const bg=tk.bg||sw[0],surf=tk.surface||sw[1]||bg,ink=tk.ink||sw[2],acc=tk.accent||sw[3];
  tk.ink=C.ensure(ink,[bg,surf],7);tk.accent=acc;site.tokens=tk;commit();render();tokensUI();say('Text colours adjusted to meet AA');setTimeout(runCheck,900)}
-addEventListener('message',e=>{if(e.source===pv.contentWindow&&e.data&&e.data.pb==='checked'&&rtabCur==='check')chkDraw(e.data.issues||[])});
+addEventListener('message',e=>{if(e.source===pv.contentWindow&&e.data&&e.data.pb==='checked'){const n=(e.data.issues||[]).length;badge(n);if(rtabCur==='check')chkDraw(e.data.issues||[]);else lastIssues=e.data.issues||[]}});
+function badge(n){const b=$('#chkBadge');if(!b)return;b.textContent=n;b.dataset.n=n?'bad':'ok';$('#chkBtn').setAttribute('aria-label',n?n+' things to check on this page':'No problems found on this page')}
+$('#chkBtn').onclick=()=>{showPane('page');rtab('check')};
 $('#chkRun').onclick=runCheck;
 /* ---------- site tokens ---------- */
 function tokensUI(){const box=$('#tkBox');if(!box)return;const cur=PB.styles.get(page.style),sw=cur.sw||[],tk=site.tokens||{};
@@ -455,10 +461,10 @@ $('#pairSel').onchange=e=>{page.pair=+e.target.value;commit();render();say(page.
 
 /* ---------- pages of this site ---------- */
 const accentOf=()=>{const st=PB.styles.get(page.style);return (st&&st.sw&&st.sw[3])||'#5B2DFF'};
-function goPage(id){if(!site.pages.some(p=>p.id===id))return;curId=id;open=null;pageSelUI();outline();render();if(rtabCur==='pages')pagesPanel()}
+function goPage(id){if(!site.pages.some(p=>p.id===id))return;curId=id;open=null;pageSelUI();outline();render();if(rtabCur==='page')pagesPanel()}
 function pageSelUI(){const sel=$('#pageSel'),cp=curPage();sel.innerHTML=site.pages.map(p=>`<option value="${esc(p.id)}"${p.id===cp.id?' selected':''}>${esc(p.name||'Untitled')}${p.id===site.home&&(p.name||'').trim().toLowerCase()!=='home'?' (home)':''}</option>`).join('')}
 $('#pageSel').onchange=e=>goPage(e.target.value);
-function siteChanged(msg){commit();pageSelUI();outline();render();if(rtabCur==='pages')pagesPanel();if(rtabCur==='site')sitePanel();if(msg)say(msg)}
+function siteChanged(msg){commit();pageSelUI();outline();render();if(rtabCur==='page')pagesPanel();if(rtabCur==='site')sitePanel();if(msg)say(msg)}
 const uniqueName=base=>{let n=base,i=2;while(site.pages.some(p=>p.name===n))n=base+' '+i++;return n};
 function pgListHTML(){const cp=curPage(),L=$('#pgList');
  L.innerHTML=site.pages.map((p,i)=>`<li class="pgrow${p.id===cp.id?' cur':''}" data-id="${esc(p.id)}"><button type="button" class="pgname" data-a="go"${p.id===cp.id?' aria-current="true"':''}><b>${esc(p.name||'Untitled')}${p.id===site.home?' <em>Home</em>':''}</b><small>${esc(S.pageFile(site,p))} · ${p.blocks.length} sections${p.inNav?'':' · not in menu'}</small></button><span class="pgact"><button type="button" class="ib" data-a="up" aria-label="Move ${esc(p.name)} up"${i?'':' disabled'}>↑</button><button type="button" class="ib" data-a="down" aria-label="Move ${esc(p.name)} down"${i<site.pages.length-1?'':' disabled'}>↓</button><button type="button" class="ib" data-a="dup" aria-label="Duplicate ${esc(p.name)}">⧉</button><button type="button" class="ib" data-a="home" aria-label="Make ${esc(p.name)} the home page"${p.id===site.home?' disabled':''}>⌂</button><button type="button" class="ib" data-a="rm" aria-label="Delete ${esc(p.name)}"${site.pages.length<2?' disabled':''}>✕</button></span></li>`).join('');
@@ -507,7 +513,7 @@ function navRows(){const box=$('#navRows');box.innerHTML='';$('#navAuto').checke
 function sitePanel(){const st=site.settings;
  $('#brand').value=site.brand||'';$('#sname').value=site.name||'';$('#slang').value=st.lang||'en';$('#surl').value=st.url||'';$('#sdesc').value=st.description||'';$('#sog').value=st.ogImage||'';
  $('#nfOn').checked=st.notFound.on;$('#nfTitle').value=st.notFound.title;$('#nfText').value=st.notFound.text;$('#nfBtn').value=st.notFound.button;$('#sAnalytics').value=st.analytics||'';$('#sForm').value=st.formAction||'';
- favUI();navRows();sitesList()}
+ favUI();navRows()}
 const bindSite=(sel,fn,live)=>{$(sel).oninput=e=>{fn(e.target.value,e.target);commitSoon();if(live)render()}};
 bindSite('#brand',v=>{site.brand=v},1);bindSite('#sname',v=>{site.name=v});bindSite('#slang',v=>{site.settings.lang=v.trim().slice(0,12)||'en'});bindSite('#surl',v=>{site.settings.url=v.trim()});
 bindSite('#sdesc',v=>{site.settings.description=v});bindSite('#sog',v=>{site.settings.ogImage=v.trim()});bindSite('#sAnalytics',v=>{site.settings.analytics=v});bindSite('#sForm',v=>{site.settings.formAction=v.trim()},1);
@@ -518,22 +524,11 @@ $('#favName').onchange=e=>{site.settings.favicon.name=e.target.value;commit();fa
 $('#navAuto').onchange=e=>{site.navSeed=false;site.navAuto=e.target.checked;if(!site.navAuto&&!site.nav.length)site.nav=S.menu(site).map(i=>({label:i.label,link:i.link}));commit();navRows();render()};
 
 /* ---------- saved sites and templates ---------- */
-function sitesList(){const P=Object.values(store.pages).sort((a,b)=>(b.updated||0)-(a.updated||0));
- $('#siteList').innerHTML=P.map(p=>`<li class="${p.id===site.id?'cur':''}"><div><b>${esc(p.name||p.brand||'Untitled')}</b><small>${p.pages.length} page${p.pages.length>1?'s':''} · ${esc(PB.styles.has(p.style)?PB.styles.get(p.style).name:p.style)}${p.updated?' · '+new Date(p.updated).toLocaleDateString():''}</small></div><span>${p.id===site.id?'<em>Open now</em>':`<button type="button" class="btn small" data-open="${esc(p.id)}">Open</button>`}<button type="button" class="btn small" data-dup="${esc(p.id)}" aria-label="Duplicate ${esc(p.name)}">Duplicate</button>${P.length>1?`<button type="button" class="btn small" data-del="${esc(p.id)}" aria-label="Delete ${esc(p.name)}">Delete</button>`:''}</span></li>`).join('');
- $$('#siteList [data-open]').forEach(b=>b.onclick=()=>switchTo(b.dataset.open));
- $$('#siteList [data-dup]').forEach(b=>b.onclick=()=>{const c=clone(store.pages[b.dataset.dup]);c.id=S.uid('s');c.name=(c.name||'Site')+' copy';store.pages[c.id]=c;switchTo(c.id);say('Duplicated')});
- $$('#siteList [data-del]').forEach(b=>b.onclick=()=>{const p=store.pages[b.dataset.del];if(!confirm('Delete “'+(p.name||'this site')+'”? This cannot be undone.'))return;delete store.pages[p.id];if(site.id===p.id)switchTo(Object.keys(store.pages)[0]);else{persist();sitesList()}say('Site deleted')});
- const NT=PB.templates||[];
- $('#tplList').innerHTML=NT.map((t,i)=>`<li class="tpl"><button type="button" data-n="${i}"><b>${esc(t.name)}</b><small>${t.pages} pages · ${esc(PB.styles.has(t.style)?PB.styles.get(t.style).name:t.style)}</small><span>${esc(t.desc)}</span></button></li>`).join('')+TEMPLATES.map((t,i)=>{const x=t();return `<li><button type="button" class="chip" data-t="${i}">${esc(x.name)} · one page</button></li>`}).join('');
- $$('#tplList [data-n]').forEach(b=>b.onclick=()=>{const t=NT[+b.dataset.n],p=S.normalize(t.make(),def);p.name=t.name;store.pages[p.id]=p;switchTo(p.id);showPane('preview');say('New site from '+t.name)});
- $$('#tplList [data-t]').forEach(b=>b.onclick=()=>{const t=TEMPLATES[+b.dataset.t]();const p=S.normalize(t,def);store.pages[p.id]=p;switchTo(p.id);say('New site from '+t.name)})}
-function switchTo(id){clearTimeout(typing);commit();site=store.pages[id];store.cur=id;curId=site.home;hist=[];fut=[];lastSnap=snap();open=null;persist();refresh();histUI()}
-$('#tplBtn').onclick=()=>{showPane('page');rtab('site');const el=$('#tplList');el&&el.scrollIntoView({block:'start'})};
-$('#newSite').onclick=()=>{const p=blank();store.pages[p.id]=p;switchTo(p.id);say('New blank site');showPane('lib')};
+function switchTo(id){clearTimeout(typing);commit();site=store.pages[id];store.cur=id;curId=site.home;hist=[];fut=[];lastSnap=snap();open=null;persist();refresh();histUI();csel=null;if(PB.app&&PB.app.onSwitch)PB.app.onSwitch()}
 
 /* ---------- right panel tabs, panes ---------- */
-const RT=[['page','Page'],['pages','Pages'],['site','Site'],['style','Style'],['check','Check'],['ai','AI']];let rtabCur=RT.some(t=>t[0]===ui.rtab)?ui.rtab:'page';
-function rtab(k){rtabCur=k;ui.rtab=k;saveUI();$$('#rtabs [role=tab]').forEach(b=>{const on=b.dataset.t===k;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1});$$('.rpanel').forEach(p=>p.hidden=p.id!=='rp-'+k);if(k==='style')styles();if(k==='pages')pagesPanel();if(k==='site')sitePanel();if(k==='check')runCheck();if(k==='ai')aiStatus()}
+const RT=[['page','Outline'],['style','Design'],['site','Site'],['ai','AI']];let rtabCur=RT.some(t=>t[0]===ui.rtab)?ui.rtab:'page';
+function rtab(k){if(k==='pages'){k='page';const d=$('#pgSettings');if(d)d.open=true}rtabCur=k;if(k!=='check'){ui.rtab=k;saveUI()}$$('#rtabs [role=tab]').forEach(b=>{const on=b.dataset.t===k;b.setAttribute('aria-selected',on);b.tabIndex=on||(k==='check'&&b.dataset.t==='page')?0:-1});$$('.rpanel').forEach(p=>p.hidden=p.id!=='rp-'+k);if(k==='style')styles();if(k==='page')pagesPanel();if(k==='site')sitePanel();if(k==='check')runCheck();if(k==='ai')aiStatus()}
 $('#rtabs').innerHTML=RT.map(([k,l])=>`<button role="tab" type="button" id="rt-${k}" data-t="${k}" aria-controls="rp-${k}">${l}</button>`).join('');
 $$('#rtabs [role=tab]').forEach((b,i,all)=>{b.onclick=()=>rtab(b.dataset.t);b.onkeydown=e=>{const n=all.length;let j=null;if(e.key==='ArrowRight')j=(i+1)%n;if(e.key==='ArrowLeft')j=(i-1+n)%n;if(j!=null){e.preventDefault();rtab(all[j].dataset.t);all[j].focus()}}});
 function showPane(k){document.body.dataset.pane=k;$$('#panes button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.p===k))}
@@ -700,7 +695,7 @@ document.addEventListener('keydown',e=>{const mod=e.metaKey||e.ctrlKey;if(!mod)r
 $('#undoBtn').onclick=undo;$('#redoBtn').onclick=redo;
 
 /* ---------- refresh ---------- */
-function refresh(){pageSelUI();outline();render();if(rtabCur==='style')styles();if(rtabCur==='pages')pagesPanel();if(rtabCur==='site')sitePanel()}
+function refresh(){pageSelUI();outline();render();if(rtabCur==='style')styles();if(rtabCur==='page')pagesPanel();if(rtabCur==='site')sitePanel()}
 function imagesList(){$('#pbImages').innerHTML=LIB.images.map(i=>`<option value="${esc(i)}">`).join('')}
 
 /* ---------- async sources (read-only) ---------- */
@@ -713,6 +708,9 @@ fetch('expansion.json').then(r=>r.json()).then(j=>{const E=j.entries||[];PB.desi
 fetch('backgrounds.js').then(r=>r.text()).then(t=>{const m=t.match(/const FRAG=`([\s\S]*?)`;/);if(m&&/void main/.test(m[1])){PB.bgFrag=m[1];render();if(ltab==='media')library()}}).catch(()=>{});
 
 PB.dbg=()=>({hist:hist.map(h=>JSON.parse(h).blocks.length),fut:fut.length,last:JSON.parse(lastSnap).blocks.length,now:page.blocks.length});
+/* ---------- hooks for builder/ux.js ---------- */
+PB.app={get site(){return site},get store(){return store},get curId(){return curId},get csel(){return csel},get open(){return open},set open(v){open=v},get first(){return !persistedOnce&&!hasSaved},
+ def,B,isX,uidGen,clone,addBlock,render,commit,commitSoon,outline,refresh,say,switchTo,findBlk,goPage,openPicker,siteChanged,showPane,rtab,persist,saved,curPage,blank,S,TEMPLATES,siteFromTemplate,aiSiteGo,get aiOn(){return aiOn},aiStatus,dupBlk,rmBlk,move,toAgent,compose,assemble,swapA,thumbHTML,mountThumbs,fieldsOf,val,vals,undo,redo,xLabel,setW,setMode,get EDIT(){return EDIT},status,histSnapshot:()=>lastSnap,restoreSnap:s=>{clearTimeout(typing);commit();hist.push(lastSnap);fut=[];restore(s);histUI()},UI:ui,saveUI,pv,runCheck,libraryRedraw:()=>library(),copy,dl,setS,pickDraw:()=>pickDraw(),selectBlock:uid=>{const f=findBlk(uid);if(!f)return;csel={uid,kind:'section'};open=uid;outline();toAgent({pb:'reselect',uid,kind:'section'});scrollPreviewTo(uid)},clearSel:()=>{csel=null;hideTb();toAgent({pb:'clear'})}};
 /* ---------- boot ---------- */
 try{const CLX=PB.src.CL();if(CLX){const st=document.createElement('style');st.textContent=CLX.css();document.head.append(st)}}catch(e){}
 PB.styles.build();if(!PB.styles.has(page.style)&&!/^ds:/.test(page.style))page.style='studio';

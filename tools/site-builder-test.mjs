@@ -24,8 +24,10 @@ async function open(opts = {}) {
   await pg.route('**/api/ai*', r => r.fulfill({ status: 200, contentType: 'application/json', body: '{"enabled":false}' }));
   await pg.goto(BASE + 'page-builder.html'); await pg.waitForFunction(() => document.body.classList.contains('ready'));
   await pg.waitForTimeout(600);
+  if (!opts.start && await pg.locator('#startDlg[open]').count()) { await pg.keyboard.press('Escape'); await pg.waitForTimeout(150); }
   return { ctx, pg };
 }
+const openPages = async pg => { await pg.click('#rt-page'); await pg.evaluate(() => { document.querySelector('#pgSettings').open = true; }); };
 const site = pg => pg.evaluate(() => JSON.parse(JSON.stringify(PB.getSite())));
 const frame = pg => pg.frameLocator('#pv');
 const waitPv = pg => pg.waitForTimeout(700);
@@ -35,7 +37,7 @@ const waitPv = pg => pg.waitForTimeout(700);
   const { ctx, pg } = await open();
   let s = await site(pg);
   ok(s.pages.length === 1 && s.header.length === 1 && s.footer.length === 1, 'default site has one page with a shared header and footer');
-  await pg.click('#rt-pages'); await pg.click('#addPage'); await waitPv(pg);
+  await openPages(pg); await pg.click('#addPage'); await waitPv(pg);
   await pg.fill('#pgName', 'About us'); await pg.click('#addPage'); await pg.fill('#pgName', 'Contact'); await waitPv(pg);
   s = await site(pg);
   ok(s.pages.map(p => p.slug).join() === 'index,about-us,contact', 'three pages with slugs index, about-us, contact: ' + s.pages.map(p => p.slug));
@@ -66,7 +68,7 @@ const waitPv = pg => pg.waitForTimeout(700);
   ok(await pg.inputValue('#pageSel') === (await site(pg)).pages[2].id, 'clicking a menu link in the preview opens that page');
   await pg.click('#modeSeg [data-m=edit]'); await waitPv(pg);
   // hide from the menu
-  await pg.click('#rt-pages'); await pg.uncheck('#pgNav'); await waitPv(pg);
+  await openPages(pg); await pg.uncheck('#pgNav'); await waitPv(pg);
   ok((await frame(pg).locator('.b-nav .links a').count()) === 2, 'page hidden from the menu');
   // custom menu
   await pg.click('#rt-site'); await pg.uncheck('#navAuto'); await pg.click('#navRows .btn'); await pg.fill('#navRows .navrow:last-of-type > input', 'Docs');
@@ -77,7 +79,7 @@ const waitPv = pg => pg.waitForTimeout(700);
   await pg.selectOption('#favSet', 'letter'); await waitPv(pg);
   ok(await frame(pg).locator('.b-nav .logo').textContent() === 'Pottery Co', 'brand name flows into the shared header');
   // per-page SEO
-  await pg.click('#rt-pages'); await pg.click('.pgrow:nth-child(1) .pgname'); await pg.fill('#ptitle', 'Pottery Co | Classes'); await pg.fill('#pgDesc', 'Learn wheel throwing.'); await waitPv(pg);
+  await openPages(pg); await pg.click('.pgrow:nth-child(1) .pgname'); await pg.fill('#ptitle', 'Pottery Co | Classes'); await pg.fill('#pgDesc', 'Learn wheel throwing.'); await waitPv(pg);
   ok((await pg.textContent('#serp')).includes('Pottery Co | Classes'), 'search result preview shows the page title');
   // add a section to the shared footer / header goes to the right place
   s = await site(pg);
@@ -149,7 +151,7 @@ const waitPv = pg => pg.waitForTimeout(700);
   const { ctx, pg } = await open();
   await pg.waitForTimeout(2500);
   const fr = frame(pg);
-  await pg.click('#rt-pages'); await pg.click('#addPage'); await waitPv(pg); await pg.click('#rt-page');
+  await openPages(pg); await pg.click('#addPage'); await waitPv(pg); await pg.click('#rt-page');
   // add a hero with an image through the library
   await pg.click('#libSearch'); await pg.fill('#libSearch', '3D card'); await pg.waitForTimeout(400); await pg.click('#libList .lc .add'); await waitPv(pg);
   let img = fr.locator('[data-pbimg=img3]'); await img.scrollIntoViewIfNeeded(); await img.click(); await pg.waitForTimeout(400);
@@ -229,7 +231,7 @@ const waitPv = pg => pg.waitForTimeout(700);
   await pg.waitForTimeout(2500);
   await pg.click('#libSearch'); await pg.fill('#libSearch', 'Full-width image'); await pg.waitForTimeout(400); await pg.click('#libList .lc .add'); await waitPv(pg);
   if (!(await pg.getByLabel('Image description', { exact: true }).count())) await pg.locator('#ol .blk', { hasText: 'Full-width image' }).locator('.bname').click(); await pg.getByLabel('Image description', { exact: true }).first().fill(''); await waitPv(pg);
-  await pg.click('#rt-check'); await pg.waitForTimeout(1200);
+  await pg.click('#chkBtn'); await pg.waitForTimeout(1200);
   ok((await pg.textContent('#chkSum')).length > 0 && await pg.locator('#chkList .chk').count() >= 1, 'check lists problems with a fix list');
   ok(await pg.locator('#chkList .chk', { hasText: 'alt text' }).count() >= 1, 'missing alt text is reported');
   const n0 = await pg.locator('#chkList .chk', { hasText: 'alt text' }).count();
@@ -252,7 +254,7 @@ const waitPv = pg => pg.waitForTimeout(700);
   const n = await pg.evaluate(() => PB.templates.length);
   ok(n >= 12, 'at least 12 multi-page templates (' + n + ')');
   for (let i = 0; i < n; i++) {
-    await pg.evaluate(i => { const t = PB.templates[i]; document.querySelector('#rt-site').click(); document.querySelector('#tplList [data-n="' + i + '"]').click(); }, i);
+    await pg.evaluate(i => { const t = PB.templates[i]; PB.ux.useTemplate(i); }, i);
     await waitPv(pg);
     const s = await site(pg), nm = s.name;
     ok(s.pages.length >= 3 && s.pages.length <= 6, nm + ': ' + s.pages.length + ' pages');
@@ -282,7 +284,7 @@ const waitPv = pg => pg.waitForTimeout(700);
     if (m === 'DELETE') { store.files = null; return J(200, { deleted: true }); }
     return J(404, {});
   });
-  await pg.click('#rt-site'); await pg.click('#tplList [data-n="0"]'); await waitPv(pg);
+  await pg.evaluate(() => PB.ux.useTemplate(0)); await waitPv(pg);
   await pg.click('#exportMenu summary'); await pg.click('#pubBtn'); await pg.waitForTimeout(500);
   ok(await pg.locator('#pubDlg[open]').count() === 1 && !(await pg.locator('#pubGo').isDisabled()), 'publish dialog opens and is ready');
   await pg.click('#pubGo'); await pg.waitForFunction(() => /Published/.test(document.querySelector('#pubState').textContent), null, { timeout: 30000 });
@@ -359,7 +361,7 @@ const waitPv = pg => pg.waitForTimeout(700);
 {
   const { ctx, pg } = await open({ vp: { width: 390, height: 844 } });
   ok(await pg.evaluate(() => document.documentElement.scrollWidth <= 390), 'no horizontal overflow at 390px');
-  for (const tab of ['page', 'pages', 'site', 'style']) {
+  for (const tab of ['page', 'site', 'style']) {
     await pg.click('#panes [data-p=page]'); await pg.click('#rt-' + tab);
     ok(await pg.evaluate(() => document.documentElement.scrollWidth <= 390), 'no horizontal overflow on the ' + tab + ' tab at 390px');
   }
@@ -369,7 +371,7 @@ const waitPv = pg => pg.waitForTimeout(700);
 }
 if (axeSrc) {
   const { ctx, pg } = await open();
-  for (const tab of ['page', 'pages', 'site']) {
+  for (const tab of ['page', 'style', 'site']) {
     await pg.click('#rt-' + tab); await pg.waitForTimeout(200);
     await pg.addScriptTag({ content: axeSrc }).catch(() => {});
     const r = await pg.evaluate(() => axe.run(document.querySelector('.app'), { resultTypes: ['violations'] }));
