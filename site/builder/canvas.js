@@ -182,7 +182,7 @@ PB.images=IMG;
 
 /* ---------- 4. per-section settings ---------- */
 const SPACING=[['default','Default'],['compact','Compact'],['roomy','Roomy'],['spacious','Spacious']],WIDTH=[['default','Default'],['narrow','Narrow'],['wide','Wide'],['full','Full width']],ALIGN=[['','As designed'],['left','Left'],['center','Centre'],['right','Right']],
- BG=[['','As designed'],['surface','Soft panel'],['accent','Accent colour'],['ink','Inverted'],['gradient','Gradient'],['image','Image'],['film','Film']],ANIM=[['','None'],['rise','Fade up on scroll']];
+ BG=[['','As designed'],['none','Transparent (blends into the page)'],['page','Page colour'],['surface','Soft panel'],['accent','Accent colour'],['ink','Inverted'],['custom','Custom colour'],['gradient','Gradient'],['image','Image or photo'],['film','Film']],BORDER=[['','None'],['thin','Thin line'],['strong','Strong line'],['accent','Accent line']],SHADOW=[['','None'],['soft','Soft'],['lifted','Lifted']],ANIM=[['','None'],['rise','Fade up on scroll']];
 const FLIP={accent:'--bg:var(--q-acc);--ink:var(--q-on);--mute:color-mix(in srgb,var(--q-on) 78%,var(--q-acc));--line:color-mix(in srgb,var(--q-on) 28%,transparent);--surface:color-mix(in srgb,var(--q-on) 12%,var(--q-acc));--accent:var(--q-on);--on-accent:var(--q-acc);--accent-ink:var(--q-on);color:var(--q-on)',
  ink:'--bg:var(--q-ink);--ink:var(--q-bg);--mute:color-mix(in srgb,var(--q-bg) 70%,var(--q-ink));--line:color-mix(in srgb,var(--q-bg) 24%,transparent);--surface:color-mix(in srgb,var(--q-bg) 10%,var(--q-ink));color:var(--q-bg)',
  surface:'--bg:var(--q-surface);--surface:var(--q-bg)'};
@@ -197,17 +197,27 @@ function secBuild(blk,o){const s=blk.set;if(!s||!Object.keys(s).length)return {c
  if(s.t){const o=rules(true,s.t);if(o.length)r.push('@media (min-width:641px) and (max-width:1024px){'+o.join('')+'}')}
  if(s.p){const o=rules(true,s.p);if(o.length)r.push('@media (max-width:640px){'+o.join('')+'}')}
  const bg=s.bg;
- if(bg&&bg!=='default'){cls.push('pb-bg');r.push(`${u}{position:relative;isolation:isolate;--q-bg:var(--bg);--q-ink:var(--ink);--q-acc:var(--accent);--q-on:var(--on-accent);--q-surface:var(--surface)}`);
+ if(bg==='none'){r.push(`${u}{background:transparent!important;--on-accent:var(--ink);--accent-ink:var(--accent)}${u}>*{background-color:transparent!important;background-image:none!important}`)}
+ else if(bg==='page'){r.push(`${u}{background:var(--bg)}`)}
+ else if(bg==='custom'&&/^#[0-9a-f]{6}$/i.test(s.bgc||'')){const c=s.bgc,C=PB.color,t=C?C.best(c):'#000';flip=`--bg:${c};--ink:${t};--mute:color-mix(in srgb,${t} 72%,${c});--line:color-mix(in srgb,${t} 24%,transparent);--surface:color-mix(in srgb,${t} 8%,${c});color:${t}`;r.push(`${u}{background:${c}}`)}
+ const FR=o.frame?`${u} .x-frame`:`${u}>:first-child`;const fr=[];
+ if(s.bd==='thin')fr.push('border:1px solid var(--line)');else if(s.bd==='strong')fr.push('border:2px solid var(--ink)');else if(s.bd==='accent')fr.push('border:2px solid var(--accent)');
+ if(s.sh==='soft')fr.push('box-shadow:0 10px 30px -14px rgba(0,0,0,.35)');else if(s.sh==='lifted')fr.push('box-shadow:0 30px 70px -30px rgba(0,0,0,.55)');
+ if(s.rd!=null&&s.rd!==''&&+s.rd>=0)fr.push('border-radius:'+Math.min(80,+s.rd)+'px;overflow:hidden');
+ if(fr.length)r.push(`${FR}{${fr.join(';')}!important}`);
+ if(s.pd!=null&&s.pd!==''&&+s.pd>=0)r.push(`${u}{padding-block:${Math.min(400,+s.pd)}px!important}${u} .wrap{padding-top:0!important;padding-bottom:0!important}`);
+ if(bg&&bg!=='default'&&bg!=='none'&&bg!=='page'&&bg!=='custom'){cls.push('pb-bg');r.push(`${u}{position:relative;isolation:isolate;--q-bg:var(--bg);--q-ink:var(--ink);--q-acc:var(--accent);--q-on:var(--on-accent);--q-surface:var(--surface)}`);
   if(FLIP[bg]){flip=FLIP[bg];r.push(`${u}{background:${bg==='accent'?'var(--accent)':bg==='ink'?'var(--ink)':'var(--surface)'}}`)}
   else if(bg==='gradient')r.push(`${u}{background:linear-gradient(180deg,var(--bg),color-mix(in srgb,var(--accent) 18%,var(--bg)))}`);
   else if(bg==='image'&&s.bgv){inner+=`<div class="pb-bgm" aria-hidden="true" style="background-image:url(${o.asset(s.bgv)})"></div>`}
   else if(bg==='film'&&s.bgv){const f=String(s.bgv).replace(/[^\w-]/g,'');inner+=`<video class="pb-bgm" aria-hidden="true" tabindex="-1" ${o.mode==='preview'?'':'autoplay '}muted loop playsinline poster="${o.A}films/${f}.jpg"><source src="${o.A}films/${f}-720.mp4" type="video/mp4"></video>`}
   if((bg==='image'||bg==='film')&&s.bgv){const ov=Math.max(0,Math.min(90,+s.ov>=0?+s.ov:55));inner+=`<div class="pb-bgo" aria-hidden="true" style="background:color-mix(in srgb,var(--bg) ${ov}%,transparent)"></div>`;
    r.push(`${u} .pb-bgm{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background-size:cover;background-position:center;z-index:-2}${u} .pb-bgo{position:absolute;inset:0;z-index:-1}`)}}
+ if(s.matched)r.push(`${u} .wrap{padding-top:clamp(8px,2vw,28px)!important}`);
  const hide=s.hide||{};if(hide.d)cls.push('pbh-d');if(hide.t)cls.push('pbh-t');if(hide.p)cls.push('pbh-p');
  let rt='';if(s.anim==='rise'&&o.mode!=='preview'){cls.push('pb-rise');rt='pbrise'}
  return {cls:cls.join(' '),css:r.join('\n'),inner,flip,rt}}
-PB.sec={build:secBuild,SPACING,WIDTH,ALIGN,BG,ANIM,
+PB.sec={build:secBuild,SPACING,WIDTH,ALIGN,BG,BORDER,SHADOW,ANIM,
  base:`pb-t{display:inline}@media (min-width:1025px){.pbh-d{display:none!important}}@media (min-width:641px) and (max-width:1024px){.pbh-t{display:none!important}}@media (max-width:640px){.pbh-p{display:none!important}}.pb-sticky{position:sticky;top:0;z-index:40}.pb-rise{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)}.pb-rise.in{opacity:1;transform:none}@media (prefers-reduced-motion:reduce){.pb-rise{opacity:1;transform:none;transition:none}}`,
  runtime:{pbrise:`(function(){var els=document.querySelectorAll('.pb-rise');if(!('IntersectionObserver' in window)){els.forEach(function(x){x.classList.add('in')});return}var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.1});els.forEach(function(x){io.observe(x)})})();`}};
 

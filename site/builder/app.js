@@ -134,7 +134,8 @@ function compose(mode,pg,acc,opt){ // mode: preview | html | zip  -> parts for o
    if(mode==='zip'&&t){files.set('interactions/'+id+'.html',t);return `src="interactions/${esc(id)}.html"`}
    if(mode==='html'&&t)return `srcdoc="${t.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}"`;return `src="${SITE}interactions/demos/${esc(id)}.html"`}};
 
- [...(opt&&opt.solo?[]:site.header).map(b=>[b,'header']),...pg.blocks.map(b=>[b,'page']),...(opt&&opt.solo?[]:site.footer).map(b=>[b,'footer'])].forEach(([blk,zone])=>{const d=def(blk.id);if(!d)return;ctx.uid=blk.uid;let html='',bjs='';
+ let prevB=null,prevZ=null;
+ [...(opt&&opt.solo?[]:site.header).map(b=>[b,'header']),...pg.blocks.map(b=>[b,'page']),...(opt&&opt.solo?[]:site.footer).map(b=>[b,'footer'])].forEach(([blk,zone])=>{const d=def(blk.id);if(!d)return;ctx.uid=blk.uid;ctx.cfg=blk.cfg||{};ctx.blk=blk;let html='',bjs='';
   try{if(isX(blk.id)){const r=d.render(vals(blk),ctx)||{};html=r.html||'';bjs=r.js||'';(r.css||[]).forEach(([k,c])=>{if(!css.has(k))css.set(k,c)});if(!css.has('x-base'))css.set('x-base',PB.extraBase)}
    else{html=fill(mode==='preview'?PB.canvas.mark(d):d.html,blk,AT);bjs=d.js?fill(d.js,blk,AT):'';if(!css.has('b:'+d.id))css.set('b:'+d.id,d.css)}}
   catch(e){console.warn('Page builder: block failed',blk.id,e);html='<section class="wrap"><p>This section could not be drawn.</p></section>'}
@@ -142,7 +143,9 @@ function compose(mode,pg,acc,opt){ // mode: preview | html | zip  -> parts for o
   if(mode==='preview')html=lazyMedia(html);
   html=anchors(S.linkPages(site,html.split(AT+'http').join('http'),CTX,esc),blk,mode);
   html=html.replace(/\u0001A\/\u0002U:([\w-]+)\u0002|\u0002U:([\w-]+)\u0002/g,(m,a,b)=>upURL(a||b,mode,acc));
-  const sb=PB.sec.build(blk,{mode,A:AT,asset:v=>/^user:/.test(v)?upURL(v.slice(5),mode,acc):AT+v});
+  let eff=blk;if(blk.set&&blk.set.match&&prevB&&prevZ===zone&&prevB.set){const ps=prevB.set,mx={};['bg','bgc','bgv','ov'].forEach(k=>{if(ps[k]!=null)mx[k]=ps[k]});eff={...blk,set:{...blk.set,...mx,matched:1}}}
+  prevB=blk;prevZ=zone;
+  const sb=PB.sec.build(eff,{mode,A:AT,frame:blk.id==='x-component'||blk.id==='x-interaction',asset:v=>/^user:/.test(v)?upURL(v.slice(5),mode,acc):AT+v});
   if(sb.css)css.set('set:'+blk.uid,sb.css);if(sb.rt)ctx.need(sb.rt,PB.sec.runtime[sb.rt]);
   if(!css.has('pb-base'))css.set('pb-base',PB.sec.base);
   const sticky=S.isTop(d)&&d.id!=='announce';
@@ -209,7 +212,7 @@ function placeIndex(id){const d=def(id),bl=listFor(id);
  if(d&&d.place==='hero'){let i=0;while(i<bl.length&&def(bl[i].id).place==='hero')i++;return i}
  return bl.length}
 function dropAt(i,list){const items=$$('#ol .blk');if(i<items.length){const t=findBlk(items[i].dataset.uid);return t&&t.list===list?t.i:-1}const l=items[items.length-1],t=l&&findBlk(l.dataset.uid);return t&&t.list===list?list.length:-1}
-function addBlock(id,valsIn,at,extra){if(!def(id))return;const b={uid:uidGen(),id,vals:valsIn||{}};if(extra){if(extra.rich)b.rich=clone(extra.rich);if(extra.set)b.set=clone(extra.set);if(extra.links)b.links=clone(extra.links)}let list=listFor(id),i=-1;
+function addBlock(id,valsIn,at,extra){if(!def(id))return;const b={uid:uidGen(),id,vals:valsIn||{}};if(extra){if(extra.rich)b.rich=clone(extra.rich);if(extra.cfg)b.cfg=clone(extra.cfg);if(extra.set)b.set=clone(extra.set);if(extra.links)b.links=clone(extra.links)}let list=listFor(id),i=-1;
  if(addTarget){const t=findBlk(addTarget.uid),w=addTarget.where;addTarget=null;if(t&&t.list===list){i=t.i+(w==='before'?0:1)}}
  if(i<0&&at!=null)i=dropAt(at,list);if(i<0)i=placeIndex(id);
  list.splice(i,0,b);open=b.uid;csel={uid:b.uid,kind:'section'};commit();outline();render();jump=b.uid;say('Added '+def(id).name+(list===page.blocks?'':list===site.header?' to the header (every page)':' to the footer (every page)'));return b}
@@ -231,7 +234,7 @@ function outRow(blk,list,i){const d=def(blk.id);const li=document.createElement(
   nb.onkeydown=e=>{if(e.altKey&&(e.key==='ArrowUp'||e.key==='ArrowDown')){e.preventDefault();const j=e.key==='ArrowUp'?i-1:i+1;if(j<0||j>=list.length)return;move(list,i,j);say(d.name+' moved to position '+(j+1));const el=$(`#ol [data-uid="${blk.uid}"] .bname`);el&&el.focus()}};
   li.querySelectorAll('.ib').forEach(b=>b.onclick=()=>{const a=b.dataset.a;
    if(a==='rm'){list.splice(i,1);if(open===blk.uid)open=null;commit();outline();render();say('Removed '+d.name+'. Undo brings it back.');const n=$$('#ol .blk')[Math.min(i,$$('#ol .blk').length-1)];(n?n.querySelector('.bname'):$('#libSearch')).focus();return}
-   if(a==='dup'){const c={uid:uidGen(),id:blk.id,vals:clone(blk.vals)};if(blk.rich)c.rich=clone(blk.rich);list.splice(i+1,0,c);commit();outline();render();say('Duplicated '+d.name);return}
+   if(a==='dup'){const c={uid:uidGen(),id:blk.id,vals:clone(blk.vals)};if(blk.rich)c.rich=clone(blk.rich);if(blk.cfg)c.cfg=clone(blk.cfg);list.splice(i+1,0,c);commit();outline();render();say('Duplicated '+d.name);return}
    const j=a==='up'?i-1:i+1;move(list,i,j);const el=$(`#ol [data-uid="${blk.uid}"] [data-a="${a}"]:not(:disabled)`)||$(`#ol [data-uid="${blk.uid}"] .bname`);el&&el.focus()});
   return li}
 function xLabel(blk){const v=vals(blk);try{if(blk.id==='x-component'){const c=PB.src.CL()&&PB.src.CL().components.find(x=>x.id===v.cid);return c?c.id+' · '+c.name:'Component'}
@@ -244,6 +247,10 @@ function setS(blk,k,v,redraw){blk.set=blk.set||{};if(v===''||v==null||v==='defau
 function settingsUI(blk){const det=document.createElement('details');det.className='setd';if(blk.set)det.open=true;const sm=document.createElement('summary');sm.textContent='Section settings'+(blk.set?' ·  customised':'');det.append(sm);const box=document.createElement('div');box.className='setb';det.append(box);const S0=blk.set||{};
  const sel=(label,opts,key,redraw)=>{const id='f'+(++fid),w=document.createElement('div');w.className='f';const l=document.createElement('label');l.htmlFor=id;l.textContent=label;const s=document.createElement('select');s.id=id;opts.forEach(([v,t])=>{const o=document.createElement('option');o.value=v;o.textContent=t;s.append(o)});s.value=S0[key]||opts[0][0];s.onchange=()=>setS(blk,key,s.value,redraw);w.append(l,s);box.append(w);return s};
  sel('Spacing',PB.sec.SPACING,'pad');sel('Width',PB.sec.WIDTH,'width');sel('Alignment',PB.sec.ALIGN,'align');sel('Background',PB.sec.BG,'bg',true);
+ if(S0.bg==='custom'){const id='f'+(++fid),w=document.createElement('div');w.className='f';w.innerHTML=`<label for="${id}">Background colour</label><input id="${id}" type="color" value="${/^#[0-9a-f]{6}$/i.test(S0.bgc||'')?S0.bgc:'#f4efe6'}">`;const ci=w.querySelector('input');ci.oninput=()=>{blk.set=blk.set||{};blk.set.bgc=ci.value;commitSoon();render()};ci.onchange=()=>commit();if(!S0.bgc){blk.set=blk.set||{};blk.set.bgc=ci.value}box.append(w)}
+ {const id='f'+(++fid),w=document.createElement('label');w.className='check';const c=document.createElement('input');c.type='checkbox';c.id=id;c.checked=!!S0.match;c.onchange=()=>setS(blk,'match',c.checked?1:'',false);w.append(c,' Match the section above (no seam)');box.append(w)}
+ sel('Border',PB.sec.BORDER,'bd');sel('Shadow',PB.sec.SHADOW,'sh');
+ [['rd','Corner radius',0,60,'As designed'],['pd','Exact space above and below',0,240,'Use the Spacing setting']].forEach(([k,l,mn,mx,em])=>{const id='f'+(++fid),w=document.createElement('div');w.className='f';const has=S0[k]!=null&&S0[k]!=='';w.innerHTML=`<label for="${id}">${l}: <output>${has?S0[k]+'px':em}</output></label><input id="${id}" type="range" min="${mn}" max="${mx}" step="2" value="${has?S0[k]:mn}">`;const r=w.querySelector('input'),o=w.querySelector('output');r.oninput=()=>{o.textContent=r.value+'px';blk.set=blk.set||{};blk.set[k]=+r.value;commitSoon();render()};box.append(w)});
  if(S0.bg==='image'||S0.bg==='film'){const id='f'+(++fid),w=document.createElement('div');w.className='f';const l=document.createElement('label');l.htmlFor=id;l.textContent=S0.bg==='film'?'Background film':'Background image';
   if(S0.bg==='film'){const s=document.createElement('select');s.id=id;[['','Choose a film'],...LIB.films.map(n=>[n,n.replace(/-/g,' ')])].forEach(([v,t])=>{const o=document.createElement('option');o.value=v;o.textContent=t;s.append(o)});s.value=S0.bgv||'';s.onchange=()=>setS(blk,'bgv',s.value);w.append(l,s)}
   else{const i=document.createElement('input');i.id=id;i.setAttribute('list','pbImages');i.placeholder='Pick a library image or paste a path';i.value=/^user:/.test(S0.bgv||'')?'(uploaded image)':S0.bgv||'';i.onchange=()=>setS(blk,'bgv',i.value.trim());const up=document.createElement('button');up.type='button';up.className='btn small';up.textContent='Upload an image';const fi=document.createElement('input');fi.type='file';fi.accept='image/*';fi.hidden=true;fi.setAttribute('aria-label','Choose a background image file');up.onclick=()=>fi.click();fi.onchange=async()=>{const fl=fi.files[0];if(!fl)return;if(!/^image\//.test(fl.type))return say('That file is not an image. Try a JPG, PNG or WebP.');try{const id2=await PB.images.add(fl);setS(blk,'bgv','user:'+id2,true)}catch(e){say('Could not keep that image. Try a smaller JPG, PNG or WebP.')}};w.append(l,i,up,fi)}
@@ -256,7 +263,7 @@ function settingsUI(blk){const det=document.createElement('details');det.classNa
  sel('Reveal animation',PB.sec.ANIM,'anim');
  const rs=document.createElement('button');rs.type='button';rs.className='btn small';rs.textContent='Reset settings';rs.onclick=()=>{delete blk.set;commit();outline();render()};box.append(rs);return det}
 
-function editor(blk){const d=def(blk.id),bb=document.createElement('div');bb.className='bb';bb.innerHTML=`<p class="hint">${esc(d.desc)}</p>`;bb.append(settingsUI(blk));
+function editor(blk){if(PB.cfg&&PB.cfg.has(blk)&&PB.cfg.schema(blk))return PB.cfg.panel(blk);const d=def(blk.id),bb=document.createElement('div');bb.className='bb';bb.innerHTML=`<p class="hint">${esc(d.desc)}</p>`;bb.append(settingsUI(blk));
  fieldsOf(d).forEach(f=>{const id='f'+(++fid),wrap=document.createElement('div');wrap.className='f';const lab=document.createElement('label');lab.htmlFor=id;lab.textContent=f.label;let inp;
   if(f.type==='link'){const lp=linkPicker(val(blk,f.k),v=>{blk.vals[f.k]=v;commitSoon();render()},f.label,id);wrap.append(lab,lp);bb.append(wrap);return}
   if(f.type==='select'||f.type==='film'){inp=document.createElement('select');const opts=f.type==='film'?LIB.films.map(n=>[n,n.replace(/-/g,' ')]):(f.options?f.options(vals(blk)):[]);
@@ -296,7 +303,7 @@ function placeTb(m){if(!EDIT||!csel||!m){hideTb();return}const f=buildTb();if(!f
  const ir=pv.getBoundingClientRect(),sr=stage.getBoundingClientRect(),r0=m.el||m.sec;if(!r0){hideTb();return}const z=ZOOM,r={left:r0.left*z,top:r0.top*z,width:r0.width*z,height:r0.height*z};if(r.top+r.height<0||r.top>ir.height){hideTb();return}
  const h=tb.offsetHeight||40,w=tb.offsetWidth||260,top0=ir.top-sr.top;let y=ir.top-sr.top+r.top-h-8;if(y<top0+4)y=top0+Math.max(r.top,0)+8;
  let x=ir.left-sr.left+Math.max(r.left,0);x=Math.max(8,Math.min(x,sr.width-w-8));tb.style.left=x+'px';tb.style.top=Math.min(y,sr.height-h-8)+'px'}
-function dupBlk(uid){const f=findBlk(uid);if(!f)return;const c={uid:uidGen(),id:f.blk.id,vals:clone(f.blk.vals)};if(f.blk.rich)c.rich=clone(f.blk.rich);if(f.blk.set)c.set=clone(f.blk.set);if(f.blk.links)c.links=clone(f.blk.links);f.list.splice(f.i+1,0,c);csel=null;open=c.uid;commit();outline();render();say('Duplicated '+def(f.blk.id).name)}
+function dupBlk(uid){const f=findBlk(uid);if(!f)return;const c={uid:uidGen(),id:f.blk.id,vals:clone(f.blk.vals)};if(f.blk.rich)c.rich=clone(f.blk.rich);if(f.blk.cfg)c.cfg=clone(f.blk.cfg);if(f.blk.set)c.set=clone(f.blk.set);if(f.blk.links)c.links=clone(f.blk.links);f.list.splice(f.i+1,0,c);csel=null;open=c.uid;commit();outline();render();say('Duplicated '+def(f.blk.id).name)}
 function rmBlk(uid){const f=findBlk(uid);if(!f)return;f.list.splice(f.i,1);if(open===uid)open=null;csel=null;hideTb();commit();outline();render();say('Removed '+def(f.blk.id).name+'. Undo brings it back.')}
 function askAdd(uid,where){openPicker({uid,where})}
 /* element tools: links, images, menu */
@@ -416,7 +423,7 @@ function library(){const L=$('#libList');let h='';if(ixIO){ixIO.disconnect();ixI
   const items=all.filter(b=>(lgroup==='All'||b.group===lgroup)&&match(b.name,b.group,b.desc));
   h+=`<p class="lcount">${items.length} sections · previews use your style</p><ul class="lgrid tiles">`+items.map(b=>card({id:b.id,title:b.name,meta:b.group,thumb:`<div class="sth" data-sth="${esc(b.id)}" data-sw="${thumbW(b.id)}"></div>`,cls:'sec'})).join('')+'</ul>'+(items.length?'':'<p class="hint">No section matches “'+esc($('#libSearch').value)+'”. Try a shorter word such as “price”, “team” or “form”, or clear the search.</p>')}
  else if(ltab==='components'){const L2=PB.src.CL();if(!L2)h+='<p class="hint">The UI component lab has not loaded, so components are unavailable right now.</p>';else{
-  const items=L2.components.filter(c=>match(c.id,c.name));h+=`<p class="lcount">${items.length} of ${L2.components.length} components · each one is themed by your page style</p><ul class="lgrid comp">`+items.map(c=>card({id:'x-component',vals:{cid:c.id},title:c.name,meta:c.id+(c.live?' · interactive':''),thumb:`<div class="cthumb pb-cl"><div class="cl-root" inert>${PB.componentHTML(c,c.thumb||c.v[0][0],'t'+c.id)}</div></div>`,cls:'comp'})).join('')+'</ul>'}}
+  const items=L2.components.filter(c=>match(c.id,c.name));h+=`<p class="lcount">${items.length} of ${L2.components.length} components · each one is themed by your page style</p><ul class="lgrid comp">`+items.map(c=>card({id:'x-component',vals:{cid:c.id,layout:'plain'},title:c.name,meta:c.id+(c.live?' · interactive':''),thumb:`<div class="cthumb pb-cl"><div class="cl-root" inert>${PB.componentHTML(c,c.thumb||c.v[0][0],'t'+c.id)}</div></div>`,cls:'comp'})).join('')+'</ul>'}}
  else if(ltab==='interactions'){const X=(window.INTERACTIONS||[]).filter(x=>!/^sec-/.test(x.id));if(!X.length)h+='<p class="hint">The interactions shelf has not loaded.</p>';else{
   const cats=['All',...new Set(X.map(x=>x.cat))];h+=chips(cats);const items=X.filter(x=>(lgroup==='All'||x.cat===lgroup)&&match(x.t,x.cat,x.d,x.use));
   h+=`<p class="lcount">${items.length} interactions · embedded as frames, inlined in the export</p><ul class="lgrid ix">`+items.map(x=>card({id:'x-interaction',vals:{iid:x.id,height:/^story-/.test(x.id)?'800':'640'},title:x.t,meta:x.cat,desc:x.d,thumb:`<div class="ixthumb ${x.tone==='light'?'light':''}" data-ix="${esc(x.id)}"><span>${esc(x.cat)}</span></div>`,cls:'ixc'})).join('')+'</ul>'}}

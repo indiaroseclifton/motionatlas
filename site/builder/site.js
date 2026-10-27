@@ -41,7 +41,7 @@ function normalize(x,def){
  const d=DEFAULTS(),st=x.settings||{};s.settings={...d,...st,favicon:{...d.favicon,...(st.favicon||{})},notFound:{...d.notFound,...(st.notFound||{})}};
  if(x.tokens&&typeof x.tokens==='object'){const t={},k=x.tokens,hex=v=>/^#[0-9a-f]{6}$/i.test(v);['bg','surface','ink','accent'].forEach(n=>{if(hex(k[n]))t[n]=k[n]});if(k.radius!=null&&+k.radius>=0&&+k.radius<=40)t.radius=+k.radius;if(['sharp','pill'].includes(k.btn))t.btn=k.btn;['fontHead','fontBody'].forEach(n=>{if(/^[\w ]{2,40}$/.test(k[n]||''))t[n]=k[n]});if(Object.keys(t).length)s.tokens=t}
  return s}
-function fix(list,def){return (list||[]).filter(b=>b&&(!def||def(b.id))).map(b=>{const o={uid:b.uid||uid(),id:b.id,vals:b.vals||{}};if(b.set&&typeof b.set==='object')o.set=b.set;if(b.links&&typeof b.links==='object')o.links=b.links;if(b.rich&&typeof b.rich==='object')o.rich=b.rich;return o})}
+function fix(list,def){return (list||[]).filter(b=>b&&(!def||def(b.id))).map(b=>{const o={uid:b.uid||uid(),id:b.id,vals:b.vals||{}};if(b.set&&typeof b.set==='object')o.set=b.set;if(b.links&&typeof b.links==='object')o.links=b.links;if(b.rich&&typeof b.rich==='object')o.rich=b.rich;if(b.cfg&&typeof b.cfg==='object'&&Object.keys(b.cfg).length)o.cfg=b.cfg;return o})}
 const safeLink=l=>{l=String(l||'').trim();if(!l)return '#';if(/^\s*(javascript|data|vbscript):/i.test(l))return '#';return l};
 /* menu: the pages (in order) or the custom list; each item {label,link} */
 function menu(site){if(site.navAuto)return site.pages.filter(p=>p.inNav).map(p=>({label:p.name,link:'page:'+p.id,pageId:p.id}));

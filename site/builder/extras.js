@@ -42,10 +42,12 @@ const comp={id:'x-component',name:'UI component',group:'Components',desc:'Any co
   {k:'kicker',label:'Kicker',type:'text',def:''},{k:'heading',label:'Heading',type:'text',def:''},{k:'intro',label:'Intro',type:'long',def:''},
   {k:'layout',label:'Layout',type:'select',options:()=>[['card','In a card'],['plain','On the page'],['wide','Full width card']],def:'card'}],
  render(v,ctx){const L=CL();if(!L)return {html:NOTE('The component library has not loaded.')};const c=L.components.find(x=>x.id===v.cid)||L.components[0];
-  const variant=c.v.some(x=>x[0]===v.variant)?v.variant:c.v[0][0];
-  if(c.live)ctx.need('cl',{componentLab:true});
-  return {html:`<section class="wrap x-comp x-${esc(v.layout||'card')}">${HEAD(v)}<div class="x-stage"><div class="cl-root"${c.live?` data-cllive="${c.id}"`:''}>${PB.componentHTML(c,variant,ctx.uid)}</div></div></section>`,
-   css:[['cl-base',clBaseCSS()],['cl-map',PB.clMap],['cl:'+c.id,c.css||''],['x-comp',`.x-comp .x-stage{display:grid;justify-items:center;overflow:auto}.x-comp.x-card .x-stage,.x-comp.x-wide .x-stage{background:var(--surface);border:1px solid var(--line);border-radius:calc(var(--radius) * 1.3);padding:clamp(24px,5vw,56px)}.x-comp.x-wide{max-width:none}.x-comp .cl-root{max-width:100%;color:var(--ink)}`]]}}};
+  const variant=c.v.some(x=>x[0]===v.variant)?v.variant:c.v[0][0],cfg=ctx.cfg||{},CF=PB.cfg;
+  const live=c.live&&!cfg.st;if(live)ctx.need('cl',{componentLab:true});
+  const inner=CF?CF.applyContent(PB.componentHTML(c,variant,ctx.uid),cfg):PB.componentHTML(c,variant,ctx.uid),rs=CF?CF.compStyle(cfg):'';
+  const al=cfg.al==='start'||cfg.al==='end'?cfg.al:'center',aid=cfg.id&&/^[A-Za-z][\w-]*$/.test(cfg.id)?` id="${esc(cfg.id)}"`:'';
+  return {html:`<section class="wrap x-comp x-${esc(v.layout||'card')}${cfg.calm?' x-calm':''}"${aid}>${HEAD(v)}<div class="x-stage x-frame" style="justify-items:${al}"><div class="cl-root"${live?` data-cllive="${c.id}"`:''}${rs?` style="${esc(rs)}"`:''}>${inner}</div></div></section>`,
+   css:[['cl-base',clBaseCSS()],['cl-map',PB.clMap],['cl:'+c.id,c.css||''],['x-comp',`.x-comp .x-stage{display:grid;justify-items:center;overflow:auto}.x-comp.x-plain .x-stage{overflow:visible}.x-comp.x-card .x-stage,.x-comp.x-wide .x-stage{background:var(--surface);border:1px solid var(--line);border-radius:calc(var(--radius) * 1.3);padding:clamp(24px,5vw,56px)}.x-comp.x-wide{max-width:none}.x-comp .cl-root{max-width:100%;color:var(--ink)}.x-calm *,.x-calm *::before,.x-calm *::after{animation:none!important;transition:none!important}`]]}}};
 
 /* ---------- interaction-shelf demos ---------- */
 const HEIGHTS=[['480','Short (480px)'],['640','Medium (640px)'],['800','Tall (800px)'],['100vh','Full screen']];

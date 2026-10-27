@@ -562,6 +562,42 @@ if (axeSrc) {
   ok(!r.missing.length, 'every photo a template references exists in the library ' + r.missing.slice(0, 3));
   await ctx.close();
 }
+// ---- 7. per-item settings for components, and transparent backgrounds
+{
+  const { ctx, pg } = await open();
+  await pg.evaluate(() => PB.ux.useTemplate(0)); await waitPv(pg);
+  ok(await pg.evaluate(() => PB.src.CL().components.every(c => { const b = { id: 'x-component', vals: { cid: c.id }, uid: 't' }; const s = PB.cfg.schema(b); return s && s.groups.length >= 6 && s.presets.length >= 4; })), 'every one of the 64 components has a settings schema with groups and presets');
+  const uid = await pg.evaluate(() => PB.app.addBlock('x-component', { cid: 'C01', layout: 'plain' }).uid); await waitPv(pg); await pg.waitForTimeout(500);
+  await pg.evaluate(u => PB.app.selectBlock(u), uid); await pg.waitForSelector('.cfgp');
+  ok(await pg.locator('.cfgp .cfgb').first().textContent().then(x => /C01/.test(x)), 'the selected item panel names the component');
+  ok(await pg.locator('.cfgd2 summary').count() >= 6, 'settings are grouped in collapsible sections');
+  await pg.fill('.cfgs', 'accent'); ok(await pg.locator('.cfgf:not([hidden])').count() >= 1 && await pg.locator('.cfgf[hidden]').count() > 3, 'the settings search filters the form');
+  await pg.fill('.cfgs', '');
+  // words
+  await pg.click('.cfgd2[data-g=words] summary'); await pg.fill('.cfgd2[data-g=words] .cfgf:has(label:text("Text")) input >> nth=0', 'Book now'); await waitPv(pg); await pg.waitForTimeout(600);
+  ok(await frame(pg).locator('.x-comp').first().innerText().then(x => /Book now/.test(x)), 'a word changed in the settings shows in the canvas');
+  // transparent by default: no card, no background
+  const bg = await frame(pg).locator('.x-comp .x-stage').first().evaluate(e => { const c = getComputedStyle(e); return [c.backgroundColor, c.borderTopWidth]; });
+  ok(bg[0] === 'rgba(0, 0, 0, 0)' && bg[1] === '0px', 'a component dropped on a page is transparent and blends in (' + bg + ')');
+  // style + background settings
+  await pg.evaluate(u => { const f = PB.app.findBlk(u); f.blk.cfg = Object.assign(f.blk.cfg || {}, { ac: '#ff3300', cr: 0, sc: 120 }); f.blk.set = { bg: 'custom', bgc: '#102a43', rd: 20, bd: 'thin' }; PB.app.commit(); PB.app.render(); }, uid); await waitPv(pg); await pg.waitForTimeout(500);
+  const st = await frame(pg).locator('.x-comp .cl-root').first().getAttribute('style'); ok(/--cl-accent:#ff3300/.test(st) && /zoom:1.2/.test(st) && /--cl-radius:0px/.test(st), 'style settings become component variables');
+  const sec = await frame(pg).locator('#' + uid).evaluate(e => getComputedStyle(e).backgroundColor); ok(sec === 'rgb(16, 42, 67)', 'a custom background colour applies to the section (' + sec + ')');
+  const ink = await frame(pg).locator('#' + uid + ' .x-comp').evaluate(e => { const c = getComputedStyle(e).color; const m = c.match(/\d+/g).map(Number); return (m[0] * 299 + m[1] * 587 + m[2] * 114) / 1000; }); ok(ink > 150, 'text turns light on a dark custom background (luma ' + Math.round(ink) + ')');
+  await pg.evaluate(u => { const f = PB.app.findBlk(u); f.blk.set = { bg: 'none' }; PB.app.commit(); PB.app.render(); }, uid); await waitPv(pg); await pg.waitForTimeout(400);
+  ok(await frame(pg).locator('#' + uid).evaluate(e => getComputedStyle(e).backgroundColor) === 'rgba(0, 0, 0, 0)', '“Transparent” removes the section background');
+  // presets, copy and paste, reset
+  await pg.click('.cfgpre .chip:has-text("Bold")'); ok(await pg.evaluate(u => PB.app.findBlk(u).blk.cfg.wt === 700, uid), 'a preset applies its settings in one click');
+  await pg.click('button:has-text("Copy settings")'); const u2 = await pg.evaluate(() => PB.app.addBlock('x-component', { cid: 'C20', layout: 'plain' }).uid); await pg.evaluate(u => PB.app.selectBlock(u), u2); await pg.waitForSelector('.cfgp'); await pg.click('button:has-text("Paste settings")');
+  ok(await pg.evaluate(u => (PB.app.findBlk(u).blk.cfg || {}).wt === 700, u2), 'settings can be copied from one component and pasted onto another');
+  await pg.evaluate(u => PB.app.selectBlock(u), uid); await pg.waitForSelector('.cfgp'); await pg.click('button:has-text("Reset to defaults")'); ok(await pg.evaluate(u => { const b = PB.app.findBlk(u).blk; return !b.cfg && !b.set; }, uid), 'Reset to defaults clears an item’s settings');
+  await pg.evaluate(() => PB.app.undo()); ok(await pg.evaluate(u => !!PB.app.findBlk(u).blk.cfg, uid), 'every settings change can be undone');
+  // export has the real markup and the settings, no builder code
+  const files = await pg.evaluate(async () => (await PB.buildSiteFiles()).map(([n, c]) => [n, typeof c === 'string' ? c : null]));
+  const h = files.find(f => f[0] === 'index.html')[1], css = files.find(f => f[0] === 'assets/site.css')[1];
+  ok(/Book now/.test(h) && /--cl-accent:#ff3300/.test(h) && !/cfgp|data-pb|contenteditable|__PB_EDIT/.test(h), 'the export contains the changed words and style with no builder code');
+  await ctx.close();
+}
 // ---- 5a. site file backup, import, My projects sync
 {
   const { ctx, pg } = await open();
