@@ -37,6 +37,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--acc);outline-of
 <p id="live" role="status" style="position:absolute;left:-9999px"></p>
 </div>
 <script>
+const $p=window.__ixp||((k,d)=>d);
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 function odometer(host,{prefix='',group=true}={}){host.innerHTML='';if(prefix){const c=document.createElement('span');c.className='cur';c.textContent=prefix;host.append(c)}const o=document.createElement('span');o.className='odo';o.setAttribute('aria-hidden','true');host.append(o);let wheels=[],val=null;
  function build(str){o.innerHTML='';wheels=[];[...str].forEach((ch,i)=>{if(/\d/.test(ch)){const d=document.createElement('span');d.className='d';const s=document.createElement('span');s.className='s';for(let r=0;r<3;r++)for(let k=0;k<10;k++){const n=document.createElement('span');n.textContent=k;s.append(n)}d.append(s);o.append(d);wheels.push({s,pos:10})}else{const sp=document.createElement('span');sp.className='sep';sp.textContent=ch;o.append(sp)}})}
@@ -48,7 +49,7 @@ function odometer(host,{prefix='',group=true}={}){host.innerHTML='';if(prefix){c
  return{set,get:()=>val}}
 const big=odometer(document.getElementById('big'),{prefix:'€'}),live=document.getElementById('live');
 const s1=odometer(document.getElementById('s1')),s2=odometer(document.getElementById('s2')),s3=odometer(document.getElementById('s3'));
-let total=1284906;big.set(1000000);s1.set(0);s2.set(0);s3.set(0);
+let total=Math.round($p('total',1284906));big.set(1000000);s1.set(0);s2.set(0);s3.set(0);
 setTimeout(()=>{big.set(total);s1.set(4812);s2.set(387);s3.set(96)},350);
 function go(n,say=true){total=Math.max(0,Math.min(99999999,Math.round(n)));big.set(total);if(say)live.textContent='Total now €'+total.toLocaleString('en-GB')}
 document.getElementById('add1').onclick=()=>{go(total+1);s1.set(s1.get()+1)};

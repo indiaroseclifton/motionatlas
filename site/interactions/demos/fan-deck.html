@@ -17,11 +17,12 @@ body{background:radial-gradient(120% 90% at 50% 110%,#2A211A 0,var(--bg) 60%);co
 <div class="deck" id="deck"></div>
 <p class="cap">Hover or focus the deck to fan it. Select a card to bring it forward.</p>
 <script>
+const $p=window.__ixp||((k,d)=>d);
 const imgs=['jellyfish','dove','threads','bloom','tree','smoke','ferro'];
 const deck=document.getElementById('deck');let active=3,open=false;
 imgs.forEach((n,i)=>{const b=document.createElement('button');b.className='card';b.innerHTML=`<img src="../../assets/shelf/${n}.webp" alt=""><span>${n}</span>`;b.setAttribute('aria-label','Card '+(i+1)+': '+n);b.onclick=()=>{active=i;layout()};deck.append(b)});
 const cards=[...deck.children];
-function layout(){const n=cards.length,spread=open?Math.min(16,90/n):3;cards.forEach((c,i)=>{const d=i-active;const rot=d*spread;const x=open?d*Math.min(46,innerWidth/14):d*3;const y=open?Math.abs(d)*8:Math.abs(d)*2;const lift=i===active?(open?-34:-8):0;c.style.transform=`translate(${x}px,${y+lift}px) rotate(${rot}deg)`;c.style.zIndex=100-Math.abs(d)})}
+function layout(){const n=cards.length,spread=open?Math.min($p('fan',16),90/n):3;cards.forEach((c,i)=>{const d=i-active;const rot=d*spread;const x=open?d*Math.min(46,innerWidth/14):d*3;const y=open?Math.abs(d)*8:Math.abs(d)*2;const lift=i===active?(open?-34:-8):0;c.style.transform=`translate(${x}px,${y+lift}px) rotate(${rot}deg)`;c.style.zIndex=100-Math.abs(d)})}
 deck.addEventListener('pointerenter',()=>{open=true;layout()});deck.addEventListener('pointerleave',()=>{if(!deck.contains(document.activeElement)){open=false;layout()}});
 deck.addEventListener('focusin',()=>{open=true;layout()});deck.addEventListener('focusout',e=>{if(!deck.contains(e.relatedTarget)){open=false;layout()}});
 deck.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){active=Math.max(0,Math.min(cards.length-1,active+(e.key==='ArrowRight'?1:-1)));cards[active].focus();layout()}});

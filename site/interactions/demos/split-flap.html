@@ -38,7 +38,8 @@ button:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
 <div class="foot"><button id="shuffle">Update board</button><button id="pause" aria-pressed="false">Pause updates</button></div>
 </div>
 <script>
-const CONFIG={chars:' ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:.-',cols:[['time','Time',5],['dest','Destination',10],['gate','Gate',3],['st','Status',7]],every:6000,
+const $p=window.__ixp||((k,d)=>d);
+const CONFIG={chars:' ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:.-',cols:[['time','Time',5],['dest','Destination',10],['gate','Gate',3],['st','Status',7]],every:$p('every',6000),
  flights:[['07:45','LISBON','A12','ON TIME'],['08:10','REYKJAVIK','B03','BOARDING'],['08:25','KYOTO','C21','DELAYED'],['08:40','MARRAKECH','A07','ON TIME'],['09:05','OSLO','B11','CANCEL'],['09:20','BUENOS AIRES','D02','ON TIME'],['09:35','TBILISI','C04','DELAYED'],['09:50','HOBART','A15','ON TIME'],['10:15','VALPARAISO','D09','BOARDING'],['10:30','NUUK','B01','ON TIME']]};
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const rowsEl=document.getElementById('rows'),hd=document.getElementById('hd');let start=0,paused=false;

@@ -74,9 +74,9 @@ window.CityCircuits=(()=>{
 
  function start(canvas,{still=false,seed=1}={}){
   if(!T)return null;
-  let renderer;try{renderer=new T.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'})}catch(e){return null}
-  const r=rng(seed);renderer.setPixelRatio(Math.min(1.75,devicePixelRatio||1));renderer.setClearColor(C.bg,1);
-  const scene=new T.Scene();scene.fog=new T.FogExp2(C.bg,K.fog);
+  let renderer;try{renderer=new T.WebGLRenderer({canvas,antialias:true,alpha:!!(window.__IXP&&__IXP.tr),powerPreference:'high-performance'})}catch(e){return null}
+  const r=rng(seed);renderer.setPixelRatio(Math.min(1.75,devicePixelRatio||1));renderer.setClearColor(C.bg,window.__IXP&&__IXP.tr?0:1);
+  const scene=new T.Scene();scene.fog=window.__IXP&&__IXP.tr?null:new T.FogExp2(C.bg,K.fog);
   const cam=new T.PerspectiveCamera(42,1,.1,400);
   scene.add(new T.HemisphereLight(0xBFD4E6,0x0A1218,1.1));const key=new T.DirectionalLight(0xE7EEF6,1.3);key.position.set(-30,40,20);scene.add(key);const rim=new T.DirectionalLight(0x7FE7F7,.9);rim.position.set(40,12,-30);scene.add(rim);
   /* board */

@@ -45,9 +45,10 @@ h1{margin:0 0 10px;font:400 clamp(30px,4vw,48px)/1.02 Georgia,serif;letter-spaci
 <p class="val" id="val" aria-hidden="true">50% graded</p></div>
 </div>
 <script>
+const $p=window.__ixp||((k,d)=>d);
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const c=document.getElementById('cmp'),hd=document.getElementById('hd'),val=document.getElementById('val'),labs=c.querySelectorAll('.lab');
-let p=50,target=50,raf=0,vert=false,drag=false;
+let p=$p('start',50),target=$p('start',50),raf=0,vert=false,drag=false;
 function set(v){p=Math.max(0,Math.min(100,v));c.style.setProperty('--p',p+'%');const r=Math.round(100-p);hd.setAttribute('aria-valuenow',Math.round(p));hd.setAttribute('aria-valuetext',r+'% graded');val.textContent=r+'% graded';labs[0].style.opacity=p<12?0:1;labs[1].style.opacity=p>88?0:1}
 function glide(v){target=Math.max(0,Math.min(100,v));if(reduce){set(target);return}if(!raf)raf=requestAnimationFrame(function s(){p+=(target-p)*.18;set(p);if(Math.abs(target-p)>.05)raf=requestAnimationFrame(s);else{set(target);raf=0}})}
 function pos(e){const r=c.getBoundingClientRect();return vert?(e.clientY-r.top)/r.height*100:(e.clientX-r.left)/r.width*100}
@@ -57,6 +58,6 @@ const up=()=>{drag=false;c.classList.remove('drag')};c.addEventListener('pointer
 hd.addEventListener('keydown',e=>{const m={ArrowLeft:-2,ArrowDown:2,ArrowRight:2,ArrowUp:-2,PageUp:-10,PageDown:10}[e.key];if(vert&&(e.key==='ArrowDown'||e.key==='ArrowUp'))e.preventDefault();
  if(m!==undefined){e.preventDefault();glide(target+(e.key.startsWith('Arrow')?m:m))}if(e.key==='Home'){e.preventDefault();glide(0)}if(e.key==='End'){e.preventDefault();glide(100)}});
 document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{vert=b.dataset.o==='v';c.classList.toggle('v',vert);hd.setAttribute('aria-orientation',vert?'vertical':'horizontal');document.querySelectorAll('.seg button').forEach(x=>x.setAttribute('aria-pressed',x===b))});
-set(50);
-if(!reduce){let t=0;const intro=()=>{t+=.02;if(t<Math.PI*2&&!drag){set(50+Math.sin(t)*22);requestAnimationFrame(intro)}else if(!drag){target=50;set(50)}};setTimeout(()=>requestAnimationFrame(intro),500)}
+set($p('start',50));
+if(!reduce){let t=0;const intro=()=>{t+=.02;if(t<Math.PI*2&&!drag){set($p('start',50)+Math.sin(t)*22);requestAnimationFrame(intro)}else if(!drag){target=50;set(50)}};setTimeout(()=>requestAnimationFrame(intro),500)}
 </script></body></html>

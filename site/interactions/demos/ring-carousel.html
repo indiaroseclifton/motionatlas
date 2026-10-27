@@ -16,6 +16,7 @@ button:focus-visible,.stage:focus-visible{outline:2px solid var(--accent);outlin
 <div class="stage" id="stage" tabindex="0" aria-label="Image ring. Drag or use the arrow keys to turn it." role="region"><div class="ring" id="ring"></div></div>
 <div class="ctl"><button id="prev" aria-label="Turn left">←</button><span>Drag to spin</span><button id="next" aria-label="Turn right">→</button></div>
 <script>
+const $p=window.__ixp||((k,d)=>d);
 const names=['owl','lighthouse','origami','statue','nebula','amber','jellyfish','dove','bloom','sumi'];
 const ring=document.getElementById('ring'),stage=document.getElementById('stage');
 const N=names.length,step=360/N;
@@ -25,7 +26,7 @@ let angle=0,vel=0,drag=false,lastX=0;
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 function radius(){return ring.offsetWidth/2/Math.tan(Math.PI/N)+24}
 function draw(){const r=radius();ring.style.transform=`translateZ(${-r}px) rotateY(${angle}deg)`;figs.forEach((f,i)=>{f.style.transform=`rotateY(${i*step}deg) translateZ(${r}px)`})}
-function tick(){if(!drag){if(Math.abs(vel)>.01){angle+=vel;vel*=.95}else if(!reduce)angle-=.06}draw();requestAnimationFrame(tick)}
+function tick(){if(!drag){if(Math.abs(vel)>.01){angle+=vel;vel*=.95}else if(!reduce)angle-=$p('rot',.06)}draw();requestAnimationFrame(tick)}
 stage.addEventListener('pointerdown',e=>{drag=true;lastX=e.clientX;vel=0;stage.setPointerCapture(e.pointerId)});
 stage.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-lastX;lastX=e.clientX;angle+=dx*.3;vel=dx*.3});
 stage.addEventListener('pointerup',()=>drag=false);stage.addEventListener('pointercancel',()=>drag=false);

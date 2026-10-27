@@ -13,10 +13,11 @@ p{position:fixed;bottom:18px;width:100%;text-align:center;color:var(--mute);font
 <h1>Fly through the work.</h1>
 <p>Scroll or swipe to travel. The tunnel drifts on its own.</p>
 <script>
+const $p=window.__ixp||((k,d)=>d);
 const names=['jellyfish','dove','threads','bloom','tree','smoke','ferro','sumi','soap','embroidery','lion','erosion','sand','biolum','owl','lighthouse','origami','statue','nebula','amber'];
 const t=document.getElementById('t');const D=2400;const items=[];
 names.concat(names).forEach((n,i)=>{const im=new Image();im.src=`../../assets/shelf/${n}.webp`;im.alt='';t.append(im);const a=i*2.39996;items.push({el:im,x:Math.cos(a)*(260+(i%3)*90),y:Math.sin(a)*(170+(i%4)*50),z:-i*(D/40)})});
-let speed=0,base=matchMedia('(prefers-reduced-motion: reduce)').matches?0:1.4;
+let speed=0,base=matchMedia('(prefers-reduced-motion: reduce)').matches?0:$p('base',1.4);
 addEventListener('wheel',e=>{speed+=e.deltaY*.05},{passive:true});
 let ty=0;addEventListener('touchstart',e=>ty=e.touches[0].clientY,{passive:true});addEventListener('touchmove',e=>{const y=e.touches[0].clientY;speed+=(ty-y)*.15;ty=y},{passive:true});
 addEventListener('keydown',e=>{if(e.key==='ArrowDown'||e.key===' ')speed+=20;if(e.key==='ArrowUp')speed-=20});

@@ -14,10 +14,11 @@ body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;di
 </style></head><body>
 <div class="row" id="row"></div>
 <script>
+const $p=window.__ixp||((k,d)=>d);
 const d=[['Ferrofluid','ferro'],['Soap film','soap'],['Sand','sand'],['Biolume','biolum']];const row=document.getElementById('row');
 d.forEach(([t,i])=>{const a=document.createElement('a');a.className='card';a.href='#';a.innerHTML=`<img src="../../assets/shelf/${i}.webp" alt=""><div class="shine"></div><h3>${t}</h3>`;a.onclick=e=>e.preventDefault();row.append(a)});
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 row.querySelectorAll('.card').forEach(c=>{const im=c.querySelector('img');
-c.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect(),px=(e.clientX-r.left)/r.width-.5,py=(e.clientY-r.top)/r.height-.5;c.style.setProperty('--x',(px+.5)*100+'%');c.style.setProperty('--y',(py+.5)*100+'%');if(reduce)return;c.style.transition='transform .1s';c.style.transform=`rotateY(${px*14}deg) rotateX(${-py*14}deg)`;im.style.transform=`translate(${-px*18}px,${-py*18}px)`});
+c.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect(),px=(e.clientX-r.left)/r.width-.5,py=(e.clientY-r.top)/r.height-.5;c.style.setProperty('--x',(px+.5)*100+'%');c.style.setProperty('--y',(py+.5)*100+'%');if(reduce)return;c.style.transition='transform .1s';c.style.transform=`rotateY(${px*$p('tilt',14)}deg) rotateX(${-py*$p('tilt',14)}deg)`;im.style.transform=`translate(${-px*$p('shift',18)}px,${-py*$p('shift',18)}px)`});
 c.addEventListener('pointerleave',()=>{c.style.transition='';c.style.transform='';im.style.transform=''})});
 </script></body></html>

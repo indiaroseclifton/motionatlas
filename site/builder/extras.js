@@ -55,10 +55,13 @@ const inter={id:'x-interaction',name:'Interaction',group:'Interactions',desc:'A 
  fields:[{k:'iid',label:'Interaction',type:'select',options:()=>IX().filter(x=>!/^sec-/.test(x.id)).map(x=>[x.id,x.t+' · '+x.cat]),def:'fan-deck'},
   {k:'kicker',label:'Kicker',type:'text',def:''},{k:'heading',label:'Heading',type:'text',def:''},{k:'intro',label:'Intro',type:'long',def:''},
   {k:'height',label:'Height',type:'select',options:()=>HEIGHTS,def:'640'},{k:'bleed',label:'Width',type:'select',options:()=>[['contained','Inside the page'],['full','Edge to edge']],def:'contained'}],
- render(v,ctx){const x=ix(v.iid)||{id:v.iid,t:v.iid};const h=/^\d+$/.test(v.height)?v.height+'px':(v.height==='100vh'?'100vh':'640px');
-  const src=ctx.interactionSrc(x.id);
-  return {html:`<section class="${v.bleed==='full'?'x-ix x-full':'wrap x-ix'}">${HEAD(v)}<iframe ${src} title="${esc(x.t)} (interactive demo)" loading="lazy" style="height:${h}"></iframe></section>`,
-   css:[['x-ix',`.x-ix iframe{display:block;width:100%;border:0;border-radius:calc(var(--radius) * 1.3);background:#0b0b0c;box-shadow:0 30px 70px -40px rgba(0,0,0,.6)}.x-ix.x-full iframe{border-radius:0}.x-ix.x-full .x-head{padding:clamp(48px,8vh,90px) max(16px,4vw) 0;max-width:1180px;margin:0 auto 28px}`]]}}};
+ render(v,ctx){const x=ix(v.iid)||{id:v.iid,t:v.iid};const cfg=ctx.cfg||{};const h=/^\d+$/.test(v.height)?v.height+'px':(v.height==='100vh'?'100vh':'640px');
+  const src=ctx.interactionSrc(x.id,cfg,ctx.uid);const AR={'16/9':'16 / 9','4/3':'4 / 3','1/1':'1 / 1','3/4':'3 / 4','21/9':'21 / 9'};
+  const W={narrow:'420px',medium:'640px',wide:'900px'};const al=cfg.al==='start'?'0 auto 0 0':cfg.al==='end'?'0 0 0 auto':'0 auto';
+  const sty=[AR[cfg.ar]?'aspect-ratio:'+AR[cfg.ar]+';height:auto':'height:'+h,W[cfg.w]?'max-width:'+W[cfg.w]+';margin:'+al:''].filter(Boolean).join(';');
+  const id=cfg.id&&/^[A-Za-z][\w-]*$/.test(cfg.id)?` id="${esc(cfg.id)}"`:'';
+  return {html:`<section${id} class="${v.bleed==='full'?'x-ix x-full':'wrap x-ix'}${cfg.tr?' x-tr':''}">${HEAD(v)}<iframe class="x-frame" ${src} title="${esc(cfg.ttl||x.t)} (interactive demo)" loading="lazy" style="${sty}"></iframe></section>`,
+   css:[['x-ix',`.x-ix iframe{display:block;width:100%;border:0;border-radius:calc(var(--radius) * 1.3);background:#0b0b0c;box-shadow:0 30px 70px -40px rgba(0,0,0,.6)}.x-ix.x-tr iframe{background:transparent;border-radius:0;box-shadow:none}.x-ix.x-full iframe{border-radius:0}.x-ix.x-full .x-head{padding:clamp(48px,8vh,90px) max(16px,4vw) 0;max-width:1180px;margin:0 auto 28px}`]]}}};
 
 /* ---------- generated backgrounds ---------- */
 const BG_RT=frag=>`window.__atlasBg=function(c,S,still){var g=c.getContext('webgl',{premultipliedAlpha:false});if(!g)return function(){};var F=${JSON.stringify(frag)},V='attribute vec2 v;void main(){gl_Position=vec4(v,0.,1.);}';

@@ -130,9 +130,15 @@ function compose(mode,pg,acc,opt){ // mode: preview | html | zip  -> parts for o
  (st.fonts||'').split('&').filter(Boolean).forEach(f=>fonts.add(f));
  CTX={mode,current:pg.id,pageHref:pageHrefFor(mode)};
  const ctx={mode,A:AT,site:base,siteData:site,pageHref:p=>CTX.pageHref(p),uid:'',home:CTX.pageHref(S.pageOf(site,site.home)),need:(k,v)=>{if(!needs.has(k))needs.set(k,v)},font:q=>{(q||'').split('&').filter(Boolean).forEach(f=>fonts.add(f))},
-  interactionSrc:id=>{if(mode==='preview')return `src="${ABS}interactions/demos/${esc(id)}.html"`;const t=cache.ix[id];
-   if(mode==='zip'&&t){files.set('interactions/'+id+'.html',t);return `src="interactions/${esc(id)}.html"`}
-   if(mode==='html'&&t)return `srcdoc="${t.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}"`;return `src="${SITE}interactions/demos/${esc(id)}.html"`}};
+  vars:PB.ix.vars(st.vars),
+  interactionSrc:(id,cfg,uid)=>{const fixA=t=>t.split('../../assets/').join((mode==='preview'?ABS:SITE)+'assets/');
+   const mk=()=>{const raw=PB.ix.raw[id];return raw==null?null:PB.ix.build(fixA(raw),{cfg,vars:ctx.vars})};
+   const act=PB.ix.active(cfg);
+   if(mode==='preview'){if(!act)return `src="${ABS}interactions/demos/${esc(id)}.html"`;const d=mk();if(d==null){PB.ix.load(id).then(()=>render());return `src="about:blank"`}return `srcdoc="${d.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}"`}
+   const t=cache.ix[id];if(t==null)return `src="${SITE}interactions/demos/${esc(id)}.html"`;
+   const d=act?PB.ix.build(t,{cfg,vars:ctx.vars}):t;
+   if(mode==='zip'){const f='interactions/'+id+(act?'-'+uid:'')+'.html';files.set(f,d);return `src="${f}"`}
+   return `srcdoc="${d.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}"`}};
 
  let prevB=null,prevZ=null;
  [...(opt&&opt.solo?[]:site.header).map(b=>[b,'header']),...pg.blocks.map(b=>[b,'page']),...(opt&&opt.solo?[]:site.footer).map(b=>[b,'footer'])].forEach(([blk,zone])=>{const d=def(blk.id);if(!d)return;ctx.uid=blk.uid;ctx.cfg=blk.cfg||{};ctx.blk=blk;let html='',bjs='';
@@ -426,7 +432,7 @@ function library(){const L=$('#libList');let h='';if(ixIO){ixIO.disconnect();ixI
   const items=L2.components.filter(c=>match(c.id,c.name));h+=`<p class="lcount">${items.length} of ${L2.components.length} components · each one is themed by your page style</p><ul class="lgrid comp">`+items.map(c=>card({id:'x-component',vals:{cid:c.id,layout:'plain'},title:c.name,meta:c.id+(c.live?' · interactive':''),thumb:`<div class="cthumb pb-cl"><div class="cl-root" inert>${PB.componentHTML(c,c.thumb||c.v[0][0],'t'+c.id)}</div></div>`,cls:'comp'})).join('')+'</ul>'}}
  else if(ltab==='interactions'){const X=(window.INTERACTIONS||[]).filter(x=>!/^sec-/.test(x.id));if(!X.length)h+='<p class="hint">The interactions shelf has not loaded.</p>';else{
   const cats=['All',...new Set(X.map(x=>x.cat))];h+=chips(cats);const items=X.filter(x=>(lgroup==='All'||x.cat===lgroup)&&match(x.t,x.cat,x.d,x.use));
-  h+=`<p class="lcount">${items.length} interactions · embedded as frames, inlined in the export</p><ul class="lgrid ix">`+items.map(x=>card({id:'x-interaction',vals:{iid:x.id,height:/^story-/.test(x.id)?'800':'640'},title:x.t,meta:x.cat,desc:x.d,thumb:`<div class="ixthumb ${x.tone==='light'?'light':''}" data-ix="${esc(x.id)}"><span>${esc(x.cat)}</span></div>`,cls:'ixc'})).join('')+'</ul>'}}
+  h+=`<p class="lcount">${items.length} interactions · embedded as frames, inlined in the export</p><ul class="lgrid ix">`+items.map(x=>card({id:'x-interaction',vals:{iid:x.id,height:/^story-/.test(x.id)?'800':'640'},extra:/^(sec|story)-/.test(x.id)?{}:{cfg:{tr:1}},title:x.t,meta:x.cat,desc:x.d,thumb:`<div class="ixthumb ${x.tone==='light'?'light':''}" data-ix="${esc(x.id)}"><span>${esc(x.cat)}</span></div>`,cls:'ixc'})).join('')+'</ul>'}}
  else if(ltab==='photos'){const P=PB.photos;if(!P||!P.list.length)h+='<p class="hint">'+(P&&P.ready?'The photo library could not be loaded.':'Loading photos…')+'</p>';else{const items=P.match(q(),lgroup==='All'?'all':lgroup);
   h+=`<div class="gchips" role="group" aria-label="Photo category">${['All',...P.cats].map(c=>`<button type="button" class="chip" aria-pressed="${c===lgroup}" data-g="${esc(c)}">${esc(c==='All'?'All':P.catName(c))}</button>`).join('')}</div><p class="lcount">${items.length} of ${P.list.length} photos · public domain or CC0, credited for you in exports</p><ul class="lgrid tiles">`+items.map(p=>card({id:'image-full',vals:{img:P.path(p),alt:p.alt||p.title,caption:''},title:p.title,meta:P.catName(p.cat)+' · photo',thumb:`<img src="${esc(P.thumb(p))}" alt="" loading="lazy">`,cls:'tile'})).join('')+'</ul>'+(items.length?'':'<p class="hint">No photo matches “'+esc(q())+'”. Try “coffee”, “house” or “flowers”.</p>')}}
  else if(ltab==='media'){const BG=PB.src.BGA();const gs=['All','Backgrounds','Films','Landing effects','Images'];h+=chips(gs);
@@ -621,7 +627,7 @@ const slug=()=>(page.brand||page.name||'page').toLowerCase().replace(/[^a-z0-9]+
 function dl(blob,name){const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000)}
 async function prefetch(){const all=[...site.header,...site.pages.flatMap(p=>p.blocks),...site.footer],jobs=[];
  if(cache.cl==null&&all.some(b=>b.id==='x-component'))jobs.push(fetch('component-lab.js').then(r=>r.ok?r.text():null).then(t=>{cache.cl=t}).catch(()=>{}));
- all.filter(b=>b.id==='x-interaction').forEach(b=>{const id=val(b,'iid');if(cache.ix[id]!=null)return;jobs.push(fetch('interactions/demos/'+id+'.html').then(r=>r.ok?r.text():null).then(t=>{if(t)cache.ix[id]=t.split('../../assets/').join(SITE+'assets/')}).catch(()=>{}))});
+ all.filter(b=>b.id==='x-interaction').forEach(b=>{const id=val(b,'iid');if(cache.ix[id]!=null)return;jobs.push(PB.ix.load(id).then(t=>{if(t)cache.ix[id]=t.split('../../assets/').join(SITE+'assets/')}))});
  [...JSON.stringify(site).matchAll(/user:([\w-]+)/g)].forEach(m=>{if(!dcache.has(m[1]))jobs.push(PB.images.dataURL(m[1]).then(u=>{dcache.set(m[1],u)}))});
  await Promise.all(jobs)}
 const favHref=()=>S.svgDataURL(S.faviconSVG(site,accentOf()));

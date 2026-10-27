@@ -30,7 +30,8 @@ form:focus-within{box-shadow:inset 0 2px 0 #2A5A3E}
 <form id="f" autocomplete="off"><label for="cmd">~ $</label><input id="cmd" placeholder="type help and press Enter" spellcheck="false"></form>
 </div>
 <script>
-const CONFIG={script:[['cmd','npx create-atlas@latest my-site'],['out','<span class="m">Need to install the following packages:</span>\n  create-atlas@4.2.0'],['wait',380],['bar','Downloading template'],['out','<span class="c">✔</span> Template <span class="y">editorial</span> copied'],['out','<span class="c">✔</span> 214 packages installed in 3.1s'],['cmd','cd my-site && npm run dev'],['out','\n  <span class="c">ATLAS</span> v4.2.0  ready in <span class="y">412 ms</span>\n\n  ➜  Local:   <span class="p">http://localhost:5173/</span>\n  ➜  Network: use <span class="m">--host</span> to expose\n']],
+const $p=window.__ixp||((k,d)=>d);
+const CONFIG={script:[['cmd',$p('cmd','npx create-atlas@latest my-site')],['out','<span class="m">Need to install the following packages:</span>\n  create-atlas@4.2.0'],['wait',380],['bar','Downloading template'],['out','<span class="c">✔</span> Template <span class="y">editorial</span> copied'],['out','<span class="c">✔</span> 214 packages installed in 3.1s'],['cmd','cd my-site && npm run dev'],['out','\n  <span class="c">ATLAS</span> v4.2.0  ready in <span class="y">412 ms</span>\n\n  ➜  Local:   <span class="p">http://localhost:5173/</span>\n  ➜  Network: use <span class="m">--host</span> to expose\n']],
  commands:{help:'Commands: <span class="y">help</span>, <span class="y">ls</span>, <span class="y">whoami</span>, <span class="y">date</span>, <span class="y">clear</span>, <span class="y">replay</span>',ls:'<span class="p">assets/</span>  <span class="p">pages/</span>  atlas.config.js  package.json  README.md',whoami:'a curious visitor',date:()=>new Date().toString()}};
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const out=document.getElementById('out');let run=0;

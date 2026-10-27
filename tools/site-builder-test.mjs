@@ -598,6 +598,42 @@ if (axeSrc) {
   ok(/Book now/.test(h) && /--cl-accent:#ff3300/.test(h) && !/cfgp|data-pb|contenteditable|__PB_EDIT/.test(h), 'the export contains the changed words and style with no builder code');
   await ctx.close();
 }
+// ---- 7b. per-item settings for interactions, and removing the demo background
+{
+  const { ctx, pg } = await open();
+  await pg.evaluate(() => PB.ux.useTemplate(0)); await waitPv(pg);
+  ok(await pg.evaluate(() => window.INTERACTIONS.every(x => { const s = PB.cfg.schema({ id: 'x-interaction', vals: { iid: x.id }, uid: 't' }); return s && s.groups.length >= 6 && s.presets.length >= 5 && /interaction/.test(s.badge); })), 'every one of the 70 interactions has a settings schema');
+  const uid = await pg.evaluate(() => PB.app.addBlock('x-interaction', { iid: 'fan-deck', height: '480' }, undefined, { cfg: { tr: 1 } }).uid); await waitPv(pg); await pg.waitForTimeout(1500);
+  await pg.evaluate(u => PB.app.selectBlock(u), uid); await pg.waitForSelector('.cfgp');
+  ok(await pg.locator('.cfgp .cfgb').first().textContent().then(x => /interaction/.test(x)), 'the selected item panel names the interaction and its kind');
+  ok(await pg.locator('.cfgd2[data-g=behaviour] .cfgf').count() >= 4, 'behaviour settings: speed, plays, calm, hide caption');
+  const ifr = () => frame(pg).locator('#' + uid + ' iframe');
+  ok(await ifr().evaluate(e => getComputedStyle(e).backgroundColor) === 'rgba(0, 0, 0, 0)', 'the frame itself is transparent');
+  const inner = async () => ifr().evaluate(e => { const d = e.contentDocument; return [getComputedStyle(d.body).backgroundColor, getComputedStyle(d.body).backgroundImage, getComputedStyle(d.documentElement).backgroundColor, d.defaultView.__IXP && d.defaultView.__IXP.tr]; });
+  const a = await inner(); ok(a[0] === 'rgba(0, 0, 0, 0)' && a[1] === 'none' && a[2] === 'rgba(0, 0, 0, 0)' && a[3] === 1, 'the demo page inside is really transparent, so the page shows through (' + a + ')');
+  // text takes the page colours
+  const col = await ifr().evaluate(e => { const d = e.contentDocument; return getComputedStyle(d.querySelector('.cap')).color; });
+  const pgInk = await frame(pg).locator('body').evaluate(e => getComputedStyle(e).getPropertyValue('--ink').trim() || getComputedStyle(e).color);
+  ok(!!col, 'demo text colour is set (' + col + ' on page ink ' + pgInk + ')');
+  // turn the background back on
+  await pg.evaluate(u => { const f = PB.app.findBlk(u); delete f.blk.cfg.tr; PB.app.commit(); PB.app.render(); }, uid); await waitPv(pg); await pg.waitForTimeout(1200);
+  const b0 = await ifr().evaluate(e => getComputedStyle(e.contentDocument.body).backgroundColor + '|' + getComputedStyle(e.contentDocument.body).backgroundImage); ok(!/rgba\(0, 0, 0, 0\)\|none/.test(b0), 'with the toggle off the demo keeps its own backdrop');
+  // behaviour: speed, hide caption, calm are written into the document
+  await pg.evaluate(u => { const f = PB.app.findBlk(u); f.blk.cfg = { tr: 1, sp: 50, nohint: 1, calm: 1, ac: '#ff3300', ar: '16/9' }; PB.app.commit(); PB.app.render(); }, uid); await waitPv(pg); await pg.waitForTimeout(1500);
+  const r = await ifr().evaluate(e => { const d = e.contentDocument, w = d.defaultView; return [w.__IXP.sp, getComputedStyle(d.querySelector('.cap')).display, w.matchMedia('(prefers-reduced-motion: reduce)').matches, getComputedStyle(d.documentElement).getPropertyValue('--accent').trim(), e.getBoundingClientRect().width / e.getBoundingClientRect().height]; });
+  ok(r[0] === .5 && r[1] === 'none' && r[2] === true && r[3] === '#ff3300' && Math.abs(r[4] - 16 / 9) < .05, 'speed, hidden caption, calm motion, accent and shape reach the demo (' + r + ')');
+  // presets, reset, undo
+  await pg.evaluate(u => PB.app.selectBlock(u), uid); await pg.waitForSelector('.cfgp');
+  await pg.click('.cfgpre .chip:has-text("Lively")'); ok(await pg.evaluate(u => PB.app.findBlk(u).blk.cfg.sp === 150 && PB.app.findBlk(u).blk.cfg.tr === 1, uid), 'an interaction look applies in one click');
+  await pg.click('button:has-text("Reset to defaults")'); ok(await pg.evaluate(u => { const b = PB.app.findBlk(u).blk; return b.cfg && b.cfg.tr === 1 && Object.keys(b.cfg).length === 1 && !b.set; }, uid), 'Reset returns an interaction to the blended default');
+  await pg.evaluate(() => PB.app.undo()); ok(await pg.evaluate(u => PB.app.findBlk(u).blk.cfg.sp === 150, uid), 'the reset can be undone');
+  // export: no builder code, the settings are in the markup
+  await pg.evaluate(u => { const f = PB.app.findBlk(u); f.blk.cfg = { tr: 1, sp: 50 }; PB.app.commit(); }, uid);
+  const files = await pg.evaluate(async () => (await PB.buildSiteFiles()).map(([n, c]) => [n, typeof c === 'string' ? c : null]));
+  const ixf = files.filter(f => /^interactions\/fan-deck/.test(f[0])); const h = files.find(f => f[0] === 'index.html')[1];
+  ok(ixf.length === 1 && /__IXP/.test(ixf[0][1]) && /background:none!important/.test(ixf[0][1]) && /interactions\/fan-deck-/.test(h) && !/cfgp|data-pb|contenteditable|__PB_EDIT/.test(ixf[0][1] + h), 'the export has a transparent copy of the demo with the settings and no builder code');
+  await ctx.close();
+}
 // ---- 5a. site file backup, import, My projects sync
 {
   const { ctx, pg } = await open();

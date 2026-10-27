@@ -18,10 +18,11 @@ button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 <div class="card"><h1>Iron filings.</h1><p>Hundreds of needles turn to face your pointer and stretch as you get close. Click or tap to send a ripple through the field. On a keyboard, focus the field and steer with the arrow keys.</p>
 <div class="row"><button data-m="face" aria-pressed="true">Face</button><button data-m="flow" aria-pressed="false">Orbit</button><button data-m="away" aria-pressed="false">Repel</button></div></div>
 <script>
+const $p=window.__ixp||((k,d)=>d);
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const c=document.getElementById('c'),x=c.getContext('2d');let W,H,dpr,N=[],gap;
-let px=0,py=0,tx=0,ty=0,user=false,mode='face',waves=[];
-function size(){dpr=Math.min(2,devicePixelRatio||1);W=innerWidth;H=innerHeight;c.width=W*dpr;c.height=H*dpr;x.setTransform(dpr,0,0,dpr,0,0);gap=W<600?24:30;N=[];for(let y=gap/2;y<H;y+=gap)for(let X=gap/2;X<W;X+=gap)N.push({x:X,y,a:0,l:.3});if(!user){tx=px=W*.62;ty=py=H*.4}}
+let px=0,py=0,tx=0,ty=0,user=false,mode=$p('mode','face'),waves=[];
+function size(){dpr=Math.min(2,devicePixelRatio||1);W=innerWidth;H=innerHeight;c.width=W*dpr;c.height=H*dpr;x.setTransform(dpr,0,0,dpr,0,0);gap=W<600?24:$p('gap',30);N=[];for(let y=gap/2;y<H;y+=gap)for(let X=gap/2;X<W;X+=gap)N.push({x:X,y,a:0,l:.3});if(!user){tx=px=W*.62;ty=py=H*.4}}
 addEventListener('resize',size);size();
 c.addEventListener('pointermove',e=>{user=true;tx=e.clientX;ty=e.clientY});
 c.addEventListener('pointerdown',e=>{user=true;tx=e.clientX;ty=e.clientY;waves.push({x:e.clientX,y:e.clientY,r:0})});

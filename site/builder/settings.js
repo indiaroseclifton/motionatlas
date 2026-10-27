@@ -42,7 +42,7 @@ CFG.compStyle=cfg=>{cfg=cfg||{};const v=[],a=CFG.colour(cfg.ac),k=CFG.colour(cfg
 
 /* ---------- presets: one-click looks ---------- */
 CFG.compPresets=[['default','Default',{}],['minimal','Minimal',{cr:4,bw:1,csh:'none',wt:500}],['soft','Soft',{cr:20,bw:1,csh:'soft',wt:600}],['bold','Bold',{cr:6,bw:2,csh:'lifted',wt:700}],['sharp','Sharp',{cr:0,bw:1,csh:'none',wt:600}]];
-CFG.ixPresets=[['default','Default',{}],['calm','Calm',{sp:60,calm:1,hint:0}],['lively','Lively',{sp:140}],['framed','Framed',{},{rd:20,bd:'thin',sh:'soft'}],['bare','Bare',{hint:0},{bg:'none'}]];
+CFG.ixPresets=[['default','Blended',{tr:1}],['bare','Bare',{tr:1,nohint:1}],['calm','Calm',{tr:1,sp:60,calm:1,nohint:1}],['lively','Lively',{tr:1,sp:150}],['saver','Saves power',{tr:1,pl:'visible'}],['framed','Framed',{},{rd:20,bd:'thin',sh:'soft',bg:'surface'}]];
 
 /* ---------- schemas ---------- */
 const OPT=(a)=>a.map(x=>Array.isArray(x)?x:[x,x]);
@@ -85,6 +85,31 @@ function compSchema(blk){const L=PB.src.CL(),vals=PB.app.vals(blk),c=L&&(L.compo
  g.push({id:'adv',label:'Advanced',fields:[{k:'id',store:'cfg',type:'text',label:'Link anchor name',help:'Lets a menu link jump here, for example #pricing.',def:'',pattern:'[A-Za-z][\\w-]*'},...SPACE.slice(2)]});
  return {title:c.name,badge:c.id+' · UI component',desc:(c.a11y&&c.a11y.notes)||'A live component from the UI lab, themed by your page style.',groups:g,presets:CFG.compPresets,kind:'comp'}}
 
+/* ---------- interactions ---------- */
+const IXH=[['480','Short (480 px)'],['640','Medium (640 px)'],['800','Tall (800 px)'],['100vh','Full screen']];
+CFG.ixSchema=blk=>{const vals=PB.app.vals(blk),X=(window.INTERACTIONS||[]).find(x=>x.id===vals.iid);if(!X)return null;
+ const g=[];
+ g.push({id:'content',label:'Content',open:1,fields:[{k:'iid',store:'vals',type:'select',label:'Interaction',help:'Swap this for another one; your other settings stay.',options:(window.INTERACTIONS||[]).filter(x=>!/^sec-/.test(x.id)).map(x=>[x.id,x.t+' · '+x.cat]),def:'fan-deck',redraw:1},...HEAD,{k:'ttl',store:'cfg',type:'text',label:'Name for screen readers',help:'Read out for the frame, for example “Gallery of rooms (interactive demo)”.',def:''}]});
+ g.push({id:'layout',label:'Layout',open:1,fields:[
+  {k:'height',store:'vals',type:'select',label:'Height',options:IXH,def:'640'},
+  {k:'ar',store:'cfg',type:'select',label:'Or keep a shape',help:'A fixed shape replaces the height and keeps its proportions at any width.',options:[['','Use the height'],['16/9','Widescreen 16:9'],['21/9','Cinema 21:9'],['4/3','Standard 4:3'],['1/1','Square'],['3/4','Portrait 3:4']],def:''},
+  {k:'bleed',store:'vals',type:'select',label:'Width',options:[['contained','Inside the page'],['full','Edge to edge']],def:'contained'},
+  {k:'w',store:'cfg',type:'select',label:'Narrower than the page',options:[['','Full width'],['narrow','Narrow (420 px)'],['medium','Medium (640 px)'],['wide','Wide (900 px)']],def:''},
+  {k:'al',store:'cfg',type:'select',label:'Position when narrower',options:[['','Centre'],['start','Left'],['end','Right']],def:''},...SPACE.slice(0,2)]});
+ g.push({id:'style',label:'Style',open:1,fields:[
+  {k:'tr',store:'cfg',type:'toggle',label:'Remove the demo’s own background',help:'Lets the page show through so the demo blends in. Text takes the page’s colours. Turn it off to keep the demo’s own dark or light stage.',def:0},
+  {k:'tc',store:'cfg',type:'colour',label:'Text colour',help:'Blank uses the page text colour when the background is removed.',def:''},
+  {k:'ac',store:'cfg',type:'colour',label:'Accent colour',help:'Highlights, glows and active states inside the demo.',def:''}]});
+ g.push({id:'bg',label:'Background and frame',fields:SETFIELDS(true)});
+ g.push({id:'behaviour',label:'Behaviour',open:1,fields:[
+  {k:'sp',store:'cfg',type:'range',label:'Speed',min:25,max:200,step:5,unit:'%',def:100,help:'Slows down or speeds up the motion. 100% is as designed.'},
+  {k:'pl',store:'cfg',type:'select',label:'Plays',help:'Pausing off screen or until hovered saves battery on long pages.',options:[['always','Always'],['visible','Only while on screen'],['hover','Only while hovered or focused']],def:'always'},
+  {k:'calm',store:'cfg',type:'toggle',label:'Calm motion',help:'Switches off animation, as if the visitor asked for reduced motion.',def:0},
+  {k:'nohint',store:'cfg',type:'toggle',label:'Hide the instruction caption',help:'Hides small hints such as “Drag to turn”.',def:0}]});
+ g.push({id:'about',label:'Good to know',fields:[{type:'note',label:'How it works',text:X.how||''},{type:'note',label:'Good for',text:X.use||''}].filter(f=>f.text)});
+ g.push({id:'adv',label:'Advanced',fields:[{k:'id',store:'cfg',type:'text',label:'Link anchor name',help:'Lets a menu link jump here, for example #gallery.',def:'',pattern:'[A-Za-z][\\w-]*'},...SPACE.slice(2)]});
+ return {title:X.t,badge:X.cat+' · interaction',desc:X.d,groups:g,presets:CFG.ixPresets,kind:'ix'}};
+
 CFG.schema=blk=>{if(blk.id==='x-component')return compSchema(blk);if(blk.id==='x-interaction'&&CFG.ixSchema)return CFG.ixSchema(blk);return null};
 CFG.has=blk=>!!(blk&&(blk.id==='x-component'||blk.id==='x-interaction'));
 
@@ -115,7 +140,7 @@ CFG.panel=(blk,onChange)=>{const A=PB.app,sch=CFG.schema(blk);const root=documen
   if(!Object.keys(blk.cfg).length)delete blk.cfg;if(blk.set&&!Object.keys(blk.set).length)delete blk.set;A.commit();A.render();draw();A.say('Look: '+l)};pre.append(b)});
  const acts=document.createElement('div');acts.className='btools';
  const mkb=(t,fn,title)=>{const b=document.createElement('button');b.type='button';b.className='btn small';b.textContent=t;if(title)b.title=title;b.onclick=fn;acts.append(b);return b};
- mkb('Reset to defaults',()=>{const keep={cid:blk.vals.cid,iid:blk.vals.iid};delete blk.cfg;delete blk.set;['variant','layout','kicker','heading','intro','height','bleed'].forEach(k=>delete blk.vals[k]);Object.entries(keep).forEach(([k,v])=>{if(v)blk.vals[k]=v});A.commit();A.render();A.outline();A.say('Back to the defaults. Undo brings your settings back.')},'Put every setting of this item back to how it was when you added it');
+ mkb('Reset to defaults',()=>{const keep={cid:blk.vals.cid,iid:blk.vals.iid};delete blk.cfg;if(blk.id==='x-interaction')blk.cfg={tr:1};delete blk.set;['variant','layout','kicker','heading','intro','height','bleed'].forEach(k=>delete blk.vals[k]);Object.entries(keep).forEach(([k,v])=>{if(v)blk.vals[k]=v});A.commit();A.render();A.outline();A.say('Back to the defaults. Undo brings your settings back.')},'Put every setting of this item back to how it was when you added it');
  mkb('Copy settings',()=>{try{localStorage.setItem('atlas-pb-cfg-clip',JSON.stringify({id:blk.id,cfg:blk.cfg||{},set:blk.set||{}}))}catch(e){}A.say('Settings copied. Select another '+(blk.id==='x-component'?'component':'interaction')+' and press Paste settings.')},'Copy this item’s look and behaviour');
  mkb('Paste settings',()=>{let c=null;try{c=JSON.parse(localStorage.getItem('atlas-pb-cfg-clip'))}catch(e){}if(!c||c.id!==blk.id)return A.say('Nothing to paste: copy settings from another '+(blk.id==='x-component'?'component':'interaction')+' first.');
   const keep=['tx','at','im','ln'];const nc=Object.assign({},c.cfg);keep.forEach(k=>delete nc[k]);blk.cfg=Object.assign({},(blk.cfg||{}),nc);blk.set=Object.assign({},blk.set||{},c.set);A.commit();A.render();draw();A.say('Settings pasted')},'Paste the look and behaviour copied from another item of this kind');
@@ -123,6 +148,7 @@ CFG.panel=(blk,onChange)=>{const A=PB.app,sch=CFG.schema(blk);const root=documen
  root.append(head,note,bar,body);bar.append(search,pre,acts);
  const fieldEl=(f,gid)=>{const w=document.createElement('div');w.className='f cfgf';w.dataset.label=(f.label+' '+(f.orig||'')+' '+(f.help||'')).toLowerCase();const id=idp+'-'+(++uidc);const cur=read(blk,f);
   const lab=document.createElement('label');lab.htmlFor=id;lab.textContent=f.label;let inp;const commitV=(v,live)=>{write(blk,f,v);if(live)A.commitSoon();else A.commit();A.render();if(f.redraw)draw();if(onChange)onChange()};
+  if(f.type==='note'){w.className='cfgf cfgn';w.innerHTML='<b></b><p></p>';w.firstChild.textContent=f.label;w.lastChild.textContent=f.text;return w}
   if(f.type==='toggle'){w.className='cfgf check cfgt';inp=document.createElement('input');inp.type='checkbox';inp.id=id;inp.checked=!!(+cur);inp.onchange=()=>commitV(inp.checked?1:0);const l=document.createElement('label');l.htmlFor=id;l.textContent=f.label;w.append(inp,l)}
   else if(f.type==='select'){inp=document.createElement('select');inp.id=id;OPT(f.options||[]).forEach(([v,l])=>{const o=document.createElement('option');o.value=v;o.textContent=l;inp.append(o)});inp.value=String(cur==null?'':cur);if(inp.value!==String(cur==null?'':cur)&&inp.options.length)inp.value=inp.options[0].value;inp.onchange=()=>commitV(inp.value);w.append(lab,inp)}
   else if(f.type==='range'){const row=document.createElement('div');row.className='cfgr';inp=document.createElement('input');inp.type='range';inp.id=id;inp.min=f.min;inp.max=f.max;inp.step=f.step||1;const isSet=cur!==''&&cur!=null;inp.value=isSet?cur:(f.def!==''&&f.def!=null?f.def:f.min);const out=document.createElement('output');out.htmlFor=id;const show=()=>{const has=(read(blk,f)!==''&&read(blk,f)!=null);out.textContent=has?inp.value+(f.unit||''):(f.emptyLabel||inp.value+(f.unit||''))};show();

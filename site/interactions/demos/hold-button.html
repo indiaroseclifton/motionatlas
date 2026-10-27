@@ -36,9 +36,10 @@ p{margin:0;color:var(--mute);max-width:44ch}
 <button class="undo" id="undo" hidden>Undo</button>
 </div>
 <script>
+const $p=window.__ixp||((k,d)=>d);
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const b=document.getElementById('hold'),lab=document.getElementById('lab'),hint=document.getElementById('hint'),file=document.getElementById('file'),undo=document.getElementById('undo');
-const T=1300;let p=0,holding=false,done=false,last=0,raf=0,downAt=0;
+const T=$p('t',1300);document.documentElement.style.setProperty('--T',T+'ms');let p=0,holding=false,done=false,last=0,raf=0,downAt=0;
 const ICON=lab.querySelector('svg').outerHTML;
 function frame(t){const dt=t-last;last=t;if(holding)p=Math.min(1,p+dt/T);else p=Math.max(0,p-dt/(reduce?1:350));b.style.setProperty('--p',p);
  if(p>=1&&!done)complete();if(holding||(p>0&&!done))raf=requestAnimationFrame(frame);else raf=0}

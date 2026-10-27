@@ -28,7 +28,8 @@ p.s{margin:0;color:var(--mute);max-width:56ch}
 <div class="row"><button class="p" id="next">Next phrase</button><button id="pause" aria-pressed="false">Pause cycling</button></div>
 </main>
 <script>
-const CONFIG={phrases:['We build things that feel alive.','Interfaces with a pulse.','Motion, made legible.','Quiet code. Loud ideas.'],glyphs:'!<>-_\\/[]{}=+*^?#ABCDEFGHJKLMNPQRSTUVWXYZ0123456789',hold:3400};
+const $p=window.__ixp||((k,d)=>d);
+const CONFIG={phrases:['We build things that feel alive.','Interfaces with a pulse.','Motion, made legible.','Quiet code. Loud ideas.'],glyphs:'!<>-_\\/[]{}=+*^?#ABCDEFGHJKLMNPQRSTUVWXYZ0123456789',hold:$p('hold',3400)};{const ph=$p('phrases','');if(ph)CONFIG.phrases=String(ph).split('\n').map(x=>x.trim()).filter(Boolean)}
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 function scramble(el,to,{dur=26,spread=20}={}){const from=el.textContent;const n=Math.max(from.length,to.length);const q=[];for(let i=0;i<n;i++){const s=Math.floor(Math.random()*spread)+i*.6,e=s+Math.floor(Math.random()*dur)+6;q.push({f:from[i]||'',t:to[i]||'',s,e,c:''})}
  cancelAnimationFrame(el._raf);if(reduce){el.textContent=to;return Promise.resolve()}
