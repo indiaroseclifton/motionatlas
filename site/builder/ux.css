@@ -72,6 +72,8 @@
  .ib,.btn.small{min-height:40px}.ib{width:40px;height:40px;flex-basis:40px}
  .tools{flex-wrap:nowrap;overflow-x:auto;max-width:100%;scrollbar-width:none}.tools::-webkit-scrollbar{display:none}
  header{flex-wrap:wrap}.brandline{margin-right:0}
+ /* keep Export in reach: Undo and Redo shrink to their arrows */
+ #undoBtn,#redoBtn{font-size:0;min-width:44px;padding-left:0;padding-right:0}#undoBtn::before,#redoBtn::before{font-size:17px}#undoBtn::before{content:'↶'}#redoBtn::before{content:'↷'}
 }
 @media (max-width:700px){
  .siteTitle,#histBtn,#helpBtn,.savedot span{display:none}

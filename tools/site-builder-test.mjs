@@ -727,6 +727,11 @@ if (axeSrc) {
   ok(!/pb-logo[^>]*>\s*Saffron &amp; Salt\.\s*<\/span><span class="soc"/.test(idx) && !/©\s*2026\s*<img/.test(idx), 'copyright line has no logo image');
   ok(!/ryeandroast|Rye (&|&amp;) Roast/.test(idx), 'template placeholder email/brand does not leak into a brand site');
   ok(ixf && !/https?:\/\/[^"'\s]*\/assets\/shelf\//.test(ixf[1]) && files.some(x => /^assets\/shelf\//.test(x[0])), 'exported interaction packs its pictures instead of hot-linking the atlas');
+  /* words typed a moment before a reload are kept */
+  await pg.click('#rt-page'); await pg.selectOption('#pageSel', { index: 0 }); await pg.waitForTimeout(800);
+  await f.locator('[data-pbf=heading]').first().click(); await pg.keyboard.press('Control+A'); await pg.keyboard.type('Kept after reload'); await pg.waitForTimeout(100);
+  await pg.reload(); await pg.waitForFunction(() => document.body.classList.contains('ready')); await pg.waitForTimeout(1800);
+  ok(/Kept after reload/.test(await pg.frameLocator('#pv').locator('[data-pbf=heading]').first().textContent()), 'inline text typed just before a reload is not lost');
   await ctx.close();
 }
 ok(errs.length === 0, 'no console or page errors ' + errs.slice(0, 5).join(' || '));

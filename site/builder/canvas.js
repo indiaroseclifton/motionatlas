@@ -77,10 +77,11 @@ function agent(){
    else if(t==='A'&&(c.getAttribute('data-raw')||c.getAttribute('href'))&&/^(https?:\/\/|mailto:|tel:|#|page:)/i.test(c.getAttribute('data-raw')||c.getAttribute('href')))o+='<a href="'+ee(c.getAttribute('data-raw')||c.getAttribute('href'))+'">'+inn+'</a>';else o+=inn}}return o}
  function plain(el){return (el.textContent||'').replace(/\s+/g,' ').trim()}
  function fmt(el){if(!el.querySelector('b,strong,i,em,a,[style]'))return '';var h=inl(el).replace(/\s+/g,' ').trim();return /<(b|i|a)[ >]/.test(h)?h:''}
- function pushText(el){var o={pb:'text',uid:blockOf(el).id,k:el.getAttribute('data-pbf'),v:plain(el),h:el.getAttribute('data-r')!=null?'':fmt(el)};var r=el.getAttribute('data-r');if(r!=null){o.r=r;o.c=el.getAttribute('data-c')}
+ function pushText(el,direct){var o={pb:'text',uid:blockOf(el).id,k:el.getAttribute('data-pbf'),v:plain(el),h:el.getAttribute('data-r')!=null?'':fmt(el)};var r=el.getAttribute('data-r');if(r!=null){o.r=r;o.c=el.getAttribute('data-c')}
   /* mirror into other copies of the same field in this section */
   var b=blockOf(el),q='[data-pbf="'+o.k+'"]'+(r!=null?'[data-r="'+r+'"][data-c="'+o.c+'"]':'');if(!o.h&&!el.querySelector('b,strong,i,em,a'))b.querySelectorAll(q).forEach(function(x){if(x!==el&&x!==document.activeElement)x.textContent=o.v});
-  send(o);later()}
+  if(direct){try{parent.__pbApply&&parent.__pbApply(o)}catch(e){}return}send(o);later()}
+ window.__pbFlush=function(){if(pend){var el=pend;pend=null;clearTimeout(tmr);pushText(el,true)}};
  document.addEventListener('input',function(e){var el=e.target.closest&&e.target.closest('[data-pbf]');if(!el)return;pend=el;clearTimeout(tmr);tmr=setTimeout(function(){pend=null;pushText(el)},250);later()});
  document.addEventListener('focusin',function(e){if(e.target.closest&&e.target.closest('[data-pbf]'))send({pb:'focus'})});
  document.addEventListener('focusout',function(e){var el=e.target.closest&&e.target.closest('[data-pbf]');if(!el)return;clearTimeout(tmr);if(pend){pend=null;pushText(el)}send({pb:'blur'})});
