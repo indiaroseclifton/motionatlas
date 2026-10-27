@@ -37,6 +37,6 @@ async function one(p) {
 const q = [...pages].filter(p => !only || p.includes(only));
 await Promise.all(Array.from({ length: 3 }, async () => { while (q.length) { const p = q.shift(); try { await one(p) } catch (e) { res.push({ p, err: e.message.slice(0, 100) }) } } }));
 res.sort((a, b) => (b.KB || 0) - (a.KB || 0));
-for (const r of res.slice(0, TOP)) console.log(String(r.KB).padStart(7), 'KB', String(r.reqs).padStart(4), 'req', String(r.loadMs).padStart(6), 'ms  load:', r.loadKB + 'KB/' + r.loadReqs, ' blocking:' + r.blockingScripts, ' eagerVideo:' + r.eagerVideos, ' ', r.p, r.err || '', r.bigImages.length ? '\n          big: ' + r.bigImages.join(', ') : '');
+for (const r of res.slice(0, TOP)) console.log(r.top.slice(0, 8).join(' | '), '\n', String(r.KB).padStart(7), 'KB', String(r.reqs).padStart(4), 'req', String(r.loadMs).padStart(6), 'ms  load:', r.loadKB + 'KB/' + r.loadReqs, ' blocking:' + r.blockingScripts, ' eagerVideo:' + r.eagerVideos, ' ', r.p, r.err || '', r.bigImages.length ? '\n          big: ' + r.bigImages.join(', ') : '');
 if (out) fs.writeFileSync(out, JSON.stringify(res, null, 1));
 await br.close();
