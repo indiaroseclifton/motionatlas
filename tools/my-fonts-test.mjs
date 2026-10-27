@@ -60,6 +60,58 @@ ok(await pg.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 
 await pg.addScriptTag({ content: axeSrc }); const ax = await pg.evaluate(() => axe.run(document, { runOnly: ['wcag2a', 'wcag2aa'] }).then(r => r.violations.map(v => v.id + ':' + v.nodes.length + ' ' + v.nodes[0].html.slice(0, 80))));
 ok(ax.length === 0, 'axe clean on my-fonts.html ' + ax.join(' | '));
 await pg.evaluate(() => MyFonts.remove('Zed Test'));
+/* ---- brand generator: specimen, lockups, tokens, exports ---- */
+await pg.setViewportSize({ width: 1280, height: 900 });
+await pg.evaluate(() => MyFonts.remove('Zed Test')); await pg.setInputFiles('[data-files]', [reg, bold, ital]); await pg.waitForSelector('.mfFam');
+await pg.goto(BASE + '/brand-generator.html'); await pg.waitForFunction(() => window.Brandgen && window.Brandgen.brand); await pg.evaluate(() => MyFonts.ready);
+ok(await pg.evaluate(() => [...document.querySelectorAll('#mineHead option')].some(o => o.value === 'Zed Test')), 'brand generator lists the uploaded family in the headline chooser');
+const spec = () => pg.locator('#typBox .specbox').first();
+await pg.selectOption('#mineHead', 'Zed Test'); await pg.waitForTimeout(500);
+const bgf = await pg.evaluate(() => { const p = document.querySelector('#typBox .specbox p'); return { ff: getComputedStyle(p).fontFamily, chk: document.fonts.check('700 20px "Zed Test"'), stack: Brandgen.brand.type.headStack } });
+ok(/Zed Test/.test(bgf.ff) && bgf.chk, 'specimen headline computes to the uploaded font: ' + bgf.ff);
+const shotMine = await spec().screenshot();
+await pg.selectOption('#mineHead', ''); await pg.waitForTimeout(400); const shotBase = await spec().screenshot();
+ok(!shotMine.equals(shotBase), 'specimen pixels differ from the fallback pairing');
+await pg.selectOption('#mineHead', 'Zed Test'); await pg.waitForTimeout(400);
+const tok = await pg.evaluate(() => [BrandGen.css(Brandgen.brand), BrandGen.json(Brandgen.brand), BrandGen.tailwind(Brandgen.brand)]);
+ok(/--font-head: 'Zed Test'/.test(tok[0]) && /own licensed font/.test(tok[0]) && !/@font-face\{/.test(tok[0]), 'CSS tokens name the family and carry a note, no @font-face by default');
+ok(/Zed Test/.test(tok[1]) && /myFonts/.test(tok[1]) && /Zed Test/.test(tok[2]), 'JSON and Tailwind tokens carry the family');
+const svgOut = await pg.evaluate(async () => { await MyFonts.prepare('Zed Test'); BrandGen.setMineMode('outline'); const a = BrandGen.wordmark(Brandgen.brand, 'light'); BrandGen.setMineMode('embed'); const b = BrandGen.wordmark(Brandgen.brand, 'light', { fonts: true }); BrandGen.setMineMode('text'); const c = BrandGen.wordmark(Brandgen.brand, 'light'); BrandGen.setMineMode('outline'); return [a, b, c] });
+ok(/<path[^>]* d="M/.test(svgOut[0]) && !/<text/.test(svgOut[0]) && !/@font-face/.test(svgOut[0]), 'SVG wordmark: outlines, no live text, no font');
+ok(/@font-face/.test(svgOut[1]) && /base64/.test(svgOut[1]) && /<text/.test(svgOut[1]), 'SVG wordmark: optional embed puts a base64 @font-face inside');
+ok(/<text/.test(svgOut[2]) && !/base64/.test(svgOut[2]), 'SVG wordmark: name-only mode has neither');
+const names = buf => { const e = buf.lastIndexOf(Buffer.from([0x50, 0x4b, 5, 6])); let n = buf.readUInt16LE(e + 10), p = buf.readUInt32LE(e + 16); const out = []; for (let i = 0; i < n; i++) { const nl = buf.readUInt16LE(p + 28), el = buf.readUInt16LE(p + 30), cl = buf.readUInt16LE(p + 32); out.push(buf.toString('utf8', p + 46, p + 46 + nl)); p += 46 + nl + el + cl } return out };
+const dlZip = async sel => { const [d] = await Promise.all([pg.waitForEvent('download'), pg.click(sel)]); return fs.readFileSync(await d.path()) };
+await pg.locator('#kitZip').scrollIntoViewIfNeeded();
+let z1 = names(await dlZip('#kitZip')); ok(!z1.some(n => /\.(ttf|otf|woff2?)$/i.test(n)) && z1.includes('FONTS-README.txt'), 'theme kit ZIP: no font files by default, README explains how to add them');
+await pg.check('#inclFonts'); let z2 = names(await dlZip('#kitZip')); ok(z2.filter(n => /^fonts\/.*\.ttf$/.test(n)).length === 3, 'theme kit ZIP: switch on includes the three font files ' + z2.filter(n => /fonts\//.test(n)).join());
+await pg.uncheck('#inclFonts');
+await pg.setViewportSize({ width: 390, height: 800 }); await pg.locator('#mineBox').scrollIntoViewIfNeeded();
+ok(await pg.evaluate(() => document.documentElement.scrollWidth <= innerWidth), '390px: brand generator has no horizontal overflow with My fonts');
+await pg.setViewportSize({ width: 1280, height: 900 });
+
+/* ---- site builder: canvas preview, tokens, export ---- */
+await pg.goto(BASE + '/page-builder.html?nostart=1'); await pg.waitForFunction(() => window.PB && document.querySelector('#pairSel')); await pg.evaluate(() => MyFonts.ready); await pg.waitForTimeout(1200);
+await pg.click('[role=tab]:has-text("Design")'); await pg.selectOption('#pairSel', 'mya:Zed Test'); await pg.waitForTimeout(1500);
+const pv = await pg.evaluate(() => { const w = document.querySelector('#pv').contentWindow, h = w.document.querySelector('h1,h2'); return { ff: h && w.getComputedStyle(h).fontFamily, chk: w.document.fonts.check('400 20px "Zed Test"'), blob: /blob:/.test((w.document.getElementById('pb-myfonts') || {}).textContent || ''), w: h && h.getBoundingClientRect().width } });
+ok(/Zed Test/.test(pv.ff) && pv.chk && pv.blob, 'builder canvas: heading computes to the uploaded font, injected via blob @font-face ' + JSON.stringify(pv));
+const pvShot = await pg.locator('#pv').screenshot(); await pg.selectOption('#pairSel', '-1'); await pg.waitForTimeout(1200); const pvBase = await pg.locator('#pv').screenshot(); ok(!pvShot.equals(pvBase), 'builder canvas pixels differ from the style fonts');
+await pg.selectOption('#pairSel', 'mya:Zed Test'); await pg.waitForTimeout(1200);
+await pg.click('#exportMenu summary'); await pg.waitForSelector('#mineExport', { state: 'visible', timeout: 3000 }).catch(() => { }); ok(await pg.isVisible('#mineExport'), 'export menu offers the include-fonts switch (off)'); ok(!(await pg.isChecked('#exInclFonts')), 'include-fonts switch is off by default');
+const zipFiles = async () => { const [d] = await Promise.all([pg.waitForEvent('download'), pg.click('#dlZip')]); const buf = fs.readFileSync(await d.path()); return { n: names(buf), raw: buf.toString('latin1') } };
+let bz = await zipFiles(); ok(!bz.n.some(n => /\.(ttf|otf|woff2?)$/i.test(n)) && /place them in a fonts\//.test(bz.raw) && /Zed Test/.test(bz.raw), 'site ZIP default: no font files; README and CSS say to bring your own ' + bz.n.length + ' files');
+ok(/font-family:'Zed Test'|--head:'Zed Test'/.test(bz.raw), 'site CSS references the family name');
+await pg.click('#exportMenu summary'); await pg.check('#exInclFonts'); bz = await zipFiles(); ok(bz.n.filter(n => /^fonts\/.*\.ttf$/.test(n)).length === 3 && /@font-face/.test(bz.raw), 'site ZIP with the switch: fonts/ has the three files and site.css has @font-face');
+await pg.click('#exportMenu summary'); await pg.uncheck('#exInclFonts'); await pg.click('#exportMenu summary', { force: true }).catch(() => { });
+await pg.click('#pubBtn').catch(async () => { await pg.click('#exportMenu summary'); await pg.click('#pubBtn') });
+ok(await pg.isVisible('#pubMine') && !(await pg.isChecked('#pubInclFonts')), 'publish dialog warns about the font and its include switch is off');
+await pg.keyboard.press('Escape');
+/* ---- mockup studio ---- */
+await pg.goto(BASE + '/mockup-studio.html'); await pg.evaluate(() => MyFonts.ready); await pg.click('#msT-text');
+ok(await pg.evaluate(() => [...document.querySelectorAll('#msFont option,#msCapFont option')].filter(o => o.value === 'my:Zed Test').length === 2), 'mockup studio: headline and caption choosers list the font');
+await pg.selectOption('#msFont', 'my:Zed Test'); await pg.waitForTimeout(900);
+const msA = await pg.locator('#msFont').evaluate(() => 0).then(() => pg.screenshot({ clip: { x: 400, y: 150, width: 800, height: 520 } })); await pg.selectOption('#msFont', 'Inter'); await pg.waitForTimeout(900);
+const msB = await pg.screenshot({ clip: { x: 400, y: 150, width: 800, height: 520 } }); ok(!msA.equals(msB), 'mockup studio: headline renders in the uploaded font (canvas pixels differ)');
 /* private mode / blocked storage: fonts last for the page session only, with a notice */
 const pc = await br.newContext({ viewport: { width: 1000, height: 800 } }); await pc.addInitScript(() => { Object.defineProperty(window, 'indexedDB', { get() { throw new Error('blocked') } }); const g = () => { throw new Error('blocked') }; Object.defineProperty(window, 'localStorage', { get: g }) });
 const pp = await pc.newPage(); const pe = []; pp.on('pageerror', e => pe.push(e.message)); await pp.goto(BASE + '/my-fonts.html'); await pp.evaluate(() => MyFonts.ready);
@@ -68,6 +120,6 @@ ok(pe.length === 0 && await pp.evaluate(() => !MyFonts.persistent && !document.q
 await pc.close();
 /* nothing uploaded */
 const posts = net.filter(n => n.m !== 'GET' && n.m !== 'HEAD' && n.m !== 'OPTIONS'); ok(posts.length === 0, 'no non-GET requests at all ' + JSON.stringify(posts.slice(0, 3)));
-ok(!net.some(n => n.hit), 'no request body contains font bytes'); ok(!net.some(n => /\.(ttf|otf|woff2?)(\?|$)/i.test(n.u) && !n.u.includes('/fonts/Atlas')), 'no font file URL was requested');
+ok(!net.some(n => n.hit), 'no request body contains font bytes'); ok(!net.some(n => /\.(ttf|otf|woff2?)(\?|$)/i.test(n.u) && !/gstatic\.com|\/fonts\/Atlas/.test(n.u)), 'no user font file URL was requested (only the atlas and Google fonts load by URL)');
 ok(errs.length === 0, 'no console errors ' + errs.join(' | '));
 fs.rmSync(tmp, { recursive: true, force: true }); await br.close(); console.log(fails ? fails + ' FAILED' : 'ALL PASS'); process.exit(fails ? 1 : 0);

@@ -609,6 +609,7 @@ cd site && python3 -m http.server 8798 &
 node tools/site-counts.mjs          # recompute site/counts.json from the data
 node tools/site-qa.mjs --strict     # crawl every page at 1440x900 and 390x844
 node tools/handoff-test.mjs         # the tool-to-tool hand-offs, end to end
+node tools/my-fonts-test.mjs        # My fonts: synthesised font, no upload, exports, a11y (BASE=http://localhost:8798)
 node tools/build-sitemap.mjs        # regenerate sitemap.xml
 ```
 
