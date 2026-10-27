@@ -55,7 +55,7 @@ window.ATLAS_NAV_MENUS=[
  {id:'lib',name:'Library',groups:[
   {name:'Explore',items:['#home','#browse','#tours','#compare','#references']},
   {name:'Visual',items:['#art','#cinema','#backgrounds','#vases','#pairings']},
-  {name:'Motion',items:['#motion','#effects','#showcase']},
+  {name:'Motion',items:['#motion','#effects','interactions.html','#showcase']},
   {name:'Interface',items:['#systems','#ux','theme-kits.html','icons.html','#typography','ds/start.html',{more:'More interface',items:['#icons','#playground','#assets','chart-styles.html']}]}]},
  {id:'make',name:'Make',top:['page-builder.html'],groups:[
   {name:'Brand & assets',items:['brand-generator.html','mockup-studio.html','theme-kits.html']},
