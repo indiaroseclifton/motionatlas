@@ -3,6 +3,36 @@
 A field guide to how images move, and a toolkit for building with what it shows. It's a static
 site (`site/`) with a few serverless functions (`api/`), deployed by Vercel from `main`.
 
+## Contents
+
+- [Flowchart studio (canvas)](#flowchart-studio-canvas)
+- [Chart studio](#chart-studio)
+- [Diagram studio](#diagram-studio)
+- [Tools overview](#tools-overview)
+- [The constant top bar](#the-constant-top-bar)
+- [Directory map](#directory-map)
+- [Theme kits (site/theme-kits.html, site/kits/)](#theme-kits-sitetheme-kitshtml-sitekits)
+- [Brand kit generator (site/brand-generator.html, site/brandgen/)](#brand-kit-generator-sitebrand-generatorhtml-sitebrandgen)
+- [Design systems D01–D48](#design-systems-d01d48)
+- [The 01 Design System docs (site/ds/)](#the-01-design-system-docs-siteds)
+- [UI components (#ux, site/component-lab.js)](#ui-components-ux-sitecomponent-labjs)
+- [Interactions shelf (site/interactions.html, site/interactions/)](#interactions-shelf-siteinteractionshtml-siteinteractions)
+- [Site builder (site/page-builder.html, site/builder/)](#site-builder-sitepage-builderhtml-sitebuilder)
+- [My projects and accounts (Supabase)](#my-projects-and-accounts-supabase)
+- [AI endpoint (api/ai.js)](#ai-endpoint-apiaijs)
+- [Service worker (site/sw.js)](#service-worker-siteswjs)
+- [Performance notes](#performance-notes)
+- [Local development](#local-development)
+- [Deploying](#deploying)
+- [Feature notes](#feature-notes)
+- [Mockup & social asset studio](#mockup--social-asset-studio)
+- [Moodboards](#moodboards)
+- [Adding things](#adding-things)
+- [QA scripts](#qa-scripts)
+- [Contributing and collaborator workflow](#contributing-and-collaborator-workflow)
+- [Publishing (Vercel Blob) and accounts, in one place](#publishing-vercel-blob-and-accounts-in-one-place)
+- [Credits and licences](#credits-and-licences)
+
 The library holds:
 
 | What | Count | Where it lives |
@@ -14,7 +44,9 @@ The library holds:
 | Interactions | 70 | `site/interactions/` |
 | Landing effects (techniques) | 41 (L01–L49, with gaps where older effects were retired) | `site/effects-data.js` (the techniques), `site/effects-lab.js` (the lab UI), `site/expansion.json`, clips in `site/assets/fx/clips/` |
 | Atlas themes (component lab skins) | 22 | `site/atlas-themes.js` |
-| Page-builder sections / styles | 44 / 144 | `site/builder/` |
+| Site-builder templates / sections / photographs | 26 / 56 / 82 (CC0, `site/assets/photos/`) | `site/builder/` |
+| Icons | 3,768 in 13 families | `site/icons/`, `site/icon-library.js` |
+| Chart types / diagram types / flowchart templates | 26 / 18 / 24 | `site/dataviz/` |
 
 ### Landing effects and the Interactions shelf
 
@@ -78,6 +110,40 @@ Live: https://motionatlas-ten.vercel.app (`/` rewrites to `/atlas`).
 
 ---
 
+## Tools overview
+
+Every tool is listed once in `site/tools-data.js` (name, page, group, one-line purpose, thumbnail in
+`site/assets/tools/`). That registry feeds `tools.html`, the home page shelf, the search and
+`tools/site-qa.mjs`. Numbers in the blurbs are `{tokens}` filled from `site/counts.json`.
+
+| Tool | Page | Makes |
+| --- | --- | --- |
+| Site builder | `page-builder.html` | multi-page sites from 26 templates, export ZIP or Publish |
+| Brand kit generator | `brand-generator.html` | palette, fonts, logo, tokens and a theme kit |
+| Mockup studio | `mockup-studio.html` | device frames and every social size |
+| Chart / Diagram / Flowchart studios | `chart-studio.html`, `diagram-studio.html`, `flowchart-studio.html` (and the lighter `flowchart-canvas.html`) | SVG, PNG, video, GIF |
+| Particle studio, Interactions shelf, Background generator | `particle-studio.html`, `interactions.html`, `atlas.html#backgrounds` | single-file motion |
+| Theme kits, Icon library, Chart style guides | `theme-kits.html`, `icons.html`, `chart-styles.html` | tokens, packs, palettes |
+| Moodboards, My projects | `moodboard.html`, `atlas.html#projects` | boards and project hubs |
+
+Hand-offs (all checked by `tools/handoff-test.mjs`): chart, diagram, flowchart studios and the Site
+builder export **Make share image** into the Mockup studio (`mockup/handoff.js`); the Brand generator,
+Theme kits and the Moodboard style dialog send a brand to the Site builder (`kits/handoff.js`, the
+`atlas-pb-brand-handoff` key); Theme kits and the Brand generator pin to Moodboards (`moodboard/pin.js`);
+the Icon library sets a Site builder favicon (`?favicon=1`); the two flowchart pages share one saved chart.
+
+## The constant top bar
+
+`site/site-bar.js` is a fixed 44 px bar (brand, Library, Make, Your studio, All tools, search, My
+projects, Account; a Menu sheet on phones) on every public page, including `atlas.html`. The menus come
+from `site/site-nav-data.js`, which `atlas-nav.js` also reads. A page gets it from the lines
+`tools/install-site-bar.mjs` adds to its `<head>` (an inline style that reserves the height, plus two
+deferred scripts) and a no-JS link row after `<body>`. **After adding a page, run
+`node tools/install-site-bar.mjs`.** Full-height editors are fitted below the bar by `fit()` in
+`site-bar.js`; where a layout uses `calc(100vh - Npx)`, write `calc(100vh - Npx - var(--sb-h,0px))`.
+`work/01` (a private project), `interactions/demos/` (embedded) and exported or published user sites
+never get the bar.
+
 ## Directory map
 
 ```
@@ -91,15 +157,19 @@ site/                    everything that is served (outputDirectory in vercel.js
   atlas.html             the atlas: one page, sections after the # (see below)
   app.js, app.css        catalogue core: routing, grid, detail view, compare, vases
   catalogue.json         144 original entries (A, S, M, E, W prefixes)
-  expansion.json         193 more entries (C, D, L, R, F) + source references
+  expansion.json         237 more entries (C, D, L, R, F) + source references
   atlas-*.js/.css        nav, enhance (plate bands, header films, search), share, explore, tours, refine
   lazy-bg.js             holds catalogue card images back until they scroll near (load it first)
   kits/                  theme kits (theme-kits.html)
   ds/                    the 01 Design System docs site
   interactions/          interactions shelf: manifest.js + demos/*.html
-  builder/               page builder (page-builder.html)
+  builder/               Site builder (page-builder.html)
   system-components/     live HTML/CSS components for systems D21–D32
   dataviz/               flowchart, diagram and chart studios, chart style guides
+  mockup/, moodboard/, brandgen/   Mockup studio, Moodboards, Brand kit generator
+  tools.html, tools-data.js        the Tools overview and the registry every tool is listed in
+  site-bar.js, site-nav-data.js    the constant top bar and its menu data (see below)
+  counts.json            every headline number, computed from the data (tools/site-counts.mjs)
   studies/               live WebGL particle studies (lion, whale, butterfly, bird/fox)
   supabase-client.js     accounts (window.AtlasCloud)
   projects*.js, account.html, p.html, shared.html   My projects, sign-in, public hubs, shared links
@@ -489,3 +559,58 @@ Short notes on parts of the atlas that are easy to miss:
 `site/moodboard.html` (`site/moodboard/store.js`, `board.js`, `board.css`, `pin.js`) is a free canvas for a project. Pan (drag) and zoom (Ctrl/⌘ + scroll, or the buttons), drag, resize, z-order (Front/Back, `]` `[`), group (Ctrl+G), align, duplicate, undo/redo, Shift-drag to select several, arrow keys nudge. Pin atlas entries (a **Pin to moodboard** button in the catalogue detail view, or Add > Atlas entry), theme kits, icons (from `icons/sets`), colour swatches, notes, links and your own pictures (drop, paste or upload). **Grid** and **Masonry** auto-arrange; **Palette and style** reads colours from swatches, kits, notes and the pictures, and **Make this a style** builds a theme kit from the palette plus the fonts of pinned kits or design-system entries (`ThemeKits.zipKit` → ZIP, tokens as CSS, or pin the kit back on the board). Export the board as a PNG (drawn directly on canvas). **Share link** encodes the board into the URL hash (deflate + base64url, view-only, uploaded pictures are left out). Templates: Brand exploration, Campaign, Website redesign. Boards open from My projects via the **Moodboard** button (`moodboard.html?project=<id>`).
 
 Storage is local-first and needs no account or `schema.sql` change: boards in `localStorage` (`atlas-moodboards-v1`), pictures in IndexedDB (`atlas-moodboard`). Signed-in cloud sync of boards is not built yet. Test: `node tools/moodboard-test.mjs`.
+
+## Adding things
+
+- **A catalogue entry:** `python3 -I tools/add-specimens.py site/catalogue.json <package>` (or add to
+  `expansion.json`), then `node tools/site-counts.mjs` to refresh `counts.json`.
+- **A tool or page:** add the page, list it in `site/tools-data.js` (and a thumbnail:
+  `node tools/tool-thumbs.mjs http://localhost:8772/ <id>`), add it to `site/site-nav-data.js`, run
+  `node tools/install-site-bar.mjs` and `node tools/build-sitemap.mjs`, add core files to `SHELL` in
+  `sw.js`, and bump `CACHE`.
+- **A number in copy:** prefer a `{token}` or run the QA crawl; it flags counts that disagree with the data.
+
+## QA scripts
+
+```bash
+cd site && python3 -m http.server 8798 &
+node tools/site-counts.mjs          # recompute site/counts.json from the data
+node tools/site-qa.mjs --strict     # crawl every page at 1440x900 and 390x844
+node tools/handoff-test.mjs         # the tool-to-tool hand-offs, end to end
+node tools/build-sitemap.mjs        # regenerate sitemap.xml
+```
+
+`site-qa.mjs` reports console and page errors, failed requests, horizontal overflow, broken images and
+videos, missing title, description, Open Graph tags and favicon, axe serious and critical violations,
+numbers that disagree with `counts.json`, dead links, and the top bar (present, current page marked, stays
+fixed while scrolling, nothing under it). Options: `--only <text>`, `--vp phone|desktop`, `--no-axe`,
+`--demos`, `--out report.json`. It needs Playwright and axe-core (set `PW_DIR` to where they are installed).
+
+## Contributing and collaborator workflow
+
+- Small, safe changes go straight to `main`; larger ones through a pull request. Before pushing:
+  rebase on `origin/main` (others push too, keep their work), bump `CACHE` in `site/sw.js` above the one on
+  `main`, and run the gate and `tools/site-qa.mjs`.
+- The collaborator **ng549** pushes pull requests. **Vercel may not auto-deploy commits whose Git author is
+  not a member of the Vercel team** (it shows "Deployment blocked: needs authorization"). The maintainer
+  either adds the author to the Vercel team, or merges the work through a pull request opened by a team
+  member, so the production deploy runs under a team account.
+- Never put secrets in `site/`. Keys live in Vercel environment variables.
+
+## Publishing (Vercel Blob) and accounts, in one place
+
+| Need | Setting |
+| --- | --- |
+| AI in the Site builder and project hubs | `ANTHROPIC_API_KEY` in Vercel (Project, Settings, Environment Variables), redeploy |
+| Publish a site (`/site/<id>/`), share links, uploads | connect a **Vercel Blob** store to the project (adds `BLOB_READ_WRITE_TOKEN`) |
+| Sign-in and cloud projects | run `supabase/schema.sql`; Site URL `https://motionatlas-ten.vercel.app` plus the `/account` redirects (see My projects) |
+| Application form email | `RESEND_API_KEY`, `APPLY_TO` (optional `APPLY_FROM`) |
+
+## Credits and licences
+
+The in-site page is `atlas.html#references` ("Sources & credits"); the Site builder lists every asset
+source in its credits table and writes `assets/CREDITS.txt` into each export. In short: 82 CC0 /
+public-domain photographs from Wikimedia Commons (`site/assets/photos/photos.json`, audit in
+`docs/image-licences.md`); icon families Phosphor (MIT), Heroicons (MIT), Lucide (ISC), Tabler (MIT),
+Pixelarticons (MIT), OpenMoji (CC BY-SA 4.0) and Fluent 3D emoji (MIT), with licences in
+`site/icons/LICENSES.txt`; Google Fonts under the SIL Open Font Licence or Apache 2.0.

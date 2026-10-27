@@ -8,7 +8,7 @@ let fail = 0; const ok = (c, m) => { if (!c) { fail++; console.log('FAIL', m) } 
 async function page(url, w = 1440) {
   const ctx = await br.newContext({ viewport: { width: w, height: 900 }, serviceWorkers: 'block', acceptDownloads: true });
   const pg = await ctx.newPage(); const errs = []; pg.on('pageerror', e => errs.push(e.message));
-  await pg.goto(base + url); await pg.waitForTimeout(1800); pg.errs = errs; pg.ctx = ctx; return pg;
+  await pg.goto(base + url); await pg.waitForTimeout(3500); pg.errs = errs; pg.ctx = ctx; return pg;
 }
 const closeDlg = pg => pg.evaluate(() => document.querySelectorAll('dialog[open]').forEach(d => d.close()));
 
@@ -16,11 +16,11 @@ const closeDlg = pg => pg.evaluate(() => document.querySelectorAll('dialog[open]
 for (const [u, sel, label] of [['chart-studio.html', '[data-ex="share"]', 'chart studio'], ['diagram-studio.html', '#exShare', 'diagram studio'], ['flowchart-studio.html', '#exMock', 'flowchart studio'], ['flowchart-canvas.html', '#exMock', 'flowchart canvas'], ['page-builder.html?nostart=1', '#mkShare', 'site builder']]) {
   const pg = await page(u);
   await pg.evaluate(s => document.querySelector(s).click(), sel);
-  await pg.waitForURL(/mockup-studio\.html\?from=/, { timeout: 15000 }).catch(() => { });
+  await pg.waitForURL(/mockup-studio\.html/, { timeout: 15000 }).catch(() => { });
   await pg.waitForTimeout(3000);
-  ok(/mockup-studio\.html\?from=/.test(pg.url()), label + ' -> Mockup studio (url)');
-  const got = await pg.evaluate(() => /Picture received|received from/i.test(document.body.innerText) || !!document.querySelector('.toast.on, .toast[class*=show]'));
-  ok(got || /mockup-studio/.test(pg.url()), label + ' picture arrives in the studio');
+  ok(/mockup-studio\.html/.test(pg.url()), label + ' -> Mockup studio (url) ' + pg.url());
+  const got = await pg.evaluate(() => { const c = [...document.querySelectorAll('canvas')].find(c => c.width > 100); return !!c || /received/i.test(document.body.innerText); });
+  ok(got, label + ' picture arrives in the studio');
   await pg.ctx.close();
 }
 

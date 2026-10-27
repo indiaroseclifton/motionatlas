@@ -27,8 +27,8 @@ const pages = new Set();
 const add = p => { p = p.replace(/^\//, ''); if (p) pages.add(p); };
 const sm = fs.existsSync(path.join(root, 'sitemap.xml')) ? fs.readFileSync(path.join(root, 'sitemap.xml'), 'utf8') : '';
 for (const m of sm.matchAll(/<loc>https?:\/\/[^/]+\/?([^<]*)<\/loc>/g)) { let p = m[1]; if (!p) p = 'atlas.html'; else if (!/\.\w+$/.test(p.split('#')[0]) && !p.includes('#')) p += '.html'; add(p); }
-const nav = fs.readFileSync(path.join(root, 'atlas-nav.js'), 'utf8');
-for (const m of nav.matchAll(/\['([^']+)','[^']+','[^']*','[^']+'\]/g)) { const h = m[1]; add(h.startsWith('#') ? 'atlas.html' + h : h); }
+const nav = fs.readFileSync(path.join(root, 'site-nav-data.js'), 'utf8');
+for (const m of nav.matchAll(/\['([^']+)','[^']+','[^']*','[a-z0-9-]+'\]/g)) { const h = m[1]; add(h.startsWith('#') ? 'atlas.html' + h : h); }
 { const ctx = { window: {} }; vm.createContext(ctx); vm.runInContext(fs.readFileSync(path.join(root, 'tools-data.js'), 'utf8'), ctx); for (const t of ctx.window.ATLAS_TOOLS.list) add(t.href); }
 for (const f of fs.readdirSync(path.join(root, 'ds'))) if (f.endsWith('.html')) add('ds/' + f);
 for (const f of fs.readdirSync(path.join(root, 'studies'))) if (f.endsWith('.html')) add('studies/' + f);
@@ -89,7 +89,7 @@ async function audit(url, vpName, pageId) {
   pg.on('response', res => { const u = res.url(); if (res.status() >= 400 && !IGNORE_REQ.test(u) && u.startsWith(base)) issue('http' + res.status(), u.replace(base, '')); });
   pg.on('requestfailed', q => { const u = q.url(); const f = q.failure()?.errorText || ''; if (!IGNORE_REQ.test(u) && u.startsWith(base) && !/ABORTED/.test(f)) issue('reqfail', u.replace(base, '') + ' ' + f); });
   try {
-    await pg.goto(base + url, { waitUntil: 'load', timeout: 45000 });
+    await pg.goto(base + url + (url === 'page-builder.html' ? '?nostart=1' : ''), { waitUntil: 'load', timeout: 45000 });
     await pg.waitForTimeout(2200);
     /* scroll through the page so lazy images and sections load */
     await pg.evaluate(async () => { const h = Math.min(document.documentElement.scrollHeight, 9000); for (let y = 0; y < h; y += 700) { scrollTo(0, y); await new Promise(r => setTimeout(r, 90)); } scrollTo(0, 0); });

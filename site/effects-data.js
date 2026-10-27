@@ -259,11 +259,11 @@ addEventListener('resize',size);addEventListener('scroll',()=>requestAnimationFr
   css:`.scrub{height:calc(340vh * var(--fx-intensity))}
 .pin{position:sticky;top:0;height:100vh;overflow:hidden;background:#0d1220}
 .pin video{width:100%;height:100%;object-fit:cover}
-.title{position:absolute;left:6vw;top:10vh;display:grid;gap:14px;color:#fff;text-shadow:0 4px 30px rgba(0,0,0,.55)}
-.caps{position:absolute;left:0;bottom:0;display:grid;gap:10px;width:min(100%,620px);padding:18vh 6vw 12vh;background:radial-gradient(120% 100% at 0% 100%,rgba(13,18,32,.85),rgba(13,18,32,0) 70%)}
-.caps p{font:400 clamp(28px,3vw,44px)/1.05 "Cormorant Garamond",serif;color:#fff;opacity:0;transform:translateY(16px);transition:opacity var(--fx-duration) var(--fx-ease),transform var(--fx-duration) var(--fx-ease)}
+.title{position:absolute;left:6vw;top:10vh;display:grid;gap:14px;color:#1b1409;text-shadow:0 0 28px rgba(250,243,228,.95),0 0 10px rgba(250,243,228,.8)}.title .kicker{color:#1b1409;background:rgba(250,243,228,.92);padding:5px 9px;border-radius:4px;justify-self:start}
+.caps{position:absolute;left:0;bottom:0;display:grid;gap:10px;width:min(100%,620px);padding:18vh 6vw 12vh;background:radial-gradient(120% 100% at 0% 100%,rgba(250,243,228,.94),rgba(250,243,228,0) 72%)}
+.caps p{font:500 clamp(28px,3vw,44px)/1.05 "Cormorant Garamond",serif;color:#1b1409;opacity:0;transform:translateY(16px);transition:opacity var(--fx-duration) var(--fx-ease),transform var(--fx-duration) var(--fx-ease)}
 .caps p.on{opacity:1;transform:none}
-.meter{position:absolute;left:6vw;right:6vw;bottom:6vh;height:2px;background:rgba(255,255,255,.25)}.meter i{display:block;height:100%;background:#fde68a;transform-origin:left;transform:scaleX(0)}`,
+.meter{position:absolute;left:6vw;right:6vw;bottom:6vh;height:2px;background:rgba(27,20,9,.22)}.meter i{display:block;height:100%;background:#7c2d12;transform-origin:left;transform:scaleX(0)}`,
   js:`const sec=document.querySelector('.scrub'),v=sec.querySelector('video'),caps=[...sec.querySelectorAll('.caps p')],bar=sec.querySelector('.meter i');let cur=0;
 function frame(){const p=FX.progress(sec);cur+=(p-cur)*(FX.R?1:.18);bar.style.transform='scaleX('+cur+')';caps.forEach(c=>c.classList.toggle('on',cur>=+c.dataset.at));
  if(v.duration&&Math.abs(v.currentTime-cur*v.duration)>.03)v.currentTime=cur*(v.duration-.05);requestAnimationFrame(frame);}
@@ -408,7 +408,7 @@ tick();setInterval(tick,1000);`},
 .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:12px}
 .c{all:unset;position:relative;cursor:pointer;border-radius:22px;overflow:hidden}
 .c img{width:100%;height:100%;object-fit:cover;transition:transform .6s}.c:hover img{transform:scale(1.04)}
-.c span{position:absolute;left:20px;bottom:18px;font:300 clamp(28px,2.6vw,44px)/1 "Cormorant Garamond",serif;color:#fff;text-shadow:0 2px 20px rgba(0,0,0,.6)}
+.c::before{content:"";position:absolute;inset:auto 0 0 0;height:55%;background:linear-gradient(transparent,rgba(0,0,0,.66))}.c span{position:absolute;left:20px;bottom:18px;font:400 clamp(28px,2.6vw,44px)/1 "Cormorant Garamond",serif;color:#fff;text-shadow:0 2px 20px rgba(0,0,0,.7)}
 .c:focus-visible{outline:3px solid #7dd3fc;outline-offset:-6px}
 .hint{display:flex;justify-content:space-between;align-items:baseline;padding:10px 26px 22px}.hint h1{font-size:clamp(40px,5vw,76px)}
 #detail{position:relative;height:100%}#detail[hidden]{display:none}
@@ -647,7 +647,7 @@ document.querySelectorAll('[data-z]').forEach(b=>b.onclick=()=>{z=FX.clamp(z*+b.
   html:`<section class="lq"><canvas aria-label="A liquid ripple over a mercury study"></canvas><img class="fallback" src="${IMG}mercury.webp" alt="" hidden><div class="copy"><p class="kicker">Move across the image</p><h1 class="display">Liquid<br>surface.</h1></div></section>`,
   css:`.lq{position:relative;height:100vh;background:#000;overflow:hidden}
 .lq canvas,.fallback{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.copy{position:absolute;right:6vw;bottom:9vh;text-align:right;display:grid;gap:14px;pointer-events:none;justify-items:end}.copy .kicker{color:#c9d3e3}`,
+.lq::after{content:"";position:absolute;inset:0;background:radial-gradient(70% 60% at 100% 100%,rgba(0,0,0,.62),transparent 72%);pointer-events:none}.copy{position:absolute;right:6vw;bottom:9vh;text-align:right;display:grid;gap:14px;pointer-events:none;z-index:1;text-shadow:0 2px 24px rgba(0,0,0,.75);justify-items:end}.copy .kicker{color:#c9d3e3}`,
   js:`const c=document.querySelector('canvas'),gl=c.getContext('webgl');
 if(!gl){c.hidden=true;document.querySelector('.fallback').hidden=false;}else{
  const vs='attribute vec2 p;varying vec2 v;void main(){v=p*.5+.5;v.y=1.-v.y;gl_Position=vec4(p,0,1);}';
