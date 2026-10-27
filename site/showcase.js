@@ -17,7 +17,7 @@
   const x=c.getContext('2d');x.filter=`blur(${Math.min(w,h)*.09}px)`;x.fillStyle='rgba(10,14,22,.75)';x.beginPath();x.roundRect(pad,pad,w,h,Math.min(w,h)*.06);x.fill();shadows.set(k,c);return c;}
  /* Card drawing shared by every template: rounded, shadowed, image covers the card. */
  function card(ctx,img,cx,cy,w,h,o){const r=Math.min(w,h)*o.radius;ctx.save();ctx.globalAlpha*=o.alpha??1;ctx.translate(cx,cy);if(o.rot)ctx.rotate(o.rot);if(o.sx||o.sy)ctx.scale(o.sx??1,o.sy??1);
-  if(o.shadow){const sp=shadowSprite(w/h),m=Math.min(w,h),pad=m*.28;ctx.save();ctx.globalAlpha*=Math.min(1,.55*o.shadow);ctx.drawImage(sp,-w/2-pad,-h/2-pad+m*.04*o.shadow,w+pad*2,h+pad*2);ctx.restore();}
+  if(o.shadow&&w>0&&h>0){const sp=shadowSprite(w/h),m=Math.min(w,h),pad=m*.28;ctx.save();ctx.globalAlpha*=Math.min(1,.55*o.shadow);ctx.drawImage(sp,-w/2-pad,-h/2-pad+m*.04*o.shadow,w+pad*2,h+pad*2);ctx.restore();}
   ctx.beginPath();ctx.roundRect(-w/2,-h/2,w,h,r);ctx.fillStyle='#fff';ctx.fill();ctx.clip();
   if(img&&img.naturalWidth){const s=Math.max(w/img.naturalWidth,h/img.naturalHeight),iw=img.naturalWidth*s,ih=img.naturalHeight*s;ctx.drawImage(img,-iw/2,-ih/2,iw,ih);}
   if(o.dim){ctx.fillStyle=`rgba(8,10,16,${o.dim})`;ctx.fillRect(-w/2,-h/2,w,h);}ctx.restore();}

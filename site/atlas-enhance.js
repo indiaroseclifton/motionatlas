@@ -191,12 +191,14 @@
   const words=q.split(/\s+/).filter(Boolean);
   const entryHits=!q?[]:entries().map(e=>{const hay=[e.id,e.title,e.group,e.kind,e.desc,e.tags,e.use].join(' ').toLowerCase();let score=0;for(const w of words){if(!hay.includes(w))return null;score+=(String(e.title).toLowerCase().includes(w)?3:1);}return{e,score};}).filter(Boolean).sort((a,b)=>b.score-a.score).slice(0,40)
    .map(({e})=>({type:'entry',id:e.id,title:e.title,sub:`${e.id} · ${e.group||e.kind||'Entry'}`,desc:e.desc}));
+  const toolHits=!q?[]:(window.ATLAS_TOOLS?ATLAS_TOOLS.list:[]).filter(t=>words.every(w=>(t.name+' '+t.blurb+' '+t.group).toLowerCase().includes(w))).slice(0,6)
+   .map(t=>({type:'tool',href:t.href,title:t.name,sub:'Tool · '+t.group,desc:ATLAS_TOOLS.blurbNow(t)}));
   const recent=!q&&window.AtlasRecent?window.AtlasRecent().map(e=>({type:'entry',id:e.id,title:e.title,sub:`Recently viewed · ${e.id}`,desc:e.desc})):[];
-  return q?[...pageHits.slice(0,5),...entryHits]:[...recent,...pageHits];
+  return q?[...pageHits.slice(0,5),...toolHits,...entryHits]:[...recent,...pageHits];
  }
  function render(){
   items=search(input.value);sel=Math.min(sel,Math.max(0,items.length-1));
-  list.innerHTML=items.length?items.map((it,i)=>`<li id="aeOpt${i}" role="option" aria-selected="${i===sel}" data-i="${i}" class="aeOpt aeOpt-${it.type}"><span class="aeOptTag" style="--c:${it.color?COLORS[it.color][1]:'var(--text-dim)'}">${it.type==='page'?'Page':'Entry'}</span><span class="aeOptMain"><b>${esc(it.title)}</b><small>${esc(it.sub)}</small>${it.desc?`<em>${esc(it.desc)}</em>`:''}</span><span class="aeOptGo" aria-hidden="true">↵</span></li>`).join(''):`<li class="aeEmpty">Nothing matches “${esc(input.value)}”. Try a material, a movement or a component name.</li>`;
+  list.innerHTML=items.length?items.map((it,i)=>`<li id="aeOpt${i}" role="option" aria-selected="${i===sel}" data-i="${i}" class="aeOpt aeOpt-${it.type}"><span class="aeOptTag" style="--c:${it.color?COLORS[it.color][1]:'var(--text-dim)'}">${it.type==='page'?'Page':it.type==='tool'?'Tool':'Entry'}</span><span class="aeOptMain"><b>${esc(it.title)}</b><small>${esc(it.sub)}</small>${it.desc?`<em>${esc(it.desc)}</em>`:''}</span><span class="aeOptGo" aria-hidden="true">↵</span></li>`).join(''):`<li class="aeEmpty">Nothing matches “${esc(input.value)}”. Try a material, a movement or a component name.</li>`;
   input.setAttribute('aria-activedescendant',items.length?`aeOpt${sel}`:'');
   count.textContent=input.value?`${items.length} result${items.length===1?'':'s'}`:'';
   list.querySelector('[aria-selected=true]')?.scrollIntoView({block:'nearest'});
@@ -204,6 +206,7 @@
  function go(it){
   if(!it)return;dlg.close();
   if(it.type==='page'){location.hash=it.id;scrollTo(0,0);return;}
+  if(it.type==='tool'){location.href=it.href;return;}
   try{if(typeof openEntry==='function'){if(location.hash.split('?')[0]!=='#browse'&&it.id[0]!=='D')location.hash='browse';setTimeout(()=>openEntry(it.id),60);return;}}catch{}
   location.hash='browse';setTimeout(()=>{const s=$('#search');if(s){s.value=it.title;s.dispatchEvent(new Event('input',{bubbles:true}));}},80);
  }

@@ -50,13 +50,17 @@ a{color:inherit}button,input,select{font:inherit;color:inherit}
 #kit:focus{outline:none}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1C1F2A;color:#fff;padding:10px 16px;border-radius:999px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:100;max-width:calc(100vw - 32px)}
 .toast.on{opacity:1}
+.khand{display:flex;gap:8px;flex-wrap:wrap;align-items:center;max-width:1240px;margin:0 auto;padding:12px 24px}.khand span{font-size:13px;color:var(--pmute,#5b5a62);margin-right:4px}.khand a.pbtn{display:inline-flex;align-items:center;text-decoration:none}
 @media (max-width:1100px){.picker{grid-template-columns:repeat(6,minmax(0,1fr))}}
 @media (max-width:900px){.intro{grid-template-columns:1fr}.cmpgrid{grid-template-columns:1fr}.picker{grid-template-columns:repeat(4,minmax(0,1fr))}.count{margin-left:0}}
 @media (max-width:560px){.picker{grid-auto-flow:column;grid-template-columns:none;grid-template-rows:repeat(2,auto);grid-auto-columns:42%;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:16px}.pick{scroll-snap-align:start}.search{max-width:none}.cmpbar select{min-width:0;width:100%}.cmpbar label{flex:1 1 100%}}
 @media (prefers-reduced-motion:reduce){.toast{transition:none}}
-</style></head><body>
+</style><meta property="og:type" content="website"><meta property="og:site_name" content="Visual &amp; Motion Atlas"><meta property="og:title" content="Theme kits · Visual & Motion Atlas"><meta property="og:description" content="Forty-eight complete brand and theme kits, from Matrix (01) to Chambers (48): colour scales with contrast labels, light and dark tokens, type scale, components, a live animated background, logo, social card, slide, email header, business cards, favicon and guidelines, each downloadable as a zip with CSS, SCSS, JSON and Tailwind tokens."><meta property="og:url" content="https://motionatlas-ten.vercel.app/theme-kits"><meta property="og:image" content="https://motionatlas-ten.vercel.app/assets/og-atlas.jpg"><meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://motionatlas-ten.vercel.app/theme-kits">
+<style id="sbPre">html{--sb-h:calc(44px + env(safe-area-inset-top,0px))}body{padding-top:var(--sb-h)}html:not(.sbReady) body::before{content:"";position:fixed;top:0;left:0;right:0;height:var(--sb-h);background:#0d111b;z-index:2147483000}@media print{body{padding-top:0}}</style><script src="site-nav-data.js" defer></script><script src="site-bar.js" defer></script>
+</head><body><noscript><nav id="sbNo" aria-label="Atlas" style="position:fixed;top:0;left:0;right:0;height:44px;box-sizing:border-box;z-index:2147483000;background:#0d111b;padding:12px 16px;font:500 14px/20px system-ui,sans-serif;white-space:nowrap;overflow:auto"><a style="color:#fde68a;margin-right:16px" href="atlas.html">Atlas</a><a style="color:#e8edf5;margin-right:16px" href="tools.html">Tools</a><a style="color:#e8edf5;margin-right:16px" href="atlas.html#browse">Catalogue</a><a style="color:#e8edf5" href="atlas.html#projects">My projects</a></nav></noscript>
 <a class="skip" href="#kit">Skip to the kit</a>
-<header class="top"><a class="back" href="atlas.html#systems">← Atlas / Design systems</a><nav aria-label="Related"><a href="brand-generator.html">Brand kit generator</a><a href="page-builder.html">Page builder</a><a href="interactions.html">Interactions shelf</a><a href="atlas.html#backgrounds">Backgrounds</a></nav></header>
+<header class="top"><a class="back" href="atlas.html#systems">← Atlas / Design systems</a><nav aria-label="Related"><a href="brand-generator.html">Brand kit generator</a><a href="page-builder.html">Site builder</a><a href="interactions.html">Interactions shelf</a><a href="atlas.html#backgrounds">Backgrounds</a></nav></header>
 <section class="intro" aria-labelledby="ttl"><h1 id="ttl">Theme kits.</h1><p><span id="introCount">Forty-eight</span> complete brand kits, from <b>Matrix (01)</b> to <b>Chambers (48)</b>, across fintech, health, civic, food, travel, fashion, science, music, games, retro eras and print traditions. Each has colour scales with contrast labels, light and dark tokens, a type scale, a component sheet, a live animated background, a logo and mark, social card, title slide, email header, business cards, favicon and short guidelines. Download any kit as a zip with CSS, SCSS, JSON and Tailwind tokens.</p></section>
 <div class="bar" role="search" aria-label="Filter kits">
  <div class="search"><label for="q">Search</label><input id="q" type="search" placeholder="Name, mood, industry, font…" autocomplete="off"></div>
@@ -70,8 +74,10 @@ a{color:inherit}button,input,select{font:inherit;color:inherit}
 <section id="compare" hidden aria-labelledby="cmpH"><div class="in"><h2 id="cmpH">Compare two kits</h2>
  <div class="cmpbar"><label>First kit<select id="cmpA"></select></label><label>Second kit<select id="cmpB"></select></label><button class="pbtn ghost" type="button" id="cmpSwap">Swap</button><button class="pbtn ghost" type="button" id="cmpClose">Close</button></div>
  <div class="cmpgrid" id="cmpGrid"></div></div></section>
+<div class="khand" id="handoff" role="group" aria-label="Use this kit in another tool"></div>
 <main id="kit" tabindex="-1"></main>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="moodboard/pin.js" defer></script><script src="kits/handoff.js"></script>
 <script src="kits/themes.js"></script><script src="kits/kits-a.js"></script><script src="kits/kits-b.js"></script><script src="kits/brand.js"></script><script src="kits/render.js"></script>
 <script>
 (()=>{
@@ -103,7 +109,14 @@ $('#cmpClose').onclick=closeCompare;$('#cmpA').onchange=$('#cmpB').onchange=()=>
 $('#cmpSwap').onclick=()=>{const a=$('#cmpA').value;$('#cmpA').value=$('#cmpB').value;$('#cmpB').value=a;drawCompare(true)};
 /* kit */
 let cur=null,view=null;
-function show(k){if(view)view.destroy();cur=k;document.title=`${k.name} (${k.no}) · Theme kits · Visual & Motion Atlas`;document.querySelectorAll('.pick').forEach(b=>b.setAttribute('aria-pressed',b.dataset.id===k.id));const m=$('#kit');m.setAttribute('aria-label',k.name+' theme kit');view=TK.render(k,m,{say})}
+/* hand-offs: this kit into the Site builder, a moodboard or the Brand kit generator (kits/handoff.js) */
+function handoff(k){const box=$('#handoff');if(!box)return;
+ box.innerHTML=`<span>Use ${esc(k.name)} in:</span><button class="pbtn" type="button" data-h="site">Site builder</button><button class="pbtn ghost" type="button" data-h="pin">Pin to moodboard</button><a class="pbtn ghost" href="moodboard.html">Open moodboards</a><button class="pbtn ghost" type="button" data-h="brand">Brand kit generator</button>`;
+ box.onclick=e=>{const b=e.target.closest('button[data-h]');if(!b)return;const a=b.dataset.h;
+  try{if(a==='site'){say('Opening the Site builder with '+k.name);KitHandoff.toSite(k)}
+  else if(a==='pin'){if(window.MoodPin)MoodPin.pinKit(k);else say('The moodboard is still loading. Try again.')}
+  else if(a==='brand')KitHandoff.toBrand(k)}catch(_){say('Could not hand the kit over: storage is blocked')}};}
+function show(k){if(view)view.destroy();cur=k;handoff(k);document.title=`${k.name} (${k.no}) · Theme kits · Visual & Motion Atlas`;document.querySelectorAll('.pick').forEach(b=>b.setAttribute('aria-pressed',b.dataset.id===k.id));const m=$('#kit');m.setAttribute('aria-label',k.name+' theme kit');view=TK.render(k,m,{say})}
 function fromHash(scroll){const h=decodeURIComponent(location.hash.slice(1));
  if(h.startsWith('compare=')){const [a,b]=h.slice(8).split(',');if(!cur)show(L[0]);if(L.find(k=>k.id===a)&&L.find(k=>k.id===b)){openCompare(a,b,false);if(scroll)$('#compare').scrollIntoView({behavior:reduce?'auto':'smooth'})}return}
  const k=L.find(x=>x.id===h)||cur||L[0];if(k!==cur)show(k);if(scroll){$('#kit').focus({preventScroll:true});$('#kit').scrollIntoView({behavior:reduce?'auto':'smooth'})}}

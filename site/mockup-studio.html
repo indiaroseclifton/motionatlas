@@ -27,7 +27,7 @@ details.menu>summary::after{content:'▾';font-size:10px;margin-left:2px}
 .pop{position:absolute;right:0;top:calc(100% + 6px);z-index:30;min-width:230px;max-width:min(320px,calc(100vw - 24px));background:var(--panel);border:1px solid var(--hair);border-radius:12px;box-shadow:0 18px 40px -16px rgba(20,24,40,.35);padding:6px;display:grid;gap:2px}
 .pop button{display:flex;justify-content:space-between;gap:12px;align-items:center;text-align:left;border:0;background:none;border-radius:8px;padding:8px 10px;font-size:13px;min-height:36px}.pop button:hover{background:var(--soft)}
 .pop small{color:var(--mute);font-size:11.5px}
-.app{display:grid;grid-template-columns:minmax(320px,380px) minmax(0,1fr);min-height:calc(100vh - 57px)}
+.app{display:grid;grid-template-columns:minmax(320px,380px) minmax(0,1fr);min-height:calc(100vh - 57px - var(--sb-h,0px))}
 .side{background:var(--panel);border-right:1px solid var(--hair);min-width:0}
 .tabs{display:flex;border-bottom:1px solid var(--hair);position:sticky;top:57px;background:var(--panel);z-index:5;overflow-x:auto;scrollbar-width:none}
 .tabs button{flex:1 0 auto;padding:0 10px;border:0;background:none;min-height:44px;font-size:12.5px;font-weight:600;color:var(--mute);border-bottom:2px solid transparent}
@@ -74,12 +74,15 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 @media (max-width:900px){.app{grid-template-columns:1fr}.side{border-right:0;border-top:1px solid var(--hair);order:2}.main{order:1;padding-bottom:10px}.tabs{top:0;position:relative}.links{display:none}}
 @media (max-width:480px){.brand h1{font-size:22px}header.top{gap:8px}.acts .btn{padding:0 10px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
-</style></head>
-<body>
+</style><meta property="og:type" content="website"><meta property="og:site_name" content="Visual &amp; Motion Atlas"><meta property="og:title" content="Mockup & social asset studio · Visual & Motion Atlas"><meta property="og:description" content="Put a screenshot, chart, diagram or page into a phone, tablet, laptop, browser or watch frame on an atlas background, add a headline, and export every social and store size at once: Open Graph, X, LinkedIn, Instagram, YouTube, Dribbble, Product Hunt and App Store."><meta property="og:url" content="https://motionatlas-ten.vercel.app/mockup-studio"><meta property="og:image" content="https://motionatlas-ten.vercel.app/assets/og-atlas.jpg"><meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://motionatlas-ten.vercel.app/mockup-studio">
+<style id="sbPre">html{--sb-h:calc(44px + env(safe-area-inset-top,0px))}body{padding-top:var(--sb-h)}html:not(.sbReady) body::before{content:"";position:fixed;top:0;left:0;right:0;height:var(--sb-h);background:#0d111b;z-index:2147483000}@media print{body{padding-top:0}}</style><script src="site-nav-data.js" defer></script><script src="site-bar.js" defer></script>
+</head>
+<body><noscript><nav id="sbNo" aria-label="Atlas" style="position:fixed;top:0;left:0;right:0;height:44px;box-sizing:border-box;z-index:2147483000;background:#0d111b;padding:12px 16px;font:500 14px/20px system-ui,sans-serif;white-space:nowrap;overflow:auto"><a style="color:#fde68a;margin-right:16px" href="atlas.html">Atlas</a><a style="color:#e8edf5;margin-right:16px" href="tools.html">Tools</a><a style="color:#e8edf5;margin-right:16px" href="atlas.html#browse">Catalogue</a><a style="color:#e8edf5" href="atlas.html#projects">My projects</a></nav></noscript>
 <a class="skip" href="#msMain">Skip to the preview</a>
 <header class="top">
  <div class="brand"><a href="atlas.html">Atlas</a><h1>Mockup studio</h1></div>
- <nav class="links" aria-label="Other studios"><a href="page-builder.html">Page builder</a><a href="chart-studio.html">Chart studio</a><a href="diagram-studio.html">Diagram studio</a><a href="moodboard.html">Moodboards</a></nav>
+ <nav class="links" aria-label="Other studios"><a href="page-builder.html">Site builder</a><a href="chart-studio.html">Chart studio</a><a href="diagram-studio.html">Diagram studio</a><a href="flowchart-studio.html">Flowchart studio</a><a href="moodboard.html">Moodboards</a></nav>
  <div class="acts">
   <button class="btn" id="msCopy" type="button">Copy PNG</button>
   <details class="menu" id="msMenu"><summary class="btn primary">Export</summary><div class="pop">
@@ -108,7 +111,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
    <label class="f"><span>Viewport</span><select id="msSiteSize"><option value="desktop">Desktop 1440×900</option><option value="phone">Phone 390×844</option></select></label>
    <button class="btn" type="button" id="msCapture">Capture page</button>
    <p class="hint">Captures the top of the page as a picture. Live canvases and video can come out still or blank, so for a pixel-perfect copy take a screenshot and drop it in.</p></div>
-  <div class="sec"><h2>From the other studios</h2><p class="hint">Use <b>Make share image</b> in the <a href="chart-studio.html">Chart studio</a>, <a href="diagram-studio.html">Diagram studio</a> or <a href="page-builder.html">Page builder</a> export menus to bring your work straight here.</p></div>
+  <div class="sec"><h2>From the other studios</h2><p class="hint">Use <b>Make share image</b> in the <a href="chart-studio.html">Chart studio</a>, <a href="diagram-studio.html">Diagram studio</a>, <a href="flowchart-studio.html">Flowchart studio</a> or <a href="page-builder.html">Site builder</a> export menus to bring your work straight here.</p></div>
  </section>
  <section class="msPanel" id="msP-frame" role="tabpanel" aria-labelledby="msT-frame" hidden>
   <div class="sec"><h2>Device</h2>

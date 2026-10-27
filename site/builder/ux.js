@@ -125,7 +125,7 @@ UX.createBrandSite=createBrandSite;UX.suggest=suggest;
 
 /* first run: a start screen for visitors with no saved site */
 if(/[?&]brand=1/.test(location.search)&&tryJSON(HK,null))setTimeout(()=>openStart('brand'),50);
-else if(A.first&&!/[?&](site|nostart)=?/.test(location.search))setTimeout(()=>openStart('home'),50);
+else if(A.first&&!/[?&](site|nostart|favicon)=?/.test(location.search))setTimeout(()=>openStart('home'),50);
 
 /* ---------- version history: last 20 autosaves per site, kept in IndexedDB (no size cap) ---------- */
 const MAXV=20;

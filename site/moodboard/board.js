@@ -19,7 +19,7 @@ const ratio=(a,b)=>{const x=lum(a),y=lum(b);return (Math.max(x,y)+.05)/(Math.min
 const sat=h=>{const [r,g,b]=hx(h).map(v=>v/255),M=Math.max(r,g,b),m=Math.min(r,g,b);return M?(M-m)/M:0};
 const best=bg=>ratio('#FFFFFF',bg)>=ratio('#000000',bg)?'#FFFFFF':'#000000';
 function ensure(fg,bg,min){if(ratio(fg,bg)>=min)return fg;const to=best(bg);for(let p=.05;p<=1.001;p+=.05){const c=mix(fg,to,p);if(ratio(c,bg)>=min)return c}return to}
-const ink=bg=>lum(bg)>.4?'#111318':'#FFFFFF';
+const ink=bg=>ratio('#111318',bg)>=ratio('#FFFFFF',bg)?'#111318':'#FFFFFF';
 
 /* ---------- messages ---------- */
 function say(t){$('mbLive').textContent=t}
@@ -217,6 +217,8 @@ $('mbStyle').onclick=async()=>{$('mbPalDlg').close();const p=await palette();if(
  loadFont(styleKit.fonts.css);$('mbKitZip').disabled=!ok;d.showModal()};
 $('mbKitZip').onclick=async()=>{const b=$('mbKitZip');b.disabled=true;try{if(!ThemeKits.zipKit)await loadScript('kits/brand.js');const blob=await ThemeKits.zipKit(styleKit);window.__mbZip={size:blob.size};const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=styleKit.id+'-theme-kit.zip';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);toast('Theme kit ZIP downloaded')}catch(e){toast('The kit ZIP could not be built: '+(e.message||e))}finally{b.disabled=false}};
 $('mbKitPin').onclick=()=>{const k=styleKit;addItem({type:'kit',ref:k.id,title:k.name,sub:'Made from this board',colors:['bg','surface','ink','accent','accent2'].map(x=>k.t[x]),head:k.fonts.head,body:k.fonts.body,css:k.fonts.css,w:240,h:150});$('mbStyleDlg').close();toast('Style kit added to the board')};
+const kitHand=async m=>{try{if(!window.KitHandoff)await loadScript('kits/handoff.js');if(!(window.ThemeKits&&ThemeKits.favicon)&&m==='toSite'){try{await loadScript('kits/brand.js')}catch{}}KitHandoff[m](styleKit)}catch(e){toast('Could not hand the style over: '+(e.message||e))}};
+$('mbKitSite').onclick=()=>kitHand('toSite');$('mbKitBrand').onclick=()=>kitHand('toBrand');
 $('mbKitCss').onclick=async()=>{try{if(!ThemeKits.css)await loadScript('kits/brand.js');await navigator.clipboard.writeText(ThemeKits.css(styleKit));toast('Tokens copied as CSS')}catch{toast('Could not copy.')}};
 
 /* ---------- share link ---------- */

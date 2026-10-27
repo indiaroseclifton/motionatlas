@@ -339,8 +339,11 @@ body.presenting .rail,body.presenting .dock,body.presenting .selbar,body.present
  .motion{bottom:70px;max-width:calc(100% - 16px)}
  .insp{height:min(48%,400px)}.dock{overflow-x:auto;scrollbar-width:none}
 }
-</style></head>
-<body>
+</style><meta property="og:type" content="website"><meta property="og:site_name" content="Visual &amp; Motion Atlas"><meta property="og:title" content="Flowchart studio · Visual & Motion Atlas"><meta property="og:description" content="Write or draw a flowchart, get a clean, well-laid-out diagram in many styles, then click, drag and connect every element. Export as SVG, PNG, HTML, video or a style guide."><meta property="og:url" content="https://motionatlas-ten.vercel.app/flowchart-studio"><meta property="og:image" content="https://motionatlas-ten.vercel.app/assets/og-atlas.jpg"><meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://motionatlas-ten.vercel.app/flowchart-studio">
+<style id="sbPre">html{--sb-h:calc(44px + env(safe-area-inset-top,0px))}body{padding-top:var(--sb-h)}html:not(.sbReady) body::before{content:"";position:fixed;top:0;left:0;right:0;height:var(--sb-h);background:#0d111b;z-index:2147483000}@media print{body{padding-top:0}}</style><script src="site-nav-data.js" defer></script><script src="site-bar.js" defer></script>
+</head>
+<body><noscript><nav id="sbNo" aria-label="Atlas" style="position:fixed;top:0;left:0;right:0;height:44px;box-sizing:border-box;z-index:2147483000;background:#0d111b;padding:12px 16px;font:500 14px/20px system-ui,sans-serif;white-space:nowrap;overflow:auto"><a style="color:#fde68a;margin-right:16px" href="atlas.html">Atlas</a><a style="color:#e8edf5;margin-right:16px" href="tools.html">Tools</a><a style="color:#e8edf5;margin-right:16px" href="atlas.html#browse">Catalogue</a><a style="color:#e8edf5" href="atlas.html#projects">My projects</a></nav></noscript>
 <div class="app">
  <header class="top">
   <a class="back" href="atlas.html#systems" aria-label="Back to the Visual and Motion Atlas">← <span class="hs">Atlas</span></a>
@@ -352,6 +355,7 @@ body.presenting .rail,body.presenting .dock,body.presenting .selbar,body.present
     <div class="mnu" id="exportMenu" role="menu" hidden>
      <button role="menuitem" id="exSvg">SVG file<small>keeps the motion</small></button>
      <button role="menuitem" id="exPng">PNG<small>2× size</small></button>
+     <button role="menuitem" id="exMock">Make share image<small>in the Mockup studio</small></button>
      <button role="menuitem" id="exCopy">Copy SVG</button>
      <button role="menuitem" id="exHtml">Web page</button>
      <button role="menuitem" id="exVideo">Build-up video<small>MP4</small></button>
@@ -361,7 +365,7 @@ body.presenting .rail,body.presenting .dock,body.presenting .selbar,body.present
      <button role="menuitem" id="exMmdCopy">Copy Mermaid</button>
      <button role="menuitem" id="exOutline">Outline<small>.txt</small></button>
      <button role="menuitem" id="exJson">JSON<small>reopens here</small></button>
-     <hr><a role="menuitem" href="diagram-studio.html">Diagram studio</a><a role="menuitem" href="chart-styles.html">Chart styles</a>
+     <hr><a role="menuitem" href="flowchart-canvas.html" title="The lighter, text-first editor. It opens the same chart.">Flowchart canvas (lighter editor)</a><a role="menuitem" href="diagram-studio.html">Diagram studio</a><a role="menuitem" href="chart-styles.html">Chart styles</a>
     </div></div>
   </div>
  </header>
@@ -747,7 +751,6 @@ function ownerFeedSource(items,view){
   L.push('  end');});
  for(const x of keep)for(const d of (x.depends||[])){const f='a_'+String(d).replace(/[^A-Za-z0-9]/g,'_').toLowerCase();if(ids.has(f))L.push(`  ${f} --> ${nid(x)}`);}
  return L.join('\n');}
-fetch('_01/feeds/index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).then(ix=>{if(!ix||!ix.feeds||!ix.feeds.length)return;feedIndex=ix;feedReady=true;syncView();}).catch(()=>{});
 async function loadFeed(val){if(!val||!feedIndex)return;const [fid,vid]=val.split(':'),f=feedIndex.feeds.find(x=>x.id===fid),v=f&&f.views.find(x=>x.id===vid);if(!v)return;
  try{if(!feedCache[fid]){const r=await fetch(f.file,{cache:'no-cache'});if(!r.ok)throw new Error(r.status);feedCache[fid]=await r.json();}
   const data=feedCache[fid];let src,title,sub,type='stages',state=null;
@@ -825,6 +828,9 @@ $('exCopy').onclick=async()=>{try{await navigator.clipboard.writeText(cur().svg)
 $('exPng').onclick=async()=>{const svg=await svgWithFonts(),r=cur(),k=2,img=new Image();img.decoding='async';
  img.onload=()=>{const c=document.createElement('canvas');c.width=r.width*k;c.height=r.height*k;const x=c.getContext('2d');x.scale(k,k);x.drawImage(img,0,0);c.toBlob(b=>{download(slug()+'.png',b);toast('PNG downloaded at 2×');},'image/png');};
  img.onerror=()=>toast('PNG export failed in this browser; use SVG');img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);};
+$('exMock').onclick=async()=>{try{const svg=await svgWithFonts(),r=cur(),k=2;const blob=await new Promise((res,rej)=>{const img=new Image();img.onload=()=>{const c=document.createElement('canvas');c.width=r.width*k;c.height=r.height*k;const x=c.getContext('2d');x.scale(k,k);x.drawImage(img,0,0);c.toBlob(b=>b?res(b):rej(Error('Could not make the picture')),'image/png')};img.onerror=()=>rej(Error('PNG export failed in this browser; use SVG'));img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)});
+ if(!window.MockupHandoff)await new Promise((res,rej)=>{const t=document.createElement('script');t.src='mockup/handoff.js';t.onload=res;t.onerror=rej;document.head.append(t)});
+ await MockupHandoff.send({blob,title:$('title').value||'',from:'flowchart studio'})}catch(e){toast(e.message||'Could not open the Mockup studio')}};
 $('exHtml').onclick=async()=>{const st=DVStyle(S.style);const html=`<!doctype html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${($('title').value||'Flowchart').replace(/</g,'&lt;')}</title>\n<style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:${st.t.bg.startsWith('#')?st.t.bg:'#0B0F1A'};padding:24px}figure{margin:0;max-width:100%}svg{max-width:100%;height:auto}</style></head>\n<body><figure>${await svgWithFonts()}</figure></body></html>`;download(slug()+'.html',html,'text/html');toast('HTML page downloaded');};
 const b64=s=>btoa(unescape(encodeURIComponent(s))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''),unb64=s=>decodeURIComponent(escape(atob(s.replace(/-/g,'+').replace(/_/g,'/'))));
 $('exShare').onclick=async()=>{const q=new URLSearchParams({s:S.style,d:S.dir,y:S.type,t:$('title').value,st:$('subtitle').value,c:b64($('src').value),...(S.view==='canvas'?{v:b64(JSON.stringify(cv.getState()))}:{})});const url=location.origin+location.pathname+'#'+q.toString();

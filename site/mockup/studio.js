@@ -231,7 +231,7 @@ async function capture(src,size,{html=''}={}){const [w,h]=size==='phone'?[390,84
   await new Promise(r=>setTimeout(r,2200));const doc=fr.contentDocument;if(!doc)throw Error('That page cannot be read.');try{await doc.fonts.ready}catch{}
   const node=doc.documentElement,cv=await L.domToCanvas(node,{width:w,height:h,scale:2,backgroundColor:getComputedStyle(doc.body).backgroundColor||'#fff',timeout:8000,filter:n=>!(n.tagName==='VIDEO'),style:{overflow:'hidden'},features:{removeControlCharacter:true}});
   if(!cv||!cv.width)throw Error('The capture came back empty.');const blob=await new Promise(r=>cv.toBlob(r,'image/png'));if(!blob||blob.size<2000)throw Error('The capture came back empty.');
-  await setImage('main',blob,(html?'Page builder page':SITE_PAGES.find(p=>p[0]===src)?.[1]||src)+' · capture');status('Captured. Live canvases and video may show as still frames or blanks; drop in a screenshot for a pixel-perfect copy.')}
+  await setImage('main',blob,(html?'Site builder page':SITE_PAGES.find(p=>p[0]===src)?.[1]||src)+' · capture');status('Captured. Live canvases and video may show as still frames or blanks; drop in a screenshot for a pixel-perfect copy.')}
  catch(e){status(e.message||'Capture failed. Take a screenshot and drop it here instead.');toast('Capture failed. Drop a screenshot instead.')}
  finally{fr.remove();btn.disabled=false}}
 

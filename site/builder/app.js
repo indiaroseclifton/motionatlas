@@ -723,6 +723,9 @@ function saveToProjects(sx,quiet){sx=sx&&sx.pages?sx:site;const K='atlas-project
 let projT=0;
 $('#projBtn').onclick=()=>{closeMenu();saveToProjects()};
 PB.projSync=()=>{clearTimeout(projT);projT=setTimeout(()=>{try{if(hasProject(site))saveToProjects(site,true)}catch(e){}},2500)};
+/* icon library -> favicon: icons.html stores {set,name} and opens ?favicon=1 */
+if(/[?&]favicon=1/.test(location.search))setTimeout(()=>{try{const h=JSON.parse(localStorage.getItem('atlas-pb-favicon-handoff')||'null');localStorage.removeItem('atlas-pb-favicon-handoff');
+ if(h&&LIB.iconFiles[h.set]&&PB.iconNames(h.set).includes(h.name)){site.settings.favicon={set:h.set,name:h.name};commit();favUI();say('Favicon set to “'+h.name+'” ('+h.set.replace(/-/g,' ')+'). See it under Site settings.')}else say('That icon is not available as a favicon here. Pick one under Site settings.')}catch(e){}},700);
 {const q=new URLSearchParams(location.search).get('site');if(q&&store.pages[q]&&site.id!==q){site=store.pages[q];store.cur=q;curId=site.home;lastSnap=snap()}}
 
 $('#copyPrompt').onclick=()=>{closeMenu();const st=PB.styles.get(page.style),pair=page.pair>=0?LIB.pairs[page.pair]:null;

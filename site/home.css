@@ -246,3 +246,5 @@ body.vmaCinema>header{opacity:0;pointer-events:none}
 .vmaBuildTxt>span:last-child{color:var(--ink-dim);max-width:46ch}
 @media (max-width:760px){.vmaBuild{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){.vmaBuildCard,.vmaBuildImg img{transition:none}}
+
+.vmaTools{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.vmaTools .vmaBuildImg{aspect-ratio:16/10}.vmaTools .vmaBuildTxt b{font-size:clamp(20px,1.7vw,25px)}.vmaTools .vmaBuildTxt>span:last-child{font-size:14px}.vmaBuildSec .vmaTextLink{display:inline-block;margin-top:22px}

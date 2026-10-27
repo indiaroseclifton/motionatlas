@@ -8,51 +8,10 @@
    - Catalogue on phones: collections and filters move into a left "Filters" drawer. */
 (()=>{
  const F='assets/films/';
- const GROUPS=[
-  {name:'Explore',items:[
-   ['#home','Home','The atlas at a glance, with the jellyfish reel.','jellyfish'],
-   ['#browse','Catalogue','Every specimen in one searchable contact sheet.','hydraulic-erosion'],
-   ['#tours','Guided tours','Short routes through the atlas for a brief or a mood.','golden-dove'],
-   ['#compare','Compare styles','Two styles side by side on the same subject.','ferrofluid'],
-   ['#references','Sources & credits','Original works, research, licences and credits.','smoke-plume']]},
-  {name:'Visual',items:[
-   ['#art','Art styles','Sixty art styles, from museum references to procedural specimen films.','suminagashi'],
-   ['#cinema','Film looks','Cinematic directions translated into original scenes.','pixel-sorting'],
-   ['#backgrounds','Backgrounds','Generate gradients, light and grain; export 4K or a loop.','petal-swirl'],
-   ['#vases','Vase studies','One vase, forty treatments, to read a style quickly.','sand-drawing'],
-   ['#pairings','Style pairings','Styles that work together, and why.','lion-phoenix']]},
-  {name:'Motion',items:[
-   ['#motion','Animation studio','Live studies, films, simulations and an easing lab.','bioluminescent-trails'],
-   ['#effects','Landing effects','The techniques: scroll-driven CSS, View Transitions, shaders, with code.','light-ribbons'],
-   ['#showcase','Showcase reels','Motion templates for portfolios and launches.','golden-figure'],
-   ['particle-studio.html','Particle studio','Turn any picture into moving particles.','particle-tree']]},
-  {name:'Interface',items:[
-   ['#systems','Design systems','Forty-eight complete visual worlds and real open-source systems.','game-of-life'],
-   ['#ux','UI components','Sixty-four components, every state, in every style.','light-mesh'],
-   ['#icons','Icon families','Outline, solid, pixel, colour and 3D icon sets.','sketchbook-horse'],
-   ['icons.html','Icon library','3,768 searchable icons in 13 families, with full packs.','sketchbook-horse'],
-   ['#typography','Fonts & type','Type pairings and scales, ready to use.','light-threads'],
-   ['#playground','System playground','Try a system across a landing page, dashboard and phone.','swan-construction'],
-   ['#assets','Extracted assets','201 fragments cut from our original mock-ups.','paper-bird'],
-   ['theme-kits.html','Theme kits','Matrix to Graphite: tokens, components, backgrounds and assets.','game-of-life']]},
-  {name:'Make',items:[
-   ['interactions.html','Interactions shelf','Showpieces, scroll stories and sections to copy.','golden-dove'],
-   ['page-builder.html','Page builder','Stack sections, pick a style, download one HTML file.','paper-bird'],
-   ['flowchart-studio.html','Flowchart studio','Draw, animate and export flowcharts.','light-mesh'],
-   ['flowchart-canvas.html','Flowchart canvas','A free canvas: drag, resize and connect every element.','light-mesh'],
-   ['chart-studio.html','Chart studio','Your data as a chart: 26 forms, any style.','pigment-bloom'],
-   ['mockup-studio.html','Mockup studio','Frame a screenshot in a device and export every social size.','paper-bird'],
-   ['diagram-studio.html','Diagram studio','Eighteen diagram types: roadmaps to sequence and ER.','swan-construction'],
-   ['brand-generator.html','Brand kit generator','Name and feel words in; palette, fonts, logo lockups, tokens and a theme kit out.','game-of-life'],
-   ['chart-styles.html','Chart style guides','Chart palettes and rules for every style.','game-of-life']]},
-  {name:'Your studio',items:[
-   ['#projects','My projects','Save specimens into boards for a client or idea.','particle-tree'],
-   ['moodboard.html','Moodboards','A free canvas: pin styles, kits, colours and pictures, then make a style.','embroidery'],
-   ['#inspiration','Inspiration','Your own uploads and references, kept together.','embroidery'],
-   ['#creations','Your creations','Things you have made and exported here.','pigment-bloom']]}
- ];
+ const GROUPS=window.ATLAS_NAV_GROUPS||[];
+
  const ALL=GROUPS.flatMap(g=>g.items.map(i=>({href:i[0],name:i[1],note:i[2],film:i[3],group:g.name})));
- const ICON={"#home": "M4 11 12 4l8 7M6 9.5V20h12V9.5M10 20v-5h4v5", "#browse": "M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z", "#tours": "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM15.5 8.5l-2 5-5 2 2-5z", "#compare": "M4 5h7v14H4zM13 5h7v14h-7zM7.5 9v6M16.5 9v6", "#references": "M5 4h10a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3zM5 17a3 3 0 0 1 3-3h10M9 8h5", "#art": "M12 3a9 9 0 1 0 0 18c1.2 0 1.8-.9 1.4-1.9-.5-1.2.3-2.3 1.6-2.3H17a4 4 0 0 0 4-4c0-5.2-4-9.8-9-9.8zM7.5 11.5h.01M10 7.5h.01M15 7.5h.01", "#cinema": "M3 5h18v14H3zM3 9h18M3 15h18M7 5v4M12 5v4M17 5v4M7 15v4M12 15v4M17 15v4", "#backgrounds": "M4 4h16v16H4zM4 15c3-3 5-3 8 0s5 3 8 0M4 10c3-3 5-3 8 0s5 3 8 0", "#vases": "M9 3h6M10 3v3c-3 2-4 5-4 8a6 6 0 0 0 12 0c0-3-1-6-4-8V3M7 13h10", "#pairings": "M9 15a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM15 19a5 5 0 1 0 0-10 5 5 0 0 0 0 10z", "#motion": "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM10 8.5v7l5.5-3.5z", "#effects": "M5 19 15 9M15 9l1.5-4.5L18 9l4.5 1.5L18 12l-1.5 4.5L15 12l-4.5-1.5z", "#showcase": "M4 6h16v12H4zM8 6v12M16 6v12M4 10h4M4 14h4M16 10h4M16 14h4", "particle-studio.html": "M6 6h.01M12 5h.01M18 7h.01M5 12h.01M10 11h.01M15 12h.01M19 13h.01M7 18h.01M13 17h.01M17 19h.01", "#systems": "M12 3 4 7.5v9L12 21l8-4.5v-9zM4 7.5 12 12l8-4.5M12 12v9", "#ux": "M4 7h10M18 7h2M14 5v4M4 17h4M12 17h8M8 15v4", "#icons": "M4 4h16v16H4zM12 7.5l1.3 2.7 3 .4-2.2 2 .6 3-2.7-1.5-2.7 1.5.6-3-2.2-2 3-.4z", "#typography": "M4 19 9 5l5 14M6 14h6M15 19v-6a2.5 2.5 0 0 1 5 0v6M15 16h5", "#playground": "M4 6h16M4 12h16M4 18h16M8 4v4M15 10v4M10 16v4", "#assets": "M6 18a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM6 11a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM8 9.5l12 8M8 14.5l12-8", "ds/start.html": "M12 3 3 8l9 5 9-5zM3 13l9 5 9-5M3 18l9 5 9-5", "theme-kits.html": "M4 20 9 5l4 1.5-4.5 13.5zM9 19.5l7-12 3.5 2-7 12M12 20h8v-4", "interactions.html": "M9 11V5a1.5 1.5 0 0 1 3 0v5M12 10V8.5a1.5 1.5 0 0 1 3 0V11M15 10.5a1.5 1.5 0 0 1 3 0V15a6 6 0 0 1-6 6h-1a6 6 0 0 1-5-2.7L4.5 15a1.5 1.5 0 0 1 2.5-1.7L9 15", "page-builder.html": "M4 4h16v4H4zM4 10h10v4H4zM4 16h16v4H4zM16 10h4v4h-4z", "flowchart-studio.html": "M4 4h6v5H4zM14 15h6v5h-6zM14 4h6v5h-6zM7 9v4h10v2M17 9v6", "diagram-studio.html": "M4 6h10M4 12h14M4 18h7M4 3v18", "brand-generator.html": "M12 3l2.5 5.5L20 9.5l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-1z", "chart-styles.html": "M4 20h16M7 20v-7M11 20V8M15 20v-5M19 20V5", "chart-studio.html": "M4 4v16h16M8 15l3-4 3 2 5-6", "mockup-studio.html": "M7 3h10a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM10 18h4", "moodboard.html": "M4 4h7v9H4zM13 4h7v5h-7zM13 11h7v9h-7zM4 15h7v5H4z", "#projects": "M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z", "#inspiration": "M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.7.5 1 1.2 1 2.1h5c0-.9.3-1.6 1-2.1A6 6 0 0 0 12 3z", "#creations": "M14.5 4.5l5 5L9 20H4v-5zM12 7l5 5"};
+ const ICON={"#home": "M4 11 12 4l8 7M6 9.5V20h12V9.5M10 20v-5h4v5", "#browse": "M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z", "#tours": "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM15.5 8.5l-2 5-5 2 2-5z", "#compare": "M4 5h7v14H4zM13 5h7v14h-7zM7.5 9v6M16.5 9v6", "#references": "M5 4h10a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3zM5 17a3 3 0 0 1 3-3h10M9 8h5", "#art": "M12 3a9 9 0 1 0 0 18c1.2 0 1.8-.9 1.4-1.9-.5-1.2.3-2.3 1.6-2.3H17a4 4 0 0 0 4-4c0-5.2-4-9.8-9-9.8zM7.5 11.5h.01M10 7.5h.01M15 7.5h.01", "#cinema": "M3 5h18v14H3zM3 9h18M3 15h18M7 5v4M12 5v4M17 5v4M7 15v4M12 15v4M17 15v4", "#backgrounds": "M4 4h16v16H4zM4 15c3-3 5-3 8 0s5 3 8 0M4 10c3-3 5-3 8 0s5 3 8 0", "#vases": "M9 3h6M10 3v3c-3 2-4 5-4 8a6 6 0 0 0 12 0c0-3-1-6-4-8V3M7 13h10", "#pairings": "M9 15a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM15 19a5 5 0 1 0 0-10 5 5 0 0 0 0 10z", "#motion": "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM10 8.5v7l5.5-3.5z", "#effects": "M5 19 15 9M15 9l1.5-4.5L18 9l4.5 1.5L18 12l-1.5 4.5L15 12l-4.5-1.5z", "#showcase": "M4 6h16v12H4zM8 6v12M16 6v12M4 10h4M4 14h4M16 10h4M16 14h4", "particle-studio.html": "M6 6h.01M12 5h.01M18 7h.01M5 12h.01M10 11h.01M15 12h.01M19 13h.01M7 18h.01M13 17h.01M17 19h.01", "#systems": "M12 3 4 7.5v9L12 21l8-4.5v-9zM4 7.5 12 12l8-4.5M12 12v9", "#ux": "M4 7h10M18 7h2M14 5v4M4 17h4M12 17h8M8 15v4", "#icons": "M4 4h16v16H4zM12 7.5l1.3 2.7 3 .4-2.2 2 .6 3-2.7-1.5-2.7 1.5.6-3-2.2-2 3-.4z", "#typography": "M4 19 9 5l5 14M6 14h6M15 19v-6a2.5 2.5 0 0 1 5 0v6M15 16h5", "#playground": "M4 6h16M4 12h16M4 18h16M8 4v4M15 10v4M10 16v4", "#assets": "M6 18a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM6 11a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM8 9.5l12 8M8 14.5l12-8", "ds/start.html": "M12 3 3 8l9 5 9-5zM3 13l9 5 9-5M3 18l9 5 9-5", "theme-kits.html": "M4 20 9 5l4 1.5-4.5 13.5zM9 19.5l7-12 3.5 2-7 12M12 20h8v-4", "interactions.html": "M9 11V5a1.5 1.5 0 0 1 3 0v5M12 10V8.5a1.5 1.5 0 0 1 3 0V11M15 10.5a1.5 1.5 0 0 1 3 0V15a6 6 0 0 1-6 6h-1a6 6 0 0 1-5-2.7L4.5 15a1.5 1.5 0 0 1 2.5-1.7L9 15", "tools.html": "M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM15 13l5 3.5-5 3.5z", "page-builder.html": "M4 4h16v4H4zM4 10h10v4H4zM4 16h16v4H4zM16 10h4v4h-4z", "flowchart-studio.html": "M4 4h6v5H4zM14 15h6v5h-6zM14 4h6v5h-6zM7 9v4h10v2M17 9v6", "diagram-studio.html": "M4 6h10M4 12h14M4 18h7M4 3v18", "brand-generator.html": "M12 3l2.5 5.5L20 9.5l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-1z", "chart-styles.html": "M4 20h16M7 20v-7M11 20V8M15 20v-5M19 20V5", "chart-studio.html": "M4 4v16h16M8 15l3-4 3 2 5-6", "mockup-studio.html": "M7 3h10a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM10 18h4", "moodboard.html": "M4 4h7v9H4zM13 4h7v5h-7zM13 11h7v9h-7zM4 15h7v5H4z", "#projects": "M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z", "#inspiration": "M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.7.5 1 1.2 1 2.1h5c0-.9.3-1.6 1-2.1A6 6 0 0 0 12 3z", "#creations": "M14.5 4.5l5 5L9 20H4v-5zM12 7l5 5"};
  const svgIcon=h=>`<svg class="anIco" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="${ICON[h]||ICON['#browse']}"/></svg>`;
  const reduce=matchMedia('(prefers-reduced-motion: reduce)');
  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -67,9 +26,9 @@
  function build(){
   const header=document.querySelector('body>header');if(!header||header.querySelector('.anBar'))return;
   document.body.classList.add('anNav');
-  const menu=(name,cls,group)=>`<details class="navGroup anMenu ${cls}"><summary>${name}${icon.chev}</summary><div>${GROUPS.find(g=>g.name===group).items.map(i=>`<a href="${i[0]}"><b>${esc(i[1])}</b><span>${esc(i[2])}</span></a>`).join('')}</div></details>`;
+  const menu=(name,cls,group)=>`<details class="navGroup anMenu ${cls}"><summary>${name}${icon.chev}</summary><div>${GROUPS.find(g=>g.name===group).items.filter(i=>i[0]!=='tools.html').map(i=>`<a href="${i[0]}"><b>${esc(i[1])}</b><span>${esc(i[2])}</span></a>`).join('')}</div></details>`;
   const bar=document.createElement('div');bar.className='anBar';
-  bar.innerHTML=`<button type="button" class="anLibBtn" aria-haspopup="dialog" aria-controls="anDrawer">${icon.menu}<span>Library</span></button>${menu('Make','anMake','Make')}${menu('Your studio','anStudio','Your studio')}`;
+  bar.innerHTML=`<button type="button" class="anLibBtn" aria-haspopup="dialog" aria-controls="anDrawer">${icon.menu}<span>Library</span></button>${menu('Make','anMake','Make')}${menu('Your studio','anStudio','Your studio')}<a class="anToolsLink" href="tools.html">All tools</a>`;
   const brand=header.querySelector('.brand');(brand||header.firstElementChild).insertAdjacentElement('afterend',bar);
 
   const d=document.createElement('dialog');d.id='anDrawer';d.className='anDrawer';d.setAttribute('aria-label','Library');

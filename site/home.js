@@ -52,10 +52,10 @@ window.HomeAtlas={
  </footer>
 </section>
 
-<nav class="vmaInner vmaIndex" aria-label="Atlas sections"><span class="vmaLabel">Browse the atlas</span><a href="#systems">Design systems</a><a href="#motion">Animation studio</a><a href="#art">Art &amp; graphics</a><a href="#ux">UI components</a><a href="#typography">Typography</a><a href="#effects">Landing effects</a><a href="interactions.html">Interactions shelf</a><a href="page-builder.html">Page builder</a></nav>
+<nav class="vmaInner vmaIndex" aria-label="Atlas sections"><span class="vmaLabel">Browse the atlas</span><a href="#systems">Design systems</a><a href="#motion">Animation studio</a><a href="#art">Art &amp; graphics</a><a href="#ux">UI components</a><a href="#typography">Typography</a><a href="#effects">Landing effects</a><a href="interactions.html">Interactions shelf</a><a href="page-builder.html">Site builder</a><a href="tools.html">All tools</a></nav>
 
 <section class="vmaInner vmaSection" style="--c:var(--mint)">
- <div class="vmaSectionHead"><div><p class="vmaLabel vmaLabelC">Design systems &middot; 32 worlds</p><h2>Different worlds.<br><em>One creative library.</em></h2></div><p>Original concepts, coordinated materials and individual assets. Go from a whole visual world to the detail that makes it work.</p></div>
+ <div class="vmaSectionHead"><div><p class="vmaLabel vmaLabelC">Design systems &middot; 48 worlds</p><h2>Different worlds.<br><em>One creative library.</em></h2></div><p>Original concepts, coordinated materials and individual assets. Go from a whole visual world to the detail that makes it work.</p></div>
  <div class="vmaPlates3">${plate('D31','4bb6531f690e.jpg',0,100,'Nexus','Electric / dimensional')}${plate('D26','d1bd34fc70f4.jpg',100,0,'Palette','Colour / expressive')}${plate('D32','4bb6531f690e.jpg',100,100,'Terralux','Precision / scientific')}</div>
  <a class="vmaTextLink" href="#systems">Explore every design system <span aria-hidden="true">&rarr;</span></a>
 </section>
@@ -64,7 +64,7 @@ window.HomeAtlas={
  <div class="vmaInner vmaMotionGrid">
   <div class="vmaKinetic" aria-hidden="true"><canvas id="vmaEpicycle" width="560" height="560"></canvas></div>
   <div class="vmaMotionCopy">
-   <p class="vmaLabel vmaLabelC">Animation studio &middot; 60 studies</p>
+   <p class="vmaLabel vmaLabelC">Animation studio &middot; 74 studies</p>
    <h2 id="homeMotionTitle">See how<br><em>an idea moves.</em></h2>
    <p>Play graphic animations and interface transitions. Slow them down, change the timing and explore the mechanics behind the movement.</p>
    <div class="vmaActions"><a class="vmaBtn vmaBtnPrimary" href="#motion">Enter the animation studio <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5"/></svg></a><a class="vmaBtn vmaBtnGhost" href="#effects">Try landing effects</a></div>
@@ -73,12 +73,10 @@ window.HomeAtlas={
  </div>
 </section>
 
-<section class="vmaInner vmaSection vmaBuildSec" style="--c:var(--gold)">
- <div class="vmaSectionHead"><div><p class="vmaLabel vmaLabelC">Build with it &middot; copy, stack, ship</p><h2>Take it home.<br><em>One file at a time.</em></h2></div><p>Every interaction, scroll story and page section is a single HTML file you can copy. Or stack sections into a whole page, pick a style, write your words and download it.</p></div>
- <div class="vmaBuild">
-  <a class="vmaBuildCard" href="interactions.html"><span class="vmaBuildImg"><img src="assets/films/golden-dove.jpg" alt="" loading="lazy" width="1920" height="1288"></span><span class="vmaBuildTxt"><span class="vmaLabel">Interactions shelf &middot; 70 pieces</span><b>Showpieces, stories and sections</b><span>Card decks, carousels, scroll reveals, four film-led scroll stories and eight page sections, each with code and an AI build prompt.</span></span></a>
-  <a class="vmaBuildCard" href="page-builder.html"><span class="vmaBuildImg"><img src="assets/films/paper-bird.jpg" alt="" loading="lazy" width="1920" height="1288"></span><span class="vmaBuildTxt"><span class="vmaLabel">Page builder &middot; 44 sections, 144 styles</span><b>Stack a page and download it</b><span>Film heroes, features, proof, pricing, contact and a footer. Edit the words, switch styles, then export one HTML file or a prompt.</span></span></a>
- </div>
+<section class="vmaInner vmaSection vmaBuildSec" id="vmaToolsSec" style="--c:var(--gold)">
+ <div class="vmaSectionHead"><div><p class="vmaLabel vmaLabelC" id="vmaToolsLabel">Tools &middot; make with it</p><h2>Take it home.<br><em>Then make something.</em></h2></div><p>Build a whole site, a brand kit, a chart, a diagram or a share image from the atlas&rsquo;s styles, kits and assets. Every tool hands its work to the next, and everything saves to your projects.</p></div>
+ <div class="vmaBuild vmaTools" id="vmaTools"></div>
+ <a class="vmaTextLink" href="tools.html">See all tools <span aria-hidden="true">&rarr;</span></a>
 </section>
 
 <section class="vmaInner vmaSection" style="--c:var(--ice)">
@@ -95,6 +93,12 @@ window.HomeAtlas={
 <footer class="vmaInner vmaFooter"><span>Visual &amp; Motion Atlas</span><a href="#inspiration">Your inspiration library &rarr;</a><a href="#home?film" id="vmaBackToFilm">Back to the film &uarr;</a></footer>
 </div>`;
  document.getElementById('main').prepend(section);
+ /* the tools shelf comes from the shared registry (tools-data.js), with numbers from counts.json */
+ (()=>{const T=window.ATLAS_TOOLS,box=section.querySelector('#vmaTools');if(!T||!box)return;
+  const pick=['site-builder','brand-generator','mockup-studio','chart-studio','diagram-studio','flowchart-studio','moodboard','interactions'].map(id=>T.list.find(t=>t.id===id)).filter(Boolean);
+  const esc=x=>String(x).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const draw=c=>{box.innerHTML=pick.map(t=>`<a class="vmaBuildCard" href="${esc(t.href)}"><span class="vmaBuildImg"><img src="${esc(T.thumb(t))}" alt="" loading="lazy" width="640" height="400"></span><span class="vmaBuildTxt"><span class="vmaLabel">${esc(t.group==='Your studio'?'Your studio':'Make')}</span><b>${esc(t.name)}</b><span>${esc(T.fill(t.blurb,c))}</span></span></a>`).join('');};
+  draw(T.fallback);T.counts().then(draw);})();
  // the Genesis poster waits for the scene switcher to ask for it; without the switcher it loads straight away
  // (checked once every script has run: a plain timeout can fire while the switcher is still downloading)
  const genesisArt=()=>{if(!window.AtlasMotion)section.querySelectorAll('#vmaFilm [data-src]').forEach(el=>{el.src=el.dataset.src;el.removeAttribute('data-src');});};

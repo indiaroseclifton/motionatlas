@@ -112,7 +112,7 @@
   d.innerHTML=`<div class="dhead"><div><h2 id="dName" tabindex="-1">${esc(i.n)}</h2><p>${esc(f.title)} · ${png?'PNG 192 px':'SVG'}</p></div><button type="button" class="x" data-close aria-label="Close details">${svgI('x')}</button></div>
    <div class="stage" style="--ds:${Math.max(64,size*2)}px;color:${S.colour}">${png?`<img src="${esc(i.f)}" alt="${esc(i.n.replace(/-/g,' '))}" width="140" height="140">`:i.s.replace('<svg',`<svg role="img" aria-label="${esc(i.n.replace(/-/g,' '))}"`)}</div>
    <div class="acts">${png?`<button type="button" class="btn" data-act="html">${svgI('copy')}Copy &lt;img&gt;</button><button type="button" class="btn ghost" data-act="name">${svgI('copy')}Copy name</button><button type="button" class="btn ghost wide" data-act="png">${svgI('down')}Download PNG</button>`
-   :`<button type="button" class="btn" data-act="svg">${svgI('copy')}Copy SVG</button><button type="button" class="btn ghost" data-act="jsx">${svgI('copy')}Copy JSX</button><button type="button" class="btn ghost" data-act="name">${svgI('copy')}Copy name</button><button type="button" class="btn ghost" data-act="dl">${svgI('down')}Download SVG</button>`}</div>
+   :`<button type="button" class="btn" data-act="svg">${svgI('copy')}Copy SVG</button><button type="button" class="btn ghost" data-act="jsx">${svgI('copy')}Copy JSX</button><button type="button" class="btn ghost" data-act="name">${svgI('copy')}Copy name</button><button type="button" class="btn ghost" data-act="dl">${svgI('down')}Download SVG</button><button type="button" class="btn ghost wide" data-act="fav">${svgI('copy')}Use as favicon in the Site builder</button>`}</div>
    ${png?'':`<pre class="code" tabindex="0" aria-label="SVG code">${esc(sized(i,size))}</pre>`}
    ${kws.length?`<div><p class="dl">Also found by</p><div class="kw">${kws.map(w=>`<button type="button" data-kw="${esc(w)}">${esc(w)}</button>`).join('')}</div></div>`:''}
    <p class="dl">${esc(f.licence)} · ${esc(f.source)}${f.id==='openmoji'?' · credit “OpenMoji, CC BY-SA 4.0”':''}. Copies are ${size} px${!png&&f.monochrome?(S.bake?` in ${S.colour}`:' in currentColor'):''}.</p>`;
@@ -128,6 +128,7 @@
   else if(a==='name')copy(i.n,'Name');
   else if(a==='dl'){download(`${i.n}.svg`,new Blob([sized(i,size)+'\n'],{type:'image/svg+xml'}));toast(`${i.n}.svg downloaded`);}
   else if(a==='html')copy(`<img src="${new URL(i.f,location.href).href}" alt="${i.n.replace(/-/g,' ')}" width="${size}" height="${size}">`,'HTML');
+  else if(a==='fav'){try{localStorage.setItem('atlas-pb-favicon-handoff',JSON.stringify({set:f.id,name:i.n}));toast('Opening the Site builder…');location.href='page-builder.html?favicon=1'}catch{toast('Could not hand the icon over: storage is blocked.')}}
   else if(a==='png'){try{const r=await fetch(i.f);download(`${i.n}.png`,await r.blob());toast(`${i.n}.png downloaded`);}catch{toast('Download failed. Try again.');}}
  }
 

@@ -13,7 +13,8 @@ body.anNav>header{flex-wrap:nowrap;row-gap:0;padding-bottom:12px}
 .anMenu.anHere summary{color:#fff;box-shadow:inset 0 -2px 0 #fde68a}
 .anMenu summary svg{width:10px;height:10px;transition:transform .2s}
 .anMenu[open] summary svg{transform:rotate(180deg)}
-.anMenu>div{position:absolute;top:calc(100% + 8px);left:0;z-index:60;display:grid;gap:2px;width:min(330px,80vw);padding:8px;border-radius:16px;background:#0d111b;border:1px solid rgba(190,210,240,.16);box-shadow:0 24px 60px -20px rgba(0,0,0,.7)}
+.anToolsLink{display:inline-flex;align-items:center;min-height:40px;padding:0 12px;border-radius:999px;color:#c9d3e3;font:500 14px/1 "Manrope",system-ui,sans-serif;text-decoration:none;white-space:nowrap}.anToolsLink:hover{color:#fff;background:rgba(255,255,255,.07)}.anToolsLink:focus-visible{outline:2px solid #fde68a;outline-offset:3px}
+.anMenu>div{max-height:calc(100vh - 90px);overflow:auto;position:absolute;top:calc(100% + 8px);left:0;z-index:60;display:grid;gap:2px;width:min(330px,80vw);padding:8px;border-radius:16px;background:#0d111b;border:1px solid rgba(190,210,240,.16);box-shadow:0 24px 60px -20px rgba(0,0,0,.7)}
 .anMenu>div a{display:grid;gap:2px;padding:10px 12px;border-radius:10px;text-decoration:none;color:#e8edf5}
 .anMenu>div a:hover,.anMenu>div a.active{background:rgba(255,255,255,.07)}
 .anMenu>div a b{font:600 14px/1.25 "Manrope",system-ui,sans-serif}
