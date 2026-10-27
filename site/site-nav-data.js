@@ -43,6 +43,7 @@ window.ATLAS_NAV_GROUPS=[
    ['#projects','My projects','Save specimens into boards for a client or idea.','particle-tree'],
    ['moodboard.html','Moodboards','A free canvas: pin styles, kits, colours and pictures, then make a style.','embroidery'],
    ['#inspiration','Inspiration','Your own uploads and references, kept together.','embroidery'],
+   ['my-fonts.html','My fonts','Fonts you own, kept in this browser and never uploaded.','embroidery'],
    ['#creations','Your creations','Things you have made and exported here.','pigment-bloom'],
    ['account.html','Account','Sign in, and keep your projects on every device.','particle-tree']]}
 ];
@@ -61,5 +62,5 @@ window.ATLAS_NAV_MENUS=[
   {name:'Charts & diagrams',items:['chart-studio.html','diagram-studio.html','flowchart-studio.html']},
   {name:'Motion & interaction',items:['particle-studio.html','interactions.html']}]},
  {id:'studio',name:'Your studio',groups:[
-  {name:'',items:['#projects','moodboard.html','#inspiration','#creations','account.html']}]}
+  {name:'',items:['#projects','moodboard.html','#inspiration','my-fonts.html','#creations','account.html']}]}
 ];
