@@ -154,7 +154,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
   <div class="sec"><h2>Headline and caption</h2>
    <label class="f"><span>Headline</span><textarea id="msHead" rows="2" maxlength="140"></textarea></label>
    <label class="f"><span>Caption</span><textarea id="msCap" rows="2" maxlength="220"></textarea></label>
-   <div class="g2"><label class="f"><span>Font</span><select id="msFont"><option>Inter</option><option>Manrope</option><option>Space Grotesk</option><option>Bricolage Grotesque</option><option>Fraunces</option><option>DM Serif Display</option><option>Playfair Display</option><option>Cormorant Garamond</option><option>Archivo Black</option><option>JetBrains Mono</option></select></label>
+   <div class="g2"><label class="f"><span>Font</span><select id="msFont"><option>Inter</option><option>Manrope</option><option>Space Grotesk</option><option>Bricolage Grotesque</option><option>Fraunces</option><option>DM Serif Display</option><option>Playfair Display</option><option>Cormorant Garamond</option><option>Archivo Black</option><option>JetBrains Mono</option></select></label><label class="f"><span>Caption font</span><select id="msCapFont"><option>Inter</option><option>Manrope</option><option>Space Grotesk</option><option>JetBrains Mono</option></select></label>
     <label class="f"><span>Size</span><input type="range" id="msTSize" min=".5" max="1.8" step=".05"></label></div>
    <div class="g2"><label class="f"><span>Position</span><select id="msTPos"><option value="auto">Auto for each size</option><option value="top">Above</option><option value="bottom">Below</option><option value="left">Left</option><option value="right">Right</option></select></label>
     <label class="f"><span>Align</span><select id="msTAlign"><option value="auto">Auto</option><option value="left">Left</option><option value="center">Centre</option><option value="right">Right</option></select></label></div>
@@ -186,7 +186,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 </div>
 <div id="msOffscreen" aria-hidden="true"></div>
 <div class="toast" id="msToast" role="status" aria-live="polite"></div>
-<script src="backgrounds.js"></script>
+<script src="fontlib.js"></script><script src="backgrounds.js"></script>
 <script src="builder/zip.js"></script>
 <script src="mockup/handoff.js"></script>
 <script src="mockup/devices.js"></script>

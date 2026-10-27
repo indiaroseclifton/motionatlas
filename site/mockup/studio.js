@@ -23,7 +23,7 @@ const SITE_PAGES=[['atlas.html#home','Atlas home'],['atlas.html#browse','Catalog
 const DEF={preset:'og',custom:[1500,1000],frame:'browser',color:'black',chrome:'light',url:'yourproduct.com',fit:'top',orient:'auto',
  bg:{type:'atlas',atlas:'velvet-0',solid:'#EEF0F6',g:['#5B2DFF','#FF7AC6','#FFD27A'],gType:'linear',angle:135,kit:'',kitStyle:'glow',dim:.25,blur:0,grain:.03},
  lay:{scale:1,rotate:0,tiltX:0,tiltY:0,pad:.08,shadow:.55,offX:0,offY:0},
- text:{head:'Your product, framed',cap:'Made with the Visual & Motion Atlas',font:'Inter',size:1,color:'auto',pos:'auto',align:'auto'},
+ text:{head:'Your product, framed',cap:'Made with the Visual & Motion Atlas',font:'Inter',capFont:'Inter',size:1,color:'auto',pos:'auto',align:'auto'},
  badge:{text:'',pos:'above',color:'#5B2DFF'},logo:{pos:'br',size:.1},
  out:{fmt:'png',q:.92,pick:PRESETS.map(p=>p[0])}};
 const clone=o=>JSON.parse(JSON.stringify(o));
@@ -110,10 +110,14 @@ function warp(x,img,cx,cy,dw,dh,rx,ry,rz,N){const P=project(dw,dh,cx,cy,rx,ry,rz
   tri(x,img,s(i,j),s(i+1,j),s(i,j+1),pts[j][i],pts[j][i+1],pts[j+1][i]);tri(x,img,s(i+1,j),s(i+1,j+1),s(i,j+1),pts[j][i+1],pts[j+1][i+1],pts[j+1][i])}}
 
 /* ---------- words ---------- */
-function fontFor(){const k=S.bg.type==='kit'&&kit();if(S.text.font==='kit'&&k)return {fam:k.fonts.head,w:k.hw||700};const f=FONTS.find(f=>f[0]===S.text.font)||FONTS[0];return {fam:`'${f[0]}', system-ui, sans-serif`,w:f[1]}}
+/* My fonts (kept in this browser, see fontlib.js): select value 'my:Family' */
+const MFx=()=>window.MyFonts||null,isMine=v=>typeof v==='string'&&v.startsWith('my:')&&!!(MFx()&&MFx().has(v.slice(3)));
+function capFam(){return isMine(S.text.capFont)?MFx().cssFamily(S.text.capFont.slice(3)):'Inter, system-ui, sans-serif'}
+function mineFill(){const M=MFx();if(!M)return;for(const id of ['msFont','msCapFont']){const sel=$(id);if(!sel)continue;const keep=sel.value;sel.querySelectorAll('optgroup[data-myfonts]').forEach(g=>g.remove());M.optgroup(sel,{prefix:'my:',always:true});const v=id==='msFont'?S.text.font:S.text.capFont;if([...sel.options].some(o=>o.value===v))sel.value=v}}
+function fontFor(){if(isMine(S.text.font)){const n=S.text.font.slice(3);return {fam:MFx().cssFamily(n),w:MFx().faceFor(n,700).weight}}const k=S.bg.type==='kit'&&kit();if(S.text.font==='kit'&&k)return {fam:k.fonts.head,w:k.hw||700};const f=FONTS.find(f=>f[0]===S.text.font)||FONTS[0];return {fam:`'${f[0]}', system-ui, sans-serif`,w:f[1]}}
 function wrap(x,t,max){const out=[];for(const para of String(t).split('\n')){let line='';for(const w of para.split(/\s+/).filter(Boolean)){const tryL=line?line+' '+w:w;if(x.measureText(tryL).width>max&&line){out.push(line);line=w}else line=tryL}out.push(line)}return out.filter((l,i,a)=>l||a.length===1)}
 function textBlock(x,maxW,m,scale=1){const F=fontFor(),hs=m*.082*S.text.size*scale,cs=Math.max(11,hs*.4);const head=S.text.head.trim(),cap=S.text.cap.trim();
- x.font=`${F.w} ${hs}px ${F.fam}`;const hl=head?wrap(x,head,maxW).slice(0,4):[];x.font=`500 ${cs}px Inter, system-ui, sans-serif`;const cl=cap?wrap(x,cap,maxW).slice(0,4):[];
+ x.font=`${F.w} ${hs}px ${F.fam}`;const hl=head?wrap(x,head,maxW).slice(0,4):[];x.font=`500 ${cs}px ${capFam()}`;const cl=cap?wrap(x,cap,maxW).slice(0,4):[];
  const bt=S.badge.text.trim()&&S.badge.pos==='above'?cs*2.1:0;
  const h=bt+hl.length*hs*1.08+(hl.length&&cl.length?hs*.35:0)+cl.length*cs*1.4;return {F,hs,cs,hl,cl,h,bt}}
 function autoColor(c,r){const t=canvas(8,8),g=t.getContext('2d');g.drawImage(c,Math.max(0,r.x),Math.max(0,r.y),Math.max(1,r.w),Math.max(1,r.h),0,0,8,8);const d=g.getImageData(0,0,8,8).data;let L=0;for(let i=0;i<d.length;i+=4)L+=lumRGB([d[i],d[i+1],d[i+2]]);L/=64;return L>.38?['#111318','rgba(17,19,24,.72)']:['#FFFFFF','rgba(255,255,255,.82)']}
@@ -147,7 +151,7 @@ function compose(W,H,{mesh=14}={}){
   if(tb.bt){badge(x,ax,y,tb.cs,align);y+=tb.bt}
   x.textAlign=align;x.textBaseline='top';x.fillStyle=ink;x.font=`${tb.F.w} ${tb.hs}px ${tb.F.fam}`;
   for(const l of tb.hl){x.fillText(l,ax,y);y+=tb.hs*1.08}if(tb.hl.length&&tb.cl.length)y+=tb.hs*.35;
-  x.fillStyle=mute;x.font=`500 ${tb.cs}px Inter, system-ui, sans-serif`;for(const l of tb.cl){x.fillText(l,ax,y);y+=tb.cs*1.4}}
+  x.fillStyle=mute;x.font=`500 ${tb.cs}px ${capFam()}`;for(const l of tb.cl){x.fillText(l,ax,y);y+=tb.cs*1.4}}
  /* corner badge and logo */
  const corner=(p,w,h)=>{const e=pad*.55;return [p[1]==='l'?e:W-e-w,p[0]==='t'?e:H-e-h]};
  if(S.badge.text.trim()&&S.badge.pos!=='above'){const cs=m*.03;x.font=`700 ${cs*.86}px Inter, system-ui, sans-serif`;const w=x.measureText(S.badge.text.trim()).width+cs*1.4,h=cs*1.7,[bx,by]=corner(S.badge.pos,w,h);badge(x,bx,by,cs,'left')}
@@ -175,7 +179,7 @@ function bind(){
  on('msBgSolid',e=>S.bg.solid=e.value);[0,1,2].forEach(i=>on('msG'+i,e=>S.bg.g[i]=e.value));on('msGType',e=>S.bg.gType=e.value,'change');on('msAngle',e=>S.bg.angle=+e.value);
  on('msKit',e=>{S.bg.kit=e.value;fontsForKit()},'change');on('msKitStyle',e=>S.bg.kitStyle=e.value,'change');on('msDim',e=>S.bg.dim=+e.value);on('msBlur',e=>S.bg.blur=+e.value);on('msGrain',e=>S.bg.grain=+e.value);
  [['msScale','scale'],['msRotate','rotate'],['msTiltX','tiltX'],['msTiltY','tiltY'],['msPad','pad'],['msShadow','shadow'],['msOffX','offX'],['msOffY','offY']].forEach(([id,k])=>on(id,e=>{S.lay[k]=+e.value;out(id)}));
- on('msHead',e=>S.text.head=e.value.slice(0,140));on('msCap',e=>S.text.cap=e.value.slice(0,220));on('msFont',e=>{S.text.font=e.value;fontsReady().then(draw)},'change');on('msTSize',e=>S.text.size=+e.value);
+ on('msHead',e=>S.text.head=e.value.slice(0,140));on('msCap',e=>S.text.cap=e.value.slice(0,220));on('msFont',e=>{if(e.value==='__upload_fonts'){e.value=S.text.font;MFx().openDialog();return}S.text.font=e.value;fontsReady().then(draw)},'change');on('msCapFont',e=>{if(e.value==='__upload_fonts'){e.value=S.text.capFont;MFx().openDialog();return}S.text.capFont=e.value;fontsReady().then(draw)},'change');on('msTSize',e=>S.text.size=+e.value);
  on('msTPos',e=>S.text.pos=e.value,'change');on('msTAlign',e=>S.text.align=e.value,'change');on('msTColorAuto',e=>{S.text.color=e.checked?'auto':$('msTColor').value;sync()},'change');on('msTColor',e=>{if(S.text.color!=='auto')S.text.color=e.value});
  on('msBadge',e=>S.badge.text=e.value.slice(0,40));on('msBadgePos',e=>S.badge.pos=e.value,'change');on('msBadgeColor',e=>S.badge.color=e.value);on('msLogoPos',e=>S.logo.pos=e.value,'change');on('msLogoSize',e=>S.logo.size=+e.value);
  on('msCW',e=>{S.custom[0]=Math.max(64,Math.min(4096,+e.value||1200));buildStrip()},'change');on('msCH',e=>{S.custom[1]=Math.max(64,Math.min(4096,+e.value||630));buildStrip()},'change');
@@ -209,7 +213,7 @@ function sync(){
  const set=(id,v)=>{const el=$(id);if(el)el.value=v};set('msFrame',S.frame);set('msColor',S.color);set('msChrome',S.chrome);set('msUrl',S.url);set('msFit',S.fit);set('msOrient',S.orient);
  set('msBgType',S.bg.type);set('msBgSolid',S.bg.solid);[0,1,2].forEach(i=>set('msG'+i,S.bg.g[i]));set('msGType',S.bg.gType);set('msAngle',S.bg.angle);set('msKit',S.bg.kit);set('msKitStyle',S.bg.kitStyle);set('msDim',S.bg.dim);set('msBlur',S.bg.blur);set('msGrain',S.bg.grain);
  [['msScale','scale'],['msRotate','rotate'],['msTiltX','tiltX'],['msTiltY','tiltY'],['msPad','pad'],['msShadow','shadow'],['msOffX','offX'],['msOffY','offY']].forEach(([id,k])=>{set(id,S.lay[k]);out(id)});
- set('msHead',S.text.head);set('msCap',S.text.cap);set('msFont',S.text.font);set('msTSize',S.text.size);set('msTPos',S.text.pos);set('msTAlign',S.text.align);$('msTColorAuto').checked=S.text.color==='auto';$('msTColor').disabled=S.text.color==='auto';if(S.text.color!=='auto')set('msTColor',S.text.color);
+ set('msHead',S.text.head);set('msCap',S.text.cap);mineFill();set('msFont',S.text.font);set('msCapFont',S.text.capFont||'Inter');set('msTSize',S.text.size);set('msTPos',S.text.pos);set('msTAlign',S.text.align);$('msTColorAuto').checked=S.text.color==='auto';$('msTColor').disabled=S.text.color==='auto';if(S.text.color!=='auto')set('msTColor',S.text.color);
  set('msBadge',S.badge.text);set('msBadgePos',S.badge.pos);set('msBadgeColor',S.badge.color);set('msLogoPos',S.logo.pos);set('msLogoSize',S.logo.size);set('msCW',S.custom[0]);set('msCH',S.custom[1]);set('msFmt',S.out.fmt);set('msQ',S.out.q);
  const f=S.frame;$('msColorRow').hidden=!['phone','classic','tablet','laptop','watch','combo'].includes(f);$('msChromeRow').hidden=f!=='browser';$('msOrientRow').hidden=f!=='tablet';$('msSecondRow').hidden=f!=='combo';
  document.querySelectorAll('[data-bg]').forEach(el=>el.hidden=!el.dataset.bg.split(' ').includes(S.bg.type));
@@ -249,7 +253,7 @@ async function zipAll(){const ids=S.out.pick.slice();if(!ids.length)return;const
  catch(e){status('The ZIP could not be built: '+(e.message||e))}finally{btn.disabled=false}}
 
 /* ---------- fonts and kits ---------- */
-function fontsReady(){const F=fontFor(),fam=F.fam;return Promise.race([Promise.all([document.fonts.load(`${F.w} 40px ${fam}`),document.fonts.load('500 20px Inter'),document.fonts.load('700 20px Inter')]).catch(()=>{}),new Promise(r=>setTimeout(r,2500))])}
+function fontsReady(){const F=fontFor(),fam=F.fam;return Promise.race([Promise.all([document.fonts.load(`${F.w} 40px ${fam}`),document.fonts.load(`500 20px ${capFam()}`),document.fonts.load('500 20px Inter'),document.fonts.load('700 20px Inter')]).catch(()=>{}),new Promise(r=>setTimeout(r,2500))])}
 let kitsP=null;
 function script(src){return new Promise((res,rej)=>{if(document.querySelector(`script[src="${src}"]`))return res();const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=()=>rej(Error('Could not load '+src));document.head.append(s)})}
 function loadKits(){return kitsP||(kitsP=(async()=>{try{for(const f of ['kits/themes.js','kits/kits-a.js','kits/kits-b.js'])await script(f)}catch{toast('Theme kits could not be loaded.');return}
@@ -266,7 +270,7 @@ async function start(){SAMPLE=sample(false);SAMPLE_M=sample(true);
  if(S.bg.type==='kit'||S.text.font==='kit')loadKits();
  try{title=localStorage.getItem('atlas-mockup-title')||''}catch{}
  for(const k of ['main','second','logo','bg']){try{const b=await kv('readonly',s=>s.get(k));if(b)IMG[k]=await blobImg(b)}catch{}}
- sync();draw();fontsReady().then(draw);
+ sync();draw();fontsReady().then(draw);if(window.MyFonts)MyFonts.on(()=>{mineFill();fontsReady().then(draw)});
  const q=new URLSearchParams(location.search);
  if(q.get('from')&&window.MockupHandoff){const v=await MockupHandoff.receive();if(v){if(v.title&&S.text.head===DEF.text.head)S.text.head=v.title;
   if(v.blob){if(['phone','classic','watch'].includes(S.frame))S.frame='card';await setImage('main',v.blob,v.title||'From '+v.from);toast('Picture received from the '+(v.from||'studio'));}

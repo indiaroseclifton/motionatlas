@@ -104,6 +104,11 @@ function fill(str,blk,A){const d=def(blk.id),keys=new Set(fieldsOf(d).map(f=>f.k
 const AT='\u0001A/';
 const cache={cl:null,ix:{}};
 let CTX=null;
+/* ---- my fonts (kept in the visitor's browser; see fontlib.js) ---- */
+const MINE={zip:false,pub:false};
+const MF=()=>window.MyFonts||null;
+const mineUsed=txt=>{const M=MF();return M&&txt?M.list().map(f=>f.family).filter(n=>txt.includes("'"+n+"'")):[]};
+const pairOf=pg=>{const p=pg.pair;if(typeof p==='string'&&/^my[hba]:/.test(p)){const k=p[2],n=p.slice(4),cur=PB.styles.get(pg.style);return ['My font: '+n,k==='b'?cur.head:n,k==='h'?cur.body:n]}return p>=0?LIB.pairs[p]:null};
 const newAcc=()=>({css:new Map(),fonts:new Set(),files:new Map()});
 let pubBase='';
 const pageHrefFor=mode=>p=>mode==='preview'?'#pb-page:'+p.id:(mode==='zip'?pubBase:'')+S.pageFile(site,p);
@@ -124,7 +129,7 @@ const buildCSS=(st,acc)=>':root{'+st.vars+'}\n'+(st.face||'')+LIB.base+'.h{text-
 const fontURLOf=acc=>acc.fonts.size?'https://fonts.googleapis.com/css2?'+[...acc.fonts].join('&')+'&display=swap':'';
 function compose(mode,pg,acc,opt){ // mode: preview | html | zip  -> parts for one page (header + page + footer). acc shares css/fonts/files between pages.
  pg=pg||curPage();acc=acc||newAcc();
- const base=mode==='preview'?ABS:SITE;const pair=page.pair>=0?LIB.pairs[page.pair]:null;
+ const base=mode==='preview'?ABS:SITE;const pair=pairOf(page);
  const st=withTokens(PB.styles.resolve(page.style,pair,base),acc);
  const css=acc.css,fonts=acc.fonts,files=acc.files,needs=new Map(),body=[],js=[];
  (st.fonts||'').split('&').filter(Boolean).forEach(f=>fonts.add(f));
@@ -176,6 +181,10 @@ function anchors(html,blk,mode){let i=0;return html.replace(/<a\s([^>]*)>/g,(m,a
 const dcache=new Map();
 function upURL(id,mode,acc){if(mode==='preview')return PB.images.url(id);if(mode==='zip'){(acc.uploads=acc.uploads||new Set()).add(id);return pubBase+'assets/uploads/'+id+'.'+PB.images.ext(id)}return dcache.get(id)||''}
 const ogURL=v=>!v?'':/^(https?:|data:)/.test(v)?v:SITE+'assets/'+v.replace(/^\/+/,'');
+function mineHead(P){const used=mineUsed(P.cssText),M=MF();if(!used.length)return '';
+ if(P.mode==='preview')return `<style id="pb-myfonts">${M.fontFaceCSSSync(used,{mode:'blob'})}</style>`;
+ if(P.mode==='html'&&MINE.zip)return `<style id="pb-myfonts">${M.fontFaceCSSSync(used,{mode:'base64'})}</style>`;
+ return `\n<!-- Fonts: this page uses your own font${used.length>1?'s':''} (${used.join(', ')}). The font files are not included. Bring your own font files: place them in a /fonts folder and add @font-face rules for them. -->`}
 function assemble(P,opt={}){ // opt: {cssHref, jsHref, clSrc, clInline, favHref, canonical, title}
  const pg=P.pg,stg=site.settings,pre=P.mode==='preview',home=pg.id===site.home;
  const title=opt.title||pg.title||(home?(site.brand||pg.name):pg.name+' · '+(site.brand||''));
@@ -183,7 +192,7 @@ function assemble(P,opt={}){ // opt: {cssHref, jsHref, clSrc, clInline, favHref,
  let head=`<!doctype html>\n<html lang="${esc(stg.lang||'en')}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">\n<title>${esc(title)}</title>\n`;
  if(!pre){head+=(desc?`<meta name="description" content="${esc(desc)}">\n`:'')+`<meta property="og:title" content="${esc(title)}">\n<meta property="og:type" content="website">\n<meta property="og:site_name" content="${esc(site.brand||'')}">\n`+(desc?`<meta property="og:description" content="${esc(desc)}">\n`:'')+(og?`<meta property="og:image" content="${esc(og)}">\n<meta name="twitter:card" content="summary_large_image">\n`:'<meta name="twitter:card" content="summary">\n')+(pg.noindex?'<meta name="robots" content="noindex">\n':'')+(opt.canonical?`<link rel="canonical" href="${esc(opt.canonical)}">\n<meta property="og:url" content="${esc(opt.canonical)}">\n`:'')+(opt.favHref?`<link rel="icon" href="${esc(opt.favHref)}" type="image/svg+xml">\n`:'')+(opt.feedHref&&S.posts(site).length?`<link rel="alternate" type="application/rss+xml" title="${esc(site.brand||site.name)}" href="${esc(opt.feedHref)}">\n`:'')}
  head+=(P.fontURL?`<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link rel="stylesheet" href="${P.fontURL}">\n`:'')+
-  (pre?'':`<!-- Built with the Visual & Motion Atlas site builder. Style: ${esc(P.st.style.name)}. -->\n`)+(opt.cssHref?`<link rel="stylesheet" href="${opt.cssHref}">`:`<style>\n${P.cssText}\n</style>`)+(!pre&&stg.analytics?'\n'+stg.analytics+'\n':'')+'</head><body>\n';
+  (pre?'':`<!-- Built with the Visual & Motion Atlas site builder. Style: ${esc(P.st.style.name)}. -->\n`)+(opt.cssHref?`<link rel="stylesheet" href="${opt.cssHref}">`:`<style>\n${P.cssText}\n</style>`)+mineHead(P)+(!pre&&stg.analytics?'\n'+stg.analytics+'\n':'')+'</head><body>\n';
  let scripts='';
  if(P.cl){scripts+=opt.clInline?`<script>${opt.clInline.replace(/<\/script/gi,'<\\/script')}<\/script>\n`:`<script src="${opt.clSrc||SITE+'component-lab.js'}"><\/script>\n`;
   scripts+=`<script>/* wake the component behaviours */document.body.appendChild(document.createElement('span')).hidden=true;<\/script>\n`}
@@ -526,6 +535,8 @@ function badge(n){const b=$('#chkBadge');if(!b)return;b.textContent=n;b.dataset.
 $('#chkBtn').onclick=()=>{showPane('page');rtab('check')};
 $('#chkRun').onclick=runCheck;
 /* ---------- site tokens ---------- */
+function mineOpts(){const M=MF();if(!M)return '';const L=M.list();return `<optgroup label="My fonts" data-myfonts>${L.map(f=>`<option value="${esc(f.family)}">${esc(f.display)} (mine)</option>`).join('')}<option value="__upload_fonts">+ Upload fonts…</option></optgroup>`}
+function mineSelect(sel,get,set){sel.onchange=e=>{if(e.target.value==='__upload_fonts'){e.target.value=get()||'';MF().openDialog();return}set(e.target.value)}}
 function tokensUI(){const box=$('#tkBox');if(!box)return;const cur=PB.styles.get(page.style),sw=cur.sw||[],tk=site.tokens||{};
  const eff={bg:tk.bg||sw[0],surface:tk.surface||sw[1],ink:tk.ink||sw[2],accent:tk.accent||sw[3]};const C=PB.color;
  const cr=(a,b)=>{try{return C.ratio(a,b)}catch(e){return 0}};
@@ -535,14 +546,14 @@ function tokensUI(){const box=$('#tkBox');if(!box)return;const cur=PB.styles.get
  <p class="hint" id="tkCr">Text on background ${cr(eff.ink,eff.bg).toFixed(1)}:1 ${cr(eff.ink,eff.bg)>=4.5?'(passes AA)':'(too low: needs 4.5)'} · button text ${cr(C.best(eff.accent||'#000'),eff.accent||'#000').toFixed(1)}:1</p>
  <div class="f"><label for="tkRad">Corner radius: <output>${tk.radius!=null?tk.radius:'style default'}</output></label><input id="tkRad" type="range" min="0" max="32" step="2" value="${tk.radius!=null?tk.radius:12}"></div>
  <div class="f"><label for="tkBtn">Buttons</label><select id="tkBtn"><option value="">As the style</option><option value="sharp">Square</option><option value="pill">Pill</option></select></div>
- <div class="f"><label for="tkFh">Heading font</label><select id="tkFh"><option value="">Style’s font</option>${fonts.map(f=>`<option>${esc(f)}</option>`).join('')}</select></div>
- <div class="f"><label for="tkFb">Body font</label><select id="tkFb"><option value="">Style’s font</option>${fonts.map(f=>`<option>${esc(f)}</option>`).join('')}</select></div>
+ <div class="f"><label for="tkFh">Heading font</label><select id="tkFh"><option value="">Style’s font</option>${fonts.map(f=>`<option>${esc(f)}</option>`).join('')}${mineOpts()}</select></div>
+ <div class="f"><label for="tkFb">Body font</label><select id="tkFb"><option value="">Style’s font</option>${fonts.map(f=>`<option>${esc(f)}</option>`).join('')}${mineOpts()}</select></div>
  <button type="button" class="btn small" id="tkReset">Reset to the style</button></div></details>`;
  $('#tkBtn').value=tk.btn||'';$('#tkFh').value=tk.fontHead||'';$('#tkFb').value=tk.fontBody||'';
  const set=(k,v)=>{site.tokens=site.tokens||{};if(v===''||v==null)delete site.tokens[k];else site.tokens[k]=v;if(!Object.keys(site.tokens).length)delete site.tokens};
  box.querySelectorAll('input[type=color]').forEach(i=>{i.oninput=()=>{set(i.dataset.k,i.value);commitSoon();render()};i.onchange=()=>{commit();tokensUI()}});
  const r=$('#tkRad');r.oninput=()=>{r.previousElementSibling.querySelector('output').textContent=r.value;set('radius',+r.value);commitSoon();render()};
- $('#tkBtn').onchange=e=>{set('btn',e.target.value);commit();render()};$('#tkFh').onchange=e=>{set('fontHead',e.target.value);commit();render()};$('#tkFb').onchange=e=>{set('fontBody',e.target.value);commit();render()};
+ $('#tkBtn').onchange=e=>{set('btn',e.target.value);commit();render()};mineSelect($('#tkFh'),()=>tk.fontHead,v=>{set('fontHead',v);commit();render()});mineSelect($('#tkFb'),()=>tk.fontBody,v=>{set('fontBody',v);commit();render()});
  $('#tkReset').onclick=()=>{delete site.tokens;commit();tokensUI();render();say('Back to the style’s own look')}}
 /* ---------- style panel ---------- */
 let skind=ui.skind||'all';
@@ -556,9 +567,10 @@ function styles(){tokensUI();const S=PB.styles.list(),t=($('#styleSearch').value
  $('#styleList').innerHTML=items.slice(0,240).map(s=>`<li><button type="button" class="sc" aria-pressed="${s.id===page.style}" data-s="${esc(s.id)}"><span class="sw" aria-hidden="true">${s.sw.map(c=>`<i style="background:${esc(c)}"></i>`).join('')}</span><span class="sn"><b>${esc(s.name)}</b><small>${esc(s.note)} · ${esc(s.head)}</small></span></button></li>`).join('')||'<li class="hint">No style matches.</li>';
  $('#styleCount').textContent=items.length+' styles';
  $$('#styleList .sc').forEach(b=>b.onclick=()=>{setStyle(b.dataset.s);const n=$(`#styleList [data-s="${CSS.escape(b.dataset.s)}"]`);n&&n.focus()});
- const ps=$('#pairSel');ps.innerHTML='<option value="-1">The style’s own fonts</option>'+LIB.pairs.map((p,i)=>`<option value="${i}">${esc(p[0])}: ${esc(p[1])} + ${esc(p[2])}</option>`).join('');ps.value=String(page.pair)}
+ const ps=$('#pairSel'),M=MF(),mine=M?M.list():[];ps.innerHTML='<option value="-1">The style’s own fonts</option>'+LIB.pairs.map((p,i)=>`<option value="${i}">${esc(p[0])}: ${esc(p[1])} + ${esc(p[2])}</option>`).join('')+(M?`<optgroup label="My fonts">${mine.map(f=>[['h','for headings'],['b','for body text'],['a','for headings and body']].map(([k,l])=>`<option value="my${k}:${esc(f.family)}">${esc(f.display)} ${l}</option>`).join('')).join('')}<option value="__upload_fonts">+ Upload fonts…</option></optgroup>`:'');ps.value=String(page.pair);if(ps.value!==String(page.pair))ps.value='-1'}
 $('#styleSearch').oninput=()=>styles();
-$('#pairSel').onchange=e=>{page.pair=+e.target.value;commit();render();say(page.pair<0?'Using the style’s fonts':'Fonts: '+LIB.pairs[page.pair][0])};
+$('#pairSel').onchange=e=>{if(e.target.value==='__upload_fonts'){e.target.value=String(page.pair);MF().openDialog();return}page.pair=/^my/.test(e.target.value)?e.target.value:+e.target.value;commit();render();const pr=pairOf(page);say(!pr?'Using the style’s fonts':'Fonts: '+pr[0])};
+if(window.MyFonts)MyFonts.on(()=>{try{styles();render();mineExportUI()}catch(e){}});
 
 /* ---------- pages of this site ---------- */
 const accentOf=()=>{const st=PB.styles.get(page.style);return (st&&st.sw&&st.sw[3])||'#5B2DFF'};
@@ -669,13 +681,16 @@ async function buildSiteFiles(opt={}){await prefetch();const acc=newAcc(),assets
  const items=site.pages.map(pg=>({pg,file:S.pageFile(site,pg),js:pg.id===site.home?'index':pg.slug}));
  if(nf.on)items.push({pg:{id:'__404',name:'Page not found',slug:'404',title:nf.title+' · '+brand,desc:'',og:'',inNav:false,noindex:true,blocks:[{uid:'nf404',id:'x-notfound',vals:{title:nf.title,text:nf.text,button:nf.button}}]},file:'404.html',js:'404'});
  items.forEach(it=>{it.P=compose('zip',it.pg,acc)});
- const st=items[0].P.st,css=fix(buildCSS(st,acc)),fontURL=fontURLOf(acc);
+ const st=items[0].P.st;let css=fix(buildCSS(st,acc));const fontURL=fontURLOf(acc);
+ const mUsed=mineUsed(css),mInc=opt.pub?MINE.pub:MINE.zip,mFiles=[];
+ if(mUsed.length){const M=MF();if(mInc){css=M.fontFaceCSSSync(mUsed,{mode:'file',dir:opt.pub?pubBase+'fonts/':'../fonts/'})+css;for(const f of mUsed)for(const x of await M.exportFiles(f))mFiles.push([x.path,x.bytes])}
+  else css=`/* Fonts: this site uses your own font${mUsed.length>1?'s':''} (${mUsed.join(', ')}). The font files are not included. Bring your own font files: place them in /fonts and add @font-face rules, for example:\n@font-face{font-family:"${mUsed[0]}";src:url("../fonts/${mUsed[0].replace(/[^A-Za-z0-9_.-]+/g,'-')}-400.ttf") format("truetype");font-weight:400;font-style:normal;font-display:swap}\n*/\n`+css}
  const base=((stg.url||'').trim()||(opt.pub?opt.pub.origin+opt.pub.base:'')),canon=it=>base&&!it.pg.noindex?base.replace(/\/?$/,'/')+(it.file==='index.html'?'':it.file):'';
  let anyCl=false;
  items.forEach(it=>{const P=it.P;anyCl=anyCl||P.cl;const code=swapA((P.runtime?P.runtime+'\n':'')+P.js,SITE+'assets/');
   const html=assemble({...P,fontURL,cssText:css,body:fix(P.body),runtime:'',js:code},{cssHref:pubBase+'assets/site.css',jsHref:code.trim()?pubBase+'assets/'+it.js+'.js':null,clSrc:pubBase+'assets/component-lab.js',favHref:pubBase+'assets/favicon.svg',feedHref:pubBase+'feed.xml',canonical:canon(it)});
   out.push([it.file,html]);if(code.trim())out.push(['assets/'+it.js+'.js',code])});
- out.push(['assets/site.css',css],['assets/favicon.svg',S.faviconSVG(site,accentOf())]);
+ out.push(['assets/site.css',css],['assets/favicon.svg',S.faviconSVG(site,accentOf())]);mFiles.forEach(f=>out.push(f));
  if(anyCl)out.push(['assets/component-lab.js',cache.cl||'/* component-lab.js could not be copied; load it from '+SITE+'component-lab.js */']);
  acc.files.forEach((t,n)=>out.push([n,t]));
  const dims=new Map(),vars=new Map(),mime=e=>e==='png'?'image/png':e==='webp'?'image/webp':'image/jpeg';
@@ -696,9 +711,13 @@ async function buildSiteFiles(opt={}){await prefetch();const acc=newAcc(),assets
  out.push(['sitemap.xml',S.sitemap(site,base||'https://example.com/',today)],['robots.txt',S.robots(base)]);
  if(S.posts(site).length)out.push(['feed.xml',feedXML(base||'https://example.com/')]);
  out.push(['README.txt',`${brand}: a static website made with the Visual & Motion Atlas site builder.\n\n${site.pages.length} page${site.pages.length>1?'s':''}: ${site.pages.map(p=>S.pageFile(site,p)).join(', ')}.\nOpen index.html in a browser. Keep assets/CREDITS.txt with the site: it lists the credits and licences of the pictures, icons and fonts used. Styles are in assets/site.css, behaviour in assets/*.js, images in assets/.\nFilms still stream from ${SITE}assets/films/ so the download stays small; copy them next to your site and change the paths before you publish.\nForms${stg.formAction?' post to '+stg.formAction:' are placeholders and send nothing until you set a form address in Site settings'}.\n\nPublish it: drag this folder onto Netlify Drop, or run "vercel" inside it, or push it to GitHub Pages. To use your own domain, add it in that host's settings and set the Site address in the builder so sitemap.xml and canonical links use it${(stg.url||'').trim()?'':' (it is empty now, so sitemap.xml uses https://example.com/: replace it)'}.\nStyle: ${st.style?st.style.name:''}.\n`]);
+ if(mUsed.length){const i=out.findIndex(o=>o[0]==='README.txt');if(i>=0)out[i][1]+=`\n\nFonts: this site uses your own font${mUsed.length>1?'s':''} (${mUsed.join(', ')}). ${mInc?'Copies of your font files are in fonts/. Check that your licence allows you to pass them on or publish them.':'The font files are not included: bring your own font files and place them in a fonts/ folder next to index.html, then add @font-face rules for them in assets/site.css (a template is at the top of that file). Until then visitors see a fallback font.'}\n`}
  return out}finally{pubBase=''}}
 $('#mkShare').onclick=async()=>{closeMenu();say('Preparing the page…');try{const h=await htmlFile();await MockupHandoff.send({html:h,title:($('#ptitle').value||$('#brand').value||'').slice(0,100),from:'page builder'})}catch(e){say(e.message||'Could not open the Mockup studio')}};
-$('#dlZip').onclick=async()=>{closeMenu();const zip=(window.ThemeKits&&window.ThemeKits.zip)||PB.zip;say('Building the site ZIP…');try{const files=await buildSiteFiles();dl(zip(files),slug()+'-site.zip');say('Downloading '+slug()+'-site.zip')}catch(e){console.error(e);say('ZIP export failed')}};
+function mineExportUI(){const row=$('#mineExport');if(!row)return;let u=[];try{u=mineUsed(compose('html').cssText)}catch(e){}row.hidden=!u.length;const pm=$('#pubMine');if(pm)pm.hidden=!u.length}
+{const em=$('#exportMenu');if(em)em.addEventListener('toggle',()=>{if(em.open)mineExportUI()})}
+$('#exInclFonts')&&($('#exInclFonts').onchange=()=>{MINE.zip=$('#exInclFonts').checked});
+$('#dlZip').onclick=async()=>{closeMenu();MINE.zip=!!($('#exInclFonts')&&$('#exInclFonts').checked);const zip=(window.ThemeKits&&window.ThemeKits.zip)||PB.zip;say('Building the site ZIP…');try{const files=await buildSiteFiles();dl(zip(files),slug()+'-site.zip');say('Downloading '+slug()+'-site.zip')}catch(e){console.error(e);say('ZIP export failed')}};
 PB.buildSiteFiles=buildSiteFiles;PB.getSite=()=>site;
 
 /* ---------- publish to a shareable address (api/site.js) ---------- */
@@ -718,7 +737,7 @@ async function pubDraw(msg){const rec=pubGet(),st=pubAvail||await pubStatus();co
  else state.textContent=msg||(rec?'Published. Update it after you make changes.':'Publish this site to a shareable address on the atlas. You can unpublish any time.');
  if(rec&&rec.url){link.innerHTML=`<a href="${esc(rec.url)}" target="_blank" rel="noopener">${esc(rec.url)}</a>${rec.at?' · '+new Date(rec.at).toLocaleString():''}`;$('#pubOpen').href=rec.url}else link.textContent=''}
 const pubMsg=st=>st===0?'Could not reach the publishing service. Check your connection and try again. Your site is safe in this browser, and the ZIP download still works.':st===413?'The site is too big to publish. Remove large uploaded images or download the ZIP instead.':st===429?'Too many publishes just now. Wait a minute and try again.':'Publishing failed ('+st+'). Try again, or download the ZIP.';
-async function publishSite(){const go=$('#pubGo');go.disabled=true;let rec=pubGet();
+async function publishSite(){const go=$('#pubGo');go.disabled=true;let rec=pubGet();MINE.pub=!!($('#pubInclFonts')&&$('#pubInclFonts').checked&&!$('#pubMine').hidden);
  try{
   for(let attempt=0;attempt<2;attempt++){
    if(!rec){await pubDraw('Creating the address…');const c=await apiSite('POST','',{name:site.name,files:[]});if(!c.ok)throw new Error((c.j&&c.j.error)||pubMsg(c.status));rec={id:c.j.id,key:c.j.key};pubSet(rec)}
@@ -730,7 +749,7 @@ async function publishSite(){const go=$('#pubGo');go.disabled=true;let rec=pubGe
    rec.url=location.origin+base;rec.at=Date.now();pubSet(rec);await pubDraw('Published. Share the link below.');say('Site published');return}
   throw new Error('Could not publish. Try again.')}
  catch(e){await pubDraw(e.message||'Publishing failed');$('#pubGo').disabled=false}}
-$('#pubBtn').onclick=async()=>{closeMenu();pubDlg.showModal();await pubDraw()};
+$('#pubBtn').onclick=async()=>{closeMenu();mineExportUI();pubDlg.showModal();await pubDraw()};
 $('#pubClose').onclick=()=>pubDlg.close();$('#pubGo').onclick=publishSite;
 $('#pubCopy').onclick=()=>{const r=pubGet();r&&copy(r.url,'Link copied')};
 $('#pubOff').onclick=async()=>{const r=pubGet();if(!r||!confirm('Unpublish this site? The link stops working.'))return;const d=await apiSite('DELETE','?id='+r.id,null,r.key);if(d.ok||d.status===404){pubSet(null);await pubDraw('Unpublished.')}else await pubDraw((d.j&&d.j.error)||'Could not unpublish')};
@@ -754,7 +773,7 @@ if(/[?&]favicon=1/.test(location.search))setTimeout(()=>{try{const h=JSON.parse(
  if(h&&LIB.iconFiles[h.set]&&PB.iconNames(h.set).includes(h.name)){site.settings.favicon={set:h.set,name:h.name};commit();favUI();say('Favicon set to “'+h.name+'” ('+h.set.replace(/-/g,' ')+'). See it under Site settings.')}else say('That icon is not available as a favicon here. Pick one under Site settings.')}catch(e){}},700);
 {const q=new URLSearchParams(location.search).get('site');if(q&&store.pages[q]&&site.id!==q){site=store.pages[q];store.cur=q;curId=site.home;lastSnap=snap()}}
 
-$('#copyPrompt').onclick=()=>{closeMenu();const st=PB.styles.get(page.style),pair=page.pair>=0?LIB.pairs[page.pair]:null;
+$('#copyPrompt').onclick=()=>{closeMenu();const st=PB.styles.get(page.style),pair=pairOf(page);
  const lines=page.blocks.map((b,i)=>{const d=def(b.id);const v=vals(b);const words=fieldsOf(d).filter(f=>['text','long','list'].includes(f.type)).map(f=>f.label.replace(/\s*\(.*\)/,'').toLowerCase()+' “'+String(v[f.k]).replace(/\n/g,' / ')+'”').filter(x=>!/“”$/.test(x)).join('; ');
   const film=fieldsOf(d).find(f=>f.type==='film');return (i+1)+'. '+d.name+(isX(b.id)?' ('+xLabel(b)+')':'')+'. '+(d.prompt||d.desc)+(film?' Background film: '+SITE+'assets/films/'+v[film.k]+'-720.mp4 (poster '+SITE+'assets/films/'+v[film.k]+'.jpg).':'')+(words?' Words: '+words+'.':'')});
  copy('Build a one-page website for “'+(page.brand||'my brand')+'” as a single HTML file with no libraries (Google Fonts are fine).\n\nStyle: '+(st.desc||st.name)+(pair?'. Override fonts: '+pair[1]+' for headings and '+pair[2]+' for text':'')+'.\n\nSections, top to bottom:\n'+lines.join('\n')+'\n\nThroughout: lay out at phone width as well as desktop, make every control keyboard-accessible with visible focus, keep text contrast at WCAG AA, pause or calm all motion under prefers-reduced-motion, give looping videos a pause button, and make forms show a confirmation without sending anything.','Prompt copied')};

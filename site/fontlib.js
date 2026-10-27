@@ -17,6 +17,7 @@ const FMT = { ttf: 'truetype', otf: 'opentype', woff: 'woff', woff2: 'woff2' };
 let meta = [];                       /* face records, no bytes */
 const bytes = new Map();             /* id -> ArrayBuffer */
 const parsed = new Map();            /* id -> parsed font (lazy, for outlines) */
+const blobUrls = new Map();
 const registered = new Map();        /* id -> FontFace */
 const subs = new Set();
 let persistent = true, idb = null, bc = null;
@@ -229,7 +230,7 @@ function register(m) {
     return ff.load().catch(() => { document.fonts.delete(ff); registered.delete(m.id); m.bad = true });
   } catch (e) { return Promise.resolve() }
 }
-function unregister(id) { const ff = registered.get(id); if (ff) { try { document.fonts.delete(ff) } catch (e) { } registered.delete(id) } }
+function unregister(id) { const bu = blobUrls.get(id); if (bu) { try { URL.revokeObjectURL(bu) } catch (e) { } blobUrls.delete(id) } const ff = registered.get(id); if (ff) { try { document.fonts.delete(ff) } catch (e) { } registered.delete(id) } }
 
 async function sync() {
   meta = lsGet(); let recs = null;
@@ -323,12 +324,13 @@ function fontFaceCSSSync(families, opt) {
   for (const f of [].concat(families || [])) {
     const key = fam(f); if (!key) continue;
     for (const m of meta.filter(x => x.family === key && bytes.has(x.id))) {
-      const src = mode === 'file' ? 'url("' + dir + faceFile(m) + '")' : 'url(data:' + (MIME[m.ext] || 'font/ttf') + ';base64,' + b64(bytes.get(m.id)) + ')';
+      const src = mode === 'file' ? 'url("' + dir + faceFile(m) + '")' : mode === 'blob' ? 'url(' + blobUrl(m) + ')' : 'url(data:' + (MIME[m.ext] || 'font/ttf') + ';base64,' + b64(bytes.get(m.id)) + ')';
       css += '@font-face{font-family:"' + key + '";font-style:' + (m.italic ? 'italic' : 'normal') + ';font-weight:' + m.weight + ';font-display:swap;src:' + src + ' format("' + (FMT[m.ext] || 'truetype') + '")}\n';
     }
   }
   return css;
 }
+function blobUrl(m) { if (!blobUrls.has(m.id)) blobUrls.set(m.id, URL.createObjectURL(new Blob([bytes.get(m.id)], { type: MIME[m.ext] || 'font/ttf' }))); return blobUrls.get(m.id) }
 async function fontFaceCSS(families, opt) { await ready; return fontFaceCSSSync(families, opt) }
 /* outline text: {d, width, ascent, descent, size} with the baseline at y=0, or null if the font has no TrueType outlines.
    prepare(families) parses the files once so glyphPathSync works without awaiting. */

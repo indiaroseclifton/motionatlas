@@ -23,8 +23,9 @@ PB.color={hx,toHex,mix,lum,ratio,best,ensure,isHex};
 const GOOGLE=['Inter','Manrope','Public Sans','Red Hat Text','Source Sans 3','Space Grotesk','Roboto','DM Sans','Outfit','Lora','Playfair Display','Cormorant Garamond','Libre Baskerville','IBM Plex Mono','IBM Plex Sans','Fraunces','Archivo','Archivo Black','Inter Tight','Hanken Grotesk','JetBrains Mono','Newsreader','Space Mono'];
 const famName=s=>String(s||'').split(',')[0].replace(/['"]/g,'').trim();
 const fallback=f=>/Mono|Code|Courier|monospace/i.test(f)?'ui-monospace,monospace':/Serif|Garamond|Georgia|Baskerville|Lora|Playfair|Fraunces|Newsreader|Times|Fell|Bodoni|Didot|Caslon/i.test(f)&&!/Sans/i.test(f)?'Georgia,serif':'system-ui,sans-serif';
-const stack=f=>`'${f}',${fallback(f)}`;
-const gq=names=>[...new Set(names)].filter(n=>GOOGLE.includes(n)||n&&!/^(system-ui|Georgia|Helvetica|Arial|-apple-system|ui-monospace|Atlas)/i.test(n)).map(n=>'family='+n.replace(/ /g,'+')+':wght@400;500;600;700').join('&');
+const mineFam=f=>!!(window.MyFonts&&window.MyFonts.has(f));
+const stack=f=>mineFam(f)?window.MyFonts.cssFamily(f).replace(/"/g,"'"):`'${f}',${fallback(f)}`;
+const gq=names=>[...new Set(names)].filter(n=>!mineFam(n)&&(GOOGLE.includes(n)||n&&!/^(system-ui|Georgia|Helvetica|Arial|-apple-system|ui-monospace|Atlas)/i.test(n))).map(n=>'family='+n.replace(/ /g,'+')+':wght@400;500;600;700').join('&');
 const FACE=site=>`@font-face{font-family:'Atlas Display';src:url(${site}fonts/AtlasNarrow-Bold.woff2) format('woff2');font-weight:700;font-display:swap}@font-face{font-family:'Atlas Sans';src:url(${site}fonts/AtlasSans-Regular.woff2) format('woff2');font-display:swap}`;
 
 function varsFrom(t){ // t: {bg,surface,ink,mute,line,accent,onAccent,accentInk,head,body,hw,hs,radius,track,case,extra}
