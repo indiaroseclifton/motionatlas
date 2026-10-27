@@ -313,3 +313,10 @@ UX.uploadsAfter=L=>{const up=L.querySelector('#upMany'),fi=L.querySelector('#upF
   li.querySelector('[data-a=add]').onclick=()=>{const r=PB.images.cache.get(id);A.addBlock('image-full',{img:'user:'+id,alt:(r&&r.alt)||'',caption:''})};
   li.querySelector('[data-a=del]').onclick=async()=>{const n=usedCount(id);if(n&&!confirm('This image is used '+n+' time'+(n>1?'s':'')+' in your sites. Delete it anyway? Those places will show no picture.'))return;await PB.images.remove(id);A.render();A.libraryRedraw();A.say('Image deleted')}})};
 })();
+/* the "More" menu in the header: closes after a choice, on outside click and on Escape; shows the checks count on its button */
+{const mm=document.getElementById('moreMenu');if(mm){const close=()=>{mm.open=false},cb=document.getElementById('chkBadge'),mb=document.getElementById('moreBadge');
+ mm.addEventListener('click',e=>{if(e.target.closest('.mlist button'))setTimeout(close,0)});
+ document.addEventListener('click',e=>{if(mm.open&&!mm.contains(e.target))close()});
+ mm.addEventListener('keydown',e=>{if(e.key==='Escape'&&mm.open){close();mm.querySelector('summary').focus()}});
+ const sync=()=>{const t=(cb&&cb.textContent||'').trim();const n=/^\d+$/.test(t)&&+t>0;mb.hidden=!n;mb.textContent=n?t:''};
+ if(cb){new MutationObserver(sync).observe(cb,{childList:true,characterData:true,subtree:true});sync()}}}

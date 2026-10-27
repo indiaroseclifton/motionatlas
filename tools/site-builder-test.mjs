@@ -231,7 +231,7 @@ const waitPv = pg => pg.waitForTimeout(700);
   await pg.waitForTimeout(2500);
   await pg.click('#libSearch'); await pg.fill('#libSearch', 'Full-width image'); await pg.waitForTimeout(400); await pg.click('#libList .lc .add'); await waitPv(pg);
   if (!(await pg.getByLabel('Image description', { exact: true }).count())) await pg.locator('#ol .blk', { hasText: 'Full-width image' }).locator('.bname').click(); await pg.getByLabel('Image description', { exact: true }).first().fill(''); await waitPv(pg);
-  await pg.click('#chkBtn'); await pg.waitForTimeout(1200);
+  await pg.click('#moreMenu summary'); await pg.click('#chkBtn'); await pg.waitForTimeout(1200);
   ok((await pg.textContent('#chkSum')).length > 0 && await pg.locator('#chkList .chk').count() >= 1, 'check lists problems with a fix list');
   ok(await pg.locator('#chkList .chk', { hasText: 'alt text' }).count() >= 1, 'missing alt text is reported');
   const n0 = await pg.locator('#chkList .chk', { hasText: 'alt text' }).count();
@@ -424,7 +424,7 @@ if (axeSrc) {
   ok(JSON.stringify(bs).includes('Slow bread, warm mornings.') && !!bs.logo, 'the tagline and mark are used');
   ok(await frame(pg).locator('img.pb-logo').count() >= 1, 'the brand mark appears next to the name in the header');
   // version history
-  await pg.evaluate(() => PB.ux.captureVersion(true)); await pg.click('#histBtn'); await pg.waitForSelector('#histDlg .histl li'); ok(await pg.locator('#histDlg .histl li').count() >= 1, 'history lists snapshots');
+  await pg.evaluate(() => PB.ux.captureVersion(true)); await pg.click('#moreMenu summary'); await pg.click('#histBtn'); await pg.waitForSelector('#histDlg .histl li'); ok(await pg.locator('#histDlg .histl li').count() >= 1, 'history lists snapshots');
   const bigOk = await pg.evaluate(async () => { const A = PB.app; A.curPage().blocks.push({ uid: 'big1', id: 'rich-text', vals: { kicker: '', heading: 'Big', paras: 'x'.repeat(900000) } }); const r = await PB.ux.captureVersion(true); A.curPage().blocks.pop(); return r; });
   ok(bigOk, 'a site over 600 KB still gets a history snapshot'); await pg.keyboard.press('Escape');
   // shortcuts sheet

@@ -20,10 +20,10 @@ for(const vp of [{width:1440,height:900},{width:390,height:844}]){
  await pg.click('#mbAddKit');await pg.waitForSelector('#mbKitList button');await pg.click('#mbKitList button >> nth=2');await pg.click('#mbKitDlg [data-close]');ok(await pg.evaluate(()=>MoodBoard.items().some(i=>i.type==='kit')),tag+'pin theme kit');
  await pg.click('#mbAddIcon');await pg.waitForSelector('#mbIconList button');await pg.click('#mbIconList button >> nth=1');await pg.click('#mbIconDlg [data-close]');ok(await pg.evaluate(()=>MoodBoard.items().some(i=>i.type==='icon')),tag+'add icon');
  /* drag, group, align, arrange, order */
- await pg.evaluate(()=>MoodBoard.select(MoodBoard.items().slice(0,3).map(i=>i.id)));await pg.click('#mbGroup');ok(await pg.evaluate(()=>{const g=MoodBoard.items().slice(0,3).map(i=>i.g);return g[0]&&g.every(x=>x===g[0])}),tag+'group');
- await pg.click('#mbUngroup');await pg.click('[data-align=l]');ok(await pg.evaluate(()=>{const x=MoodBoard.items().slice(0,3).map(i=>i.x);return x.every(v=>v===x[0])}),tag+'align left');
- await pg.click('#mbMasonry');await pg.click('#mbGrid');ok(true,tag+'arrange grid/masonry');
- await pg.click('#mbFront');
+ await pg.evaluate(()=>MoodBoard.select(MoodBoard.items().slice(0,3).map(i=>i.id)));await pg.click('#mbMore summary');await pg.click('#mbGroup');ok(await pg.evaluate(()=>{const g=MoodBoard.items().slice(0,3).map(i=>i.g);return g[0]&&g.every(x=>x===g[0])}),tag+'group');
+ await pg.click('#mbMore summary');await pg.click('#mbUngroup');await pg.click('#mbMore summary');await pg.click('[data-align=l]');ok(await pg.evaluate(()=>{const x=MoodBoard.items().slice(0,3).map(i=>i.x);return x.every(v=>v===x[0])}),tag+'align left');
+ await pg.click('#mbMore summary');await pg.click('#mbMasonry');await pg.click('#mbMore summary');await pg.click('#mbGrid');ok(true,tag+'arrange grid/masonry');
+ await pg.click('#mbMore summary');await pg.click('#mbFront');
  await pg.click('#mbFit');await pg.waitForTimeout(100);const box=await pg.evaluate(()=>{for(const it of MoodBoard.items()){const e=document.querySelector(`[data-id="${it.id}"]`),r=e.getBoundingClientRect(),x=r.x+r.width/2,y=r.y+r.height/2;const t=document.elementFromPoint(x,y);if(t&&t.closest('.mbItem')===e&&y>180)return {id:it.id,x,y,ix:it.x}}return null});
  if(vp.width>600){ok(!!box,tag+'found a draggable item');await pg.evaluate(()=>MoodBoard.select([]));await pg.mouse.move(box.x,box.y);await pg.mouse.down();await pg.mouse.move(box.x+60,box.y+40,{steps:5});await pg.mouse.up();ok(await pg.evaluate(id=>MoodBoard.items().find(i=>i.id===id).x,box.id)!==box.ix,tag+'drag moves an item')}
  await pg.click('#mbIn');await pg.click('#mbFit');

@@ -134,11 +134,21 @@ the Icon library sets a Site builder favicon (`?favicon=1`); the two flowchart p
 
 ## The constant top bar
 
-`site/site-bar.js` is a fixed 44 px bar (brand, Library, Make, Your studio, All tools, search, My
-projects, Account; a Menu sheet on phones) on every public page, including `atlas.html`. The menus come
-from `site/site-nav-data.js`, which `atlas-nav.js` also reads. A page gets it from the lines
-`tools/install-site-bar.mjs` adds to its `<head>` (an inline style that reserves the height, plus two
-deferred scripts) and a no-JS link row after `<body>`. **After adding a page, run
+`site/site-bar.js` is a fixed 44 px bar on every public page, including `atlas.html`: brand, **Library**, **Make**,
+**Your studio**, **All tools** and search (five items). Library and Make open two-column menus (groups on the
+left, one-line rows on the right, the purpose of the hovered row underneath); Your studio is a short list; a group
+can hold a **More** row that expands in place. On phones the bar is brand, search and a Menu button that opens an
+accordion (one group open, the current page's group first). Keyboard: Enter or Space opens a menu, arrows move,
+Right enters the list, Left returns, Esc closes.
+
+**Editing the menus:** everything comes from `site/site-nav-data.js`. `ATLAS_NAV_GROUPS` holds every entry once
+(href, name, one-line purpose, film); `ATLAS_NAV_MENUS` arranges them into the bar's menus (keep a menu to about
+seven rows; put rarer items in a `{more}` row). `atlas-nav.js` (the Library drawer and breadcrumb) reads the same
+groups. Studios keep primary actions in their own toolbars and put the rest under one **More** menu (Site builder,
+Moodboards); their cross-links to other studios are hidden because the bar's menus carry them.
+
+A page gets the bar from the lines `tools/install-site-bar.mjs` adds to its `<head>` (an inline style that reserves
+the height, plus two deferred scripts) and a no-JS link row after `<body>`. **After adding a page, run
 `node tools/install-site-bar.mjs`.** Full-height editors are fitted below the bar by `fit()` in
 `site-bar.js`; where a layout uses `calc(100vh - Npx)`, write `calc(100vh - Npx - var(--sb-h,0px))`.
 `work/01` (a private project), `interactions/demos/` (embedded) and exported or published user sites

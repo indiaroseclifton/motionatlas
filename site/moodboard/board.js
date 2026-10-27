@@ -289,3 +289,5 @@ async function start(){const q=new URLSearchParams(location.search),h=location.h
  await open(b);if(items().length)fit();if(q.get('new'))newBoard();window.MoodBoard={board:()=>board,items,select:setSel,renderBoard,palette,buildKit,ready:true}}
 window.MoodBoardReady=start().then(()=>{window.MoodBoard=window.MoodBoard||{board:()=>board,items,select:setSel,renderBoard,palette,buildKit,ready:true};window.MoodBoard.ready=true});
 })();
+/* the toolbar's More menu closes after a choice, on outside click and on Escape */
+{const mm=document.getElementById('mbMore');if(mm){const close=()=>{mm.open=false};mm.addEventListener('click',e=>{if(e.target.closest('.pop button'))setTimeout(close,0)});document.addEventListener('click',e=>{if(mm.open&&!mm.contains(e.target))close()});mm.addEventListener('keydown',e=>{if(e.key==='Escape'&&mm.open){close();mm.querySelector('summary').focus()}})}}

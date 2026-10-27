@@ -15,9 +15,11 @@
   <button class="btn" id="tplBtn" type="button" aria-haspopup="dialog">Sites &amp; templates</button>
   <span class="savedot" id="saveInd" role="status" aria-live="polite"><i aria-hidden="true"></i><span>Saved</span></span>
   <button class="btn" id="undoBtn" type="button" aria-keyshortcuts="Control+Z" disabled>↶ Undo</button><button class="btn" id="redoBtn" type="button" aria-keyshortcuts="Control+Shift+Z" disabled>↷ Redo</button>
-  <button class="btn" id="chkBtn" type="button" aria-label="Page checks">Checks <b class="badge" id="chkBadge">–</b></button>
-  <button class="btn" id="histBtn" type="button" aria-haspopup="dialog">History</button>
-  <button class="btn iconbtn" id="helpBtn" type="button" aria-label="Keyboard shortcuts" aria-keyshortcuts="?" title="Keyboard shortcuts (?)">?</button>
+  <details class="menu" id="moreMenu"><summary class="btn" aria-label="More: checks, history, shortcuts">⋯ More <b class="badge moreBadge" id="moreBadge" hidden></b></summary><div class="mlist" role="group" aria-label="More">
+   <button type="button" class="btn" id="chkBtn" aria-label="Page checks"><span>Checks <b class="badge" id="chkBadge">–</b></span><small>Accessibility, SEO and link checks for this page</small></button>
+   <button type="button" class="btn" id="histBtn" aria-haspopup="dialog"><span>History</span><small>Earlier versions of this site</small></button>
+   <button type="button" class="btn" id="helpBtn" aria-keyshortcuts="?"><span>Keyboard shortcuts</span><small>Press ? any time</small></button>
+  </div></details>
   <details class="menu" id="exportMenu"><summary class="btn primary">Export ▾</summary><div class="mlist" role="group" aria-label="Export">
    <button type="button" id="dlHtml"><span>This page as one HTML file</span><small>Styles, scripts and demos inlined</small></button>
    <button type="button" id="dlZip"><span>Download the site (ZIP)</span><small>Every page, sitemap.xml, robots.txt, assets</small></button>

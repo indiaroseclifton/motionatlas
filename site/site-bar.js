@@ -25,6 +25,8 @@
  const css=document.createElement('style');css.id='sbCss';css.textContent=`
 :root{--sb-h:calc(44px + env(safe-area-inset-top,0px))}
 html.sbReady body::before{display:none}
+/* the pages' own cross-links between studios are now in the bar's menus */
+html.sbReady nav[aria-label="Other studios"],html.sbReady header nav[aria-label=Related]{display:none}
 .sbar{position:fixed;top:0;left:0;right:0;z-index:2147483000;box-sizing:border-box;height:var(--sb-h);padding:env(safe-area-inset-top,0px) max(12px,env(safe-area-inset-right,0px)) 0 max(12px,env(safe-area-inset-left,0px));display:flex;align-items:center;gap:4px;background:rgba(13,17,27,.96);color:#e8edf5;border-bottom:1px solid rgba(190,210,240,.16);font:500 13.5px/1 "Manrope",Inter,system-ui,sans-serif;-webkit-text-size-adjust:100%;text-align:left}
 .sbar *{box-sizing:border-box}
 .sbar a,.sbar button{font:inherit;color:inherit;text-decoration:none;background:none;border:0;cursor:pointer}
