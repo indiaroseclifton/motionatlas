@@ -49,7 +49,7 @@ function roadmap(d,s,opt){const {ctx,frame,heading,wrap,measure,esc,alpha,mix}=K
 /* ---------- 2. org chart ---------- */
 function parseOrg(text){const root={kids:[],depth:-1};const stack=[root];
  for(const raw of String(text||'').split('\n')){if(!raw.trim())continue;const ind=raw.match(/^[\t ]*/)[0].replace(/\t/g,'  ').length;const line=raw.trim().replace(/^[-*•]\s*/,'');
-  const m=line.match(/^(.*?)\s*(?:[—–]|\s-\s|,)\s*(.+)$/);let name=m?m[1]:line,role=m?m[2]:'';const tm=role.match(/\[(.+?)\]\s*$/);let team='';if(tm){team=tm[1];role=role.replace(/\s*\[.+?\]\s*$/,'');}
+  const m=line.match(/^(.*?)\s*(?:[—–|]|\s-\s|,)\s*(.+)$/);let name=m?m[1]:line,role=m?m[2]:'';const tm=role.match(/\[(.+?)\]\s*$/);let team='';if(tm){team=tm[1];role=role.replace(/\s*\[.+?\]\s*$/,'');}
   const vac=/^(open role|hiring|vacant|tbc)\b/i.test(name);const n={name,role,team,vac,kids:[],depth:ind};while(stack.length>1&&stack[stack.length-1].depth>=ind)stack.pop();stack[stack.length-1].kids.push(n);stack.push(n);}
  return root.kids;}
 function org(d,s,opt){const {ctx,frame,heading,wrap,measure,esc,alpha,mix}=K();const C=ctx(s,opt),t=C.t;

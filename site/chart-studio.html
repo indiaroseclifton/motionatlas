@@ -85,6 +85,7 @@ table.grid .x:hover{color:var(--bad);background:var(--badbg)}
 .note .x{border:0;background:none;width:30px;height:30px;border-radius:7px;color:var(--mute);font-size:15px}.note .x:hover{color:var(--bad);background:var(--badbg)}
 /* stage */
 .main{min-width:0;display:grid;align-content:start;gap:14px;padding:22px clamp(14px,2.4vw,32px) 48px}
+@media (min-width:861px){.app>.main{position:sticky;top:calc(var(--sb-h,0px) + 57px);align-self:start;max-height:calc(100vh - var(--sb-h,0px) - 57px);overflow:auto}}/* the chart stays in view while a long settings panel scrolls */
 .bar2{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
 .bar2 .row{gap:6px}
 .fig{position:relative;border-radius:16px;overflow:hidden;line-height:0;box-shadow:var(--shadow);border:1px solid var(--hair);background:#fff;max-width:100%}
@@ -256,6 +257,7 @@ $('sheetx').onclick=()=>$('side').classList.remove('open');
 M.SAMPLES.forEach(s=>$('sample').insertAdjacentHTML('beforeend',`<option value="${s.id}">${esc(s.name)} · ${esc(M.KIND[s.kind].name)}</option>`));
 $('sample').onchange=()=>{const id=$('sample').value;if(!id)return;const keep={style:S.style,mode:S.mode};S={...fresh(id),...keep};drawAll();commit();toast('Loaded '+M.SAMPLES.find(s=>s.id===id).name.toLowerCase());};
 function useText(text,what){let tb;try{tb=M.parse(text);}catch(e){toast('Could not read that: '+(e.message||e));return;}if(!tb.rows.length){toast('No rows found');return;}
+ {const smp=M.SAMPLES.find(x=>x.id===S.sample);if(smp){/* the sample's headline, subtitle, source and notes describe the sample, not your data */if(S.opt.title===smp.title)S.opt.title='';if(S.opt.subtitle===smp.subtitle)S.opt.subtitle='';if(S.opt.source===smp.source)S.opt.source='';S.notes=[];}S.opt.desc='';}
  S.table=tb;S.map=null;S.sample='';S.opt.slots=[];S.opt.emph='';const rec=M.recommend(tb)[0];if(rec)S.kind=rec.id;drawAll();commit();toast(`${what}: ${tb.rows.length} rows × ${tb.columns.length} columns. Suggested: ${M.KIND[S.kind].name}`);}
 $('file').onchange=async()=>{const f=$('file').files[0];if(!f)return;if(f.size>5e6){toast('That file is over 5 MB');return;}useText(await f.text(),f.name);$('file').value='';};
 $('pasteOpen').onclick=()=>{$('pasteBox').value='';$('pasteDlg').showModal();$('pasteBox').focus();};

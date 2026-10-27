@@ -94,7 +94,7 @@ function fill(str,blk,A){const d=def(blk.id),keys=new Set(fieldsOf(d).map(f=>f.k
  str=str.replace(/\{\{each:(\w+)\}\}([\s\S]*?)\{\{\/each\}\}/g,(m,k,body)=>rows(val(blk,k)).map((cells,i)=>body.replace(/\{\{n\}\}|\{\{(g|i|t|list)?(\d+)\}\}/g,(mm,kind,num)=>{if(mm==='{{n}}')return String(i+1);const c=cells[+num]||'';
   if(!kind)return esc(c);if(kind==='g')return glyph(c);if(kind==='i')return esc(initials(c));if(kind==='t')return tick(c);return c.split(';').map(x=>x.trim()).filter(Boolean).map(x=>'<li>'+esc(x)+'</li>').join('')})).join(''));
  str=str.replace(/\{\{rich:(\w+)\}\}/g,(m,k)=>storyHTML(val(blk,k)));
- return str.replace(/\{\{(\w+)\}\}/g,(m,k,off)=>{if(k==='A')return A;if(k==='brand'){const pre=str.slice(0,off);if(site.logo&&pre.lastIndexOf('<')<=pre.lastIndexOf('>'))return `<img class="pb-logo" src="${esc(site.logo)}" alt="" style="height:1.1em;width:auto;vertical-align:-.18em;margin-right:.45em">`+esc(page.brand||'Brand');return esc(page.brand||'Brand')}if(k==='formAction')return esc(CTX&&CTX.mode==='preview'?'#':(site.settings.formAction||'#'));if(k==='home')return esc(CTX?CTX.pageHref(S.pageOf(site,site.home)):'#');
+ return str.replace(/\{\{(\w+)\}\}/g,(m,k,off)=>{if(k==='A')return A;if(k==='brand'){const pre=str.slice(0,off);if(site.logo&&pre.lastIndexOf('<')<=pre.lastIndexOf('>')&&!/(©\s*\d{4}\s*|<th[^>]*>|class="word"[^>]*>)$/.test(pre))return `<img class="pb-logo" src="${esc(site.logo)}" alt="" style="height:1.1em;width:auto;vertical-align:-.18em;margin-right:.45em">`+esc(page.brand||'Brand');return esc(page.brand||'Brand')}if(k==='formAction')return esc(CTX&&CTX.mode==='preview'?'#':(site.settings.formAction||'#'));if(k==='home')return esc(CTX?CTX.pageHref(S.pageOf(site,site.home)):'#');
   if(k==='menu'||k==='menuL'||k==='menuR'){const it=S.menu(site),h=Math.ceil(it.length/2),sub=k==='menu'?it:k==='menuL'?it.slice(0,h):it.slice(h);return CTX?S.menuHTML(site,sub,CTX,esc):''}
   if(!keys.has(k))return m;const f=fieldsOf(d).find(f=>f.k===k);if(f.type==='link')return esc(CTX?S.href(site,val(blk,k),CTX):'#');if(f.type==='image'&&/^user:[\w-]+$/.test(val(blk,k)))return '\u0002U:'+val(blk,k).slice(5)+'\u0002';
   if(f.type==='text'||f.type==='long'){const pre=str.slice(0,off),inTag=pre.lastIndexOf('<')>pre.lastIndexOf('>');return inTag?esc(val(blk,k)):richOf(blk,k,val(blk,k),pre)}
@@ -209,9 +209,9 @@ function feedXML(base){const u=base.replace(/\/?$/,'/'),items=S.posts(site).slic
 const swapA=(s,base)=>s.split(AT).join(base);
 
 /* ---------- preview ---------- */
-const pv=$('#pv');let rt=0,lastY=0,jump=null;
+const pv=$('#pv');let rt=0,lastY=0,jump=null,pgSeen=null;
 let editingText=false,rendPending=false;
-function render(){clearTimeout(rt);rt=setTimeout(()=>{if(editingText){rendPending=true;return}try{lastY=pv.contentWindow.scrollY||0}catch(e){}const P=compose('preview');pv.srcdoc=swapA(assemble(P,{clSrc:ABS+'component-lab.js',edit:EDIT}),ABS+'assets/');status()},160)}
+function render(){clearTimeout(rt);rt=setTimeout(()=>{if(editingText){rendPending=true;return}try{lastY=pv.contentWindow.scrollY||0}catch(e){}if(pgSeen!==curId){if(pgSeen!==null)lastY=0;pgSeen=curId}const P=compose('preview');pv.srcdoc=swapA(assemble(P,{clSrc:ABS+'component-lab.js',edit:EDIT}),ABS+'assets/');status()},160)}
 pv.addEventListener('load',()=>{try{const w=pv.contentWindow;if(jump){const el=w.document.getElementById(jump);if(el)el.scrollIntoView();jump=null}else w.scrollTo(0,lastY)}catch(e){}});
 function status(){$('#status').textContent=curPage().name+' · '+page.blocks.length+' sections · '+PB.styles.get(page.style).name}
 function scrollPreviewTo(uid){jump=uid;try{const t=pv.contentWindow.document.getElementById(uid);if(t){t.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});jump=null}}catch(e){}}
@@ -297,7 +297,7 @@ function editor(blk){if(PB.cfg&&PB.cfg.has(blk)&&PB.cfg.schema(blk))return PB.cf
   const live=f.type==='select'||f.type==='film';
   inp[live?'onchange':'oninput']=()=>{blk.vals[f.k]=inp.value;if(live){commit();if(blk.id==='x-component'&&f.k==='cid'){delete blk.vals.variant}outline()}else commitSoon();render()};
   wrap.append(lab,inp);if(f.type==='list'){const h=document.createElement('p');h.className='hint';h.textContent='One per line'+(/\|/.test(f.label)?'; separate parts with |':'');wrap.append(h)}
-  if(f.type==='image'){const h=document.createElement('p');h.className='hint';h.textContent='Pick a library image or paste any image URL.';wrap.append(h)}
+  if(f.type==='image'){const pb=document.createElement('button');pb.type='button';pb.className='btn small';pb.textContent='Choose a photo or upload…';pb.onclick=()=>imgPop({blk},f.k);const h=document.createElement('p');h.className='hint';h.textContent='Pick a library photo, upload your own, or paste any image URL.';wrap.append(pb,h)}
   bb.append(wrap)});
  if(!fieldsOf(d).length)bb.insertAdjacentHTML('beforeend','<p class="hint">This section uses the brand name and has no other words to edit.</p>');
  const tools=document.createElement('div');tools.className='btools';
@@ -341,7 +341,7 @@ function elGroup(f){const out=[];
  return out}
 function linkPop(f){const blk=f.blk,a=csel.a;const w=document.createElement('div');w.className='ppb';const cur=blk.links&&blk.links[a]!==undefined?blk.links[a]:'';
  w.append(linkPicker(cur,v=>{blk.links=blk.links||{};blk.links[a]=v;commitSoon();render()},'Link target'));const p=document.createElement('p');p.className='hint';p.textContent='Pick a page of this site, or paste any address. Edit the button words by clicking them.';w.append(p);showPop('Link',w)}
-function imgPop(f){const blk=f.blk,d=def(blk.id),key=csel.k;const w=document.createElement('div');w.className='ppb';let altInput=null;
+function imgPop(f,k0){const blk=f.blk,d=def(blk.id),key=k0||csel.k;const w=document.createElement('div');w.className='ppb';let altInput=null;
  const afterImg=()=>{if(altInput&&!altInput.value.trim()){altInput.focus();say('Describe the image for people who cannot see it')}else closePop()};
  const up=document.createElement('button');up.type='button';up.className='btn small pk';up.textContent='Upload from your device';const fi=document.createElement('input');fi.type='file';fi.accept='image/*';fi.hidden=true;fi.setAttribute('aria-label','Choose an image file');
  up.onclick=()=>fi.click();fi.onchange=async()=>{const file=fi.files[0];if(!file)return;if(!/^image\//.test(file.type))return say('That file is not an image. Try a JPG, PNG or WebP.');if(file.size>25e6)return say('Choose an image under 25 MB');try{const id=await PB.images.add(file);blk.vals[key]='user:'+id;commit();render();say('Image replaced. It is saved in this browser.');afterImg()}catch(e){say(e&&e.name==='QuotaExceededError'?'This browser has no room left to keep that image. Try a smaller one.':'Could not read that image. Try a JPG, PNG or WebP.')}};
@@ -692,7 +692,7 @@ async function buildSiteFiles(opt={}){await prefetch();const acc=newAcc(),assets
   out.push([it.file,html]);if(code.trim())out.push(['assets/'+it.js+'.js',code])});
  out.push(['assets/site.css',css],['assets/favicon.svg',S.faviconSVG(site,accentOf())]);mFiles.forEach(f=>out.push(f));
  if(anyCl)out.push(['assets/component-lab.js',cache.cl||'/* component-lab.js could not be copied; load it from '+SITE+'component-lab.js */']);
- acc.files.forEach((t,n)=>out.push([n,t]));
+ acc.files.forEach((t,n)=>{if(/^interactions\/.+\.html$/.test(n)&&typeof t==='string'){/* pictures inside a demo are packed with the site, not hot-linked from the atlas */const ims=PB.ix.images(t.split(SITE+'assets/').join('assets/'));if(/assets\/shelf\/\$\{/.test(t.split(SITE).join('')))t=t.split(SITE+'assets/shelf/').join('../assets/shelf/');ims.forEach(q=>{if(!/^assets\/(shelf|photos)\//.test(q))return;assets.set(q.replace(/^assets\//,''),1);t=t.split(SITE+q).join('../'+q)})}out.push([n,t])});
  const dims=new Map(),vars=new Map(),mime=e=>e==='png'?'image/png':e==='webp'?'image/webp':'image/jpeg';
  const shrink=async(blob,w,type)=>{try{const bm=await createImageBitmap(blob);if(bm.width<=w*1.15)return null;const k=w/bm.width,c=document.createElement('canvas');c.width=w;c.height=Math.round(bm.height*k);c.getContext('2d').drawImage(bm,0,0,c.width,c.height);const o=await new Promise(r=>c.toBlob(r,type,.82));return o?new Uint8Array(await o.arrayBuffer()):null}catch(e){return null}};
  for(const id of (acc.uploads||[])){const b=await PB.images.bytes(id);if(!b)continue;const ext=PB.images.ext(id),base='assets/uploads/'+id,path=base+'.'+ext;out.push([path,b]);const d=await PB.images.dims(id);if(d)dims.set(path,d);
@@ -761,7 +761,7 @@ const hasProject=s=>projectsList().some(x=>x&&x.origin===projOrigin(s));
 function saveToProjects(sx,quiet){sx=sx&&sx.pages?sx:site;const K='atlas-projects-v1';const list=projectsList();
  const origin=projOrigin(sx),rec=pubGetFor(sx.id),links=[{id:'site-edit',title:'Edit in the site builder',url:'page-builder.html?site='+encodeURIComponent(sx.id),kind:'page',text:sx.pages.length+' page'+(sx.pages.length>1?'s':'')+', saved in this browser.'}];
  if(rec&&rec.url)links.push({id:'site-live',title:'Published site',url:rec.url,kind:'page',text:'The live address.'});
- let p=list.find(x=>x&&x.origin===origin);const now=Date.now();
+ const nm=t=>String(t||'').trim().toLowerCase();let p=list.find(x=>x&&x.origin===origin)||list.find(x=>x&&/^brand-/.test(x.origin||'')&&nm(x.name)===nm(sx.name||sx.brand));/* a brand saved earlier under the same name gets the site in its hub instead of a second project */const now=Date.now();
  if(!p){p={id:(crypto.randomUUID?crypto.randomUUID():'p'+now.toString(36)),name:sx.name||sx.brand,brief:'A website made in the site builder: '+sx.pages.map(x=>x.name).join(', ')+'.',platform:'Website',stage:'Designing',entries:[],icons:[],references:[],decisions:'',notes:{},directions:[],created:now,updated:now,origin,isPublic:false,files:[],hub:{links:[]}};list.push(p)}
  p.name=sx.name||sx.brand;p.updated=now;p.hub=p.hub&&typeof p.hub==='object'?p.hub:{links:[]};const keep=(p.hub.links||[]).filter(l=>!/^site-(edit|live)$/.test(l.id));p.hub.links=[...links,...keep];
  try{localStorage.setItem(K,JSON.stringify(list));if(!quiet)say('Saved to My projects');return true}catch(e){if(!quiet)say('Could not save: storage is full');return false}}

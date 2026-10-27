@@ -36,6 +36,7 @@ window.HomeAtlas={
   <div class="vmaActions vmaRise vmaD4">
    <a class="vmaBtn vmaBtnPrimary" href="#browse">Open the atlas <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5"/></svg></a>
    <button class="vmaBtn vmaBtnGhost" type="button" id="vmaCinemaBtn" aria-pressed="false"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="1.5" y="3.5" width="13" height="9" rx="1.5" stroke="currentColor"/><path d="M6.5 6v4l3.5-2z" fill="currentColor"/></svg><span>Watch the film</span></button>
+   <a class="vmaBtn vmaBtnGhost" href="#vmaToolsSec">Make something</a>
   </div>
  </div>
  <footer class="vmaInner vmaFoot vmaRise vmaD6" id="plates">
@@ -116,6 +117,7 @@ window.HomeAtlas={
  v.addEventListener('seeked',()=>this.tick());
  this.playBtn.onclick=()=>{if(v.paused){this.userPaused=false;v.play().catch(()=>{});}else{this.userPaused=true;v.pause();}};
  this.plates.forEach(p=>p.onclick=()=>{v.currentTime=Number(p.dataset.t)+0.05;this.film.classList.add('isPlaying');this.userPaused=false;v.play().catch(()=>{});this.tick();});
+ {const mk=this.hero&&this.hero.querySelector('a[href="#vmaToolsSec"]');if(mk)mk.onclick=e=>{e.preventDefault();const t=document.getElementById('vmaToolsSec');if(t)t.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})}}
  this.cinemaBtn.onclick=()=>{const on=this.hero.classList.toggle('isCinema');this.cinemaBtn.setAttribute('aria-pressed',String(on));this.cinemaBtn.querySelector('span').textContent=on?'Show the atlas':'Watch the film';document.body.classList.toggle('vmaCinema',on);if(on){if(v.currentTime>1)v.currentTime=0;this.film.classList.add('isPlaying');this.userPaused=false;v.play().catch(()=>{});}};
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&this.hero.classList.contains('isCinema'))this.cinemaBtn.click();});
  $('#vmaBackToFilm').onclick=e=>{e.preventDefault();this.hero.scrollIntoView({behavior:this.reduced.matches?'auto':'smooth'});};

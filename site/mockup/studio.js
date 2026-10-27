@@ -273,7 +273,7 @@ async function start(){SAMPLE=sample(false);SAMPLE_M=sample(true);
  sync();draw();fontsReady().then(draw);if(window.MyFonts)MyFonts.on(()=>{mineFill();fontsReady().then(draw)});
  const q=new URLSearchParams(location.search);
  if(q.get('from')&&window.MockupHandoff){const v=await MockupHandoff.receive();if(v){if(v.title&&S.text.head===DEF.text.head)S.text.head=v.title;
-  if(v.blob){if(['phone','classic','watch'].includes(S.frame))S.frame='card';await setImage('main',v.blob,v.title||'From '+v.from);toast('Picture received from the '+(v.from||'studio'));}
+  if(v.blob){if(['phone','classic','watch','browser'].includes(S.frame))S.frame='card';await setImage('main',v.blob,v.title||'From '+v.from);toast('Picture received from the '+(v.from||'studio'));}
   else if(v.html){tab('image');S.frame='browser';sync();await capture('', 'desktop',{html:v.html})}
   history.replaceState(null,'',location.pathname);sync();save();draw()}}
  const pg=q.get('page');if(pg&&/^[\w./#-]+$/.test(pg))capture(pg,q.get('size')==='phone'?'phone':'desktop');

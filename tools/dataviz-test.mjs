@@ -299,6 +299,26 @@ for (const [vw, vh] of VIEWPORTS) {
     await ctx.close();
   }
 }
+/* dogfood regressions: stale sample text after your own data, sticky chart, org import separators */
+{
+  const { page, ctx, errors } = await newPage(1440, 900);
+  await page.goto(BASE + '/chart-studio.html'); await page.waitForTimeout(900);
+  await page.click('#pasteOpen'); await page.fill('#pasteBox', 'Month,Sourdough,Pastries\nJan,4200,2800\nFeb,4300,2900\nMar,4600,2850'); await page.click('#pasteUse'); await page.waitForTimeout(700);
+  await page.click('#t-chart');
+  const txt = await page.evaluate(() => [document.getElementById('o-title').value, document.getElementById('o-subtitle').value, document.getElementById('o-source').value]);
+  note(txt.every(v => v === ''), `chart studio: pasting your own data clears the sample's title, subtitle and source (${JSON.stringify(txt)})`);
+  await page.fill('#o-title', 'x'); await page.evaluate(() => document.getElementById('side').scrollTo?.(0, 0));
+  const pos = await page.evaluate(() => getComputedStyle(document.getElementById('main')).position);
+  note(pos === 'sticky', 'chart studio: the chart stays in view (sticky) while the settings panel scrolls');
+  await page.goto(BASE + '/diagram-studio.html'); await page.waitForTimeout(900);
+  await page.click('#kinds button:has-text("Org chart")'); await page.waitForTimeout(400);
+  await page.click('#importOpen'); await page.fill('#impBox', 'Maya Cole | Owner\n  Dev Patel | Head baker');
+  await page.click('#impDlg button:has-text("Replace")'); await page.waitForTimeout(700);
+  const org = await page.evaluate(() => [document.getElementById('title').value, document.getElementById('stage').innerText]);
+  note(org[0] === '' && /Head baker/.test(org[1]) && !/\|/.test(org[1]), `diagram studio: text import clears the starter title and reads "Name | Role" (${JSON.stringify(org[0])})`);
+  note(!errors.length, 'dogfood regressions: no console errors ' + errors.slice(0, 2).join(' | '));
+  await ctx.close();
+}
 await browser.close();
 console.log('\n' + log.join('\n'));
 console.log(`\n${fails ? `DATAVIZ TEST FAIL (${fails})` : 'DATAVIZ TEST OK'}`);

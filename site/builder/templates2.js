@@ -7,7 +7,7 @@ const F=(legal,line,c1,l1,c2,l2,c3,l3)=>[0,{line,c1,links1:l1,c2,links2:l2,c3,li
 
 /* coffee shop and bakery */
 add({id:'coffee',ctaLine:'Come in, we saved you a seat.',name:'Coffee shop and bakery',desc:'Menu, the bakers, opening hours and a place to find us.',brand:'Rye & Roast',style:'at:S03-light',cta:['Visit us','visit'],siteDesc:'Rye & Roast is a neighbourhood bakery and coffee bar in Manchester with slow-fermented bread.',
- footer:F('© 2027 Rye & Roast','Bread, coffee and not much else.','Pages','Home\nMenu\nOur bakers\nVisit','Follow','Instagram\nNewsletter','Say hello','hello@ryeandroast.example\n0161 000 0000'),
+ footer:F('','Bread, coffee and not much else.','Pages','Home\nMenu\nOur bakers\nVisit','Follow','Instagram\nNewsletter','Say hello','hello@ryeandroast.example\n0161 000 0000'),
  pages:[
  {id:'home',name:'Home',title:'Rye & Roast · Bakery and coffee bar in Manchester',desc:'Slow-fermented bread, strong coffee and a warm room on Oak Street.',blocks:[
   ['hero-image',{kicker:'Bakery and coffee bar · Manchester',heading:'Slow bread, strong coffee, warm mornings.',intro:'We bake every loaf for 36 hours and roast our coffee the day before it reaches your cup.',b1:'See the menu',b2:'Find us',img:'photos/drink-frothy-coffee-in-a-green-cup.webp',alt:'A frothy latte in a green cup on a wooden table'},{0:'page:menu',1:'page:visit'}],
@@ -33,7 +33,7 @@ add({id:'coffee',ctaLine:'Come in, we saved you a seat.',name:'Coffee shop and b
 
 /* fitness studio */
 add({id:'fitness',ctaLine:'Your first class is on us.',name:'Fitness studio',desc:'Classes, coaches, membership and a free trial.',brand:'Forge',style:'kit:kinetic',cta:['Try a class','join'],siteDesc:'Forge is a strength and conditioning studio in Bristol with small classes and coaches who know your name.',
- footer:F('© 2027 Forge Strength','Small classes. Real coaching.','Studio','Home\nClasses\nCoaches\nJoin','Follow','Instagram\nStrava club','Contact','hello@forge.example\n0117 000 0000'),
+ footer:F('','Small classes. Real coaching.','Studio','Home\nClasses\nCoaches\nJoin','Follow','Instagram\nStrava club','Contact','hello@forge.example\n0117 000 0000'),
  pages:[
  {id:'home',name:'Home',title:'Forge · Strength and conditioning studio in Bristol',desc:'Small group classes, coaches who know your name and a free first session.',blocks:[
   ['hero-film',{film:'hydraulic-erosion',kicker:'Strength and conditioning · Bristol',heading:'Get stronger. Together.',intro:'Small classes of eight, coached properly, for people who want to feel capable again.',b1:'Book a free class',b2:'See the timetable'},{0:'page:join',1:'page:classes'}],
@@ -58,7 +58,7 @@ add({id:'fitness',ctaLine:'Your first class is on us.',name:'Fitness studio',des
 
 /* law firm and consultancy */
 add({id:'law',ctaLine:'Talk to a partner this week.',name:'Law firm',desc:'Practice areas, partners, insights and an enquiry form.',brand:'Hartley & Vane',style:'kit:chambers',cta:['Book a consultation','contact'],siteDesc:'Hartley & Vane is a small commercial law firm in Edinburgh advising founders, landlords and family businesses.',
- footer:F('© 2027 Hartley & Vane LLP. Authorised and regulated by the Law Society of Scotland.','Clear advice for businesses and families.','Firm','Home\nPractice\nPeople\nInsights\nContact','Offices','Edinburgh\nGlasgow','Contact','enquiries@hartleyvane.example\n0131 000 0000'),
+ footer:F('Authorised and regulated by the Law Society of Scotland.','Clear advice for businesses and families.','Firm','Home\nPractice\nPeople\nInsights\nContact','Offices','Edinburgh\nGlasgow','Contact','enquiries@hartleyvane.example\n0131 000 0000'),
  pages:[
  {id:'home',name:'Home',title:'Hartley & Vane · Commercial law in Edinburgh',desc:'Clear, practical legal advice for founders, landlords and family businesses.',blocks:[
   ['hero-center',{badge:'Since 1994',news:'Independent, partner-led',heading:'Advice you can act on.',intro:'We are a small commercial law firm. A partner handles every matter from the first call to the final signature.',b1:'Book a consultation',b2:'Our practice',proof:'Rated excellent by 140 clients'},{1:'page:contact',2:'page:practice'}],
@@ -87,7 +87,7 @@ add({id:'law',ctaLine:'Talk to a partner this week.',name:'Law firm',desc:'Pract
 
 /* real estate agent */
 add({id:'realestate',ctaLine:'Curious what your home is worth?',name:'Estate agent',desc:'Featured homes, how we sell, the team and a valuation form.',brand:'Larch & Lane',style:'kit:marmo',cta:['Free valuation','valuation'],siteDesc:'Larch & Lane is an independent estate agency selling and letting homes across south London.',
- footer:F('© 2027 Larch & Lane Ltd','Homes, found and sold with care.','Agency','Home\nHomes\nSelling\nTeam\nValuation','Follow','Instagram\nRightmove','Visit','hello@larchandlane.example\n020 7000 0000'),
+ footer:F('','Homes, found and sold with care.','Agency','Home\nHomes\nSelling\nTeam\nValuation','Follow','Instagram\nRightmove','Visit','hello@larchandlane.example\n020 7000 0000'),
  pages:[
  {id:'home',name:'Home',title:'Larch & Lane · Independent estate agents in south London',desc:'Sell or let your home with a local team that picks up the phone.',blocks:[
   ['hero-image',{kicker:'Independent estate agents · South London',heading:'Selling homes the way neighbours would.',intro:'Honest valuations, beautiful photography and one agent from first viewing to completion.',b1:'Free valuation',b2:'See homes',img:'photos/property-living-room.webp',alt:'A bright living room with a blue sofa and herringbone floor'},{0:'page:valuation',1:'page:homes'}],
@@ -115,7 +115,7 @@ add({id:'realestate',ctaLine:'Curious what your home is worth?',name:'Estate age
 
 /* wedding */
 add({id:'wedding',ctaLine:'Will you join us?',name:'Wedding',desc:'Our story, the day, accommodation and RSVP.',brand:'Ella & Sam',style:'kit:botanical',cta:['RSVP','rsvp'],siteDesc:'The wedding of Ella and Sam, 20 September 2027, in the Cotswolds.',
- footer:F('© 2027 Ella & Sam','We cannot wait to celebrate with you.','Pages','Home\nOur story\nThe day\nStay\nRSVP','Questions','ellaandsam@example.com','Dates','RSVP by 1 August'),
+ footer:F('','We cannot wait to celebrate with you.','Pages','Home\nOur story\nThe day\nStay\nRSVP','Questions','ellaandsam@example.com','Dates','RSVP by 1 August'),
  pages:[
  {id:'home',name:'Home',title:'Ella & Sam · 20 September 2027',desc:'Join us to celebrate our wedding in the Cotswolds.',blocks:[
   ['hero-image',{kicker:'20 September 2027 · The Cotswolds',heading:'Ella and Sam are getting married.',intro:'We would love you to be there. Everything you need is on these pages.',b1:'RSVP',b2:'The day',img:'photos/wedding-aisle-for-a-wedding.webp',alt:'An aisle lined with gold chairs and pink and white flowers'},{0:'page:rsvp',1:'page:day'}],
@@ -141,7 +141,7 @@ add({id:'wedding',ctaLine:'Will you join us?',name:'Wedding',desc:'Our story, th
 
 /* podcast and creator */
 add({id:'podcast',ctaLine:'Press play on something slow.',name:'Podcast or creator',desc:'Latest episodes, about the host, sponsors and a newsletter.',brand:'Slow Radio',style:'kit:vinyl',cta:['Listen now','episodes'],siteDesc:'Slow Radio is a weekly podcast about people who make things carefully.',
- footer:F('© 2027 Slow Radio','Conversations at walking pace.','Show','Home\nEpisodes\nAbout\nSponsor','Listen','Apple Podcasts\nSpotify\nRSS','Contact','hello@slowradio.example'),
+ footer:F('','Conversations at walking pace.','Show','Home\nEpisodes\nAbout\nSponsor','Listen','Apple Podcasts\nSpotify\nRSS','Contact','hello@slowradio.example'),
  pages:[
  {id:'home',name:'Home',title:'Slow Radio · A weekly podcast about careful making',desc:'Conversations at walking pace with potters, bakers, printers and other people who take their time.',blocks:[
   ['hero-split',{film:'lissajous-drawing',kicker:'A weekly podcast',heading:'Conversations at walking pace.',intro:'Every Thursday, one maker, one hour and no rush. Listen to potters, printers, bakers and people who take their time.',b1:'Latest episode',b2:'All episodes',note:'New episode every Thursday'},{0:'page:episodes',1:'page:episodes'}],
@@ -164,7 +164,7 @@ add({id:'podcast',ctaLine:'Press play on something slow.',name:'Podcast or creat
 
 /* documentation and help centre */
 add({id:'docs',ctaLine:'Draw your first chart in five minutes.',name:'Documentation',desc:'Getting started, guides, reference and a support page.',brand:'Plume Docs',style:'at:S12-light',cta:['Get started','start'],siteDesc:'Documentation for Plume, a small open-source library for drawing charts in the browser.',
- footer:F('© 2027 Plume. MIT licensed.','Charts that load in a blink.','Docs','Home\nGet started\nGuides\nReference\nSupport','Community','GitHub\nDiscord\nMastodon','Project','Changelog\nRoadmap\nLicence'),
+ footer:F('MIT licensed.','Charts that load in a blink.','Docs','Home\nGet started\nGuides\nReference\nSupport','Community','GitHub\nDiscord\nMastodon','Project','Changelog\nRoadmap\nLicence'),
  pages:[
  {id:'home',name:'Home',title:'Plume · Documentation',desc:'Everything you need to draw fast, accessible charts with Plume.',blocks:[
   ['hero-center',{badge:'v2.4',news:'Faster rendering, smaller bundles',heading:'Charts that load in a blink.',intro:'Plume is a 6 KB library for drawing accessible charts in the browser. These docs take you from install to production.',b1:'Get started',b2:'Reference',proof:'Used by 4,000 projects'},{1:'page:start',2:'page:reference'}],
@@ -191,7 +191,7 @@ add({id:'docs',ctaLine:'Draw your first chart in five minutes.',name:'Documentat
 
 /* conference */
 add({id:'conference',ctaLine:'Join 600 product people in Glasgow.',name:'Conference',desc:'Agenda, speakers, venue, sponsors and tickets.',brand:'Northlight Summit',style:'at:S07-light',cta:['Get tickets','tickets'],siteDesc:'Northlight Summit is a two-day conference for product and design leaders in Glasgow, 7 and 8 November 2027.',
- footer:F('© 2027 Northlight Summit','Two days for people who build products.','Summit','Home\nAgenda\nSpeakers\nVenue\nTickets','Follow','LinkedIn\nBluesky\nNewsletter','Contact','hello@northlight.example\nPress and sponsors'),
+ footer:F('','Two days for people who build products.','Summit','Home\nAgenda\nSpeakers\nVenue\nTickets','Follow','LinkedIn\nBluesky\nNewsletter','Contact','hello@northlight.example\nPress and sponsors'),
  pages:[
  {id:'home',name:'Home',title:'Northlight Summit · Glasgow, 7 and 8 November 2027',desc:'Two days of talks and workshops for product and design leaders.',blocks:[
   ['hero-film',{film:'light-mesh',kicker:'7 and 8 November 2027 · Glasgow',heading:'Two days for people who build products.',intro:'Talks, workshops and honest conversations with 600 product and design leaders.',b1:'Get tickets',b2:'See the agenda'},{0:'page:tickets',1:'page:agenda'}],
@@ -217,7 +217,7 @@ add({id:'conference',ctaLine:'Join 600 product people in Glasgow.',name:'Confere
   ['sec-faq',{kicker:'Questions',heading:'Before you buy.',intro:'Refunds, transfers and invoices.',button:'Ask us',qa:'Can I get a refund? | Yes, up to 30 days before the event.\nCan I transfer my ticket? | Yes; email us the new name.\nDo you offer invoices? | Yes, for any ticket, at checkout.'}]]}]});
 
 /* ---------- landing pages (one page each) ---------- */
-const LF=(brand,line)=>F('© 2027 '+brand,line,'Legal','Privacy\nTerms','Contact','hello@example.com','More','Back to top');
+const LF=(brand,line)=>F(''+brand,line,'Legal','Privacy\nTerms','Contact','hello@example.com','More','Back to top');
 const L=(o,blocks)=>add({cat:'landing',cta:['Join','home'],header:null,pages:[{id:'home',name:'Home',title:o.title||o.brand,desc:o.siteDesc,blocks}],footer:LF(o.brand,o.line||''),...o});
 
 L({id:'lp-waitlist',name:'Landing: waitlist',desc:'One page to collect sign-ups before you launch.',brand:'Orbit',style:'signal',siteDesc:'Orbit is a calendar that plans your week around the work that matters. Join the waitlist.',line:'A calmer calendar.'},[

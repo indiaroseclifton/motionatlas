@@ -119,7 +119,17 @@ function arrange(mode){const l=selItems().length>1?selItems():items().slice();if
  commit();renderAll();fit(l);say('Arranged as a '+mode+'.')}
 function doUndo(){if(!undo.length)return;redo.push(JSON.stringify(board.items));board.items=JSON.parse(undo.pop());sel.clear();persist();renderAll()}
 function doRedo(){if(!redo.length)return;undo.push(JSON.stringify(board.items));board.items=JSON.parse(redo.pop());sel.clear();persist();renderAll()}
-function addItem(it,at){const r=view.getBoundingClientRect();const [cx,cy]=at||toWorld(r.left+r.width/2,r.top+r.height/2);const base=Object.assign({w:200,h:140},it);const n=S.addItem(board,Object.assign(base,{x:Math.round(cx-base.w/2+(items().length%5)*18),y:Math.round(cy-base.h/2+(items().length%5)*18)}),false);commit();renderAll();setSel([n.id]);return n}
+/* a place for a new item that does not sit on top of the others: the free spot nearest the middle of the view, else below everything */
+function freeSpot(w,h,cx,cy){const its=items(),G=16,hit=(x,y)=>its.some(i=>x<i.x+i.w+G&&x+w+G>i.x&&y<i.y+i.h+G&&y+h+G>i.y);
+ if(!its.length)return [Math.round(cx-w/2),Math.round(cy-h/2)];
+ const r=view.getBoundingClientRect(),a=toWorld(r.left,r.top),b=toWorld(r.right,r.bottom);let best=null;
+ for(let y=a[1];y+h<=b[1];y+=24)for(let x=a[0];x+w<=b[0];x+=24){if(hit(x,y))continue;const d=(x+w/2-cx)**2+(y+h/2-cy)**2;if(!best||d<best.d)best={x,y,d}}
+ if(best)return [Math.round(best.x),Math.round(best.y)];
+ const bottom=Math.max(...its.map(i=>i.y+i.h)),left=Math.min(...its.map(i=>i.x));return [Math.round(left),Math.round(bottom+24)]}
+function addItem(it,at){const r=view.getBoundingClientRect();const [cx,cy]=at||toWorld(r.left+r.width/2,r.top+r.height/2);const base=Object.assign({w:200,h:140},it);const pos=at?[Math.round(cx-base.w/2),Math.round(cy-base.h/2)]:freeSpot(base.w,base.h,cx,cy);const n=S.addItem(board,Object.assign(base,{x:pos[0],y:pos[1]}),false);commit();renderAll();setSel([n.id]);
+ /* if it landed outside the view, bring it into view so the pin is visible */
+ {const v=V(),k=v.k,sx=n.x*k+v.x,sy=n.y*k+v.y;if(sx<0||sy<0||sx+n.w*k>r.width||sy+n.h*k>r.height){v.x=r.width/2-(n.x+n.w/2)*k;v.y=r.height/2-(n.y+n.h/2)*k;applyView()}}
+ return n}
 
 /* ---------- adding things ---------- */
 async function addPicture(blob,at){try{if(!/^image\//.test(blob.type))throw Error('That is not an image file.');if(blob.size>20*1024*1024)throw Error('Choose a picture under 20 MB.');
@@ -135,7 +145,7 @@ const sprite=e=>{const r=e.image;if(!r||!r.url)return null;const c=r.columns||2,
 async function atlasPicker(){const d=dlg('mbAtlasDlg');d.showModal();const list=await catalogue(),box=$('mbAtlasList'),q=$('mbAtlasQ');
  const draw=()=>{const s=q.value.trim().toLowerCase();const r=list.filter(e=>!s||[e.id,e.title,e.group,e.kind,e.mood,e.desc].join(' ').toLowerCase().includes(s)).slice(0,60);
   box.innerHTML=r.map(e=>{const sp=sprite(e);return `<li><button type="button" data-id="${esc(e.id)}"><span class="th" style="${sp?`background-image:url('${esc(sp.u)}');background-size:${esc(sp.s)};background-position:${esc(sp.p)}`:''}"></span><span><b>${esc(e.title)}</b><small>${esc(e.id)} · ${esc(e.group||'')}</small></span></button></li>`}).join('')||'<li class="hint">Nothing matches.</li>'};
- if(!q.dataset.b){q.dataset.b=1;q.addEventListener('input',draw);box.addEventListener('click',ev=>{const b=ev.target.closest('button[data-id]');if(!b)return;const e=list.find(x=>x.id===b.dataset.id),sp=sprite(e);addItem({type:'entry',ref:e.id,title:e.title,sub:e.group||'',img:sp,w:240,h:sp?200:110});toast('Pinned '+e.title)})}draw();q.focus()}
+ if(!q.dataset.b){q.dataset.b=1;q.addEventListener('input',draw);box.addEventListener('click',ev=>{const b=ev.target.closest('button[data-id]');if(!b)return;const e=list.find(x=>x.id===b.dataset.id),sp=sprite(e);addItem({type:'entry',ref:e.id,title:e.title,sub:e.group||'',img:sp,w:240,h:sp?276:110});toast('Pinned '+e.title)})}draw();q.focus()}
 let kitsP=null;const loadScript=s=>new Promise((res,rej)=>{if(document.querySelector(`script[src="${s}"]`))return res();const t=document.createElement('script');t.src=s;t.onload=res;t.onerror=()=>rej(Error('Could not load '+s));document.head.append(t)});
 function loadKits(){return kitsP||(kitsP=(async()=>{for(const f of ['kits/themes.js','kits/kits-a.js','kits/kits-b.js'])await loadScript(f);return window.ThemeKits.list})().catch(e=>{kitsP=null;throw e}))}
 async function kitPicker(){const d=dlg('mbKitDlg');d.showModal();const box=$('mbKitList');try{const L=await loadKits();box.innerHTML=L.map(k=>`<li><button type="button" data-id="${esc(k.id)}"><span class="th kitTh">${['bg','surface','accent','accent2','ink'].map(x=>`<i style="background:${k.t[x]}"></i>`).join('')}</span><span><b>${esc(k.name)}</b><small>${esc(k.tagline)}</small></span></button></li>`).join('');
@@ -176,18 +186,18 @@ async function drawItem(x,it){const {x:X,y:Y,w:W,h:H}=it;x.save();x.shadowColor=
   text(it.title||'',X+10,Y+ah+7,'600 12px Inter, sans-serif','#111318',W-20,14,1);text(it.sub||'',X+10,Y+ah+22,'400 10px Inter, sans-serif','#5F6577',W-20,12,1)}
  x.restore()}
 const bmCache=new Map();async function imgBitmap(id){if(!id)return null;if(bmCache.has(id))return bmCache.get(id);let b=null;try{const blob=await S.getImage(id);if(blob)b=await createImageBitmap(blob)}catch{}bmCache.set(id,b);return b}
-async function renderBoard(maxPx=3200,margin=48){const l=items().slice().sort((a,b)=>(a.z||0)-(b.z||0));if(!l.length)return null;const b=bbox(l),W=b.w+margin*2,H=b.h+margin*2,k=Math.min(2,maxPx/Math.max(W,H)),c=document.createElement('canvas');c.width=Math.round(W*k);c.height=Math.round(H*k);const x=c.getContext('2d');x.scale(k,k);x.fillStyle='#F3F0E8';x.fillRect(0,0,W,H);x.translate(margin-b.x,margin-b.y);for(const it of l)await drawItem(x,it);return c}
+async function renderBoard(maxPx=3200,margin=48,only){const l=(only||items()).slice().sort((a,b)=>(a.z||0)-(b.z||0));if(!l.length)return null;const b=bbox(l),W=b.w+margin*2,H=b.h+margin*2,k=Math.min(2,maxPx/Math.max(W,H)),c=document.createElement('canvas');c.width=Math.round(W*k);c.height=Math.round(H*k);const x=c.getContext('2d');x.scale(k,k);x.fillStyle='#F3F0E8';x.fillRect(0,0,W,H);x.translate(margin-b.x,margin-b.y);for(const it of l)await drawItem(x,it);return c}
 $('mbPng').onclick=async()=>{const c=await renderBoard();if(!c)return toast('Add something to the board first.');const bl=await new Promise(r=>c.toBlob(r,'image/png'));const a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download=(board.name||'moodboard').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')+'.png';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);window.__mbPng={w:c.width,h:c.height,size:bl.size};say('PNG downloaded');toast('PNG downloaded')};
 
 /* ---------- palette from the board ---------- */
-async function palette(){const out=new Map();const add=(c,w)=>{if(!hexOK(c))return;c=c.toUpperCase();out.set(c,(out.get(c)||0)+w)};
- items().forEach(i=>{if(i.type==='swatch')add(i.color,5e4);if(i.type==='kit')(i.colors||[]).forEach(c=>add(c,2e4));if(i.type==='note')add(i.bg,6e3);if(i.type==='icon')add(i.color,3e3)});
- const c=await renderBoard(360,0);const picked=[];
+async function palette(only){const out=new Map();const its=only||items();const add=(c,w)=>{if(!hexOK(c))return;c=c.toUpperCase();out.set(c,(out.get(c)||0)+w)};
+ its.forEach(i=>{if(i.type==='swatch')add(i.color,5e4);if(i.type==='kit')(i.colors||[]).forEach(c=>add(c,2e4));if(i.type==='note')add(i.bg,6e3);if(i.type==='icon')add(i.color,3e3)});
+ const c=await renderBoard(360,0,only);const picked=[];
  if(c){const d=c.getContext('2d').getImageData(0,0,c.width,c.height).data,bk=new Map();for(let n=0;n<d.length;n+=4){if(d[n+3]<200)continue;const r=d[n],g=d[n+1],b=d[n+2];if(r>236&&g>232&&b>220&&Math.abs(r-243)<8)continue;const key=(r>>4)<<8|(g>>4)<<4|(b>>4),e=bk.get(key)||[0,0,0,0];e[0]++;e[1]+=r;e[2]+=g;e[3]+=b;bk.set(key,e)}
   bk.forEach(e=>{const h=toHex([e[1]/e[0],e[2]/e[0],e[3]/e[0]]);add(h,e[0]*(1+sat(h)*2))})}
  const dist=(a,b)=>{const A=hx(a),B=hx(b);return Math.hypot(A[0]-B[0],A[1]-B[1],A[2]-B[2])};
  [...out.entries()].sort((a,b)=>b[1]-a[1]).forEach(([h])=>{if(picked.length<8&&picked.every(p=>dist(p,h)>54))picked.push(h)});return picked}
-async function showPalette(){const d=dlg('mbPalDlg');d.showModal();const box=$('mbPalList');box.innerHTML='<li class="hint">Reading the board…</li>';const p=await palette();window.__mbPalette=p;
+async function showPalette(){const d=dlg('mbPalDlg');d.showModal();const box=$('mbPalList');box.innerHTML='<li class="hint">Reading the board…</li>';const only=selItems().length?selItems():null,hn=d.querySelector('p.hint');if(hn){hn.dataset.t=hn.dataset.t||hn.textContent;hn.textContent=only?'Using the '+only.length+' selected item'+(only.length>1?'s':'')+'. Click an empty part of the board first to use everything.':hn.dataset.t}const p=await palette(only);window.__mbPalette=p;
  box.innerHTML=p.length?p.map(c=>`<li><button type="button" data-c="${c}" style="background:${c};color:${ink(c)}"><b>${c}</b><small>Copy</small></button></li>`).join(''):'<li class="hint">Add pictures, colours or kits first.</li>';
  $('mbPalAdd').disabled=$('mbStyle').disabled=!p.length;
  if(!box.dataset.b){box.dataset.b=1;box.addEventListener('click',e=>{const b=e.target.closest('button[data-c]');if(!b)return;navigator.clipboard?.writeText(b.dataset.c).then(()=>toast('Copied '+b.dataset.c),()=>toast(b.dataset.c))})}}
@@ -212,7 +222,7 @@ function buildKit(pal){const name=(board.name||'Moodboard').replace(/\bmoodboard
   voice:['Start from what you collected.','Every choice traces back to the board.','Keep what feels true.'],
   dos:['Use the accent once per view.','Keep body text on the ink colour.','Return to the board when unsure.'],donts:['Add colours that are not on the board.','Use the accent for long paragraphs.','Mix more than two typefaces.']}}
 let styleKit=null;
-$('mbStyle').onclick=async()=>{$('mbPalDlg').close();const p=await palette();if(p.length<2)return toast('Add more colour (pictures, swatches or kits) first.');await catalogue();let ok=true;try{await loadKits()}catch{ok=false}styleKit=buildKit(p);window.__mbKit=styleKit;
+$('mbStyle').onclick=async()=>{$('mbPalDlg').close();const p=await palette(selItems().length?selItems():null);if(p.length<2)return toast('Add more colour (pictures, swatches or kits) first.');await catalogue();let ok=true;try{await loadKits()}catch{ok=false}styleKit=buildKit(p);window.__mbKit=styleKit;
  const t=styleKit.t,d=dlg('mbStyleDlg');$('mbStyleBody').innerHTML=`<div class="stylePrev" style="background:${t.bg};color:${t.ink};border-color:${t.line}"><h3 style="font-family:${esc(styleKit.fonts.head)}">${esc(styleKit.name)}</h3><p style="color:${t.mute};font-family:${esc(styleKit.fonts.body)}">${esc(styleKit.tagline)}</p><div class="row">${['bg','surface','ink','mute','line','accent','accent2'].map(k=>`<i title="${k} ${t[k]}" style="background:${t[k]};border:1px solid ${t.line}"></i>`).join('')}</div><span class="btn" style="background:${t.accent};color:${t.onAccent};border-radius:${t.radius}">Accent</span></div><p class="hint">Fonts: ${esc(styleKit.fonts.head.split(',')[0])} / ${esc(styleKit.fonts.body.split(',')[0])}. ${ok?'':'Theme kit code could not load, so the ZIP is unavailable.'}</p>`;
  loadFont(styleKit.fonts.css);$('mbKitZip').disabled=!ok;d.showModal()};
 $('mbKitZip').onclick=async()=>{const b=$('mbKitZip');b.disabled=true;try{if(!ThemeKits.zipKit)await loadScript('kits/brand.js');const blob=await ThemeKits.zipKit(styleKit);window.__mbZip={size:blob.size};const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=styleKit.id+'-theme-kit.zip';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);toast('Theme kit ZIP downloaded')}catch(e){toast('The kit ZIP could not be built: '+(e.message||e))}finally{b.disabled=false}};

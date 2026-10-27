@@ -18,7 +18,7 @@ const T=[];
 const add=o=>{T.push({id:o.id,name:o.name,desc:o.desc,style:o.style,pages:o.pages.length,cat:o.cat||'',make:site(o)})};
 
 /* 1 portfolio */
-add({id:'portfolio',ctaLine:'Have a project in mind?',name:'Portfolio',desc:'A designer’s work, a case study, about and contact.',brand:'Ines Duarte',style:'studio',cta:['Say hello','contact'],siteDesc:'Ines Duarte is an independent brand and interface designer in Lisbon.',footer:[0,{line:'Brand and interface design, Lisbon.',c1:'Pages',links1:'Home\nWork\nAbout\nContact',c2:'Elsewhere',links2:'Instagram\nDribbble\nLinkedIn',c3:'Say hello',links3:'ines@example.com\nBook a call',legal:'© 2027 Ines Duarte'}],
+add({id:'portfolio',ctaLine:'Have a project in mind?',name:'Portfolio',desc:'A designer’s work, a case study, about and contact.',brand:'Ines Duarte',style:'studio',cta:['Say hello','contact'],siteDesc:'Ines Duarte is an independent brand and interface designer in Lisbon.',footer:[0,{line:'Brand and interface design, Lisbon.',c1:'Pages',links1:'Home\nWork\nAbout\nContact',c2:'Elsewhere',links2:'Instagram\nDribbble\nLinkedIn',c3:'Say hello',links3:'ines@example.com\nBook a call',legal:''}],
  pages:[
  {id:'home',name:'Home',title:'Ines Duarte · Brand and interface designer',desc:'Independent designer making calm brands and clear interfaces for small companies.',blocks:[
   ['hero-image',{kicker:'Independent designer, Lisbon',heading:'Calm brands for busy small companies.',intro:'I help founders say what they do in one look: identity, interface and the first thousand words.',b1:'See the work',b2:'Say hello',img:'shelf/origami.webp',alt:'A folded paper crane lit from the side'},{0:'page:work',1:'page:contact'}],
@@ -42,7 +42,7 @@ add({id:'portfolio',ctaLine:'Have a project in mind?',name:'Portfolio',desc:'A d
   ['contact-cards',{kicker:'Or',heading:'Reach me directly.',ways:'mail | Email | The quickest way to reach me. | ines@example.com\nphone | Call | Tuesdays and Thursdays, 10 to 4. | +351 21 000 0000\npin | Studio | By appointment, in Alfama. | Rua das Flores 12, Lisbon'}]]}]});
 
 /* 2 agency */
-add({id:'agency',ctaLine:'Got something worth building?',name:'Agency',desc:'Services, case studies, the team and a contact page.',brand:'Northfield',style:'kit:swiss',cta:['Start a project','contact'],siteDesc:'Northfield is a digital product agency for ambitious companies.',footer:[0,{line:'Digital product agency.',c1:'Agency',links1:'Home\nServices\nWork\nTeam\nContact',c2:'Follow',links2:'LinkedIn\nInstagram',c3:'Contact',links3:'hello@northfield.example',legal:'© 2027 Northfield Ltd'}],
+add({id:'agency',ctaLine:'Got something worth building?',name:'Agency',desc:'Services, case studies, the team and a contact page.',brand:'Northfield',style:'kit:swiss',cta:['Start a project','contact'],siteDesc:'Northfield is a digital product agency for ambitious companies.',footer:[0,{line:'Digital product agency.',c1:'Agency',links1:'Home\nServices\nWork\nTeam\nContact',c2:'Follow',links2:'LinkedIn\nInstagram',c3:'Contact',links3:'hello@northfield.example',legal:''}],
  pages:[
  {id:'home',name:'Home',title:'Northfield · Digital product agency',desc:'We design and build websites and apps for ambitious companies.',blocks:[
   ['hero-3d',{kicker:'Digital product agency · Leeds',heading:'We build products people keep.',intro:'Strategy, design and engineering in one small team, from the first sketch to the thousandth release.',b1:'See our work',b2:'Our services',img1:'shelf/threads.webp',img2:'shelf/nebula.webp',img3:'shelf/ferro.webp'},{0:'page:work',1:'page:services'}],
@@ -70,7 +70,7 @@ add({id:'agency',ctaLine:'Got something worth building?',name:'Agency',desc:'Ser
   ['map-embed',{kicker:'Visit',heading:'Come for coffee.',address:'2 Mill Yard, Leeds LS1 4AB',hours:'Monday to Friday | 9am to 6pm\nSaturday | By appointment',button:'Get directions',maplink:'https://www.openstreetmap.org/search?query=Leeds%20LS1'}]]}]});
 
 /* 3 SaaS */
-add({id:'saas',ctaLine:'Hear it before it’s loud.',name:'SaaS product',desc:'Product, pricing, customers and docs links.',brand:'Signal',style:'signal',cta:['Start free','pricing'],siteDesc:'Signal turns customer calls into a roadmap.',footer:[0,{line:'Find the signal in every call.',c1:'Product',links1:'Home\nFeatures\nPricing\nCustomers',c2:'Company',links2:'About\nCareers\nPress',c3:'Help',links3:'Docs\nStatus\nPrivacy',legal:'© 2027 Signal Labs'}],
+add({id:'saas',ctaLine:'Hear it before it’s loud.',name:'SaaS product',desc:'Product, pricing, customers and docs links.',brand:'Signal',style:'signal',cta:['Start free','pricing'],siteDesc:'Signal turns customer calls into a roadmap.',footer:[0,{line:'Find the signal in every call.',c1:'Product',links1:'Home\nFeatures\nPricing\nCustomers',c2:'Company',links2:'About\nCareers\nPress',c3:'Help',links3:'Docs\nStatus\nPrivacy',legal:''}],
  pages:[
  {id:'home',name:'Home',title:'Signal · Find the signal in every call',desc:'Signal listens to customer calls and threads what people ask for into your roadmap.',blocks:[
   ['hero-film',{film:'light-threads',kicker:'Version 3 · themes that grow on their own',heading:'Find the signal in every call.',intro:'Signal transcribes your customer calls, pulls out what people asked for and threads it into your roadmap.',b1:'Start free',b2:'See features'},{0:'page:pricing',1:'page:features'}],
@@ -94,7 +94,7 @@ add({id:'saas',ctaLine:'Hear it before it’s loud.',name:'SaaS product',desc:'P
   ['quote',{quote:'We stopped arguing about what customers said and started deciding.',name:'Priya Nair',role:'Head of Product, Halden',initials:'PN'}]]}]});
 
 /* 4 restaurant */
-add({id:'restaurant',ctaLine:'Come hungry.',name:'Restaurant',desc:'Menu, story, bookings and a find-us page.',brand:'Saffron & Salt',style:'kit:bistro',cta:['Book a table','visit'],siteDesc:'A neighbourhood restaurant cooking over fire in East London.',footer:[0,{line:'Cooked over fire, shared at the table.',c1:'Restaurant',links1:'Home\nMenu\nStory\nVisit',c2:'Follow',links2:'Instagram\nTikTok',c3:'Book',links3:'020 7946 0321\nhello@saffronandsalt.example',legal:'© 2027 Saffron & Salt Ltd'}],
+add({id:'restaurant',ctaLine:'Come hungry.',name:'Restaurant',desc:'Menu, story, bookings and a find-us page.',brand:'Saffron & Salt',style:'kit:bistro',cta:['Book a table','visit'],siteDesc:'A neighbourhood restaurant cooking over fire in East London.',footer:[0,{line:'Cooked over fire, shared at the table.',c1:'Restaurant',links1:'Home\nMenu\nStory\nVisit',c2:'Follow',links2:'Instagram\nTikTok',c3:'Book',links3:'020 7946 0321\nhello@saffronandsalt.example',legal:''}],
  pages:[
  {id:'home',name:'Home',title:'Saffron & Salt · Fire-cooked food in East London',desc:'A neighbourhood restaurant cooking over fire. Book a table.',blocks:[
   ['hero-film',{film:'smoke-plume',kicker:'Tuesday to Sunday',heading:'Cooked over fire, shared at the table.',intro:'Seasonal plates from a wood-burning kitchen in Hackney. Good wine, no fuss.',b1:'Book a table',b2:'See the menu'},{0:'page:visit',1:'page:menu'}],
@@ -116,7 +116,7 @@ add({id:'restaurant',ctaLine:'Come hungry.',name:'Restaurant',desc:'Menu, story,
   ['contact-form',{kicker:'Book',heading:'Request a table.',intro:'Tell us the date, time and how many of you. We confirm by email.',button:'Request booking',thanks:'We’ll confirm by email within a day.'}]]}]});
 
 /* 5 photographer */
-add({id:'photographer',ctaLine:'Let’s make something.',name:'Photographer',desc:'Full-screen gallery, series, about and bookings.',brand:'Elio Marsh',style:'kit:graphite',cta:['Book a shoot','contact'],siteDesc:'Elio Marsh is a documentary and portrait photographer.',footer:[0,{line:'Documentary and portrait photography.',c1:'Pages',links1:'Home\nPortfolio\nAbout\nContact',c2:'Follow',links2:'Instagram\nBehance',c3:'Bookings',links3:'elio@example.com',legal:'© 2027 Elio Marsh'}],
+add({id:'photographer',ctaLine:'Let’s make something.',name:'Photographer',desc:'Full-screen gallery, series, about and bookings.',brand:'Elio Marsh',style:'kit:graphite',cta:['Book a shoot','contact'],siteDesc:'Elio Marsh is a documentary and portrait photographer.',footer:[0,{line:'Documentary and portrait photography.',c1:'Pages',links1:'Home\nPortfolio\nAbout\nContact',c2:'Follow',links2:'Instagram\nBehance',c3:'Bookings',links3:'elio@example.com',legal:''}],
  pages:[
  {id:'home',name:'Home',title:'Elio Marsh · Documentary and portrait photographer',desc:'Photographs of people, places and quiet moments.',blocks:[
   ['hero-film',{film:'suminagashi',kicker:'Documentary and portrait',heading:'Pictures that wait for the moment.',intro:'Commissions, editorial and long-form projects across Europe.',b1:'View portfolio',b2:'Book a shoot'},{0:'page:portfolio',1:'page:contact'}],
@@ -138,7 +138,7 @@ add({id:'photographer',ctaLine:'Let’s make something.',name:'Photographer',des
   ['faq-none',{}]].filter(b=>b[0]!=='faq-none')}]});
 
 /* 6 event */
-add({id:'event',ctaLine:'Come for the day.',name:'Event',desc:'Countdown, schedule, speakers and tickets.',brand:'Paper Weight',style:'kit:kinetic',cta:['Get tickets','tickets'],siteDesc:'Paper Weight is a one-day festival of printmakers and paper artists.',footer:[0,{line:'A day of paper, print and pattern.',c1:'Festival',links1:'Home\nSchedule\nSpeakers\nTickets',c2:'Follow',links2:'Instagram\nNewsletter',c3:'Help',links3:'Accessibility\nContact',legal:'© 2027 Paper Weight'}],
+add({id:'event',ctaLine:'Come for the day.',name:'Event',desc:'Countdown, schedule, speakers and tickets.',brand:'Paper Weight',style:'kit:kinetic',cta:['Get tickets','tickets'],siteDesc:'Paper Weight is a one-day festival of printmakers and paper artists.',footer:[0,{line:'A day of paper, print and pattern.',c1:'Festival',links1:'Home\nSchedule\nSpeakers\nTickets',c2:'Follow',links2:'Instagram\nNewsletter',c3:'Help',links3:'Accessibility\nContact',legal:''}],
  pages:[
  {id:'home',name:'Home',title:'Paper Weight · A day of paper, print and pattern',desc:'A festival of printmakers and paper artists, 14 June 2027, Leeds.',blocks:[
   ['hero-kinetic',{kicker:'14 June 2027 · Leeds',lead:'A day of',words:'paper\nprint\npattern\nplay',intro:'Talks, workshops and a market of over sixty makers in the old mill.',b1:'Get tickets',b2:'See the schedule'},{0:'page:tickets',1:'page:schedule'}],
@@ -158,7 +158,7 @@ add({id:'event',ctaLine:'Come for the day.',name:'Event',desc:'Countdown, schedu
   ['map-embed',{kicker:'Venue',heading:'The old mill.',address:'Mill Lane, Leeds LS2 7AA',hours:'Saturday 14 June | 9:30 to 6pm',button:'Get directions',maplink:'https://www.openstreetmap.org/search?query=Leeds%20LS2'}]]}]});
 
 /* 7 personal blog */
-add({id:'blog',ctaLine:'Never miss a note.',name:'Personal blog',desc:'Index, an article, about and a newsletter.',brand:'Field Notes',style:'kit:gazette',cta:['Subscribe','about'],siteDesc:'Field Notes is a blog about slow cooking, small gardens and long walks.',footer:[0,{line:'Slow cooking, small gardens, long walks.',c1:'Blog',links1:'Home\nArticles\nAbout',c2:'Follow',links2:'RSS\nInstagram',c3:'Contact',links3:'hello@fieldnotes.example',legal:'© 2027 Field Notes'}],
+add({id:'blog',ctaLine:'Never miss a note.',name:'Personal blog',desc:'Index, an article, about and a newsletter.',brand:'Field Notes',style:'kit:gazette',cta:['Subscribe','about'],siteDesc:'Field Notes is a blog about slow cooking, small gardens and long walks.',footer:[0,{line:'Slow cooking, small gardens, long walks.',c1:'Blog',links1:'Home\nArticles\nAbout',c2:'Follow',links2:'RSS\nInstagram',c3:'Contact',links3:'hello@fieldnotes.example',legal:''}],
  pages:[
  {id:'home',name:'Home',title:'Field Notes · Slow cooking, small gardens, long walks',desc:'A blog about the small things.',blocks:[
   H('Field Notes','Slow cooking, small gardens, long walks.','Notes from a kitchen in the north of England. New posts most weeks.'),
@@ -182,7 +182,7 @@ add({id:'blog',ctaLine:'Never miss a note.',name:'Personal blog',desc:'Index, an
   ['contact-form',{kicker:'Write',heading:'Say hello.',intro:'Questions, recipes or just a note.',button:'Send',thanks:'I read everything.'}]]}]});
 
 /* 8 shop */
-add({id:'shop',ctaLine:'Find something small and good.',name:'Shop / product launch',desc:'Product grid, story, shipping and contact.',brand:'Small Weather',style:'kit:pastel',cta:['Shop now','shop'],siteDesc:'Small Weather makes paper and textile objects in small batches.',footer:[0,{line:'Made slowly, shipped carefully.',c1:'Shop',links1:'Home\nShop\nStory\nHelp',c2:'Follow',links2:'Instagram\nPinterest',c3:'Contact',links3:'hello@smallweather.example',legal:'© 2027 Small Weather'}],
+add({id:'shop',ctaLine:'Find something small and good.',name:'Shop / product launch',desc:'Product grid, story, shipping and contact.',brand:'Small Weather',style:'kit:pastel',cta:['Shop now','shop'],siteDesc:'Small Weather makes paper and textile objects in small batches.',footer:[0,{line:'Made slowly, shipped carefully.',c1:'Shop',links1:'Home\nShop\nStory\nHelp',c2:'Follow',links2:'Instagram\nPinterest',c3:'Contact',links3:'hello@smallweather.example',legal:''}],
  pages:[
  {id:'home',name:'Home',title:'Small Weather · Paper and textile objects',desc:'Small-batch paper and textile objects.',blocks:[
   ['hero-image',{kicker:'New spring collection',heading:'Objects with a little weather in them.',intro:'Paper birds, embroidered leaves and prints made in small batches in Bristol.',b1:'Shop the collection',b2:'Our story',img:'shelf/dove.webp',alt:'A golden paper dove'},{0:'page:shop',1:'page:story'}],
@@ -223,7 +223,7 @@ add({id:'nonprofit',ctaLine:'Help us keep the door open.',name:'Nonprofit',desc:
   ['donate',{kicker:'Spring appeal',heading:'Help us keep the doors open.',intro:'Every pound pays for warm meals, a quiet room and someone to talk to.',raised:'£36,400',goal:'of £50,000',pct:'73',amounts:'£10\n£25\n£50\n£100',button:'Donate now',fine:'Registered charity 000000. Gift Aid adds 25% at no cost to you.'}]]}]});
 
 /* 10 course */
-add({id:'course',ctaLine:'Your first cylinder awaits.',name:'Online course',desc:'Landing, curriculum, instructor and enrol.',brand:'Clay School',style:'kit:lab',cta:['Enrol','enrol'],siteDesc:'Clay School teaches pottery online, at your own pace.',footer:[0,{line:'Pottery, taught slowly.',c1:'Course',links1:'Home\nCurriculum\nInstructor\nEnrol',c2:'Follow',links2:'YouTube\nInstagram',c3:'Help',links3:'Support\nRefunds',legal:'© 2027 Clay School'}],
+add({id:'course',ctaLine:'Your first cylinder awaits.',name:'Online course',desc:'Landing, curriculum, instructor and enrol.',brand:'Clay School',style:'kit:lab',cta:['Enrol','enrol'],siteDesc:'Clay School teaches pottery online, at your own pace.',footer:[0,{line:'Pottery, taught slowly.',c1:'Course',links1:'Home\nCurriculum\nInstructor\nEnrol',c2:'Follow',links2:'YouTube\nInstagram',c3:'Help',links3:'Support\nRefunds',legal:''}],
  pages:[
  {id:'home',name:'Home',title:'Clay School · Learn pottery at your own pace',desc:'A six-module online pottery course with a real teacher.',blocks:[
   ['hero-split',{film:'sand-drawing',kicker:'Six modules, your pace',heading:'Learn to throw, from your kitchen table.',intro:'Short, calm lessons that take you from your first cylinder to a glazed set.',b1:'Enrol now',b2:'See the curriculum',note:'Starts every month'},{0:'page:enrol',1:'page:curriculum'}],
@@ -245,7 +245,7 @@ add({id:'course',ctaLine:'Your first cylinder awaits.',name:'Online course',desc
   ['sec-faq',{kicker:'Questions',heading:'Before you start.',intro:'Ask us if yours is not here.',button:'Ask us',qa:'Do I need a wheel? | Module one works with a basic wheel; we list kit that costs under £250.\nHow long do I have access? | For life, including updates.\nWhat if it is not for me? | Ask within 30 days for a full refund.'}]]}]});
 
 /* 11 app landing */
-add({id:'app',ctaLine:'Take it with you.',name:'App landing',desc:'Hero, features, pricing and download.',brand:'Ledger',style:'ds:D46',cta:['Get the app','download'],siteDesc:'Ledger sorts every payment and shows what is safe to spend.',footer:[0,{line:'Calm personal finance.',c1:'App',links1:'Home\nFeatures\nPricing\nDownload',c2:'Company',links2:'About\nCareers\nPress',c3:'Legal',links3:'Privacy\nTerms\nSecurity',legal:'© 2027 Ledger Ltd. Authorised by the FCA.'}],
+add({id:'app',ctaLine:'Take it with you.',name:'App landing',desc:'Hero, features, pricing and download.',brand:'Ledger',style:'ds:D46',cta:['Get the app','download'],siteDesc:'Ledger sorts every payment and shows what is safe to spend.',footer:[0,{line:'Calm personal finance.',c1:'App',links1:'Home\nFeatures\nPricing\nDownload',c2:'Company',links2:'About\nCareers\nPress',c3:'Legal',links3:'Privacy\nTerms\nSecurity',legal:'Authorised by the FCA.'}],
  pages:[
  {id:'home',name:'Home',title:'Ledger · Calm personal finance',desc:'Ledger sorts every payment and shows what is safe to spend.',blocks:[
   ['hero-image',{kicker:'New · shared budgets for couples',heading:'Money, without the knot in your stomach.',intro:'Ledger sorts every payment, shows what’s safe to spend and nudges you before bills land. Rated 4.8 by 22,000 people.',b1:'Get the app',b2:'See features',img:'photos/workspace-books-pencils-laptop-and-iphon.webp',alt:'A laptop, notebooks and a phone on a tidy desk'},{0:'page:download',1:'page:features'}],
@@ -266,7 +266,7 @@ add({id:'app',ctaLine:'Take it with you.',name:'App landing',desc:'Hero, feature
   ['sec-faq',{kicker:'Questions',heading:'Before you download.',intro:'Ask us anything.',button:'Talk to us',qa:'Is my data safe? | Ledger has read-only access and never stores your bank credentials.\nIs it free? | The free plan is free forever. Plus adds shared budgets and goals.\nWhich banks work? | Over 2,000 UK and EU banks.'}]]}]});
 
 /* 12 studio */
-add({id:'studio',ctaLine:'Commission a piece.',name:'Creative studio',desc:'A small studio: work, process, journal and contact.',brand:'Fold',style:'paper',cta:['Commission a piece','contact'],siteDesc:'Fold is a paper sculpture studio in Bristol.',footer:[0,{line:'Paper sculpture, made slowly.',c1:'Studio',links1:'Home\nWork\nJournal\nContact',c2:'Follow',links2:'Instagram\nVimeo',c3:'Commission',links3:'studio@fold.example',legal:'© 2027 Fold Studio'}],
+add({id:'studio',ctaLine:'Commission a piece.',name:'Creative studio',desc:'A small studio: work, process, journal and contact.',brand:'Fold',style:'paper',cta:['Commission a piece','contact'],siteDesc:'Fold is a paper sculpture studio in Bristol.',footer:[0,{line:'Paper sculpture, made slowly.',c1:'Studio',links1:'Home\nWork\nJournal\nContact',c2:'Follow',links2:'Instagram\nVimeo',c3:'Commission',links3:'studio@fold.example',legal:''}],
  pages:[
  {id:'home',name:'Home',title:'Fold · Paper sculpture studio',desc:'A paper sculpture studio making work for shop windows, book covers and film.',blocks:[
   ['hero-3d',{kicker:'Paper, light and patience',heading:'Objects made slowly, filmed carefully.',intro:'A small studio making paper sculpture for shop windows, book covers and film.',b1:'See the work',b2:'Commission a piece',img1:'shelf/origami.webp',img2:'shelf/owl.webp',img3:'shelf/dove.webp'},{0:'page:work',1:'page:contact'}],

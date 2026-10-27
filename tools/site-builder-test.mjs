@@ -701,6 +701,34 @@ if (axeSrc) {
   ok(await pg.evaluate(() => document.documentElement.scrollWidth <= 390), 'no horizontal overflow on the canvas at 390px');
   await ctx.close();
 }
+/* dogfood regressions: brand -> site -> components -> export, driven through the real UI */
+{
+  const ctx = await br.newContext({ viewport: { width: 1440, height: 900 } }); const pg = await ctx.newPage();
+  pg.on('pageerror', e => errs.push('PE ' + e.message.slice(0, 160)));
+  await pg.route('**/api/**', r => r.fulfill({ status: 503, contentType: 'application/json', body: '{}' }));
+  await pg.goto(BASE + 'brand-generator.html'); await pg.waitForFunction(() => window.Brandgen && Brandgen.brand);
+  await pg.fill('#name', 'Saffron & Salt'); await pg.fill('#desc', 'A neighbourhood bakery selling sourdough and pastries.'); await pg.waitForTimeout(500);
+  await pg.click('#toSite'); await pg.waitForSelector('#brandGrid'); await pg.click('#brGo'); await pg.waitForTimeout(2200);
+  const f = pg.frameLocator('#pv');
+  ok(await f.locator('[data-pbf=heading]').first().textContent() !== await f.locator('[data-pbf=intro]').first().textContent(), 'brand site: hero headline and intro are not the same sentence');
+  await f.locator('img').nth(1).click({ force: true }); await pg.waitForTimeout(400);
+  await pg.click('button:has-text("Choose a photo or upload")'); await pg.waitForTimeout(400);
+  await pg.locator('.pimg').nth(2).click(); await pg.waitForTimeout(700);
+  ok(/assets\/photos\//.test(await f.locator('img').nth(1).getAttribute('src')), 'image field has a Choose a photo button that swaps the hero photo');
+  await pg.click('#lt-components'); await pg.fill('input[type=search]', 'pricing'); await pg.locator('button[aria-label^="Add Pricing"]').click(); await pg.waitForTimeout(700);
+  await pg.click('#lt-interactions'); await pg.fill('input[type=search]', 'fan'); await pg.waitForTimeout(400); await pg.locator('button[aria-label^="Add Fanned"]').click(); await pg.waitForTimeout(1000);
+  await pg.click('#moreMenu summary'); await pg.click('#chkBtn'); await pg.waitForTimeout(300); await pg.click('#rp-check button:has-text("Check this page")'); await pg.waitForTimeout(2000);
+  ok(/No problems found/.test(await pg.locator('#rp-check').innerText()), 'Checks pass with a pricing component added (no heading jump)');
+  await pg.click('#rt-page'); await pg.click('#addPost'); await pg.waitForTimeout(900);
+  ok(await pg.evaluate(() => document.querySelector('#pv').contentWindow.scrollY) < 50, 'a new blog post opens scrolled to its top');
+  const files = await pg.evaluate(async () => (await PB.buildSiteFiles()).map(([n, c]) => [n, typeof c === 'string' ? c : null]));
+  const idx = files.find(x => x[0] === 'index.html')[1], ixf = files.find(x => /^interactions\//.test(x[0]));
+  ok(!/© 2026[^<]*<\/?[^>]*>?[^©]*© 20/.test(idx) && (idx.match(/©/g) || []).length === 1, 'footer has a single copyright line');
+  ok(!/pb-logo[^>]*>\s*Saffron &amp; Salt\.\s*<\/span><span class="soc"/.test(idx) && !/©\s*2026\s*<img/.test(idx), 'copyright line has no logo image');
+  ok(!/ryeandroast|Rye (&|&amp;) Roast/.test(idx), 'template placeholder email/brand does not leak into a brand site');
+  ok(ixf && !/https?:\/\/[^"'\s]*\/assets\/shelf\//.test(ixf[1]) && files.some(x => /^assets\/shelf\//.test(x[0])), 'exported interaction packs its pictures instead of hot-linking the atlas');
+  await ctx.close();
+}
 ok(errs.length === 0, 'no console or page errors ' + errs.slice(0, 5).join(' || '));
 await br.close();
 console.log(fails ? fails + ' FAILED' : 'ALL PASSED'); process.exit(fails ? 1 : 0);

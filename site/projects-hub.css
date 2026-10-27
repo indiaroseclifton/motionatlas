@@ -47,7 +47,7 @@
 .phKick{margin:0;font:500 12px var(--ph-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ph-fg2)}
 .phKick span{color:var(--ph-fg3);margin-left:6px}
 .phSub{margin:22px 0 8px;font:11px var(--ph-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ph-fg3)}
-.phEmpty{margin:14px 0 0;color:var(--ph-fg2)}
+.phNone{margin:14px 0 0;color:var(--ph-fg2)}
 .phSeg{display:inline-flex;border:1px solid var(--ph-line);border-radius:999px;padding:3px}
 .phSeg button{min-height:34px;padding:0 14px;border:0;border-radius:999px;background:none;color:var(--ph-fg2);font:600 13px var(--ph-sans);cursor:pointer}
 .phSeg button[aria-pressed=true]{background:var(--ph-fg);color:var(--ph-bg)}
@@ -193,7 +193,7 @@
 .ph label{color:var(--ph-fg)!important;font-size:13px!important;font-weight:600!important;text-transform:none!important;letter-spacing:0!important}
 .ph input:not([type=checkbox]):not([type=file]),.ph textarea,.ph select{color:var(--ph-fg)!important;background:var(--ph-surface)!important;border-color:#3A4554!important}
 .ph p{color:inherit}
-.ph .phLede,.ph .phHint,.ph .phEmpty,.ph .phDirText>span,.ph .phRows span,.ph .phSys span span,.ph .phNotes,.ph .phDraft,.ph .phFeat p{color:var(--ph-fg2)!important}
+.ph .phLede,.ph .phHint,.ph .phNone,.ph .phDirText>span,.ph .phRows span,.ph .phSys span span,.ph .phNotes,.ph .phDraft,.ph .phFeat p{color:var(--ph-fg2)!important}
 .ph .phKitCard p{color:var(--k-ink)!important}
 .ph .phMeta{color:var(--ph-fg2)!important}
 .ph .phNotes a,.ph .phBrief a{text-decoration:underline!important}
@@ -201,3 +201,4 @@
 .ph .phStar[aria-pressed=true]{color:var(--ph-accent)!important;border-color:var(--ph-accent)!important}
 .ph .phSeg button{color:var(--ph-fg2)!important}.ph .phSeg button[aria-pressed=true]{color:var(--ph-bg)!important;background:var(--ph-fg)!important}
 .ph .phDirText .phDraft b{display:inline;font:inherit;font-weight:600}
+#projectHub{scroll-margin-top:60px}

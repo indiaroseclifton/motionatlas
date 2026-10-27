@@ -41,4 +41,11 @@ for(const vp of [{width:1440,height:900},{width:390,height:844}]){
  /* a11y */
  await pg.addScriptTag({content:axeSrc});const res=await pg.evaluate(()=>axe.run(document,{resultTypes:['violations']}));const bad=res.violations.filter(v=>['serious','critical'].includes(v.impact));ok(!bad.length,tag+'axe serious/critical: '+bad.map(v=>v.id+'('+v.nodes.length+')').join(','));
  ok(!errs.length,tag+'no console errors '+errs.slice(0,2).join('|'));await ctx.close()}
+/* dogfood regressions: pins do not pile up, and a style from a selected picture uses that picture */
+{const ctx=await br.newContext({viewport:{width:1440,height:900}}),pg=await ctx.newPage();await pg.goto(BASE+'moodboard.html');await pg.waitForFunction(()=>window.MoodBoard&&window.MoodBoard.ready,null,{timeout:15000});await pg.waitForTimeout(600);
+ await pg.click('#mbAddAtlas');await pg.waitForSelector('#mbAtlasList button');for(let i=0;i<4;i++){await pg.locator('#mbAtlasList button').nth(i).click();await pg.waitForTimeout(150)}await pg.click('#mbAtlasDlg [data-close]');
+ const ov=await pg.evaluate(()=>{const l=MoodBoard.items();let n=0;for(let a=0;a<l.length;a++)for(let b=a+1;b<l.length;b++){const A=l[a],B=l[b];if(A.x<B.x+B.w&&A.x+A.w>B.x&&A.y<B.y+B.h&&A.y+A.h>B.y)n++}return n});ok(ov===0,'four pinned atlas entries do not overlap each other or the board ('+ov+' overlaps)');
+ const vis=await pg.evaluate(()=>{const r=document.querySelector('#mbView').getBoundingClientRect(),id=MoodBoard.items().slice(-1)[0].id,e=document.querySelector(`[data-id="${id}"]`).getBoundingClientRect();return e.right>r.left&&e.left<r.right&&e.bottom>r.top&&e.top<r.bottom});ok(vis,'the newest pin is scrolled into view');
+ await pg.setInputFiles('#mbUpload','/tmp/mb-test.png');await pg.waitForTimeout(700);await pg.click('#mbPalette');await pg.waitForTimeout(900);ok(/selected item/.test(await pg.textContent('#mbPalDlg p.hint')),'palette says it uses the selected picture');
+ const pal=await pg.evaluate(()=>window.__mbPalette||[]);ok(!pal.includes('#5B2DFF'),'palette from a selected picture ignores the starter swatches ('+pal.slice(0,3)+')');await ctx.close()}
 await br.close();console.log(fail?'MOODBOARD TEST FAIL':'MOODBOARD TEST OK');process.exit(fail?1:0);
