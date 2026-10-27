@@ -145,10 +145,45 @@ async function audit(url, vpName, pageId) {
   await ctx.close(); return r;
 }
 
+/* ---------- menu behaviour (once, on the Tools page): fits the viewport, groups expand, keyboard works, phone accordion ---------- */
+async function menuTests() {
+  const out = []; const bad = m => out.push({ kind: 'menu', msg: m });
+  for (const vpName of vpNames) {
+    const ctx = await br.newContext({ viewport: VPS[vpName], serviceWorkers: 'block', reducedMotion: 'reduce', isMobile: vpName === 'phone', hasTouch: vpName === 'phone' });
+    const pg = await ctx.newPage(); await pg.goto(base + 'tools.html'); await pg.waitForTimeout(1500);
+    if (vpName === 'desktop') {
+      const top = await pg.evaluate(() => [...document.querySelectorAll('#sbar .sbTop, #sbar .sbSearch')].filter(e => e.offsetParent).length);
+      if (top > 5) bad(`desktop bar shows ${top} items (max 5)`);
+      for (const k of ['lib', 'make', 'studio']) {
+        await pg.click(`.sbTop[data-m=${k}]`); await pg.waitForTimeout(150);
+        const m = await pg.evaluate(k => { const p = document.getElementById('sbP-' + k); const r = p.getBoundingClientRect(); return { fits: r.bottom <= innerHeight && r.top >= 0, h: r.height, rows: [...p.querySelectorAll('a')].filter(a => a.offsetParent).length, expanded: p.querySelectorAll('.sbG').length }; }, k);
+        if (!m.fits) bad(`${k} menu does not fit the viewport (${Math.round(m.h)}px)`);
+        if (m.rows > 8) bad(`${k} menu shows ${m.rows} rows at once (max 8)`);
+        if (m.expanded > 1) { const before = await pg.evaluate(k => document.querySelector(`#sbP-${k} .sbGr ul:not([hidden])`).id, k); await pg.click(`#sbP-${k} .sbG:nth-child(1) >> nth=1`).catch(() => { }); await pg.locator(`#sbP-${k} .sbG`).nth(1).click(); const after = await pg.evaluate(k => document.querySelector(`#sbP-${k} .sbGr ul:not([hidden])`).id, k); if (before === after) bad(`${k} menu: clicking a group does not expand it`); }
+        await pg.keyboard.press('Escape'); if (await pg.evaluate(k => !document.getElementById('sbP-' + k).hidden, k)) bad(`${k} menu: Esc does not close`);
+      }
+      await pg.focus('.sbTop[data-m=lib]'); await pg.keyboard.press('Enter'); await pg.waitForTimeout(100);
+      if (!await pg.evaluate(() => document.querySelector('.sbTop[data-m=lib]').getAttribute('aria-expanded') === 'true')) bad('Library: Enter does not open the menu');
+      await pg.keyboard.press('ArrowDown'); await pg.keyboard.press('ArrowRight');
+      if (!await pg.evaluate(() => document.activeElement && document.activeElement.closest('.sbGr'))) bad('Library: arrow keys do not reach the item list');
+      await pg.keyboard.press('Escape'); if (!await pg.evaluate(() => document.activeElement === document.querySelector('.sbTop[data-m=lib]'))) bad('Library: Esc does not return focus to the button');
+    } else {
+      await pg.click('.sbMenuBtn'); await pg.waitForTimeout(150);
+      const m = await pg.evaluate(() => { const p = document.getElementById('sbP-menu'); const openN = p.querySelectorAll('.sbAcc > button[aria-expanded=true]').length; return { openN, vis: [...p.querySelectorAll('a')].filter(a => a.offsetParent).length, h: p.scrollHeight, groups: p.querySelectorAll('.sbAcc').length, search: !!p.querySelector('.sbSheetSearch') }; });
+      if (m.openN !== 1) bad(`phone sheet has ${m.openN} groups open (want 1)`);
+      if (m.h > 1200) bad(`phone sheet is ${m.h}px tall collapsed`);
+      if (!m.search) bad('phone sheet has no search');
+      await pg.locator('#sbP-menu .sbAcc > button').nth(2).click(); const n2 = await pg.evaluate(() => document.querySelectorAll('#sbP-menu .sbAcc > button[aria-expanded=true]').length); if (n2 !== 1) bad('phone sheet: opening a group must close the others');
+    }
+    await ctx.close();
+  }
+  return out;
+}
 const jobs = []; for (const p of list) for (const v of vpNames) jobs.push([p, v]);
 const results = []; let next = 0;
 async function worker() { while (next < jobs.length) { const [p, v] = jobs[next++]; const r = await audit(p, v, p); results.push(r); process.stderr.write(`${r.issues.length ? 'x' : '.'}`); } }
 await Promise.all(Array.from({ length: CONC }, worker));
+if (!only || process.argv.includes('--menus')) { const mi = await menuTests(); if (mi.length) results.push({ page: 'menus', vp: vpNames.join('+'), issues: mi }); }
 await br.close();
 process.stderr.write('\n');
 

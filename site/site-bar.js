@@ -15,10 +15,12 @@
   if(tp!==h.p&&!(tp.endsWith('/atlas')&&h.p==='')){return false}
   if(t.hash)return t.hash===h.h||(t.hash==='#home'&&!h.h);return !(/atlas$/.test(tp)&&h.h&&false)};
  const grp=n=>G.find(g=>g.name===n)||{items:[]};
- const LIB=['Explore','Visual','Motion','Interface'].map(grp).filter(g=>g.items.length);
- const MAKE=grp('Make').items.filter(i=>i[0]!=='tools.html'),STUDIO=grp('Your studio').items;
- const item=i=>`<a href="${esc(url(i[0]).href)}"${isCur(i[0])?' aria-current="page"':''}><b>${esc(i[1])}</b><span>${esc(i[2])}</span></a>`;
- const has=items=>items.some(i=>isCur(i[0]));
+ const BY={};G.forEach(g=>g.items.forEach(i=>{BY[i[0]]={href:i[0],name:i[1],note:i[2]}}));
+ const MENUS=window.ATLAS_NAV_MENUS||[];
+ const flat=m=>[...(m.top||[]),...m.groups.flatMap(g=>g.items.flatMap(i=>i.items||[i]))];
+ const has=hrefs=>hrefs.some(isCur);
+ const link=h=>{const e=BY[h];if(!e)return '';return `<li><a href="${esc(url(h).href)}" data-note="${esc(e.note)}"${isCur(h)?' aria-current="page"':''}>${esc(e.name)}</a></li>`};
+ const rows=items=>items.map(i=>typeof i==='string'?link(i):`<li class="sbMoreLi"><button type="button" class="sbMore" aria-expanded="false" aria-controls="sbM-${esc(i.more.replace(/\W/g,''))}">${esc(i.more)}${chev}</button><ul id="sbM-${esc(i.more.replace(/\W/g,''))}" hidden>${i.items.map(link).join('')}</ul></li>`).join('');
  const chev='<svg viewBox="0 0 10 10" aria-hidden="true"><path d="m2.5 4 2.5 2.5L7.5 4" stroke="currentColor" stroke-width="1.3" fill="none"/></svg>';
  const css=document.createElement('style');css.id='sbCss';css.textContent=`
 :root{--sb-h:calc(44px + env(safe-area-inset-top,0px))}
@@ -40,14 +42,33 @@ html.sbReady body::before{display:none}
 .sbMenuBtn{display:none;align-items:center;gap:7px;height:36px;padding:0 12px;border-radius:999px;border:1px solid rgba(190,210,240,.28)!important}
 .sbPanel{position:fixed;z-index:2147483001;top:var(--sb-h);left:8px;max-width:calc(100vw - 16px);max-height:calc(100vh - var(--sb-h) - 12px);max-height:calc(100dvh - var(--sb-h) - 12px);overflow:auto;background:#0d111b;border:1px solid rgba(190,210,240,.18);border-radius:16px;box-shadow:0 24px 60px -20px rgba(0,0,0,.7);padding:10px;color:#e8edf5}
 .sbPanel[hidden]{display:none}
+.sbPanel{font:500 14px/1.3 "Manrope",Inter,system-ui,sans-serif}.sbPanel *{box-sizing:border-box}.sbPanel a,.sbPanel button{font:inherit;text-decoration:none;background:none;border:0;cursor:pointer;color:inherit}.sbPanel :focus-visible{outline:2px solid #fde68a;outline-offset:-2px}
 .sbPanel h2{margin:10px 8px 4px;font:600 10.5px/1 "JetBrains Mono",ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase;color:#8fa0bb}.sbPanel h2:first-child{margin-top:4px}
 .sbPanel .sbList{display:grid;gap:2px}
 .sbPanel a{display:grid;gap:3px;padding:9px 12px;border-radius:10px;color:#e8edf5}
 .sbPanel a:hover{background:rgba(255,255,255,.08)}.sbPanel a b{font-weight:600;font-size:14px}.sbPanel a span{font-size:12px;line-height:1.35;color:#9fb0c8;font-weight:400}
 .sbPanel a[aria-current=page]{background:rgba(253,230,138,.14);box-shadow:inset 3px 0 0 #fde68a}
-.sbPanel.sbWide{width:min(980px,calc(100vw - 16px))}.sbPanel.sbWide .sbCols{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0 8px}
-.sbPanel.sbNarrow{width:min(360px,calc(100vw - 16px))}
-.sbPanel.sbSheet{left:0;right:0;top:var(--sb-h);bottom:0;max-width:none;max-height:none;border-radius:0;border-width:1px 0 0}
+.sbPanel.sbNarrow{width:min(300px,calc(100vw - 16px))}
+.sbMega{width:min(640px,calc(100vw - 16px));padding:8px}
+.sbMegaBody{display:grid;grid-template-columns:190px minmax(0,1fr);gap:8px;max-height:min(340px,calc(100vh - var(--sb-h) - 90px));min-height:0}
+.sbGl{list-style:none;margin:0;padding:0;display:grid;align-content:start;gap:2px;border-right:1px solid rgba(190,210,240,.14);padding-right:8px;overflow:auto}
+.sbG{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;padding:10px 12px;border-radius:10px;color:#c9d3e3;font-weight:600}
+.sbG svg{width:10px;height:10px;transform:rotate(-90deg)}.sbG[aria-expanded=true]{background:rgba(255,255,255,.1);color:#fff}.sbG.sbHere{box-shadow:inset 3px 0 0 #fde68a}
+.sbGr ul{list-style:none;margin:0;padding:0;display:grid;gap:1px;overflow:auto;max-height:inherit}.sbGr ul[hidden]{display:none}
+.sbPanel li a,.sbPanel .sbMore{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-radius:9px;color:#e8edf5;font-weight:500;font-size:14px;text-align:left;width:100%}
+.sbPanel li a:hover,.sbPanel .sbMore:hover{background:rgba(255,255,255,.08)}.sbPanel .sbMore{color:#9fb0c8}.sbPanel .sbMore svg{width:10px;height:10px}.sbPanel .sbMore[aria-expanded=true] svg{transform:rotate(180deg)}
+.sbMoreLi ul{list-style:none;margin:0 0 4px 12px;padding:0;border-left:1px solid rgba(190,210,240,.18)}.sbMoreLi ul[hidden]{display:none}
+.sbPanel li a[aria-current=page]{background:rgba(253,230,138,.14);box-shadow:inset 3px 0 0 #fde68a}
+.sbPrime{display:flex!important;align-items:center;justify-content:space-between;margin:2px 0 8px;padding:11px 14px!important;background:#fde68a;color:#15110a!important;border-radius:12px!important;font-weight:700!important}
+.sbPrime small{font-weight:500;opacity:.75;font-size:12px}
+.sbDesc{margin:8px 6px 2px;min-height:34px;font-size:12px;line-height:1.4;color:#9fb0c8}
+.sbPanel.sbSheet{left:0;right:0;top:var(--sb-h);bottom:0;max-width:none;max-height:none;border-radius:0;border-width:1px 0 0;padding:12px 12px 24px}
+.sbAcc{border-bottom:1px solid rgba(190,210,240,.12)}
+.sbAcc>button{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:52px;padding:0 6px;font-weight:700;font-size:16px;color:#fff;text-align:left}
+.sbAcc>button svg{width:14px;height:14px;transition:transform .2s}.sbAcc>button[aria-expanded=true] svg{transform:rotate(180deg)}.sbAcc>button.sbHere{color:#fde68a}
+.sbAcc ul{list-style:none;margin:0 0 10px;padding:0}.sbAcc ul[hidden]{display:none}.sbAcc li a{min-height:48px;font-size:15px}
+.sbSheetSearch{display:flex;align-items:center;gap:10px;width:100%;min-height:48px;margin:2px 0 6px;padding:0 14px;border:1px solid rgba(190,210,240,.3);border-radius:12px;color:#c9d3e3;font-size:15px;text-align:left}
+.sbSheetSearch svg{width:16px;height:16px}
 .sbQuick{display:flex;gap:8px;flex-wrap:wrap;padding:4px 8px 8px}.sbQuick a{display:inline-flex;padding:9px 14px;border:1px solid rgba(190,210,240,.28);border-radius:999px;font-weight:600;font-size:13px}
 .sbSkip{position:fixed;left:8px;top:-60px;z-index:2147483002;background:#fde68a;color:#111;padding:10px 14px;border-radius:8px;font:600 14px/1 Inter,sans-serif}.sbSkip:focus{top:calc(var(--sb-h) + 6px)}
 .sbSrch{width:min(640px,calc(100vw - 24px));margin:0;padding:0;border:1px solid rgba(190,210,240,.25);border-radius:16px;background:#0d111b;color:#e8edf5;position:fixed;top:12vh;left:50%;transform:translateX(-50%)}
@@ -66,29 +87,50 @@ html.sbReady body::before{display:none}
  const top=(id,label,cls)=>`<button type="button" class="sbTop sbDesk ${cls||''}" data-m="${id}" aria-expanded="false" aria-controls="sbP-${id}" aria-haspopup="true">${esc(label)}${chev}</button>`;
  const toolsCur=isCur('tools.html');
  bar.innerHTML=`<a class="sbBrand" href="${esc(url('atlas.html#home').href)}" aria-label="Visual and Motion Atlas home"><span class="sbMark" aria-hidden="true">V/M</span><span class="sbName">Atlas</span></a>
- ${top('lib','Library',has(LIB.flatMap(g=>g.items))?'sbHere':'')}${top('make','Make',has(MAKE)?'sbHere':'')}${top('studio','Your studio',has(STUDIO)?'sbHere':'')}<a class="sbTop sbDesk" href="${esc(url('tools.html').href)}"${toolsCur?' aria-current="page"':''}>All tools</a>
+ ${MENUS.map(m=>top(m.id,m.name,has(flat(m))?'sbHere':'')).join('')}<a class="sbTop sbDesk" href="${esc(url('tools.html').href)}"${toolsCur?' aria-current="page"':''}>All tools</a>
  <span class="sbGrow"></span>
  <button type="button" class="sbSearch" data-m="search" aria-label="Search the atlas"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="m10.5 10.5 3.5 3.5" stroke="currentColor" stroke-width="1.5"/></svg><span class="sbLbl">Search</span><kbd>/</kbd></button>
- <a class="sbTop sbDesk${isCur('#projects')?' sbHere':''}" href="${esc(url('#projects').href)}">My projects</a><a class="sbTop sbDesk${isCur('account.html')?' sbHere':''}" href="${esc(url('account.html').href)}">Account</a>
  <button type="button" class="sbMenuBtn" data-m="menu" aria-expanded="false" aria-controls="sbP-menu"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 4h11M2.5 8h11M2.5 12h11" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>Menu</button>`;
  const skip=document.createElement('a');skip.className='sbSkip';skip.href='#';skip.textContent='Skip to content';
  skip.addEventListener('click',e=>{e.preventDefault();const t=document.querySelector('main,[role=main],#main')||document.querySelector('h1');if(t){if(!t.hasAttribute('tabindex'))t.setAttribute('tabindex','-1');t.focus({preventScroll:false})}});
- const panels={
-  lib:`<div class="sbCols">${LIB.map(g=>`<section><h2>${esc(g.name)}</h2><div class="sbList">${g.items.map(item).join('')}</div></section>`).join('')}</div>`,
-  make:`<div class="sbList">${MAKE.map(item).join('')}</div><div class="sbQuick"><a href="${esc(url('tools.html').href)}">All tools &rarr;</a></div>`,
-  studio:`<div class="sbList">${STUDIO.map(item).join('')}</div>`,
-  menu:`<div class="sbQuick"><a href="${esc(url('tools.html').href)}"${toolsCur?' aria-current="page"':''}>All tools</a><a href="${esc(url('#projects').href)}">My projects</a><a href="${esc(url('account.html').href)}">Account</a></div>${[...LIB,grp('Make'),grp('Your studio')].map(g=>`<h2>${esc(g.name)}</h2><div class="sbList">${g.items.map(item).join('')}</div>`).join('')}`};
- const cls={lib:'sbWide',make:'sbNarrow',studio:'sbNarrow',menu:'sbSheet'};
+ const mega=m=>{const gs=m.groups,named=gs.length>1||gs[0].name;const cur=Math.max(0,gs.findIndex(g=>has(g.items.flatMap(i=>i.items||[i]))));
+  const prime=(m.top||[]).map(h=>{const e=BY[h];return `<a class="sbPrime" href="${esc(url(h).href)}" data-note="${esc(e.note)}"${isCur(h)?' aria-current="page"':''}>${esc(e.name)}<small>${esc(e.note.split(';')[0])}</small></a>`}).join('');
+  if(!named)return `<ul class="sbSolo" style="list-style:none;margin:0;padding:0">${rows(gs[0].items)}</ul><p class="sbDesc" aria-live="polite"></p>`;
+  return `${prime}<div class="sbMegaBody"><ul class="sbGl">${gs.map((g,i)=>`<li><button type="button" class="sbG${has(g.items.flatMap(x=>x.items||[x]))?' sbHere':''}" aria-expanded="${i===cur}" aria-controls="sbL-${m.id}-${i}">${esc(g.name)}${chev}</button></li>`).join('')}</ul><div class="sbGr">${gs.map((g,i)=>`<ul id="sbL-${m.id}-${i}"${i===cur?'':' hidden'}>${rows(g.items)}</ul>`).join('')}</div></div><p class="sbDesc" aria-live="polite"></p>`};
+ /* phone sheet: an accordion, one group open at a time, the current page's group open */
+ const SHEET=[...['Explore','Visual','Motion','Interface'].map(grp),{name:'Make',items:grp('Make').items.filter(i=>i[0]!=='tools.html')},grp('Your studio')].filter(g=>g.items&&g.items.length);
+ const sheet=()=>{const cur=Math.max(0,SHEET.findIndex(g=>g.items.some(i=>isCur(i[0]))));
+  return `<button type="button" class="sbSheetSearch" data-m="search"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="m10.5 10.5 3.5 3.5" stroke="currentColor" stroke-width="1.5"/></svg>Search the atlas</button>
+  <div class="sbQuick"><a href="${esc(url('tools.html').href)}"${toolsCur?' aria-current="page"':''}>All tools</a><a href="${esc(url('page-builder.html').href)}"${isCur('page-builder.html')?' aria-current="page"':''}>Site builder</a></div>
+  ${SHEET.map((g,i)=>{const id='sbA-'+i;return `<div class="sbAcc"><button type="button" aria-expanded="${i===cur}" aria-controls="${id}"${g.items.some(x=>isCur(x[0]))?' class="sbHere"':''}>${esc(g.name)}${chev}</button><ul id="${id}"${i===cur?'':' hidden'}>${g.items.map(x=>link(x[0])).join('')}</ul></div>`}).join('')}`};
+ const panels={};MENUS.forEach(m=>panels[m.id]=mega(m));panels.menu=sheet();
+ const cls={lib:'sbMega',make:'sbMega',studio:'sbNarrow',menu:'sbSheet'};
  const els={};
  for(const k in panels){const p=document.createElement('div');p.id='sbP-'+k;p.className='sbPanel '+cls[k];p.hidden=true;p.innerHTML=panels[k];els[k]=p}
+ /* group / accordion / more toggles and descriptions */
+ function activateGroup(btn){const p=btn.closest('.sbPanel');p.querySelectorAll('.sbG').forEach(b=>{const on=b===btn;b.setAttribute('aria-expanded',String(on));const l=document.getElementById(b.getAttribute('aria-controls'));if(l)l.hidden=!on})}
+ for(const k in els){const p=els[k];
+  p.addEventListener('pointerover',e=>{const g=e.target.closest('.sbG');if(g&&e.pointerType==='mouse')activateGroup(g);const a=e.target.closest('a[data-note]');const d=p.querySelector('.sbDesc');if(a&&d)d.textContent=a.dataset.note});
+  p.addEventListener('focusin',e=>{const g=e.target.closest('.sbG');if(g)activateGroup(g);const a=e.target.closest('a[data-note]');const d=p.querySelector('.sbDesc');if(a&&d)d.textContent=a.dataset.note});
+  p.addEventListener('click',e=>{const g=e.target.closest('.sbG');if(g){activateGroup(g);return}
+   const m=e.target.closest('.sbMore');if(m){const on=m.getAttribute('aria-expanded')!=='true';m.setAttribute('aria-expanded',String(on));document.getElementById(m.getAttribute('aria-controls')).hidden=!on;return}
+   const ac=e.target.closest('.sbAcc>button');if(ac){const on=ac.getAttribute('aria-expanded')!=='true';p.querySelectorAll('.sbAcc>button').forEach(b=>{b.setAttribute('aria-expanded','false');document.getElementById(b.getAttribute('aria-controls')).hidden=true});if(on){ac.setAttribute('aria-expanded','true');document.getElementById(ac.getAttribute('aria-controls')).hidden=false}return}
+   if(e.target.closest('[data-m=search]')){close();openSearch();return}
+   if(e.target.closest('a'))close()});
+  /* keyboard: arrows move between rows, Right enters the list, Left returns to the groups */
+  p.addEventListener('keydown',e=>{const t=e.target;if(!['ArrowDown','ArrowUp','ArrowRight','ArrowLeft','Home','End'].includes(e.key))return;
+   const gl=[...p.querySelectorAll('.sbG')];
+   if(t.classList.contains('sbG')){const i=gl.indexOf(t);if(e.key==='ArrowDown'){e.preventDefault();gl[(i+1)%gl.length].focus()}else if(e.key==='ArrowUp'){e.preventDefault();gl[(i-1+gl.length)%gl.length].focus()}else if(e.key==='ArrowRight'){e.preventDefault();const l=document.getElementById(t.getAttribute('aria-controls'));const f=l&&l.querySelector('a,button');if(f)f.focus()}else if(e.key==='Home'){e.preventDefault();gl[0].focus()}else if(e.key==='End'){e.preventDefault();gl[gl.length-1].focus()}return}
+   const list=t.closest('ul');if(!list||t.closest('.sbSheet')&&false)return;const items=[...list.querySelectorAll(':scope > li > a, :scope > li > button, :scope > li > ul:not([hidden]) > li > a')];const i=items.indexOf(t);if(i<0)return;
+   if(e.key==='ArrowDown'){e.preventDefault();items[(i+1)%items.length].focus()}else if(e.key==='ArrowUp'){e.preventDefault();items[(i-1+items.length)%items.length].focus()}else if(e.key==='Home'){e.preventDefault();items[0].focus()}else if(e.key==='End'){e.preventDefault();items[items.length-1].focus()}
+   else if(e.key==='ArrowLeft'){const g=p.querySelector('.sbG[aria-expanded=true]');if(g){e.preventDefault();g.focus()}}})}
  let openKey=null,opener=null;
  function close(refocus){if(!openKey)return;els[openKey].hidden=true;bar.querySelectorAll('[aria-expanded=true]').forEach(b=>b.setAttribute('aria-expanded','false'));const o=opener;openKey=null;opener=null;if(refocus&&o)o.focus()}
  function open(k,btn){close();openKey=k;opener=btn;els[k].hidden=false;btn.setAttribute('aria-expanded','true');
-  if(k!=='menu'&&k!=='lib'){const r=btn.getBoundingClientRect();els[k].style.left=Math.max(8,Math.min(r.left,innerWidth-els[k].offsetWidth-8))+'px'}else if(k==='lib')els[k].style.left='8px'}
+  if(k!=='menu'){const r=btn.getBoundingClientRect();els[k].style.left=Math.max(8,Math.min(r.left,innerWidth-els[k].offsetWidth-8))+'px'}}
  bar.addEventListener('click',e=>{const b=e.target.closest('[data-m]');if(!b)return;const k=b.dataset.m;if(k==='search'){close();openSearch();return}
-  if(openKey===k)close(true);else open(k,b)});
+  if(openKey===k)close(true);else{open(k,b);if(e.detail===0){const f=els[k].querySelector('.sbG[aria-expanded=true],a,button');if(f)f.focus()}}});
  document.addEventListener('click',e=>{if(openKey&&!e.target.closest('.sbar,.sbPanel'))close()});
- for(const k in els)els[k].addEventListener('click',e=>{if(e.target.closest('a'))close()});
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&openKey){e.preventDefault();close(true)}
   const typing=/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement&&document.activeElement.tagName)||(document.activeElement&&document.activeElement.isContentEditable);
   if(document.querySelector('.aeSearchBtn'))return;if(((e.key==='k'||e.key==='K')&&(e.metaKey||e.ctrlKey))||(e.key==='/'&&!typing&&!e.metaKey&&!e.ctrlKey)){e.preventDefault();openSearch()}});
