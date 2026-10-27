@@ -7,7 +7,7 @@
 (()=>{
 const TK=window.ThemeKits,esc=TK.esc;
 const reduce=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
-function loadFonts(k){const id='tk-font-'+k.id;if(document.getElementById(id))return;const l=document.createElement('link');l.id=id;l.rel='stylesheet';l.href=TK.fontsURL(k);document.head.append(l)}
+function loadFonts(k){const id='tk-font-'+k.id;if(document.getElementById(id)||!TK.fontsURL(k))return;const l=document.createElement('link');l.id=id;l.rel='stylesheet';l.href=TK.fontsURL(k);document.head.append(l)}
 function vars(k,m){const M=TK.modes(k),t=m||M[M.primary];return `--bg:${t.bg};--surface:${t.surface};--ink:${t.ink};--mute:${t.mute};--line:${t.line};--accent:${t.accent};--on-accent:${t.onAccent};--accent-text:${t.accentText};--accent-2:${t.accent2};--radius:${k.t.radius};--shadow:${t.shadow};--glow:${t.glow};--font-head:${k.fonts.head};--font-body:${k.fonts.body};--head-weight:${k.hw||400};--case:${k.case==='upper'?'uppercase':'none'};color-scheme:${TK.isDark(t)?'dark':'light'}`}
 function save(blob,name){const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000)}
 async function copy(text){try{await navigator.clipboard.writeText(text);return true}catch(e){const ta=document.createElement('textarea');ta.value=text;ta.setAttribute('readonly','');ta.style.cssText='position:fixed;left:-9999px';document.body.append(ta);ta.select();let ok=false;try{ok=document.execCommand('copy')}catch(_){}ta.remove();return ok}}

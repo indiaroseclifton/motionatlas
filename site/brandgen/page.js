@@ -4,6 +4,7 @@
 const BG=window.BrandGen,TK=window.ThemeKits,$=s=>document.querySelector(s),esc=BG.esc;
 const CHIPS=['bold','calm','playful','premium','minimal','warm','friendly','techy','trustworthy','natural','elegant','energetic','edgy','retro','modern','classic','soft','creative','futuristic','handmade','editorial','youthful','cosy','fresh'];
 let S=BG.norm({name:'Saffron & Salt',desc:'A neighbourhood bakery and coffee bar with slow-fermented bread.',feels:['warm','friendly','cosy']});
+let mineMode='outline',inclFonts=false;window.__mineOpts={get mode(){return mineMode},get incl(){return inclFonts}};
 let B=null,logoURL='',logoName='',hist=[],tokTab='css',view=null,kitTimer=0,kitKey='';
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 function say(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(say.t);say.t=setTimeout(()=>t.classList.remove('on'),2200)}
@@ -64,7 +65,7 @@ $('#logoClear').onclick=()=>{push();logoURL='';logoName='';S.logoColors=[];S.fro
 
 /* ---------- font loading + measuring ---------- */
 const loaded=new Set();
-function loadFonts(b){const u=BG.fontsURL(b.type);if(loaded.has(u))return;loaded.add(u);const l=document.createElement('link');l.rel='stylesheet';l.href=u;document.head.append(l);l.onload=()=>{document.fonts&&document.fonts.load(`${b.type.hw} 40px '${b.type.head}'`).then(()=>{if(B&&B.type.head===b.type.head)renderLockups()}).catch(()=>{})}}
+function loadFonts(b){const u=BG.fontsURL(b.type);if(!u){const m=BG.mineFams(b);if(m.length)document.fonts&&Promise.all(m.map(f=>document.fonts.load(`${b.type.hw} 40px "${f}"`))).then(()=>{if(B)renderLockups()}).catch(()=>{});return}if(loaded.has(u))return;loaded.add(u);const l=document.createElement('link');l.rel='stylesheet';l.href=u;document.head.append(l);l.onload=()=>{document.fonts&&document.fonts.load(`${b.type.hw} 40px '${b.type.head}'`).then(()=>{if(B&&B.type.head===b.type.head)renderLockups()}).catch(()=>{})}}
 const mc=document.createElement('canvas').getContext('2d');
 BG.setMeasure((t,w,fam,size)=>{try{const f=fam.split(',')[0].replace(/['"]/g,'').trim();if(document.fonts&&!document.fonts.check(`${w} ${size}px "${f}"`))return 0;mc.font=`${w} ${size}px "${f}"`;return mc.measureText(t).width}catch(e){return 0}});
 
@@ -91,7 +92,20 @@ function renderType(){const b=B,t=b.type,M=b.modes[b.mode];loadFonts(b);
  $('#typBox').innerHTML=`<p class="lede"><b>${esc(t.head)}</b> + <b>${esc(t.body)}</b>. ${esc(t.why)}</p><div class="specs"><div class="specbox" style="background:${M.surface};color:${M.ink}"><p style="margin:0;font:${t.hw} clamp(34px,5vw,54px)/1.05 ${t.headStack};text-transform:${t.case==='upper'?'uppercase':'none'}">${esc(b.name)}</p><p style="margin:8px 0 0;font:${t.hw} 22px/1.3 ${t.headStack};text-transform:${t.case==='upper'?'uppercase':'none'}">${esc(b.copy.voice[0])}</p><p style="margin:12px 0 0;font:400 16px/1.6 ${t.bodyStack};color:${M.ink}">${esc(b.copy.tagline)} The quick brown fox jumps over the lazy dog. 0123456789</p><p style="margin:8px 0 0;font:600 14px/1.5 ${t.bodyStack};color:${M.mute}">Aa Bb Cc Dd Ee Ff Gg · ${esc(t.body)} 400 / 600</p></div>
  <div class="specbox"><b>Type scale</b> <span class="note">ratio ${t.ratio} from 16px</span><div style="display:grid;gap:2px;margin-top:6px;overflow:hidden">${t.scale.slice().reverse().map(s=>`<div style="display:grid;grid-template-columns:44px 70px minmax(0,1fr);gap:8px;align-items:baseline"><code>${s.name}</code><code style="color:var(--pmute)">${s.px}px</code><span style="font:${s.face==='head'?t.hw:400} ${Math.min(s.px,44)}px/${s.lh} ${s.face==='head'?t.headStack:t.bodyStack};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:${s.face==='head'&&t.case==='upper'?'uppercase':'none'}">${s.face==='head'?esc(b.name):'The quick brown fox'}</span></div>`).join('')}</div></div></div>
  <div class="f"><label for="pairSel">Choose a pairing (best matches for your feel words first)</label><select id="pairSel">${alts.map(p=>`<option value="${p.id}" ${p.id===t.id?'selected':''}>${esc(p.head)} + ${esc(p.body)}</option>`).join('')}${alts.some(p=>p.id===t.id)?'':`<option value="${t.id}" selected>${esc(t.head)} + ${esc(t.body)}</option>`}</select></div>`;
- $('#pairSel').onchange=e=>{push();S.frozen.type=e.target.value;lockUI();run()}}
+ $('#pairSel').onchange=e=>{push();S.frozen.type=e.target.value;lockUI();run()};mineUI()}
+/* ---------- my fonts: choosers, outline/embed options ---------- */
+function MFt(){return window.MyFonts}
+function mineSel(id,label,cur){const sel=document.createElement('select');sel.id=id;sel.innerHTML='<option value="">From the pairing</option>';MFt().optgroup(sel,{always:true});[...sel.options].forEach(o=>{if(o.value===(cur||''))o.setAttribute('selected','')});return `<div class="f"><label for="${id}">${label}</label>${sel.outerHTML}</div>`}
+function mineUI(){const M=MFt();if(!M)return;const box=$('#mineBox');if(!box)return;const cur=S.mine||{};const used=BG.mineFams(B);
+ box.innerHTML=`<fieldset class="mineSet"><legend>My fonts</legend><p class="note">Use fonts you own for the headline and body. They stay in this browser and are never uploaded. ${esc(M.NOTICE)}</p><div class="specs">${mineSel('mineHead','Headline font',cur.head)}${mineSel('mineBody','Body font',cur.body)}</div><div class="row"><button class="btn ghost sm" type="button" id="mineUp">Upload fonts</button><a class="btn ghost sm" href="my-fonts.html">Manage my fonts</a></div>
+ ${used.length?`<div class="f"><span class="l">When I download SVG logos</span><div class="seg" role="group" aria-label="SVG text for my fonts"><button type="button" data-mm="outline" aria-pressed="${mineMode==='outline'}">Outlines (recommended)</button><button type="button" data-mm="embed" aria-pressed="${mineMode==='embed'}">Embed font</button><button type="button" data-mm="text" aria-pressed="${mineMode==='text'}">Font name only</button></div><small>Outlines turn the letters into shapes, so the logo needs no font. ${M.list().some(f=>used.includes(f.family)&&f.faces.some(x=>!x.hasOutlines))?'Some of your files have no TrueType outlines, so those fall back to live text. ':''}Embedding puts a copy of your font inside each SVG: only do that if your licence allows it.</small></div>
+ <label class="row" style="gap:8px"><input type="checkbox" id="inclFonts" ${inclFonts?'checked':''}> <span>Include font files in the ZIP and guide (my own copies)</span></label><small class="note">Off by default. Your licence decides whether you may hand a font file to anyone else, so leave it off for files you share.</small>`:''}</fieldset>`;
+ const ch=()=>{push();const h=$('#mineHead').value,b=$('#mineBody').value;if(h==='__upload_fonts'||b==='__upload_fonts'){M.openDialog();$('#mineHead').value=S.mine&&S.mine.head||'';$('#mineBody').value=S.mine&&S.mine.body||'';return}S.mine=h||b?{head:h,body:b}:null;run()};
+ $('#mineHead').onchange=ch;$('#mineBody').onchange=ch;$('#mineUp').onclick=()=>M.openDialog();
+ box.querySelectorAll('[data-mm]').forEach(x=>x.onclick=()=>{mineMode=x.dataset.mm;mineUI()});const ic=$('#inclFonts');if(ic)ic.onchange=()=>{inclFonts=ic.checked}}
+if(window.MyFonts){MyFonts.on(()=>{if(!B)return;if(S.mine&&!(MyFonts.has(S.mine.head||'-')||MyFonts.has(S.mine.body||'-'))){S.mine=null}run()})}
+async function withMine(fn){const M=MFt(),fams=B?BG.mineFams(B):[];if(!M||!fams.length)return fn();await M.prepare(fams);const full=[...fams].every(f=>{const l=M.list().find(x=>x.family===f);return l&&l.faces.every(x=>x.hasOutlines)});BG.setMineMode(mineMode==='outline'?'outline':mineMode);try{return fn()}finally{BG.setMineMode('outline')}}
+const faceCss=()=>{const M=MFt(),f=B?BG.mineFams(B):[];return M&&f.length?M.fontFaceCSSSync(f,{mode:'file'}):''};
 function lockupViews(b){const L=[['Horizontal · light','horizontal','light'],['Horizontal · dark','horizontal','dark'],['Stacked · light','stacked','light'],['Stacked · dark','stacked','dark']];
  const withLogo=b.logoURL;return L.map(([n,l,m])=>({n,svg:BG.lockup(b,l,m),file:`${l}-${m}.svg`,l,m,bg:b.modes[m].bg}))}
 function renderLockups(){if(!B)return;const b=B,v=lockupViews(b),M=b.modes;
@@ -99,9 +113,9 @@ function renderLockups(){if(!B)return;const b=B,v=lockupViews(b),M=b.modes;
  $('#lgBox').innerHTML=`<p class="lede">${b.logoURL?`Your uploaded logo (${esc(logoName)}) sits beside the wordmark, which is set in ${esc(b.type.head)}. The monogram is the fallback for small sizes.`:`A wordmark set in ${esc(b.type.head)} with a monogram (${esc(b.logo.shape)} shape${b.logo.decor!=='plain'?', '+b.logo.decor+' detail':''}). Upload your own logo to place it here instead.`}</p><div class="lockups">${[...v,...extra].map((x,i)=>`<div class="lk"><div class="v" style="background:${x.bg}" role="img" aria-label="${esc(b.name)} ${esc(x.n)}">${x.svg.replace(/<rect width="[\d.]+" height="[\d.]+" fill="[^"]+"\/>/,'')}</div><div class="row" style="justify-content:space-between"><b style="font-size:13px">${esc(x.n)}</b><button class="btn ghost sm" type="button" data-svg="${i}">SVG</button></div></div>`).join('')}</div>`;
  lockups=[...v,...extra]}
 let lockups=[];
-$('#lgBox').onclick=e=>{const bt=e.target.closest('[data-svg]');if(!bt)return;const x=lockups[+bt.dataset.svg],s=x.n==='Monogram'?BG.monogram(B,512,{bg:false,fonts:true}):x.n==='Wordmark'?BG.wordmark(B,'light',{fonts:true}):BG.lockup(B,x.l,x.m,{fonts:true});save(blobOf(s,'image/svg+xml'),slug()+'-'+x.file);say('Downloaded '+slug()+'-'+x.file)};
+$('#lgBox').onclick=async e=>{const bt=e.target.closest('[data-svg]');if(!bt)return;const x=lockups[+bt.dataset.svg],s=await withMine(()=>x.n==='Monogram'?BG.monogram(B,512,{bg:false,fonts:true}):x.n==='Wordmark'?BG.wordmark(B,'light',{fonts:true}):BG.lockup(B,x.l,x.m,{fonts:true}));save(blobOf(s,'image/svg+xml'),slug()+'-'+x.file);say('Downloaded '+slug()+'-'+x.file+(BG.mineFams(B).length?(mineMode==='outline'?' (letters as outlines)':mineMode==='embed'?' (font embedded: check your licence)':' (needs your font installed)'):''))};
 const slug=()=>(B.name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'brand');
-function renderTokens(){const b=B,txt=tokTab==='css'?BG.css(b):tokTab==='json'?BG.json(b):BG.tailwind(b);$('#tokPre').textContent=txt;document.querySelectorAll('#tokTabs button').forEach(x=>x.setAttribute('aria-selected',x.dataset.t===tokTab))}
+function renderTokens(){const b=B,txt=tokTab==='css'?BG.css(b,{faceCSS:inclFonts?faceCss():''}):tokTab==='json'?BG.json(b):BG.tailwind(b);$('#tokPre').textContent=txt;document.querySelectorAll('#tokTabs button').forEach(x=>x.setAttribute('aria-selected',x.dataset.t===tokTab))}
 $('#tokTabs').onclick=e=>{const t=e.target.closest('button');if(!t)return;tokTab=t.dataset.t;renderTokens()};
 $('#copyTok').onclick=async()=>say(await copy($('#tokPre').textContent)?'Copied':'Copy failed');
 $('#dlTok').onclick=()=>{const n={css:['tokens.css','text/css'],json:['tokens.json','application/json'],tw:['tailwind.config.js','text/javascript']}[tokTab];save(blobOf($('#tokPre').textContent,n[1]),slug()+'-'+n[0]);say('Downloaded '+slug()+'-'+n[0])};
@@ -109,7 +123,8 @@ document.addEventListener('click',async e=>{const c=e.target.closest('[data-copy
 
 /* theme kit through the atlas renderer */
 function renderKit(){clearTimeout(kitTimer);kitTimer=setTimeout(()=>{const k=B.kit,box=$('#kitBox');if(view){view.destroy();view=null}box.innerHTML='';box.setAttribute('aria-label',k.name+' theme kit');try{view=TK.render(k,box,{say,playing:false})}catch(e){box.innerHTML='<p class="note" style="padding:16px">The theme kit preview could not be drawn: '+esc(e.message)+'</p>'}},350)}
-$('#kitZip').onclick=async e=>{const b=e.currentTarget;b.disabled=true;say('Packing the kit…');try{save(await TK.zipKit(B.kit),slug()+'-theme-kit.zip');say('Downloaded '+slug()+'-theme-kit.zip')}catch(err){say('Could not build the zip: '+err.message)}finally{b.disabled=false}};
+$('#kitZip').onclick=async e=>{const b=e.currentTarget;b.disabled=true;say('Packing the kit…');try{const fams=BG.mineFams(B),M=MFt(),extra=[];if(fams.length&&M){extra.push(['FONTS-README.txt',`This kit uses your own font${fams.length>1?'s':''}: ${fams.join(', ')}.\n${inclFonts?'Copies of your font files are in fonts/ (fonts/fonts.css has the @font-face rules). Check your licence before sharing this ZIP.':'The font files are NOT included. Place your licensed files in a fonts/ folder next to the CSS and add @font-face rules (fonts/fonts.css shows the shape).'}\nThe SVG files name the font; open them where it is installed, or convert text to outlines in your design tool.\n`]);extra.push(['fonts/fonts.css',faceCss()]);if(inclFonts)for(const f of fams)for(const x of await M.exportFiles(f))extra.push([x.path,x.bytes])}
+ save(await TK.zipKit(B.kit,extra),slug()+'-theme-kit.zip');say('Downloaded '+slug()+'-theme-kit.zip')}catch(err){say('Could not build the zip: '+err.message)}finally{b.disabled=false}};
 
 /* ---------- run ---------- */
 function run(){try{B=BG.generate(S)}catch(e){console.error(e);return}
@@ -141,10 +156,12 @@ function applied(){const b=cur(),t=b.modes[pm],c=b.copy;
 document.querySelectorAll('[data-pm]').forEach(x=>x.onclick=()=>{pm=x.dataset.pm;document.querySelectorAll('[data-pm]').forEach(y=>y.setAttribute('aria-pressed',y===x));applied()});
 
 /* guide */
-const guide=()=>BG.guideHTML(cur());
-function showGuide(){$('#gdFrame').srcdoc=guide()}
+function MFt(){return window.MyFonts}
+const guide=(forFile)=>{const f=BG.mineFams(cur()),M=MFt(),inc=f.length&&M&&(!forFile||__mineOpts.incl);return BG.guideHTML(cur(),{faceCSS:inc?M.fontFaceCSSSync(f,{mode:'base64'}):''})};
+const guideAsync=async forFile=>{const f=BG.mineFams(cur());if(!f.length)return guide(forFile);await MFt().prepare(f);const mm=__mineOpts.mode;BG.setMineMode(mm==='embed'?'embed':'outline');try{return guide(forFile)}finally{BG.setMineMode('outline')}};
+async function showGuide(){$('#gdFrame').srcdoc=await guideAsync(false)}
 const save=(b,n)=>TK.save(b,n);
-$('#gdHtml').onclick=()=>{save(new Blob([guide()],{type:'text/html'}),slug()+'-brand-guide.html');say('Downloaded the guide')};
+$('#gdHtml').onclick=async()=>{save(new Blob([await guideAsync(true)],{type:'text/html'}),slug()+'-brand-guide.html');say('Downloaded the guide'+(BG.mineFams(cur()).length?(__mineOpts.incl?' (your font is embedded: check your licence)':' (logos as outlines; your font is not included)'):''))};
 $('#gdPrint').onclick=()=>{const f=$('#gdFrame');try{f.contentWindow.focus();f.contentWindow.print()}catch(e){say('Open the downloaded HTML and print it')}};
 $('#gdPng').onclick=async()=>{const f=$('#gdFrame'),d=f.contentDocument;if(!d||!d.body){say('The guide is still loading');return}
  try{const W=1000,H=Math.ceil(d.documentElement.scrollHeight),css=[...d.querySelectorAll('style')].map(s=>s.textContent).join('\n').replace(/@import[^;]+;/g,'');

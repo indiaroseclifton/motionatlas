@@ -38,14 +38,14 @@ const TS=[['xs',-2],['sm',-1],['base',0],['lg',1],['xl',2],['2xl',3],['3xl',4],[
 function typeScale(k){const r=Math.min(1.333,k.scale||1.25);return TS.map(([n,e])=>({name:n,px:Math.round(16*r**e),lh:e<=0?1.6:e<=2?1.35:e<=4?1.15:1.04,face:e<=0?'body':'head'}))}
 const famName=s=>s.split(',')[0].replace(/['"]/g,'').trim();
 const famList=s=>s.split(',').map(x=>x.trim().replace(/^['"]|['"]$/g,''));
-const fontsURL=k=>'https://fonts.googleapis.com/css2?'+k.fonts.css+'&display=swap';
+const fontsURL=k=>k.fonts.css?'https://fonts.googleapis.com/css2?'+k.fonts.css+'&display=swap':'';
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const caseT=(k,s)=>k.case==='upper'?String(s).toUpperCase():String(s);
 const MODE_KEYS=[['bg','bg'],['surface','surface'],['ink','ink'],['mute','mute'],['line','line'],['accent','accent'],['on-accent','onAccent'],['accent-text','accentText'],['accent-2','accent2'],['accent-3','accent3'],['shadow','shadow'],['glow','glow']];
 
 /* ---------- SVG helpers ---------- */
 const NS='xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"';
-const fontStyle=k=>`<style><![CDATA[@import url('${fontsURL(k)}');]]></style>`;
+const fontStyle=k=>fontsURL(k)?`<style><![CDATA[${fontsURL(k)?`@import url('${fontsURL(k)}');`:''}]]></style>`:'';
 const inner=s=>s.replace(/^<svg[^>]*>/,'').replace(/<\/svg>\s*$/,'');
 const scope=(s,p)=>s.replace(/id="([^"]+)"/g,`id="${p}-$1"`).replace(/url\(#([^)]+)\)/g,`url(#${p}-$1)`).replace(/href="#([^"]+)"/g,`href="#${p}-$1"`);
 const dims=s=>{const m=s.match(/width="([\d.]+)"\s+height="([\d.]+)"/);return m?[+m[1],+m[2]]:[80,80]};
@@ -100,7 +100,7 @@ function modeVars(m,ind='  '){return MODE_KEYS.filter(([,key])=>m[key]).map(([n,
 function css(k){const M=modes(k),P=M[M.primary],S=scales(k);
  return `/* ${k.name} (${k.no}) theme kit · tokens.css · Visual & Motion Atlas
    Primary mode: ${M.primary}. ${M.single?M.single:`Switch with <html data-theme="${M.primary==='dark'?'light':'dark'}">.`} */
-@import url('${fontsURL(k)}');
+${fontsURL(k)?`@import url('${fontsURL(k)}');`:''}
 :root{
   color-scheme: ${M.primary};
 ${modeVars(P)}
@@ -140,7 +140,7 @@ function componentsCSS(k){return `/* ${k.name} (${k.no}) · components.css · us
 function scss(k){const M=modes(k),P=M[M.primary],S=scales(k),q=s=>/^[#\d]/.test(s)||/^\d/.test(s)?s:`unquote("${s}")`;
  return `// ${k.name} (${k.no}) theme kit · tokens.scss · Visual & Motion Atlas
 @use "sass:map";
-@import url('${fontsURL(k)}');
+${fontsURL(k)?`@import url('${fontsURL(k)}');`:''}
 
 ${MODE_KEYS.filter(([,key])=>P[key]).map(([n,key])=>`$${n}: ${/shadow|glow/.test(n)?q(P[key]):P[key]};`).join('\n')}
 $font-head: ${k.fonts.head};
@@ -269,7 +269,7 @@ async function files(k){const o={fonts:true},F={'README.txt':readme(k),'demo.htm
  'svg/og-card.svg':og(k,stillURL(k,1200,630),o),'svg/slide-title.svg':slide(k,stillURL(k,1920,1080),o),'svg/email-header.svg':email(k,stillURL(k,600,200),o),'svg/business-card-front.svg':cardFront(k,o),'svg/business-card-back.svg':cardBack(k,o)};
  Object.keys(TK.ICONS).forEach(n=>F['svg/icons/'+n+'.svg']=TK.icon(k,n));F['png/background.png']=new Uint8Array(await (await pngBlob(k)).arrayBuffer());
  return fileList(k).map(([n])=>[n,F[n]])}
-async function zipKit(k){return TK.zip(await files(k))}
+async function zipKit(k,extra){const f=await files(k);return TK.zip(extra&&extra.length?f.concat(extra):f)}
 Object.assign(TK,{hx,toHex,mix,lum,ratio,grade,best,ensure,isDark,scales,modes,typeScale,famName,fontsURL,esc,caseT,scope,inner,css,componentsCSS,scss,json,tailwind,prompt,bgJS,og,slide,email,favicon,cardFront,cardBack,clearspace,logoFile,componentsSheet,componentsHTML,demoHTML,guidelinesHTML,fileList,readme,stillURL,pngBlob,files,zipKit});
 TK.list.forEach(k=>{k.tone=isDark(k.t)?'dark':'light'});
 })();

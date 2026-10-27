@@ -145,19 +145,32 @@ const PAIRS=[
 /* single-weight display faces must not ask for weights Google Fonts doesn't have */
 const SINGLE=new Set(['DM Serif Display','Archivo Black','Bebas Neue','Anton','Abril Fatface','Righteous','Shrikhand','Gloock','Instrument Serif','Young Serif']);
 PAIRS.forEach(p=>{if(SINGLE.has(p.head)){p.css=`family=${p.head.replace(/ /g,'+')}&family=${BODYCSS[p.body]}`;p.hw=400}});
-const fontsURL=p=>'https://fonts.googleapis.com/css2?'+p.css+'&display=swap';
+const fontsURL=p=>p.css?'https://fonts.googleapis.com/css2?'+p.css+'&display=swap':'';
+/* ---- my fonts (fonts the visitor uploaded, kept in their browser; see ../fontlib.js) ---- */
+let MINE_MODE='outline';/* how SVG exports carry my fonts: 'outline' (paths), 'embed' (base64 @font-face, live text) or 'text' (family name only) */
+const MF=()=>window.MyFonts||null;
+function applyMine(type,mine){const M=MF();if(!M||!mine)return type;const h=mine.head&&M.has(mine.head)?M.list().find(f=>f.family===mine.head||f.display===mine.head).family:'',bd=mine.body&&M.has(mine.body)?M.list().find(f=>f.family===mine.body||f.display===mine.body).family:'';
+ if(!h&&!bd)return type;const parts=(type.css||'').split('&').filter(x=>/^family=/.test(x)),hp=parts[0]||'',bp=parts[1]||parts[0]||'';
+ if(h){type.head=h;type.headStack=M.cssFamily(h).replace(/"/g,"'");type.hw=M.faceFor(h,type.hw).weight}
+ if(bd){type.body=bd;type.bodyStack=M.cssFamily(bd).replace(/"/g,"'")}
+ type.css=[...new Set([h?'':hp,bd?'':bp].filter(Boolean))].join('&');type.mine={head:h,body:bd};
+ type.why=`Your own font${h&&bd?'s':''}: ${[h&&h+' for headlines',bd&&bd+' for body text'].filter(Boolean).join(' and ')}${(!h||!bd)?', paired with '+(h?type.body:type.head)+' from the atlas pairing':''}. Fonts you upload stay in this browser; the atlas never uploads or redistributes them.`;
+ if(h&&M.faceFor(h,400)){const fl=M.list().find(f=>f.family===h);if(fl&&!fl.faces.some(f=>f.weight===type.hw))type.hw=fl.faces[0].weight}
+ return type}
+const mineFams=b=>b.type&&b.type.mine?[b.type.mine.head,b.type.mine.body].filter(Boolean):[];
+const mineHead=b=>!!(b.type&&b.type.mine&&b.type.mine.head);
 
 /* ---------------- naming ---------------- */
 const HUE_NAMES=[[12,'Crimson'],[32,'Vermilion'],[52,'Tangerine'],[72,'Amber'],[95,'Saffron'],[112,'Olive'],[135,'Leaf'],[155,'Emerald'],[175,'Jade'],[195,'Teal'],[215,'Lagoon'],[238,'Azure'],[260,'Cobalt'],[280,'Indigo'],[300,'Violet'],[322,'Orchid'],[342,'Magenta'],[360,'Rose']];
 function colourName(hex){const [L,C,H]=oklch(hex);if(C<.035)return L>.8?'Mist':L<.35?'Graphite':'Slate';const n=(HUE_NAMES.find(([h])=>H<=h)||HUE_NAMES[0])[1];return (L<.42?'Deep ':L>.84?'Pale ':'')+n}
 
 /* ---------------- state ---------------- */
-const DEFAULT={name:'Northwind',desc:'',feels:[],audience:'',base:'',mode:'auto',logoColors:[],seeds:{pal:0,type:0,logo:0},frozen:{pal:null,type:null,logo:null},ai:null};
+const DEFAULT={mine:null,name:'Northwind',desc:'',feels:[],audience:'',base:'',mode:'auto',logoColors:[],seeds:{pal:0,type:0,logo:0},frozen:{pal:null,type:null,logo:null},ai:null};
 function norm(s){s=Object.assign({},DEFAULT,s||{});s.name=String(s.name||'').slice(0,60);s.desc=String(s.desc||'').slice(0,400);s.audience=String(s.audience||'').slice(0,80);
  s.feels=[...new Set((Array.isArray(s.feels)?s.feels:[]).map(x=>String(x).toLowerCase().trim().slice(0,24)).filter(Boolean))].slice(0,8);
  s.base=normHex(s.base);s.mode=['light','dark','auto'].includes(s.mode)?s.mode:'auto';s.logoColors=(Array.isArray(s.logoColors)?s.logoColors:[]).map(normHex).filter(Boolean).slice(0,4);
  s.seeds=Object.assign({pal:0,type:0,logo:0},s.seeds||{});for(const k in s.seeds)s.seeds[k]=Math.max(0,Math.floor(+s.seeds[k]||0))%100000;
- s.frozen=Object.assign({pal:null,type:null,logo:null},s.frozen||{});return s}
+ s.frozen=Object.assign({pal:null,type:null,logo:null},s.frozen||{});s.mine=s.mine&&typeof s.mine==='object'&&(s.mine.head||s.mine.body)?{head:String(s.mine.head||'').slice(0,80),body:String(s.mine.body||'').slice(0,80)}:null;return s}
 
 /* ---------------- profile from feel words ---------------- */
 function profile(s){const w={};s.feels.forEach((f,i)=>{const k=resolveFeel(f);if(k)w[k]=(w[k]||0)+(i<5?1:.6)});const aud=audienceFeels(s.audience);for(const k in aud)w[k]=(w[k]||0)+aud[k]*.6;
@@ -267,7 +280,7 @@ function generate(input){const s=norm(input),P=profile(s);const seedBase=hash([s
  const ranked=rankPairs(s,P,seedBase),frozenT=s.frozen.type&&PAIRS.find(p=>p.id===s.frozen.type),aiT=s.ai&&s.ai.type&&PAIRS.find(p=>p.id===s.ai.type);
  const pair=frozenT||(aiT&&s.seeds.type===0?aiT:null)||ranked[s.seeds.type%Math.min(8,ranked.length)];
  const ratioR=P.e>.75?1.333:P.e>.5?1.28:P.e>.3?1.25:1.2;
- const type={...pair,ratio:ratioR,scale:typeScale(ratioR),alternatives:ranked.slice(0,8).map(p=>p.id)};
+ const type=applyMine({...pair,ratio:ratioR,scale:typeScale(ratioR),alternatives:ranked.slice(0,8).map(p=>p.id)},s.mine);
  const logo=s.frozen.logo&&s.frozen.logo.shape?s.frozen.logo:logoParams(s,P,seedBase);
  const pal={brand:pp.hex,secondary:pp.secHex,accent:pp.accHex,primaryName:colourName(pp.hex),secondaryName:colourName(pp.secHex),accentName:colourName(pp.accHex),harmony:pp.harm,from:pp.from,params:pp};
  const copy=copyFor(s,P,pal,type);
@@ -277,7 +290,7 @@ function generate(input){const s=norm(input),P=profile(s);const seedBase=hash([s
 /* ---------------- theme kit object (kits/themes.js shape) ---------------- */
 function kitOf(b){const TK=window.ThemeKits;const M=b.modes[b.mode],A=b.modes[b.mode==='dark'?'light':'dark'],P=b.profile;
  const tk=t=>({bg:t.bg,surface:t.surface,ink:t.ink,mute:t.mute,line:t.border,accent:t.primary,onAccent:t.onPrimary,accentText:t.primaryText,accent2:t.secondary,accent3:t.accent,radius:b.radius+'px',shadow:t.shadow,glow:t.glow});
- const id=('gen-'+(b.name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,18)||'brand')+'-'+hash(JSON.stringify([b.state,b.mode,M.primary,b.type.id,b.logo])).toString(36)).slice(0,40);
+ const id=('gen-'+(b.name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,18)||'brand')+'-'+hash(JSON.stringify([b.state,b.mode,M.primary,b.type.id,b.logo,b.type.mine||0])).toString(36)).slice(0,40);
  const roundy=P.r>12,sq=P.r<5;
  const k={id,no:(b.initials+'  ').slice(0,2).trim()||'BK',name:b.name,tagline:b.copy.tagline,mood:[...b.state.feels.slice(0,4),b.state.audience].filter(Boolean).join(', ')||'Generated brand',
   fonts:{head:b.type.headStack,body:b.type.bodyStack,css:b.type.css},t:tk(M),alt:tk(A),bg:P.bg,stroke:{w:roundy?1.75:1.5,cap:sq?'square':'round',join:sq?'miter':'round'},case:b.type.case==='upper'?'upper':'',
@@ -288,7 +301,12 @@ function kitOf(b){const TK=window.ThemeKits;const M=b.modes[b.mode],A=b.modes[b.
 
 /* ---------------- SVG builders ---------------- */
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const fontImport=b=>`<style>@import url('${fontsURL(b.type).replace(/&/g,'&amp;')}');</style>`;
+const fontImport=b=>{const u=fontsURL(b.type),m=mineFams(b),emb=m.length&&MINE_MODE==='embed'&&MF()?MF().fontFaceCSSSync(m):'';return u||emb?`<style>${u?`@import url('${u.replace(/&/g,'&amp;')}');`:''}${emb}</style>`:''};
+/* SVG text: live <text>, or an outline path when the font is mine and MINE_MODE is 'outline' (so the logo needs no font) */
+function svgText(b,face,o){/* o: x,y,size,weight,fill,track,anchor,middle,txt */
+ const fam=face==='head'?(b.type.mine&&b.type.mine.head):null;const stack=face==='head'?b.type.headStack:b.type.bodyStack;
+ if(fam&&MINE_MODE==='outline'&&MF()){const g=MF().glyphPathSync(fam,o.txt,{size:o.size,weight:o.weight,tracking:o.track/o.size});if(g&&g.d){let x=o.x-(o.anchor==='middle'?g.width/2:0),y=o.y+(o.middle?(g.ascent-g.descent)/2*.62:0);return `<path transform="translate(${(+x).toFixed(2)} ${(+y).toFixed(2)})" d="${g.d}" fill="${o.fill}"><title>${esc(o.txt)}</title></path>`}}
+ return `<text x="${o.x}" y="${o.y}"${o.anchor?` text-anchor="${o.anchor}"`:''}${o.middle?' dominant-baseline="middle"':''} font-family="${esc(stack.replace(/"/g,"'"))}" font-weight="${o.weight}" font-size="${o.size}" fill="${o.fill}" letter-spacing="${o.track}">${esc(o.txt)}</text>`}
 const famAttr=b=>b.type.headStack.replace(/"/g,"'");
 function shapePath(shape,s){const h=s/2;switch(shape){case 'circle':return `<circle cx="${h}" cy="${h}" r="${h}"/>`;case 'rounded':return `<rect width="${s}" height="${s}" rx="${s*.22}"/>`;case 'squircle':return `<path d="M${h} 0C${s*.9} 0 ${s} ${s*.1} ${s} ${h}S${s*.9} ${s} ${h} ${s} 0 ${s*.9} 0 ${h} ${s*.1} 0 ${h} 0z"/>`;
  case 'hexagon':return `<path d="M${h} 0 ${s*.933} ${s*.25}V${s*.75}L${h} ${s} ${s*.067} ${s*.75}V${s*.25}z"/>`;case 'shield':return `<path d="M${s*.08} ${s*.06}H${s*.92}V${s*.5}C${s*.92} ${s*.78} ${s*.7} ${s*.92} ${h} ${s}C${s*.3} ${s*.92} ${s*.08} ${s*.78} ${s*.08} ${s*.5}z"/>`;case 'arch':return `<path d="M0 ${s}V${h}A${h} ${h} 0 0 1 ${s} ${h}V${s}z"/>`;default:return `<rect width="${s}" height="${s}" rx="${s*.08}"/>`}}
@@ -296,12 +314,12 @@ function shapePath(shape,s){const h=s/2;switch(shape){case 'circle':return `<cir
 function markInner(b,s=64,o={}){const t=o.t||b.modes[b.mode];if(o.logo!==false&&b.logoURL)return `<image href="${esc(b.logoURL)}" x="0" y="0" width="${s}" height="${s}" preserveAspectRatio="xMidYMid meet"/>`;
  const L=b.logo,txt=b.initials,two=txt.length>1,fs=s*(two?.42:.56)*(b.type.case==='upper'||b.type.wf<.47?1.05:1)*(b.type.wf>.68?.82:1),plain=L.shape==='plain';
  const fill=plain?'none':t.primary,ink=plain?t.primaryText:t.onPrimary;
- return `<g fill="${fill}">${plain?'':shapePath(L.shape,s)}</g>${plain?`<rect x="${s*.12}" y="${s*.8}" width="${s*.76}" height="${s*.07}" fill="${t.accent}"/>`:''}<text x="${s/2}" y="${s*(L.shape==='arch'?.66:L.shape==='shield'?.6:.555)}" text-anchor="middle" dominant-baseline="middle" font-family="${esc(famAttr(b))}" font-weight="${b.type.hw}" font-size="${fs.toFixed(1)}" fill="${ink}" letter-spacing="${two?-.5:0}">${esc(txt)}</text>`}
+ return `<g fill="${fill}">${plain?'':shapePath(L.shape,s)}</g>${plain?`<rect x="${s*.12}" y="${s*.8}" width="${s*.76}" height="${s*.07}" fill="${t.accent}"/>`:''}${svgText(b,'head',{x:s/2,y:s*(L.shape==='arch'?.66:L.shape==='shield'?.6:.555),anchor:'middle',middle:true,weight:b.type.hw,size:+fs.toFixed(1),fill:ink,track:two?-.5:0,txt})}`}
 function monogram(b,size=256,o={}){const t=o.t||b.modes[o.mode||b.mode];return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 64 64">${o.fonts?`<defs>${fontImport(b)}</defs>`:''}${o.bg?`<rect width="64" height="64" fill="${t.bg}"/>`:''}${markInner(b,64,{t,logo:false})}</svg>`}
 function wordText(b){const n=b.logo.lower?b.name.toLowerCase():b.name;return b.type.case==='upper'?n.toUpperCase():n}
 function wordmarkParts(b,t,x,y,size){x=+x;y=+y;const L=b.logo,txt=wordText(b),w=textW(txt,b.type,size)+Math.max(0,[...txt].length-1)*L.track*size;
  const dec=L.decor==='dot'?`<circle cx="${(x+w+size*.16).toFixed(1)}" cy="${(y-size*.09).toFixed(1)}" r="${(size*.09).toFixed(1)}" fill="${t.accent}"/>`:L.decor==='bar'?`<rect x="${x}" y="${(y+size*.2).toFixed(1)}" width="${(size*1.1).toFixed(1)}" height="${(size*.08).toFixed(1)}" fill="${t.accent}"/>`:L.decor==='slash'?`<path d="M${(x+w+size*.14).toFixed(1)} ${(y+size*.06).toFixed(1)}l${(size*.22).toFixed(1)} ${(-size*.74).toFixed(1)}" stroke="${t.accent}" stroke-width="${(size*.09).toFixed(1)}" stroke-linecap="round"/>`:'';
- return {svg:`<text x="${x}" y="${y}" font-family="${esc(famAttr(b))}" font-weight="${b.type.hw}" font-size="${size}" letter-spacing="${(L.track*size).toFixed(2)}" fill="${t.ink}">${esc(txt)}</text>${dec}`,w:w+(L.decor==='dot'||L.decor==='slash'?size*.45:0)}}
+ return {svg:`${svgText(b,'head',{x,y,weight:b.type.hw,size,fill:t.ink,track:(L.track*size).toFixed(2),txt})}${dec}`,w:w+(L.decor==='dot'||L.decor==='slash'?size*.45:0)}}
 function wordmark(b,mode,o={}){const t=b.modes[mode||b.mode],size=64,p=wordmarkParts(b,t,24,96,size),W=Math.ceil(p.w+48),H=132;
  return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${o.fonts?`<defs>${fontImport(b)}</defs>`:''}${o.bg!==false?`<rect width="${W}" height="${H}" fill="${t.bg}"/>`:''}${p.svg}</svg>`}
 function lockup(b,layout,mode,o={}){const t=b.modes[mode||b.mode],size=56;let W,H,body;
@@ -314,11 +332,12 @@ function patternSVG(b){const t=b.modes[b.mode],L=b.logo;const sh=L.shape==='plai
 const MODE_TOKENS=[['bg','bg'],['surface','surface'],['raised','raised'],['ink','ink'],['mute','mute'],['line','line'],['border','border'],['primary','primary'],['on-primary','onPrimary'],['primary-text','primaryText'],['secondary','secondary'],['on-secondary','onSecondary'],['secondary-text','secondaryText'],['accent','accent'],['on-accent','onAccent'],['accent-text','accentText'],['focus','focus'],
  ['success','success'],['success-text','successText'],['success-tint','successTint'],['warning','warning'],['warning-text','warningText'],['warning-tint','warningTint'],['danger','danger'],['danger-text','dangerText'],['danger-tint','dangerTint'],['info','info'],['info-text','infoText'],['info-tint','infoTint']];
 const famList=s=>s.split(',').map(x=>x.trim().replace(/^['"]|['"]$/g,''));
-function css(b){const M=b.modes,P=M[b.mode],alt=b.mode==='dark'?'light':'dark',mv=(m,ind='  ')=>MODE_TOKENS.map(([n,k])=>`${ind}--${n}: ${m[k]};`).join('\n');
+function css(b,o){o=o||{};const M=b.modes,P=M[b.mode],alt=b.mode==='dark'?'light':'dark',mv=(m,ind='  ')=>MODE_TOKENS.map(([n,k])=>`${ind}--${n}: ${m[k]};`).join('\n');
  return `/* ${b.name} · brand tokens · made with the Brand kit generator (Visual & Motion Atlas)
    Primary mode: ${b.mode}. Every text pair is at least 4.5:1 and every UI colour at least 3:1 in both modes.
-   Switch modes with <html data-theme="light|dark">; without it the visitor's system setting decides. */
-@import url('${fontsURL(b.type)}');
+   Switch modes with <html data-theme="light|dark">; without it the visitor's system setting decides.${mineFams(b).length?`
+   Fonts: ${mineFams(b).map(f=>'"'+f+'"').join(' and ')} ${mineFams(b).length>1?'are':'is'} your own licensed font${mineFams(b).length>1?'s':''} and ${o.faceCSS?'the files are included next to this CSS in fonts/':'not included here: add @font-face rules for your own font files (or place them in /fonts)'}.`:''} */
+${fontsURL(b.type)?`@import url('${fontsURL(b.type)}');\n`:''}${o.faceCSS||''}
 :root{
   color-scheme: ${b.mode};
   --brand-primary: ${b.pal.brand};
@@ -366,10 +385,11 @@ function json(b){const col=v=>({$value:v}),grp=m=>{const o={$type:'color'};MODE_
   font:{family:{$type:'fontFamily',head:{$value:famList(b.type.headStack)},body:{$value:famList(b.type.bodyStack)}},weight:{$type:'fontWeight',head:{$value:b.type.hw},body:{$value:400}}},
   'font-size':fs,'line-height':lh,
   radius:{$type:'dimension',base:{$value:{value:b.radius,unit:'px'}},sm:{$value:{value:Math.round(b.radius/2),unit:'px'}},pill:{$value:{value:999,unit:'px'}}},
-  $extensions:{'com.motionatlas.brand':{name:b.name,tagline:b.copy.tagline,feels:b.state.feels,audience:b.state.audience,primaryMode:b.mode,typePairing:b.type.id,googleFonts:fontsURL(b.type),voice:b.copy.voice}}},null,2)}
+  $extensions:{'com.motionatlas.brand':{name:b.name,tagline:b.copy.tagline,feels:b.state.feels,audience:b.state.audience,primaryMode:b.mode,typePairing:b.type.id,googleFonts:fontsURL(b.type)||null,myFonts:mineFams(b).length?{families:mineFams(b),note:'Your own licensed fonts; not included. Add @font-face for your own files.'}:undefined,voice:b.copy.voice}}},null,2)}
 function tailwind(b){const T=n=>`var(--${n})`;
  return `/* ${b.name} · Tailwind CSS config (v3 preset; for v4 import tokens.css and map these in @theme)
-   Semantic colours read the CSS variables in tokens.css, so light/dark switching keeps working. */
+   Semantic colours read the CSS variables in tokens.css, so light/dark switching keeps working.${mineFams(b).length?`
+   Fonts ${mineFams(b).map(f=>'"'+f+'"').join(', ')}: your own licensed font files are not included; add @font-face rules for them (see tokens.css).`:''} */
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ['selector', '[data-theme="dark"]'],
@@ -391,12 +411,12 @@ ${b.type.scale.map(s=>`        '${s.name}': ['${s.px/16}rem', { lineHeight: '${s
 `}
 
 /* ---------------- one-page brand guide (standalone HTML) ---------------- */
-function guideHTML(b){const L=b.modes.light,D=b.modes.dark,P=b.modes[b.mode],ty=b.type;
+function guideHTML(b,o){o=o||{};const L=b.modes.light,D=b.modes.dark,P=b.modes[b.mode],ty=b.type;
  const sw=(n,h,on)=>`<div class="sw"><span style="background:${h};color:${on||best(h)}">${esc(n)}</span><code>${h}</code></div>`;
  const svgData=s=>'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(s);
  const ck=b.checks[b.mode].filter(c=>/Text on background|Muted text on background|Label on primary|Primary text \(links\) on background|Primary button/.test(c.label));
  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(b.name)} brand guide</title>
-<link rel="stylesheet" href="${esc(fontsURL(ty))}">
+${fontsURL(ty)?`<link rel="stylesheet" href="${esc(fontsURL(ty))}">`:''}${o.faceCSS?`<style>${o.faceCSS}</style>`:''}
 <style>
 :root{--bg:${L.bg};--surface:${L.surface};--ink:${L.ink};--mute:${L.mute};--line:${L.line};--primary:${L.primary};--on-primary:${L.onPrimary};--ptext:${L.primaryText};--head:${ty.headStack};--body:${ty.bodyStack}}
 *{box-sizing:border-box}html,body{margin:0}body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--body);-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -429,11 +449,11 @@ ${['primary','secondary','accent','neutral'].map(n=>`<div class="ramp" role="img
 <section class="grid"><div class="card spec"><h2>Type</h2><p class="big">${esc(b.copy.voice[0])}</p><p>${esc(ty.head)} ${ty.hw} for headlines, ${esc(ty.body)} for everything you read. ${esc(ty.why)}</p><div class="ts">${ty.scale.slice().reverse().filter((s,i)=>i%2===0).map(s=>`<span>${s.name} · ${s.px}px / ${s.lh}</span>`).join('')}</div></div>
 <div class="card voice"><h2>Voice</h2>${b.copy.voice.map(v=>`<q>${esc(v)}</q>`).join('')}<p style="margin-top:14px"><a class="btn" href="#">Primary action</a></p></div></section>
 <section class="grid"><div><h2>Do</h2><ul>${b.copy.dos.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div><div><h2>Avoid</h2><ul>${b.copy.donts.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div></section>
-<footer>${esc(b.name)} brand guide · generated with the Brand kit generator, Visual &amp; Motion Atlas · fonts from Google Fonts (SIL Open Font Licence)</footer>
+<footer>${esc(b.name)} brand guide · generated with the Brand kit generator, Visual &amp; Motion Atlas · ${mineFams(b).length?`${esc(mineFams(b).join(' and '))}: the creator's own licensed font${mineFams(b).length>1?'s':''}${fontsURL(ty)?'; the rest from Google Fonts (SIL Open Font Licence)':''}`:'fonts from Google Fonts (SIL Open Font Licence)'}</footer>
 </main></body></html>`}
 
 window.BrandGen={FEELS,FEEL_KEYS,PAIRS,SYN,resolveFeel,hintHues,generate,norm,DEFAULT,css,json,tailwind,guideHTML,wordmark,monogram,lockup,markInner,patternSVG,fontsURL,colourName,
- oklch,lch,ratio,fix,best,normHex,isHex,dE,cvdMin,hash,esc,setMeasure:f=>{MEASURE=f},MODE_TOKENS,initials};
+ oklch,lch,ratio,fix,best,normHex,isHex,dE,cvdMin,hash,esc,setMeasure:f=>{MEASURE=f},setMineMode:m=>{MINE_MODE=m},mineFams,mineHead,MODE_TOKENS,initials};
 })();
 
 /* ---------------- animated backgrounds for generated kits (registered with ThemeKits.BG; each is self-contained so bgJS can export it) ---------------- */

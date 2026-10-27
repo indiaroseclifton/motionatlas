@@ -318,7 +318,7 @@ async function exportFiles(family) {
   return meta.filter(m => m.family === key && bytes.has(m.id)).map(m => ({ path: 'fonts/' + faceFile(m), name: faceFile(m), weight: m.weight, italic: m.italic, format: FMT[m.ext] || 'truetype', bytes: new Uint8Array(bytes.get(m.id)) }));
 }
 /* @font-face rules. mode 'base64' (self-contained, for iframes/SVG/HTML), 'file' (url(fonts/..) next to an exported ZIP) */
-async function fontFaceCSS(families, opt) {
+function fontFaceCSSSync(families, opt) {
   opt = opt || {}; const mode = opt.mode || 'base64', dir = opt.dir == null ? 'fonts/' : opt.dir; let css = '';
   for (const f of [].concat(families || [])) {
     const key = fam(f); if (!key) continue;
@@ -329,19 +329,24 @@ async function fontFaceCSS(families, opt) {
   }
   return css;
 }
-/* outline text: returns {d, width, ascent, descent, size} with the baseline at y=0, or null if the font has no TrueType outlines */
-async function glyphPath(family, text, o) {
-  o = o || {}; await ready; const m = faceFor(family, o.weight, o.italic); if (!m || !m.hasOutlines || !bytes.has(m.id)) return null;
-  let P = parsed.get(m.id);
-  if (!P) { try { const T = await readTables(bytes.get(m.id)); P = buildOutliner(T); parsed.set(m.id, P) } catch (e) { return null } }
+async function fontFaceCSS(families, opt) { await ready; return fontFaceCSSSync(families, opt) }
+/* outline text: {d, width, ascent, descent, size} with the baseline at y=0, or null if the font has no TrueType outlines.
+   prepare(families) parses the files once so glyphPathSync works without awaiting. */
+async function prepare(families) {
+  await ready;
+  for (const f of [].concat(families || [])) for (const m of meta.filter(x => x.family === fam(f) && x.hasOutlines && bytes.has(x.id) && !parsed.has(x.id))) { try { parsed.set(m.id, buildOutliner(await readTables(bytes.get(m.id)))) } catch (e) { } }
+}
+function glyphPathSync(family, text, o) {
+  o = o || {}; const m = faceFor(family, o.weight, o.italic); const P = m && parsed.get(m.id); if (!P) return null;
   const size = o.size || 64, k = size / P.upm, track = (o.tracking || 0) * size; let x = 0, d = '';
   for (const ch of String(text)) {
-    const cp = ch.codePointAt(0), g = P.gid(cp);
+    const g = P.gid(ch.codePointAt(0));
     if (g) { try { for (const c of P.contours(g, 0)) d += contourPath(c, k, x, 0) } catch (e) { } }
     x += (P.adv(g || 0) * k) + track;
   }
   return { d, width: x, ascent: P.asc * k, descent: -P.desc * k, size };
 }
+async function glyphPath(family, text, o) { await prepare(family); return glyphPathSync(family, text, o) }
 function optgroup(sel, o) {
   o = o || {}; const old = sel.querySelector('optgroup[data-myfonts]'); if (old) old.remove();
   const L = list(); if (!L.length && !o.always) return null;
@@ -432,6 +437,6 @@ function openDialog(opt) {
 meta = lsGet();
 try { if (typeof BroadcastChannel !== 'undefined') { bc = new BroadcastChannel('atlas-myfonts'); bc.onmessage = () => { sync().then(emit) } } } catch (e) { }
 const ready = sync().then(() => { emit() }, () => { });
-window.MyFonts = { ready, list, add, remove, rename, registerAll, cssFamily, has, faceFor, toBase64, exportFiles, fontFaceCSS, glyphPath, optgroup, mount, openDialog, NOTICE, LIMIT,
+window.MyFonts = { ready, list, add, remove, rename, registerAll, cssFamily, has, faceFor, toBase64, exportFiles, fontFaceCSS, fontFaceCSSSync, glyphPath, glyphPathSync, prepare, optgroup, mount, openDialog, NOTICE, LIMIT,
   get persistent() { return persistent }, on: f => subs.add(f), off: f => subs.delete(f), parse: parseFont };
 })();

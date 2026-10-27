@@ -43,6 +43,7 @@ textarea{min-height:64px;resize:vertical}
 .ramp{display:flex;border-radius:8px;overflow:hidden;border:1px solid var(--phair)}.ramp button{flex:1;height:34px;border:0;cursor:pointer;font:500 9px 'JetBrains Mono',monospace;padding:0}
 table.ct{width:100%;border-collapse:collapse;font-size:13px}.ct th,.ct td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--phair)}.ct td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
 .tbl{overflow-x:auto}
+.mineSet{border:1px dashed var(--phair);border-radius:12px;padding:12px;margin-top:6px;display:grid;gap:10px}.mineSet legend{padding:0 6px;font-weight:600}.mineSet .specs{gap:10px}
 .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:600}.pass{background:var(--okbg);color:var(--ok)}.fail{background:var(--badbg);color:var(--bad)}.warn{background:var(--warnbg);color:var(--warn)}
 .modes{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .mode{border-radius:12px;padding:16px;border:1px solid var(--phair);display:grid;gap:8px;min-width:0}
@@ -83,7 +84,7 @@ pre{margin:0;background:#12141C;color:#E8EBF3;border-radius:10px;padding:12px;fo
 </form>
 <main id="out" tabindex="-1" aria-label="Your brand">
  <section class="sec" aria-labelledby="hPal"><header><h2 id="hPal">Palette</h2><div class="row"><button class="btn ghost sm" type="button" id="shPal">Shuffle palette</button><button class="btn ghost sm" type="button" id="lkPal" aria-pressed="false">Lock palette</button></div></header><div id="palBox"></div></section>
- <section class="sec" aria-labelledby="hTyp"><header><h2 id="hTyp">Type</h2><div class="row"><button class="btn ghost sm" type="button" id="shTyp">Shuffle type</button><button class="btn ghost sm" type="button" id="lkTyp" aria-pressed="false">Lock type</button></div></header><div id="typBox"></div></section>
+ <section class="sec" aria-labelledby="hTyp"><header><h2 id="hTyp">Type</h2><div class="row"><button class="btn ghost sm" type="button" id="shTyp">Shuffle type</button><button class="btn ghost sm" type="button" id="lkTyp" aria-pressed="false">Lock type</button></div></header><div id="typBox"></div><div id="mineBox"></div></section>
  <section class="sec" aria-labelledby="hLg"><header><h2 id="hLg">Logo lockups</h2><div class="row"><button class="btn ghost sm" type="button" id="shLg">Shuffle logo</button><button class="btn ghost sm" type="button" id="lkLg" aria-pressed="false">Lock logo</button></div></header><div id="lgBox"></div></section>
  <section class="sec" aria-labelledby="hTok"><header><h2 id="hTok">Tokens</h2><div class="row"><button class="btn sm" type="button" id="copyTok">Copy</button><button class="btn ghost sm" type="button" id="dlTok">Download</button></div></header><div class="tabs" role="tablist" aria-label="Token format" id="tokTabs"><button role="tab" type="button" data-t="css" aria-selected="true">CSS variables</button><button role="tab" type="button" data-t="json" aria-selected="false">JSON (W3C)</button><button role="tab" type="button" data-t="tw" aria-selected="false">Tailwind</button></div><pre id="tokPre" tabindex="0" aria-label="Token code"></pre></section>
  <section class="sec" aria-labelledby="hApp"><header><h2 id="hApp">Applied</h2><div class="row"><div class="seg" role="group" aria-label="Preview mode"><button type="button" data-pm="light" aria-pressed="true">Light</button><button type="button" data-pm="dark" aria-pressed="false">Dark</button></div></div></header><div id="appBox"></div></section>
@@ -92,7 +93,7 @@ pre{margin:0;background:#12141C;color:#E8EBF3;border-radius:10px;padding:12px;fo
  <section class="sec" aria-labelledby="hKit"><header><h2 id="hKit">Theme kit</h2><div class="row"><button class="btn sm" type="button" id="kitZip">Download theme kit (.zip)</button></div></header><p class="lede">Your brand rendered through the atlas theme-kit system: the same page, components, assets and guidelines as the forty-eight built-in kits, and the same ZIP.</p><div id="kitBox" class="tkwrap"></div></section>
 </main></div></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="kits/themes.js"></script><script src="kits/kits-a.js"></script><script src="kits/kits-b.js"></script><script src="kits/brand.js"></script><script src="kits/render.js"></script>
+<script src="fontlib.js"></script><script src="kits/themes.js"></script><script src="kits/kits-a.js"></script><script src="kits/kits-b.js"></script><script src="kits/brand.js"></script><script src="kits/render.js"></script>
 <script src="dataviz/styles.js"></script><script src="dataviz/chartmaker.js"></script>
 <script src="moodboard/pin.js" defer></script><script src="brandgen/engine.js"></script><script src="brandgen/page.js"></script>
 </body></html>
