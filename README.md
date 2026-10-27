@@ -374,6 +374,22 @@ static site or publish it to a live address. Old single-page saves open as one-p
   bakery, fitness studio, law firm, estate agent, wedding, podcast, documentation, conference; files `builder/templates.js` and
   `templates2.js`) and 6 one-page landings (waitlist, product launch, app download, webinar, link in bio, coming soon).
   Every page of a template ends with a call to action, and photographs come from the atlas image library, chosen per template.
+- **Settings for every component and interaction:** select one and the panel becomes a "Selected item" form with
+  collapsible groups (Content, Layout, Style, Background and frame, Behaviour, Advanced), a settings search, Looks
+  (presets), Copy and Paste settings between items of the same kind, Reset to defaults and a first-run tip. The schema is
+  derived from the item itself (`builder/settings.js`): all 64 components expose every word, placeholder, picture and link,
+  state, size, width, position, accent, text and panel colours, corners, line, shadow, weight, calm motion and an anchor;
+  all 70 interactions expose heading, height or shape, width, position, text and accent colour, speed, play always / on
+  screen / on hover, calm motion, hidden caption, words and pictures found in the demo, and (for 14 hand-tuned demos,
+  `CFG.IXP`) their own options such as points, spacing, hold time or phrases (demos read `window.__ixp(key, default)`).
+  Values live in `blk.cfg` (look and behaviour), `blk.set` (background and frame) and `blk.vals` (words). Components and
+  interactions are **transparent by default** and blend into the page; every section, component and interaction also has
+  Background (Transparent, Page colour, Surface, Accent, Text colour, Custom, Gradient, Image, Film), Border, Shadow,
+  Corners, exact padding and "Match the section above". Interactions are rewritten per placed instance by
+  `builder/ix.js`: the demo's backdrop is removed (transparent `html`/`body`, canvases and WebGL cleared, glow layers
+  hidden, panels that keep their colour get readable text), colours follow the page, speed scales the demo's clocks, and
+  the result goes into the preview and the export as a clean `srcdoc` or `interactions/<id>-<uid>.html` file. The
+  Components and Interactions library tabs have categories, favourites and recently used.
 - **Export and publish:** Export downloads a clean static site as a ZIP (every page, `assets/`, `sitemap.xml`,
   `robots.txt`, `404.html`, favicon, canonical and Open Graph tags, no builder code), a single HTML file for the current
   page, or an AI prompt. **Publish** puts the site at `/site/<id>/` on this domain through `api/site.js` (Vercel Blob; the
@@ -395,6 +411,8 @@ Set the Site address in Site settings first so `sitemap.xml` and canonical links
 | `builder/canvas.js` | Template markers, the editing agent that runs inside the preview, uploaded-image store, per-section settings |
 | `builder/styles.js` | Style registry, mapping every source onto the builder variables |
 | `builder/extras.js` | Code-drawn library blocks (components, interactions, media, icons, kit assets, 404) |
+| `builder/settings.js` | Per-item settings: schemas for components and interactions, content extraction and the Selected item panel |
+| `builder/ix.js` | Rewrites a demo for one placed interaction: transparent background, colours, speed, play mode, words, pictures |
 | `builder/templates.js` | The 12 multi-page site templates |
 | `builder/app.js` | UI: library, outline, panels, preview, export and publish |
 | `builder/zip.js` | Stored-zip writer (same as the kits') |

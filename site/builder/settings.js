@@ -84,12 +84,36 @@ function compSchema(blk){const L=PB.src.CL(),vals=PB.app.vals(blk),c=L&&(L.compo
   {k:'calm',store:'cfg',type:'toggle',label:'Calm motion',help:'Removes animation and transitions from this component.',def:0}]});
  g.push({id:'adv',label:'Advanced',fields:[{k:'id',store:'cfg',type:'text',label:'Link anchor name',help:'Lets a menu link jump here, for example #pricing.',def:'',pattern:'[A-Za-z][\\w-]*'},...SPACE.slice(2)]});
  return {title:c.name,badge:c.id+' · UI component',desc:(c.a11y&&c.a11y.notes)||'A live component from the UI lab, themed by your page style.',groups:g,presets:CFG.compPresets,kind:'comp'}}
+/* options that belong to one demo: the demo reads them from window.__ixp(key, default) */
+const R=(k,label,min,max,step,def,unit,help)=>({k,label,type:'range',min,max,step,def,unit:unit||'',help});
+const T=(k,label,def,help)=>({k,label,type:'toggle',def:0,help});
+CFG.IXP={
+ 'particle-globe':[R('n','Points',200,3000,100,1400),R('spin','Spin speed',0,6,.5,1,'×')],
+ 'image-tunnel':[R('base','Cruise speed',0,4,.2,1.4)],
+ 'kinetic-grid':[R('gap','Spacing',18,60,2,30,' px'),{k:'mode',label:'Needles',type:'select',options:[['face','Point at the pointer'],['away','Point away'],['flow','Flow around it']],def:'face'}],
+ 'dot-clock':[T('ampm','12-hour clock (AM/PM)'),T('nosec','Hide the seconds'),{k:'led',label:'Dot colour',type:'colour',def:'#FF5B2E'}],
+ 'odometer':[{k:'total',label:'Number shown',type:'text',def:'1284906',pattern:'\\d*'}],
+ 'hold-button':[R('t','Hold time',500,3000,100,1300,' ms')],
+ 'split-flap':[R('every','Change every',2000,15000,500,6000,' ms')],
+ 'mesh-lines':[R('l','Number of lines',20,120,5,60),R('hue','Colour (hue)',0,360,5,200,'°')],
+ 'tilt-row':[R('tilt','Tilt',0,30,1,14,'°'),R('shift','Picture drift',0,40,1,18,' px')],
+ 'fan-deck':[R('fan','Fan spread',4,30,1,16,'°')],
+ 'compare-slider':[R('start','Starting position',0,100,5,50,'%')],
+ 'ring-carousel':[R('rot','Auto-turn speed',0,.3,.01,.06)],
+ 'text-scramble':[{k:'phrases',label:'Phrases (one per line)',type:'long',def:'We build things that feel alive.\nInterfaces with a pulse.\nMotion, made legible.\nQuiet code. Loud ideas.'},R('hold','Hold each phrase',1000,8000,200,3400,' ms')],
+ 'terminal-type':[{k:'cmd',label:'Command that is typed',type:'text',def:'npx create-atlas@latest my-site'}]};
 
 /* ---------- interactions ---------- */
 const IXH=[['480','Short (480 px)'],['640','Medium (640 px)'],['800','Tall (800 px)'],['100vh','Full screen']];
 CFG.ixSchema=blk=>{const vals=PB.app.vals(blk),X=(window.INTERACTIONS||[]).find(x=>x.id===vals.iid);if(!X)return null;
  const g=[];
  g.push({id:'content',label:'Content',open:1,fields:[{k:'iid',store:'vals',type:'select',label:'Interaction',help:'Swap this for another one; your other settings stay.',options:(window.INTERACTIONS||[]).filter(x=>!/^sec-/.test(x.id)).map(x=>[x.id,x.t+' · '+x.cat]),def:'fan-deck',redraw:1},...HEAD,{k:'ttl',store:'cfg',type:'text',label:'Name for screen readers',help:'Read out for the frame, for example “Gallery of rooms (interactive demo)”.',def:''}]});
+ const ex=CFG.IXP[X.id],raw=PB.ix&&PB.ix.raw[X.id];
+ if(raw==null&&PB.ix)PB.ix.load(X.id).then(t=>{if(t&&CFG._draw)CFG._draw()});
+ if(ex)g.push({id:'options',label:'Options for this demo',open:1,fields:ex.map(f=>({...f,store:'p',key:f.k,orig:f.def}))});
+ if(raw){const tx=PB.ix.texts(raw),im=PB.ix.images(raw);
+  if(tx.length)g.push({id:'words',label:'Words in the demo ('+tx.length+')',fields:tx.map(t=>({store:'tx',key:t,type:t.length>60?'long':'text',label:'Text',orig:t,def:t}))});
+  if(im.length)g.push({id:'pictures',label:'Pictures ('+im.length+')',fields:im.map(i=>({store:'im',key:i,type:'image',label:i.split('/').pop().replace(/\.\w+$/,''),orig:i,def:''}))})}
  g.push({id:'layout',label:'Layout',open:1,fields:[
   {k:'height',store:'vals',type:'select',label:'Height',options:IXH,def:'640'},
   {k:'ar',store:'cfg',type:'select',label:'Or keep a shape',help:'A fixed shape replaces the height and keeps its proportions at any width.',options:[['','Use the height'],['16/9','Widescreen 16:9'],['21/9','Cinema 21:9'],['4/3','Standard 4:3'],['1/1','Square'],['3/4','Portrait 3:4']],def:''},
@@ -124,7 +148,7 @@ function write(blk,f,v){const empty=v===''||v==null||v===false||v===0&&f.type===
  if(f.store==='set'){blk.set=blk.set||{};if(empty||v==='default')delete blk.set[f.k];else blk.set[f.k]=v;if(!Object.keys(blk.set).length)delete blk.set;return}
  blk.cfg=blk.cfg||{};
  if(f.store==='cfg'){if(empty)delete blk.cfg[f.k];else blk.cfg[f.k]=v}
- else{const m=blk.cfg[f.store]=blk.cfg[f.store]||{};if(v===f.orig||v===''&&f.store!=='tx'&&f.store!=='at'||(f.store==='im'&&!v))delete m[f.key];else m[f.key]=v;if(!Object.keys(m).length)delete blk.cfg[f.store]}
+ else{const m=blk.cfg[f.store]=blk.cfg[f.store]||{};if(String(v)===String(f.orig)||v===''&&f.store!=='tx'&&f.store!=='at'||(f.store==='im'&&!v))delete m[f.key];else m[f.key]=v;if(!Object.keys(m).length)delete blk.cfg[f.store]}
  if(!Object.keys(blk.cfg).length)delete blk.cfg}
 
 /* ---------- the panel ---------- */
@@ -145,7 +169,11 @@ CFG.panel=(blk,onChange)=>{const A=PB.app,sch=CFG.schema(blk);const root=documen
  mkb('Paste settings',()=>{let c=null;try{c=JSON.parse(localStorage.getItem('atlas-pb-cfg-clip'))}catch(e){}if(!c||c.id!==blk.id)return A.say('Nothing to paste: copy settings from another '+(blk.id==='x-component'?'component':'interaction')+' first.');
   const keep=['tx','at','im','ln'];const nc=Object.assign({},c.cfg);keep.forEach(k=>delete nc[k]);blk.cfg=Object.assign({},(blk.cfg||{}),nc);blk.set=Object.assign({},blk.set||{},c.set);A.commit();A.render();draw();A.say('Settings pasted')},'Paste the look and behaviour copied from another item of this kind');
  const body=document.createElement('div');body.className='cfgg';
- root.append(head,note,bar,body);bar.append(search,pre,acts);
+ const tipKey='atlas-pb-tip-'+sch.kind;let seen=false;try{seen=localStorage.getItem(tipKey)==='1'}catch(e){}
+ if(!seen){const tip=document.createElement('div');tip.className='cfgtip';tip.setAttribute('role','note');
+  tip.innerHTML='<p><b>Tip.</b> '+(sch.kind==='ix'?'Style › “Remove the demo’s own background” lets your page show through. Behaviour has speed and when it plays. Looks apply a whole mood in one click.':'Every word, picture and colour of this component can be changed below. It starts without a box, so it blends into the page; pick a Look or a Background to change that.')+'</p>';
+  const ok=document.createElement('button');ok.type='button';ok.className='btn small';ok.textContent='Got it';ok.onclick=()=>{try{localStorage.setItem(tipKey,'1')}catch(e){}tip.remove()};tip.append(ok);root.append(head,note,tip,bar,body)}
+ else root.append(head,note,bar,body);bar.append(search,pre,acts);
  const fieldEl=(f,gid)=>{const w=document.createElement('div');w.className='f cfgf';w.dataset.label=(f.label+' '+(f.orig||'')+' '+(f.help||'')).toLowerCase();const id=idp+'-'+(++uidc);const cur=read(blk,f);
   const lab=document.createElement('label');lab.htmlFor=id;lab.textContent=f.label;let inp;const commitV=(v,live)=>{write(blk,f,v);if(live)A.commitSoon();else A.commit();A.render();if(f.redraw)draw();if(onChange)onChange()};
   if(f.type==='note'){w.className='cfgf cfgn';w.innerHTML='<b></b><p></p>';w.firstChild.textContent=f.label;w.lastChild.textContent=f.text;return w}
@@ -169,5 +197,5 @@ CFG.panel=(blk,onChange)=>{const A=PB.app,sch=CFG.schema(blk);const root=documen
   s2.groups.forEach(gr=>{const fs=gr.fields.filter(f=>!f.show||f.show(blk));if(!fs.length)return;const det=document.createElement('details');det.className='cfgd2';det.dataset.g=gr.id;det.open=openState[gr.id]!=null?openState[gr.id]:!!gr.open;const sm=document.createElement('summary');sm.textContent=gr.label;det.append(sm);const gb=document.createElement('div');gb.className='cfgb2';fs.forEach(f=>gb.append(fieldEl(f,gr.id)));det.append(gb);body.append(det)});
   filter();body.scrollTop=sc}
  function filter(){const t=search.value.trim().toLowerCase();body.querySelectorAll('details.cfgd2').forEach(d=>{let any=0;d.querySelectorAll('.cfgf').forEach(f=>{const m=!t||f.dataset.label.includes(t);f.hidden=!m;if(m)any++});d.hidden=!any;if(t&&any)d.open=true})}
- search.oninput=filter;draw();return root};
+ search.oninput=filter;CFG._draw=draw;draw();return root};
 })();

@@ -571,6 +571,9 @@ if (axeSrc) {
   await pg.evaluate(u => PB.app.selectBlock(u), uid); await pg.waitForSelector('.cfgp');
   ok(await pg.locator('.cfgp .cfgb').first().textContent().then(x => /C01/.test(x)), 'the selected item panel names the component');
   ok(await pg.locator('.cfgd2 summary').count() >= 6, 'settings are grouped in collapsible sections');
+  if (axeSrc) { await pg.addScriptTag({ content: axeSrc }).catch(() => {}); const r = await pg.evaluate(() => axe.run(document.querySelector('.cfgp'), { resultTypes: ['violations'] })); const bad = r.violations.filter(v => ['serious', 'critical'].includes(v.impact)); ok(bad.length === 0, 'axe: the component settings panel has no serious or critical issues ' + bad.map(v => v.id + ' ' + v.nodes.map(n => n.target.join(' ')).slice(0, 3)).join(' | ')); }
+  ok(await pg.locator('.cfgtip').count() === 1, 'a first-run tip explains the panel');
+  await pg.click('.cfgtip button'); ok(await pg.locator('.cfgtip').count() === 0, 'the tip can be dismissed');
   await pg.fill('.cfgs', 'accent'); ok(await pg.locator('.cfgf:not([hidden])').count() >= 1 && await pg.locator('.cfgf[hidden]').count() > 3, 'the settings search filters the form');
   await pg.fill('.cfgs', '');
   // words
@@ -606,6 +609,7 @@ if (axeSrc) {
   const uid = await pg.evaluate(() => PB.app.addBlock('x-interaction', { iid: 'fan-deck', height: '480' }, undefined, { cfg: { tr: 1 } }).uid); await waitPv(pg); await pg.waitForTimeout(1500);
   await pg.evaluate(u => PB.app.selectBlock(u), uid); await pg.waitForSelector('.cfgp');
   ok(await pg.locator('.cfgp .cfgb').first().textContent().then(x => /interaction/.test(x)), 'the selected item panel names the interaction and its kind');
+  if (axeSrc) { await pg.addScriptTag({ content: axeSrc }).catch(() => {}); const r = await pg.evaluate(() => axe.run(document.querySelector('.cfgp'), { resultTypes: ['violations'] })); const bad = r.violations.filter(v => ['serious', 'critical'].includes(v.impact)); ok(bad.length === 0, 'axe: the interaction settings panel has no serious or critical issues ' + bad.map(v => v.id + ' ' + v.nodes.map(n => n.target.join(' ')).slice(0, 3)).join(' | ')); }
   ok(await pg.locator('.cfgd2[data-g=behaviour] .cfgf').count() >= 4, 'behaviour settings: speed, plays, calm, hide caption');
   const ifr = () => frame(pg).locator('#' + uid + ' iframe');
   ok(await ifr().evaluate(e => getComputedStyle(e).backgroundColor) === 'rgba(0, 0, 0, 0)', 'the frame itself is transparent');
@@ -622,6 +626,12 @@ if (axeSrc) {
   await pg.evaluate(u => { const f = PB.app.findBlk(u); f.blk.cfg = { tr: 1, sp: 50, nohint: 1, calm: 1, ac: '#ff3300', ar: '16/9' }; PB.app.commit(); PB.app.render(); }, uid); await waitPv(pg); await pg.waitForTimeout(1500);
   const r = await ifr().evaluate(e => { const d = e.contentDocument, w = d.defaultView; return [w.__IXP.sp, getComputedStyle(d.querySelector('.cap')).display, w.matchMedia('(prefers-reduced-motion: reduce)').matches, getComputedStyle(d.documentElement).getPropertyValue('--accent').trim(), e.getBoundingClientRect().width / e.getBoundingClientRect().height]; });
   ok(r[0] === .5 && r[1] === 'none' && r[2] === true && r[3] === '#ff3300' && Math.abs(r[4] - 16 / 9) < .05, 'speed, hidden caption, calm motion, accent and shape reach the demo (' + r + ')');
+  await pg.evaluate(u => PB.app.selectBlock(u), uid); await pg.waitForSelector('.cfgp'); await pg.waitForTimeout(600);
+  // demo options, words and pictures
+  ok(await pg.locator('.cfgd2[data-g=options]').count() === 1 && await pg.locator('.cfgd2[data-g=words]').count() === 1 && await pg.locator('.cfgd2[data-g=pictures]').count() === 1, 'a hand-tuned demo shows its own options, its words and its pictures');
+  await pg.evaluate(u => { const f = PB.app.findBlk(u); f.blk.cfg = { tr: 1, p: { fan: 30 }, tx: { 'Hover or focus the deck to fan it. Select a card to bring it forward.': 'Hello deck' }, im: { 'assets/shelf/jellyfish.webp': 'assets/shelf/dove.webp' } }; PB.app.commit(); PB.app.render(); }, uid); await waitPv(pg); await pg.waitForTimeout(1500);
+  const o2 = await ifr().evaluate(e => { const d = e.contentDocument; return [d.querySelector('.cap').textContent, [...d.images].map(i => i.src.split('/').pop())[0], d.querySelector('.card').style.transform]; });
+  ok(o2[0] === 'Hello deck' && o2[1] === 'dove.webp' && /rotate\(-9deg\)/.test(o2[2]), 'a changed word, picture and demo option reach the demo (' + o2 + ')');
   // presets, reset, undo
   await pg.evaluate(u => PB.app.selectBlock(u), uid); await pg.waitForSelector('.cfgp');
   await pg.click('.cfgpre .chip:has-text("Lively")'); ok(await pg.evaluate(u => PB.app.findBlk(u).blk.cfg.sp === 150 && PB.app.findBlk(u).blk.cfg.tr === 1, uid), 'an interaction look applies in one click');
@@ -632,6 +642,22 @@ if (axeSrc) {
   const files = await pg.evaluate(async () => (await PB.buildSiteFiles()).map(([n, c]) => [n, typeof c === 'string' ? c : null]));
   const ixf = files.filter(f => /^interactions\/fan-deck/.test(f[0])); const h = files.find(f => f[0] === 'index.html')[1];
   ok(ixf.length === 1 && /__IXP/.test(ixf[0][1]) && /background:none!important/.test(ixf[0][1]) && /interactions\/fan-deck-/.test(h) && !/cfgp|data-pb|contenteditable|__PB_EDIT/.test(ixf[0][1] + h), 'the export has a transparent copy of the demo with the settings and no builder code');
+  await ctx.close();
+}
+// ---- 7c. library: categories, favourites, recently used
+{
+  const { ctx, pg } = await open();
+  await pg.evaluate(() => PB.ux.useTemplate(0)); await waitPv(pg);
+  await pg.click('#lt-components'); await pg.waitForTimeout(600);
+  const chips = await pg.$$eval('#libList .gchips .chip', e => e.map(x => x.textContent));
+  ok(chips.includes('Navigation') && chips.some(c => /Favourites/.test(c)) && chips.some(c => /Recent/.test(c)), 'the components shelf has categories, favourites and recently used');
+  ok(await pg.locator('#libList .chip:has-text("Form fields")').click().then(() => pg.locator('#libList .lc').count()) >= 10, 'a category filters the components');
+  await pg.click('#libList .chip:has-text("All")'); await pg.click('#libList .fav >> nth=1'); await pg.click('#libList .chip:has-text("Favourites")');
+  ok(await pg.locator('#libList .lc').count() === 1, 'a starred component appears under Favourites');
+  await pg.click('#libList .lc .add'); await pg.waitForTimeout(300); await pg.click('#libList .chip:has-text("Recent")');
+  ok(await pg.locator('#libList .lc').count() === 1, 'an added component appears under Recent');
+  await pg.click('#lt-interactions'); await pg.waitForTimeout(600);
+  ok((await pg.$$eval('#libList .gchips .chip', e => e.map(x => x.textContent))).some(c => /Favourites/.test(c)), 'the interactions shelf has favourites and recently used too');
   await ctx.close();
 }
 // ---- 5a. site file backup, import, My projects sync

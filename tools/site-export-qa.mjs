@@ -94,6 +94,36 @@ for (let ti = 0; ti < ids.length; ti++) {
   }
   server.close(); fs.rmSync(dir, { recursive: true, force: true }); console.log('checked', ids[ti], ((Date.now() - t0) / 1000).toFixed(0) + 's');
 }
+
+/* blend scenario: components and interactions dropped on a page are transparent in the export, text stays readable on light and dark pages, no editor code */
+if (!only.length || only.includes('blend')) {
+  const lum = c => { const m = c.match(/[\d.]+/g).map(Number); const f = v => { v /= 255; return v <= .03928 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4); }; return .2126 * f(m[0]) + .7152 * f(m[1]) + .0722 * f(m[2]); };
+  const ratio = (a, b) => { const x = lum(a), y = lum(b); return (Math.max(x, y) + .05) / (Math.min(x, y) + .05); };
+  for (const [label, style] of [['light', 'studio'], ['dark', 'noir']]) {
+    const IDS = ['fan-deck', 'mesh-lines', 'text-scramble', 'odometer', 'morph-icons'];
+    await builder.evaluate(([style, IDS]) => { PB.ux.useTemplate(0); const A = PB.app; A.site.pages[0].blocks = []; A.site.pages[0].style = style; A.site.header = []; A.site.footer = [];
+      A.addBlock('x-component', { cid: 'C01', layout: 'plain' }, undefined, {}); A.addBlock('x-component', { cid: 'C25', layout: 'plain' }, undefined, {});
+      for (const id of IDS) A.addBlock('x-interaction', { iid: id, height: '480' }, undefined, { cfg: { tr: 1 } }); }, [style, IDS]);
+    const files = await builder.evaluate(async () => (await PB.buildSiteFiles()).map(([n, c]) => [n, typeof c === 'string' ? c : null]));
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'pbqa-blend-')); for (const [n, c] of files) if (c != null) { const f = path.join(dir, n); fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, c); }
+    const server = await serve(dir); const origin = 'http://localhost:' + server.address().port + '/';
+    const pg = await builder.context().newPage(); await pg.goto(origin + 'index.html'); await pg.waitForTimeout(3500);
+    const L = 'blend/' + label;
+    const pageBg = await pg.evaluate(() => getComputedStyle(document.body).backgroundColor);
+    const comps = await pg.$$eval('.x-comp .x-stage', els => els.map(e => { const c = getComputedStyle(e); return [c.backgroundColor, c.borderTopWidth]; }));
+    ok(comps.length === 2 && comps.every(c => c[0] === 'rgba(0, 0, 0, 0)' && c[1] === '0px'), L + ': components are transparent with no box (' + comps.join(' | ') + ')');
+    const fr = await pg.$$('iframe.x-frame'); ok(fr.length === IDS.length, L + ': every interaction is embedded');
+    for (let i = 0; i < fr.length; i++) { const f = await fr[i].contentFrame(); if (!f) { bad(L + ': frame ' + IDS[i] + ' not reachable'); continue; }
+      const r = await f.evaluate(() => { const b = getComputedStyle(document.body), h = getComputedStyle(document.documentElement); const t = document.querySelector('h1,h2,h3,p'); return { bg: b.backgroundColor, bgi: b.backgroundImage, hbg: h.backgroundColor, ink: t ? getComputedStyle(t).color : '', tr: window.__IXP && window.__IXP.tr }; });
+      const clear = r.bg === 'rgba(0, 0, 0, 0)' && r.hbg === 'rgba(0, 0, 0, 0)' && r.bgi === 'none';
+      ok(clear && r.tr === 1, L + ': ' + IDS[i] + ' is really transparent (' + [r.bg, r.bgi, r.hbg] + ')');
+      if (r.ink && IDS[i] !== 'morph-icons') ok(ratio(r.ink, pageBg) >= 3, L + ': ' + IDS[i] + ' text reads on the page (' + r.ink + ' on ' + pageBg + ' = ' + ratio(r.ink, pageBg).toFixed(1) + ')'); }
+    const h = files.find(f => f[0] === 'index.html')[1]; for (const e of lint(h, L)) bad(e);
+    ok(!files.some(f => f[1] && /^interactions\//.test(f[0]) && /contenteditable|__PB_EDIT|data-pb/.test(f[1])), L + ': exported interaction files carry no editor code');
+    await pg.close(); server.close(); fs.rmSync(dir, { recursive: true, force: true });
+  }
+  console.log('checked blend');
+}
 await br.close();
 console.log('coverage', JSON.stringify(cov));
 console.log(fails ? fails + ' FAILED of ' + checks : 'EXPORT QA PASSED (' + checks + ' checks)'); process.exit(fails ? 1 : 0);

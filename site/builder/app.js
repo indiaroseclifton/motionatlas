@@ -132,11 +132,12 @@ function compose(mode,pg,acc,opt){ // mode: preview | html | zip  -> parts for o
  const ctx={mode,A:AT,site:base,siteData:site,pageHref:p=>CTX.pageHref(p),uid:'',home:CTX.pageHref(S.pageOf(site,site.home)),need:(k,v)=>{if(!needs.has(k))needs.set(k,v)},font:q=>{(q||'').split('&').filter(Boolean).forEach(f=>fonts.add(f))},
   vars:PB.ix.vars(st.vars),
   interactionSrc:(id,cfg,uid)=>{const fixA=t=>t.split('../../assets/').join((mode==='preview'?ABS:SITE)+'assets/');
-   const mk=()=>{const raw=PB.ix.raw[id];return raw==null?null:PB.ix.build(fixA(raw),{cfg,vars:ctx.vars})};
+   const img=v=>{if(!v)return '';if(/^user:/.test(v)){const u=upURL(v.slice(5),mode,acc);return mode==='zip'&&!/^(https?:|data:)/.test(u)?'../'+u:u}if(/^(https?:|data:)/.test(v))return v;return (mode==='preview'?ABS:SITE)+'assets/'+v.replace(/^assets\//,'')};
+   const mk=()=>{const raw=PB.ix.raw[id];return raw==null?null:PB.ix.build(fixA(raw),{id,cfg,vars:ctx.vars,img})};
    const act=PB.ix.active(cfg);
    if(mode==='preview'){if(!act)return `src="${ABS}interactions/demos/${esc(id)}.html"`;const d=mk();if(d==null){PB.ix.load(id).then(()=>render());return `src="about:blank"`}return `srcdoc="${d.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}"`}
    const t=cache.ix[id];if(t==null)return `src="${SITE}interactions/demos/${esc(id)}.html"`;
-   const d=act?PB.ix.build(t,{cfg,vars:ctx.vars}):t;
+   const d=act?PB.ix.build(t,{id,cfg,vars:ctx.vars,img}):t;
    if(mode==='zip'){const f='interactions/'+id+(act?'-'+uid:'')+'.html';files.set(f,d);return `src="${f}"`}
    return `srcdoc="${d.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}"`}};
 
@@ -218,7 +219,7 @@ function placeIndex(id){const d=def(id),bl=listFor(id);
  if(d&&d.place==='hero'){let i=0;while(i<bl.length&&def(bl[i].id).place==='hero')i++;return i}
  return bl.length}
 function dropAt(i,list){const items=$$('#ol .blk');if(i<items.length){const t=findBlk(items[i].dataset.uid);return t&&t.list===list?t.i:-1}const l=items[items.length-1],t=l&&findBlk(l.dataset.uid);return t&&t.list===list?list.length:-1}
-function addBlock(id,valsIn,at,extra){if(!def(id))return;const b={uid:uidGen(),id,vals:valsIn||{}};if(extra){if(extra.rich)b.rich=clone(extra.rich);if(extra.cfg)b.cfg=clone(extra.cfg);if(extra.set)b.set=clone(extra.set);if(extra.links)b.links=clone(extra.links)}let list=listFor(id),i=-1;
+function addBlock(id,valsIn,at,extra){if(!def(id))return;pushRecent(itemKey(id,valsIn||{}));const b={uid:uidGen(),id,vals:valsIn||{}};if(extra){if(extra.rich)b.rich=clone(extra.rich);if(extra.cfg)b.cfg=clone(extra.cfg);if(extra.set)b.set=clone(extra.set);if(extra.links)b.links=clone(extra.links)}let list=listFor(id),i=-1;
  if(addTarget){const t=findBlk(addTarget.uid),w=addTarget.where;addTarget=null;if(t&&t.list===list){i=t.i+(w==='before'?0:1)}}
  if(i<0&&at!=null)i=dropAt(at,list);if(i<0)i=placeIndex(id);
  list.splice(i,0,b);open=b.uid;csel={uid:b.uid,kind:'section'};commit();outline();render();jump=b.uid;say('Added '+def(id).name+(list===page.blocks?'':list===site.header?' to the header (every page)':' to the footer (every page)'));return b}
@@ -229,12 +230,19 @@ function outline(){const ol=$('#ol');ol.innerHTML='';
  lists().forEach(([kind,list])=>{const h=document.createElement('li');h.className='grp';h.innerHTML=kind==='page'?`<b>This page: ${esc(curPage().name)}</b>`:`<b>${kind==='header'?'Header':'Footer'}</b><small>Shown on every page</small>`;ol.append(h);
   if(!list.length){const e=document.createElement('li');e.className='empty';e.textContent=kind==='page'?'No sections yet. Add some from the library, or drag them here.':kind==='header'?'No header yet. Add a navigation bar from the library.':'No footer yet. Add a footer from the library.';ol.append(e)}
   list.forEach((blk,i)=>ol.append(outRow(blk,list,i)))});
- status()}
+ selPanel();status()}
+/* the Selected item panel: components and interactions get their full settings form pinned at the top of the sidebar */
+let selWas=null;
+function selPanel(){const host=$('#selItem');if(!host)return;const f=open&&findBlk(open),blk=f&&f.blk;
+ if(!blk||!(PB.cfg&&PB.cfg.has(blk)&&PB.cfg.schema(blk))){host.hidden=true;host.innerHTML='';selWas=null;return}
+ if(host.contains(document.activeElement)&&selWas===blk.uid&&document.activeElement.matches('input,textarea,select'))return;
+ host.hidden=false;host.innerHTML='';const top=document.createElement('div');top.className='selhead';top.innerHTML='<h3>Selected item</h3>';const done=document.createElement('button');done.type='button';done.className='btn small';done.textContent='Done';done.title='Close the settings';done.onclick=()=>{open=null;csel=null;outline();hideTb&&hideTb()};top.append(done);host.append(top,PB.cfg.panel(blk));
+ if(selWas!==blk.uid){selWas=blk.uid;const sc=host.closest('.scroll');if(sc)sc.scrollTop=0;}}
 function outRow(blk,list,i){const d=def(blk.id);const li=document.createElement('li');li.className='blk'+(open===blk.uid?' open':'');li.dataset.uid=blk.uid;li.draggable=true;
   const sub=isX(blk.id)?xLabel(blk):d.group;
   li.innerHTML=`<div class="bh"><span class="grip" aria-hidden="true">⋮⋮</span><button class="bname" aria-expanded="${open===blk.uid}" aria-keyshortcuts="Alt+ArrowUp Alt+ArrowDown" title="Alt + ↑/↓ moves this section"><b>${esc(d.name)}</b><small>${esc(sub)}</small></button>
    <button class="ib" data-a="up" aria-label="Move ${esc(d.name)} up"${i?'':' disabled'}>↑</button><button class="ib" data-a="down" aria-label="Move ${esc(d.name)} down"${i<list.length-1?'':' disabled'}>↓</button><button class="ib" data-a="dup" aria-label="Duplicate ${esc(d.name)}">⧉</button><button class="ib" data-a="rm" aria-label="Remove ${esc(d.name)}">✕</button></div>`;
-  if(open===blk.uid)li.append(editor(blk));
+  if(open===blk.uid&&!(PB.cfg&&PB.cfg.has(blk)&&PB.cfg.schema(blk)))li.append(editor(blk));
   const nb=li.querySelector('.bname');
   nb.onclick=()=>{open=open===blk.uid?null:blk.uid;outline();if(open)scrollPreviewTo(blk.uid);const again=$(`#ol [data-uid="${blk.uid}"] .bname`);again&&again.focus()};
   nb.onkeydown=e=>{if(e.altKey&&(e.key==='ArrowUp'||e.key==='ArrowDown')){e.preventDefault();const j=e.key==='ArrowUp'?i-1:i+1;if(j<0||j>=list.length)return;move(list,i,j);say(d.name+' moved to position '+(j+1));const el=$(`#ol [data-uid="${blk.uid}"] .bname`);el&&el.focus()}};
@@ -419,8 +427,19 @@ function libTabs(){const tl=$('#ltabs');tl.innerHTML=LTABS.map(([k,l])=>`<button
  $('#libList').setAttribute('aria-labelledby','lt-'+ltab)}
 const q=()=>($('#libSearch').value||'').trim().toLowerCase();
 const match=(...s)=>{const t=q();return !t||s.join(' ').toLowerCase().includes(t)};
-function card({id,vals:v,title,meta,desc,thumb,cls,extra}){return `<li class="lc ${cls||''}" draggable="true" data-add='${esc(JSON.stringify({id,vals:v||{},...(extra||{})}))}'><div class="lth" aria-hidden="true">${thumb||''}</div><div class="lb"><b>${esc(title)}</b>${meta?`<small>${esc(meta)}</small>`:''}${desc?`<p>${esc(desc)}</p>`:''}</div><button type="button" class="btn small add" aria-label="Add ${esc(title)} to the page">Add</button></li>`}
-function chips(groups){return `<div class="gchips" role="group" aria-label="Filter">${groups.map(g=>`<button type="button" class="chip" aria-pressed="${g===lgroup}" data-g="${esc(g)}">${esc(g)}</button>`).join('')}</div>`}
+/* favourites and recently used, for components and interactions */
+const LSK={fav:'atlas-pb-fav',rec:'atlas-pb-recent'};
+const lsGet=k=>{try{const v=JSON.parse(localStorage.getItem(k));return Array.isArray(v)?v:[]}catch(e){return[]}};const lsSet=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const itemKey=(id,v)=>id==='x-component'?'c:'+v.cid:id==='x-interaction'?'i:'+v.iid:'';
+const isFav=k=>lsGet(LSK.fav).includes(k);
+function toggleFav(k){const a=lsGet(LSK.fav),i=a.indexOf(k);if(i<0)a.push(k);else a.splice(i,1);lsSet(LSK.fav,a);return i<0}
+function pushRecent(k){if(!k)return;const a=lsGet(LSK.rec).filter(x=>x!==k);a.unshift(k);lsSet(LSK.rec,a.slice(0,12))}
+const COMPCAT=[['Buttons and menus','C01 C02 C41 C42 C43'],['Form fields','C03 C04 C05 C06 C07 C08 C09 C10 C11 C13 C14 C44 C45 C46 C47 C48 C49 C50 C52'],['Navigation','C16 C17 C18 C19 C20 C32 C34 C63'],['Overlays and messages','C21 C22 C23 C24 C26 C27 C57 C64'],['Content and data','C12 C25 C28 C29 C30 C31 C33 C35 C36 C37 C38 C56 C58 C59 C61 C62'],['Tools and layout','C15 C39 C40 C51 C53 C54 C55 C60']];
+const compCat=id=>(COMPCAT.find(([,l])=>l.split(' ').includes(id))||['Other'])[0];
+const shelfGroups=(base,key)=>{const f=lsGet(LSK.fav).filter(x=>x.startsWith(key)).length,r=lsGet(LSK.rec).filter(x=>x.startsWith(key)).length;return ['All','★ Favourites'+(f?' ('+f+')':''),'Recent'+(r?' ('+r+')':''),...base]};
+const inShelf=(g,key)=>g==='All'||(/^★/.test(g)?isFav(key):/^Recent/.test(g)?lsGet(LSK.rec).includes(key):null);
+function card({id,vals:v,title,meta,desc,thumb,cls,extra}){const fk=itemKey(id,v||{});return `<li class="lc ${cls||''}" draggable="true" data-add='${esc(JSON.stringify({id,vals:v||{},...(extra||{})}))}'><div class="lth" aria-hidden="true">${thumb||''}</div>${fk?`<button type="button" class="fav" data-fav="${esc(fk)}" aria-pressed="${isFav(fk)}" aria-label="Favourite: ${esc(title)}" title="Keep in Favourites">${isFav(fk)?'★':'☆'}</button>`:''}<div class="lb"><b>${esc(title)}</b>${meta?`<small>${esc(meta)}</small>`:''}${desc?`<p>${esc(desc)}</p>`:''}</div><button type="button" class="btn small add" aria-label="Add ${esc(title)} to the page">Add</button></li>`}
+function chips(groups){return `<div class="gchips" role="group" aria-label="Filter">${groups.map(g=>`<button type="button" class="chip" aria-pressed="${g.replace(/ \(\d+\)$/,'')===lgroup}" data-g="${esc(g)}">${esc(g)}</button>`).join('')}</div>`}
 const SEC_ICON={Navigation:'M3 6h18M3 6v4h18V6',Heroes:'M3 4h18v12H3zM6 19h12',Features:'M3 4h8v7H3zM13 4h8v7h-8zM3 13h8v7H3zM13 13h8v7h-8z',Proof:'M5 7h6v6H5zM13 7h6v6h-6zM5 16h14',Sell:'M4 5h5v14H4zM10 3h5v18h-5zM16 5h5v14h-5z',Story:'M4 6h16M4 10h16M4 14h12M4 18h8',Content:'M4 4h16v10H4zM4 17h16M4 20h10',Endings:'M3 14h18v6H3zM6 17h4M14 17h4',Fonts:'M5 19 10 5h2l5 14M7 14h8',Components:'M4 6h7v5H4zM13 6h7v5h-7zM4 14h16v4H4z'};
 const secThumb=g=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="${SEC_ICON[g]||SEC_ICON.Content}"/></svg>`;
 let ixIO=null,bgThumbs={};
@@ -429,9 +448,15 @@ function library(){const L=$('#libList');let h='';if(ixIO){ixIO.disconnect();ixI
   const items=all.filter(b=>(lgroup==='All'||b.group===lgroup)&&match(b.name,b.group,b.desc));
   h+=`<p class="lcount">${items.length} sections · previews use your style</p><ul class="lgrid tiles">`+items.map(b=>card({id:b.id,title:b.name,meta:b.group,thumb:`<div class="sth" data-sth="${esc(b.id)}" data-sw="${thumbW(b.id)}"></div>`,cls:'sec'})).join('')+'</ul>'+(items.length?'':'<p class="hint">No section matches “'+esc($('#libSearch').value)+'”. Try a shorter word such as “price”, “team” or “form”, or clear the search.</p>')}
  else if(ltab==='components'){const L2=PB.src.CL();if(!L2)h+='<p class="hint">The UI component lab has not loaded, so components are unavailable right now.</p>';else{
-  const items=L2.components.filter(c=>match(c.id,c.name));h+=`<p class="lcount">${items.length} of ${L2.components.length} components · each one is themed by your page style</p><ul class="lgrid comp">`+items.map(c=>card({id:'x-component',vals:{cid:c.id,layout:'plain'},title:c.name,meta:c.id+(c.live?' · interactive':''),thumb:`<div class="cthumb pb-cl"><div class="cl-root" inert>${PB.componentHTML(c,c.thumb||c.v[0][0],'t'+c.id)}</div></div>`,cls:'comp'})).join('')+'</ul>'}}
+  const cg=shelfGroups(COMPCAT.map(x=>x[0]),'c:');if(!cg.some(g=>g.replace(/ \(\d+\)$/,'')===lgroup))lgroup='All';h+=chips(cg.map(g=>g));
+  const items=L2.components.filter(c=>{const k='c:'+c.id,sh=inShelf(lgroup,k);return (sh===null?compCat(c.id)===lgroup:sh)&&match(c.id,c.name)});
+  if(/^★/.test(lgroup)&&!items.length)h+='<p class="hint">Nothing starred yet. Press the star on a component to keep it here.</p>';if(/^Recent/.test(lgroup)&&!items.length)h+='<p class="hint">Components you add to a page show up here, newest first.</p>';
+  if(/^Recent/.test(lgroup))items.sort((a,b)=>lsGet(LSK.rec).indexOf('c:'+a.id)-lsGet(LSK.rec).indexOf('c:'+b.id));
+  h+=`<p class="lcount">${items.length} of ${L2.components.length} components · each one is themed by your page style</p><ul class="lgrid comp">`+items.map(c=>card({id:'x-component',vals:{cid:c.id,layout:'plain'},title:c.name,meta:c.id+(c.live?' · interactive':''),thumb:`<div class="cthumb pb-cl"><div class="cl-root" inert>${PB.componentHTML(c,c.thumb||c.v[0][0],'t'+c.id)}</div></div>`,cls:'comp'})).join('')+'</ul>'}}
  else if(ltab==='interactions'){const X=(window.INTERACTIONS||[]).filter(x=>!/^sec-/.test(x.id));if(!X.length)h+='<p class="hint">The interactions shelf has not loaded.</p>';else{
-  const cats=['All',...new Set(X.map(x=>x.cat))];h+=chips(cats);const items=X.filter(x=>(lgroup==='All'||x.cat===lgroup)&&match(x.t,x.cat,x.d,x.use));
+  const cats=shelfGroups([...new Set(X.map(x=>x.cat))],'i:');if(!cats.some(g=>g.replace(/ \(\d+\)$/,'')===lgroup))lgroup='All';h+=chips(cats);const items=X.filter(x=>{const sh=inShelf(lgroup,'i:'+x.id);return (sh===null?x.cat===lgroup:sh)&&match(x.t,x.cat,x.d,x.use)});
+  if(/^★/.test(lgroup)&&!items.length)h+='<p class="hint">Nothing starred yet. Press the star on an interaction to keep it here.</p>';if(/^Recent/.test(lgroup)&&!items.length)h+='<p class="hint">Interactions you add to a page show up here, newest first.</p>';
+  if(/^Recent/.test(lgroup))items.sort((a,b)=>lsGet(LSK.rec).indexOf('i:'+a.id)-lsGet(LSK.rec).indexOf('i:'+b.id));
   h+=`<p class="lcount">${items.length} interactions · embedded as frames, inlined in the export</p><ul class="lgrid ix">`+items.map(x=>card({id:'x-interaction',vals:{iid:x.id,height:/^story-/.test(x.id)?'800':'640'},extra:/^(sec|story)-/.test(x.id)?{}:{cfg:{tr:1}},title:x.t,meta:x.cat,desc:x.d,thumb:`<div class="ixthumb ${x.tone==='light'?'light':''}" data-ix="${esc(x.id)}"><span>${esc(x.cat)}</span></div>`,cls:'ixc'})).join('')+'</ul>'}}
  else if(ltab==='photos'){const P=PB.photos;if(!P||!P.list.length)h+='<p class="hint">'+(P&&P.ready?'The photo library could not be loaded.':'Loading photos…')+'</p>';else{const items=P.match(q(),lgroup==='All'?'all':lgroup);
   h+=`<div class="gchips" role="group" aria-label="Photo category">${['All',...P.cats].map(c=>`<button type="button" class="chip" aria-pressed="${c===lgroup}" data-g="${esc(c)}">${esc(c==='All'?'All':P.catName(c))}</button>`).join('')}</div><p class="lcount">${items.length} of ${P.list.length} photos · public domain or CC0, credited for you in exports</p><ul class="lgrid tiles">`+items.map(p=>card({id:'image-full',vals:{img:P.path(p),alt:p.alt||p.title,caption:''},title:p.title,meta:P.catName(p.cat)+' · photo',thumb:`<img src="${esc(P.thumb(p))}" alt="" loading="lazy">`,cls:'tile'})).join('')+'</ul>'+(items.length?'':'<p class="hint">No photo matches “'+esc(q())+'”. Try “coffee”, “house” or “flowers”.</p>')}}
@@ -459,7 +484,8 @@ function library(){const L=$('#libList');let h='';if(ixIO){ixIO.disconnect();ixI
      else art=`<div class="palthumb">${sw.map(c=>`<i style="background:${c}"></i>`).join('')}</div>`}catch(e){}
      return card({id:'x-kitasset',vals:{kit:sel.id,asset:a},title:l,meta:sel.name,thumb:art,cls:'tile'})}).join('')+'</ul>'}}}
  L.innerHTML=h;
- L.querySelectorAll('.gchips .chip').forEach(b=>b.onclick=()=>{lgroup=b.dataset.g;library();const n=$(`#libList .chip[data-g="${CSS.escape(lgroup)}"]`);n&&n.focus()});
+ L.querySelectorAll('.gchips .chip').forEach(b=>b.onclick=()=>{const full=b.dataset.g;lgroup=full.replace(/ \(\d+\)$/,'');library();const n=$$('#libList .chip').find(c=>c.dataset.g.replace(/ \(\d+\)$/,'')===lgroup);n&&n.focus()});
+ L.querySelectorAll('.fav').forEach(b=>b.onclick=e=>{e.stopPropagation();const on=toggleFav(b.dataset.fav);b.setAttribute('aria-pressed',on);b.textContent=on?'★':'☆';say(on?'Added to Favourites':'Removed from Favourites');if(/^★/.test(lgroup)||true){const g=$(`#libList .chip[data-g^="★"]`);if(g)g.textContent='★ Favourites'+(lsGet(LSK.fav).filter(x=>x.startsWith(b.dataset.fav.slice(0,2))).length?' ('+lsGet(LSK.fav).filter(x=>x.startsWith(b.dataset.fav.slice(0,2))).length+')':'');if(g)g.dataset.g=g.textContent}});
  L.querySelectorAll('.lc').forEach(li=>{const x=JSON.parse(li.dataset.add);li.querySelector('.add').onclick=()=>addBlock(x.id,clone(x.vals),null,x);
   li.addEventListener('dragstart',e=>{e.dataTransfer.effectAllowed='copy';e.dataTransfer.setData('application/x-pb',li.dataset.add);e.dataTransfer.setData('text/plain',x.id)})});
  const ks=$('#kitSel');if(ks){ks.onchange=()=>{ui.kit=ks.value;saveUI();library();$('#kitSel').focus()};
