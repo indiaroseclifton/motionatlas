@@ -43,7 +43,7 @@ $('#stClose').onclick=()=>dlg.close();
 $('#stBack').onclick=()=>{view=view==='detail'?'templates':'home';draw()};
 function openStart(v){view=v||'home';draw();if(!dlg.open)dlg.showModal();const f=$('#stBody button,#stBody textarea');f&&f.focus()}
 UX.openStart=openStart;
-$('#tplBtn').onclick=()=>openStart('home');$('#openStart')&&($('#openStart').onclick=()=>openStart('home'));
+{const tb=$('#tplBtn');if(tb&&matchMedia('(max-width:700px)').matches)tb.textContent='Templates'}$('#tplBtn').onclick=()=>openStart('home');$('#openStart')&&($('#openStart').onclick=()=>openStart('home'));
 function sitesSorted(){return Object.values(A.store.pages).sort((a,b)=>(b.updated||0)-(a.updated||0))}
 function draw(){const body=$('#stBody'),back=$('#stBack');back.hidden=view==='home';
  $('#stTitle').textContent={home:'Start your site',templates:'Start from a template',detail:'Template preview',ai:'Describe your site',brand:'Use a brand kit'}[view];
