@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', 'site');
 const ORIGIN = 'https://motionatlas-ten.vercel.app';
 const ctx = { window: {} }; vm.createContext(ctx); vm.runInContext(fs.readFileSync(path.join(root, 'tools-data.js'), 'utf8'), ctx);
-const urls = [['atlas', 1.0, 'weekly'], ['tools', 0.9, 'weekly']];
+const urls = [['', 1.0, 'weekly'], ['atlas', 0.9, 'weekly'], ['tools', 0.8, 'weekly']];
 for (const t of ctx.window.ATLAS_TOOLS.list) { if (t.href.includes('#')) continue; urls.push([t.href.replace(/\.html$/, ''), 0.8, 'monthly']); }
 for (const f of fs.readdirSync(path.join(root, 'studies')).sort()) if (f.endsWith('.html')) urls.push(['studies/' + f.replace(/\.html$/, ''), 0.5, 'monthly']);
 const day = new Date().toISOString().slice(0, 10);

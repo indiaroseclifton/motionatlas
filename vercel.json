@@ -5,10 +5,6 @@
   "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/",
-      "destination": "/atlas"
-    },
-    {
       "source": "/site/:id",
       "destination": "/api/site?id=:id"
     },

@@ -663,3 +663,11 @@ are inlined, as are `art.js` (CSS gradient artwork, so demos load no images) and
 `<script type="application/json" id="settings">` and lists its sliders, toggles, colours and selects in `CONTROLS`.
 Inside the shelf the demo posts both to the parent page, which draws the Settings panel, posts changes back
 (`{atlasSet:{key:value}}`) and writes the chosen values into the settings block of the copied or downloaded file.
+
+## Home page and navigation
+
+`site/index.html` is the home page (the site root serves it; the old rewrite of `/` to `/atlas` is gone). It lists three
+groups of tiles, read from `ATLAS_NAV_GROUPS` in `site/site-nav-data.js`: Browse, Make and Styles. The bar on every page
+has the same three short menus (Browse, Make, Yours), defined in `ATLAS_NAV_MENUS`; pages that are not in a menu sit in the
+More group so their breadcrumbs and search still work. Both bars (`site-bar.js` and the atlas page's `atlas-nav.js`) are
+white with black text.

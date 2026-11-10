@@ -1,0 +1,51 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Visual & Motion Atlas</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<meta name="description" content="Interactions, app screens, components, design systems and tools for people building websites and apps. Pick what you need, tune it, copy it.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@1,500&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+:root{--bg:#FFFFFF;--panel:#FFFFFF;--ink:#111113;--mute:#6B6F76;--hair:#E8E8EA;--soft:#F5F5F6;--accent:#111111;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+main{max-width:1120px;margin:0 auto;padding:0 max(20px,env(safe-area-inset-right)) 80px max(20px,env(safe-area-inset-left))}
+.hero{padding:clamp(40px,9vh,96px) 0 clamp(24px,5vh,48px);display:grid;gap:14px;max-width:760px}
+.hero h1{margin:0;font:500 clamp(44px,8vw,88px)/.95 'Cormorant Garamond',Georgia,serif;font-style:italic;letter-spacing:-.02em}
+.hero p{margin:0;font-size:clamp(16px,2vw,19px);color:var(--mute);max-width:52ch}
+.feat{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:10px}
+.view{position:relative;aspect-ratio:16/10;border-radius:16px;overflow:hidden;border:1px solid var(--hair);background:var(--soft);display:block}
+.view iframe{position:absolute;left:0;top:0;width:1200px;height:750px;border:0;transform:scale(var(--k,.27));transform-origin:0 0;pointer-events:none}
+.view span{position:absolute;left:12px;bottom:10px;padding:5px 10px;border-radius:99px;background:var(--panel);border:1px solid var(--hair);font-size:12.5px;font-weight:600}
+.view:hover{border-color:var(--ink)}
+section{margin-top:clamp(34px,6vh,60px)}
+section h2{margin:0 0 4px;font-size:22px;letter-spacing:-.01em}section>p{margin:0 0 16px;color:var(--mute)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.t{display:grid;gap:4px;padding:18px 18px 16px;border:1px solid var(--hair);border-radius:16px;background:var(--panel);transition:border-color .15s,transform .15s;min-height:104px;align-content:start}
+.t:hover{border-color:var(--ink);transform:translateY(-2px)}
+.t b{display:flex;justify-content:space-between;gap:10px;font-size:16.5px;font-weight:600}.t b i{font-style:normal;color:var(--mute);transition:transform .15s}.t:hover b i{transform:translateX(3px);color:var(--ink)}
+.t span{color:var(--mute);font-size:13.5px;line-height:1.45}
+.t.big{background:var(--ink);color:#fff;border-color:var(--ink)}.t.big span,.t.big b i{color:rgba(255,255,255,.72)}
+footer{margin-top:60px;padding-top:18px;border-top:1px solid var(--hair);display:flex;gap:18px;flex-wrap:wrap;color:var(--mute);font-size:13.5px}footer a:hover{color:var(--ink)}
+@media(max-width:760px){.feat{grid-template-columns:1fr}.feat .view:nth-child(n+2){display:none}}
+@media(prefers-reduced-motion:reduce){.t,.t b i{transition:none}}
+</style>
+<meta property="og:type" content="website"><meta property="og:site_name" content="Visual &amp; Motion Atlas"><meta property="og:title" content="Visual & Motion Atlas"><meta property="og:description" content="Interactions, app screens, components, design systems and tools for people building websites and apps. Pick what you need, tune it, copy it."><meta property="og:url" content="https://motionatlas-ten.vercel.app/index"><meta property="og:image" content="https://motionatlas-ten.vercel.app/assets/og-atlas.jpg"><meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://motionatlas-ten.vercel.app/index">
+<style id="sbPre">html{--sb-h:calc(44px + env(safe-area-inset-top,0px))}body{padding-top:var(--sb-h)}html:not(.sbReady) body::before{content:"";position:fixed;top:0;left:0;right:0;height:var(--sb-h);background:#fff;border-bottom:1px solid #e8e8ea;z-index:2147483000}@media print{body{padding-top:0}}</style><script src="site-nav-data.js" defer></script><script src="site-bar.js" defer></script>
+</head><body><noscript><nav id="sbNo" aria-label="Atlas" style="position:fixed;top:0;left:0;right:0;height:44px;box-sizing:border-box;z-index:2147483000;background:#fff;border-bottom:1px solid #e8e8ea;padding:12px 16px;font:500 14px/20px system-ui,sans-serif;white-space:nowrap;overflow:auto"><a style="color:#111;font-weight:700;margin-right:16px" href="atlas.html">Atlas</a><a style="color:#111;margin-right:16px" href="tools.html">Tools</a><a style="color:#111;margin-right:16px" href="atlas.html#browse">Catalogue</a><a style="color:#111" href="atlas.html#projects">My projects</a></nav></noscript>
+<main id="main">
+<div class="hero"><h1>Visual &amp; Motion Atlas.</h1><p>Ready-made interactions, screens and components for websites and apps, plus the tools to make your own. Pick one, tune it, copy it.</p></div>
+<div class="feat" id="feat"></div>
+<div id="secs"></div>
+<footer><a href="atlas.html#home">Style atlas overview</a><a href="tools.html">All tools</a><a href="atlas.html#references">Sources &amp; credits</a></footer>
+</main>
+<script src="site-nav-data.js"></script>
+<script>
+(()=>{const G=window.ATLAS_NAV_GROUPS||[],by=n=>(G.find(g=>g.name===n)||{items:[]}).items,href=h=>h[0]==='#'?'atlas.html'+h:h;
+const SECS=[['Browse','Use in your product','Finished pieces to copy into a website or an app.'],['Make','Make something','Tools that turn your words, data and colours into finished work.'],['Styles','Find a style','Visual directions to brief from, with references and live examples.']];
+document.getElementById('secs').innerHTML=SECS.map(([g,t,d],k)=>`<section aria-labelledby="s${k}"><h2 id="s${k}">${t}</h2><p>${d}</p><div class="tiles">${by(g).map((i,n)=>`<a class="t${k===0&&n===0?' big':''}" href="${href(i[0])}"><b>${i[1]}<i aria-hidden="true">→</i></b><span>${i[2]}</span></a>`).join('')}</div></section>`).join('');
+document.getElementById('feat').innerHTML=[['arc-carousel','Arc focus carousel'],['glow-border','Glowing border cards'],['elastic-slider','Elastic slider']].map(([id,t])=>`<a class="view" href="interactions.html#${id}" aria-label="${t}, open in UI interactions"><iframe src="interactions/demos/${id}.html" title="" tabindex="-1" aria-hidden="true" loading="lazy"></iframe><span>${t}</span></a>`).join('');
+const ro=new ResizeObserver(es=>es.forEach(e=>e.target.style.setProperty('--k',(e.contentRect.width/1200).toFixed(4))));document.querySelectorAll('.view').forEach(v=>ro.observe(v));
+})();
+</script>
+</body></html>
