@@ -154,8 +154,6 @@ html.sbReady nav[aria-label="Other studios"],html.sbReady header nav[aria-label=
    /* the catalogue and the docs index load on first use */
    const load=async()=>{const out=[];try{const [c,x]=await Promise.all([fetch(new URL('catalogue.json',BASE)).then(r=>r.json()),fetch(new URL('expansion.json',BASE)).then(r=>r.json())]);
      for(const e of [...c,...(x.entries||[])])out.push({t:e.title,s:(e.id||'')+' · '+(e.group||e.kind||'Entry'),h:url('#browse?entry='+e.id).href,k:[e.id,e.title,e.group,e.kind,e.desc,e.tags,e.use].join(' ').toLowerCase()})}catch(_){}
-    try{await new Promise((res,rej)=>{const s=document.createElement('script');s.src=new URL('ds/search-index.js',BASE).href;s.onload=res;s.onerror=rej;document.head.append(s)});
-     for(const d of window.DS_INDEX||[])out.push({t:d.t,s:'01 Design System · '+d.p,h:new URL('ds/'+d.u,BASE).href,k:(d.t+' '+d.p+' '+d.k).toLowerCase()})}catch(_){}
     idx=out;draw(inp.value)};load()}
   sd.showModal();sd.querySelector('input').value='';sd.draw('');sd.querySelector('input').focus()}
 

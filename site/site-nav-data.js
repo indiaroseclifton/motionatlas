@@ -15,9 +15,8 @@ window.ATLAS_NAV_GROUPS=[
    ['#vases','Vase studies','One vase, forty treatments, to read a style quickly.','sand-drawing'],
    ['#pairings','Style pairings','Styles that work together, and why.','lion-phoenix']]},
   {name:'Motion',items:[
-   ['#motion','Animation studio','Live studies, films, simulations and an easing lab.','bioluminescent-trails'],
-   ['#effects','Landing effects','The techniques: scroll-driven CSS, View Transitions, shaders, with code.','light-ribbons'],
-   ['#showcase','Showcase reels','Motion templates for portfolios and launches.','golden-figure']]},
+   ['#motion','Animation studio','Watch and study: 74 live animations, films, simulations and an easing lab.','bioluminescent-trails'],
+   ['#effects','Page effects','Learn the technique: 41 scroll and page effects running live, with settings and code.','light-ribbons']]},
   {name:'Interface',items:[
    ['#systems','Design systems','Forty-eight complete visual worlds and real open-source systems.','game-of-life'],
    ['#ux','UI components','Seventy components, every state, in every style.','light-mesh'],
@@ -25,10 +24,8 @@ window.ATLAS_NAV_GROUPS=[
    ['#icons','Icon families','Outline, solid, pixel, colour and 3D icon sets.','sketchbook-horse'],
    ['icons.html','Icon library','3,768 searchable icons in 13 families, with full packs.','sketchbook-horse'],
    ['#typography','Fonts & type','Type pairings and scales, ready to use.','light-threads'],
-   ['#playground','System playground','Try a system across a landing page, dashboard and phone.','swan-construction'],
    ['#assets','Extracted assets','201 fragments cut from our original mock-ups.','paper-bird'],
    ['theme-kits.html','Theme kits','Forty-eight kits, Matrix to Graphite: tokens, components, backgrounds and assets.','game-of-life'],
-   ['ds/start.html','01 Design System docs','The 01 design system, documented: foundations, components, patterns and downloads.','game-of-life'],
    ['chart-styles.html','Chart style guides','Chart palettes and rules for every style.','game-of-life']]},
   {name:'Make',items:[
    ['tools.html','All tools','Every tool in one place, with what it makes and how they connect.','paper-bird'],
@@ -38,9 +35,8 @@ window.ATLAS_NAV_GROUPS=[
    ['chart-studio.html','Chart studio','Your data as a chart: 26 forms, any style.','pigment-bloom'],
    ['mockup-studio.html','Mockup studio','Frame a screenshot in a device and export every social size.','paper-bird'],
    ['diagram-studio.html','Diagram studio','Eighteen diagram types: roadmaps to sequence and ER.','swan-construction'],
-   ['particle-studio.html','Particle studio','Turn any picture into moving particles and export one HTML file.','particle-tree'],
-   ['motion-graphics.html','Motion graphics','Animated titles, lower thirds, logo stings and transitions to edit and export.','light-ribbons'],
-   ['interactions.html','Interactions shelf','Eighty-two showpieces, scroll stories and sections to copy.','golden-dove']]},
+   ['motion-graphics.html','Motion graphics','Make video: titles, lower thirds, logo stings and transitions, exported as video, GIF or HTML.','light-ribbons'],
+   ['interactions.html','UI interactions','Copy the finished piece: 82 ready-made interactions and page sections, one HTML file each.','golden-dove']]},
   {name:'Your studio',items:[
    ['#projects','My projects','Save specimens into boards for a client or idea.','particle-tree'],
    ['moodboard.html','Moodboards','A free canvas: pin styles, kits, colours and pictures, then make a style.','embroidery'],
@@ -57,12 +53,12 @@ window.ATLAS_NAV_MENUS=[
  {id:'lib',name:'Library',groups:[
   {name:'Explore',items:['#home','#browse','#tours','#compare','#references']},
   {name:'Visual',items:['#art','#cinema','#backgrounds','#vases','#pairings']},
-  {name:'Motion',items:['#motion','#effects','motion-graphics.html','interactions.html','#showcase']},
-  {name:'Interface',items:['#systems','#ux','app-interfaces.html','theme-kits.html','icons.html','#typography','ds/start.html',{more:'More interface',items:['#icons','#playground','#assets','chart-styles.html']}]}]},
+  {name:'Motion',items:['#motion','#effects','interactions.html','motion-graphics.html']},
+  {name:'Interface',items:['#systems','#ux','app-interfaces.html','theme-kits.html','icons.html','#typography',{more:'More interface',items:['#icons','#assets','chart-styles.html']}]}]},
  {id:'make',name:'Make',top:['page-builder.html'],groups:[
   {name:'Brand & assets',items:['brand-generator.html','mockup-studio.html','theme-kits.html']},
   {name:'Charts & diagrams',items:['chart-studio.html','diagram-studio.html','flowchart-studio.html']},
-  {name:'Motion & interaction',items:['motion-graphics.html','particle-studio.html','interactions.html']},
+  {name:'Motion & interaction',items:['motion-graphics.html','interactions.html']},
   {name:'Apps & tools',items:['app-interfaces.html']}]},
  {id:'studio',name:'Your studio',groups:[
   {name:'',items:['#projects','moodboard.html','#inspiration','my-fonts.html','#creations','account.html']}]}

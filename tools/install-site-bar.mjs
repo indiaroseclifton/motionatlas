@@ -1,6 +1,6 @@
 /* Adds the constant top bar (site-bar.js), its no-JS fallback and the standard social meta tags to every public page.
    Idempotent: run it again after adding a page.  Usage: node tools/install-site-bar.mjs
-   Skipped on purpose: atlas.html (the same bar is built by atlas-nav.js), work/01 (a private project) and interactions/demos (iframe demos). */
+   Skipped on purpose: atlas.html (the same bar is built by atlas-nav.js), interactions/demos (iframe demos). */
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';

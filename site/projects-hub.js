@@ -1,6 +1,6 @@
 'use strict';
-/* Project hubs. A hub is the landing page for one project, modelled on the 01ai hub
-   (work/01/hub.html): big title and brief, a featured directions block with a thumbnail montage,
+/* Project hubs. A hub is the landing page for one project, modelled on a studio project page:
+   big title and brief, a featured directions block with a thumbnail montage,
    a directions board with a shortlist, the chosen theme kit, the chosen atlas design system,
    rows of prototypes and pages with screenshots, files and notes.
    - ProjectHub.render(el, project, opts) draws it. With opts.editable the owner can shortlist and
@@ -44,55 +44,11 @@
    links:Array.isArray(h.links)?h.links.filter(l=>l&&typeof l.title==='string').slice(0,80).map(l=>cleanItem(l,true)):[]
   }}
 
- /* ---------- the 01 project (the user's own) ---------- */
- const W='work/01/';
- const D01=[['01','Graphite Standard','The brief played straight: solid towers, scroll-driven camera, three framed feeds.'],['02','Midnight Wireframe','The city as pure edge light. A terminal strip runs the full width of the floor.'],['03','Platinum Monolith','A street-level camera looking up at the tallest chips. Expanded caps, feeds in a right rail.'],['04','Long Exposure','Traffic photographed over minutes: light trails through dark towers, with a ticker rail.'],['05','Binary Metropolis','Every tower is built from 0s and 1s. Feeds sit in terminal windows.'],['06','Point Cloud','A lidar scan of the board. Radial gauges instead of bars.'],['07','Layered Parallax','Six cut-paper skylines sliding at their own depth. Feeds float between layers.'],['08','War Room HUD','Targeting reticles lock onto towers as the camera drifts. Readouts in corner brackets.'],['09','Luxe','A slow, quiet city and a serif headline. Feeds reduced to one hairline ticker.'],['10','Blueprint','The city drawn as an engineering projection, traced in live, with a spec table.'],['11','Wet Neon','The city mirrored in a wet board, purple in the light. Bold rounded display type.'],['12','Split Screen','Type owns the left 45%. The city runs in a tall framed window on the right.'],['13','Orbit Cam','The camera circles the downtown core on its own. A compass dial tracks the bearing.'],['14','Data Skyline','Tower heights are live load. The skyline rises and falls with the feed.'],['15','Tilt-Shift Macro','A macro lens on the board: sharp middle band, blurred foreground and sky.'],['16','Glitch Signal','Wireframe city, interference bands and an RGB-split headline. Hex streams for feeds.'],['17','Kinetic Type','The headline is the window: the city shows only through the letters.'],['18','Minimal Signal','Fog, one trace lighting end to end, and a lot of graphite. Light weight type.'],['19','Swarm Lights','Agents as lights flocking between towers. Feeds as a soft ledger.'],['20','Command Deck','The home page is the console: panels docked over the city and a live command line.'],['21','Sphere','Film hero, dark: the sphere opens on the core, annotated live, with the scarcity block and a mono tab bar.'],['22','Capsule','Film hero, light concrete: the exploded capsule, a typing headline and Request access.'],['23','Stack','Film hero: the exploded server tower, layer by layer.']];
- const L=(kind,title,text,url,shot)=>({kind,title,text,url,shot:shot?{u:shot}:null});
- const ONE={template:'launch',accent:'everything in one place.',lede:'The new Brand Kit v2 and three concept films, twenty-three home-page directions, the 01 Design System, the interface system, three product prototypes and the first pass of the site pages. Start with the Brand Kit.',
-  feature:{title:'01ai Brand Kit v2',text:'The new mono wordmark, graphite and concrete modes, three concept films, live annotation, scarcity, typing and tab-bar components, and a one-click ZIP.',url:W+'brand-kit.html',cta:'Open the Brand Kit',shots:[W+'films/sphere.jpg',W+'films/capsule.jpg',W+'films/stack.jpg',W+'kit/shots/d21.webp',W+'kit/shots/d22.webp',W+'kit/shots/d23.webp',W+'kit/shots/d01.webp',W+'kit/shots/d08.webp']},
-  directions:D01.map(([n,t,x])=>({id:'d'+n,title:'Direction '+n+' · '+t,text:x,url:W+'kit/d'+n+'.html',shot:{u:W+'kit/shots/d'+n+'.webp'}})),
-  kit:'graphite',kitSnap:{id:'graphite',no:'09',name:'Graphite',tagline:'A motherboard city at night.',head:"'Geist',system-ui,sans-serif",body:"'Geist',system-ui,sans-serif",css:'family=Geist:wght@300..700',t:{bg:'#07090C',surface:'#0F1318',ink:'#E7EAEE',mute:'#8A94A2',line:'#252D38',accent:'#7FE7F7',accent2:'#3CF29A',onAccent:'#041014'}},
-  system:'D08',systemSnap:{id:'D08',title:'Cinematic cyber system',desc:'Token structure starting point; swap neon for graphite and platinum.',tokens:{background:'#0b1522',surface:'#15263a',ink:'#e6f4ff',accent:'#75dbff'},font:'system-ui'},
-  links:[
-   L('brand','01ai Brand Kit v2','New mono logo, graphite and concrete modes, films, live components, ZIP.',W+'brand-kit.html',W+'films/sphere.jpg'),
-   L('brand','Film · Sphere','Dark concept: the sphere opens on the core. 10s, 1280×720.',W+'films/sphere.mp4',W+'films/sphere.jpg'),
-   L('brand','Film · Capsule','Light concrete concept: the exploded capsule. 10s, 1280×720.',W+'films/capsule.mp4',W+'films/capsule.jpg'),
-   L('brand','Film · Stack','The exploded server tower. 10s, 1280×720.',W+'films/stack.mp4',W+'films/stack.jpg'),
-   L('page','23 home-page directions','The directions board, now with three film heroes (21–23).',W+'kit/directions.html',W+'kit/shots/d21.webp'),
-   L('system','01 Design System','The documentation site: start here for foundations, components and patterns.','ds/start.html'),
-   L('system','Colour','Graphite, platinum, cyan and the rare accents.','ds/colour.html'),
-   L('system','Typography','Geist and Geist Mono, the type scale.','ds/type.html'),
-   L('system','All components','Buttons, forms, chat, data, navigation, overlays and the shell.','ds/components.html'),
-   L('system','Patterns','How the components combine.','ds/patterns.html'),
-   L('system','Motion & sound','Routed motion and the machine sound kit.','ds/motion.html'),
-   L('system','Logo & voice','The mark, clear space and the showman voice.','ds/logo.html'),
-   L('system','Downloads & kit','Tokens, fonts and the starter.','ds/resources.html'),
-   L('system','Interface system','Foundations, components with live code, patterns.',W+'system.html',W+'assets/shots/system.webp'),
-   L('prototype','01ai Console','Chat that spawns agents, runs, models, connections, settings.',W+'app.html',W+'assets/shots/console.webp'),
-   L('prototype','01 Workspace','Ops overview, task board, clients, agent inbox.',W+'workspace.html',W+'assets/shots/workspace.webp'),
-   L('prototype','01 Agency','Agency site: services, work, process, brief form.',W+'agency.html',W+'assets/shots/agency.webp'),
-   L('page','Home','The original city-circuits home page.',W+'home.html',W+'assets/shots/home.webp'),
-   L('page','Agents','The agent lineage, with the DNA helix.',W+'agents.html',W+'assets/shots/agents.webp'),
-   L('page','Integrations','The integration wall.',W+'integrations.html',W+'assets/shots/integrations.webp'),
-   L('page','Apply','The staged application.',W+'apply.html',W+'assets/shots/apply.webp'),
-   L('page','Origin','The story.',W+'origin.html'),
-   L('page','Login','Discreet sign-in into the console.',W+'login.html'),
-   L('page','Chat','The public chat demo.',W+'chat.html'),
-   L('brand','Brand book','Logo, colour, type, motion and sound.',W+'brand.html',W+'assets/shots/brand.webp'),
-   L('other','Original hub page','The first hub page for 01ai.',W+'hub.html')
-  ].map((l,i)=>Object.assign(l,{id:'o1-'+i}))};
- /* Fill in the 01 hub on the user's own 01ai project (and pick up the directions board shortlist). */
- function seed(p){if(!p||(p.id!=='starter-01ai'&&p.origin!=='starter-01ai'))return false;const h=p.hub||clean({});
-  /* already-seeded hubs get any new 01 links once (seed v2: Brand Kit v2, films, d21-d23) without losing their edits */
-  if(h.seeded&&(h.seedV||0)<2){const have=new Set([...h.links,...h.directions].map(x=>x.url));p.hub=clean(Object.assign({},h,{seedV:2,feature:ONE.feature||h.feature,lede:ONE.lede||h.lede,links:[...h.links,...(ONE.links||[]).filter(x=>!have.has(x.url))],directions:[...h.directions,...(ONE.directions||[]).filter(x=>!have.has(x.url))]}));return true}
-  if(h.seeded||h.links.length||h.directions.length)return false;
-  let star=[];try{star=JSON.parse(localStorage.getItem('o1-kit-shortlist')||'[]').map(x=>'d'+String(x).replace(/\D/g,'').padStart(2,'0'))}catch{}
-  p.hub=clean(Object.assign({},ONE,{seeded:true,seedV:2,snap:h.snap,shortlist:[...new Set([...h.shortlist,...star,'L05','L01','A03'])]}));return true}
 
  /* ---------- templates ---------- */
  const slot=(kind,title,text)=>({kind,title,text});
  const TEMPLATES=[
-  {id:'launch',name:'Brand + product launch',desc:'The 01 package: a board of home-page directions, a theme kit, a design system, product prototypes, site pages and a brand book.',platform:'Website',accent:'everything in one place.',
+  {id:'launch',name:'Brand + product launch',desc:'The full package: a board of home-page directions, a theme kit, a design system, product prototypes, site pages and a brand book.',platform:'Website',accent:'everything in one place.',
    directions:6,dirText:'A home-page direction: its own type, layout, motion and hero.',
    decisions:'Voice:\nColour:\nType:\nMotion:\nSound:\nAvoid:\n\nDecisions so far:\n- \n\nStill to do:\n- ',
    links:[slot('system','Design system','Foundations, components and patterns.'),slot('system','Interface system','Components with live code.'),slot('prototype','Product app','The core product, e.g. a console or dashboard.'),slot('prototype','Workspace','Internal tools or the team dashboard.'),slot('prototype','Client-facing site','Services, work and a brief form.'),slot('page','Home','The chosen direction, built out.'),slot('page','About / origin','The story.'),slot('page','Apply / contact','The way in.'),slot('page','Login','Sign-in.'),slot('brand','Brand book','Logo, colour, type, motion and sound.')]},
@@ -264,5 +220,5 @@
     try{it.draft=await AI.generate(p,it);status(el,'Draft ready: '+it.draft.title+'. Open it in the page builder to edit and download it.')}catch(err){status(el,err.message)}finally{st.busy.delete(id);save(true,`[data-ph=opendraft][data-id="${id}"]`)}return}
    if(a==='opendraft'){const it=findItem(p,'dir',id)||findItem(p,'link',id);if(it&&it.draft){try{AI.open(it.draft)}catch(err){status(el,err.message)}}return}});
  }
- window.ProjectHub={render,clean,seed,safeURL,KINDS,TEMPLATES,fromTemplate,AI};
+ window.ProjectHub={render,clean,safeURL,KINDS,TEMPLATES,fromTemplate,AI};
 })();

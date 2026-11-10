@@ -14,7 +14,6 @@ site (`site/`) with a few serverless functions (`api/`), deployed by Vercel from
 - [Theme kits (site/theme-kits.html, site/kits/)](#theme-kits-sitetheme-kitshtml-sitekits)
 - [Brand kit generator (site/brand-generator.html, site/brandgen/)](#brand-kit-generator-sitebrand-generatorhtml-sitebrandgen)
 - [Design systems D01–D48](#design-systems-d01d48)
-- [The 01 Design System docs (site/ds/)](#the-01-design-system-docs-siteds)
 - [UI components (#ux, site/component-lab.js)](#ui-components-ux-sitecomponent-labjs)
 - [Interactions shelf (site/interactions.html, site/interactions/)](#interactions-shelf-siteinteractionshtml-siteinteractions)
 - [Site builder (site/page-builder.html, site/builder/)](#site-builder-sitepage-builderhtml-sitebuilder)
@@ -84,7 +83,6 @@ Live: https://motionatlas-ten.vercel.app (`/` rewrites to `/atlas`).
 - **Mouse and keyboard.** Click selects; Shift-click or Shift-drag selects several; drag moves; drag from a round handle to connect (drop on empty space to add a connected element); select a line and drag an end to reconnect or drop it on nothing to disconnect; right-click or press and hold for a menu; double-click empty space adds an element. Copy, cut, paste, duplicate, select all, undo and redo, Delete, arrows to nudge, Tab to move between elements, 0 to fit, + and - to zoom, ? for the full list.
 - **Resize.** Drag any corner of a selected element (Shift keeps the shape), or type a width and height in its panel; Alt+arrows resize from the keyboard; double-click a corner to go back to the standard size. Text refits to the new box.
 - **Workers.** A worker is an element that does a job. Adding one shows the workflow it runs; setting "How many" shows one lane of that workflow per worker. Elements can also record what they kick-start (saved with the chart).
-- **Workspace feeds.** Where the host serves `/_01/feeds/index.json` (the 01 Design Suite) a Workspace button loads a model of a client's workspace onto the canvas. This site serves none, so the button stays hidden.
 - **Shapes library.** Add opens a searchable shape picker (type "database", "wait", "actor"…, Enter adds the first hit): the basic flowchart set plus document, delay, manual step, manual input, display and off-page link, people and systems, notes, connection modules, and containers (Group wraps the selection; Swimlane pool adds three named lanes).
 - **Connectors.** Ports on all four sides; drag from one to another element to connect, or onto empty space to add a linked step. Connectors route at right angles round other elements. Each connection has a label, a line (solid, dashed, thick) and an end (arrow, both ways, circle, cross, plain), set in its panel; Mermaid `--o` and `--x` read and write the same ends.
 - **Arrange.** With two or more selected, a toolbar appears: align left, centre, right, top, middle, bottom; space evenly across or down; group; zoom to selection (also Alt+A/H/D/W/V/S, Alt+Shift+H/V, Ctrl+G and Ctrl+Shift+G, Shift+2). Smart guides line a dragged element up with the edges and centres of the others; the grid button snaps to a 24px grid; hold Alt to place freely. Groups move everything inside them.
@@ -122,8 +120,9 @@ Every tool is listed once in `site/tools-data.js` (name, page, group, one-line p
 | Brand kit generator | `brand-generator.html` | palette, fonts, logo, tokens and a theme kit |
 | Mockup studio | `mockup-studio.html` | device frames and every social size |
 | Chart / Diagram / Flowchart studios | `chart-studio.html`, `diagram-studio.html`, `flowchart-studio.html` (and the lighter `flowchart-canvas.html`) | SVG, PNG, video, GIF |
+| App interfaces | `app-interfaces.html`, `app-screens/`, `tools/app-screens/` | 8 dashboard and tool screens (analytics, sales, operations, data table, kanban, inbox, AI chat, settings); light and dark; built from `tools/app-screens/src` by `node tools/build-app-screens.mjs` |
 | Motion graphics studio | `motion-graphics.html`, `motiongfx/templates.js`, `motiongfx/studio.js` | 28 canvas animations (titles, lower thirds, logo stings, transitions, numbers, social, backdrops); export WebM (keeps transparency), GIF, PNG, PNG sequence or one HTML file |
-| Particle studio, Interactions shelf, Background generator | `particle-studio.html`, `interactions.html`, `atlas.html#backgrounds` | single-file motion |
+| Interactions shelf, Background generator | `interactions.html`, `atlas.html#backgrounds` | single-file motion |
 | Theme kits, Icon library, Chart style guides | `theme-kits.html`, `icons.html`, `chart-styles.html` | tokens, packs, palettes |
 | Moodboards, My projects | `moodboard.html`, `atlas.html#projects` | boards and project hubs |
 
@@ -152,7 +151,7 @@ A page gets the bar from the lines `tools/install-site-bar.mjs` adds to its `<he
 the height, plus two deferred scripts) and a no-JS link row after `<body>`. **After adding a page, run
 `node tools/install-site-bar.mjs`.** Full-height editors are fitted below the bar by `fit()` in
 `site-bar.js`; where a layout uses `calc(100vh - Npx)`, write `calc(100vh - Npx - var(--sb-h,0px))`.
-`work/01` (a private project), `interactions/demos/` (embedded) and exported or published user sites
+`interactions/demos/` (embedded) and exported or published user sites
 never get the bar.
 
 ## Directory map
@@ -172,7 +171,6 @@ site/                    everything that is served (outputDirectory in vercel.js
   atlas-*.js/.css        nav, enhance (plate bands, header films, search), share, explore, tours, refine
   lazy-bg.js             holds catalogue card images back until they scroll near (load it first)
   kits/                  theme kits (theme-kits.html)
-  ds/                    the 01 Design System docs site
   interactions/          interactions shelf: manifest.js + demos/*.html
   builder/               Site builder (page-builder.html)
   system-components/     live HTML/CSS components for systems D21–D32
@@ -186,7 +184,6 @@ site/                    everything that is served (outputDirectory in vercel.js
   projects*.js, account.html, p.html, shared.html   My projects, sign-in, public hubs, shared links
   icons/, fonts/, vendor/, assets/                  static assets (films in assets/films/)
   work/djinyc/           a client mock-up (served at /work/djinyc/home)
-  work/01/               a personal project. Its assets are used by ds/, but keep it OUT of the atlas nav
   original/              backups of files from the first mirror; not linked
   sw.js                  service worker (bump the cache name on every deploy)
 supabase/schema.sql      tables, policies and storage bucket for My projects
@@ -270,17 +267,6 @@ Canvas, Mantine), and the newer originals up to D48.
 `system-previews.js`, add its kit row (background family, voice lines, do, don't) next to `D48`
 in `system-kits.js`, and a credit line if it interprets someone else's system. Update the counts.
 
-## The 01 Design System docs (`site/ds/`)
-
-A separate documentation site for 01 (graphite and platinum, routed motion, machine sound, 44
-`u-` components in 8 families, patterns, templates, kits). `/ds` redirects to `/ds/start`.
-
-- `ds.js` builds the shared chrome, search, live example frames and code blocks. Pages load
-  `../work/01/01.js` and `../work/01/01-ui.js` first, which is why `work/01` must stay deployed.
-- `kitview.js` renders a 01 kit in the theme-kit format (used by `kits.html` and `resources.html`).
-- `search-index.js` is generated. After adding or renaming headings, run
-  `node site/ds/tools/build-search-index.mjs` from the repo root. It reads every `h2`/`h3` with
-  an `id` in `site/ds/*.html`.
 
 ## UI components (`#ux`, `site/component-lab.js`)
 
@@ -518,7 +504,6 @@ cd site && python3 -m http.server 8772     # then open http://localhost:8772/atl
 npm install                                # only needed for the API functions / share dev server
 npm run dev:share                          # site + real share API on http://localhost:8790
 python3 tools/blocks.py                    # rebuild builder/blocks.js and sec-* demos
-node site/ds/tools/build-search-index.mjs  # rebuild the ds search index
 python3 tools/build-atlas-theme.py         # regenerate atlas-theme.css
 python3 -I tools/add-specimens.py site/catalogue.json   # merge a specimen package (safe to re-run)
 tools/add-film.sh A41 path/to/A41.mp4      # encode a film loop + poster and attach it to an entry
@@ -533,7 +518,7 @@ sharing).
 
 A Playwright check (`gate.mjs`, kept outside the repo; run it with `node gate.mjs` while the local
 server runs on 8772) loads `atlas.html#motion`, `#projects`, `#systems`, `#ux`, `theme-kits.html`,
-`interactions.html`, `page-builder.html` and `ds/start.html` at 1440px and fails on any page error
+`interactions.html` and `page-builder.html` at 1440px and fails on any page error
 or console error. It must pass. Also check, at 1440px and 390px, that nothing scrolls sideways
 (`document.documentElement.scrollWidth <= innerWidth`) and that axe (WCAG 2 A/AA) reports no
 serious or critical issues on the pages you touched.
@@ -541,7 +526,7 @@ serious or critical issues on the pages you touched.
 ## Deploying
 
 Push to `main` and Vercel deploys `site/` with `api/` as functions (`vercel.json`: no build step,
-`cleanUrls`, `/` → `/atlas`, redirects for `/ds`, `/work/01`, `/work/djinyc`, a week of caching on
+`cleanUrls`, `/` → `/atlas`, a redirect for `/work/djinyc`, a week of caching on
 `/assets/*`, and `no-cache` on `/sw.js`). Checklist:
 
 1. Bump `CACHE` in `site/sw.js`.
@@ -657,3 +642,15 @@ and `K` a small set of helpers (easing, text fitting, rounded rectangles). Becau
 the studio can write any of them out as a single HTML file (helpers plus that one function, no libraries).
 To add a template, `add({id, name, cat, dur, d, f:{t1,…}, draw})` in `templates.js`; set `loop:true` for seamless backdrops.
 `tools/site-counts.mjs` counts them as `motionGraphics`.
+
+## App interfaces and shared tool themes
+
+`site/app-interfaces.html` is the shelf for app and tool screens. Each screen in `site/app-screens/demos/` is one
+self-contained HTML file generated by `node tools/build-app-screens.mjs` from `tools/app-screens/src/<id>.html`
+(the shell, tokens, chart code and helpers in `tools/app-screens/` are inlined, so edit the sources, not the output).
+A source starts with `<!--META {json}-->` (title, category, description, AI prompt) and can use `<!--SHELL Active|Search-->`
+to get the sidebar and top bar. Add `#dark` to a screen's address to open it dark.
+
+`site/tool-themes.js` gives Motion graphics, UI interactions and App interfaces a shared theme picker (Midnight is the
+default; Graphite, Ocean, Forest, Plum, Paper and Daylight are the others). It sets the page's CSS variables and remembers
+the choice in the browser. It also scales the live preview frames, each `.view` shows a 1200 x 750 page shrunk to fit.

@@ -35,7 +35,7 @@
    film:{src:'assets/films/sand-drawing-720.mp4',webm:'assets/films/sand-drawing-720.webm',poster:'assets/films/sand-drawing-1280.webp',label:'Sand drawing',tone:'light'}},
   pairings:{no:15,name:'Style pairings',family:'Motion',color:'rose',related:['systems','motion','typography'],h:[1,2,-5],
    film:{src:'assets/films/lion-phoenix-720.mp4',webm:'assets/films/lion-phoenix-720.webm',poster:'assets/films/lion-phoenix-1280.webp',label:'Lion to phoenix',tone:'dark'}},
-  effects:{no:16,name:'Landing effects',family:'Motion',color:'rose',related:['motion','ux','playground'],h:[1,-3,2,-6],
+  effects:{no:16,name:'Page effects',family:'Motion',color:'rose',related:['motion','ux','playground'],h:[1,-3,2,-6],
    film:{src:'assets/films/light-ribbons-720.mp4',webm:'assets/films/light-ribbons-720.webm',poster:'assets/films/light-ribbons-1280.webp',label:'Light ribbons',tone:'dark'}},
   compare:{no:17,name:'Comparison desk',family:'Motion',color:'rose',related:['art','systems','vases'],h:[1,3,-6],
    film:{src:'assets/films/ferrofluid-720.mp4',webm:'assets/films/ferrofluid-720.webm',poster:'assets/films/ferrofluid-1280.webp',label:'Ferrofluid',tone:'dark'}},

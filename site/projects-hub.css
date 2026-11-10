@@ -1,5 +1,5 @@
 /* Project hubs (projects-hub.js), the account bar and sign-in form (supabase-client.js, projects.js).
-   The hub is a dark graphite page modelled on work/01/hub.html. */
+   The hub is a dark graphite page. */
 .ph{--ph-bg:#07090C;--ph-surface:#0F1318;--ph-fg:#E7EAEE;--ph-fg2:#A9B2BF;--ph-fg3:#939DAB;--ph-line:#252D38;--ph-accent:#7FE7F7;--ph-ok:#3CF29A;
  --ph-gut:clamp(16px,4vw,56px);--ph-sans:Manrope,system-ui,sans-serif;--ph-mono:'JetBrains Mono',ui-monospace,monospace;
  background:var(--ph-bg);color:var(--ph-fg);font:16px/1.55 var(--ph-sans);padding:0 var(--ph-gut) 48px;border-radius:20px;margin:28px 0;min-width:0;overflow:hidden}

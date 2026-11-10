@@ -30,7 +30,6 @@ for (const m of sm.matchAll(/<loc>https?:\/\/[^/]+\/?([^<]*)<\/loc>/g)) { let p 
 const nav = fs.readFileSync(path.join(root, 'site-nav-data.js'), 'utf8');
 for (const m of nav.matchAll(/\['([^']+)','[^']+','[^']*','[a-z0-9-]+'\]/g)) { const h = m[1]; add(h.startsWith('#') ? 'atlas.html' + h : h); }
 { const ctx = { window: {} }; vm.createContext(ctx); vm.runInContext(fs.readFileSync(path.join(root, 'tools-data.js'), 'utf8'), ctx); for (const t of ctx.window.ATLAS_TOOLS.list) add(t.href); }
-for (const f of fs.readdirSync(path.join(root, 'ds'))) if (f.endsWith('.html')) add('ds/' + f);
 for (const f of fs.readdirSync(path.join(root, 'studies'))) if (f.endsWith('.html')) add('studies/' + f);
 add('work/djinyc/home.html');
 for (const f of ['account.html', 'shared.html', 'p.html']) if (fs.existsSync(path.join(root, f))) add(f);
