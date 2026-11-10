@@ -38,6 +38,7 @@ window.ATLAS_NAV_GROUPS=[
    ['mockup-studio.html','Mockup studio','Frame a screenshot in a device and export every social size.','paper-bird'],
    ['diagram-studio.html','Diagram studio','Eighteen diagram types: roadmaps to sequence and ER.','swan-construction'],
    ['particle-studio.html','Particle studio','Turn any picture into moving particles and export one HTML file.','particle-tree'],
+   ['motion-graphics.html','Motion graphics','Animated titles, lower thirds, logo stings and transitions to edit and export.','light-ribbons'],
    ['interactions.html','Interactions shelf','Seventy showpieces, scroll stories and sections to copy.','golden-dove']]},
   {name:'Your studio',items:[
    ['#projects','My projects','Save specimens into boards for a client or idea.','particle-tree'],
@@ -55,12 +56,12 @@ window.ATLAS_NAV_MENUS=[
  {id:'lib',name:'Library',groups:[
   {name:'Explore',items:['#home','#browse','#tours','#compare','#references']},
   {name:'Visual',items:['#art','#cinema','#backgrounds','#vases','#pairings']},
-  {name:'Motion',items:['#motion','#effects','interactions.html','#showcase']},
+  {name:'Motion',items:['#motion','#effects','motion-graphics.html','interactions.html','#showcase']},
   {name:'Interface',items:['#systems','#ux','theme-kits.html','icons.html','#typography','ds/start.html',{more:'More interface',items:['#icons','#playground','#assets','chart-styles.html']}]}]},
  {id:'make',name:'Make',top:['page-builder.html'],groups:[
   {name:'Brand & assets',items:['brand-generator.html','mockup-studio.html','theme-kits.html']},
   {name:'Charts & diagrams',items:['chart-studio.html','diagram-studio.html','flowchart-studio.html']},
-  {name:'Motion & interaction',items:['particle-studio.html','interactions.html']}]},
+  {name:'Motion & interaction',items:['motion-graphics.html','particle-studio.html','interactions.html']}]},
  {id:'studio',name:'Your studio',groups:[
   {name:'',items:['#projects','moodboard.html','#inspiration','my-fonts.html','#creations','account.html']}]}
 ];

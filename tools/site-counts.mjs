@@ -24,6 +24,7 @@ const br = await chromium.launch({ executablePath: process.env.CHROME || '/opt/p
 async function ev(p, fn) { const pg = await br.newPage(); await pg.goto(base + p); await pg.waitForTimeout(2500); try { return await pg.evaluate(fn); } finally { await pg.close(); } }
 counts.kits = await ev('theme-kits.html', () => window.ThemeKits.list.length);
 counts.interactions = await ev('interactions.html', () => window.INTERACTIONS.length);
+counts.motionGraphics = await ev('motion-graphics.html', () => window.MotionGfx.list.length);
 counts.chartTypes = await ev('chart-studio.html', () => window.DVChartMaker.KINDS.length);
 counts.diagramTypes = await ev('diagram-studio.html', () => window.Diagrams.KINDS.length);
 counts.flowTemplates = await ev('flowchart-studio.html', () => window.FlowTemplates.length);

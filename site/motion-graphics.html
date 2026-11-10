@@ -1,0 +1,108 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Motion graphics studio · Visual & Motion Atlas</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<meta name="description" content="Animated titles, lower thirds, logo stings, transitions, counters and looping backdrops. Change the words, colours and shape, then export a video, a GIF, a PNG sequence or one HTML file.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500&family=Space+Grotesk:wght@500;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Fraunces:opsz,wght@9..144,500;9..144,700&family=DM+Serif+Display&family=Archivo+Black&family=Manrope:wght@500;800&display=swap">
+<style>
+:root{--bg:#F4F5F8;--panel:#FFFFFF;--ink:#1C1F2A;--mute:#5F6577;--hair:#E4E7EE;--soft:#F7F8FB;--accent:#5B2DFF;--shadow:0 1px 2px rgba(20,24,40,.06),0 8px 24px -12px rgba(20,24,40,.18)}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:14px/1.5 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}button,select,input,textarea{font:inherit;color:inherit}button{cursor:pointer}
+[hidden]{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip{position:absolute;left:12px;top:-60px;z-index:50;background:var(--ink);color:#fff;padding:8px 12px;border-radius:8px}.skip:focus{top:10px}
+header.top{position:sticky;top:var(--sb-h,0px);z-index:20;display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px max(16px,env(safe-area-inset-right)) 10px max(16px,env(safe-area-inset-left));background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--hair)}
+.brand{display:flex;align-items:baseline;gap:12px;min-width:0;flex-wrap:wrap}
+.brand h1{margin:0;font:500 26px/1.05 'Cormorant Garamond',Georgia,serif;font-style:italic}
+.brand p{margin:0;color:var(--mute);font-size:12.5px}
+.acts{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;align-items:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:36px;padding:0 12px;border-radius:10px;border:1px solid var(--hair);background:var(--panel);font-weight:500;font-size:13px;text-decoration:none;white-space:nowrap}
+.btn:hover{border-color:#CBD0DB;background:var(--soft)}.btn:disabled{opacity:.5;cursor:default}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}.btn.primary:hover{background:#4A1FF0}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+details.menu{position:relative}details.menu>summary{list-style:none}details.menu>summary::-webkit-details-marker{display:none}
+details.menu>summary::after{content:'▾';font-size:11px;margin-left:2px}
+.pop{position:absolute;right:0;top:calc(100% + 6px);z-index:30;min-width:270px;max-width:min(340px,calc(100vw - 24px));background:var(--panel);border:1px solid var(--hair);border-radius:12px;box-shadow:0 18px 40px -16px rgba(20,24,40,.35);padding:6px;display:grid;gap:2px}
+.pop button{display:grid;gap:1px;text-align:left;border:0;background:none;border-radius:8px;padding:8px 10px;font-size:13px;min-height:44px}.pop button:hover{background:var(--soft)}
+.pop small{color:var(--mute);font-size:11.5px}
+.app{display:grid;grid-template-columns:minmax(300px,360px) minmax(0,1fr);align-items:start}
+.side{background:var(--panel);border-right:1px solid var(--hair);min-width:0;min-height:calc(100vh - 57px - var(--sb-h,0px))}
+.sec{padding:14px 18px;border-bottom:1px solid var(--hair);display:grid;gap:10px}
+.sec h2{margin:0;font:600 11px/1.2 Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+.hint{margin:0;font-size:12px;color:var(--mute);line-height:1.45}
+label.f{display:grid;gap:4px;font-size:12px;color:var(--mute)}
+label.f>span{display:flex;justify-content:space-between;gap:8px}
+input[type=text],select,textarea{width:100%;min-height:38px;border:1px solid var(--hair);border-radius:9px;background:var(--panel);padding:7px 10px;font-size:14px;color:var(--ink)}
+textarea{resize:vertical;min-height:60px}
+input[type=range]{width:100%;accent-color:var(--accent);min-height:28px}
+.seg{display:flex;gap:4px;flex-wrap:wrap}.seg button{flex:1 0 auto;min-height:36px;padding:0 10px;border:1px solid var(--hair);background:var(--panel);border-radius:9px;font-size:12.5px;font-weight:500}
+.seg button[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+.pals{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.pals button{height:36px;border-radius:9px;border:1px solid var(--hair);padding:0;overflow:hidden;display:flex}.pals button i{flex:1}.pals button[aria-pressed=true]{outline:2px solid var(--accent);outline-offset:2px}
+.cols{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.cols label{display:grid;gap:4px;font-size:12px;color:var(--mute)}
+.cols input[type=color]{width:100%;height:36px;border:1px solid var(--hair);border-radius:9px;background:var(--panel);padding:3px}
+.check{display:flex;gap:8px;align-items:center;font-size:13px;min-height:32px}.check input{width:18px;height:18px;accent-color:var(--accent)}
+.main{padding:18px max(16px,env(safe-area-inset-right)) 40px 18px;min-width:0;display:grid;gap:14px}
+#mgStage{display:grid;place-items:center;background:repeating-conic-gradient(#E9EBF1 0 25%,#F4F5F8 0 50%) 0 0/20px 20px;border:1px solid var(--hair);border-radius:14px;padding:14px;min-height:200px}
+#mgCanvas{max-width:100%;max-height:62vh;height:auto;width:auto;border-radius:6px;box-shadow:var(--shadow);display:block}
+.transport{display:flex;gap:10px;align-items:center}.transport input{flex:1}.transport output{font:500 12px 'JetBrains Mono',monospace;color:var(--mute);min-width:74px;text-align:right}
+.gal h2{margin:0 0 4px;font:500 22px/1.1 'Cormorant Garamond',Georgia,serif;font-style:italic}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}.chips button{min-height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--hair);background:var(--panel);font-size:12.5px;font-weight:500}.chips button[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+#mgGrid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px}
+#mgGrid button{display:grid;gap:6px;width:100%;text-align:left;border:1px solid var(--hair);background:var(--panel);border-radius:12px;padding:6px 6px 10px;transition:transform .15s,box-shadow .15s}
+#mgGrid button:hover{transform:translateY(-2px);box-shadow:var(--shadow)}#mgGrid button[aria-current=true]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+#mgGrid canvas{width:100%;aspect-ratio:16/9;border-radius:8px;display:block;background:#111}
+#mgGrid b{font-size:13px;padding:0 4px}#mgGrid span{font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);padding:0 4px}
+#mgStatus{margin:0;min-height:20px;font-size:13px;color:var(--mute)}
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);background:var(--ink);color:#fff;padding:10px 16px;border-radius:10px;font-size:13px;opacity:0;pointer-events:none;transition:.25s;z-index:60;max-width:calc(100vw - 32px)}.toast.on{opacity:1;transform:translate(-50%,0)}
+@media(max-width:860px){.app{grid-template-columns:1fr}.side{border-right:0;min-height:0;order:2}.main{padding:14px 16px 20px;order:1}#mgCanvas{max-height:46vh}}
+@media(prefers-reduced-motion:reduce){#mgGrid button{transition:none}}
+</style><meta property="og:type" content="website"><meta property="og:site_name" content="Visual &amp; Motion Atlas"><meta property="og:title" content="Motion graphics studio · Visual & Motion Atlas"><meta property="og:description" content="Animated titles, lower thirds, logo stings, transitions, counters and looping backdrops. Change the words, colours and shape, then export a video, a GIF, a PNG sequence or one HTML file."><meta property="og:url" content="https://motionatlas-ten.vercel.app/motion-graphics"><meta property="og:image" content="https://motionatlas-ten.vercel.app/assets/og-atlas.jpg"><meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://motionatlas-ten.vercel.app/motion-graphics">
+<style id="sbPre">html{--sb-h:calc(44px + env(safe-area-inset-top,0px))}body{padding-top:var(--sb-h)}html:not(.sbReady) body::before{content:"";position:fixed;top:0;left:0;right:0;height:var(--sb-h);background:#0d111b;z-index:2147483000}@media print{body{padding-top:0}}</style><script src="site-nav-data.js" defer></script><script src="site-bar.js" defer></script>
+</head><body><noscript><nav id="sbNo" aria-label="Atlas" style="position:fixed;top:0;left:0;right:0;height:44px;box-sizing:border-box;z-index:2147483000;background:#0d111b;padding:12px 16px;font:500 14px/20px system-ui,sans-serif;white-space:nowrap;overflow:auto"><a style="color:#fde68a;margin-right:16px" href="atlas.html">Atlas</a><a style="color:#e8edf5;margin-right:16px" href="tools.html">Tools</a><a style="color:#e8edf5;margin-right:16px" href="atlas.html#browse">Catalogue</a><a style="color:#e8edf5" href="atlas.html#projects">My projects</a></nav></noscript>
+<a class="skip" href="#mgMain">Skip to the preview</a>
+<header class="top">
+ <div class="brand"><h1>Motion graphics studio</h1><p id="mgCount"></p></div>
+ <div class="acts">
+  <button class="btn" id="mgCopy" type="button">Copy as HTML</button>
+  <details class="menu" id="mgExport"><summary class="btn primary">Export</summary><div class="pop">
+   <button type="button" data-x="webm"><b>Video (WebM)</b><small>Full size, 60 frames a second. Keeps a transparent background.</small></button>
+   <button type="button" data-x="gif"><b>GIF</b><small>640 px wide, 20 frames a second, loops forever.</small></button>
+   <button type="button" data-x="png"><b>This frame (PNG)</b><small>The frame showing now, at full size.</small></button>
+   <button type="button" data-x="seq"><b>PNG sequence (ZIP)</b><small>Every frame at 30 a second, for a video editor.</small></button>
+   <button type="button" data-x="html"><b>One HTML file</b><small>The animation as code, no libraries, ready to embed.</small></button>
+  </div></details>
+ </div>
+</header>
+<div class="app">
+<aside class="side" aria-label="Settings">
+ <section class="sec"><h2 id="mgName">Template</h2><p class="hint" id="mgDesc"></p></section>
+ <section class="sec" id="mgWords"><h2>Words</h2></section>
+ <section class="sec"><h2>Type</h2>
+  <label class="f"><span>Typeface</span><select id="mgFont"></select></label>
+ </section>
+ <section class="sec"><h2>Colour</h2>
+  <div class="pals" id="mgPals" role="group" aria-label="Palettes"></div>
+  <div class="cols"><label>Background<input type="color" id="mgBg"></label><label>Text<input type="color" id="mgInk"></label><label>Accent<input type="color" id="mgAccent"></label></div>
+  <label class="check"><input type="checkbox" id="mgAlpha"> Transparent background</label>
+  <p class="hint">Transparent is kept in the WebM video, PNG and HTML exports, so a lower third or transition can sit over your footage.</p>
+ </section>
+ <section class="sec"><h2>Shape and length</h2>
+  <div class="seg" id="mgRatio" role="group" aria-label="Shape"></div>
+  <label class="f"><span>Length <output id="mgDurOut"></output></span><input type="range" id="mgDur" min="1.5" max="12" step="0.5"></label>
+ </section>
+</aside>
+<main class="main" id="mgMain" tabindex="-1">
+ <div id="mgStage"><canvas id="mgCanvas" role="img" aria-label="Preview of the animation"></canvas></div>
+ <div class="transport"><button class="btn" id="mgPlay" type="button" aria-pressed="true">Pause</button><input type="range" id="mgScrub" min="0" max="1000" value="0" aria-label="Position in the animation"><output id="mgTime"></output></div>
+ <p id="mgStatus" role="status" aria-live="polite"></p>
+ <section class="gal" aria-labelledby="mgGalH"><h2 id="mgGalH">Templates</h2><p class="hint">Pick one to edit. Thumbnails play when you point at them.</p>
+  <div class="chips" id="mgChips" role="group" aria-label="Filter templates"></div><ul id="mgGrid"></ul></section>
+</main>
+</div>
+<div class="toast" id="mgToast" role="status" aria-live="polite"></div>
+<script src="builder/zip.js"></script>
+<script src="motiongfx/templates.js"></script>
+<script src="motiongfx/studio.js"></script>
+</body></html>

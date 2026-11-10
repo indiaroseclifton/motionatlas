@@ -122,6 +122,7 @@ Every tool is listed once in `site/tools-data.js` (name, page, group, one-line p
 | Brand kit generator | `brand-generator.html` | palette, fonts, logo, tokens and a theme kit |
 | Mockup studio | `mockup-studio.html` | device frames and every social size |
 | Chart / Diagram / Flowchart studios | `chart-studio.html`, `diagram-studio.html`, `flowchart-studio.html` (and the lighter `flowchart-canvas.html`) | SVG, PNG, video, GIF |
+| Motion graphics studio | `motion-graphics.html`, `motiongfx/templates.js`, `motiongfx/studio.js` | 28 canvas animations (titles, lower thirds, logo stings, transitions, numbers, social, backdrops); export WebM (keeps transparency), GIF, PNG, PNG sequence or one HTML file |
 | Particle studio, Interactions shelf, Background generator | `particle-studio.html`, `interactions.html`, `atlas.html#backgrounds` | single-file motion |
 | Theme kits, Icon library, Chart style guides | `theme-kits.html`, `icons.html`, `chart-styles.html` | tokens, packs, palettes |
 | Moodboards, My projects | `moodboard.html`, `atlas.html#projects` | boards and project hubs |
@@ -647,3 +648,12 @@ public-domain photographs from Wikimedia Commons (`site/assets/photos/photos.jso
 `docs/image-licences.md`); icon families Phosphor (MIT), Heroicons (MIT), Lucide (ISC), Tabler (MIT),
 Pixelarticons (MIT), OpenMoji (CC BY-SA 4.0) and Fluent 3D emoji (MIT), with licences in
 `site/icons/LICENSES.txt`; Google Fonts under the SIL Open Font Licence or Apache 2.0.
+
+## Motion graphics studio
+
+`site/motion-graphics.html` plays the templates in `site/motiongfx/templates.js`. Each template is one function,
+`draw(c, p, W, H, o, K)`: `c` is a 2D canvas context, `p` the loop position from 0 to 1, `o` the words, colours and font,
+and `K` a small set of helpers (easing, text fitting, rounded rectangles). Because a template only touches `c`, `o` and `K`,
+the studio can write any of them out as a single HTML file (helpers plus that one function, no libraries).
+To add a template, `add({id, name, cat, dur, d, f:{t1,…}, draw})` in `templates.js`; set `loop:true` for seamless backdrops.
+`tools/site-counts.mjs` counts them as `motionGraphics`.
