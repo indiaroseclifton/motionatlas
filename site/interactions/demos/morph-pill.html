@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Morphing status pill</title>
 <style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
-:root{--bg:#0E0F13;--panel:#191B22;--ink:#F3F4F7;--mute:#9CA3B4;--line:#2A2D38;--ac:#8B7CFF}
-:root[data-mode=light]{--bg:#F3F1EC;--panel:#FFFFFF;--ink:#17181C;--mute:#646978;--line:#DEDAD0}
+:root{--bg:#0F1012;--panel:#1A1B1E;--ink:#F4F4F5;--mute:#A1A1AA;--line:#2C2D31;--ac:#111111}
+:root[data-mode=light]{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#111113;--mute:#6B6F76;--line:#E6E6E8}
 *{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
 body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
 button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
@@ -36,13 +36,13 @@ body{align-content:center;gap:30px}
  <div class="s done"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Export finished</span></div>
 </div>
 <div class="pick" id="pick" role="group" aria-label="Show a state"></div><p class="hint">One element changes shape; the content cross-fades inside it</p>
-<script type="application/json" id="settings">{"bounce":0.5,"duration":520,"corner":26,"scale":1,"glow":0,"mode":"dark","accent":"#3DDC97"}</script>
+<script type="application/json" id="settings">{"bounce":0.5,"duration":520,"corner":26,"scale":1,"glow":0,"mode":"light","accent":"#3DDC97"}</script>
 <script>
 const CONTROLS=[{g:'Spring',k:'bounce',label:'Bounce',min:0,max:1,step:.05},{k:'duration',label:'Duration',min:200,max:1200,step:10,unit:'ms'},{g:'Shape',k:'corner',label:'Corner radius',min:8,max:44,step:1,unit:'px'},{k:'scale',label:'Size',min:.8,max:1.5,step:.05,unit:'×'},{k:'glow',label:'Glow',min:0,max:50,step:1,unit:'px'},
- {g:'Look',k:'mode',label:'Mode',type:'select',options:['dark','light']},{k:'accent',label:'Accent',type:'color'}];
+ {g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
 /* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
 const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
-const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'dark';if(S.accent)r.style.setProperty('--ac',S.accent)};
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'light';if(S.accent)r.style.setProperty('--ac',S.accent)};
 addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
 if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
 const SHAPE={idle:[120,36],timer:[230,44],music:[300,56],call:[320,76],done:[200,44]},pill=document.getElementById('pill'),pick=document.getElementById('pick');let state='idle',left=1500,back=0;

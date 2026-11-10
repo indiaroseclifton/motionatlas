@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Folder cards</title>
 <style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
-:root{--bg:#0E0F13;--panel:#191B22;--ink:#F3F4F7;--mute:#9CA3B4;--line:#2A2D38;--ac:#8B7CFF}
-:root[data-mode=light]{--bg:#F3F1EC;--panel:#FFFFFF;--ink:#17181C;--mute:#646978;--line:#DEDAD0}
+:root{--bg:#0F1012;--panel:#1A1B1E;--ink:#F4F4F5;--mute:#A1A1AA;--line:#2C2D31;--ac:#111111}
+:root[data-mode=light]{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#111113;--mute:#6B6F76;--line:#E6E6E8}
 *{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
 body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
 button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
@@ -26,13 +26,13 @@ button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
 </style>
 <body>
 <div class="row" id="row"></div><p class="hint">Hover, focus or press a folder</p>
-<script type="application/json" id="settings">{"count":3,"tabw":46,"tabh":18,"corner":20,"lift":14,"tilt":-2,"peek":34,"speed":420,"mode":"dark","accent":"#8B7CFF"}</script>
+<script type="application/json" id="settings">{"count":3,"tabw":46,"tabh":18,"corner":20,"lift":14,"tilt":-2,"peek":34,"speed":420,"mode":"light","accent":"#111111"}</script>
 <script>
 const CONTROLS=[{g:'Folder',k:'count',label:'Cards',min:2,max:4,step:1},{k:'tabw',label:'Tab width',min:25,max:80,step:1,unit:'%'},{k:'tabh',label:'Tab height',min:8,max:34,step:1,unit:'px'},{k:'corner',label:'Corner radius',min:4,max:36,step:1,unit:'px'},
- {g:'Motion',k:'lift',label:'Lift',min:0,max:40,step:1,unit:'px'},{k:'tilt',label:'Tilt',min:-8,max:8,step:.5,unit:'°'},{k:'peek',label:'Sheet peek',min:0,max:70,step:1,unit:'px'},{k:'speed',label:'Speed',min:150,max:900,step:10,unit:'ms'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['dark','light']},{k:'accent',label:'Accent',type:'color'}];
+ {g:'Motion',k:'lift',label:'Lift',min:0,max:40,step:1,unit:'px'},{k:'tilt',label:'Tilt',min:-8,max:8,step:.5,unit:'°'},{k:'peek',label:'Sheet peek',min:0,max:70,step:1,unit:'px'},{k:'speed',label:'Speed',min:150,max:900,step:10,unit:'ms'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
 /* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
 const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
-const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'dark';if(S.accent)r.style.setProperty('--ac',S.accent)};
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'light';if(S.accent)r.style.setProperty('--ac',S.accent)};
 addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
 if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
 const D=[['Simple and easy to use','Set up in minutes, not days.','Guide'],['Numbers you can trust','One source for every figure.','Report'],['Built to grow with you','From first user to millionth.','Plan'],['Help when you need it','People, not a queue.','Support']],row=document.getElementById('row');

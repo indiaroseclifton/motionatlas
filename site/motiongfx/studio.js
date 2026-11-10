@@ -4,9 +4,9 @@
 const G=window.MotionGfx,K=G.K,$=s=>document.querySelector(s);
 const cv=$('#mgCanvas'),cx=cv.getContext('2d');
 const FONTS=[['Inter','Inter, system-ui, sans-serif',700],['Space Grotesk','"Space Grotesk", sans-serif',700],['Bricolage Grotesque','"Bricolage Grotesque", sans-serif',800],['Manrope','Manrope, sans-serif',800],['Archivo Black','"Archivo Black", sans-serif',400],['Cormorant Garamond','"Cormorant Garamond", Georgia, serif',700],['Fraunces','Fraunces, Georgia, serif',700],['DM Serif Display','"DM Serif Display", Georgia, serif',400],['JetBrains Mono','"JetBrains Mono", monospace',700]];
-const PALS=[['#0B0D14','#F4F5F8','#8B7BFF'],['#F6F1E7','#1B1A17','#E0522D'],['#101820','#FEE715','#FEE715'],['#0E1A14','#EAF4EC','#3DDC84'],['#FFFFFF','#111111','#FF2D6F'],['#1A1033','#FBE9FF','#FF8A3D'],['#F2F4F7','#14213D','#FCA311'],['#0A0A0A','#FFFFFF','#00E5FF'],['#2B1D0E','#F6E7C8','#D9A441'],['#E8F0FF','#0B2A6F','#2F6BFF'],['#111111','#EDEDED','#FF4D4D'],['#FAF7F2','#2E2A25','#7A9E7E']];
+const PALS=[['#FFFFFF','#111111','#E0522D'],['#0B0D14','#F4F5F8','#F4F5F8'],['#F6F1E7','#1B1A17','#E0522D'],['#101820','#FEE715','#FEE715'],['#0E1A14','#EAF4EC','#3DDC84'],['#F2F0EB','#111111','#FF2D6F'],['#F2F4F7','#14213D','#FCA311'],['#0A0A0A','#FFFFFF','#00E5FF'],['#2B1D0E','#F6E7C8','#D9A441'],['#E8F0FF','#0B2A6F','#2F6BFF'],['#111111','#EDEDED','#FF4D4D'],['#FAF7F2','#2E2A25','#7A9E7E']];
 const RATIOS=[['16:9',1920,1080],['9:16',1080,1920],['1:1',1080,1080],['4:5',1080,1350]];
-const KEY='mgfx-state-v1';
+const KEY='mgfx-state-v2';
 let S={id:'mask-rise',words:{},font:0,bg:PALS[0][0],ink:PALS[0][1],accent:PALS[0][2],alpha:false,ratio:0,dur:0};
 try{const j=JSON.parse(localStorage.getItem(KEY)||'null');if(j&&G.get(j.id))S=Object.assign(S,j)}catch{}
 const h=location.hash.slice(1);if(G.get(h))S.id=h;

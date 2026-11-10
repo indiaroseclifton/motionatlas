@@ -1,15 +1,15 @@
 /* Shared theme picker for the tool pages (Motion graphics, UI interactions, App interfaces).
    Themes are sets of the page's CSS variables; the choice is remembered in this browser. Load in <head>, no defer. */
 (()=>{
-const KEY='atlas-tool-theme',DEF='midnight';
+const KEY='atlas-tool-theme-2',DEF='clean';
 const T={
- midnight:['Midnight','#0B0D14','#8B7CFF',{bg:'#0B0D14',panel:'#141824',ink:'#ECEEF6',mute:'#98A1B8',hair:'#262C3E',soft:'#1B2030',accent:'#8B7CFF',ai:'#0B0D14'},1],
+ clean:['Clean','#FFFFFF','#111111',{bg:'#FFFFFF',panel:'#FFFFFF',ink:'#111113',mute:'#6B6F76',hair:'#E8E8EA',soft:'#F5F5F6',accent:'#111111',ai:'#FFFFFF'},0],
+ paper:['Paper','#F6F1E8','#B4531A',{bg:'#F6F1E8',panel:'#FFFDF8',ink:'#231F18',mute:'#6B6254',hair:'#E3DAC8',soft:'#F0E9DB',accent:'#B4531A',ai:'#FFFFFF'},0],
+ sky:['Sky','#F4F8FC','#2563EB',{bg:'#F4F8FC',panel:'#FFFFFF',ink:'#0F172A',mute:'#5B6475',hair:'#DFE7F0',soft:'#EDF3F9',accent:'#2563EB',ai:'#FFFFFF'},0],
+ midnight:['Midnight','#0E0F11','#FAFAFA',{bg:'#0E0F11',panel:'#17181B',ink:'#F4F4F5',mute:'#A1A1AA',hair:'#2A2B30',soft:'#1E1F23',accent:'#FAFAFA',ai:'#0E0F11'},1],
  graphite:['Graphite','#121212','#FFB224',{bg:'#121212',panel:'#1C1C1E',ink:'#F2F2F2',mute:'#A0A0A6',hair:'#2E2E32',soft:'#242428',accent:'#FFB224',ai:'#1A1200'},1],
  ocean:['Ocean','#08141C','#2DD4BF',{bg:'#08141C',panel:'#0E1F2B',ink:'#E6F3F8',mute:'#8FB1C2',hair:'#1E3646',soft:'#132A39',accent:'#2DD4BF',ai:'#04201D'},1],
  forest:['Forest','#0C140F','#7DD87F',{bg:'#0C140F',panel:'#131F17',ink:'#E8F1EA',mute:'#9CB3A2',hair:'#25392B',soft:'#192A1E',accent:'#7DD87F',ai:'#0A1A0C'},1],
- plum:['Plum','#150C14','#FF6FAE',{bg:'#150C14',panel:'#20121F',ink:'#F8E9F3',mute:'#BE9BB4',hair:'#3A2238',soft:'#2A182A',accent:'#FF6FAE',ai:'#2A0B1A'},1],
- paper:['Paper','#F6F1E8','#B4531A',{bg:'#F6F1E8',panel:'#FFFDF8',ink:'#231F18',mute:'#6B6254',hair:'#E3DAC8',soft:'#F0E9DB',accent:'#B4531A',ai:'#FFFFFF'},0],
- daylight:['Daylight','#F4F5F8','#5B2DFF',{bg:'#F4F5F8',panel:'#FFFFFF',ink:'#1C1F2A',mute:'#5E6476',hair:'#E1E4EC',soft:'#F7F8FB',accent:'#5B2DFF',ai:'#FFFFFF'},0]
 };
 let css='html[data-tt]{--accent-ink:var(--ai,#fff)}';
 for(const [id,[n,,,v,dark]] of Object.entries(T))css+=`html[data-tt="${id}"]{--bg:${v.bg};--panel:${v.panel};--ink:${v.ink};--mute:${v.mute};--hair:${v.hair};--soft:${v.soft};--accent:${v.accent};--ai:${v.ai};--shadow:${dark?'0 1px 2px rgba(0,0,0,.4),0 12px 30px -14px rgba(0,0,0,.6)':'0 1px 2px rgba(20,24,40,.05),0 10px 30px -14px rgba(20,24,40,.2)'};color-scheme:${dark?'dark':'light'}}`;

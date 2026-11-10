@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Aurora rays shader</title>
 <style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
-:root{--bg:#0E0F13;--panel:#191B22;--ink:#F3F4F7;--mute:#9CA3B4;--line:#2A2D38;--ac:#8B7CFF}
-:root[data-mode=light]{--bg:#F3F1EC;--panel:#FFFFFF;--ink:#17181C;--mute:#646978;--line:#DEDAD0}
+:root{--bg:#0F1012;--panel:#1A1B1E;--ink:#F4F4F5;--mute:#A1A1AA;--line:#2C2D31;--ac:#111111}
+:root[data-mode=light]{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#111113;--mute:#6B6F76;--line:#E6E6E8}
 *{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
 body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
 button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
@@ -17,12 +17,12 @@ button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
 </style>
 <body>
 <div class="heroc"><h1>Northern lights</h1><p>Curtains of light, drawn by a shader.</p><a href="#">Get started</a></div>
-<script type="application/json" id="settings">{"c1": "#3DDC97", "c2": "#8B5CFF", "c3": "#050814", "count": 4, "sharp": 5, "sway": 1.2, "height": 0.75, "stars": 0.6, "speed": 1}</script>
+<script type="application/json" id="settings">{"c1": "#3DDC97", "c2": "#38BDF8", "c3": "#050814", "count": 4, "sharp": 5, "sway": 1.2, "height": 0.75, "stars": 0.6, "speed": 1}</script>
 <script>
 const CONTROLS=[{g:'Colour',k:'c1',label:'Low colour',type:'color'},{k:'c2',label:'High colour',type:'color'},{k:'c3',label:'Sky',type:'color'},{g:'Curtains',k:'count',label:'Curtains',min:1,max:8,step:.5},{k:'sharp',label:'Sharpness',min:1,max:8,step:.5},{k:'sway',label:'Sway',min:0,max:3,step:.05},{k:'height',label:'Height',min:.3,max:1.2,step:.05},{g:'Finish',k:'stars',label:'Stars',min:0,max:1,step:.05},{k:'speed',label:'Speed',min:0,max:4,step:.1}];
 /* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
 const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
-const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'dark';if(S.accent)r.style.setProperty('--ac',S.accent)};
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'light';if(S.accent)r.style.setProperty('--ac',S.accent)};
 addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
 if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
 /* Tiny WebGL runner: one full-screen triangle, uniforms R (size), T (time), M (pointer 0-1) plus whatever set() is given.

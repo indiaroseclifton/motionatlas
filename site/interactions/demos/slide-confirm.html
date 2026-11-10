@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Slide to confirm</title>
 <style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
-:root{--bg:#0E0F13;--panel:#191B22;--ink:#F3F4F7;--mute:#9CA3B4;--line:#2A2D38;--ac:#8B7CFF}
-:root[data-mode=light]{--bg:#F3F1EC;--panel:#FFFFFF;--ink:#17181C;--mute:#646978;--line:#DEDAD0}
+:root{--bg:#0F1012;--panel:#1A1B1E;--ink:#F4F4F5;--mute:#A1A1AA;--line:#2C2D31;--ac:#111111}
+:root[data-mode=light]{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#111113;--mute:#6B6F76;--line:#E6E6E8}
 *{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
 body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
 button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
@@ -28,13 +28,13 @@ button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
 </style>
 <body>
 <div class="wrap"><div class="tr" id="tr"><div class="fill"></div><div class="lab" id="lab">Slide to pay £48.00</div><button class="kn" id="kn" role="slider" aria-label="Slide to pay" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span class="ar" aria-hidden="true">→</span><svg class="tick" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button></div><p id="live" aria-live="polite">Drag the knob, or focus it and press End</p></div>
-<script type="application/json" id="settings">{"width":340,"height":60,"threshold":0.85,"stiffness":0.18,"damping":0.7,"shimmer":2.4,"corner":30,"mode":"dark","accent":"#3DDC97"}</script>
+<script type="application/json" id="settings">{"width":340,"height":60,"threshold":0.85,"stiffness":0.18,"damping":0.7,"shimmer":2.4,"corner":30,"mode":"light","accent":"#111111"}</script>
 <script>
 const CONTROLS=[{g:'Track',k:'width',label:'Width',min:220,max:460,step:5,unit:'px'},{k:'height',label:'Height',min:44,max:80,step:1,unit:'px'},{k:'corner',label:'Corner radius',min:6,max:40,step:1,unit:'px'},{g:'Behaviour',k:'threshold',label:'Confirm at',min:.5,max:1,step:.01},{k:'stiffness',label:'Spring stiffness',min:.05,max:.4,step:.01},{k:'damping',label:'Spring damping',min:.4,max:.9,step:.01},{k:'shimmer',label:'Shimmer time',min:1,max:6,step:.1,unit:'s'},
- {g:'Look',k:'mode',label:'Mode',type:'select',options:['dark','light']},{k:'accent',label:'Accent',type:'color'}];
+ {g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
 /* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
 const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
-const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'dark';if(S.accent)r.style.setProperty('--ac',S.accent)};
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'light';if(S.accent)r.style.setProperty('--ac',S.accent)};
 addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
 if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
 const tr=document.getElementById('tr'),kn=document.getElementById('kn'),live=document.getElementById('live');let p=0,v=0,drag=null,goal=null,done=false;

@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Radial action menu</title>
 <style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
-:root{--bg:#0E0F13;--panel:#191B22;--ink:#F3F4F7;--mute:#9CA3B4;--line:#2A2D38;--ac:#8B7CFF}
-:root[data-mode=light]{--bg:#F3F1EC;--panel:#FFFFFF;--ink:#17181C;--mute:#646978;--line:#DEDAD0}
+:root{--bg:#0F1012;--panel:#1A1B1E;--ink:#F4F4F5;--mute:#A1A1AA;--line:#2C2D31;--ac:#111111}
+:root[data-mode=light]{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#111113;--mute:#6B6F76;--line:#E6E6E8}
 *{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
 body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
 button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
@@ -27,13 +27,13 @@ button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
 <body>
 <div class="m" id="m"><button class="t" id="t" aria-haspopup="menu" aria-expanded="false" aria-controls="menu" aria-label="Create"><span aria-hidden="true">+</span></button><div id="menu" role="menu" aria-label="Create"></div></div>
 <p id="live" aria-live="polite">Press the button. Arrow keys move, Escape closes.</p>
-<script type="application/json" id="settings">{"count":5,"radius":120,"arc":180,"start":180,"stagger":45,"size":50,"mode":"dark","accent":"#FF5C8A"}</script>
+<script type="application/json" id="settings">{"count":5,"radius":120,"arc":180,"start":180,"stagger":45,"size":50,"mode":"light","accent":"#111111"}</script>
 <script>
 const CONTROLS=[{g:'Layout',k:'count',label:'Actions',min:3,max:8,step:1},{k:'radius',label:'Radius',min:70,max:200,step:2,unit:'px'},{k:'arc',label:'Arc span',min:60,max:360,step:5,unit:'°'},{k:'start',label:'Start angle',min:0,max:360,step:5,unit:'°'},{k:'size',label:'Button size',min:38,max:68,step:1,unit:'px'},
- {g:'Motion',k:'stagger',label:'Stagger',min:0,max:120,step:5,unit:'ms'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['dark','light']},{k:'accent',label:'Accent',type:'color'}];
+ {g:'Motion',k:'stagger',label:'Stagger',min:0,max:120,step:5,unit:'ms'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
 /* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
 const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
-const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'dark';if(S.accent)r.style.setProperty('--ac',S.accent)};
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'light';if(S.accent)r.style.setProperty('--ac',S.accent)};
 addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
 if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
 const A=[['✎','Note'],['☑','Task'],['◷','Reminder'],['❖','Photo'],['♫','Voice memo'],['✉','Message'],['⚑','Flag'],['☆','Favourite']],m=document.getElementById('m'),t=document.getElementById('t'),menu=document.getElementById('menu'),live=document.getElementById('live');

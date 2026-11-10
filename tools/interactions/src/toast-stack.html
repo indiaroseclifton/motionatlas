@@ -12,7 +12,7 @@
 <body>
 <button class="go" id="go">Show a notification</button>
 <div class="reg bottom" id="reg" role="region" aria-label="Notifications" aria-live="polite"></div>
-<script type="application/json" id="settings">{"peek":12,"scale":0.05,"visible":3,"gap":10,"duration":5,"corner":14,"position":"bottom","mode":"light","accent":"#12805C"}</script>
+<script type="application/json" id="settings">{"peek":12,"scale":0.05,"visible":3,"gap":10,"duration":5,"corner":14,"position":"bottom","mode":"light","accent":"#111111"}</script>
 <script>
 const CONTROLS=[{g:'Deck',k:'peek',label:'Peek',min:4,max:24,step:1,unit:'px'},{k:'scale',label:'Scale step',min:0,max:.1,step:.005},{k:'visible',label:'Visible when closed',min:1,max:5,step:1},{k:'gap',label:'Gap when open',min:4,max:24,step:1,unit:'px'},{k:'corner',label:'Corner radius',min:4,max:28,step:1,unit:'px'},
  {g:'Behaviour',k:'duration',label:'Stay for',min:2,max:12,step:.5,unit:'s'},{k:'position',label:'Position',type:'select',options:['bottom','top']},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];

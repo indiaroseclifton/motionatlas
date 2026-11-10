@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Cover flow</title>
 <style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
-:root{--bg:#0E0F13;--panel:#191B22;--ink:#F3F4F7;--mute:#9CA3B4;--line:#2A2D38;--ac:#8B7CFF}
-:root[data-mode=light]{--bg:#F3F1EC;--panel:#FFFFFF;--ink:#17181C;--mute:#646978;--line:#DEDAD0}
+:root{--bg:#0F1012;--panel:#1A1B1E;--ink:#F4F4F5;--mute:#A1A1AA;--line:#2C2D31;--ac:#111111}
+:root[data-mode=light]{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#111113;--mute:#6B6F76;--line:#E6E6E8}
 *{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
 body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
 button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
@@ -22,19 +22,19 @@ button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
 <body>
 <div class="stage" id="stage" tabindex="0" role="group" aria-roledescription="carousel" aria-label="Covers. Use the arrow keys."></div>
 <div class="cap" aria-live="polite"><h2 id="t"></h2><p id="s"></p></div>
-<script type="application/json" id="settings">{"size":210,"angle":58,"depth":150,"push":150,"gap":58,"perspective":900,"reflect":true,"corner":8,"mode":"dark","accent":"#4CC9F0"}</script>
+<script type="application/json" id="settings">{"size":210,"angle":58,"depth":150,"push":150,"gap":58,"perspective":900,"reflect":true,"corner":8,"mode":"light","accent":"#111111"}</script>
 <script>
 const CONTROLS=[{g:'Covers',k:'size',label:'Cover size',min:120,max:320,step:2,unit:'px'},{k:'corner',label:'Corner radius',min:0,max:30,step:1,unit:'px'},{k:'reflect',label:'Mirror floor',type:'toggle'},
  {g:'Depth',k:'angle',label:'Turn',min:0,max:80,step:1,unit:'°'},{k:'depth',label:'Push back',min:0,max:400,step:5,unit:'px'},{k:'perspective',label:'Perspective',min:400,max:2000,step:50,unit:'px'},{g:'Spacing',k:'push',label:'Centre clearance',min:40,max:300,step:2,unit:'px'},{k:'gap',label:'Side spacing',min:20,max:140,step:1,unit:'px'},
- {g:'Look',k:'mode',label:'Mode',type:'select',options:['dark','light']},{k:'accent',label:'Accent',type:'color'}];
+ {g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
 /* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
 const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
-const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'dark';if(S.accent)r.style.setProperty('--ac',S.accent)};
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'light';if(S.accent)r.style.setProperty('--ac',S.accent)};
 addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
 if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
 /* Carousel engine: drag, arrow keys, click a card. n() is the item count, draw(pos) places the cards. */
 /* Artwork is drawn with CSS gradients, so nothing has to load. Swap art(i) for your own image URLs if you have them. */
-const PAL=[['#FF8A3D','#FFD166','#7A1E0A'],['#19C2C9','#2B4CFF','#051937'],['#FF5CA8','#8B5CFF','#2A0845'],['#F4E3C1','#D9A066','#6B4423'],['#7B5CFF','#FF4D8D','#0B1026'],['#D8DEE9','#8FA3BF','#1F2937'],['#3DDC97','#0E9F6E','#062B22'],['#FFE066','#FF7A59','#5C1A1B'],['#B8C0FF','#5E60CE','#10002B']];
+const PAL=[['#FF8A3D','#FFD166','#7A1E0A'],['#19C2C9','#2B4CFF','#051937'],['#FF8FA3','#FFB703','#7A1F3D'],['#F4E3C1','#D9A066','#6B4423'],['#38BDF8','#F472B6','#0B2545'],['#D8DEE9','#8FA3BF','#1F2937'],['#3DDC97','#0E9F6E','#062B22'],['#FFE066','#FF7A59','#5C1A1B'],['#A7F3D0','#0EA5E9','#0B2E33']];
 const art=i=>{const [a,b,c]=PAL[((i%PAL.length)+PAL.length)%PAL.length],k=i*37%100;return `radial-gradient(90% 70% at ${15+k*.5}% ${8+k*.25}%,${a},transparent 62%),radial-gradient(80% 80% at ${88-k*.4}% ${28+k*.3}%,${b},transparent 58%),radial-gradient(120% 90% at 50% 115%,${a}55,transparent 60%),linear-gradient(160deg,${c},#000 140%)`};
 const ITEMS=[['Ember','Warm, slow, glowing'],['Lagoon','Cool water at night'],['Orchid','Colour let loose'],['Dune','Soft planes of sand'],['Nebula','Dust, gas and distance'],['Glacier','Pale and precise'],['Moss','Deep, quiet green'],['Nectar','Sweet and bright'],['Dusk','The last light']];
 function carousel(stage,n,draw,o={}){let pos=0,target=0,drag=null,raf=0;

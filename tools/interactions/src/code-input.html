@@ -17,7 +17,7 @@ h1{font-size:20px}.sub{color:var(--mute);font-size:13.5px}
 <form class="card" id="f" novalidate><h1><label for="code">Check your phone</label></h1><p class="sub" id="hint">Enter the six-digit code we sent to •••• 4471. Try 428913.</p>
 <div class="otp" id="otp"><input id="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]*" aria-describedby="hint msg"></div>
 <p id="msg" role="alert"></p><button type="button" class="re" id="re" disabled>Resend in 30s</button></form>
-<script type="application/json" id="settings">{"count":6,"size":50,"gap":8,"corner":12,"split":true,"pop":1.8,"stagger":60,"mode":"light","accent":"#5B2DFF"}</script>
+<script type="application/json" id="settings">{"count":6,"size":50,"gap":8,"corner":12,"split":true,"pop":1.8,"stagger":60,"mode":"light","accent":"#111111"}</script>
 <script>
 const CONTROLS=[{g:'Boxes',k:'count',label:'Digits',min:4,max:8,step:1},{k:'size',label:'Box size',min:36,max:66,step:1,unit:'px'},{k:'gap',label:'Gap',min:2,max:18,step:1,unit:'px'},{k:'corner',label:'Corner radius',min:0,max:24,step:1,unit:'px'},{k:'split',label:'Split in two groups',type:'toggle'},
  {g:'Motion',k:'pop',label:'Pop strength',min:1,max:2.6,step:.1},{k:'stagger',label:'Success wave',min:0,max:140,step:5,unit:'ms'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];

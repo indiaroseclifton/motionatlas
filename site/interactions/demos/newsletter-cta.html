@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Morphing sign-up</title>
 <style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
-:root{--bg:#0E0F13;--panel:#191B22;--ink:#F3F4F7;--mute:#9CA3B4;--line:#2A2D38;--ac:#8B7CFF}
-:root[data-mode=light]{--bg:#F3F1EC;--panel:#FFFFFF;--ink:#17181C;--mute:#646978;--line:#DEDAD0}
+:root{--bg:#0F1012;--panel:#1A1B1E;--ink:#F4F4F5;--mute:#A1A1AA;--line:#2C2D31;--ac:#111111}
+:root[data-mode=light]{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#111113;--mute:#6B6F76;--line:#E6E6E8}
 *{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
 body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
 button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
@@ -16,7 +16,7 @@ button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
 .heroc{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:24px;max-width:760px;color:#fff;text-shadow:0 1px 24px rgba(0,0,0,.35)}.heroc h1{font-size:clamp(34px,7vw,76px);line-height:1;letter-spacing:-.03em}.heroc p{font-size:clamp(15px,2vw,18px);opacity:.9;max-width:46ch}.heroc a{display:inline-flex;align-items:center;min-height:46px;padding:0 22px;border-radius:99px;background:#fff;color:#111;font-weight:700;text-decoration:none;text-shadow:none}
 .sec{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:30px 20px;max-width:640px}
 .sec::before{content:"";position:absolute;inset:-20% -10%;background:radial-gradient(50% 50% at 50% 60%,color-mix(in srgb,var(--ac) calc(var(--gl)*100%),transparent),transparent 70%);filter:blur(40px);z-index:-1}
-.k{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ac)}h1{font-size:clamp(30px,6vw,52px);line-height:1.02;letter-spacing:-.03em}.sub{color:var(--mute);max-width:44ch}
+.k{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}h1{font-size:clamp(30px,6vw,52px);line-height:1.02;letter-spacing:-.03em}.sub{color:var(--mute);max-width:44ch}
 .pill{display:flex;align-items:center;width:var(--w);max-width:100%;height:var(--h);padding:5px;border-radius:var(--r);background:var(--panel);border:1px solid var(--line);margin-top:8px;transition:background .3s,border-color .3s}
 .pill:focus-within{border-color:var(--ac)}.pill input{flex:1 1 auto;min-width:0;width:100%;height:100%;border:0;background:none;outline:0;color:inherit;font:inherit;font-size:16px;padding:0 16px;transition:flex-grow var(--t) var(--e),padding var(--t) var(--e),opacity .2s}
 .pill button{flex:0 0 auto;height:100%;padding:0 22px;border:0;border-radius:calc(var(--r) - 5px);background:var(--ac);color:#fff;font-weight:700;white-space:nowrap;display:grid;place-items:center;transition:flex-grow var(--t) var(--e)}
@@ -30,13 +30,13 @@ button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
 <body>
 <section class="sec"><span class="k">The Friday letter</span><h1>One good idea, every week.</h1><p class="sub">Design notes, a tool worth trying and nothing else. Read by 12,400 people who make things.</p>
 <form class="pill" id="f" novalidate><label class="sr" for="em">Email address</label><input id="em" type="email" placeholder="you@example.com" autocomplete="email" aria-describedby="msg"><button id="b">Subscribe</button></form><p id="msg" role="status"></p></section>
-<script type="application/json" id="settings">{"width":440,"height":58,"corner":30,"speed":520,"bounce":0.4,"glow":0.35,"mode":"dark","accent":"#8B7CFF"}</script>
+<script type="application/json" id="settings">{"width":440,"height":58,"corner":30,"speed":520,"bounce":0.4,"glow":0.1,"mode":"light","accent":"#111111"}</script>
 <script>
 const CONTROLS=[{g:'Pill',k:'width',label:'Width',min:300,max:560,step:5,unit:'px'},{k:'height',label:'Height',min:46,max:72,step:1,unit:'px'},{k:'corner',label:'Corner radius',min:6,max:36,step:1,unit:'px'},{g:'Motion',k:'speed',label:'Morph speed',min:200,max:1000,step:10,unit:'ms'},{k:'bounce',label:'Bounce',min:0,max:1,step:.05},
- {g:'Look',k:'glow',label:'Glow',min:0,max:.8,step:.05},{k:'mode',label:'Mode',type:'select',options:['dark','light']},{k:'accent',label:'Accent',type:'color'}];
+ {g:'Look',k:'glow',label:'Glow',min:0,max:.8,step:.05},{k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
 /* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
 const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
-const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'dark';if(S.accent)r.style.setProperty('--ac',S.accent)};
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'light';if(S.accent)r.style.setProperty('--ac',S.accent)};
 addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
 if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
 const f=document.getElementById('f'),em=document.getElementById('em'),b=document.getElementById('b'),msg=document.getElementById('msg');let st='idle';

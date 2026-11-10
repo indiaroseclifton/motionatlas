@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Blob tab bar</title>
 <style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
-:root{--bg:#0E0F13;--panel:#191B22;--ink:#F3F4F7;--mute:#9CA3B4;--line:#2A2D38;--ac:#8B7CFF}
-:root[data-mode=light]{--bg:#F3F1EC;--panel:#FFFFFF;--ink:#17181C;--mute:#646978;--line:#DEDAD0}
+:root{--bg:#0F1012;--panel:#1A1B1E;--ink:#F4F4F5;--mute:#A1A1AA;--line:#2C2D31;--ac:#111111}
+:root[data-mode=light]{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#111113;--mute:#6B6F76;--line:#E6E6E8}
 *{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
 body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
 button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
@@ -29,13 +29,13 @@ button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
 <body>
 <div class="phone"><div class="screen" role="tabpanel" id="panel" aria-live="polite"><h1 id="ti"></h1><p id="su"></p></div>
 <div class="bar" id="bar" role="tablist" aria-label="Main"><div class="blob" id="blob" aria-hidden="true"></div></div></div>
-<script type="application/json" id="settings">{"blobw":52,"blobh":38,"round":50,"hop":0,"bounce":0.6,"speed":460,"barr":24,"labels":true,"mode":"dark","accent":"#8B7CFF"}</script>
+<script type="application/json" id="settings">{"blobw":52,"blobh":38,"round":50,"hop":0,"bounce":0.6,"speed":460,"barr":24,"labels":true,"mode":"light","accent":"#111111"}</script>
 <script>
 const CONTROLS=[{g:'Blob',k:'blobw',label:'Width',min:36,max:66,step:1,unit:'px'},{k:'blobh',label:'Height',min:30,max:50,step:1,unit:'px'},{k:'round',label:'Roundness',min:10,max:50,step:1,unit:'%'},{g:'Motion',k:'hop',label:'Icon hop',min:0,max:10,step:1,unit:'px'},{k:'bounce',label:'Bounce',min:0,max:1,step:.05},{k:'speed',label:'Speed',min:200,max:900,step:10,unit:'ms'},
- {g:'Bar',k:'barr',label:'Bar radius',min:8,max:34,step:1,unit:'px'},{k:'labels',label:'Labels',type:'toggle'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['dark','light']},{k:'accent',label:'Accent',type:'color'}];
+ {g:'Bar',k:'barr',label:'Bar radius',min:8,max:34,step:1,unit:'px'},{k:'labels',label:'Labels',type:'toggle'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
 /* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
 const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
-const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'dark';if(S.accent)r.style.setProperty('--ac',S.accent)};
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'light';if(S.accent)r.style.setProperty('--ac',S.accent)};
 addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
 if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
 const T=[['Home','Good evening','Three things need you today.','<path d="M4 11 12 4l8 7v9h-5v-6H9v6H4Z"/>'],['Search','Search','Find people, files and places.','<circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/>'],['Create','New','Start a note, a task or a photo.','<path d="M12 5v14M5 12h14"/>'],['Inbox','Inbox','Two unread, one flagged.','<path d="M4 13 6.5 5h11L20 13v6H4Z"/><path d="M4 13h5l1 2.5h4l1-2.5h5"/>'],['You','Profile','Amara Khan · Pro plan','<circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-4 4.5-6 8-6s6.5 2 8 6"/>']],bar=document.getElementById('bar'),blob=document.getElementById('blob');let on=0;

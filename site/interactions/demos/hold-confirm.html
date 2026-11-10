@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Hold to confirm</title>
 <style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
-:root{--bg:#0E0F13;--panel:#191B22;--ink:#F3F4F7;--mute:#9CA3B4;--line:#2A2D38;--ac:#8B7CFF}
-:root[data-mode=light]{--bg:#F3F1EC;--panel:#FFFFFF;--ink:#17181C;--mute:#646978;--line:#DEDAD0}
+:root{--bg:#0F1012;--panel:#1A1B1E;--ink:#F4F4F5;--mute:#A1A1AA;--line:#2C2D31;--ac:#111111}
+:root[data-mode=light]{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#111113;--mute:#6B6F76;--line:#E6E6E8}
 *{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
 body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
 button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
@@ -15,7 +15,7 @@ button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
 .art::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.16;mix-blend-mode:overlay}
 .heroc{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:24px;max-width:760px;color:#fff;text-shadow:0 1px 24px rgba(0,0,0,.35)}.heroc h1{font-size:clamp(34px,7vw,76px);line-height:1;letter-spacing:-.03em}.heroc p{font-size:clamp(15px,2vw,18px);opacity:.9;max-width:46ch}.heroc a{display:inline-flex;align-items:center;min-height:46px;padding:0 22px;border-radius:99px;background:#fff;color:#111;font-weight:700;text-decoration:none;text-shadow:none}
 .col{display:grid;gap:16px;justify-items:center;width:min(360px,88vw)}
-.hb{position:relative;width:100%;min-height:58px;border-radius:var(--r);border:1.5px solid var(--c);background:color-mix(in srgb,var(--c) 12%,transparent);color:var(--ink);font-weight:700;font-size:15.5px;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:10px;touch-action:none;user-select:none;-webkit-user-select:none;transform:scale(calc(1 - var(--p,0)*var(--sh)));transition:transform .15s}
+.hb{position:relative;width:100%;min-height:58px;border-radius:var(--r);border:1.5px solid var(--c);background:color-mix(in srgb,var(--c) 12%,transparent);color:color-mix(in srgb,var(--ink),#fff calc(var(--p,0)*170%));font-weight:700;font-size:15.5px;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:10px;touch-action:none;user-select:none;-webkit-user-select:none;transform:scale(calc(1 - var(--p,0)*var(--sh)));transition:transform .15s}
 .hb::before{content:"";position:absolute;inset:0;background:var(--c);transform-origin:0 100%;transform:scaleX(var(--p,0));z-index:0}
 .rise .hb::before{transform:scaleY(var(--p,0))}
 .hb>*{position:relative;z-index:1}.hb.done{color:#fff;animation:pulse .5s}.hb.no{animation:no .35s}
@@ -26,13 +26,13 @@ button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
 </style>
 <body>
 <div class="col" id="col"></div>
-<script type="application/json" id="settings">{"hold":1.4,"drain":2.5,"shrink":0.04,"corner":16,"fill":"sweep","shake":true,"mode":"dark","accent":"#8B7CFF"}</script>
+<script type="application/json" id="settings">{"hold":1.4,"drain":2.5,"shrink":0.04,"corner":16,"fill":"sweep","shake":true,"mode":"light","accent":"#111111"}</script>
 <script>
 const CONTROLS=[{g:'Timing',k:'hold',label:'Hold time',min:.5,max:4,step:.1,unit:'s'},{k:'drain',label:'Drain speed',min:.5,max:6,step:.1,unit:'×'},{g:'Feel',k:'shrink',label:'Press shrink',min:0,max:.1,step:.005},{k:'shake',label:'Shake on early release',type:'toggle'},{k:'fill',label:'Fill',type:'select',options:['sweep','rise']},
- {g:'Look',k:'corner',label:'Corner radius',min:0,max:30,step:1,unit:'px'},{k:'mode',label:'Mode',type:'select',options:['dark','light']},{k:'accent',label:'Accent',type:'color'}];
+ {g:'Look',k:'corner',label:'Corner radius',min:0,max:30,step:1,unit:'px'},{k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
 /* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
 const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
-const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'dark';if(S.accent)r.style.setProperty('--ac',S.accent)};
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'light';if(S.accent)r.style.setProperty('--ac',S.accent)};
 addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
 if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
 const D=[['Delete project','Project deleted','#E5484D'],['Send £240.00','Payment sent',''],['End session','Session ended','#F59E0B']],col=document.getElementById('col');

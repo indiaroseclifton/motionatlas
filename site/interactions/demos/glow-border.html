@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Glowing border cards</title>
 <style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
-:root{--bg:#0E0F13;--panel:#191B22;--ink:#F3F4F7;--mute:#9CA3B4;--line:#2A2D38;--ac:#8B7CFF}
-:root[data-mode=light]{--bg:#F3F1EC;--panel:#FFFFFF;--ink:#17181C;--mute:#646978;--line:#DEDAD0}
+:root{--bg:#0F1012;--panel:#1A1B1E;--ink:#F4F4F5;--mute:#A1A1AA;--line:#2C2D31;--ac:#111111}
+:root[data-mode=light]{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#111113;--mute:#6B6F76;--line:#E6E6E8}
 *{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
 body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
 button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
@@ -16,7 +16,7 @@ button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
 .heroc{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:24px;max-width:760px;color:#fff;text-shadow:0 1px 24px rgba(0,0,0,.35)}.heroc h1{font-size:clamp(34px,7vw,76px);line-height:1;letter-spacing:-.03em}.heroc p{font-size:clamp(15px,2vw,18px);opacity:.9;max-width:46ch}.heroc a{display:inline-flex;align-items:center;min-height:46px;padding:0 22px;border-radius:99px;background:#fff;color:#111;font-weight:700;text-decoration:none;text-shadow:none}
 @property --a{syntax:"<angle>";inherits:false;initial-value:0deg}
 .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;width:min(900px,92vw)}
-.k{position:relative;border-radius:var(--r);background:var(--panel);padding:20px;min-height:150px;display:grid;align-content:space-between;gap:16px;isolation:isolate;outline-offset:4px}
+.k{position:relative;border-radius:var(--r);background:var(--panel);box-shadow:inset 0 0 0 1px var(--line);padding:20px;min-height:150px;display:grid;align-content:space-between;gap:16px;isolation:isolate;outline-offset:4px}
 .k::before,.k::after{content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(var(--size) circle at var(--x,50%) var(--y,50%),var(--ac),var(--ac2) 40%,transparent 70%);opacity:0;transition:opacity .3s;pointer-events:none}
 .k::before{padding:var(--bw);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
 .k::after{z-index:-1;filter:blur(var(--blur));inset:-2px}
@@ -30,13 +30,13 @@ button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
 </style>
 <body>
 <div class="grid" id="grid"></div>
-<script type="application/json" id="settings">{"size":280,"border":1.5,"blur":22,"intensity":0.3,"corner":18,"orbit":false,"speed":4,"mode":"dark","accent":"#8B7CFF","accent2":"#4CC9F0"}</script>
+<script type="application/json" id="settings">{"size":280,"border":1.5,"blur":22,"intensity":0.3,"corner":18,"orbit":false,"speed":4,"mode":"light","accent":"#2563EB","accent2":"#06B6D4"}</script>
 <script>
 const CONTROLS=[{g:'Glow',k:'size',label:'Glow size',min:120,max:600,step:10,unit:'px'},{k:'border',label:'Border width',min:1,max:5,step:.5,unit:'px'},{k:'blur',label:'Spill blur',min:0,max:60,step:1,unit:'px'},{k:'intensity',label:'Spill strength',min:0,max:.8,step:.02},{k:'corner',label:'Corner radius',min:0,max:36,step:1,unit:'px'},
- {g:'Orbit',k:'orbit',label:'Circle on its own',type:'toggle'},{k:'speed',label:'Lap time',min:1.5,max:10,step:.5,unit:'s'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['dark','light']},{k:'accent',label:'Colour one',type:'color'},{k:'accent2',label:'Colour two',type:'color'}];
+ {g:'Orbit',k:'orbit',label:'Circle on its own',type:'toggle'},{k:'speed',label:'Lap time',min:1.5,max:10,step:.5,unit:'s'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Colour one',type:'color'},{k:'accent2',label:'Colour two',type:'color'}];
 /* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
 const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
-const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'dark';if(S.accent)r.style.setProperty('--ac',S.accent)};
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'light';if(S.accent)r.style.setProperty('--ac',S.accent)};
 addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
 if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
 const D=[['⚡','Instant sync','Changes land on every device in under a second.'],['◈','Version history','Go back to any moment, by day or by edit.'],['☍','Shared links','Send a view-only page with one click.'],['◔','Usage insights','See what your team opens most.'],['⚙','Automation','Rules that file, tag and remind for you.'],['✦','AI drafts','A first version in your own voice.']],grid=document.getElementById('grid');

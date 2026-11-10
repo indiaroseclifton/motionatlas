@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Proximity type</title>
 <style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
-:root{--bg:#0E0F13;--panel:#191B22;--ink:#F3F4F7;--mute:#9CA3B4;--line:#2A2D38;--ac:#8B7CFF}
-:root[data-mode=light]{--bg:#F3F1EC;--panel:#FFFFFF;--ink:#17181C;--mute:#646978;--line:#DEDAD0}
+:root{--bg:#0F1012;--panel:#1A1B1E;--ink:#F4F4F5;--mute:#A1A1AA;--line:#2C2D31;--ac:#111111}
+:root[data-mode=light]{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#111113;--mute:#6B6F76;--line:#E6E6E8}
 *{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
 body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
 button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
@@ -19,13 +19,13 @@ h1 span{display:inline-block;will-change:transform;white-space:pre}h1 .ln{displa
 </style>
 <body>
 <h1 id="h" aria-label="Press into the letters">Press into the letters</h1><p class="hint">Move across the words</p>
-<script type="application/json" id="settings">{"radius":190,"min":200,"max":900,"grow":0.18,"lift":8,"follow":0.18,"size":84,"mode":"dark","accent":"#FFD166"}</script>
+<script type="application/json" id="settings">{"radius":190,"min":200,"max":900,"grow":0.18,"lift":8,"follow":0.18,"size":84,"mode":"light","accent":"#E4572E"}</script>
 <script>
 const CONTROLS=[{g:'Reach',k:'radius',label:'Radius',min:80,max:420,step:5,unit:'px'},{k:'follow',label:'Follow speed',min:.04,max:.5,step:.01},{g:'Letters',k:'min',label:'Resting weight',min:100,max:500,step:50},{k:'max',label:'Pressed weight',min:500,max:900,step:50},{k:'grow',label:'Grow',min:0,max:.5,step:.01},{k:'lift',label:'Lift',min:0,max:24,step:1,unit:'px'},{k:'size',label:'Text size',min:40,max:130,step:2,unit:'px'},
- {g:'Look',k:'mode',label:'Mode',type:'select',options:['dark','light']},{k:'accent',label:'Accent',type:'color'}];
+ {g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
 /* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
 const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
-const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'dark';if(S.accent)r.style.setProperty('--ac',S.accent)};
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'light';if(S.accent)r.style.setProperty('--ac',S.accent)};
 addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
 if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
 const h=document.getElementById('h');h.innerHTML=['Press into','the letters'].map(l=>'<span class="ln" aria-hidden="true">'+[...l].map(c=>`<span>${c}</span>`).join('')+'</span>').join('');
