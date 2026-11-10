@@ -1,0 +1,23 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Morphing blob</title>
+<style>
+:root{--bg:#0B0F1A;--ink:#EEF2FF;--mute:#93A0BD}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;display:grid;place-items:center;overflow:hidden}
+.stage{position:relative;width:min(78vmin,560px);aspect-ratio:1;display:grid;place-items:center}
+svg{position:absolute;inset:0;width:100%;height:100%;filter:drop-shadow(0 30px 60px rgba(90,80,255,.35))}
+.copy{position:relative;text-align:center;padding:0 18%}
+h1{margin:0 0 8px;font:800 clamp(24px,6vmin,44px)/1.05 system-ui}p{margin:0;color:#E4E7FF;font-size:14px}
+small{position:fixed;bottom:18px;left:0;right:0;text-align:center;color:var(--mute);font-size:13px}
+</style></head><body>
+<div class="stage"><svg viewBox="-110 -110 220 220" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7C5CFF"/><stop offset=".55" stop-color="#FF5C8A"/><stop offset="1" stop-color="#FFB86B"/></linearGradient></defs><path id="blob" fill="url(#g)"/></svg>
+<div class="copy"><h1>Soft shapes</h1><p>Eight points breathe on their own clocks. Move near it and the edge leans toward you.</p></div></div>
+<small>A closed curve through moving points, redrawn every frame.</small>
+<script>
+const path=document.getElementById('blob'),N=8,reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;let mx=0,my=0,pull=0,want=0;
+addEventListener('pointermove',e=>{const r=path.ownerSVGElement.getBoundingClientRect();mx=(e.clientX-r.left)/r.width*220-110;my=(e.clientY-r.top)/r.height*220-110;want=1});document.addEventListener('pointerleave',()=>want=0);
+function draw(t){pull+=(want-pull)*.06;const P=[];for(let i=0;i<N;i++){const a=i/N*Math.PI*2,r=78+12*Math.sin(t/900+i*1.7)+8*Math.sin(t/1400+i*3.1);let x=Math.cos(a)*r,y=Math.sin(a)*r;const d=Math.hypot(mx-x,my-y),k=pull*18*Math.exp(-((d/70)**2));x+=(mx-x)/(d||1)*k;y+=(my-y)/(d||1)*k;P.push([x,y])}
+ let d='';for(let i=0;i<N;i++){const p0=P[(i-1+N)%N],p1=P[i],p2=P[(i+1)%N],p3=P[(i+2)%N];if(!i)d='M'+p1[0].toFixed(1)+' '+p1[1].toFixed(1);d+='C'+(p1[0]+(p2[0]-p0[0])/6).toFixed(1)+' '+(p1[1]+(p2[1]-p0[1])/6).toFixed(1)+' '+(p2[0]-(p3[0]-p1[0])/6).toFixed(1)+' '+(p2[1]-(p3[1]-p1[1])/6).toFixed(1)+' '+p2[0].toFixed(1)+' '+p2[1].toFixed(1)}
+ path.setAttribute('d',d+'Z');if(!reduce)requestAnimationFrame(draw)}
+draw(0);if(!reduce)requestAnimationFrame(draw);
+</script></body></html>

@@ -1,0 +1,32 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Loader set</title>
+<style>
+:root{--bg:#F3F4F7;--ink:#161A23;--mute:#667085;--a:#4F46E5}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%}
+body{background:var(--bg);color:var(--ink);font:14px/1.5 system-ui,sans-serif;display:grid;place-items:center;padding:24px}
+ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(120px,170px));gap:14px}
+li{background:#fff;border-radius:16px;aspect-ratio:1;display:grid;grid-template-rows:1fr auto;place-items:center;padding:14px;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+li span{font-size:12px;color:var(--mute)}
+.l{width:48px;height:48px;position:relative;color:var(--a)}
+.ring{border-radius:50%;border:4px solid color-mix(in srgb,currentColor 18%,transparent);border-top-color:currentColor;animation:spin .9s linear infinite}
+.dots{display:flex;gap:7px;align-items:center;justify-content:center}.dots i{width:10px;height:10px;border-radius:50%;background:currentColor;animation:up .9s ease-in-out infinite}.dots i:nth-child(2){animation-delay:.12s}.dots i:nth-child(3){animation-delay:.24s}
+.bars{display:flex;gap:5px;align-items:center;justify-content:center}.bars i{width:6px;height:100%;border-radius:3px;background:currentColor;animation:eq 1s ease-in-out infinite}.bars i:nth-child(2){animation-delay:.15s}.bars i:nth-child(3){animation-delay:.3s}.bars i:nth-child(4){animation-delay:.45s}
+.sq{display:grid;grid-template-columns:1fr 1fr;gap:4px}.sq i{background:currentColor;border-radius:5px;animation:fade 1.2s linear infinite}.sq i:nth-child(2){animation-delay:.3s}.sq i:nth-child(4){animation-delay:.6s}.sq i:nth-child(3){animation-delay:.9s}
+.arc svg{width:100%;height:100%;animation:spin 1.6s linear infinite}.arc circle{fill:none;stroke:currentColor;stroke-width:4;stroke-linecap:round;stroke-dasharray:1 200;animation:dash 1.4s ease-in-out infinite}
+.orbit{animation:spin 1.4s cubic-bezier(.5,.1,.5,.9) infinite}.orbit::before,.orbit::after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:currentColor;top:0;left:17px}.orbit::after{top:auto;bottom:0;opacity:.4}
+@keyframes spin{to{transform:rotate(360deg)}}@keyframes up{0%,60%,100%{transform:none}30%{transform:translateY(-12px)}}
+@keyframes eq{0%,100%{transform:scaleY(.3)}50%{transform:scaleY(1)}}@keyframes fade{0%,100%{opacity:.15;transform:scale(.8)}25%{opacity:1;transform:none}}
+@keyframes dash{0%{stroke-dasharray:1 200;stroke-dashoffset:0}50%{stroke-dasharray:90 200;stroke-dashoffset:-35}100%{stroke-dasharray:90 200;stroke-dashoffset:-124}}
+p{grid-column:1/-1;text-align:center;color:var(--mute);font-size:13px;margin:6px 0 0}
+@media(max-width:460px){ul{grid-template-columns:repeat(2,1fr)}}
+@media(prefers-reduced-motion:reduce){.l,.l *,.l::before,.l::after{animation-duration:4s!important}}
+</style></head><body>
+<ul aria-label="Six loading indicators">
+<li><div class="l ring" role="img" aria-label="Loading"></div><span>Ring</span></li>
+<li><div class="l dots" role="img" aria-label="Loading"><i></i><i></i><i></i></div><span>Bouncing dots</span></li>
+<li><div class="l bars" role="img" aria-label="Loading"><i></i><i></i><i></i><i></i></div><span>Equaliser</span></li>
+<li><div class="l sq" role="img" aria-label="Loading"><i></i><i></i><i></i><i></i></div><span>Chasing squares</span></li>
+<li><div class="l arc" role="img" aria-label="Loading"><svg viewBox="0 0 50 50"><circle cx="25" cy="25" r="20"/></svg></div><span>Stretching arc</span></li>
+<li><div class="l orbit" role="img" aria-label="Loading"></div><span>Orbit</span></li>
+<p>Six loaders in CSS only. Each takes its colour from one variable and slows right down for reduced motion.</p>
+</ul></body></html>

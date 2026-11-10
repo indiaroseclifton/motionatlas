@@ -1,0 +1,30 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Magnifying dock</title>
+<style>
+:root{--bg:#DDE6F0;--ink:#122033;--mute:#5A6B80}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:linear-gradient(160deg,#EAF1F8,#C9D8EA);color:var(--ink);font:15px/1.5 system-ui,sans-serif;display:grid;grid-template-rows:1fr auto;place-items:center;padding-bottom:28px}
+p{color:var(--mute);font-size:13px;text-align:center;max-width:40ch}
+.dock{display:flex;align-items:flex-end;gap:10px;height:76px;padding:10px 14px;border-radius:24px;background:rgba(255,255,255,.55);backdrop-filter:blur(14px);box-shadow:0 20px 40px -20px rgba(20,40,80,.5),inset 0 0 0 1px rgba(255,255,255,.7);list-style:none;margin:0}
+.dock li{position:relative}
+.dock button{--s:1;display:grid;place-items:center;width:calc(48px*var(--s));height:calc(48px*var(--s));border:0;border-radius:calc(13px*var(--s));background:var(--c);color:#fff;cursor:pointer;font-size:calc(22px*var(--s));box-shadow:0 6px 14px -6px var(--c);will-change:width}
+.dock button:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.dock span{position:absolute;bottom:calc(100% + 10px);left:50%;transform:translate(-50%,6px);background:var(--ink);color:#fff;font-size:12px;padding:4px 8px;border-radius:6px;white-space:nowrap;opacity:0;transition:.15s;pointer-events:none}
+.dock li:hover span,.dock button:focus-visible+span{opacity:1;transform:translate(-50%,0)}
+.dock button.bounce{animation:b .5s cubic-bezier(.3,1.5,.5,1)}@keyframes b{40%{transform:translateY(-18px)}}
+@media(max-width:520px){.dock{gap:5px;padding:8px 9px;height:60px}.dock button{width:calc(34px*var(--s));height:calc(34px*var(--s));font-size:calc(16px*var(--s));border-radius:calc(10px*var(--s))}}
+@media(prefers-reduced-motion:reduce){.dock button.bounce{animation:none}}
+</style></head><body>
+<p>Move along the dock: icons swell under the pointer and their neighbours follow. Arrow keys work too.</p>
+<ul class="dock" id="dock" aria-label="Apps"></ul>
+<script>
+const APPS=[['Mail','✉','#3B82F6'],['Notes','✎','#F59E0B'],['Music','♫','#EC4899'],['Photos','❖','#8B5CF6'],['Maps','➤','#10B981'],['Clock','◷','#111827'],['Settings','⚙','#64748B']];
+const dock=document.getElementById('dock');dock.innerHTML=APPS.map(a=>'<li><button type="button" style="--c:'+a[2]+'" aria-label="'+a[0]+'"><span aria-hidden="true" style="all:unset">'+a[1]+'</span></button><span aria-hidden="true">'+a[0]+'</span></li>').join('');
+const B=[...dock.querySelectorAll('button')],reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;let target=B.map(()=>1),cur=B.map(()=>1),raf=0;
+function aim(px){target=B.map(b=>{if(px==null)return 1;const r=b.getBoundingClientRect(),d=Math.abs(px-(r.left+r.width/2));return 1+.75*Math.max(0,1-d/130)**2});if(!raf)raf=requestAnimationFrame(step)}
+function step(){let moving=false;B.forEach((b,i)=>{cur[i]+=(target[i]-cur[i])*(reduce?1:.22);if(Math.abs(target[i]-cur[i])>.002)moving=true;b.style.setProperty('--s',cur[i].toFixed(3))});raf=moving?requestAnimationFrame(step):0}
+dock.addEventListener('pointermove',e=>aim(e.clientX));dock.addEventListener('pointerleave',()=>aim(null));
+B.forEach((b,i)=>{b.addEventListener('focus',()=>{const r=b.getBoundingClientRect();aim(r.left+r.width/2)});b.addEventListener('blur',()=>aim(null));
+ b.addEventListener('keydown',e=>{if(e.key==='ArrowRight')B[(i+1)%B.length].focus();if(e.key==='ArrowLeft')B[(i-1+B.length)%B.length].focus()});
+ b.addEventListener('click',()=>{b.classList.remove('bounce');void b.offsetWidth;b.classList.add('bounce')})});
+</script></body></html>

@@ -4,7 +4,7 @@
    Blurbs may carry {tokens}; they are filled from counts.json (made by tools/site-counts.mjs) so the numbers never go stale.
    Fallback numbers below are used only if counts.json cannot be read. */
 (()=>{
- const FALLBACK={siteTemplates:26,siteSections:56,photos:82,icons:3768,iconFamilies:13,kits:48,systems:48,components:64,effects:41,interactions:70,chartTypes:26,diagramTypes:18,flowTemplates:24,devices:8,backgrounds:80,animationStudies:74,tours:6,entries:381,motionGraphics:28};
+ const FALLBACK={siteTemplates:26,siteSections:56,photos:82,icons:3768,iconFamilies:13,kits:48,systems:48,components:64,effects:41,interactions:82,chartTypes:26,diagramTypes:18,flowTemplates:24,devices:8,backgrounds:80,animationStudies:74,tours:6,entries:381,motionGraphics:28};
  const TOOLS=[
   {id:'site-builder',group:'Make',name:'Site builder',href:'page-builder.html',film:'paper-bird',
    blurb:'Build a multi-page site from {siteTemplates} templates, {siteSections} sections and {photos} photographs; export HTML or publish it.'},

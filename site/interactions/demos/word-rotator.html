@@ -1,0 +1,27 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rotating headline word</title>
+<style>
+:root{--bg:#F7F3EA;--ink:#1C1A16;--mute:#7A7262;--a:#E0522D}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;display:grid;place-items:center;padding:24px}
+h1{margin:0;font:700 clamp(30px,6.4vw,76px)/1.12 Georgia,'Times New Roman',serif;letter-spacing:-.02em;max-width:14ch}
+.rot{display:inline-grid;vertical-align:bottom;overflow:hidden;padding-bottom:.08em;color:var(--a);font-style:italic;transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.rot span{grid-area:1/1;white-space:nowrap;transform:translateY(110%);transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+.rot span.on{transform:none}.rot span.out{transform:translateY(-110%)}
+.rot::after{content:'';grid-area:1/1;align-self:end;height:.06em;background:var(--a);transform-origin:left;animation:line var(--d,2.4s) linear infinite}
+@keyframes line{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.bar{display:flex;gap:12px;align-items:center;margin-top:26px;color:var(--mute);font-size:13px}
+button{font:inherit;border:1px solid #cfc7b6;background:#fff;border-radius:999px;padding:8px 14px;cursor:pointer;color:var(--ink)}button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){.rot,.rot span{transition:none}.rot::after{animation:none}}
+</style></head><body>
+<div><h1>We design <span class="rot" id="rot" aria-live="off"></span> people remember.</h1>
+<div class="bar"><button id="pp" aria-pressed="false">Pause</button><span>One word slides out as the next slides in; the box eases to the new width.</span></div></div>
+<script>
+const W=['websites','brands','films','products','launches'],rot=document.getElementById('rot'),pp=document.getElementById('pp'),reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+rot.innerHTML=W.map(w=>'<span>'+w+'</span>').join('');const S=[...rot.children];let i=0,paused=reduce,t;
+function show(k){S.forEach((s,j)=>{s.className=j===k?'on':j===i&&k!==i?'out':'';s.setAttribute('aria-hidden',j!==k)});rot.style.width=S[k].offsetWidth+'px';setTimeout(()=>S.forEach((s,j)=>{if(j!==k)s.className=''}),650);i=k}
+function loop(){clearTimeout(t);if(!paused)t=setTimeout(()=>{show((i+1)%W.length);loop()},2400)}
+document.fonts?.ready.then(()=>show(0));show(0);loop();
+if(reduce){pp.textContent='Next word';pp.onclick=()=>show((i+1)%W.length);rot.style.setProperty('--d','0s')}
+else pp.onclick=()=>{paused=!paused;pp.textContent=paused?'Play':'Pause';pp.setAttribute('aria-pressed',paused);rot.style.animationPlayState=paused?'paused':'';loop()};
+</script></body></html>

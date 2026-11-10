@@ -41,7 +41,7 @@ The library holds:
 | Theme kits | 48 | `site/kits/` |
 | Atlas design systems | 48 (D01–D48) | `site/expansion.json`, `systems.js`, `system-previews.js`, `system-kits.js` |
 | UI components | 64 (C01–C64) | `site/component-lab.js` |
-| Interactions | 70 | `site/interactions/` |
+| Interactions | 82 | `site/interactions/` |
 | Landing effects (techniques) | 41 (L01–L49, with gaps where older effects were retired) | `site/effects-data.js` (the techniques), `site/effects-lab.js` (the lab UI), `site/expansion.json`, clips in `site/assets/fx/clips/` |
 | Atlas themes (component lab skins) | 22 | `site/atlas-themes.js` |
 | Site-builder templates / sections / photographs | 26 / 56 / 82 (CC0, `site/assets/photos/`) | `site/builder/` |
@@ -292,7 +292,7 @@ has a catalogue entry (`C..`) in `expansion.json`. The page builder lists them a
 
 ## Interactions shelf (`site/interactions.html`, `site/interactions/`)
 
-70 original pieces, each one self-contained HTML file in `interactions/demos/` with no
+82 original pieces, each one self-contained HTML file in `interactions/demos/` with no
 libraries (the circuit-city hero uses three.js from cdnjs). The shelf mounts live previews only
 while they're on screen. Each piece has Copy HTML, Download, full screen, notes and an AI build
 prompt, and `interactions.html#<id>` opens it. Copied code rewrites `../../assets/` to the live
@@ -390,7 +390,7 @@ static site or publish it to a live address. Old single-page saves open as one-p
   (presets), Copy and Paste settings between items of the same kind, Reset to defaults and a first-run tip. The schema is
   derived from the item itself (`builder/settings.js`): all 64 components expose every word, placeholder, picture and link,
   state, size, width, position, accent, text and panel colours, corners, line, shadow, weight, calm motion and an anchor;
-  all 70 interactions expose heading, height or shape, width, position, text and accent colour, speed, play always / on
+  all 82 interactions expose heading, height or shape, width, position, text and accent colour, speed, play always / on
   screen / on hover, calm motion, hidden caption, words and pictures found in the demo, and (for 14 hand-tuned demos,
   `CFG.IXP`) their own options such as points, spacing, hold time or phrases (demos read `window.__ixp(key, default)`).
   Values live in `blk.cfg` (look and behaviour), `blk.set` (background and frame) and `blk.vals` (words). Components and

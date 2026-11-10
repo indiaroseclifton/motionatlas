@@ -1,0 +1,30 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Line drawing illustration</title>
+<style>
+:root{--bg:#FBF7EF;--ink:#23201A;--mute:#7C7566;--a:#C8553D}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;display:grid;place-items:center;padding:24px;text-align:center}
+svg{width:min(520px,88vw);height:auto;overflow:visible}
+svg *{fill:none;stroke:var(--ink);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.d{stroke-dasharray:1;stroke-dashoffset:1}.go .d{animation:draw var(--t,1.2s) cubic-bezier(.6,0,.3,1) var(--w,0s) forwards}
+.a{stroke:var(--a)}.fill{fill:var(--a);stroke:none;opacity:0}.go .fill{animation:pop .5s cubic-bezier(.3,1.6,.5,1) 2.5s forwards;transform-origin:398px 62px}
+@keyframes draw{to{stroke-dashoffset:0}}@keyframes pop{from{opacity:0;transform:scale(0)}to{opacity:1;transform:none}}
+button{margin-top:14px;font:600 14px system-ui;border:1px solid #d8cfbc;background:#fff;border-radius:999px;padding:9px 16px;cursor:pointer;color:var(--ink)}button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+p{color:var(--mute);font-size:13px;margin:10px 0 0}
+@media(prefers-reduced-motion:reduce){.go .d{animation-duration:.01s;animation-delay:0s}.go .fill{animation-delay:0s;animation-duration:.01s}}
+</style></head><body>
+<div><svg id="s" viewBox="0 0 480 260" role="img" aria-label="A line drawing of hills, a house, a tree and the sun">
+<path class="d" pathLength="1" style="--t:1.6s" d="M10 210C70 150 120 150 170 195S270 140 330 180s100 0 140 30"/>
+<path class="d" pathLength="1" style="--w:.5s;--t:1.4s" d="M40 232c80-30 150 10 220-8s130-20 190 4"/>
+<path class="d" pathLength="1" style="--w:1s" d="M196 196v-50l34-28 34 28v50z"/>
+<path class="d" pathLength="1" style="--w:1.5s;--t:.6s" d="M222 196v-26h16v26M190 150l40-33 40 33"/>
+<path class="d" pathLength="1" style="--w:1.3s" d="M110 190v-44M110 146c-22 0-30-18-22-32 2-18 26-24 36-10 18-2 24 20 12 30-4 10-14 12-26 12z"/>
+<circle class="d a" pathLength="1" style="--w:1.9s;--t:.8s" cx="398" cy="62" r="24"/>
+<circle class="fill" cx="398" cy="62" r="13"/>
+<path class="d a" pathLength="1" style="--w:2.2s;--t:.7s" d="M398 24v-12M398 112v-12M360 62h-12M448 62h-12M371 35l-8-8M433 97l-8-8M371 89l-8 8M433 27l-8 8"/>
+<path class="d" pathLength="1" style="--w:2.4s;--t:.8s" d="M290 84c8-8 14-8 20 0 6-8 12-8 20 0M52 70c7-7 12-7 18 0 6-7 11-7 18 0"/>
+</svg><div><button id="r">Draw it again</button></div><p>Every stroke has pathLength 1, so one dash offset animates from 1 to 0. Delays put them in order.</p></div>
+<script>
+const s=document.getElementById('s');const go=()=>{s.classList.remove('go');void s.getBoundingClientRect();s.classList.add('go')};
+new IntersectionObserver((e,o)=>{if(e[0].isIntersecting){go();o.disconnect()}},{threshold:.4}).observe(s);document.getElementById('r').onclick=go;
+</script></body></html>

@@ -1,0 +1,23 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ripple stagger grid</title>
+<style>
+:root{--bg:#0D0F14;--ink:#EEF0F6;--mute:#8B92A6}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;display:grid;place-items:center;padding:20px;text-align:center}
+.g{display:grid;grid-template-columns:repeat(var(--c),1fr);gap:8px;width:min(560px,92vw)}
+.g button{aspect-ratio:1;border:0;border-radius:12px;padding:0;cursor:pointer;background:hsl(calc(var(--h) + var(--i)*7) 70% 58%);transform:scale(var(--s,1));opacity:var(--o,1)}
+.g button:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.g.run button{animation:wave .7s cubic-bezier(.3,1.5,.5,1) calc(var(--d)*55ms) both}
+@keyframes wave{0%{transform:scale(1)}35%{transform:scale(.35) rotate(18deg);border-radius:50%;filter:brightness(1.6)}100%{transform:scale(1)}}
+p{color:var(--mute);font-size:13px;margin-top:18px}
+@media(prefers-reduced-motion:reduce){.g.run button{animation:fade .5s both}@keyframes fade{50%{opacity:.4}}}
+</style></head><body>
+<div><div class="g" id="g" style="--c:7;--h:230"></div><p>Press any tile. A wave spreads from it: each tile's delay is its distance from the one you pressed.</p></div>
+<script>
+const g=document.getElementById('g'),C=7,R=5;let hue=230;
+g.innerHTML=Array.from({length:C*R},(_,i)=>'<button type="button" style="--i:'+i+';--d:0" aria-label="Tile '+(i+1)+', start a wave here"></button>').join('');
+const B=[...g.children];
+function wave(k){const cx=k%C,cy=(k/C)|0;hue=(hue+70)%360;B.forEach((b,i)=>b.style.setProperty('--d',Math.hypot(i%C-cx,((i/C)|0)-cy).toFixed(2)));g.classList.remove('run');void g.offsetWidth;g.classList.add('run');setTimeout(()=>g.style.setProperty('--h',hue),200)}
+B.forEach((b,i)=>{b.addEventListener('click',()=>wave(i));b.addEventListener('keydown',e=>{const m={ArrowRight:1,ArrowLeft:-1,ArrowDown:C,ArrowUp:-C}[e.key];if(m&&B[i+m]){e.preventDefault();B[i+m].focus()}})});
+setTimeout(()=>wave(17),500);
+</script></body></html>

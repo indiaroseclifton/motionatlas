@@ -1,0 +1,31 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Day and night switch</title>
+<style>
+:root{--bg:#EAF4FF;--ink:#0F1B2D;--mute:#56657A;--card:#fff}
+:root[data-t=night]{--bg:#0B1020;--ink:#EEF2FF;--mute:#9AA6C4;--card:#151B33}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;display:grid;place-items:center;padding:24px}
+.card{background:var(--card);border-radius:22px;padding:28px;width:min(420px,100%);box-shadow:0 20px 50px -30px rgba(0,0,0,.5);display:grid;gap:16px;justify-items:start}
+h1{margin:0;font-size:24px}p{margin:0;color:var(--mute)}
+.sw{position:relative;width:84px;height:44px;border-radius:999px;border:0;cursor:pointer;background:linear-gradient(#7CC4FF,#BFE3FF);overflow:hidden;transition:background .5s}
+:root[data-t=night] .sw{background:linear-gradient(#141B3C,#2B2F66)}
+.sw:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.orb{position:absolute;top:5px;left:5px;width:34px;height:34px;border-radius:50%;background:#FFD23F;box-shadow:0 0 0 5px rgba(255,210,63,.3);transition:transform .55s cubic-bezier(.5,1.6,.5,1),background .4s,box-shadow .4s}
+.orb::after{content:'';position:absolute;top:-2px;right:-2px;width:26px;height:26px;border-radius:50%;background:#141B3C;transform:scale(0);transform-origin:80% 20%;transition:transform .45s .1s}
+:root[data-t=night] .orb{transform:translateX(40px) rotate(360deg);background:#F4F1DE;box-shadow:0 0 0 5px rgba(244,241,222,.15)}
+:root[data-t=night] .orb::after{transform:scale(1);background:#20265A}
+.sw i{position:absolute;width:3px;height:3px;border-radius:50%;background:#fff;opacity:0;transition:opacity .4s,transform .6s}
+:root[data-t=night] .sw i{opacity:1;transform:none!important}
+.cloud{position:absolute;right:10px;bottom:8px;width:26px;height:10px;border-radius:10px;background:#fff;transition:transform .5s,opacity .4s}.cloud::before{content:'';position:absolute;left:6px;top:-6px;width:12px;height:12px;border-radius:50%;background:#fff}
+:root[data-t=night] .cloud{transform:translateY(24px);opacity:0}
+::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
+@media(prefers-reduced-motion:reduce){.orb,.orb::after,.sw,.sw i,.cloud{transition:none}}
+</style></head><body>
+<div class="card"><button class="sw" id="sw" role="switch" aria-checked="false" aria-label="Night mode"><span class="orb"></span><span class="cloud"></span><i style="left:14px;top:10px;transform:translateY(-20px)"></i><i style="left:26px;top:26px;transform:translateY(-20px)"></i><i style="left:38px;top:14px;transform:translateY(-20px)"></i></button>
+<h1>Day and night</h1><p>The sun rolls across and becomes a moon; the page changes colour in a circle that grows from the switch.</p></div>
+<script>
+const sw=document.getElementById('sw'),root=document.documentElement,reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+sw.addEventListener('click',()=>{const night=root.dataset.t!=='night',set=()=>{root.dataset.t=night?'night':'day';sw.setAttribute('aria-checked',night)};
+ if(!document.startViewTransition||reduce)return set();const r=sw.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2,R=Math.hypot(Math.max(x,innerWidth-x),Math.max(y,innerHeight-y));
+ document.startViewTransition(set).ready.then(()=>root.animate({clipPath:['circle(0 at '+x+'px '+y+'px)','circle('+R+'px at '+x+'px '+y+'px)']},{duration:650,easing:'cubic-bezier(.4,0,.2,1)',pseudoElement:'::view-transition-new(root)'}))});
+</script></body></html>

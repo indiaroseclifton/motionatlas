@@ -605,7 +605,7 @@ if (axeSrc) {
 {
   const { ctx, pg } = await open();
   await pg.evaluate(() => PB.ux.useTemplate(0)); await waitPv(pg);
-  ok(await pg.evaluate(() => window.INTERACTIONS.every(x => { const s = PB.cfg.schema({ id: 'x-interaction', vals: { iid: x.id }, uid: 't' }); return s && s.groups.length >= 6 && s.presets.length >= 5 && /interaction/.test(s.badge); })), 'every one of the 70 interactions has a settings schema');
+  ok(await pg.evaluate(() => window.INTERACTIONS.every(x => { const s = PB.cfg.schema({ id: 'x-interaction', vals: { iid: x.id }, uid: 't' }); return s && s.groups.length >= 6 && s.presets.length >= 5 && /interaction/.test(s.badge); })), 'every one of the interactions has a settings schema');
   const uid = await pg.evaluate(() => PB.app.addBlock('x-interaction', { iid: 'fan-deck', height: '480' }, undefined, { cfg: { tr: 1 } }).uid); await waitPv(pg); await pg.waitForTimeout(1500);
   await pg.evaluate(u => PB.app.selectBlock(u), uid); await pg.waitForSelector('.cfgp');
   ok(await pg.locator('.cfgp .cfgb').first().textContent().then(x => /interaction/.test(x)), 'the selected item panel names the interaction and its kind');

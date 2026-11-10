@@ -39,7 +39,7 @@ window.ATLAS_NAV_GROUPS=[
    ['diagram-studio.html','Diagram studio','Eighteen diagram types: roadmaps to sequence and ER.','swan-construction'],
    ['particle-studio.html','Particle studio','Turn any picture into moving particles and export one HTML file.','particle-tree'],
    ['motion-graphics.html','Motion graphics','Animated titles, lower thirds, logo stings and transitions to edit and export.','light-ribbons'],
-   ['interactions.html','Interactions shelf','Seventy showpieces, scroll stories and sections to copy.','golden-dove']]},
+   ['interactions.html','Interactions shelf','Eighty-two showpieces, scroll stories and sections to copy.','golden-dove']]},
   {name:'Your studio',items:[
    ['#projects','My projects','Save specimens into boards for a client or idea.','particle-tree'],
    ['moodboard.html','Moodboards','A free canvas: pin styles, kits, colours and pictures, then make a style.','embroidery'],
