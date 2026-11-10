@@ -1,0 +1,58 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Cover flow</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0E0F13;--panel:#191B22;--ink:#F3F4F7;--mute:#9CA3B4;--line:#2A2D38;--ac:#8B7CFF}
+:root[data-mode=light]{--bg:#F3F1EC;--panel:#FFFFFF;--ink:#17181C;--mute:#646978;--line:#DEDAD0}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+.stage{position:relative;width:100%;height:min(66vh,420px);perspective:var(--p);touch-action:pan-y;cursor:grab;user-select:none}.stage:active{cursor:grabbing}
+.c{position:absolute;left:50%;top:42%;width:var(--w);aspect-ratio:1;border-radius:var(--r);overflow:hidden;background:var(--panel);will-change:transform;box-shadow:0 20px 40px -20px #000}
+.refl .c{overflow:visible;-webkit-box-reflect:below 6px linear-gradient(transparent 62%,rgba(255,255,255,.28))}.refl .c img{border-radius:var(--r)}
+.c img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+.cap{position:fixed;left:0;right:0;bottom:22px;text-align:center}.cap h2{font-size:19px}.cap p{color:var(--mute);font-size:13px}
+</style>
+<body>
+<div class="stage" id="stage" tabindex="0" role="group" aria-roledescription="carousel" aria-label="Covers. Use the arrow keys."></div>
+<div class="cap" aria-live="polite"><h2 id="t"></h2><p id="s"></p></div>
+<script type="application/json" id="settings">{"size":210,"angle":58,"depth":150,"push":150,"gap":58,"perspective":900,"reflect":true,"corner":8,"mode":"dark","accent":"#4CC9F0"}</script>
+<script>
+const CONTROLS=[{g:'Covers',k:'size',label:'Cover size',min:120,max:320,step:2,unit:'px'},{k:'corner',label:'Corner radius',min:0,max:30,step:1,unit:'px'},{k:'reflect',label:'Mirror floor',type:'toggle'},
+ {g:'Depth',k:'angle',label:'Turn',min:0,max:80,step:1,unit:'°'},{k:'depth',label:'Push back',min:0,max:400,step:5,unit:'px'},{k:'perspective',label:'Perspective',min:400,max:2000,step:50,unit:'px'},{g:'Spacing',k:'push',label:'Centre clearance',min:40,max:300,step:2,unit:'px'},{k:'gap',label:'Side spacing',min:20,max:140,step:1,unit:'px'},
+ {g:'Look',k:'mode',label:'Mode',type:'select',options:['dark','light']},{k:'accent',label:'Accent',type:'color'}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'dark';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+/* Carousel engine: drag, arrow keys, click a card. n() is the item count, draw(pos) places the cards. */
+const IMG=n=>'../../assets/shelf/'+n+'.webp';
+const ITEMS=[['amber','Amber resin','Warm, slow, translucent'],['biolum','Night water','Light that answers touch'],['bloom','Pigment bloom','Colour let loose in water'],['origami','Folded paper','Sharp planes, soft shadow'],['nebula','Deep field','Dust, gas and distance'],['sumi','Floating ink','One breath, one line'],['threads','Light threads','Fine lines under tension'],['owl','Carved owl','Grain as feather'],['sand','Sand drawing','Patterns from vibration']];
+function carousel(stage,n,draw,o={}){let pos=0,target=0,drag=null,raf=0;
+ const wrap=v=>o.loop?v:Math.max(0,Math.min(n()-1,v)),mod=v=>((v%n())+n())%n();
+ function frame(){pos+=(target-pos)*(calm?1:.14);if(Math.abs(target-pos)<.002)pos=target;draw(pos);raf=pos===target?0:requestAnimationFrame(frame)}
+ const kick=()=>{if(!raf)raf=requestAnimationFrame(frame)};
+ const go=t=>{target=wrap(t);o.onChange&&o.onChange(mod(Math.round(target)));kick()};
+ stage.addEventListener('pointerdown',e=>{if(e.target.closest('button,a'))return;drag={x:e.clientX,t:target,m:0};stage.setPointerCapture(e.pointerId)});
+ stage.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.x;drag.m=Math.max(drag.m,Math.abs(dx));target=wrap(drag.t-dx/(o.step?o.step():170));kick()});
+ const up=e=>{if(!drag)return;const m=drag.m;drag=null;if(m<6){const c=document.elementFromPoint(e.clientX,e.clientY)?.closest('[data-i]');if(c){const t=Math.round(target),i=+c.dataset.i;let d=i-mod(t);if(o.loop){if(d>n()/2)d-=n();if(d<-n()/2)d+=n()}return go(t+d)}}go(Math.round(target))};
+ stage.addEventListener('pointerup',up);stage.addEventListener('pointercancel',up);
+ stage.addEventListener('keydown',e=>{const k=e.key;if(k==='ArrowRight'){e.preventDefault();go(Math.round(target)+1)}else if(k==='ArrowLeft'){e.preventDefault();go(Math.round(target)-1)}else if(k==='Home'){e.preventDefault();go(0)}else if(k==='End'){e.preventDefault();go(n()-1)}});
+ let hold=false,timer=0;['pointerenter','focusin'].forEach(t=>stage.addEventListener(t,()=>hold=true));['pointerleave','focusout'].forEach(t=>stage.addEventListener(t,()=>hold=false));
+ const api={go,next:()=>go(Math.round(target)+1),prev:()=>go(Math.round(target)-1),redraw:()=>draw(pos),mod,auto(ms){clearInterval(timer);if(ms&&!calm)timer=setInterval(()=>{if(!hold&&!drag){if(!o.loop&&Math.round(target)>=n()-1)go(0);else api.next()}},ms)}};return api}
+/* distance of card i from the centre, wrapped for looping carousels */
+const dist=(i,pos,n,loop)=>{let d=i-pos;if(loop){d=((d%n)+n)%n;if(d>n/2)d-=n}return d};
+const stage=document.getElementById('stage');let cards=[];
+function draw(pos){cards.forEach((c,i)=>{const d=i-pos,s=Math.sign(d),k=Math.min(Math.abs(d),1);
+ c.style.transform=`translate(-50%,-50%) translateX(${(s*k*S.push+d*S.gap).toFixed(1)}px) translateZ(${(-k*S.depth).toFixed(1)}px) rotateY(${(-s*k*S.angle).toFixed(2)}deg)`;c.style.zIndex=100-Math.round(Math.abs(d)*10)})}
+const car=carousel(stage,()=>ITEMS.length,draw,{step:()=>S.gap*1.6,onChange:i=>{document.getElementById('t').textContent=ITEMS[i][1];document.getElementById('s').textContent=ITEMS[i][2]}});
+function apply(){theme();stage.style.setProperty('--w',S.size+'px');stage.style.setProperty('--r',S.corner+'px');stage.style.setProperty('--p',S.perspective+'px');stage.classList.toggle('refl',!!S.reflect);car.redraw()}
+stage.innerHTML=ITEMS.map(([f,t],i)=>`<figure class="c" data-i="${i}"><img src="${IMG(f)}" alt="${t}" draggable="false"></figure>`).join('');cards=[...stage.children];
+apply();car.go(4);
+</script>
+</body>
+</html>

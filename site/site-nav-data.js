@@ -36,7 +36,7 @@ window.ATLAS_NAV_GROUPS=[
    ['mockup-studio.html','Mockup studio','Frame a screenshot in a device and export every social size.','paper-bird'],
    ['diagram-studio.html','Diagram studio','Eighteen diagram types: roadmaps to sequence and ER.','swan-construction'],
    ['motion-graphics.html','Motion graphics','Make video: titles, lower thirds, logo stings and transitions, exported as video, GIF or HTML.','light-ribbons'],
-   ['interactions.html','UI interactions','Copy the finished piece: 82 ready-made interactions and page sections, one HTML file each.','golden-dove']]},
+   ['interactions.html','UI interactions','Modern interactions to embed in sites and apps: tune each with live sliders, then copy one HTML file.','golden-dove']]},
   {name:'Your studio',items:[
    ['#projects','My projects','Save specimens into boards for a client or idea.','particle-tree'],
    ['moodboard.html','Moodboards','A free canvas: pin styles, kits, colours and pictures, then make a style.','embroidery'],

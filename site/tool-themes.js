@@ -18,6 +18,7 @@ html[data-tt] .btn.primary{color:var(--accent-ink)}html[data-tt] .btn.primary:ho
 html[data-tt] .seg button[aria-pressed=true],html[data-tt] .chips button[aria-pressed=true],html[data-tt] .chip[aria-pressed=true]{color:var(--panel)}
 html[data-tt] .chip.new[aria-pressed=true],html[data-tt] .badge{color:var(--accent-ink)}
 html[data-tt] .toast,html[data-tt] .skip{color:var(--panel)}
+html[data-tt] .close{background:var(--panel);color:var(--ink);box-shadow:0 0 0 1px var(--hair)}
 html[data-tt] header.top{background:color-mix(in srgb,var(--panel) 92%,transparent)}
 html[data-tt] #mgStage{background:repeating-conic-gradient(var(--soft) 0 25%,var(--bg) 0 50%) 0 0/20px 20px}
 html[data-tt] .btn:not(.primary):not([aria-pressed=true]),html[data-tt] .chip:not([aria-pressed=true]),html[data-tt] .card,html[data-tt] dialog,html[data-tt] .pop{background-color:var(--panel);color:var(--ink)}

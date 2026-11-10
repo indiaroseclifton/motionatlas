@@ -1,0 +1,29 @@
+<!--META {"o":2,"t":"3D image ring","cat":"Carousels","tone":"dark","uses":["L08"],"d":"A ring of images turning in real 3D. Drag to spin it, change how many cards it holds, its radius, tilt and speed.","how":"Every card is rotated around the Y axis by its share of 360 degrees and pushed out by the radius, so together they form a cylinder. Turning the whole ring is one transform. Cards facing away are dimmed by comparing their angle with the camera.","use":"Hero showpieces, galleries, product ranges, event line-ups.","p":"Build a 3D ring carousel in one HTML file with no libraries. A scene with CSS perspective holds a ring element with transform-style: preserve-3d. N image cards are each set to rotateY(i * 360/N) translateZ(radius). The ring rotates to rotateX(tilt) rotateY(-position * 360/N), where position is a float easing toward an integer target; add a slow constant drift when autoplay is on and the pointer is away. Drag horizontally to spin, arrow keys step one card, clicking a card brings it to the front. Fade cards whose face points away from the viewer. Show the front card's title in a polite live region. Expose card count, radius, card width, perspective, tilt, drift speed, corner radius and accent as settings. With prefers-reduced-motion, no drift and no easing."}-->
+<style>/*BASE*/
+.scene{width:100%;height:min(70vh,480px);perspective:var(--p);display:grid;place-items:center;touch-action:pan-y;cursor:grab;user-select:none}.scene:active{cursor:grabbing}
+.ring{position:relative;width:var(--w);aspect-ratio:3/4;transform-style:preserve-3d;will-change:transform}
+.c{position:absolute;inset:0;border-radius:var(--r);overflow:hidden;background:var(--panel);backface-visibility:hidden;box-shadow:0 0 0 1px rgba(255,255,255,.08)}
+.c img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+.cap{position:fixed;left:0;right:0;bottom:20px;text-align:center}.cap h2{font-size:18px}.cap p{color:var(--mute);font-size:13px}
+</style>
+<body>
+<div class="scene" id="stage" tabindex="0" role="group" aria-roledescription="carousel" aria-label="Image ring. Use the arrow keys to turn it."><div class="ring" id="ring"></div></div>
+<div class="cap" aria-live="polite"><h2 id="t"></h2><p>Drag to spin · arrow keys step</p></div>
+<script type="application/json" id="settings">{"count":9,"radius":330,"size":170,"perspective":1100,"tilt":-8,"speed":0.25,"corner":16,"autoplay":true,"mode":"dark","accent":"#8B7CFF"}</script>
+<script>
+const CONTROLS=[{g:'Ring',k:'count',label:'Cards',min:5,max:9,step:1},{k:'radius',label:'Radius',min:180,max:560,step:5,unit:'px'},{k:'tilt',label:'Tilt',min:-30,max:30,step:1,unit:'°'},{k:'perspective',label:'Perspective',min:500,max:2400,step:50,unit:'px'},
+ {g:'Cards',k:'size',label:'Card width',min:100,max:260,step:2,unit:'px'},{k:'corner',label:'Corner radius',min:0,max:40,step:1,unit:'px'},
+ {g:'Behaviour',k:'autoplay',label:'Drift',type:'toggle'},{k:'speed',label:'Drift speed',min:.05,max:1,step:.05},{g:'Look',k:'mode',label:'Mode',type:'select',options:['dark','light']},{k:'accent',label:'Accent',type:'color'}];
+/*TUNER*/
+/*CAROUSEL*/
+const stage=document.getElementById('stage'),ring=document.getElementById('ring');let cards=[],drift=0,idle=true,last=0;
+function draw(pos){const n=S.count,step=360/n,rot=-(pos+drift)*step;ring.style.transform=`rotateX(${S.tilt}deg) rotateY(${rot.toFixed(2)}deg)`;
+ cards.forEach((c,i)=>{let a=((i*step+rot)%360+540)%360-180;c.style.opacity=(.25+.75*Math.max(0,Math.cos(a*Math.PI/180))).toFixed(2)})}
+const car=carousel(stage,()=>S.count,draw,{loop:true,step:()=>S.size*.8,onChange:i=>document.getElementById('t').textContent=ITEMS[i][1]});
+function apply(){theme();const n=S.count;stage.style.setProperty('--p',S.perspective+'px');ring.style.setProperty('--w',S.size+'px');ring.style.setProperty('--r',S.corner+'px');
+ ring.innerHTML=ITEMS.slice(0,n).map(([f,t],i)=>`<figure class="c" data-i="${i}" style="transform:rotateY(${i*360/n}deg) translateZ(${S.radius}px)"><img src="${IMG(f)}" alt="${t}" draggable="false"></figure>`).join('');cards=[...ring.children];car.redraw()}
+['pointerenter','focusin','pointerdown'].forEach(t=>stage.addEventListener(t,()=>idle=false));['pointerleave','focusout'].forEach(t=>stage.addEventListener(t,()=>idle=true));
+function spin(t){if(S.autoplay&&idle&&!calm){drift+=(t-last)/1000*S.speed;car.redraw()}last=t;requestAnimationFrame(spin)}
+apply();car.go(0);requestAnimationFrame(spin);
+</script>
+</body>

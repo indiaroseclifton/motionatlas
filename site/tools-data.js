@@ -4,7 +4,7 @@
    Blurbs may carry {tokens}; they are filled from counts.json (made by tools/site-counts.mjs) so the numbers never go stale.
    Fallback numbers below are used only if counts.json cannot be read. */
 (()=>{
- const FALLBACK={siteTemplates:26,siteSections:56,photos:82,icons:3768,iconFamilies:13,kits:48,systems:48,components:70,effects:41,interactions:82,chartTypes:26,diagramTypes:18,flowTemplates:24,devices:8,backgrounds:80,animationStudies:74,tours:6,entries:387,motionGraphics:28,appScreens:8};
+ const FALLBACK={siteTemplates:26,siteSections:56,photos:82,icons:3768,iconFamilies:13,kits:48,systems:48,components:70,effects:41,interactions:86,chartTypes:26,diagramTypes:18,flowTemplates:24,devices:8,backgrounds:80,animationStudies:74,tours:6,entries:387,motionGraphics:28,appScreens:8};
  const TOOLS=[
   {id:'site-builder',group:'Make',name:'Site builder',href:'page-builder.html',film:'paper-bird',
    blurb:'Build a multi-page site from {siteTemplates} templates, {siteSections} sections and {photos} photographs; export HTML or publish it.'},
@@ -25,7 +25,7 @@
   {id:'app-interfaces',group:'Make',name:'App interfaces',href:'app-interfaces.html',film:'light-mesh',
    blurb:'{appScreens} finished app and tool screens: dashboards, data tables, boards, inboxes, chat and settings. Light and dark, one HTML file each.'},
   {id:'interactions',group:'Make',name:'UI interactions',href:'interactions.html',film:'golden-dove',
-   blurb:'The finished pieces: {interactions} ready-made interactions and page sections, one HTML file each. Come here to take one and use it.'},
+   blurb:'{interactions} modern interactions to embed in sites and apps. Tune the new ones with live sliders, then copy one HTML file with your settings baked in.'},
   {id:'backgrounds',group:'Make',name:'Background generator',href:'atlas.html#backgrounds',film:'petal-swirl',
    blurb:'Gradients, light and grain: {backgrounds} backgrounds you can tune and export at 4K or as a loop.'},
   {id:'effects',group:'Library',name:'Landing effects lab',href:'atlas.html#effects',film:'light-ribbons',
