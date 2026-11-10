@@ -1,0 +1,97 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AI assistant chat</title>
+<style>/* Tokens: change these to restyle the whole screen. --ac is the brand colour. */
+:root{--bg:#F5F6FA;--panel:#FFFFFF;--ink:#141824;--mute:#5F677B;--line:#E3E6EE;--soft:#EEF0F6;--ac:#4F46E5;--ac-ink:#FFFFFF;--ac-soft:#EEF0FF;--ok:#12805C;--warn:#96560A;--bad:#C2362B;--ok-soft:#E3F5EC;--warn-soft:#FCF0D9;--bad-soft:#FBE6E3;--r:12px;--sh:0 1px 2px rgba(16,24,40,.05),0 8px 24px -16px rgba(16,24,40,.22);--font:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:light}
+html[data-theme=dark]{--bg:#0E1117;--panel:#161A23;--ink:#ECEEF4;--mute:#9AA3B5;--line:#272D3A;--soft:#1D2230;--ac:#928CFF;--ac-ink:#0E1117;--ac-soft:#23244B;--ok:#4ADE9B;--warn:#F0B454;--bad:#FF8B80;--ok-soft:#12301F;--warn-soft:#33260C;--bad-soft:#3A1714;--sh:0 1px 2px rgba(0,0,0,.45);color-scheme:dark}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:14px/1.5 var(--font);-webkit-font-smoothing:antialiased}
+h1,h2,h3,p{margin:0}h1{font-size:20px;line-height:1.2;letter-spacing:-.01em}h2{font-size:15px}h3{font-size:13px}
+a{color:inherit}button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px;border-radius:6px}
+[hidden]{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.mute{color:var(--mute)}.num{font-variant-numeric:tabular-nums}
+.ic{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:36px;padding:0 13px;border-radius:9px;border:1px solid var(--line);background:var(--panel);font-weight:600;font-size:13px;white-space:nowrap;text-decoration:none}
+.btn:hover{background:var(--soft)}.btn.pri{background:var(--ac);border-color:var(--ac);color:var(--ac-ink)}.btn.pri:hover{filter:brightness(1.08)}
+.btn.ghost{border-color:transparent;background:none}.btn.ghost:hover{background:var(--soft)}.btn.sq{width:36px;padding:0}.btn:disabled{opacity:.5;cursor:default}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh)}
+.pad{padding:16px}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:99px;font-size:12px;font-weight:600;background:var(--soft);color:var(--mute);white-space:nowrap}
+.badge.ok{background:var(--ok-soft);color:var(--ok)}.badge.warn{background:var(--warn-soft);color:var(--warn)}.badge.bad{background:var(--bad-soft);color:var(--bad)}.badge.ac{background:var(--ac-soft);color:var(--ac)}
+.badge i{width:6px;height:6px;border-radius:50%;background:currentColor}
+.av{display:grid;place-items:center;flex:none;width:30px;height:30px;border-radius:50%;background:var(--ac-soft);color:var(--ac);font-size:11.5px;font-weight:700}
+.in{min-height:36px;padding:0 11px;border:1px solid var(--line);border-radius:9px;background:var(--panel);min-width:0}
+.in::placeholder{color:var(--mute)}
+.seg{display:inline-flex;padding:3px;border-radius:10px;background:var(--soft);gap:2px}
+.seg button{min-height:30px;padding:0 11px;border:0;border-radius:8px;background:none;font-size:13px;font-weight:600;color:var(--mute)}
+.seg button[aria-pressed=true],.seg button[aria-selected=true]{background:var(--panel);color:var(--ink);box-shadow:0 1px 2px rgba(16,24,40,.12)}
+.row{display:flex;align-items:center;gap:10px}.sp{margin-left:auto}
+table{border-collapse:collapse;width:100%}th{font-size:12px;font-weight:600;color:var(--mute);text-align:left}th,td{padding:10px 14px;border-bottom:1px solid var(--line);white-space:nowrap}tbody tr:last-child td{border-bottom:0}
+.scroll{overflow:auto}
+/* App shell: sidebar, top bar, content */
+.app{display:grid;grid-template-columns:232px minmax(0,1fr);height:100%}
+.side{display:flex;flex-direction:column;gap:4px;padding:14px 10px;background:var(--panel);border-right:1px solid var(--line);overflow:auto}
+.logo{display:flex;align-items:center;gap:9px;padding:4px 8px 14px;font-weight:700;font-size:15px}
+.logo span{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--ac);color:var(--ac-ink)}
+.side a{display:flex;align-items:center;gap:10px;min-height:36px;padding:0 10px;border-radius:9px;color:var(--mute);font-weight:500;text-decoration:none}
+.side a:hover{background:var(--soft);color:var(--ink)}.side a[aria-current=page]{background:var(--ac-soft);color:var(--ac);font-weight:600}
+.side a b{margin-left:auto;font-size:11.5px;padding:0 7px;border-radius:99px;background:var(--soft)}
+.side .who{margin-top:auto;display:flex;align-items:center;gap:9px;padding:10px 8px 2px;border-top:1px solid var(--line);font-size:13px}
+.side .who small{display:block;color:var(--mute);font-size:12px}
+.work{display:flex;flex-direction:column;min-width:0;min-height:0}
+.top{display:flex;align-items:center;gap:10px;padding:10px 20px;border-bottom:1px solid var(--line);background:var(--panel)}
+.top .find{position:relative;flex:1;max-width:340px}.top .find .ic{position:absolute;left:10px;top:9px;color:var(--mute)}.top .find input{width:100%;padding-left:34px}
+.main{flex:1;min-height:0;overflow:auto;padding:20px}
+.head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}.head p{color:var(--mute);font-size:13px}
+#menu{display:none}
+@media(max-width:860px){.app{grid-template-columns:1fr}#menu{display:inline-flex}.side{position:fixed;inset:0 auto 0 0;width:250px;z-index:30;transform:translateX(-102%);transition:transform .2s;box-shadow:0 0 0 100vmax rgba(0,0,0,0)}.side.open{transform:none;box-shadow:0 0 0 100vmax rgba(10,12,20,.45)}.top{padding:10px 14px}.main{padding:14px}.top .find{display:none}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+.main{padding:0!important;overflow:hidden!important}
+.chat{display:grid;grid-template-columns:240px minmax(0,1fr);height:100%}
+.hist{border-right:1px solid var(--line);padding:14px 10px;overflow:auto}.hist h3{padding:14px 10px 6px;color:var(--mute);font-size:11.5px;text-transform:uppercase;letter-spacing:.08em}
+.hist button.c{display:block;width:100%;text-align:left;border:0;background:none;border-radius:8px;padding:8px 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--mute)}.hist button.c[aria-current=true]{background:var(--soft);color:var(--ink);font-weight:600}
+.col{display:flex;flex-direction:column;min-height:0;min-width:0}
+.thread{flex:1;overflow:auto;padding:24px 20px;display:flex;flex-direction:column;gap:18px}.thread>*{width:100%;max-width:720px;margin-inline:auto}
+.u{display:flex;justify-content:flex-end}.u p{background:var(--ac);color:var(--ac-ink);padding:10px 14px;border-radius:14px 14px 3px 14px;max-width:80%;white-space:pre-wrap}
+.a{display:grid;grid-template-columns:30px 1fr;gap:12px}.a .txt{display:grid;gap:10px;line-height:1.65}.a .av{background:var(--ink);color:var(--bg)}
+.a .tools{display:flex;gap:6px;margin-top:4px}.a .tools button{min-height:28px;font-size:12px;padding:0 9px}
+.caret::after{content:"";display:inline-block;width:7px;height:15px;background:var(--ac);margin-left:3px;vertical-align:-2px;animation:bl 1s steps(2) infinite}@keyframes bl{50%{opacity:0}}
+.empty{margin:auto;text-align:center;display:grid;gap:16px}.empty h1{font-size:24px}.sug{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;text-align:left}.sug button{padding:12px 14px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);display:grid;gap:2px}.sug button:hover{border-color:var(--ac)}.sug small{color:var(--mute)}
+.comp{padding:0 20px 18px}.box{max-width:720px;margin:0 auto;border:1px solid var(--line);border-radius:16px;background:var(--panel);box-shadow:var(--sh);padding:10px 12px}.box:focus-within{border-color:var(--ac)}
+.box textarea{width:100%;border:0;outline:0;background:none;resize:none;max-height:160px;min-height:24px;line-height:1.5}.box select{border:0;background:var(--soft);border-radius:8px;min-height:30px;padding:0 8px;font-size:12.5px}
+.note{text-align:center;font-size:12px;color:var(--mute);margin-top:8px}
+@media(max-width:900px){.chat{grid-template-columns:1fr}.hist{display:none}.sug{grid-template-columns:1fr}}
+</style>
+<body>
+<div class="app"><nav class="side" aria-label="Main"><div class="logo"><span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 3 5 13.500h6L10 21l8-10.500h-6Z"/></svg></span>Northwind</div><a href="#" ><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11 12 4l8 7v9h-5v-6H9v6H4Z"/></svg>Overview</a><a href="#" ><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V4M4 20h16M8 16v-5M12 16V8M16 16v-3"/></svg>Analytics</a><a href="#" ><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c1-3.6 3.4-5.5 6.5-5.5s5.500 1.900 6.500 5.500M16 4.800a3.500 3.500 0 0 1 0 6.400M18 14.800c1.700.8 2.900 2.500 3.500 5.200"/></svg>Customers</a><a href="#" ><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13 6.500 5h11L20 13v6H4Z"/><path d="M4 13h5l1 2.500h4l1-2.500h5"/></svg>Inbox<b>12</b></a><a href="#" ><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9.300 4v16M14.700 4v10"/></svg>Projects</a><a href="#" aria-current="page"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4Z"/></svg>Assistant</a><a href="#" ><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>Calendar</a><a href="#" ><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h7l2 2h9v11H3Z"/></svg>Files</a><a href="#" ><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10.500h18"/></svg>Billing</a><a href="#" ><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.600 5.600l2.100 2.100M16.300 16.300l2.100 2.100M5.600 18.400l2.100-2.100M16.300 7.700l2.100-2.100"/></svg>Settings</a><div class="who"><span class="av">AK</span><span>Amara Khan<small>Admin</small></span></div></nav>
+<div class="work"><header class="top"><button class="btn sq ghost" id="menu" aria-label="Menu" aria-expanded="false"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><label class="find"><span class="sr">Search</span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.500"/><path d="m16 16 4.500 4.500"/></svg><input class="in" type="search" placeholder="Search conversations"></label><span class="sp"></span><button class="btn sq ghost" id="theme" aria-pressed="false" aria-label="Switch to dark theme"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.500A8 8 0 0 1 9.500 4a8 8 0 1 0 10.500 10.500Z"/></svg></button><button class="btn sq ghost" aria-label="Notifications"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4Z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></button><span class="av" aria-label="Your account">AK</span></header>
+<main class="main" id="main"><div class="chat"><aside class="hist" aria-label="Conversations"><button class="btn pri" id="new" style="width:100%">+ New chat</button><h3>Today</h3><button class="c" aria-current="true" id="cur">New conversation</button><button class="c">Q4 churn analysis</button><h3>Earlier</h3><button class="c">Rewrite onboarding emails</button><button class="c">SQL for weekly cohorts</button><button class="c">Name ideas for the launch</button></aside>
+<div class="col"><div class="thread" id="thread" role="log" aria-label="Conversation" aria-live="polite"></div>
+<form class="comp" id="f"><div class="box"><label class="sr" for="t">Message the assistant</label><textarea id="t" rows="1" placeholder="Ask anything about your workspace…"></textarea><div class="row"><select aria-label="Model"><option>Balanced</option><option>Fast</option><option>Thorough</option></select><span class="sp"></span><button class="btn pri" id="send">Send</button></div></div><p class="note">The assistant can make mistakes. Check important figures.</p></form></div></div></main></div></div>
+<script>/* Shared helpers: element lookup, theme switch (add #dark to the address to start dark), mobile menu. */
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const root=document.documentElement;
+function setTheme(dark){root.dataset.theme=dark?'dark':'light';const b=$('#theme');if(b){b.setAttribute('aria-pressed',dark);b.setAttribute('aria-label',dark?'Switch to light theme':'Switch to dark theme')}document.dispatchEvent(new Event('themechange'))}
+setTheme(/dark/.test(location.hash));addEventListener('hashchange',()=>setTheme(/dark/.test(location.hash)));
+$('#theme')?.addEventListener('click',()=>setTheme(root.dataset.theme!=='dark'));
+{const m=$('#menu'),s=$('.side');if(m&&s){const set=o=>{s.classList.toggle('open',o);m.setAttribute('aria-expanded',o)};m.addEventListener('click',()=>set(!s.classList.contains('open')));addEventListener('keydown',e=>{if(e.key==='Escape')set(false)});document.addEventListener('click',e=>{if(s.classList.contains('open')&&!s.contains(e.target)&&!m.contains(e.target))set(false)})}}
+function toast(t){let n=$('#toast');if(!n){n=document.createElement('div');n.id='toast';n.setAttribute('role','status');n.style.cssText='position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 14px;border-radius:10px;font-size:13px;font-weight:600;z-index:60;transition:opacity .2s;max-width:calc(100vw - 32px)';document.body.append(n)}n.textContent=t;n.style.opacity=1;clearTimeout(toast.t);toast.t=setTimeout(()=>n.style.opacity=0,2000)}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const SUG=[['Summarise this week','Sign-ups, revenue and anything unusual'],['Find churn risks','Accounts whose usage dropped this month'],['Draft a release note','For the new board keyboard shortcuts'],['Explain a metric','What counts as an active customer?']];
+const REPLY={default:['Here is what I found in your workspace.','Sign-ups are up 8.7% on last month, mostly from search. Revenue is at 80% of the November target with twenty days still to run, so you are slightly ahead of pace.','Two things look unusual: refunds rose 1.4%, concentrated in one product, and average session time dipped on the pricing page after Tuesday’s change.','Would you like a chart of either, or a list of the affected orders?'],churn:['I looked for accounts on a paid plan whose weekly activity fell by more than half.','Three stand out: Tidewater (Business) has had no logins for 11 days, Paper Boat (Team) removed four seats, and Halcyon (Starter) exported all its projects yesterday.','A short personal check-in tends to work best in the first two weeks. I can draft those three emails if useful.']};
+const thread=$('#thread'),ta=$('#t'),send=$('#send'),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;let timer=null;
+function empty(){thread.innerHTML=`<div class="empty"><h1>How can I help, Amara?</h1><p class="mute">Ask a question, or start from one of these.</p><div class="sug">${SUG.map(([a,b])=>`<button type="button"><b>${a}</b><small>${b}</small></button>`).join('')}</div></div>`;$('#cur').textContent='New conversation'}
+function done(el,full){clearInterval(timer);timer=null;send.textContent='Send';const t=el.querySelector('.txt');t.classList.remove('caret');if(full)t.innerHTML=full.map(p=>`<p>${p}</p>`).join('');el.insertAdjacentHTML('beforeend','<span></span><div class="tools"><button class="btn" data-copy>Copy</button><button class="btn" data-redo>Try again</button></div>')}
+function ask(q){if(timer||!q.trim())return;$('.empty')?.remove();if($('#cur').textContent==='New conversation')$('#cur').textContent=q.slice(0,34);
+ thread.insertAdjacentHTML('beforeend',`<div class="u"><p>${esc(q)}</p></div><div class="a"><span class="av">AI</span><div class="txt caret" aria-busy="true"></div></div>`);const el=thread.lastChild,txt=el.querySelector('.txt'),paras=/churn|risk/i.test(q)?REPLY.churn:REPLY.default;ta.value='';grow();
+ if(calm){done(el,paras);txt.removeAttribute('aria-busy');thread.scrollTop=thread.scrollHeight;return}
+ const words=paras.flatMap((p,i)=>p.split(' ').map((w,j)=>[i,w]));let n=0;send.textContent='Stop';
+ timer=setInterval(()=>{n+=2;const out=paras.map(()=>[]);words.slice(0,n).forEach(([i,w])=>out[i].push(w));txt.innerHTML=out.filter(o=>o.length).map(o=>`<p>${o.join(' ')}</p>`).join('');thread.scrollTop=thread.scrollHeight;if(n>=words.length){txt.removeAttribute('aria-busy');done(el)}},45)}
+function grow(){ta.style.height='auto';ta.style.height=Math.min(160,ta.scrollHeight)+'px'}
+ta.addEventListener('input',grow);ta.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('#f').requestSubmit()}});
+$('#f').addEventListener('submit',e=>{e.preventDefault();if(timer){const el=thread.lastChild;el.querySelector('.txt').removeAttribute('aria-busy');done(el);toast('Stopped');return}ask(ta.value)});
+thread.addEventListener('click',e=>{const s=e.target.closest('.sug button');if(s)return ask(s.querySelector('b').textContent);if(e.target.matches('[data-copy]')){const t=e.target.closest('.a').querySelector('.txt').innerText;navigator.clipboard?.writeText(t).then(()=>toast('Answer copied'),()=>toast('Select the text to copy it'))}else if(e.target.matches('[data-redo]')){const a=e.target.closest('.a'),q=a.previousElementSibling.textContent;a.previousElementSibling.remove();a.remove();ask(q)}});
+$('#new').onclick=()=>{clearInterval(timer);timer=null;send.textContent='Send';empty();ta.focus()};empty();
+</script>
+</body>
+</html>

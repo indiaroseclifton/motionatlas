@@ -1,0 +1,41 @@
+<!--META {"o":3,"t":"Operations monitor","cat":"Dashboards","tone":"dark","hash":"dark","d":"A live status board: service health, latency and error charts that keep moving, regional status and a streaming event log you can pause.","how":"A timer adds one reading a second to rolling arrays and redraws the SVG charts from them. Service rows carry their own sparkline and a status computed from thresholds. The log is a capped list in a polite live region that stops updating while paused.","use":"Infrastructure status, DevOps tools, IoT fleets, call-centre wallboards, trading and logistics screens.","p":"Build a live operations monitor as one HTML file with no libraries, inside an app shell with a sidebar and top bar, dark by default with a light option. Content: a header with an overall status pill (All systems normal / Degraded), a Live / Paused toggle button and a time range label; four metric tiles (requests per second, p95 latency, error rate, uptime) that update every second; two SVG line charts (latency and error rate) drawn from rolling 60-point arrays; a Services table with name, status dot and word, a sparkline, latency and a region; a row of region cards with a status bar; and an event log that prepends a line every few seconds with a timestamp, level badge and message, capped at 40 lines, inside aria-live=polite. Pausing stops the timer. Respect prefers-reduced-motion by updating every five seconds instead. All colours are CSS variables."}-->
+<style>/*BASE*/
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:14px}.tile b{display:block;font-size:26px;letter-spacing:-.02em;line-height:1.15}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-bottom:14px}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ok);margin-right:7px}.dot.warn{background:var(--warn)}.dot.bad{background:var(--bad)}
+.live i{animation:pulse 1.6s infinite}@keyframes pulse{50%{opacity:.3}}
+.regions{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:14px 0}.regions div{padding:12px}.regions small{color:var(--mute);display:block}
+.up{display:flex;gap:2px;margin-top:8px}.up i{flex:1;height:18px;border-radius:2px;background:var(--ok)}.up i.w{background:var(--warn)}.up i.b{background:var(--bad)}
+.log{font:12.5px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;max-height:230px;overflow:auto;margin:0;padding:0 16px 14px;list-style:none}.log li{display:flex;gap:10px;padding:3px 0;border-bottom:1px dashed var(--line)}.log time{color:var(--mute);flex:none}.log .badge{font-size:10.5px;flex:none;min-width:48px;justify-content:center}
+@media(max-width:900px){.two{grid-template-columns:1fr}}
+</style>
+<body>
+<!--SHELL Overview|Search services, hosts, incidents-->
+<div class="head"><div><h1>Operations</h1><p>Production · last 60 seconds</p></div><span class="badge ok live" id="overall"><i></i>All systems normal</span><span class="sp"></span><button class="btn" id="pause" aria-pressed="false">Pause</button></div>
+<section class="tiles" aria-label="Live metrics" id="tiles"></section>
+<div class="two"><section class="card pad"><h2 style="margin-bottom:8px">p95 latency</h2><div id="lat"></div></section><section class="card pad"><h2 style="margin-bottom:8px">Error rate</h2><div id="err"></div></section></div>
+<section class="card"><div class="pad" style="padding-bottom:6px"><h2>Services</h2></div><div class="scroll"><table><thead><tr><th>Service</th><th>Status</th><th>Last minute</th><th>Latency</th><th>Region</th></tr></thead><tbody id="svc"></tbody></table></div></section>
+<section class="regions" id="regions" aria-label="Regions"></section>
+<section class="card"><div class="pad row" style="padding-bottom:8px"><h2>Event log</h2><span class="sp"></span><span class="mute" style="font-size:12.5px" id="logn"></span></div><ul class="log" id="log" aria-live="polite" aria-label="Event log"></ul></section>
+<!--/SHELL-->
+<script>/*BASEJS*/
+/*CHARTJS*/
+const N=60,rnd=(a,b)=>a+Math.random()*(b-a),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let lat=Array.from({length:N},(_,i)=>180+40*Math.sin(i/6)+rnd(-15,15)),err=Array.from({length:N},()=>rnd(.1,.5)),rps=4200,paused=false,spike=0;
+const SVC=[['api-gateway','eu-west'],['auth','eu-west'],['billing','us-east'],['search','us-east'],['media-worker','ap-south'],['notifications','eu-west']].map(([n,r])=>({n,r,d:Array.from({length:20},()=>rnd(40,120))}));
+const REG=[['eu-west','Dublin'],['us-east','Virginia'],['ap-south','Mumbai'],['sa-east','São Paulo']].map(([id,c])=>({id,c,up:Array.from({length:24},()=>Math.random()<.04?'w':'')}));
+const MSG=[['info','Deploy 2026.11.10-3 rolled out to 25% of api-gateway'],['info','Autoscaler added 2 nodes to search'],['warn','Queue depth above 500 on media-worker'],['info','Certificate renewed for *.northwind.app'],['warn','Slow query on billing: 1.8 s'],['error','3 failed health checks on notifications'],['info','Cache hit ratio 96.2%'],['info','Backup of primary database completed']];
+const labels=Array.from({length:N},(_,i)=>(N-1-i)+'s');
+function draw(){const l=lat[N-1],e=err[N-1],st=e>1.5||l>320?'bad':e>.9||l>260?'warn':'ok';
+ $('#tiles').innerHTML=[['Requests per second',Math.round(rps).toLocaleString('en-GB'),''],['p95 latency',Math.round(l)+' ms',l>260?'warn':''],['Error rate',e.toFixed(2)+'%',e>.9?'bad':''],['Uptime, 30 days','99.98%','']].map(([n,v,k])=>`<article class="card pad tile"><span class="mute">${n}</span><b class="num" style="${k?'color:var(--'+k+')':''}">${v}</b></article>`).join('');
+ const o=$('#overall');o.className='badge live '+st;o.innerHTML='<i></i>'+(st==='ok'?'All systems normal':st==='warn'?'Degraded performance':'Incident in progress');
+ lineChart($('#lat'),{labels,label:'p95 latency over the last minute',fmt:v=>Math.round(v)+' ms',sets:[{name:'p95',color:'var(--ac)',data:lat}]});
+ lineChart($('#err'),{labels,label:'Error rate over the last minute',fmt:v=>(+v).toFixed(1)+'%',sets:[{name:'Errors',color:'var(--bad)',data:err}]});
+ $('#svc').innerHTML=SVC.map(s=>{const v=s.d[s.d.length-1],k=v>170?'bad':v>130?'warn':'ok';return `<tr><td><b>${s.n}</b></td><td><span class="dot ${k==='ok'?'':k}"></span>${k==='ok'?'Healthy':k==='warn'?'Slow':'Failing'}</td><td>${spark(s.d,'var(--'+(k==='ok'?'ac':k)+')')}</td><td class="num">${Math.round(v)} ms</td><td class="mute">${s.r}</td></tr>`}).join('');
+ $('#regions').innerHTML=REG.map(r=>`<div class="card"><b>${r.id}</b><small>${r.c}</small><div class="up" role="img" aria-label="Last 24 hours: ${r.up.filter(x=>x).length} hours with warnings">${r.up.map(x=>`<i class="${x}"></i>`).join('')}</div></div>`).join('')}
+function log(){const [lv,m]=MSG[Math.floor(Math.random()*MSG.length)],li=document.createElement('li'),t=new Date().toLocaleTimeString('en-GB');li.innerHTML=`<time>${t}</time><span class="badge ${lv==='error'?'bad':lv==='warn'?'warn':''}">${lv}</span><span>${m}</span>`;const L=$('#log');L.prepend(li);while(L.children.length>40)L.lastChild.remove();$('#logn').textContent=L.children.length+' events'}
+function tick(){if(paused)return;if(Math.random()<.04)spike=8;const s=spike>0?(spike--,1):0;lat.push(Math.max(120,lat[N-1]*.7+(190+s*150)*.3+rnd(-18,18)));lat.shift();err.push(Math.max(.05,err[N-1]*.7+(.3+s*1.6)*.3+rnd(-.1,.1)));err.shift();rps=rps*.9+rnd(3800,4700)*.1;SVC.forEach((v,i)=>{v.d.push(Math.max(30,v.d[v.d.length-1]*.6+rnd(40,110)*.4+(s&&i===4?90:0)));v.d.shift()});draw();if(Math.random()<.35)log()}
+if(!location.hash)setTheme(true);draw();for(let i=0;i<5;i++)log();setInterval(tick,calm?5000:1000);
+$('#pause').onclick=e=>{paused=!paused;e.target.setAttribute('aria-pressed',paused);e.target.textContent=paused?'Resume':'Pause';toast(paused?'Updates paused':'Live again')};
+</script>
+</body>

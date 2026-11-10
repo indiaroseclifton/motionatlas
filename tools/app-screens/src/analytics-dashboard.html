@@ -1,0 +1,38 @@
+<!--META {"o":1,"t":"Analytics dashboard","cat":"Dashboards","tone":"light","d":"Four headline numbers, a traffic chart you can read point by point, top pages and where visitors come from, with a date range switch.","how":"All figures come from one data object per range. Switching range redraws the KPI cards, the SVG line chart and the tables from that object. The chart is drawn by a 40-line function with a hover and arrow-key readout, so there is no chart library to load.","use":"Product analytics, marketing reports, SaaS home pages, admin overviews.","p":"Build an analytics dashboard as one HTML file with no libraries. App shell: a left sidebar with a logo, ten nav links and the signed-in user, a top bar with search, a theme switch and notifications, and a scrolling content area; under 860px the sidebar becomes an off-canvas menu. Content: a heading with a 7 days / 30 days / 90 days segmented control and an Export button; four KPI cards (visitors, sign-ups, conversion, average session) each with a value, a change badge that says up or down in words and a sparkline; a wide card with an SVG line chart comparing this period with the previous one (dashed), with gridlines, axis labels, a hover guide and tooltip, and arrow-key support when focused; a Top pages table with a share bar per row; and a Sources list with percentage bars. Keep all data in one object keyed by range and re-render everything when the range changes. Define colours as CSS variables with a dark set under html[data-theme=dark]."}-->
+<style>/*BASE*/
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-bottom:14px}
+.kpi{display:grid;gap:6px}.kpi b{font-size:26px;line-height:1.1;letter-spacing:-.02em}.kpi .row{justify-content:space-between}
+.two{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:14px;margin-top:14px}
+.legend{display:flex;gap:14px;font-size:12.5px;color:var(--mute)}.legend i{display:inline-block;width:14px;height:0;border-top:2.5px solid var(--ac);vertical-align:middle;margin-right:6px}.legend i.d{border-top-style:dashed;border-color:var(--mute)}
+.share{display:flex;align-items:center;gap:8px}.share i{height:6px;border-radius:3px;background:var(--ac);min-width:2px}
+.src li{display:grid;grid-template-columns:90px 1fr 44px;gap:10px;align-items:center;padding:7px 0}.src ul{list-style:none;margin:8px 0 0;padding:0}.src i{display:block;height:8px;border-radius:4px;background:var(--ac)}.src span:nth-child(2){background:var(--soft);border-radius:4px}
+@media(max-width:900px){.two{grid-template-columns:1fr}}
+</style>
+<body>
+<!--SHELL Analytics|Search pages, events, people-->
+<div class="head"><div><h1>Analytics</h1><p id="sub"></p></div><span class="sp"></span>
+ <div class="seg" role="group" aria-label="Date range"><button data-r="7" aria-pressed="false">7 days</button><button data-r="30" aria-pressed="true">30 days</button><button data-r="90" aria-pressed="false">90 days</button></div>
+ <button class="btn" id="exp">Export CSV</button></div>
+<section class="kpis" id="kpis" aria-label="Key figures"></section>
+<section class="card pad"><div class="row" style="margin-bottom:8px"><h2>Visitors</h2><span class="sp"></span><div class="legend"><span><i></i>This period</span><span><i class="d"></i>Previous</span></div></div><div id="line"></div><p class="mute" style="font-size:12px;margin-top:6px">Point at the chart, or focus it and use the arrow keys, to read each day.</p></section>
+<div class="two"><section class="card"><div class="pad" style="padding-bottom:6px"><h2>Top pages</h2></div><div class="scroll"><table><thead><tr><th>Page</th><th>Views</th><th>Share</th><th>Bounce</th></tr></thead><tbody id="pages"></tbody></table></div></section>
+<section class="card pad src"><h2>Sources</h2><ul id="src"></ul></section></div>
+<!--/SHELL-->
+<script>/*BASEJS*/
+/*CHARTJS*/
+/* DATA: replace with your own. One entry per date range. */
+const wave=(n,base,amp,seed)=>Array.from({length:n},(_,i)=>Math.round(base+amp*Math.sin(i/2.3+seed)+amp*.6*Math.sin(i/5+seed*2)+i*base/n*.25));
+const DATA={7:{v:[18420,9.1],s:[612,4.2],c:[3.3,-0.4],t:['2m 41s',6.0],cur:wave(7,2500,420,1),prev:wave(7,2300,380,2)},30:{v:[84210,12.4],s:[2846,8.7],c:[3.4,0.6],t:['2m 58s',-2.1],cur:wave(30,2700,520,3),prev:wave(30,2350,460,4)},90:{v:[241900,21.8],s:[7920,15.3],c:[3.3,1.1],t:['3m 04s',3.5],cur:wave(90,2600,600,5),prev:wave(90,2100,520,6)}};
+const PAGES=[['/pricing',.24,31],['/',.21,44],['/templates',.17,38],['/docs/getting-started',.12,27],['/blog/launch-week',.08,52]],SRC=[['Search',41],['Direct',27],['Social',16],['Referral',11],['Email',5]];
+const nf=n=>n.toLocaleString('en-GB');let range=30;
+function render(){const d=DATA[range];$('#sub').textContent='Last '+range+' days compared with the '+range+' days before';
+ const K=[['Visitors',nf(d.v[0]),d.v[1],d.cur],['Sign-ups',nf(d.s[0]),d.s[1],d.cur.map((v,i)=>v*(.9+i%3*.05))],['Conversion',d.c[0]+'%',d.c[1],d.prev],['Average session',d.t[0],d.t[1],d.cur.slice().reverse()]];
+ $('#kpis').innerHTML=K.map(([n,v,ch,sp])=>`<article class="card pad kpi"><span class="mute">${n}</span><b class="num">${v}</b><div class="row"><span class="badge ${ch<0?'bad':'ok'}">${ch<0?'↓':'↑'} ${Math.abs(ch)}% ${ch<0?'down':'up'}</span>${spark(sp.slice(-12),ch<0?'var(--bad)':'var(--ok)')}</div></article>`).join('');
+ const lab=Array.from({length:range},(_,i)=>{const t=new Date(2026,10,10-(range-1-i));return t.getDate()+' '+t.toLocaleString('en-GB',{month:'short'})});
+ lineChart($('#line'),{labels:lab,label:'Visitors per day, this period against the previous one',fmt:nf,sets:[{name:'This period',color:'var(--ac)',data:d.cur},{name:'Previous',color:'var(--mute)',data:d.prev}]});
+ $('#pages').innerHTML=PAGES.map(([p,sh,b])=>`<tr><td>${p}</td><td class="num">${nf(Math.round(d.v[0]*sh*1.8))}</td><td><span class="share"><i style="width:${sh*300}px"></i><span class="num mute">${Math.round(sh*100)}%</span></span></td><td class="num">${b}%</td></tr>`).join('');
+ $('#src').innerHTML=SRC.map(([n,p])=>`<li><span>${n}</span><span><i style="width:${p/41*100}%"></i></span><span class="num mute" style="text-align:right">${p}%</span></li>`).join('')}
+$$('.seg button').forEach(b=>b.onclick=()=>{range=+b.dataset.r;$$('.seg button').forEach(x=>x.setAttribute('aria-pressed',x===b));render()});
+$('#exp').onclick=()=>toast('Exported '+range+' days as CSV');render();
+</script>
+</body>

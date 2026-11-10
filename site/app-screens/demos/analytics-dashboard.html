@@ -1,0 +1,115 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Analytics dashboard</title>
+<style>/* Tokens: change these to restyle the whole screen. --ac is the brand colour. */
+:root{--bg:#F5F6FA;--panel:#FFFFFF;--ink:#141824;--mute:#5F677B;--line:#E3E6EE;--soft:#EEF0F6;--ac:#4F46E5;--ac-ink:#FFFFFF;--ac-soft:#EEF0FF;--ok:#12805C;--warn:#96560A;--bad:#C2362B;--ok-soft:#E3F5EC;--warn-soft:#FCF0D9;--bad-soft:#FBE6E3;--r:12px;--sh:0 1px 2px rgba(16,24,40,.05),0 8px 24px -16px rgba(16,24,40,.22);--font:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:light}
+html[data-theme=dark]{--bg:#0E1117;--panel:#161A23;--ink:#ECEEF4;--mute:#9AA3B5;--line:#272D3A;--soft:#1D2230;--ac:#928CFF;--ac-ink:#0E1117;--ac-soft:#23244B;--ok:#4ADE9B;--warn:#F0B454;--bad:#FF8B80;--ok-soft:#12301F;--warn-soft:#33260C;--bad-soft:#3A1714;--sh:0 1px 2px rgba(0,0,0,.45);color-scheme:dark}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:14px/1.5 var(--font);-webkit-font-smoothing:antialiased}
+h1,h2,h3,p{margin:0}h1{font-size:20px;line-height:1.2;letter-spacing:-.01em}h2{font-size:15px}h3{font-size:13px}
+a{color:inherit}button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px;border-radius:6px}
+[hidden]{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.mute{color:var(--mute)}.num{font-variant-numeric:tabular-nums}
+.ic{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:36px;padding:0 13px;border-radius:9px;border:1px solid var(--line);background:var(--panel);font-weight:600;font-size:13px;white-space:nowrap;text-decoration:none}
+.btn:hover{background:var(--soft)}.btn.pri{background:var(--ac);border-color:var(--ac);color:var(--ac-ink)}.btn.pri:hover{filter:brightness(1.08)}
+.btn.ghost{border-color:transparent;background:none}.btn.ghost:hover{background:var(--soft)}.btn.sq{width:36px;padding:0}.btn:disabled{opacity:.5;cursor:default}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh)}
+.pad{padding:16px}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:99px;font-size:12px;font-weight:600;background:var(--soft);color:var(--mute);white-space:nowrap}
+.badge.ok{background:var(--ok-soft);color:var(--ok)}.badge.warn{background:var(--warn-soft);color:var(--warn)}.badge.bad{background:var(--bad-soft);color:var(--bad)}.badge.ac{background:var(--ac-soft);color:var(--ac)}
+.badge i{width:6px;height:6px;border-radius:50%;background:currentColor}
+.av{display:grid;place-items:center;flex:none;width:30px;height:30px;border-radius:50%;background:var(--ac-soft);color:var(--ac);font-size:11.5px;font-weight:700}
+.in{min-height:36px;padding:0 11px;border:1px solid var(--line);border-radius:9px;background:var(--panel);min-width:0}
+.in::placeholder{color:var(--mute)}
+.seg{display:inline-flex;padding:3px;border-radius:10px;background:var(--soft);gap:2px}
+.seg button{min-height:30px;padding:0 11px;border:0;border-radius:8px;background:none;font-size:13px;font-weight:600;color:var(--mute)}
+.seg button[aria-pressed=true],.seg button[aria-selected=true]{background:var(--panel);color:var(--ink);box-shadow:0 1px 2px rgba(16,24,40,.12)}
+.row{display:flex;align-items:center;gap:10px}.sp{margin-left:auto}
+table{border-collapse:collapse;width:100%}th{font-size:12px;font-weight:600;color:var(--mute);text-align:left}th,td{padding:10px 14px;border-bottom:1px solid var(--line);white-space:nowrap}tbody tr:last-child td{border-bottom:0}
+.scroll{overflow:auto}
+/* App shell: sidebar, top bar, content */
+.app{display:grid;grid-template-columns:232px minmax(0,1fr);height:100%}
+.side{display:flex;flex-direction:column;gap:4px;padding:14px 10px;background:var(--panel);border-right:1px solid var(--line);overflow:auto}
+.logo{display:flex;align-items:center;gap:9px;padding:4px 8px 14px;font-weight:700;font-size:15px}
+.logo span{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--ac);color:var(--ac-ink)}
+.side a{display:flex;align-items:center;gap:10px;min-height:36px;padding:0 10px;border-radius:9px;color:var(--mute);font-weight:500;text-decoration:none}
+.side a:hover{background:var(--soft);color:var(--ink)}.side a[aria-current=page]{background:var(--ac-soft);color:var(--ac);font-weight:600}
+.side a b{margin-left:auto;font-size:11.5px;padding:0 7px;border-radius:99px;background:var(--soft)}
+.side .who{margin-top:auto;display:flex;align-items:center;gap:9px;padding:10px 8px 2px;border-top:1px solid var(--line);font-size:13px}
+.side .who small{display:block;color:var(--mute);font-size:12px}
+.work{display:flex;flex-direction:column;min-width:0;min-height:0}
+.top{display:flex;align-items:center;gap:10px;padding:10px 20px;border-bottom:1px solid var(--line);background:var(--panel)}
+.top .find{position:relative;flex:1;max-width:340px}.top .find .ic{position:absolute;left:10px;top:9px;color:var(--mute)}.top .find input{width:100%;padding-left:34px}
+.main{flex:1;min-height:0;overflow:auto;padding:20px}
+.head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}.head p{color:var(--mute);font-size:13px}
+#menu{display:none}
+@media(max-width:860px){.app{grid-template-columns:1fr}#menu{display:inline-flex}.side{position:fixed;inset:0 auto 0 0;width:250px;z-index:30;transform:translateX(-102%);transition:transform .2s;box-shadow:0 0 0 100vmax rgba(0,0,0,0)}.side.open{transform:none;box-shadow:0 0 0 100vmax rgba(10,12,20,.45)}.top{padding:10px 14px}.main{padding:14px}.top .find{display:none}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-bottom:14px}
+.kpi{display:grid;gap:6px}.kpi b{font-size:26px;line-height:1.1;letter-spacing:-.02em}.kpi .row{justify-content:space-between}
+.two{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:14px;margin-top:14px}
+.legend{display:flex;gap:14px;font-size:12.5px;color:var(--mute)}.legend i{display:inline-block;width:14px;height:0;border-top:2.5px solid var(--ac);vertical-align:middle;margin-right:6px}.legend i.d{border-top-style:dashed;border-color:var(--mute)}
+.share{display:flex;align-items:center;gap:8px}.share i{height:6px;border-radius:3px;background:var(--ac);min-width:2px}
+.src li{display:grid;grid-template-columns:90px 1fr 44px;gap:10px;align-items:center;padding:7px 0}.src ul{list-style:none;margin:8px 0 0;padding:0}.src i{display:block;height:8px;border-radius:4px;background:var(--ac)}.src span:nth-child(2){background:var(--soft);border-radius:4px}
+@media(max-width:900px){.two{grid-template-columns:1fr}}
+</style>
+<body>
+<div class="app"><nav class="side" aria-label="Main"><div class="logo"><span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 3 5 13.500h6L10 21l8-10.500h-6Z"/></svg></span>Northwind</div><a href="#" ><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11 12 4l8 7v9h-5v-6H9v6H4Z"/></svg>Overview</a><a href="#" aria-current="page"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V4M4 20h16M8 16v-5M12 16V8M16 16v-3"/></svg>Analytics</a><a href="#" ><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c1-3.6 3.4-5.5 6.5-5.5s5.500 1.900 6.500 5.500M16 4.800a3.500 3.500 0 0 1 0 6.400M18 14.800c1.700.8 2.900 2.500 3.500 5.200"/></svg>Customers</a><a href="#" ><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13 6.500 5h11L20 13v6H4Z"/><path d="M4 13h5l1 2.500h4l1-2.500h5"/></svg>Inbox<b>12</b></a><a href="#" ><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9.300 4v16M14.700 4v10"/></svg>Projects</a><a href="#" ><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4Z"/></svg>Assistant</a><a href="#" ><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>Calendar</a><a href="#" ><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h7l2 2h9v11H3Z"/></svg>Files</a><a href="#" ><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10.500h18"/></svg>Billing</a><a href="#" ><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.600 5.600l2.100 2.100M16.300 16.300l2.100 2.100M5.600 18.400l2.100-2.100M16.300 7.700l2.100-2.100"/></svg>Settings</a><div class="who"><span class="av">AK</span><span>Amara Khan<small>Admin</small></span></div></nav>
+<div class="work"><header class="top"><button class="btn sq ghost" id="menu" aria-label="Menu" aria-expanded="false"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><label class="find"><span class="sr">Search</span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.500"/><path d="m16 16 4.500 4.500"/></svg><input class="in" type="search" placeholder="Search pages, events, people"></label><span class="sp"></span><button class="btn sq ghost" id="theme" aria-pressed="false" aria-label="Switch to dark theme"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.500A8 8 0 0 1 9.500 4a8 8 0 1 0 10.500 10.500Z"/></svg></button><button class="btn sq ghost" aria-label="Notifications"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4Z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></button><span class="av" aria-label="Your account">AK</span></header>
+<main class="main" id="main"><div class="head"><div><h1>Analytics</h1><p id="sub"></p></div><span class="sp"></span>
+ <div class="seg" role="group" aria-label="Date range"><button data-r="7" aria-pressed="false">7 days</button><button data-r="30" aria-pressed="true">30 days</button><button data-r="90" aria-pressed="false">90 days</button></div>
+ <button class="btn" id="exp">Export CSV</button></div>
+<section class="kpis" id="kpis" aria-label="Key figures"></section>
+<section class="card pad"><div class="row" style="margin-bottom:8px"><h2>Visitors</h2><span class="sp"></span><div class="legend"><span><i></i>This period</span><span><i class="d"></i>Previous</span></div></div><div id="line"></div><p class="mute" style="font-size:12px;margin-top:6px">Point at the chart, or focus it and use the arrow keys, to read each day.</p></section>
+<div class="two"><section class="card"><div class="pad" style="padding-bottom:6px"><h2>Top pages</h2></div><div class="scroll"><table><thead><tr><th>Page</th><th>Views</th><th>Share</th><th>Bounce</th></tr></thead><tbody id="pages"></tbody></table></div></section>
+<section class="card pad src"><h2>Sources</h2><ul id="src"></ul></section></div></main></div></div>
+<script>/* Shared helpers: element lookup, theme switch (add #dark to the address to start dark), mobile menu. */
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const root=document.documentElement;
+function setTheme(dark){root.dataset.theme=dark?'dark':'light';const b=$('#theme');if(b){b.setAttribute('aria-pressed',dark);b.setAttribute('aria-label',dark?'Switch to light theme':'Switch to dark theme')}document.dispatchEvent(new Event('themechange'))}
+setTheme(/dark/.test(location.hash));addEventListener('hashchange',()=>setTheme(/dark/.test(location.hash)));
+$('#theme')?.addEventListener('click',()=>setTheme(root.dataset.theme!=='dark'));
+{const m=$('#menu'),s=$('.side');if(m&&s){const set=o=>{s.classList.toggle('open',o);m.setAttribute('aria-expanded',o)};m.addEventListener('click',()=>set(!s.classList.contains('open')));addEventListener('keydown',e=>{if(e.key==='Escape')set(false)});document.addEventListener('click',e=>{if(s.classList.contains('open')&&!s.contains(e.target)&&!m.contains(e.target))set(false)})}}
+function toast(t){let n=$('#toast');if(!n){n=document.createElement('div');n.id='toast';n.setAttribute('role','status');n.style.cssText='position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 14px;border-radius:10px;font-size:13px;font-weight:600;z-index:60;transition:opacity .2s;max-width:calc(100vw - 32px)';document.body.append(n)}n.textContent=t;n.style.opacity=1;clearTimeout(toast.t);toast.t=setTimeout(()=>n.style.opacity=0,2000)}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+/* Small SVG charts, no library. lineChart(host,{labels,sets:[{name,color,data}],fmt}) and barChart(host,{labels,data,color,fmt}). */
+const NS='http://www.w3.org/2000/svg';
+function fitW(host){return Math.round(Math.max(300,Math.min(1100,host.clientWidth||640)))}
+addEventListener('resize',()=>{clearTimeout(fitW.t);fitW.t=setTimeout(()=>document.querySelectorAll('[data-chart]').forEach(h=>h._draw&&h._draw()),150)});
+function lineChart(host,o){host.dataset.chart=1;host._draw=()=>lineChart(host,o);const W=fitW(host),H=230,L=44,R=12,T=12,B=26,n=o.labels.length,fmt=o.fmt||(v=>v);
+ const max=Math.max(...o.sets.flatMap(s=>s.data))*1.1,x=i=>L+i*(W-L-R)/(n-1),y=v=>T+(1-v/max)*(H-T-B);
+ let g='';for(let k=0;k<=4;k++){const v=max*k/4,yy=y(v);g+=`<line x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}" stroke="var(--line)"/><text x="${L-8}" y="${yy+4}" text-anchor="end" font-size="11" fill="var(--mute)">${fmt(max>10?Math.round(v):+v.toFixed(1))}</text>`}
+ const step=Math.ceil(n/Math.max(3,Math.floor(W/90)));o.labels.forEach((l,i)=>{if(i%step===0)g+=`<text x="${x(i)}" y="${H-6}" text-anchor="middle" font-size="11" fill="var(--mute)">${l}</text>`});
+ o.sets.forEach((s,k)=>{const p=s.data.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join('');if(!k)g+=`<path d="${p}L${x(n-1)} ${H-B}L${L} ${H-B}Z" fill="${s.color}" opacity=".1"/>`;g+=`<path d="${p}" fill="none" stroke="${s.color}" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" ${k?'stroke-dasharray="5 5"':''}/>`});
+ g+=`<g id="hv" visibility="hidden"><line y1="${T}" y2="${H-B}" stroke="var(--mute)" stroke-dasharray="3 3"/>${o.sets.map(s=>`<circle r="4.5" fill="var(--panel)" stroke="${s.color}" stroke-width="2.2"/>`).join('')}</g>`;
+ host.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${o.label||'Line chart'}" style="display:block;width:100%;height:auto">${g}</svg><div class="tip" hidden></div>`;
+ host.style.position='relative';host.tabIndex=0;const svg=host.firstChild,hv=svg.querySelector('#hv'),tip=host.lastChild;let cur=-1;
+ tip.style.cssText='position:absolute;top:6px;pointer-events:none;background:var(--ink);color:var(--bg);padding:6px 9px;border-radius:8px;font-size:12px;line-height:1.45;white-space:nowrap;z-index:2';
+ const show=i=>{cur=Math.max(0,Math.min(n-1,i));hv.setAttribute('visibility','visible');hv.firstChild.setAttribute('x1',x(cur));hv.firstChild.setAttribute('x2',x(cur));[...hv.querySelectorAll('circle')].forEach((c,k)=>{c.setAttribute('cx',x(cur));c.setAttribute('cy',y(o.sets[k].data[cur]))});
+  tip.hidden=false;tip.innerHTML=`<b>${o.labels[cur]}</b><br>`+o.sets.map(s=>`${s.name}: ${fmt(s.data[cur])}`).join('<br>');const px=x(cur)/W*host.clientWidth;tip.style.left=Math.min(Math.max(px-tip.offsetWidth/2,0),host.clientWidth-tip.offsetWidth)+'px'};
+ const hide=()=>{hv.setAttribute('visibility','hidden');tip.hidden=true;cur=-1};
+ host.onpointermove=e=>{const b=svg.getBoundingClientRect();show(Math.round(((e.clientX-b.left)/b.width*W-L)/((W-L-R)/(n-1))))};host.onpointerleave=hide;host.onblur=hide;
+ host.onkeydown=e=>{if(e.key==='ArrowRight'){e.preventDefault();show(cur+1)}else if(e.key==='ArrowLeft'){e.preventDefault();show(cur<0?n-1:cur-1)}else if(e.key==='Escape')hide()}}
+function barChart(host,o){host.dataset.chart=1;host._draw=()=>barChart(host,o);const W=fitW(host),H=200,L=44,R=8,T=10,B=26,n=o.data.length,fmt=o.fmt||(v=>v),max=Math.max(...o.data)*1.1,bw=(W-L-R)/n;let g='';
+ for(let k=0;k<=3;k++){const v=max*k/3,yy=T+(1-k/3)*(H-T-B);g+=`<line x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}" stroke="var(--line)"/><text x="${L-8}" y="${yy+4}" text-anchor="end" font-size="11" fill="var(--mute)">${fmt(max>10?Math.round(v):+v.toFixed(1))}</text>`}
+ o.data.forEach((v,i)=>{const h=v/max*(H-T-B);g+=`<rect x="${L+i*bw+bw*.18}" y="${H-B-h}" width="${bw*.64}" height="${h}" rx="4" fill="${o.color||'var(--ac)'}" opacity="${o.hi!=null&&o.hi!==i?.45:1}"><title>${o.labels[i]}: ${fmt(v)}</title></rect><text x="${L+i*bw+bw/2}" y="${H-6}" text-anchor="middle" font-size="11" fill="var(--mute)">${o.labels[i]}</text>`});
+ host.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${o.label||'Bar chart'}" style="display:block;width:100%;height:auto">${g}</svg>`}
+function spark(data,color){const w=90,h=28,mx=Math.max(...data),mn=Math.min(...data);return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" aria-hidden="true"><polyline fill="none" stroke="${color||'var(--ac)'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" points="${data.map((v,i)=>(i*w/(data.length-1)).toFixed(1)+','+(h-3-(v-mn)/(mx-mn||1)*(h-6)).toFixed(1)).join(' ')}"/></svg>`}
+/* DATA: replace with your own. One entry per date range. */
+const wave=(n,base,amp,seed)=>Array.from({length:n},(_,i)=>Math.round(base+amp*Math.sin(i/2.3+seed)+amp*.6*Math.sin(i/5+seed*2)+i*base/n*.25));
+const DATA={7:{v:[18420,9.1],s:[612,4.2],c:[3.3,-0.4],t:['2m 41s',6.0],cur:wave(7,2500,420,1),prev:wave(7,2300,380,2)},30:{v:[84210,12.4],s:[2846,8.7],c:[3.4,0.6],t:['2m 58s',-2.1],cur:wave(30,2700,520,3),prev:wave(30,2350,460,4)},90:{v:[241900,21.8],s:[7920,15.3],c:[3.3,1.1],t:['3m 04s',3.5],cur:wave(90,2600,600,5),prev:wave(90,2100,520,6)}};
+const PAGES=[['/pricing',.24,31],['/',.21,44],['/templates',.17,38],['/docs/getting-started',.12,27],['/blog/launch-week',.08,52]],SRC=[['Search',41],['Direct',27],['Social',16],['Referral',11],['Email',5]];
+const nf=n=>n.toLocaleString('en-GB');let range=30;
+function render(){const d=DATA[range];$('#sub').textContent='Last '+range+' days compared with the '+range+' days before';
+ const K=[['Visitors',nf(d.v[0]),d.v[1],d.cur],['Sign-ups',nf(d.s[0]),d.s[1],d.cur.map((v,i)=>v*(.9+i%3*.05))],['Conversion',d.c[0]+'%',d.c[1],d.prev],['Average session',d.t[0],d.t[1],d.cur.slice().reverse()]];
+ $('#kpis').innerHTML=K.map(([n,v,ch,sp])=>`<article class="card pad kpi"><span class="mute">${n}</span><b class="num">${v}</b><div class="row"><span class="badge ${ch<0?'bad':'ok'}">${ch<0?'↓':'↑'} ${Math.abs(ch)}% ${ch<0?'down':'up'}</span>${spark(sp.slice(-12),ch<0?'var(--bad)':'var(--ok)')}</div></article>`).join('');
+ const lab=Array.from({length:range},(_,i)=>{const t=new Date(2026,10,10-(range-1-i));return t.getDate()+' '+t.toLocaleString('en-GB',{month:'short'})});
+ lineChart($('#line'),{labels:lab,label:'Visitors per day, this period against the previous one',fmt:nf,sets:[{name:'This period',color:'var(--ac)',data:d.cur},{name:'Previous',color:'var(--mute)',data:d.prev}]});
+ $('#pages').innerHTML=PAGES.map(([p,sh,b])=>`<tr><td>${p}</td><td class="num">${nf(Math.round(d.v[0]*sh*1.8))}</td><td><span class="share"><i style="width:${sh*300}px"></i><span class="num mute">${Math.round(sh*100)}%</span></span></td><td class="num">${b}%</td></tr>`).join('');
+ $('#src').innerHTML=SRC.map(([n,p])=>`<li><span>${n}</span><span><i style="width:${p/41*100}%"></i></span><span class="num mute" style="text-align:right">${p}%</span></li>`).join('')}
+$$('.seg button').forEach(b=>b.onclick=()=>{range=+b.dataset.r;$$('.seg button').forEach(x=>x.setAttribute('aria-pressed',x===b));render()});
+$('#exp').onclick=()=>toast('Exported '+range+' days as CSV');render();
+</script>
+</body>
+</html>

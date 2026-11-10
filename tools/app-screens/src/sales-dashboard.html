@@ -1,0 +1,44 @@
+<!--META {"o":2,"t":"Sales dashboard","cat":"Dashboards","tone":"light","d":"Revenue against target, a monthly bar chart, a channel donut, recent orders with status and a best-sellers list.","how":"The target ring and the donut are SVG circles whose dash lengths are computed from the numbers, so they redraw from data. Orders are an array rendered into a table with status badges; the status filter narrows the same array.","use":"E-commerce back offices, shop owners, sales teams, marketplace sellers.","p":"Build a sales dashboard as one HTML file with no libraries, inside an app shell (sidebar, top bar, content; sidebar becomes a slide-in menu under 860px). Content: a greeting heading with a New order button; a row of three cards: revenue this month with a progress ring towards a target, orders with average order value, and refunds; a bar chart of revenue by month with the current month highlighted; a donut chart of sales by channel with a legend that lists each share as text; a Recent orders table (order number, customer with initials avatar, items, total, status badge, date) with an All / Paid / Pending / Refunded filter; and a Best sellers list with a small bar for stock left. Draw the ring and donut with SVG circles and stroke-dasharray computed from the data. Colours are CSS variables with a dark theme."}-->
+<style>/*BASE*/
+.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.big{font-size:28px;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+.ring{display:flex;align-items:center;gap:16px}
+.two{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:14px;margin:14px 0}
+.donut{display:flex;align-items:center;gap:18px;flex-wrap:wrap}.donut ul{list-style:none;margin:0;padding:0;display:grid;gap:8px;flex:1;min-width:150px}.donut li{display:flex;align-items:center;gap:8px}.donut li i{width:10px;height:10px;border-radius:3px}.donut li b{margin-left:auto}
+.best li{display:grid;grid-template-columns:38px 1fr auto;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}.best li:last-child{border:0}.best ul{list-style:none;margin:6px 0 0;padding:0}
+.sw{width:38px;height:38px;border-radius:9px}.stock{height:5px;border-radius:3px;background:var(--soft);margin-top:5px}.stock i{display:block;height:100%;border-radius:3px;background:var(--ac)}
+@media(max-width:900px){.two{grid-template-columns:1fr}}
+</style>
+<body>
+<!--SHELL Overview|Search orders, customers, products-->
+<div class="head"><div><h1>Good morning, Amara</h1><p>Here is how the shop is doing in November.</p></div><span class="sp"></span><button class="btn pri" id="new">+ New order</button></div>
+<section class="g3" aria-label="This month">
+ <article class="card pad ring"><svg width="84" height="84" viewBox="0 0 84 84" role="img" id="ringSvg"></svg><div><span class="mute">Revenue this month</span><div class="big num" id="rev"></div><span class="mute" id="tgt"></span></div></article>
+ <article class="card pad"><span class="mute">Orders</span><div class="big num">1,284</div><div class="row" style="margin-top:6px"><span class="badge ok">↑ 8.2% up</span><span class="mute">£49.72 average order</span></div></article>
+ <article class="card pad"><span class="mute">Refunds</span><div class="big num">£1,912</div><div class="row" style="margin-top:6px"><span class="badge bad">↑ 1.4% up</span><span class="mute">38 orders, 3.0% of sales</span></div></article>
+</section>
+<div class="two"><section class="card pad"><h2 style="margin-bottom:8px">Revenue by month</h2><div id="bars"></div></section>
+<section class="card pad"><h2 style="margin-bottom:12px">Sales by channel</h2><div class="donut"><svg width="150" height="150" viewBox="0 0 42 42" role="img" aria-label="Sales by channel, listed beside the chart" id="donut"></svg><ul id="chan"></ul></div></section></div>
+<div class="two" style="grid-template-columns:minmax(0,1.9fr) minmax(0,1fr)"><section class="card"><div class="pad row" style="padding-bottom:8px;flex-wrap:wrap"><h2>Recent orders</h2><span class="sp"></span><div class="seg" role="group" aria-label="Filter orders by status" id="flt"></div></div><div class="scroll"><table><thead><tr><th>Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Date</th></tr></thead><tbody id="orders"></tbody></table></div></section>
+<section class="card pad best"><h2>Best sellers</h2><ul id="best"></ul></section></div>
+<!--/SHELL-->
+<script>/*BASEJS*/
+/*CHARTJS*/
+/* DATA */
+const REVENUE=63840,TARGET=80000,MONTHS=['Jun','Jul','Aug','Sep','Oct','Nov'],BY_MONTH=[48200,51900,47300,58800,61200,63840];
+const CHANNELS=[['Online shop',52,'var(--ac)'],['Marketplace',23,'#0EA5A4'],['Wholesale',15,'#F59E0B'],['In person',10,'#EC4899']];
+const ORDERS=[['#4821','Lena Fischer',3,128.5,'Paid','10 Nov'],['#4820','Omar Haddad',1,42,'Pending','10 Nov'],['#4819','Sofia Rossi',5,311.2,'Paid','9 Nov'],['#4818','Kenji Watanabe',2,76.9,'Refunded','9 Nov'],['#4817','Grace Mensah',1,19.5,'Paid','9 Nov'],['#4816','Noah Lindqvist',4,204,'Pending','8 Nov'],['#4815','Isla Morgan',2,88.4,'Paid','8 Nov']];
+const BEST=[['Linen throw, oat','#D9C7A8',412,.3],['Stoneware mug, moss','#7A8C6A',388,.62],['Beeswax candle set','#E6B450',301,.15],['Oak serving board','#A9764A',246,.8]];
+const gbp=n=>'£'+n.toLocaleString('en-GB',{minimumFractionDigits:n%1?2:0,maximumFractionDigits:2});
+$('#rev').textContent=gbp(REVENUE);const pc=REVENUE/TARGET;$('#tgt').textContent=Math.round(pc*100)+'% of the '+gbp(TARGET)+' target';
+{const c=2*Math.PI*36;$('#ringSvg').setAttribute('aria-label',Math.round(pc*100)+'% of target');$('#ringSvg').innerHTML=`<circle cx="42" cy="42" r="36" fill="none" stroke="var(--soft)" stroke-width="9"/><circle cx="42" cy="42" r="36" fill="none" stroke="var(--ac)" stroke-width="9" stroke-linecap="round" stroke-dasharray="${c*pc} ${c}" transform="rotate(-90 42 42)"/><text x="42" y="47" text-anchor="middle" font-size="17" font-weight="700" fill="var(--ink)">${Math.round(pc*100)}%</text>`}
+barChart($('#bars'),{labels:MONTHS,data:BY_MONTH,hi:5,fmt:v=>'£'+Math.round(v/1000)+'k',label:'Revenue by month, June to November'});
+{let off=25;$('#donut').innerHTML=CHANNELS.map(([n,p,c])=>{const s=`<circle cx="21" cy="21" r="15.9155" fill="none" stroke="${c}" stroke-width="6" stroke-dasharray="${p-1} ${101-p}" stroke-dashoffset="${off}"/>`;off-=p;return s}).join('');$('#chan').innerHTML=CHANNELS.map(([n,p,c])=>`<li><i style="background:${c}"></i>${n}<b class="num">${p}%</b></li>`).join('')}
+const KIND={Paid:'ok',Pending:'warn',Refunded:'bad'};let flt='All';
+function orders(){$('#orders').innerHTML=ORDERS.filter(o=>flt==='All'||o[4]===flt).map(o=>`<tr><td class="num"><b>${o[0]}</b></td><td><span class="row"><span class="av">${o[1].split(' ').map(w=>w[0]).join('')}</span>${o[1]}</span></td><td class="num">${o[2]}</td><td class="num">${gbp(o[3])}</td><td><span class="badge ${KIND[o[4]]}"><i></i>${o[4]}</span></td><td class="mute">${o[5]}</td></tr>`).join('')||'<tr><td colspan="6" class="mute">No orders with that status.</td></tr>'}
+$('#flt').innerHTML=['All','Paid','Pending','Refunded'].map(s=>`<button aria-pressed="${s==='All'}">${s}</button>`).join('');
+$$('#flt button').forEach(b=>b.onclick=()=>{flt=b.textContent;$$('#flt button').forEach(x=>x.setAttribute('aria-pressed',x===b));orders()});orders();
+$('#best').innerHTML=BEST.map(([n,c,sold,st])=>`<li><span class="sw" style="background:${c}"></span><span>${n}<div class="stock" role="img" aria-label="${Math.round(st*100)}% of stock left"><i style="width:${st*100}%;${st<.2?'background:var(--bad)':''}"></i></div></span><b class="num">${sold}</b></li>`).join('');
+$('#new').onclick=()=>toast('New order started');
+</script>
+</body>

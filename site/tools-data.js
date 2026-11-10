@@ -4,7 +4,7 @@
    Blurbs may carry {tokens}; they are filled from counts.json (made by tools/site-counts.mjs) so the numbers never go stale.
    Fallback numbers below are used only if counts.json cannot be read. */
 (()=>{
- const FALLBACK={siteTemplates:26,siteSections:56,photos:82,icons:3768,iconFamilies:13,kits:48,systems:48,components:70,effects:41,interactions:82,chartTypes:26,diagramTypes:18,flowTemplates:24,devices:8,backgrounds:80,animationStudies:74,tours:6,entries:387,motionGraphics:28};
+ const FALLBACK={siteTemplates:26,siteSections:56,photos:82,icons:3768,iconFamilies:13,kits:48,systems:48,components:70,effects:41,interactions:82,chartTypes:26,diagramTypes:18,flowTemplates:24,devices:8,backgrounds:80,animationStudies:74,tours:6,entries:387,motionGraphics:28,appScreens:8};
  const TOOLS=[
   {id:'site-builder',group:'Make',name:'Site builder',href:'page-builder.html',film:'paper-bird',
    blurb:'Build a multi-page site from {siteTemplates} templates, {siteSections} sections and {photos} photographs; export HTML or publish it.'},
@@ -24,6 +24,8 @@
    blurb:'Turn any picture into an animated cloud of glowing particles and export it as a single HTML file.'},
   {id:'motion-graphics',group:'Make',name:'Motion graphics studio',href:'motion-graphics.html',film:'light-ribbons',
    blurb:'{motionGraphics} animated titles, lower thirds, logo stings, transitions and counters. Change the words and colours; export video, GIF or HTML.'},
+  {id:'app-interfaces',group:'Make',name:'App interfaces',href:'app-interfaces.html',film:'light-mesh',
+   blurb:'{appScreens} finished app and tool screens: dashboards, data tables, boards, inboxes, chat and settings. Light and dark, one HTML file each.'},
   {id:'interactions',group:'Make',name:'Interactions shelf',href:'interactions.html',film:'golden-dove',
    blurb:'{interactions} showpieces, scroll stories and page sections, each a single HTML file to copy.'},
   {id:'backgrounds',group:'Make',name:'Background generator',href:'atlas.html#backgrounds',film:'petal-swirl',

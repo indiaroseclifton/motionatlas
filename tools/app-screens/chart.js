@@ -1,0 +1,23 @@
+/* Small SVG charts, no library. lineChart(host,{labels,sets:[{name,color,data}],fmt}) and barChart(host,{labels,data,color,fmt}). */
+const NS='http://www.w3.org/2000/svg';
+function fitW(host){return Math.round(Math.max(300,Math.min(1100,host.clientWidth||640)))}
+addEventListener('resize',()=>{clearTimeout(fitW.t);fitW.t=setTimeout(()=>document.querySelectorAll('[data-chart]').forEach(h=>h._draw&&h._draw()),150)});
+function lineChart(host,o){host.dataset.chart=1;host._draw=()=>lineChart(host,o);const W=fitW(host),H=230,L=44,R=12,T=12,B=26,n=o.labels.length,fmt=o.fmt||(v=>v);
+ const max=Math.max(...o.sets.flatMap(s=>s.data))*1.1,x=i=>L+i*(W-L-R)/(n-1),y=v=>T+(1-v/max)*(H-T-B);
+ let g='';for(let k=0;k<=4;k++){const v=max*k/4,yy=y(v);g+=`<line x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}" stroke="var(--line)"/><text x="${L-8}" y="${yy+4}" text-anchor="end" font-size="11" fill="var(--mute)">${fmt(max>10?Math.round(v):+v.toFixed(1))}</text>`}
+ const step=Math.ceil(n/Math.max(3,Math.floor(W/90)));o.labels.forEach((l,i)=>{if(i%step===0)g+=`<text x="${x(i)}" y="${H-6}" text-anchor="middle" font-size="11" fill="var(--mute)">${l}</text>`});
+ o.sets.forEach((s,k)=>{const p=s.data.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join('');if(!k)g+=`<path d="${p}L${x(n-1)} ${H-B}L${L} ${H-B}Z" fill="${s.color}" opacity=".1"/>`;g+=`<path d="${p}" fill="none" stroke="${s.color}" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" ${k?'stroke-dasharray="5 5"':''}/>`});
+ g+=`<g id="hv" visibility="hidden"><line y1="${T}" y2="${H-B}" stroke="var(--mute)" stroke-dasharray="3 3"/>${o.sets.map(s=>`<circle r="4.5" fill="var(--panel)" stroke="${s.color}" stroke-width="2.2"/>`).join('')}</g>`;
+ host.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${o.label||'Line chart'}" style="display:block;width:100%;height:auto">${g}</svg><div class="tip" hidden></div>`;
+ host.style.position='relative';host.tabIndex=0;const svg=host.firstChild,hv=svg.querySelector('#hv'),tip=host.lastChild;let cur=-1;
+ tip.style.cssText='position:absolute;top:6px;pointer-events:none;background:var(--ink);color:var(--bg);padding:6px 9px;border-radius:8px;font-size:12px;line-height:1.45;white-space:nowrap;z-index:2';
+ const show=i=>{cur=Math.max(0,Math.min(n-1,i));hv.setAttribute('visibility','visible');hv.firstChild.setAttribute('x1',x(cur));hv.firstChild.setAttribute('x2',x(cur));[...hv.querySelectorAll('circle')].forEach((c,k)=>{c.setAttribute('cx',x(cur));c.setAttribute('cy',y(o.sets[k].data[cur]))});
+  tip.hidden=false;tip.innerHTML=`<b>${o.labels[cur]}</b><br>`+o.sets.map(s=>`${s.name}: ${fmt(s.data[cur])}`).join('<br>');const px=x(cur)/W*host.clientWidth;tip.style.left=Math.min(Math.max(px-tip.offsetWidth/2,0),host.clientWidth-tip.offsetWidth)+'px'};
+ const hide=()=>{hv.setAttribute('visibility','hidden');tip.hidden=true;cur=-1};
+ host.onpointermove=e=>{const b=svg.getBoundingClientRect();show(Math.round(((e.clientX-b.left)/b.width*W-L)/((W-L-R)/(n-1))))};host.onpointerleave=hide;host.onblur=hide;
+ host.onkeydown=e=>{if(e.key==='ArrowRight'){e.preventDefault();show(cur+1)}else if(e.key==='ArrowLeft'){e.preventDefault();show(cur<0?n-1:cur-1)}else if(e.key==='Escape')hide()}}
+function barChart(host,o){host.dataset.chart=1;host._draw=()=>barChart(host,o);const W=fitW(host),H=200,L=44,R=8,T=10,B=26,n=o.data.length,fmt=o.fmt||(v=>v),max=Math.max(...o.data)*1.1,bw=(W-L-R)/n;let g='';
+ for(let k=0;k<=3;k++){const v=max*k/3,yy=T+(1-k/3)*(H-T-B);g+=`<line x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}" stroke="var(--line)"/><text x="${L-8}" y="${yy+4}" text-anchor="end" font-size="11" fill="var(--mute)">${fmt(max>10?Math.round(v):+v.toFixed(1))}</text>`}
+ o.data.forEach((v,i)=>{const h=v/max*(H-T-B);g+=`<rect x="${L+i*bw+bw*.18}" y="${H-B-h}" width="${bw*.64}" height="${h}" rx="4" fill="${o.color||'var(--ac)'}" opacity="${o.hi!=null&&o.hi!==i?.45:1}"><title>${o.labels[i]}: ${fmt(v)}</title></rect><text x="${L+i*bw+bw/2}" y="${H-6}" text-anchor="middle" font-size="11" fill="var(--mute)">${o.labels[i]}</text>`});
+ host.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${o.label||'Bar chart'}" style="display:block;width:100%;height:auto">${g}</svg>`}
+function spark(data,color){const w=90,h=28,mx=Math.max(...data),mn=Math.min(...data);return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" aria-hidden="true"><polyline fill="none" stroke="${color||'var(--ac)'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" points="${data.map((v,i)=>(i*w/(data.length-1)).toFixed(1)+','+(h-3-(v-mn)/(mx-mn||1)*(h-6)).toFixed(1)).join(' ')}"/></svg>`}

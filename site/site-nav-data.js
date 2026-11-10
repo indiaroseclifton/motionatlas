@@ -21,6 +21,7 @@ window.ATLAS_NAV_GROUPS=[
   {name:'Interface',items:[
    ['#systems','Design systems','Forty-eight complete visual worlds and real open-source systems.','game-of-life'],
    ['#ux','UI components','Seventy components, every state, in every style.','light-mesh'],
+   ['app-interfaces.html','App interfaces','Dashboards, tables, boards, inboxes and settings screens for apps and tools.','light-mesh'],
    ['#icons','Icon families','Outline, solid, pixel, colour and 3D icon sets.','sketchbook-horse'],
    ['icons.html','Icon library','3,768 searchable icons in 13 families, with full packs.','sketchbook-horse'],
    ['#typography','Fonts & type','Type pairings and scales, ready to use.','light-threads'],
@@ -57,11 +58,12 @@ window.ATLAS_NAV_MENUS=[
   {name:'Explore',items:['#home','#browse','#tours','#compare','#references']},
   {name:'Visual',items:['#art','#cinema','#backgrounds','#vases','#pairings']},
   {name:'Motion',items:['#motion','#effects','motion-graphics.html','interactions.html','#showcase']},
-  {name:'Interface',items:['#systems','#ux','theme-kits.html','icons.html','#typography','ds/start.html',{more:'More interface',items:['#icons','#playground','#assets','chart-styles.html']}]}]},
+  {name:'Interface',items:['#systems','#ux','app-interfaces.html','theme-kits.html','icons.html','#typography','ds/start.html',{more:'More interface',items:['#icons','#playground','#assets','chart-styles.html']}]}]},
  {id:'make',name:'Make',top:['page-builder.html'],groups:[
   {name:'Brand & assets',items:['brand-generator.html','mockup-studio.html','theme-kits.html']},
   {name:'Charts & diagrams',items:['chart-studio.html','diagram-studio.html','flowchart-studio.html']},
-  {name:'Motion & interaction',items:['motion-graphics.html','particle-studio.html','interactions.html']}]},
+  {name:'Motion & interaction',items:['motion-graphics.html','particle-studio.html','interactions.html']},
+  {name:'Apps & tools',items:['app-interfaces.html']}]},
  {id:'studio',name:'Your studio',groups:[
   {name:'',items:['#projects','moodboard.html','#inspiration','my-fonts.html','#creations','account.html']}]}
 ];
