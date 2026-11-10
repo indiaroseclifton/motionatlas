@@ -1,0 +1,43 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Magnetic buttons</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0E0F13;--panel:#191B22;--ink:#F3F4F7;--mute:#9CA3B4;--line:#2A2D38;--ac:#8B7CFF}
+:root[data-mode=light]{--bg:#F3F1EC;--panel:#FFFFFF;--ink:#17181C;--mute:#646978;--line:#DEDAD0}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+.row{display:flex;flex-wrap:wrap;gap:46px;align-items:center;justify-content:center;padding:40px}
+.mb{position:relative;min-height:58px;padding:0 34px;border-radius:var(--r);border:1.5px solid var(--ac);background:var(--ac);color:#fff;font-weight:700;font-size:16px;overflow:hidden;will-change:transform}
+.mb.out{background:none;color:var(--ink)}.mb.ic{width:70px;padding:0;font-size:24px}
+.mb span{display:inline-block;position:relative;will-change:transform;pointer-events:none}
+.mb::before{content:"";position:absolute;inset:0;background:radial-gradient(90px circle at var(--hx,50%) var(--hy,50%),rgba(255,255,255,.45),transparent 70%);opacity:var(--ho,0);transition:opacity .25s;pointer-events:none}
+.mb:active{scale:.95}
+</style>
+<body>
+<div class="row" id="row"><button class="mb"><span>Start a project</span></button><button class="mb out"><span>See the work</span></button><button class="mb ic" aria-label="Play showreel"><span aria-hidden="true">▶</span></button></div>
+<p class="hint">Move the pointer near a button</p>
+<script type="application/json" id="settings">{"radius":150,"strength":0.4,"parallax":0.45,"stiffness":0.16,"damping":0.72,"highlight":true,"corner":40,"mode":"dark","accent":"#FF5C8A"}</script>
+<script>
+const CONTROLS=[{g:'Pull',k:'radius',label:'Pull radius',min:60,max:320,step:5,unit:'px'},{k:'strength',label:'Strength',min:0,max:1,step:.02},{k:'parallax',label:'Label parallax',min:0,max:1,step:.05},{g:'Spring',k:'stiffness',label:'Stiffness',min:.04,max:.4,step:.01},{k:'damping',label:'Damping',min:.4,max:.92,step:.01},
+ {g:'Look',k:'highlight',label:'Highlight',type:'toggle'},{k:'corner',label:'Corner radius',min:0,max:40,step:1,unit:'px'},{k:'mode',label:'Mode',type:'select',options:['dark','light']},{k:'accent',label:'Accent',type:'color'}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'dark';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+const B=[...document.querySelectorAll('.mb')].map(el=>({el,lab:el.firstElementChild,x:0,y:0,vx:0,vy:0,tx:0,ty:0}));let px=-1e4,py=-1e4,fake=0;
+addEventListener('pointermove',e=>{if(e.pointerType==='touch')return;px=e.clientX;py=e.clientY;fake=0});document.addEventListener('pointerleave',()=>{px=py=-1e4});
+function tick(t){if(fake){const b=B[Math.floor(t/2600)%3].el.getBoundingClientRect(),a=t/500;px=b.left+b.width/2+Math.cos(a)*70;py=b.top+b.height/2+Math.sin(a*1.3)*45}
+ B.forEach(b=>{const r=b.el.getBoundingClientRect(),cx=r.left+r.width/2-b.x,cy=r.top+r.height/2-b.y,dx=px-cx,dy=py-cy,d=Math.hypot(dx,dy),k=d<S.radius&&!calm?(1-d/S.radius)*S.strength:0;
+  b.tx=dx*k;b.ty=dy*k;b.vx=(b.vx+(b.tx-b.x)*S.stiffness)*S.damping;b.vy=(b.vy+(b.ty-b.y)*S.stiffness)*S.damping;b.x+=b.vx;b.y+=b.vy;
+  b.el.style.transform=`translate(${b.x.toFixed(2)}px,${b.y.toFixed(2)}px)`;b.lab.style.transform=`translate(${(b.x*S.parallax).toFixed(2)}px,${(b.y*S.parallax).toFixed(2)}px)`;
+  b.el.style.setProperty('--hx',(px-r.left)+'px');b.el.style.setProperty('--hy',(py-r.top)+'px');b.el.style.setProperty('--ho',S.highlight&&k>0?.9:0)});requestAnimationFrame(tick)}
+function apply(){theme();document.getElementById('row').style.setProperty('--r',S.corner+'px')}
+apply();if(parent!==window&&!calm)fake=1;requestAnimationFrame(tick);
+</script>
+</body>
+</html>

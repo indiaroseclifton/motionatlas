@@ -1,0 +1,46 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Blob tab bar</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0E0F13;--panel:#191B22;--ink:#F3F4F7;--mute:#9CA3B4;--line:#2A2D38;--ac:#8B7CFF}
+:root[data-mode=light]{--bg:#F3F1EC;--panel:#FFFFFF;--ink:#17181C;--mute:#646978;--line:#DEDAD0}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+.phone{width:min(340px,92vw);height:min(86vh,600px);border-radius:38px;background:var(--panel);border:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 30px 60px -30px #000}
+.screen{flex:1;display:grid;place-content:center;text-align:center;gap:6px;padding:20px}.screen h1{font-size:26px}.screen p{color:var(--mute);font-size:14px}
+.bar{position:relative;display:flex;margin:0 12px 14px;padding:8px 0;border-radius:var(--br);background:var(--bg);border:1px solid var(--line)}
+.blob{position:absolute;left:0;top:8px;width:var(--bw);height:var(--bh);margin-left:calc(var(--bw)/-2);border-radius:var(--rr);background:var(--ac);transition:transform var(--t) var(--e);will-change:transform}
+.blob.go{animation:st var(--t) ease-out}@keyframes st{35%{scale:1.5 .8}}
+[role=tab]{flex:1;position:relative;z-index:1;border:0;background:none;display:grid;justify-items:center;gap:3px;padding:0 0 2px;min-height:calc(var(--bh) + 18px);color:var(--mute);font-size:11px;font-weight:600}
+[role=tab] svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;margin-top:calc((var(--bh) - 22px)/2);transition:transform var(--t) var(--e),color .2s}
+[role=tab] span{opacity:0;transition:opacity .2s;margin-top:calc((var(--bh) - 22px)/2 - 1px)}.nolab [role=tab] span{display:none}.nolab [role=tab]{min-height:var(--bh)}
+[role=tab][aria-selected=true]{color:var(--ink)}[role=tab][aria-selected=true] svg{color:#fff;transform:translateY(calc(var(--hop)*-1))}[role=tab][aria-selected=true] span{opacity:1}
+[role=tab]:focus-visible{outline-offset:-2px;border-radius:12px}
+@media(prefers-reduced-motion:reduce){.blob.go{animation:none}}
+</style>
+<body>
+<div class="phone"><div class="screen" role="tabpanel" id="panel" aria-live="polite"><h1 id="ti"></h1><p id="su"></p></div>
+<div class="bar" id="bar" role="tablist" aria-label="Main"><div class="blob" id="blob" aria-hidden="true"></div></div></div>
+<script type="application/json" id="settings">{"blobw":52,"blobh":38,"round":50,"hop":0,"bounce":0.6,"speed":460,"barr":24,"labels":true,"mode":"dark","accent":"#8B7CFF"}</script>
+<script>
+const CONTROLS=[{g:'Blob',k:'blobw',label:'Width',min:36,max:66,step:1,unit:'px'},{k:'blobh',label:'Height',min:30,max:50,step:1,unit:'px'},{k:'round',label:'Roundness',min:10,max:50,step:1,unit:'%'},{g:'Motion',k:'hop',label:'Icon hop',min:0,max:10,step:1,unit:'px'},{k:'bounce',label:'Bounce',min:0,max:1,step:.05},{k:'speed',label:'Speed',min:200,max:900,step:10,unit:'ms'},
+ {g:'Bar',k:'barr',label:'Bar radius',min:8,max:34,step:1,unit:'px'},{k:'labels',label:'Labels',type:'toggle'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['dark','light']},{k:'accent',label:'Accent',type:'color'}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'dark';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+const T=[['Home','Good evening','Three things need you today.','<path d="M4 11 12 4l8 7v9h-5v-6H9v6H4Z"/>'],['Search','Search','Find people, files and places.','<circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/>'],['Create','New','Start a note, a task or a photo.','<path d="M12 5v14M5 12h14"/>'],['Inbox','Inbox','Two unread, one flagged.','<path d="M4 13 6.5 5h11L20 13v6H4Z"/><path d="M4 13h5l1 2.5h4l1-2.5h5"/>'],['You','Profile','Amara Khan · Pro plan','<circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-4 4.5-6 8-6s6.5 2 8 6"/>']],bar=document.getElementById('bar'),blob=document.getElementById('blob');let on=0;
+bar.insertAdjacentHTML('beforeend',T.map(([n,,,d],i)=>`<button role="tab" aria-selected="false" aria-controls="panel" tabindex="-1"><svg viewBox="0 0 24 24" aria-hidden="true">${d}</svg><span>${n}</span></button>`).join(''));
+const tabs=[...bar.querySelectorAll('[role=tab]')];
+function pick(i,focus){on=i;tabs.forEach((t,k)=>{t.setAttribute('aria-selected',k===i);t.tabIndex=k===i?0:-1});const r=tabs[i],x=r.offsetLeft+r.offsetWidth/2;blob.style.transform=`translateX(${x}px)`;blob.classList.remove('go');void blob.offsetWidth;blob.classList.add('go');document.getElementById('ti').textContent=T[i][1];document.getElementById('su').textContent=T[i][2];if(focus)r.focus()}
+tabs.forEach((t,i)=>{t.onclick=()=>pick(i);t.onkeydown=e=>{const n=tabs.length,d=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(d){e.preventDefault();pick((i+d+n)%n,true)}else if(e.key==='Home'){e.preventDefault();pick(0,true)}else if(e.key==='End'){e.preventDefault();pick(n-1,true)}}});
+function apply(){theme();const s=bar.style;s.setProperty('--bw',S.blobw+'px');s.setProperty('--bh',S.blobh+'px');s.setProperty('--rr',S.round+'%');s.setProperty('--hop',S.hop+'px');s.setProperty('--t',S.speed+'ms');s.setProperty('--e',calm?'ease':`cubic-bezier(.3,${(1+S.bounce).toFixed(2)},.5,1)`);s.setProperty('--br',S.barr+'px');bar.classList.toggle('nolab',!S.labels);pick(on)}
+apply();addEventListener('resize',()=>pick(on));if(parent!==window&&!calm)setInterval(()=>{if(!bar.matches(':hover')&&!bar.contains(document.activeElement))pick((on+1)%5)},1700);
+</script>
+</body>
+</html>

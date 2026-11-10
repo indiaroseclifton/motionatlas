@@ -1,29 +1,44 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Expanding panels</title>
-<style>
-:root{--bg:#101112;--ink:#F4F2EE;--mute:#A9A49B}
-*{box-sizing:border-box}html,body{margin:0;height:100%}
-body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;display:grid;place-items:center;padding:4vh max(16px,3vw)}
-.panels{display:flex;gap:10px;width:min(1100px,100%);height:min(560px,80vh)}
-.p{position:relative;flex:1;min-width:0;border:0;padding:0;border-radius:18px;overflow:hidden;cursor:pointer;color:inherit;text-align:left;background:#000;transition:flex .6s cubic-bezier(.2,.8,.2,1)}
-.p[aria-expanded=true]{flex:5}
-.p img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .8s cubic-bezier(.2,.8,.2,1),filter .4s;filter:saturate(.6) brightness(.7)}
-.p[aria-expanded=true] img{filter:none;transform:scale(1.04)}
-.p::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.75),transparent 55%)}
-.lab{position:absolute;left:18px;bottom:18px;right:18px;z-index:2}
-.lab b{display:block;font:500 clamp(20px,2.6vw,32px)/1.05 Georgia,serif;white-space:nowrap}
-.lab span{display:block;color:#DDD8CF;max-width:36ch;opacity:0;transform:translateY(8px);transition:opacity .3s,transform .4s;font-size:14px;margin-top:6px}
-.p[aria-expanded=true] .lab span{opacity:1;transform:none;transition-delay:.25s}
-.p[aria-expanded=false] .lab b{writing-mode:vertical-rl;transform:rotate(180deg);font-size:18px}
-.p:focus-visible{outline:2px solid #fff;outline-offset:3px}
-@media (max-width:640px){.panels{flex-direction:column;height:auto}.p{flex:none;height:64px}.p[aria-expanded=true]{height:360px}.p[aria-expanded=false] .lab b{writing-mode:horizontal-tb;transform:none}.p{transition:height .5s cubic-bezier(.2,.8,.2,1)}}
-@media (prefers-reduced-motion:reduce){.p,.p img,.lab span{transition:none}}
-</style></head><body>
-<div class="panels" id="panels"></div>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Expanding panels</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0E0F13;--panel:#191B22;--ink:#F3F4F7;--mute:#9CA3B4;--line:#2A2D38;--ac:#8B7CFF}
+:root[data-mode=light]{--bg:#F3F1EC;--panel:#FFFFFF;--ink:#17181C;--mute:#646978;--line:#DEDAD0}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+.g{display:flex;gap:var(--gap);width:min(1000px,94vw);height:var(--h)}
+.p{position:relative;flex:1 1 0;min-width:0;border:0;padding:0;border-radius:var(--r);overflow:hidden;background:var(--panel);transition:flex-grow var(--t) cubic-bezier(.2,.8,.2,1);text-align:left;color:#fff}
+.p[aria-pressed=true]{flex-grow:var(--grow)}
+.p img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(var(--dim));transition:filter var(--t)}.p[aria-pressed=true] img{filter:none}
+.p .v{position:absolute;left:50%;bottom:18px;writing-mode:vertical-rl;transform:translateX(-50%) rotate(180deg);font-weight:600;font-size:13px;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;transition:opacity .2s}
+.p .o{position:absolute;inset:auto 0 0 0;padding:50px 18px 18px;background:linear-gradient(transparent,rgba(0,0,0,.75));opacity:0;transform:translateY(8px);transition:opacity .3s .1s,transform .3s .1s;white-space:nowrap}
+.p .o b{display:block;font-size:20px}.p .o span{font-size:13px;opacity:.85}.p .o i{display:block;width:28px;height:3px;border-radius:2px;background:var(--ac);margin-bottom:10px}
+.p[aria-pressed=true] .v{opacity:0}.p[aria-pressed=true] .o{opacity:1;transform:none}.p:focus-visible{outline-offset:-3px}
+@media(max-width:640px){.g{flex-direction:column;height:min(86vh,620px)}.p .v{writing-mode:horizontal-tb;transform:none;left:16px;bottom:50%;translate:0 50%}}
+@media(prefers-reduced-motion:reduce){.p,.p img,.p .o{transition:none}}
+</style>
+<body>
+<div class="g" id="g" role="group" aria-label="Studies. Arrow keys move between panels."></div>
+<script type="application/json" id="settings">{"count":5,"grow":5,"gap":10,"corner":20,"height":420,"speed":520,"dim":0.6,"mode":"dark","accent":"#FFD166"}</script>
 <script>
-const d=[['Jellyfish','Bioluminescent drift, shot as a slow loop for hero backgrounds.','jellyfish'],['Golden dove','Gilded feathers turning in warm light.','dove'],['Pigment','Ink blooms across wet paper, one colour at a time.','bloom'],['Smoke','A single plume folding into itself.','smoke'],['Threads','Light pulled into fibres and woven across black.','threads']];
-const el=document.getElementById('panels');
-d.forEach(([t,s,img],i)=>{const b=document.createElement('button');b.className='p';b.setAttribute('aria-expanded',i===0);b.innerHTML=`<img src="../../assets/shelf/${img}.webp" alt=""><div class="lab"><b>${t}</b><span>${s}</span></div>`;el.append(b)});
-const P=[...el.children];const open=i=>P.forEach((p,j)=>p.setAttribute('aria-expanded',i===j));
-P.forEach((p,i)=>{p.onclick=()=>open(i);if(matchMedia('(hover:hover)').matches)p.onpointerenter=()=>open(i);p.onfocus=()=>open(i)});
-</script></body></html>
+const CONTROLS=[{g:'Layout',k:'count',label:'Panels',min:3,max:7,step:1},{k:'grow',label:'Open width',min:2,max:9,step:.5,unit:'×'},{k:'gap',label:'Gap',min:0,max:28,step:1,unit:'px'},{k:'height',label:'Height',min:240,max:560,step:10,unit:'px'},{k:'corner',label:'Corner radius',min:0,max:48,step:1,unit:'px'},
+ {g:'Motion',k:'speed',label:'Speed',min:150,max:1200,step:10,unit:'ms'},{g:'Look',k:'dim',label:'Closed brightness',min:.25,max:1,step:.05},{k:'mode',label:'Mode',type:'select',options:['dark','light']},{k:'accent',label:'Accent',type:'color'}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'dark';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+const D=[['amber','Amber','Warm, slow, translucent'],['biolum','Night water','Light that answers touch'],['origami','Paper','Sharp planes, soft shadow'],['nebula','Deep field','Dust, gas and distance'],['bloom','Pigment','Colour let loose in water'],['sumi','Ink','One breath, one line'],['threads','Threads','Fine lines under tension']],g=document.getElementById('g');let on=1;
+const set=i=>{on=i;[...g.children].forEach((p,k)=>p.setAttribute('aria-pressed',k===i))};
+function apply(){theme();const s=g.style;s.setProperty('--gap',S.gap+'px');s.setProperty('--h',S.height+'px');s.setProperty('--r',S.corner+'px');s.setProperty('--grow',S.grow);s.setProperty('--t',S.speed+'ms');s.setProperty('--dim',S.dim);
+ if(g.children.length!==S.count){g.innerHTML=D.slice(0,S.count).map(([f,t,l])=>`<button class="p" aria-pressed="false"><img src="../../assets/shelf/${f}.webp" alt=""><span class="v" aria-hidden="true">${t}</span><span class="o"><i></i><b>${t}</b><span>${l}</span></span></button>`).join('');set(Math.min(on,S.count-1))}}
+g.addEventListener('pointerover',e=>{const p=e.target.closest('.p');if(p)set([...g.children].indexOf(p))});g.addEventListener('focusin',e=>{const p=e.target.closest('.p');if(p)set([...g.children].indexOf(p))});g.addEventListener('click',e=>{const p=e.target.closest('.p');if(p)set([...g.children].indexOf(p))});
+g.addEventListener('keydown',e=>{const d=e.key==='ArrowRight'||e.key==='ArrowDown'?1:e.key==='ArrowLeft'||e.key==='ArrowUp'?-1:0;if(d){e.preventDefault();const n=g.children.length,i=(on+d+n)%n;g.children[i].focus()}});
+apply();
+</script>
+</body>
+</html>

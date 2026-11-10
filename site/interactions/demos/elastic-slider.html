@@ -1,0 +1,48 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Elastic slider</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0E0F13;--panel:#191B22;--ink:#F3F4F7;--mute:#9CA3B4;--line:#2A2D38;--ac:#8B7CFF}
+:root[data-mode=light]{--bg:#F3F1EC;--panel:#FFFFFF;--ink:#17181C;--mute:#646978;--line:#DEDAD0}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+.box{display:grid;gap:34px;width:min(420px,86vw)}
+.sl{display:grid;gap:10px}.sl label{display:flex;justify-content:space-between;font-weight:600;font-size:14px}.sl label span{color:var(--mute);font-variant-numeric:tabular-nums}
+.tr{position:relative;height:var(--th);border-radius:99px;background:var(--line);transform-origin:var(--o,0) 50%}
+.fill{position:absolute;inset:0 auto 0 0;border-radius:99px;background:var(--ac)}
+.thumb{position:absolute;top:50%;width:var(--ts);height:var(--ts);margin:calc(var(--ts)/-2);border-radius:50%;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.3),0 0 0 1px rgba(0,0,0,.06)}
+.bub{position:absolute;bottom:calc(50% + var(--ts)/2 + 10px);translate:-50% 0;padding:5px 10px;border-radius:10px;background:var(--ink);color:var(--bg);font-size:13px;font-weight:700;white-space:nowrap;opacity:0;scale:.6;transform-origin:50% 130%;transition:opacity .15s,scale .25s cubic-bezier(.3,1.6,.5,1);font-variant-numeric:tabular-nums}
+.tr.act .bub{opacity:1;scale:1}
+.tr input{position:absolute;inset:-14px 0;width:100%;height:calc(100% + 28px);margin:0;opacity:0;cursor:grab;touch-action:none}.tr:has(input:focus-visible) .thumb{outline:3px solid var(--ac);outline-offset:3px}
+</style>
+<body>
+<div class="box" id="box"></div>
+<script type="application/json" id="settings">{"stiffness":0.22,"damping":0.62,"squash":0.5,"lean":1,"rubber":0.35,"track":10,"thumb":26,"mode":"light","accent":"#5B2DFF"}</script>
+<script>
+const CONTROLS=[{g:'Spring',k:'stiffness',label:'Stiffness',min:.05,max:.5,step:.01},{k:'damping',label:'Damping',min:.3,max:.9,step:.01},{g:'Feel',k:'squash',label:'Thumb squash',min:0,max:1,step:.05},{k:'lean',label:'Bubble lean',min:0,max:2,step:.1},{k:'rubber',label:'Rubber band',min:0,max:1,step:.05},
+ {g:'Size',k:'track',label:'Track height',min:4,max:24,step:1,unit:'px'},{k:'thumb',label:'Thumb size',min:16,max:40,step:1,unit:'px'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'dark';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+const D=[['Volume',0,100,64,v=>Math.round(v)+'%'],['Brightness',0,100,38,v=>Math.round(v)+'%'],['Maximum price',0,500,220,v=>'£'+Math.round(v/5)*5]],box=document.getElementById('box');
+box.innerHTML=D.map(([n,a,b,v],i)=>`<div class="sl"><label for="r${i}">${n}<span id="o${i}"></span></label><div class="tr"><div class="fill"></div><div class="thumb"></div><div class="bub"></div><input id="r${i}" type="range" min="${a}" max="${b}" value="${v}" step="any"></div></div>`).join('');
+const R=[...box.querySelectorAll('.tr')].map((tr,i)=>({tr,i,inp:tr.querySelector('input'),fill:tr.querySelector('.fill'),thumb:tr.querySelector('.thumb'),bub:tr.querySelector('.bub'),x:D[i][3],v:0,pull:0,pv:0,over:0,down:false}));
+R.forEach(r=>{const act=on=>r.tr.classList.toggle('act',on||r.down||r.inp.matches(':focus-visible,:hover'));
+ r.inp.addEventListener('pointerdown',()=>{r.down=true;act(true)});addEventListener('pointerup',()=>{r.down=false;r.over=0;act(false)});['focus','blur','pointerenter','pointerleave'].forEach(t=>r.inp.addEventListener(t,()=>act(false)));
+ r.inp.addEventListener('pointermove',e=>{if(!r.down)return;const b=r.tr.getBoundingClientRect();r.over=e.clientX<b.left?e.clientX-b.left:e.clientX>b.right?e.clientX-b.right:0})});
+function tick(){R.forEach(r=>{const [,a,b,,fmt]=D[r.i],goal=+r.inp.value;if(calm){r.x=goal;r.v=0;r.pull=0}else{r.v=(r.v+(goal-r.x)*S.stiffness)*S.damping;r.x+=r.v;r.pv=(r.pv+(r.over*S.rubber*.25-r.pull)*.3)*.6;r.pull+=r.pv}
+ const pc=(r.x-a)/(b-a),sp=r.v/(b-a)*100,sq=Math.min(.6,Math.abs(sp)*.06*S.squash);
+ r.fill.style.width=(pc*100)+'%';r.thumb.style.left=r.bub.style.left=(pc*100)+'%';r.thumb.style.transform=`scale(${1+sq},${1-sq*.6})`;r.bub.style.rotate=(Math.max(-28,Math.min(28,-sp*4*S.lean)))+'deg';
+ r.tr.style.setProperty('--o',r.pull>0?'0%':'100%');r.tr.style.transform=`scaleX(${1+Math.abs(r.pull)/r.tr.offsetWidth})`;const t=fmt(goal);r.bub.textContent=t;document.getElementById('o'+r.i).textContent=t;r.inp.setAttribute('aria-valuetext',t)});requestAnimationFrame(tick)}
+function apply(){theme();box.style.setProperty('--th',S.track+'px');box.style.setProperty('--ts',S.thumb+'px')}
+apply();requestAnimationFrame(tick);
+if(parent!==window&&!calm){let k=0;setInterval(()=>{if(box.matches(':hover'))return;const r=R[k%3],[,a,b]=D[r.i];r.inp.value=a+(b-a)*(.15+Math.random()*.7);r.tr.classList.add('act');setTimeout(()=>r.tr.classList.remove('act'),900);k++},1300)}
+</script>
+</body>
+</html>

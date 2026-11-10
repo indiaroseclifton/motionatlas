@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Folder cards</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0E0F13;--panel:#191B22;--ink:#F3F4F7;--mute:#9CA3B4;--line:#2A2D38;--ac:#8B7CFF}
+:root[data-mode=light]{--bg:#F3F1EC;--panel:#FFFFFF;--ink:#17181C;--mute:#646978;--line:#DEDAD0}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+.row{display:flex;flex-wrap:wrap;justify-content:center;gap:22px;padding:40px 20px;max-width:1000px}
+.f{position:relative;width:min(220px,40vw);aspect-ratio:4/5;border:0;background:none;padding:0;text-align:left;transition:transform var(--t) cubic-bezier(.3,1.5,.5,1);margin-top:var(--th)}
+.f .sheet{position:absolute;inset:calc(var(--th)*-.55) 12px auto 12px;height:70%;border-radius:calc(var(--r)*.7);background:linear-gradient(160deg,var(--ac),color-mix(in srgb,var(--ac) 40%,#fff));transition:transform var(--t) cubic-bezier(.3,1.5,.5,1);padding:10px 12px;color:#fff;font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.f .front{position:absolute;inset:0;border-radius:0 var(--r) var(--r) var(--r);background:var(--panel);border:1px solid var(--line);display:flex;flex-direction:column;justify-content:space-between;padding:16px;box-shadow:0 18px 36px -20px rgba(0,0,0,.6)}
+.f .front::before{content:"";position:absolute;left:-1px;bottom:100%;width:var(--tw);height:var(--th);background:var(--panel);border:1px solid var(--line);border-bottom:0;border-radius:calc(var(--r)*.7) calc(var(--r)*.7) 0 0}
+.f b{font-size:34px;line-height:1;letter-spacing:-.03em}.f h3{font-size:15px}.f p{font-size:12.5px;color:var(--mute);margin-top:4px}
+.f:hover,.f:focus-visible,.f[aria-pressed=true]{transform:translateY(calc(var(--lift)*-1)) rotate(var(--tilt))}
+.f:hover .sheet,.f:focus-visible .sheet,.f[aria-pressed=true] .sheet{transform:translateY(calc(var(--peek)*-1))}
+@media(prefers-reduced-motion:reduce){.f,.f .sheet{transition:none}}
+</style>
+<body>
+<div class="row" id="row"></div><p class="hint">Hover, focus or press a folder</p>
+<script type="application/json" id="settings">{"count":3,"tabw":46,"tabh":18,"corner":20,"lift":14,"tilt":-2,"peek":34,"speed":420,"mode":"dark","accent":"#8B7CFF"}</script>
+<script>
+const CONTROLS=[{g:'Folder',k:'count',label:'Cards',min:2,max:4,step:1},{k:'tabw',label:'Tab width',min:25,max:80,step:1,unit:'%'},{k:'tabh',label:'Tab height',min:8,max:34,step:1,unit:'px'},{k:'corner',label:'Corner radius',min:4,max:36,step:1,unit:'px'},
+ {g:'Motion',k:'lift',label:'Lift',min:0,max:40,step:1,unit:'px'},{k:'tilt',label:'Tilt',min:-8,max:8,step:.5,unit:'°'},{k:'peek',label:'Sheet peek',min:0,max:70,step:1,unit:'px'},{k:'speed',label:'Speed',min:150,max:900,step:10,unit:'ms'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['dark','light']},{k:'accent',label:'Accent',type:'color'}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'dark';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+const D=[['Simple and easy to use','Set up in minutes, not days.','Guide'],['Numbers you can trust','One source for every figure.','Report'],['Built to grow with you','From first user to millionth.','Plan'],['Help when you need it','People, not a queue.','Support']],row=document.getElementById('row');
+function apply(){theme();const r=document.documentElement.style;r.setProperty('--tw',S.tabw+'%');r.setProperty('--th',S.tabh+'px');r.setProperty('--r',S.corner+'px');r.setProperty('--lift',S.lift+'px');r.setProperty('--tilt',S.tilt+'deg');r.setProperty('--peek',S.peek+'px');r.setProperty('--t',S.speed+'ms');
+ if(row.children.length!==S.count)row.innerHTML=D.slice(0,S.count).map(([t,s,k],i)=>`<button class="f" aria-pressed="false"><span class="sheet">${k}</span><span class="front"><b>0${i+1}</b><span><h3>${t}</h3><p>${s}</p></span></span></button>`).join('')}
+row.addEventListener('click',e=>{const b=e.target.closest('.f');if(!b)return;const on=b.getAttribute('aria-pressed')!=='true';[...row.children].forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed',on)});
+apply();
+</script>
+</body>
+</html>

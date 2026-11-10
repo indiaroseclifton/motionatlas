@@ -1,0 +1,36 @@
+<!--META {"o":13,"t":"Verification code input","cat":"Controls","tone":"light","uses":["L12","L49"],"d":"Six boxes for a one-time code. Digits pop in, the caret hops along, pasting fills them all, a wrong code shakes and the right one turns green in a wave.","how":"There is one real input, stretched invisibly over the boxes, so paste, autofill from a text message and screen readers all work. The boxes are just a picture of its value: each shows one character, and classes on the group trigger the pop, shake and success wave.","use":"Sign-in and two-step verification, email confirmation, device pairing, coupon codes.","p":"Build a verification code input in one HTML file with no libraries. One real input (inputmode=numeric, autocomplete=one-time-code, maxlength N, pattern digits) is positioned transparently over N styled boxes; a label and a hint are tied to it. Render the input's value into the boxes one character each; the box at the caret position shows a blinking caret and a ring while the input has focus. A new digit scales in with a spring. When N digits are entered, compare with the demo code 428913: if wrong, shake the row, colour it red, announce the error with role=alert and clear after a moment; if right, turn boxes green one after another with a staggered delay and announce success. Pasting a full code fills every box. Include a Resend link with a 30 second countdown. Settings: number of boxes, box size, gap, corner radius, split into two groups, pop strength, success stagger, accent, light or dark. Reduced motion: no shake, no pop."}-->
+<style>/*BASE*/
+.card{display:grid;gap:14px;justify-items:center;text-align:center;padding:30px 26px;border-radius:22px;background:var(--panel);border:1px solid var(--line);width:min(440px,92vw)}
+h1{font-size:20px}.sub{color:var(--mute);font-size:13.5px}
+.otp{position:relative;display:flex;gap:var(--gap);margin:6px 0}
+.b{width:var(--bs);height:calc(var(--bs)*1.18);border-radius:var(--r);border:1.5px solid var(--line);display:grid;place-items:center;font-size:calc(var(--bs)*.48);font-weight:700;position:relative;transition:border-color .15s,background .2s,color .2s,transform .2s;font-variant-numeric:tabular-nums}
+.b.sp{margin-right:calc(var(--gap)*1.4)}.b span{display:block;animation:pop .28s cubic-bezier(.3,var(--pop),.5,1)}@keyframes pop{from{transform:scale(.3);opacity:0}}
+.otp:focus-within .b.at{border-color:var(--ac);box-shadow:0 0 0 3px color-mix(in srgb,var(--ac) 22%,transparent)}.otp:focus-within .b.at:empty::after{content:"";width:2px;height:45%;background:var(--ac);animation:bl 1s steps(2) infinite}@keyframes bl{50%{opacity:0}}
+.otp input{position:absolute;inset:0;width:100%;height:100%;opacity:0;font-size:16px;cursor:text}
+.otp.bad .b{border-color:#E5484D;color:#E5484D}.otp.bad{animation:shake .4s}@keyframes shake{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+.otp.ok .b{border-color:#30A46C;background:color-mix(in srgb,#30A46C 14%,transparent);color:#30A46C;transform:translateY(-4px);transition-delay:calc(var(--i)*var(--st))}
+#msg{min-height:20px;font-size:13.5px;font-weight:600}#msg.bad{color:#E5484D}#msg.ok{color:#30A46C}
+.re{all:unset;cursor:pointer;color:var(--ac);font-weight:600;font-size:13.5px}.re:disabled{color:var(--mute);cursor:default}.re:focus-visible{outline:2px solid var(--ac);outline-offset:3px;border-radius:4px}
+@media(prefers-reduced-motion:reduce){.otp.bad,.b span{animation:none}}
+</style>
+<body>
+<form class="card" id="f" novalidate><h1><label for="code">Check your phone</label></h1><p class="sub" id="hint">Enter the six-digit code we sent to •••• 4471. Try 428913.</p>
+<div class="otp" id="otp"><input id="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]*" aria-describedby="hint msg"></div>
+<p id="msg" role="alert"></p><button type="button" class="re" id="re" disabled>Resend in 30s</button></form>
+<script type="application/json" id="settings">{"count":6,"size":50,"gap":8,"corner":12,"split":true,"pop":1.8,"stagger":60,"mode":"light","accent":"#5B2DFF"}</script>
+<script>
+const CONTROLS=[{g:'Boxes',k:'count',label:'Digits',min:4,max:8,step:1},{k:'size',label:'Box size',min:36,max:66,step:1,unit:'px'},{k:'gap',label:'Gap',min:2,max:18,step:1,unit:'px'},{k:'corner',label:'Corner radius',min:0,max:24,step:1,unit:'px'},{k:'split',label:'Split in two groups',type:'toggle'},
+ {g:'Motion',k:'pop',label:'Pop strength',min:1,max:2.6,step:.1},{k:'stagger',label:'Success wave',min:0,max:140,step:5,unit:'ms'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/*TUNER*/
+const otp=document.getElementById('otp'),inp=document.getElementById('code'),msg=document.getElementById('msg'),re=document.getElementById('re'),CODE='428913';let prev='',lock=false;
+function paint(){const v=inp.value,bs=[...otp.querySelectorAll('.b')];bs.forEach((b,i)=>{const ch=v[i]||'';if(b.dataset.c!==ch){b.dataset.c=ch;b.innerHTML=ch?`<span>${ch}</span>`:''}b.classList.toggle('at',i===Math.min(v.length,S.count-1))});prev=v}
+function check(){const good=inp.value===CODE.slice(0,S.count).padEnd(S.count,'0');lock=true;if(good){otp.classList.add('ok');msg.className='ok';msg.textContent='Code accepted. Signing you in…';setTimeout(()=>{reset();msg.textContent=''},2600)}else{otp.classList.add('bad');msg.className='bad';msg.textContent='That code is not right. Try again.';setTimeout(reset,900)}}
+function reset(){otp.classList.remove('ok','bad');inp.value='';lock=false;paint()}
+inp.addEventListener('input',()=>{if(lock){inp.value=prev;return}inp.value=inp.value.replace(/\D/g,'').slice(0,S.count);if(inp.value.length<S.count&&msg.className==='bad')msg.textContent='';paint();if(inp.value.length===S.count)check()});
+['keyup','click','focus'].forEach(t=>inp.addEventListener(t,()=>inp.setSelectionRange(inp.value.length,inp.value.length)));
+let left=30;const cd=setInterval(()=>{left--;if(left<=0){re.disabled=false;re.textContent='Resend code';clearInterval(cd)}else re.textContent='Resend in '+left+'s'},1000);re.onclick=()=>{msg.className='ok';msg.textContent='A new code is on its way.'};
+function apply(){theme();const s=otp.style;s.setProperty('--bs',S.size+'px');s.setProperty('--gap',S.gap+'px');s.setProperty('--r',S.corner+'px');s.setProperty('--pop',S.pop);s.setProperty('--st',S.stagger+'ms');inp.maxLength=S.count;
+ otp.querySelectorAll('.b').forEach(b=>b.remove());inp.insertAdjacentHTML('beforebegin',Array.from({length:S.count},(_,i)=>`<div class="b ${S.split&&i===Math.ceil(S.count/2)-1?'sp':''}" style="--i:${i}" aria-hidden="true"></div>`).join(''));inp.value=inp.value.slice(0,S.count);paint()}
+apply();if(parent!==window&&!calm){const play=()=>{if(document.activeElement===inp||lock)return;const c=CODE.slice(0,S.count).padEnd(S.count,'0');let i=0;const t=setInterval(()=>{if(document.activeElement===inp){clearInterval(t);return}inp.value=c.slice(0,++i);paint();if(i>=S.count){clearInterval(t);check()}},260)};setTimeout(play,700);setInterval(play,6500)}
+</script>
+</body>

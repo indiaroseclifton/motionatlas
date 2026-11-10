@@ -1,0 +1,26 @@
+<!--META {"o":5,"t":"Folder cards","cat":"Cards","tone":"dark","uses":["L49","L12"],"d":"Numbered cards shaped like folders. Point at one or focus it and it lifts, tilts and lets a sheet slide out of the top.","how":"The folder is a rounded panel with a tab drawn by a pseudo-element; a second panel behind it is the sheet. Hover and focus change three custom properties, lift, tilt and how far the sheet peeks, and a spring curve does the rest.","use":"Feature lists, service menus, step-by-step sections, file or project pickers.","p":"Build a row of folder-shaped cards in one HTML file with no libraries. Each card is a button containing a back sheet and a front panel; the front panel has a tab on its top-left made with a pseudo-element (width and height from CSS variables, rounded top corners). Content: a large number, a title and a line of copy at the bottom. On hover, focus or when pressed open, the card translates up by a lift value, rotates by a tilt value and the back sheet slides up to peek out by a peek value, all with a springy cubic-bezier. Clicking toggles aria-pressed to keep one open. Settings: card count, tab width, tab height, corner radius, lift, tilt, sheet peek, speed, accent, light or dark. Cards wrap on small screens."}-->
+<style>/*BASE*/
+.row{display:flex;flex-wrap:wrap;justify-content:center;gap:22px;padding:40px 20px;max-width:1000px}
+.f{position:relative;width:min(220px,40vw);aspect-ratio:4/5;border:0;background:none;padding:0;text-align:left;transition:transform var(--t) cubic-bezier(.3,1.5,.5,1);margin-top:var(--th)}
+.f .sheet{position:absolute;inset:calc(var(--th)*-.55) 12px auto 12px;height:70%;border-radius:calc(var(--r)*.7);background:linear-gradient(160deg,var(--ac),color-mix(in srgb,var(--ac) 40%,#fff));transition:transform var(--t) cubic-bezier(.3,1.5,.5,1);padding:10px 12px;color:#fff;font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.f .front{position:absolute;inset:0;border-radius:0 var(--r) var(--r) var(--r);background:var(--panel);border:1px solid var(--line);display:flex;flex-direction:column;justify-content:space-between;padding:16px;box-shadow:0 18px 36px -20px rgba(0,0,0,.6)}
+.f .front::before{content:"";position:absolute;left:-1px;bottom:100%;width:var(--tw);height:var(--th);background:var(--panel);border:1px solid var(--line);border-bottom:0;border-radius:calc(var(--r)*.7) calc(var(--r)*.7) 0 0}
+.f b{font-size:34px;line-height:1;letter-spacing:-.03em}.f h3{font-size:15px}.f p{font-size:12.5px;color:var(--mute);margin-top:4px}
+.f:hover,.f:focus-visible,.f[aria-pressed=true]{transform:translateY(calc(var(--lift)*-1)) rotate(var(--tilt))}
+.f:hover .sheet,.f:focus-visible .sheet,.f[aria-pressed=true] .sheet{transform:translateY(calc(var(--peek)*-1))}
+@media(prefers-reduced-motion:reduce){.f,.f .sheet{transition:none}}
+</style>
+<body>
+<div class="row" id="row"></div><p class="hint">Hover, focus or press a folder</p>
+<script type="application/json" id="settings">{"count":3,"tabw":46,"tabh":18,"corner":20,"lift":14,"tilt":-2,"peek":34,"speed":420,"mode":"dark","accent":"#8B7CFF"}</script>
+<script>
+const CONTROLS=[{g:'Folder',k:'count',label:'Cards',min:2,max:4,step:1},{k:'tabw',label:'Tab width',min:25,max:80,step:1,unit:'%'},{k:'tabh',label:'Tab height',min:8,max:34,step:1,unit:'px'},{k:'corner',label:'Corner radius',min:4,max:36,step:1,unit:'px'},
+ {g:'Motion',k:'lift',label:'Lift',min:0,max:40,step:1,unit:'px'},{k:'tilt',label:'Tilt',min:-8,max:8,step:.5,unit:'°'},{k:'peek',label:'Sheet peek',min:0,max:70,step:1,unit:'px'},{k:'speed',label:'Speed',min:150,max:900,step:10,unit:'ms'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['dark','light']},{k:'accent',label:'Accent',type:'color'}];
+/*TUNER*/
+const D=[['Simple and easy to use','Set up in minutes, not days.','Guide'],['Numbers you can trust','One source for every figure.','Report'],['Built to grow with you','From first user to millionth.','Plan'],['Help when you need it','People, not a queue.','Support']],row=document.getElementById('row');
+function apply(){theme();const r=document.documentElement.style;r.setProperty('--tw',S.tabw+'%');r.setProperty('--th',S.tabh+'px');r.setProperty('--r',S.corner+'px');r.setProperty('--lift',S.lift+'px');r.setProperty('--tilt',S.tilt+'deg');r.setProperty('--peek',S.peek+'px');r.setProperty('--t',S.speed+'ms');
+ if(row.children.length!==S.count)row.innerHTML=D.slice(0,S.count).map(([t,s,k],i)=>`<button class="f" aria-pressed="false"><span class="sheet">${k}</span><span class="front"><b>0${i+1}</b><span><h3>${t}</h3><p>${s}</p></span></span></button>`).join('')}
+row.addEventListener('click',e=>{const b=e.target.closest('.f');if(!b)return;const on=b.getAttribute('aria-pressed')!=='true';[...row.children].forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed',on)});
+apply();
+</script>
+</body>

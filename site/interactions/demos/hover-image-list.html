@@ -1,0 +1,46 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Hover image list</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0E0F13;--panel:#191B22;--ink:#F3F4F7;--mute:#9CA3B4;--line:#2A2D38;--ac:#8B7CFF}
+:root[data-mode=light]{--bg:#F3F1EC;--panel:#FFFFFF;--ink:#17181C;--mute:#646978;--line:#DEDAD0}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+body{overflow:hidden}
+ul{list-style:none;margin:0;padding:0;width:min(760px,90vw)}
+li a{display:flex;align-items:baseline;gap:16px;padding:16px 4px;border-bottom:1px solid var(--line);text-decoration:none;color:inherit;transition:padding .3s,opacity .3s}
+li a b{font-size:clamp(22px,4vw,38px);letter-spacing:-.02em;font-weight:600}li a i{font-style:normal;font-size:12px;color:var(--mute);font-variant-numeric:tabular-nums}li a span{margin-left:auto;font-size:13px;color:var(--mute)}
+ul:hover a,ul:focus-within a{opacity:var(--dim)}ul a:hover,ul a:focus-visible{opacity:1;padding-left:18px;color:var(--ac)}
+.fr{position:fixed;left:0;top:0;width:var(--fw);aspect-ratio:var(--ar);border-radius:var(--r);overflow:hidden;pointer-events:none;scale:0;opacity:0;transition:scale .3s cubic-bezier(.3,1.4,.5,1),opacity .2s;box-shadow:0 30px 60px -24px rgba(0,0,0,.5);z-index:5;will-change:transform}
+.fr.on{scale:1;opacity:1}.fr img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;clip-path:inset(100% 0 0 0);transition:clip-path .45s cubic-bezier(.2,.8,.2,1)}.fr img.on{clip-path:inset(0);z-index:1}
+@media(prefers-reduced-motion:reduce){.fr,.fr img,li a{transition:none}}
+</style>
+<body>
+<ul id="list"></ul><div class="fr" id="fr" aria-hidden="true"></div>
+<script type="application/json" id="settings">{"width":260,"aspect":1.25,"lag":0.14,"tilt":0.5,"corner":14,"dim":0.4,"mode":"light","accent":"#E4572E"}</script>
+<script>
+const CONTROLS=[{g:'Frame',k:'width',label:'Width',min:160,max:400,step:5,unit:'px'},{k:'aspect',label:'Aspect',min:.7,max:1.8,step:.05},{k:'corner',label:'Corner radius',min:0,max:40,step:1,unit:'px'},{g:'Motion',k:'lag',label:'Follow speed',min:.04,max:.5,step:.01},{k:'tilt',label:'Tilt',min:0,max:1.5,step:.05},
+ {g:'Look',k:'dim',label:'Other rows',min:.15,max:1,step:.05},{k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'dark';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+const D=[['amber','Amber House','Identity'],['biolum','Night Water','Film'],['origami','Paper Planes','Packaging'],['nebula','Deep Field','Website'],['bloom','Pigment','Campaign'],['sumi','One Line','Editorial']],list=document.getElementById('list'),fr=document.getElementById('fr');
+list.innerHTML=D.map(([f,t,c],i)=>`<li><a href="#" data-i="${i}"><i>0${i+1}</i><b>${t}</b><span>${c}</span></a></li>`).join('');fr.innerHTML=D.map(([f])=>`<img src="../../assets/shelf/${f}.webp" alt="">`).join('');
+const imgs=[...fr.children];let x=0,y=0,tx=0,ty=0,rot=0,cur=-1;
+const show=i=>{if(i===cur)return;cur=i;imgs.forEach((m,k)=>m.classList.toggle('on',k===i));fr.classList.toggle('on',i>=0)};
+list.addEventListener('pointermove',e=>{if(e.pointerType==='touch')return;tx=e.clientX+24;ty=e.clientY-fr.offsetHeight/2;const a=e.target.closest('a');if(a)show(+a.dataset.i)});list.addEventListener('pointerleave',()=>show(-1));
+list.addEventListener('focusin',e=>{const a=e.target.closest('a');if(!a||!a.matches(':focus-visible'))return;const r=a.getBoundingClientRect();tx=Math.min(innerWidth-fr.offsetWidth-16,r.right-fr.offsetWidth*.6);ty=r.top-fr.offsetHeight/2+r.height/2;show(+a.dataset.i)});list.addEventListener('focusout',()=>show(-1));
+list.addEventListener('click',e=>e.preventDefault());
+function tick(t){if(auto&&!list.matches(':hover')){const i=Math.floor(t/1500)%D.length,r=list.children[i].getBoundingClientRect();tx=r.left+r.width*.45+Math.sin(t/400)*60;ty=r.top-fr.offsetHeight/2+r.height/2;show(i)}
+ const k=calm?1:S.lag,nx=x+(tx-x)*k;rot+=((nx-x)*S.tilt-rot)*.2;x=nx;y+=(ty-y)*k;fr.style.transform=`translate(${x.toFixed(1)}px,${Math.max(8,Math.min(innerHeight-fr.offsetHeight-8,y)).toFixed(1)}px) rotate(${Math.max(-14,Math.min(14,rot)).toFixed(2)}deg)`;requestAnimationFrame(tick)}
+function apply(){theme();const s=document.documentElement.style;s.setProperty('--fw',S.width+'px');s.setProperty('--ar',S.aspect);s.setProperty('--r',S.corner+'px');s.setProperty('--dim',S.dim)}
+const auto=parent!==window&&!calm;apply();requestAnimationFrame(tick);
+</script>
+</body>
+</html>

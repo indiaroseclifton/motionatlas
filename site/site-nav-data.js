@@ -55,10 +55,10 @@ window.ATLAS_NAV_MENUS=[
   {name:'Visual',items:['#art','#cinema','#backgrounds','#vases','#pairings']},
   {name:'Motion',items:['#motion','#effects','interactions.html','motion-graphics.html']},
   {name:'Interface',items:['#systems','#ux','app-interfaces.html','theme-kits.html','icons.html','#typography',{more:'More interface',items:['#icons','#assets','chart-styles.html']}]}]},
- {id:'make',name:'Make',top:['page-builder.html'],groups:[
+ {id:'make',name:'Make',top:['page-builder.html','interactions.html'],groups:[
   {name:'Brand & assets',items:['brand-generator.html','mockup-studio.html','theme-kits.html']},
   {name:'Charts & diagrams',items:['chart-studio.html','diagram-studio.html','flowchart-studio.html']},
-  {name:'Motion & interaction',items:['motion-graphics.html','interactions.html']},
+  {name:'Motion',items:['motion-graphics.html']},
   {name:'Apps & tools',items:['app-interfaces.html']}]},
  {id:'studio',name:'Your studio',groups:[
   {name:'',items:['#projects','moodboard.html','#inspiration','my-fonts.html','#creations','account.html']}]}

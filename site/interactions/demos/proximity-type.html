@@ -1,0 +1,36 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Proximity type</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0E0F13;--panel:#191B22;--ink:#F3F4F7;--mute:#9CA3B4;--line:#2A2D38;--ac:#8B7CFF}
+:root[data-mode=light]{--bg:#F3F1EC;--panel:#FFFFFF;--ink:#17181C;--mute:#646978;--line:#DEDAD0}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+h1{font-size:var(--fs);line-height:1.02;letter-spacing:-.02em;text-align:center;font-weight:200;padding:0 16px;font-family:"Inter Variable",Inter,"Segoe UI Variable","SF Pro Display",system-ui,sans-serif;cursor:default;user-select:none}
+h1 span{display:inline-block;will-change:transform;white-space:pre}h1 .ln{display:block}
+</style>
+<body>
+<h1 id="h" aria-label="Press into the letters">Press into the letters</h1><p class="hint">Move across the words</p>
+<script type="application/json" id="settings">{"radius":190,"min":200,"max":900,"grow":0.18,"lift":8,"follow":0.18,"size":84,"mode":"dark","accent":"#FFD166"}</script>
+<script>
+const CONTROLS=[{g:'Reach',k:'radius',label:'Radius',min:80,max:420,step:5,unit:'px'},{k:'follow',label:'Follow speed',min:.04,max:.5,step:.01},{g:'Letters',k:'min',label:'Resting weight',min:100,max:500,step:50},{k:'max',label:'Pressed weight',min:500,max:900,step:50},{k:'grow',label:'Grow',min:0,max:.5,step:.01},{k:'lift',label:'Lift',min:0,max:24,step:1,unit:'px'},{k:'size',label:'Text size',min:40,max:130,step:2,unit:'px'},
+ {g:'Look',k:'mode',label:'Mode',type:'select',options:['dark','light']},{k:'accent',label:'Accent',type:'color'}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'dark';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+const h=document.getElementById('h');h.innerHTML=['Press into','the letters'].map(l=>'<span class="ln" aria-hidden="true">'+[...l].map(c=>`<span>${c}</span>`).join('')+'</span>').join('');
+const L=[...h.querySelectorAll('.ln span')].map(el=>({el,v:0}));let px=null,py=0,idle=0;
+addEventListener('pointermove',e=>{px=e.clientX;py=e.clientY;idle=0});document.addEventListener('pointerleave',()=>px=null);
+function tick(t){idle++;const wave=px==null||idle>200;L.forEach((l,i)=>{let c;if(wave){c=Math.max(0,Math.sin(t/700-i*.45))**3}else{const r=l.el.getBoundingClientRect(),d=Math.hypot(px-(r.left+r.width/2),py-(r.top+r.height/2));c=Math.max(0,1-d/S.radius);c=c*c*(3-2*c)}
+ l.v+=(c-l.v)*S.follow;const v=l.v;l.el.style.fontWeight=Math.round(S.min+(S.max-S.min)*v);l.el.style.transform=`translateY(${(-v*S.lift).toFixed(2)}px) scale(${(1+v*S.grow).toFixed(3)})`;l.el.style.color=`color-mix(in srgb,var(--ink),var(--ac) ${(v*100).toFixed(0)}%)`});requestAnimationFrame(tick)}
+function apply(){theme();h.style.setProperty('--fs',`min(${S.size}px,13vw)`)}
+apply();if(!calm)requestAnimationFrame(tick);
+</script>
+</body>
+</html>

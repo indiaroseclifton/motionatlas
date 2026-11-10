@@ -1,57 +1,47 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Radial menu</title>
-<style>
-:root{--bg:#101114;--ink:#F2F2EE;--mute:#9EA0A8;--btn:#1D1F25;--acc:#FF7A45;--R:118px}
-*{box-sizing:border-box}html,body{margin:0;height:100%}
-body{background:var(--bg) radial-gradient(circle at 50% 55%,#1C1E26,transparent 60%);color:var(--ink);font:15px/1.5 system-ui,sans-serif;display:grid;grid-template-rows:auto 1fr auto;min-height:100vh;overflow:hidden}
-header{padding:clamp(20px,5vh,48px) clamp(16px,5vw,60px) 0;max-width:620px}
-h1{margin:0 0 8px;font:650 clamp(28px,4vw,46px)/1.02 system-ui;letter-spacing:-.04em}
-header p{margin:0;color:var(--mute)}
-.stage{position:relative;display:grid;place-items:center;touch-action:none}
-.menu{position:relative;width:calc(var(--R)*2 + 64px);height:calc(var(--R)*2 + 64px)}
-.ring{position:absolute;inset:32px;border-radius:50%;border:1px dashed #33363F;opacity:0;transform:scale(.6);transition:opacity .3s,transform .5s cubic-bezier(.2,1.3,.4,1)}
-.open .ring{opacity:1;transform:none}
-.sector{position:absolute;inset:0;border-radius:50%;opacity:0;transition:opacity .2s;background:conic-gradient(from calc(var(--a) - 30deg),rgba(255,122,69,.18) 0 60deg,transparent 60deg);-webkit-mask:radial-gradient(circle,transparent 40px,#000 41px);mask:radial-gradient(circle,transparent 40px,#000 41px)}
-.sector.on{opacity:1}
-.hub{position:absolute;left:50%;top:50%;width:76px;height:76px;margin:-38px;border-radius:50%;border:0;background:var(--acc);color:#1A0E08;display:grid;place-items:center;cursor:pointer;z-index:3;box-shadow:0 14px 34px -10px rgba(255,122,69,.6);transition:transform .45s cubic-bezier(.2,1.3,.4,1)}
-.hub svg{width:30px;height:30px;transition:transform .45s cubic-bezier(.2,1.3,.4,1)}
-.open .hub svg{transform:rotate(135deg)}
-.hub:focus-visible{outline:2px solid #fff;outline-offset:4px}
-.item{position:absolute;left:50%;top:50%;width:58px;height:58px;margin:-29px;border-radius:50%;border:1px solid #30333C;background:var(--btn);color:var(--ink);display:grid;place-items:center;cursor:pointer;transform:translate(0,0) scale(.3);opacity:0;pointer-events:none;transition:transform .5s cubic-bezier(.2,1.4,.4,1),opacity .25s,background .2s;transition-delay:calc(var(--i)*30ms)}
-.item svg{width:22px;height:22px}
-.open .item{opacity:1;pointer-events:auto;transform:translate(var(--x),var(--y)) scale(1)}
-.item.hot,.item:hover{background:#2A2D36;border-color:var(--acc)}
-.item:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
-.tip{position:absolute;left:50%;top:50%;transform:translate(-50%,calc(var(--R)*-1 - 74px));font:600 12px/1 ui-monospace,Menlo,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--acc);white-space:nowrap;opacity:0;transition:opacity .2s}
-.open .tip{opacity:1}
-.log{padding:0 16px 24px;text-align:center;color:var(--mute);font-size:13px;min-height:44px}
-.log b{color:var(--ink)}
-@media (max-width:500px){:root{--R:100px}}
-@media (prefers-reduced-motion:reduce){.item,.ring,.hub,.hub svg{transition:opacity .15s}.item{transition-delay:0s}}
-</style></head><body>
-<header><h1>Everything, one thumb away.</h1><p>Click the button or press Space to open. Arrow keys walk around the ring. Or press and hold, slide toward an action and let go, the way game menus work.</p></header>
-<div class="stage" id="stage"><div class="menu" id="menu"><div class="ring"></div><div class="sector" id="sector"></div><span class="tip" id="tip" aria-hidden="true"></span>
-<button class="hub" id="hub" aria-haspopup="menu" aria-expanded="false" aria-controls="items" aria-label="Create"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
-<div id="items" role="menu" aria-label="Create"></div></div></div>
-<p class="log" id="log" role="status">Nothing chosen yet.</p>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Radial action menu</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0E0F13;--panel:#191B22;--ink:#F3F4F7;--mute:#9CA3B4;--line:#2A2D38;--ac:#8B7CFF}
+:root[data-mode=light]{--bg:#F3F1EC;--panel:#FFFFFF;--ink:#17181C;--mute:#646978;--line:#DEDAD0}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+.m{position:relative;width:64px;height:64px}
+.t{position:absolute;inset:0;border-radius:50%;border:0;background:var(--ac);color:#fff;font-size:30px;line-height:1;display:grid;place-items:center;box-shadow:0 12px 30px -8px var(--ac);z-index:2;transition:transform .3s cubic-bezier(.3,1.5,.5,1)}
+.t span{transition:transform .3s cubic-bezier(.3,1.5,.5,1);display:block;margin-top:-3px}.t[aria-expanded=true] span{transform:rotate(45deg)}
+.i{position:absolute;left:50%;top:50%;width:var(--s);height:var(--s);margin:calc(var(--s)/-2);border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:19px;transform:translate(0,0) scale(0);opacity:0;transition:transform .45s cubic-bezier(.3,1.5,.5,1) var(--d),opacity .2s var(--d)}
+.m.open .i{transform:translate(var(--x),var(--y)) scale(1);opacity:1}
+.i::after{content:attr(data-l);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);padding:3px 8px;border-radius:6px;background:var(--ink);color:var(--bg);font-size:11.5px;font-weight:600;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s}
+.i:hover::after,.i:focus-visible::after{opacity:1}.i:hover{border-color:var(--ac)}
+#live{position:fixed;left:0;right:0;bottom:22px;text-align:center;color:var(--mute);font-size:13px}
+@media(prefers-reduced-motion:reduce){.i,.t,.t span{transition-duration:.01s;transition-delay:0s}}
+</style>
+<body>
+<div class="m" id="m"><button class="t" id="t" aria-haspopup="menu" aria-expanded="false" aria-controls="menu" aria-label="Create"><span aria-hidden="true">+</span></button><div id="menu" role="menu" aria-label="Create"></div></div>
+<p id="live" aria-live="polite">Press the button. Arrow keys move, Escape closes.</p>
+<script type="application/json" id="settings">{"count":5,"radius":120,"arc":180,"start":180,"stagger":45,"size":50,"mode":"dark","accent":"#FF5C8A"}</script>
 <script>
-const CONFIG=[['Text','M5 6V5h14v1M12 5v14M9 19h6'],['Image','M4 5h16v14H4zM4 16l5-5 4 4 3-3 4 4M15.5 9.5h.01'],['Shape','M12 3l9 16H3z'],['Pen','M4 20l4-1 11-11-3-3L5 16zM14 6l3 3'],['Comment','M5 5h14v10H9l-4 4z'],['Share','M12 15V4M8 8l4-4 4 4M5 13v6h14v-6']];
-const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-const menu=document.getElementById('menu'),hub=document.getElementById('hub'),wrap=document.getElementById('items'),tip=document.getElementById('tip'),sector=document.getElementById('sector'),log=document.getElementById('log');
-const N=CONFIG.length;
-const I=CONFIG.map(([t,d],i)=>{const b=document.createElement('button');b.className='item';b.setAttribute('role','menuitem');b.tabIndex=-1;b.setAttribute('aria-label',t);b.style.setProperty('--i',i);
- b.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;b.onclick=()=>pick(i);b.onmouseenter=()=>hot(i);b.onfocus=()=>hot(i);wrap.append(b);return b});
-function place(){const R=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--R'))||118;I.forEach((b,i)=>{const a=(i/N)*Math.PI*2-Math.PI/2;b.style.setProperty('--x',Math.cos(a)*R+'px');b.style.setProperty('--y',Math.sin(a)*R+'px')})}place();addEventListener('resize',place);
-let isOpen=false,cur=-1;wrap.inert=true;
-function setOpen(v,focusFirst){isOpen=v;wrap.inert=!v;menu.classList.toggle('open',v);hub.setAttribute('aria-expanded',v);hub.setAttribute('aria-label',v?'Close create menu':'Create');if(v&&focusFirst){I[0].focus()}if(!v){hot(-1);}}
-function hot(i){cur=i;I.forEach((b,j)=>b.classList.toggle('hot',j===i));sector.classList.toggle('on',i>=0);if(i>=0){sector.style.setProperty('--a',(i/N)*360+'deg');tip.textContent=CONFIG[i][0]}else tip.textContent=''}
-function pick(i){log.innerHTML='Chose <b>'+CONFIG[i][0]+'</b>.';setOpen(false);hub.focus()}
-hub.addEventListener('click',e=>{if(held)return;setOpen(!isOpen,e.detail===0)});
-wrap.addEventListener('keydown',e=>{const i=I.indexOf(document.activeElement);let j=null;if(e.key==='ArrowRight'||e.key==='ArrowDown')j=(i+1)%N;if(e.key==='ArrowLeft'||e.key==='ArrowUp')j=(i-1+N)%N;if(e.key==='Home')j=0;if(e.key==='End')j=N-1;if(j!==null){e.preventDefault();I[j].focus()}if(e.key==='Escape'||e.key==='Tab'){if(e.key==='Escape')e.preventDefault();setOpen(false);if(e.key==='Escape')hub.focus()}});
-let held=false,downAt=0,timer;
-hub.addEventListener('pointerdown',e=>{downAt=performance.now();held=false;timer=setTimeout(()=>{held=true;setOpen(true)},220);hub.setPointerCapture(e.pointerId)});
-hub.addEventListener('pointermove',e=>{if(!held)return;const r=hub.getBoundingClientRect(),dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2);if(Math.hypot(dx,dy)<40){hot(-1);return}let a=Math.atan2(dy,dx)+Math.PI/2;if(a<0)a+=Math.PI*2;hot(Math.round(a/(Math.PI*2)*N)%N)});
-hub.addEventListener('pointerup',()=>{clearTimeout(timer);if(held){if(cur>=0)pick(cur);else setOpen(false);setTimeout(()=>held=false,0)}});
-document.addEventListener('pointerdown',e=>{if(isOpen&&!menu.contains(e.target))setOpen(false)});
-if(!reduce)setTimeout(()=>{setOpen(true);let k=0;const t=setInterval(()=>{if(!isOpen){clearInterval(t);return}hot(k%N);k++;if(k>N){clearInterval(t)}},380)},600);
-</script></body></html>
+const CONTROLS=[{g:'Layout',k:'count',label:'Actions',min:3,max:8,step:1},{k:'radius',label:'Radius',min:70,max:200,step:2,unit:'px'},{k:'arc',label:'Arc span',min:60,max:360,step:5,unit:'°'},{k:'start',label:'Start angle',min:0,max:360,step:5,unit:'°'},{k:'size',label:'Button size',min:38,max:68,step:1,unit:'px'},
+ {g:'Motion',k:'stagger',label:'Stagger',min:0,max:120,step:5,unit:'ms'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['dark','light']},{k:'accent',label:'Accent',type:'color'}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'dark';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+const A=[['✎','Note'],['☑','Task'],['◷','Reminder'],['❖','Photo'],['♫','Voice memo'],['✉','Message'],['⚑','Flag'],['☆','Favourite']],m=document.getElementById('m'),t=document.getElementById('t'),menu=document.getElementById('menu'),live=document.getElementById('live');
+const items=()=>[...menu.children];
+function apply(){theme();const n=S.count,full=S.arc>=360;m.style.setProperty('--s',S.size+'px');const was=m.classList.contains('open');
+ menu.innerHTML=A.slice(0,n).map(([ic,l],i)=>{const a=(S.start+i*S.arc/(full?n:n-1))*Math.PI/180;return `<button class="i" role="menuitem" tabindex="-1" data-l="${l}" aria-label="${l}" style="--x:${(Math.cos(a)*S.radius).toFixed(1)}px;--y:${(Math.sin(a)*S.radius).toFixed(1)}px;--d:${i*S.stagger}ms"><span aria-hidden="true">${ic}</span></button>`}).join('');m.classList.toggle('open',was)}
+function open(o,focus){m.classList.toggle('open',o);t.setAttribute('aria-expanded',o);if(o&&focus)setTimeout(()=>items()[0].focus(),60);if(!o&&focus)t.focus()}
+t.onclick=()=>open(!m.classList.contains('open'),true);
+menu.addEventListener('click',e=>{const b=e.target.closest('.i');if(b){live.textContent='New '+b.dataset.l.toLowerCase()+' started';open(false,true)}});
+m.addEventListener('keydown',e=>{const it=items(),i=it.indexOf(document.activeElement);if(e.key==='Escape'){open(false,true);return}if(i<0)return;const d=['ArrowRight','ArrowDown'].includes(e.key)?1:['ArrowLeft','ArrowUp'].includes(e.key)?-1:0;if(d){e.preventDefault();it[(i+d+it.length)%it.length].focus()}});
+document.addEventListener('pointerdown',e=>{if(!m.contains(e.target))open(false)});
+apply();if(parent!==window)setTimeout(()=>open(true),500);
+</script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!--META {"o":6,"t":"Swipe card stack","cat":"Cards","tone":"light","uses":["L49","L13"],"d":"A stack of cards you throw left or right. The next card rises to take its place; buttons and arrow keys do the same.","how":"Only the top card listens for the drag. Its offset becomes a rotation, and a release past the threshold flings it off and moves it to the back of the array; otherwise it springs home. Depth is just an index: each card behind is offset and scaled a step more.","use":"Review queues, onboarding choices, flashcards, recommendations, quick triage.","p":"Build a swipeable card stack in one HTML file with no libraries. Five cards are absolutely stacked; card at depth k has translateY(k * offset) scale(1 - k * scaleStep) and lower z-index. The top card follows a pointer drag horizontally with rotation proportional to the offset and shows a Skip or Save label that fades in with distance. Releasing past a threshold animates it off screen in that direction, then moves it to the back and re-renders so every card eases up one place; otherwise it springs back. Skip and Save buttons and the Left and Right arrow keys trigger the same throw. Announce the result and the new top card in a polite live region, with a running count of saved cards. Settings: stack offset, scale step, rotation, throw threshold, visible depth, corner radius, accent, light or dark."}-->
+<style>/*BASE*/
+.wrap{display:grid;justify-items:center;gap:26px}
+.stack{position:relative;width:min(280px,72vw);aspect-ratio:3/4;touch-action:pan-y}
+.c{position:absolute;inset:0;border-radius:var(--r);overflow:hidden;background:var(--panel);box-shadow:0 20px 40px -20px rgba(0,0,0,.5);transition:transform .45s cubic-bezier(.3,1.4,.5,1),opacity .3s;user-select:none;transform-origin:50% 100%}
+.c.drag{transition:none;cursor:grabbing}.c img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+.c figcaption{position:absolute;inset:auto 0 0 0;padding:40px 16px 16px;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.75))}.c b{display:block;font-size:18px}.c span{font-size:13px;opacity:.85}
+.c .tag{position:absolute;top:16px;padding:5px 12px;border-radius:8px;font-weight:800;font-size:14px;letter-spacing:.08em;border:2px solid;opacity:0;text-transform:uppercase}.c .tag.y{left:16px;color:#3DDC97;transform:rotate(-10deg)}.c .tag.n{right:16px;color:#FF6B6B;transform:rotate(10deg)}
+.btns{display:flex;gap:14px;align-items:center}.btns button{min-height:44px;padding:0 20px;border-radius:99px;border:1px solid var(--line);background:var(--panel);font-weight:600}.btns .y{background:var(--ac);border-color:var(--ac);color:#fff}
+#live{font-size:13px;color:var(--mute);min-height:20px}
+</style>
+<body>
+<div class="wrap"><div class="stack" id="stack" tabindex="0" role="group" aria-label="Card stack. Left arrow skips, right arrow saves."></div>
+<div class="btns"><button id="no">Skip</button><button class="y" id="yes">Save</button></div><p id="live" aria-live="polite"></p></div>
+<script type="application/json" id="settings">{"offset":14,"scale":0.06,"rotate":14,"threshold":110,"depth":3,"corner":22,"mode":"light","accent":"#E4572E"}</script>
+<script>
+const CONTROLS=[{g:'Stack',k:'offset',label:'Offset',min:0,max:30,step:1,unit:'px'},{k:'scale',label:'Scale step',min:0,max:.12,step:.005},{k:'depth',label:'Cards showing',min:1,max:4,step:1},{k:'corner',label:'Corner radius',min:0,max:40,step:1,unit:'px'},
+ {g:'Throw',k:'rotate',label:'Rotation',min:0,max:30,step:1,unit:'°'},{k:'threshold',label:'Threshold',min:40,max:220,step:5,unit:'px'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/*TUNER*/
+const IMG=n=>'../../assets/shelf/'+n+'.webp';let Q=[['amber','Amber resin','Warm and translucent'],['origami','Folded paper','Sharp planes, soft shadow'],['biolum','Night water','Light that answers touch'],['bloom','Pigment bloom','Colour let loose'],['nebula','Deep field','Dust, gas and distance']],saved=0,busy=false;
+const stack=document.getElementById('stack'),live=document.getElementById('live');
+function place(){[...stack.children].forEach(c=>{const k=+c.dataset.k;c.style.zIndex=10-k;c.style.opacity=k>S.depth?0:1;c.style.transform=`translateY(${-Math.min(k,S.depth)*S.offset}px) scale(${1-Math.min(k,S.depth)*S.scale})`})}
+function render(){stack.innerHTML=Q.map(([f,t,s],k)=>`<figure class="c" data-k="${k}" style="border-radius:${S.corner}px"><img src="${IMG(f)}" alt="" draggable="false"><span class="tag y">Save</span><span class="tag n">Skip</span><figcaption><b>${t}</b><span>${s}</span></figcaption></figure>`).join('');place()}
+function fling(dir){if(busy)return;busy=true;const c=stack.firstElementChild;c.classList.remove('drag');c.style.transform=`translate(${dir*140}%,-10%) rotate(${dir*S.rotate*1.6}deg)`;c.style.opacity=0;if(dir>0)saved++;const [t]=[Q[0][1]];
+ setTimeout(()=>{Q.push(Q.shift());render();busy=false;live.textContent=(dir>0?'Saved ':'Skipped ')+t+'. Now showing '+Q[0][1]+'. '+saved+' saved.'},calm?0:280)}
+let d=null;stack.addEventListener('pointerdown',e=>{const c=e.target.closest('.c');if(!c||c.dataset.k!=='0'||busy)return;d={x:e.clientX,c};c.classList.add('drag');stack.setPointerCapture(e.pointerId)});
+stack.addEventListener('pointermove',e=>{if(!d)return;const dx=e.clientX-d.x;d.dx=dx;d.c.style.transform=`translateX(${dx}px) rotate(${dx/S.threshold*S.rotate*.6}deg)`;d.c.querySelector('.y').style.opacity=Math.max(0,dx/S.threshold);d.c.querySelector('.n').style.opacity=Math.max(0,-dx/S.threshold)});
+const up=()=>{if(!d)return;const {c,dx=0}=d;d=null;c.classList.remove('drag');if(Math.abs(dx)>S.threshold)fling(Math.sign(dx));else{c.querySelectorAll('.tag').forEach(t=>t.style.opacity=0);place()}};
+stack.addEventListener('pointerup',up);stack.addEventListener('pointercancel',up);
+stack.addEventListener('keydown',e=>{if(e.key==='ArrowRight'){e.preventDefault();fling(1)}else if(e.key==='ArrowLeft'){e.preventDefault();fling(-1)}});
+document.getElementById('yes').onclick=()=>fling(1);document.getElementById('no').onclick=()=>fling(-1);
+function apply(){theme();render()}apply();
+</script>
+</body>

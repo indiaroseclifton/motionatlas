@@ -1,0 +1,53 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Morphing status pill</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0E0F13;--panel:#191B22;--ink:#F3F4F7;--mute:#9CA3B4;--line:#2A2D38;--ac:#8B7CFF}
+:root[data-mode=light]{--bg:#F3F1EC;--panel:#FFFFFF;--ink:#17181C;--mute:#646978;--line:#DEDAD0}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+body{align-content:center;gap:30px}
+.pill{position:fixed;top:26px;left:50%;translate:-50% 0;background:#000;color:#fff;border-radius:var(--r);width:var(--w);height:var(--h);transition:width var(--t) var(--e),height var(--t) var(--e),border-radius var(--t) var(--e);overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,.08),0 0 var(--glow) color-mix(in srgb,var(--ac) 60%,transparent);scale:var(--sc);transform-origin:50% 0}
+.s{position:absolute;inset:0;display:flex;align-items:center;gap:10px;padding:0 14px;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap;font-size:13.5px}
+.pill[data-s=idle] .idle,.pill[data-s=timer] .timer,.pill[data-s=music] .music,.pill[data-s=call] .call,.pill[data-s=done] .done{opacity:1;transition-delay:.12s;pointer-events:auto}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--ac);margin:auto}
+.timer b,.sp{margin-left:auto}.timer b{font-variant-numeric:tabular-nums;color:var(--ac)}
+.art{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--ac),#FF5C8A);flex:none}.music small{display:block;opacity:.6;font-size:11.5px}
+.eq{display:flex;gap:3px;align-items:flex-end;height:18px;margin-left:auto}.eq i{width:3px;border-radius:2px;background:var(--ac);animation:eq .9s ease-in-out infinite alternate}.eq i:nth-child(2){animation-delay:-.3s}.eq i:nth-child(3){animation-delay:-.6s}.eq i:nth-child(4){animation-delay:-.15s}@keyframes eq{from{height:4px}to{height:18px}}
+.call{padding:0 16px}.call small{display:block;opacity:.6;font-size:11.5px}.call button{width:44px;height:44px;border-radius:50%;border:0;color:#fff;font-size:18px;flex:none}.call .no{background:#E5484D;margin-left:auto}.call .yes{background:#30A46C}
+.done{justify-content:center}.done svg{width:20px;height:20px;stroke:var(--ac);fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:24;stroke-dashoffset:24}.pill[data-s=done] .done svg{animation:tick .4s .25s forwards}@keyframes tick{to{stroke-dashoffset:0}}
+.pick{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:0 16px}.pick button{min-height:40px;padding:0 16px;border-radius:99px;border:1px solid var(--line);background:var(--panel);font-weight:600;font-size:13.5px}.pick button[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+@media(prefers-reduced-motion:reduce){.pill{transition-duration:.01s}.eq i{animation:none;height:10px}}
+</style>
+<body>
+<div class="pill" id="pill" role="status" data-s="idle">
+ <div class="s idle"><span class="dot"></span><span class="sr">Nothing running</span></div>
+ <div class="s timer"><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="8" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="3"/><circle id="ring" cx="11" cy="11" r="8" fill="none" stroke="var(--ac)" stroke-width="3" stroke-linecap="round" stroke-dasharray="50.3" transform="rotate(-90 11 11)"/></svg><span>Focus timer</span><b id="clock">25:00</b></div>
+ <div class="s music"><span class="art"></span><span><b>Slow Mornings</b><small>Juniper Labs</small></span><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span></div>
+ <div class="s call"><span><b>Maya Okafor</b><small>Incoming call</small></span><button class="no" aria-label="Decline">✕</button><button class="yes" aria-label="Accept">✆</button></div>
+ <div class="s done"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Export finished</span></div>
+</div>
+<div class="pick" id="pick" role="group" aria-label="Show a state"></div><p class="hint">One element changes shape; the content cross-fades inside it</p>
+<script type="application/json" id="settings">{"bounce":0.5,"duration":520,"corner":26,"scale":1,"glow":0,"mode":"dark","accent":"#3DDC97"}</script>
+<script>
+const CONTROLS=[{g:'Spring',k:'bounce',label:'Bounce',min:0,max:1,step:.05},{k:'duration',label:'Duration',min:200,max:1200,step:10,unit:'ms'},{g:'Shape',k:'corner',label:'Corner radius',min:8,max:44,step:1,unit:'px'},{k:'scale',label:'Size',min:.8,max:1.5,step:.05,unit:'×'},{k:'glow',label:'Glow',min:0,max:50,step:1,unit:'px'},
+ {g:'Look',k:'mode',label:'Mode',type:'select',options:['dark','light']},{k:'accent',label:'Accent',type:'color'}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'dark';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+const SHAPE={idle:[120,36],timer:[230,44],music:[300,56],call:[320,76],done:[200,44]},pill=document.getElementById('pill'),pick=document.getElementById('pick');let state='idle',left=1500,back=0;
+function show(s){state=s;pill.dataset.s=s;const [w,h]=SHAPE[s];pill.style.setProperty('--w',`min(${w}px,calc(100vw - 32px))`);pill.style.setProperty('--h',h+'px');[...pick.children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.s===s));clearTimeout(back);if(s==='done')back=setTimeout(()=>show('idle'),2200)}
+function apply(){theme();const s=pill.style;s.setProperty('--e',calm?'ease':`cubic-bezier(.3,${(1+S.bounce*.9).toFixed(2)},.4,1)`);s.setProperty('--t',S.duration+'ms');s.setProperty('--r',S.corner+'px');s.setProperty('--sc',S.scale);s.setProperty('--glow',S.glow+'px');show(state)}
+pick.innerHTML=Object.keys(SHAPE).map(s=>`<button data-s="${s}" aria-pressed="false">${s[0].toUpperCase()+s.slice(1)}</button>`).join('');pick.onclick=e=>{const b=e.target.closest('button');if(b)show(b.dataset.s)};
+pill.querySelector('.yes').onclick=()=>show('done');pill.querySelector('.no').onclick=()=>show('idle');
+setInterval(()=>{if(state!=='timer')return;left=left>0?left-1:1500;document.getElementById('clock').textContent=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');document.getElementById('ring').style.strokeDashoffset=50.3*(1-left/1500)},1000);
+apply();if(parent!==window&&!calm){const seq=['music','call','done','timer'];let i=0;setInterval(()=>{if(!document.querySelector(':hover'))show(seq[i++%seq.length])},2600)}
+</script>
+</body>
+</html>

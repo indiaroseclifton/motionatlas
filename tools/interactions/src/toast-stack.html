@@ -1,0 +1,32 @@
+<!--META {"o":9,"t":"Stacking toasts","cat":"Feedback","tone":"light","uses":["L13","L49"],"d":"Notifications that pile up as a neat deck, fan out when you hover or focus them, and can be dismissed one by one.","how":"Each toast knows its index from the newest. Collapsed, that index sets a small offset and scale so they read as a deck; expanded, it becomes a full step so they separate. Timers pause while the stack is open, and the region is a polite live region.","use":"Save confirmations, background jobs, undo prompts, messages, sync status.","p":"Build a stacking toast system in one HTML file with no libraries. A button adds a toast (icon, title, line, close button) to a fixed region with role=region, aria-label Notifications and aria-live=polite. Toasts are absolutely positioned; with index k from the newest: collapsed transform = translateY(k * peek) scale(1 - k * scaleStep) with opacity 0 beyond a visible count; when the region is hovered or contains focus, expanded transform = translateY(k * (height + gap)). New toasts slide in from the edge with a spring; each auto-dismisses after a duration, paused while expanded; closing animates out and the rest re-flow. Support top or bottom placement. Settings: peek, scale step, visible count, gap, duration, corner radius, position, accent, light or dark. Reduced motion: fades only."}-->
+<style>/*BASE*/
+.go{min-height:46px;padding:0 22px;border-radius:12px;border:0;background:var(--ac);color:#fff;font-weight:600}
+.reg{position:fixed;right:20px;width:min(340px,calc(100vw - 40px));height:0}.reg.bottom{bottom:20px}.reg.top{top:20px}
+.t{position:absolute;right:0;width:100%;display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:start;padding:13px 12px 13px 14px;border-radius:var(--r);background:var(--panel);border:1px solid var(--line);box-shadow:0 14px 30px -14px rgba(0,0,0,.45);transition:transform .45s cubic-bezier(.3,1.35,.5,1),opacity .3s;font-size:13.5px}
+.bottom .t{bottom:0;transform-origin:50% 100%}.top .t{top:0;transform-origin:50% 0}
+.t .ic{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--ac) 18%,transparent);color:var(--ac);font-weight:700}
+.t b{display:block}.t span{color:var(--mute)}.t button{all:unset;cursor:pointer;width:26px;height:26px;display:grid;place-items:center;border-radius:6px;color:var(--mute)}.t button:hover{background:var(--line)}.t button:focus-visible{outline:2px solid var(--ac)}
+.t.in{opacity:0}.bottom .t.in{transform:translateY(60px) scale(.9)!important}.top .t.in{transform:translateY(-60px) scale(.9)!important}.t.out{opacity:0!important;transform:translateX(110%)!important}
+@media(prefers-reduced-motion:reduce){.t{transition:opacity .2s}}
+</style>
+<body>
+<button class="go" id="go">Show a notification</button>
+<div class="reg bottom" id="reg" role="region" aria-label="Notifications" aria-live="polite"></div>
+<script type="application/json" id="settings">{"peek":12,"scale":0.05,"visible":3,"gap":10,"duration":5,"corner":14,"position":"bottom","mode":"light","accent":"#12805C"}</script>
+<script>
+const CONTROLS=[{g:'Deck',k:'peek',label:'Peek',min:4,max:24,step:1,unit:'px'},{k:'scale',label:'Scale step',min:0,max:.1,step:.005},{k:'visible',label:'Visible when closed',min:1,max:5,step:1},{k:'gap',label:'Gap when open',min:4,max:24,step:1,unit:'px'},{k:'corner',label:'Corner radius',min:4,max:28,step:1,unit:'px'},
+ {g:'Behaviour',k:'duration',label:'Stay for',min:2,max:12,step:.5,unit:'s'},{k:'position',label:'Position',type:'select',options:['bottom','top']},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/*TUNER*/
+const M=[['✓','Changes saved','Your profile is up to date.'],['↑','Upload finished','brand-film.mp4, 86 MB'],['✉','Invite sent','priya@example.com will get an email.'],['↺','Moved to archive','Undo is available for a minute.'],['★','Added to favourites','Find it under Saved.']],reg=document.getElementById('reg');let n=0,open=false;
+function layout(){const ts=[...reg.children].filter(t=>!t.classList.contains('out')).reverse(),dir=S.position==='top'?1:-1;let y=0;
+ ts.forEach((t,k)=>{t.style.zIndex=100-k;t.style.borderRadius=S.corner+'px';if(open){t.style.transform=`translateY(${dir*y}px)`;t.style.opacity=1;y+=t.offsetHeight+S.gap}else{t.style.transform=`translateY(${dir*k*S.peek}px) scale(${1-k*S.scale})`;t.style.opacity=k<S.visible?1:0}})}
+function close(t){if(t.classList.contains('out'))return;clearTimeout(t._t);t.classList.add('out');layout();setTimeout(()=>{t.remove();layout()},300)}
+function arm(t){clearTimeout(t._t);t._t=setTimeout(()=>open?arm(t):close(t),S.duration*1000)}
+function add(){const [ic,a,b]=M[n++%M.length],t=document.createElement('div');t.className='t in';t.innerHTML=`<span class="ic" aria-hidden="true">${ic}</span><div><b>${a}</b><span>${b}</span></div><button aria-label="Dismiss: ${a}">✕</button>`;reg.append(t);t.querySelector('button').onclick=()=>close(t);
+ requestAnimationFrame(()=>{t.classList.remove('in');layout()});arm(t)}
+const setOpen=o=>{open=o;layout()};reg.addEventListener('pointerenter',()=>setOpen(true));reg.addEventListener('pointerleave',()=>setOpen(reg.contains(document.activeElement)));reg.addEventListener('focusin',()=>setOpen(true));reg.addEventListener('focusout',()=>setTimeout(()=>{if(!reg.contains(document.activeElement))setOpen(false)},0));
+document.getElementById('go').onclick=add;
+function apply(){theme();reg.className='reg '+S.position;layout()}
+apply();add();setTimeout(add,350);setTimeout(add,700);
+</script>
+</body>

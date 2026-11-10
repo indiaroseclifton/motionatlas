@@ -1,0 +1,32 @@
+<!--META {"o":8,"t":"Radial action menu","cat":"Navigation","tone":"dark","uses":["L49","L12"],"d":"A round button that fans its actions out along an arc, one after another, and gathers them back when you are done.","how":"Each action's angle is its share of the arc, turned into an x and y offset on a circle and stored as custom properties. Opening only flips one attribute; a staggered delay and a spring curve make them fly out in order. It is a real menu: arrows move, Escape closes and focus returns.","use":"Floating action buttons, quick-add menus, share menus, tool pickers on touch screens.","p":"Build a radial action menu in one HTML file with no libraries. A circular trigger button with aria-haspopup=menu and aria-expanded, whose plus icon rotates 45 degrees when open. N action buttons with role=menuitem sit at the trigger's centre, scaled to 0; when open each moves to x = cos(angle) * radius, y = sin(angle) * radius where angle = start + i * arc / (N - 1), with transition-delay i * stagger and a spring cubic-bezier, and each shows a tooltip label. Opening focuses the first item; Up, Down, Left and Right move through items; Escape or choosing an item closes and returns focus to the trigger; clicking outside closes. Announce the chosen action. Settings: item count, radius, arc span, start angle, stagger, item size, accent, light or dark. With prefers-reduced-motion, no stagger and no spring."}-->
+<style>/*BASE*/
+.m{position:relative;width:64px;height:64px}
+.t{position:absolute;inset:0;border-radius:50%;border:0;background:var(--ac);color:#fff;font-size:30px;line-height:1;display:grid;place-items:center;box-shadow:0 12px 30px -8px var(--ac);z-index:2;transition:transform .3s cubic-bezier(.3,1.5,.5,1)}
+.t span{transition:transform .3s cubic-bezier(.3,1.5,.5,1);display:block;margin-top:-3px}.t[aria-expanded=true] span{transform:rotate(45deg)}
+.i{position:absolute;left:50%;top:50%;width:var(--s);height:var(--s);margin:calc(var(--s)/-2);border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:19px;transform:translate(0,0) scale(0);opacity:0;transition:transform .45s cubic-bezier(.3,1.5,.5,1) var(--d),opacity .2s var(--d)}
+.m.open .i{transform:translate(var(--x),var(--y)) scale(1);opacity:1}
+.i::after{content:attr(data-l);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);padding:3px 8px;border-radius:6px;background:var(--ink);color:var(--bg);font-size:11.5px;font-weight:600;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s}
+.i:hover::after,.i:focus-visible::after{opacity:1}.i:hover{border-color:var(--ac)}
+#live{position:fixed;left:0;right:0;bottom:22px;text-align:center;color:var(--mute);font-size:13px}
+@media(prefers-reduced-motion:reduce){.i,.t,.t span{transition-duration:.01s;transition-delay:0s}}
+</style>
+<body>
+<div class="m" id="m"><button class="t" id="t" aria-haspopup="menu" aria-expanded="false" aria-controls="menu" aria-label="Create"><span aria-hidden="true">+</span></button><div id="menu" role="menu" aria-label="Create"></div></div>
+<p id="live" aria-live="polite">Press the button. Arrow keys move, Escape closes.</p>
+<script type="application/json" id="settings">{"count":5,"radius":120,"arc":180,"start":180,"stagger":45,"size":50,"mode":"dark","accent":"#FF5C8A"}</script>
+<script>
+const CONTROLS=[{g:'Layout',k:'count',label:'Actions',min:3,max:8,step:1},{k:'radius',label:'Radius',min:70,max:200,step:2,unit:'px'},{k:'arc',label:'Arc span',min:60,max:360,step:5,unit:'°'},{k:'start',label:'Start angle',min:0,max:360,step:5,unit:'°'},{k:'size',label:'Button size',min:38,max:68,step:1,unit:'px'},
+ {g:'Motion',k:'stagger',label:'Stagger',min:0,max:120,step:5,unit:'ms'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['dark','light']},{k:'accent',label:'Accent',type:'color'}];
+/*TUNER*/
+const A=[['✎','Note'],['☑','Task'],['◷','Reminder'],['❖','Photo'],['♫','Voice memo'],['✉','Message'],['⚑','Flag'],['☆','Favourite']],m=document.getElementById('m'),t=document.getElementById('t'),menu=document.getElementById('menu'),live=document.getElementById('live');
+const items=()=>[...menu.children];
+function apply(){theme();const n=S.count,full=S.arc>=360;m.style.setProperty('--s',S.size+'px');const was=m.classList.contains('open');
+ menu.innerHTML=A.slice(0,n).map(([ic,l],i)=>{const a=(S.start+i*S.arc/(full?n:n-1))*Math.PI/180;return `<button class="i" role="menuitem" tabindex="-1" data-l="${l}" aria-label="${l}" style="--x:${(Math.cos(a)*S.radius).toFixed(1)}px;--y:${(Math.sin(a)*S.radius).toFixed(1)}px;--d:${i*S.stagger}ms"><span aria-hidden="true">${ic}</span></button>`}).join('');m.classList.toggle('open',was)}
+function open(o,focus){m.classList.toggle('open',o);t.setAttribute('aria-expanded',o);if(o&&focus)setTimeout(()=>items()[0].focus(),60);if(!o&&focus)t.focus()}
+t.onclick=()=>open(!m.classList.contains('open'),true);
+menu.addEventListener('click',e=>{const b=e.target.closest('.i');if(b){live.textContent='New '+b.dataset.l.toLowerCase()+' started';open(false,true)}});
+m.addEventListener('keydown',e=>{const it=items(),i=it.indexOf(document.activeElement);if(e.key==='Escape'){open(false,true);return}if(i<0)return;const d=['ArrowRight','ArrowDown'].includes(e.key)?1:['ArrowLeft','ArrowUp'].includes(e.key)?-1:0;if(d){e.preventDefault();it[(i+d+it.length)%it.length].focus()}});
+document.addEventListener('pointerdown',e=>{if(!m.contains(e.target))open(false)});
+apply();if(parent!==window)setTimeout(()=>open(true),500);
+</script>
+</body>

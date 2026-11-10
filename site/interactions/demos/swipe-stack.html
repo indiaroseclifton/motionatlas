@@ -1,0 +1,49 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Swipe card stack</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0E0F13;--panel:#191B22;--ink:#F3F4F7;--mute:#9CA3B4;--line:#2A2D38;--ac:#8B7CFF}
+:root[data-mode=light]{--bg:#F3F1EC;--panel:#FFFFFF;--ink:#17181C;--mute:#646978;--line:#DEDAD0}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+.wrap{display:grid;justify-items:center;gap:26px}
+.stack{position:relative;width:min(280px,72vw);aspect-ratio:3/4;touch-action:pan-y}
+.c{position:absolute;inset:0;border-radius:var(--r);overflow:hidden;background:var(--panel);box-shadow:0 20px 40px -20px rgba(0,0,0,.5);transition:transform .45s cubic-bezier(.3,1.4,.5,1),opacity .3s;user-select:none;transform-origin:50% 100%}
+.c.drag{transition:none;cursor:grabbing}.c img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+.c figcaption{position:absolute;inset:auto 0 0 0;padding:40px 16px 16px;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.75))}.c b{display:block;font-size:18px}.c span{font-size:13px;opacity:.85}
+.c .tag{position:absolute;top:16px;padding:5px 12px;border-radius:8px;font-weight:800;font-size:14px;letter-spacing:.08em;border:2px solid;opacity:0;text-transform:uppercase}.c .tag.y{left:16px;color:#3DDC97;transform:rotate(-10deg)}.c .tag.n{right:16px;color:#FF6B6B;transform:rotate(10deg)}
+.btns{display:flex;gap:14px;align-items:center}.btns button{min-height:44px;padding:0 20px;border-radius:99px;border:1px solid var(--line);background:var(--panel);font-weight:600}.btns .y{background:var(--ac);border-color:var(--ac);color:#fff}
+#live{font-size:13px;color:var(--mute);min-height:20px}
+</style>
+<body>
+<div class="wrap"><div class="stack" id="stack" tabindex="0" role="group" aria-label="Card stack. Left arrow skips, right arrow saves."></div>
+<div class="btns"><button id="no">Skip</button><button class="y" id="yes">Save</button></div><p id="live" aria-live="polite"></p></div>
+<script type="application/json" id="settings">{"offset":14,"scale":0.06,"rotate":14,"threshold":110,"depth":3,"corner":22,"mode":"light","accent":"#E4572E"}</script>
+<script>
+const CONTROLS=[{g:'Stack',k:'offset',label:'Offset',min:0,max:30,step:1,unit:'px'},{k:'scale',label:'Scale step',min:0,max:.12,step:.005},{k:'depth',label:'Cards showing',min:1,max:4,step:1},{k:'corner',label:'Corner radius',min:0,max:40,step:1,unit:'px'},
+ {g:'Throw',k:'rotate',label:'Rotation',min:0,max:30,step:1,unit:'°'},{k:'threshold',label:'Threshold',min:40,max:220,step:5,unit:'px'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'dark';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+const IMG=n=>'../../assets/shelf/'+n+'.webp';let Q=[['amber','Amber resin','Warm and translucent'],['origami','Folded paper','Sharp planes, soft shadow'],['biolum','Night water','Light that answers touch'],['bloom','Pigment bloom','Colour let loose'],['nebula','Deep field','Dust, gas and distance']],saved=0,busy=false;
+const stack=document.getElementById('stack'),live=document.getElementById('live');
+function place(){[...stack.children].forEach(c=>{const k=+c.dataset.k;c.style.zIndex=10-k;c.style.opacity=k>S.depth?0:1;c.style.transform=`translateY(${-Math.min(k,S.depth)*S.offset}px) scale(${1-Math.min(k,S.depth)*S.scale})`})}
+function render(){stack.innerHTML=Q.map(([f,t,s],k)=>`<figure class="c" data-k="${k}" style="border-radius:${S.corner}px"><img src="${IMG(f)}" alt="" draggable="false"><span class="tag y">Save</span><span class="tag n">Skip</span><figcaption><b>${t}</b><span>${s}</span></figcaption></figure>`).join('');place()}
+function fling(dir){if(busy)return;busy=true;const c=stack.firstElementChild;c.classList.remove('drag');c.style.transform=`translate(${dir*140}%,-10%) rotate(${dir*S.rotate*1.6}deg)`;c.style.opacity=0;if(dir>0)saved++;const [t]=[Q[0][1]];
+ setTimeout(()=>{Q.push(Q.shift());render();busy=false;live.textContent=(dir>0?'Saved ':'Skipped ')+t+'. Now showing '+Q[0][1]+'. '+saved+' saved.'},calm?0:280)}
+let d=null;stack.addEventListener('pointerdown',e=>{const c=e.target.closest('.c');if(!c||c.dataset.k!=='0'||busy)return;d={x:e.clientX,c};c.classList.add('drag');stack.setPointerCapture(e.pointerId)});
+stack.addEventListener('pointermove',e=>{if(!d)return;const dx=e.clientX-d.x;d.dx=dx;d.c.style.transform=`translateX(${dx}px) rotate(${dx/S.threshold*S.rotate*.6}deg)`;d.c.querySelector('.y').style.opacity=Math.max(0,dx/S.threshold);d.c.querySelector('.n').style.opacity=Math.max(0,-dx/S.threshold)});
+const up=()=>{if(!d)return;const {c,dx=0}=d;d=null;c.classList.remove('drag');if(Math.abs(dx)>S.threshold)fling(Math.sign(dx));else{c.querySelectorAll('.tag').forEach(t=>t.style.opacity=0);place()}};
+stack.addEventListener('pointerup',up);stack.addEventListener('pointercancel',up);
+stack.addEventListener('keydown',e=>{if(e.key==='ArrowRight'){e.preventDefault();fling(1)}else if(e.key==='ArrowLeft'){e.preventDefault();fling(-1)}});
+document.getElementById('yes').onclick=()=>fling(1);document.getElementById('no').onclick=()=>fling(-1);
+function apply(){theme();render()}apply();
+</script>
+</body>
+</html>

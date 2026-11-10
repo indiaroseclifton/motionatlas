@@ -1,60 +1,47 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Stacked toasts with swipe</title>
-<style>
-:root{--bg:#F4F4F1;--ink:#16171A;--mute:#5D6068;--card:#FFFFFF;--hair:#E3E3DE;--ok:#127A47;--err:#C0352B;--info:#2F5BD9}
-*{box-sizing:border-box}html,body{margin:0}
-body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;min-height:100vh;padding:clamp(28px,8vh,80px) clamp(16px,6vw,72px)}
-h1{margin:0 0 8px;font:650 clamp(30px,4.4vw,50px)/1.02 system-ui;letter-spacing:-.04em;max-width:16ch}
-.lede{margin:0 0 24px;color:var(--mute);max-width:54ch}
-.btns{display:flex;flex-wrap:wrap;gap:10px}
-.btns button{font:600 14px/1 system-ui;min-height:46px;padding:0 18px;border-radius:12px;border:1px solid var(--hair);background:var(--card);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
-.btns button i{width:8px;height:8px;border-radius:50%}
-button:focus-visible{outline:2px solid var(--info);outline-offset:2px}
-.region{position:fixed;right:clamp(12px,3vw,28px);bottom:clamp(12px,3vw,28px);width:min(380px,calc(100vw - 24px));height:0;z-index:5}
-.region ol{list-style:none;margin:0;padding:0}
-.t{position:absolute;right:0;bottom:0;width:100%;overflow:hidden;background:var(--card);border:1px solid var(--hair);border-radius:16px;padding:14px 44px 14px 16px;display:grid;grid-template-columns:22px 1fr;gap:4px 12px;box-shadow:0 14px 34px -16px rgba(20,22,30,.35);touch-action:pan-y;transition:transform .45s cubic-bezier(.2,.8,.2,1),opacity .35s,height .35s;user-select:none}
-.t svg{width:22px;height:22px;grid-row:span 2;margin-top:1px}
-.t b{font-weight:600;font-size:14px}
-.t span{color:var(--mute);font-size:13.5px;grid-column:2}
-.t .act{grid-column:2;justify-self:start;margin-top:6px;font:600 13px/1 system-ui;padding:8px 12px;border-radius:8px;border:0;background:var(--ink);color:#fff;cursor:pointer}
-.t .x{position:absolute;right:8px;top:8px;width:30px;height:30px;border-radius:8px;border:0;background:none;font-size:18px;line-height:1;cursor:pointer}
-.t .x:hover{background:var(--bg)}
-.t .bar{position:absolute;left:16px;right:16px;bottom:0;height:2px;border-radius:2px;background:var(--hair);overflow:hidden}
-.t .bar::after{content:"";position:absolute;inset:0;background:currentColor;transform-origin:left;transform:scaleX(var(--left,1))}
-.t.drag{transition:none}
-.ok{color:var(--ok)}.err{color:var(--err)}.info{color:var(--info)}
-.t>b,.t>.x{color:var(--ink)}.t span{color:var(--mute)}
-.hint{margin-top:18px;color:var(--mute);font-size:13px}
-@media (prefers-reduced-motion:reduce){.t{transition:opacity .2s}}
-</style></head><body>
-<h1>Notifications that stack, not pile up.</h1>
-<p class="lede">Fire a few. They collapse into a neat stack; hover or focus it to fan them out. Swipe one sideways to dismiss it, or press Escape while one is focused. Timers pause while you are reading.</p>
-<div class="btns"><button data-k="ok"><i style="background:var(--ok)"></i>Saved</button><button data-k="info"><i style="background:var(--info)"></i>New comment</button><button data-k="undo"><i style="background:var(--ink)"></i>Moved to trash</button><button data-k="err"><i style="background:var(--err)"></i>Upload failed</button></div>
-<p class="hint">Up to five stay on screen; older ones leave on their own.</p>
-<section class="region" id="region" aria-label="Notifications" aria-live="polite"><ol id="list"></ol></section>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Stacking toasts</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0E0F13;--panel:#191B22;--ink:#F3F4F7;--mute:#9CA3B4;--line:#2A2D38;--ac:#8B7CFF}
+:root[data-mode=light]{--bg:#F3F1EC;--panel:#FFFFFF;--ink:#17181C;--mute:#646978;--line:#DEDAD0}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+.go{min-height:46px;padding:0 22px;border-radius:12px;border:0;background:var(--ac);color:#fff;font-weight:600}
+.reg{position:fixed;right:20px;width:min(340px,calc(100vw - 40px));height:0}.reg.bottom{bottom:20px}.reg.top{top:20px}
+.t{position:absolute;right:0;width:100%;display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:start;padding:13px 12px 13px 14px;border-radius:var(--r);background:var(--panel);border:1px solid var(--line);box-shadow:0 14px 30px -14px rgba(0,0,0,.45);transition:transform .45s cubic-bezier(.3,1.35,.5,1),opacity .3s;font-size:13.5px}
+.bottom .t{bottom:0;transform-origin:50% 100%}.top .t{top:0;transform-origin:50% 0}
+.t .ic{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--ac) 18%,transparent);color:var(--ac);font-weight:700}
+.t b{display:block}.t span{color:var(--mute)}.t button{all:unset;cursor:pointer;width:26px;height:26px;display:grid;place-items:center;border-radius:6px;color:var(--mute)}.t button:hover{background:var(--line)}.t button:focus-visible{outline:2px solid var(--ac)}
+.t.in{opacity:0}.bottom .t.in{transform:translateY(60px) scale(.9)!important}.top .t.in{transform:translateY(-60px) scale(.9)!important}.t.out{opacity:0!important;transform:translateX(110%)!important}
+@media(prefers-reduced-motion:reduce){.t{transition:opacity .2s}}
+</style>
+<body>
+<button class="go" id="go">Show a notification</button>
+<div class="reg bottom" id="reg" role="region" aria-label="Notifications" aria-live="polite"></div>
+<script type="application/json" id="settings">{"peek":12,"scale":0.05,"visible":3,"gap":10,"duration":5,"corner":14,"position":"bottom","mode":"light","accent":"#12805C"}</script>
 <script>
-const CONFIG={life:5200,max:5,gap:12,peek:14,kinds:{ok:['ok','Changes saved','Your draft is safe in the cloud.'],info:['info','Ada left a comment','“Love the second option, can we try it bigger?”'],undo:['ok','Moved to trash','“Q3 roadmap.pdf” will be deleted in 30 days.','Undo'],err:['err','Upload failed','The file is over 25 MB. Try compressing it first.','Retry']}};
-const ICON={ok:'<circle cx="12" cy="12" r="10" fill="currentColor" opacity=".14"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',err:'<circle cx="12" cy="12" r="10" fill="currentColor" opacity=".14"/><path d="M12 7v6M12 16.5v.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>',info:'<circle cx="12" cy="12" r="10" fill="currentColor" opacity=".14"/><path d="M8 9h8M8 13h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'};
-const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-const list=document.getElementById('list'),region=document.getElementById('region');let T=[],open=false,id=0;
-function add(k,keep){const [tone,title,msg,act]=CONFIG.kinds[k];const li=document.createElement('li');li.className='t';li.tabIndex=0;li.setAttribute('aria-label',title+'. '+msg);
- li.innerHTML=`<svg viewBox="0 0 24 24" class="${tone}" aria-hidden="true">${ICON[tone]}</svg><b>${title}</b><span>${msg}</span>${act?`<button class="act">${act}</button>`:''}<button class="x" aria-label="Dismiss: ${title}">×</button><div class="bar ${tone}" aria-hidden="true"></div>`;
- const o={li,left:keep?Infinity:CONFIG.life,id:++id};li.style.transform='translateY(110%)';li.style.opacity=0;list.prepend(li);T.unshift(o);
- li.querySelector('.x').onclick=()=>kill(o);const a=li.querySelector('.act');if(a)a.onclick=()=>{kill(o);if(act==='Undo')setTimeout(()=>add('ok'),250)};
- swipe(o);requestAnimationFrame(()=>requestAnimationFrame(lay));while(T.length>CONFIG.max)kill(T[T.length-1])}
-function lay(){let y=0;T.forEach(o=>{if(!o.h)o.h=o.li.offsetHeight});const fh=T[0]?T[0].h:0;T.forEach((o,i)=>{const h=o.h;o.li.style.height=(open?h:fh)+'px';let tr,op=1;
-  if(open){tr=`translateY(${-y}px)`;y+=h+CONFIG.gap}else{tr=`translateY(${-i*CONFIG.peek}px) scale(${1-i*.05})`;op=i>2?0:1}
-  o.li.style.transform=o.dx?`translateX(${o.dx}px) `+tr:tr;o.li.style.opacity=op;o.li.style.zIndex=100-i;o.li.style.transformOrigin='center bottom';
-  o.li.inert=!open&&i>0;});region.style.height=open?y+'px':'0'}
-function kill(o,dir=1){if(o.dead)return;o.dead=true;T=T.filter(x=>x!==o);o.li.style.transform=`translateX(${dir*120}%)`;o.li.style.opacity=0;const wasFocused=o.li.contains(document.activeElement);setTimeout(()=>{o.li.remove();if(wasFocused&&T[0])T[0].li.focus()},reduce?0:380);if(!T.length)open=false;lay()}
-function swipe(o){let sx=null,t0=0;o.li.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;sx=e.clientX;t0=performance.now();o.li.classList.add('drag');o.li.setPointerCapture(e.pointerId)});
- o.li.addEventListener('pointermove',e=>{if(sx===null)return;const d=e.clientX-sx;o.dx=d>0?d:d*.25;o.li.style.opacity=1-Math.min(.8,Math.abs(o.dx)/260);lay()});
- const end=e=>{if(sx===null)return;o.li.classList.remove('drag');const v=(o.dx||0)/(performance.now()-t0);sx=null;if((o.dx||0)>110||v>.6){kill(o,1)}else{o.dx=0;lay()}};o.li.addEventListener('pointerup',end);o.li.addEventListener('pointercancel',end);
- o.li.addEventListener('keydown',e=>{if(e.key==='Escape'||e.key==='Delete'){e.preventDefault();kill(o)}})}
-region.addEventListener('pointerenter',()=>{open=true;lay()});region.addEventListener('pointerleave',()=>{open=false;lay()});
-region.addEventListener('focusin',()=>{open=true;lay()});region.addEventListener('focusout',e=>{if(!region.contains(e.relatedTarget)){open=false;lay()}});
-let last=performance.now();(function tick(t){const dt=t-last;last=t;if(!open)T.forEach(o=>{o.left-=dt;o.li.style.setProperty('--left',Math.min(1,Math.max(0,o.left/CONFIG.life)));if(o.left<=0)kill(o)});requestAnimationFrame(tick)})(last);
-document.querySelectorAll('.btns button').forEach(b=>b.onclick=()=>add(b.dataset.k));
-['ok','info','undo'].forEach((k,i)=>setTimeout(()=>add(k,true),300+i*350));
-addEventListener('resize',lay);
-</script></body></html>
+const CONTROLS=[{g:'Deck',k:'peek',label:'Peek',min:4,max:24,step:1,unit:'px'},{k:'scale',label:'Scale step',min:0,max:.1,step:.005},{k:'visible',label:'Visible when closed',min:1,max:5,step:1},{k:'gap',label:'Gap when open',min:4,max:24,step:1,unit:'px'},{k:'corner',label:'Corner radius',min:4,max:28,step:1,unit:'px'},
+ {g:'Behaviour',k:'duration',label:'Stay for',min:2,max:12,step:.5,unit:'s'},{k:'position',label:'Position',type:'select',options:['bottom','top']},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'dark';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+const M=[['✓','Changes saved','Your profile is up to date.'],['↑','Upload finished','brand-film.mp4, 86 MB'],['✉','Invite sent','priya@example.com will get an email.'],['↺','Moved to archive','Undo is available for a minute.'],['★','Added to favourites','Find it under Saved.']],reg=document.getElementById('reg');let n=0,open=false;
+function layout(){const ts=[...reg.children].filter(t=>!t.classList.contains('out')).reverse(),dir=S.position==='top'?1:-1;let y=0;
+ ts.forEach((t,k)=>{t.style.zIndex=100-k;t.style.borderRadius=S.corner+'px';if(open){t.style.transform=`translateY(${dir*y}px)`;t.style.opacity=1;y+=t.offsetHeight+S.gap}else{t.style.transform=`translateY(${dir*k*S.peek}px) scale(${1-k*S.scale})`;t.style.opacity=k<S.visible?1:0}})}
+function close(t){if(t.classList.contains('out'))return;clearTimeout(t._t);t.classList.add('out');layout();setTimeout(()=>{t.remove();layout()},300)}
+function arm(t){clearTimeout(t._t);t._t=setTimeout(()=>open?arm(t):close(t),S.duration*1000)}
+function add(){const [ic,a,b]=M[n++%M.length],t=document.createElement('div');t.className='t in';t.innerHTML=`<span class="ic" aria-hidden="true">${ic}</span><div><b>${a}</b><span>${b}</span></div><button aria-label="Dismiss: ${a}">✕</button>`;reg.append(t);t.querySelector('button').onclick=()=>close(t);
+ requestAnimationFrame(()=>{t.classList.remove('in');layout()});arm(t)}
+const setOpen=o=>{open=o;layout()};reg.addEventListener('pointerenter',()=>setOpen(true));reg.addEventListener('pointerleave',()=>setOpen(reg.contains(document.activeElement)));reg.addEventListener('focusin',()=>setOpen(true));reg.addEventListener('focusout',()=>setTimeout(()=>{if(!reg.contains(document.activeElement))setOpen(false)},0));
+document.getElementById('go').onclick=add;
+function apply(){theme();reg.className='reg '+S.position;layout()}
+apply();add();setTimeout(add,350);setTimeout(add,700);
+</script>
+</body>
+</html>
