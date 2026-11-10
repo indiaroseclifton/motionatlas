@@ -1,0 +1,50 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Hold to confirm</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0E0F13;--panel:#191B22;--ink:#F3F4F7;--mute:#9CA3B4;--line:#2A2D38;--ac:#8B7CFF}
+:root[data-mode=light]{--bg:#F3F1EC;--panel:#FFFFFF;--ink:#17181C;--mute:#646978;--line:#DEDAD0}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+
+.art{position:absolute;inset:0;display:block;pointer-events:none}
+.art::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.16;mix-blend-mode:overlay}
+.heroc{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:24px;max-width:760px;color:#fff;text-shadow:0 1px 24px rgba(0,0,0,.35)}.heroc h1{font-size:clamp(34px,7vw,76px);line-height:1;letter-spacing:-.03em}.heroc p{font-size:clamp(15px,2vw,18px);opacity:.9;max-width:46ch}.heroc a{display:inline-flex;align-items:center;min-height:46px;padding:0 22px;border-radius:99px;background:#fff;color:#111;font-weight:700;text-decoration:none;text-shadow:none}
+.col{display:grid;gap:16px;justify-items:center;width:min(360px,88vw)}
+.hb{position:relative;width:100%;min-height:58px;border-radius:var(--r);border:1.5px solid var(--c);background:color-mix(in srgb,var(--c) 12%,transparent);color:var(--ink);font-weight:700;font-size:15.5px;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:10px;touch-action:none;user-select:none;-webkit-user-select:none;transform:scale(calc(1 - var(--p,0)*var(--sh)));transition:transform .15s}
+.hb::before{content:"";position:absolute;inset:0;background:var(--c);transform-origin:0 100%;transform:scaleX(var(--p,0));z-index:0}
+.rise .hb::before{transform:scaleY(var(--p,0))}
+.hb>*{position:relative;z-index:1}.hb.done{color:#fff;animation:pulse .5s}.hb.no{animation:no .35s}
+@keyframes pulse{40%{box-shadow:0 0 0 12px color-mix(in srgb,var(--c) 30%,transparent)}}@keyframes no{25%,75%{translate:-5px 0}50%{translate:5px 0}}
+.hb svg{width:22px;height:22px}.hb circle{fill:none;stroke-width:3}.hb .bg{stroke:color-mix(in srgb,var(--ink) 20%,transparent)}.hb .fg{stroke:currentColor;stroke-linecap:round;stroke-dasharray:56.5;stroke-dashoffset:calc(56.5*(1 - var(--p,0)));transform:rotate(-90deg);transform-origin:50% 50%}
+#live{color:var(--mute);font-size:13px;min-height:20px;text-align:center}
+@media(prefers-reduced-motion:reduce){.hb.done,.hb.no{animation:none}}
+</style>
+<body>
+<div class="col" id="col"></div>
+<script type="application/json" id="settings">{"hold":1.4,"drain":2.5,"shrink":0.04,"corner":16,"fill":"sweep","shake":true,"mode":"dark","accent":"#8B7CFF"}</script>
+<script>
+const CONTROLS=[{g:'Timing',k:'hold',label:'Hold time',min:.5,max:4,step:.1,unit:'s'},{k:'drain',label:'Drain speed',min:.5,max:6,step:.1,unit:'×'},{g:'Feel',k:'shrink',label:'Press shrink',min:0,max:.1,step:.005},{k:'shake',label:'Shake on early release',type:'toggle'},{k:'fill',label:'Fill',type:'select',options:['sweep','rise']},
+ {g:'Look',k:'corner',label:'Corner radius',min:0,max:30,step:1,unit:'px'},{k:'mode',label:'Mode',type:'select',options:['dark','light']},{k:'accent',label:'Accent',type:'color'}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'dark';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+const D=[['Delete project','Project deleted','#E5484D'],['Send £240.00','Payment sent',''],['End session','Session ended','#F59E0B']],col=document.getElementById('col');
+col.innerHTML=D.map(([t,,c],i)=>`<button class="hb" data-i="${i}" style="${c?'--c:'+c:''}" aria-describedby="live"><svg viewBox="0 0 22 22" aria-hidden="true"><circle class="bg" cx="11" cy="11" r="9"/><circle class="fg" cx="11" cy="11" r="9"/></svg><span>${t}</span></button>`).join('')+'<p id="live" aria-live="polite">Press and hold a button. Space or Enter works too.</p>';
+const live=document.getElementById('live'),B=[...col.querySelectorAll('.hb')].map(el=>({el,p:0,down:false,lock:false,i:+el.dataset.i}));let last=performance.now();
+B.forEach(b=>{const on=()=>{if(!b.lock)b.down=true},off=()=>{if(b.down&&!b.lock&&b.p<1&&b.p>.05){live.textContent='Released early. Keep holding to confirm.';if(S.shake&&!calm){b.el.classList.remove('no');void b.el.offsetWidth;b.el.classList.add('no')}}b.down=false};
+ b.el.addEventListener('pointerdown',e=>{b.el.setPointerCapture(e.pointerId);on()});b.el.addEventListener('pointerup',off);b.el.addEventListener('pointercancel',off);
+ b.el.addEventListener('keydown',e=>{if((e.key===' '||e.key==='Enter')&&!e.repeat){e.preventDefault();on()}else if(e.key===' '||e.key==='Enter')e.preventDefault()});b.el.addEventListener('keyup',e=>{if(e.key===' '||e.key==='Enter')off()});b.el.addEventListener('blur',off);b.el.addEventListener('contextmenu',e=>e.preventDefault())});
+function tick(now){const dt=Math.min(.05,(now-last)/1000);last=now;B.forEach(b=>{if(b.lock)return;b.p=Math.max(0,Math.min(1,b.p+(b.down?dt/S.hold:-dt/S.hold*S.drain)));b.el.style.setProperty('--p',b.p.toFixed(3));if(b.down&&b.p<1)live.textContent='Holding… '+Math.round(b.p*100)+'%';
+ if(b.p>=1){b.lock=true;b.down=false;b.el.classList.add('done');b.el.querySelector('span').textContent='✓ '+D[b.i][1];live.textContent=D[b.i][1]+'.';setTimeout(()=>{b.el.classList.remove('done');b.el.querySelector('span').textContent=D[b.i][0];b.p=0;b.el.style.setProperty('--p',0);b.lock=false},2000)}});requestAnimationFrame(tick)}
+function apply(){theme();col.style.setProperty('--r',S.corner+'px');col.style.setProperty('--sh',S.shrink);col.style.setProperty('--c',S.accent);col.classList.toggle('rise',S.fill==='rise')}
+apply();requestAnimationFrame(tick);if(parent!==window&&!calm){let k=0;setInterval(()=>{if(col.matches(':hover'))return;const b=B[k++%3];b.down=true;setTimeout(()=>b.down=false,k%2?S.hold*1100:S.hold*450)},3200)}
+</script>
+</body>
+</html>

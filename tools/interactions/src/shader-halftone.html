@@ -1,0 +1,16 @@
+<!--META {"o": 21, "t": "Halftone shader", "cat": "Backgrounds", "tone": "dark", "uses": ["L43"], "d": "A field of print dots that swell and shrink as light moves across the page, and bloom under the pointer. Set the dot size, grid angle and inks.", "how": "The page is covered with a rotated grid. For each cell the brightness underneath decides the dot radius, exactly as a printing screen does, and a smooth edge keeps the dots crisp at any size.", "use": "Editorial and print-inspired sites, posters, music and culture brands, section dividers.", "p": "Build a full-screen animated WebGL background in one HTML file with no libraries: a canvas fixed behind the content, one full-screen triangle, a fragment shader with uniforms for resolution, time and pointer, value-noise fbm in the shader, device pixel ratio capped at 1.5, paused when off screen or in a background tab, one still frame under prefers-reduced-motion, and a CSS gradient fallback if WebGL is missing. Put a headline, a line of copy and a button over it. Shader: rotate the pixel coordinates by an angle and divide by a cell size; take the fractional position within the cell; compute a brightness field from drifting fbm plus a bloom near the pointer; draw a dot whose radius is sqrt(brightness) * 0.7 with a smoothstep edge, in an ink colour over a paper colour. Settings: paper colour, ink colour, dot size, angle, field scale, contrast, pointer bloom, speed."}-->
+<style>/*BASE*/
+</style>
+<body>
+<div class="heroc"><h1>Made of dots</h1><p>A printing screen that follows the light.</p><a href="#">Get started</a></div>
+<script type="application/json" id="settings">{"c1": "#F3EDE2", "c2": "#E4572E", "size": 14, "angle": 28, "scale": 1.6, "contrast": 1.4, "bloom": 0.7, "speed": 1}</script>
+<script>
+const CONTROLS=[{g:'Colour',k:'c1',label:'Paper',type:'color'},{k:'c2',label:'Ink',type:'color'},{g:'Screen',k:'size',label:'Dot spacing',min:5,max:40,step:1,unit:'px'},{k:'angle',label:'Angle',min:0,max:90,step:1,unit:'°'},{k:'scale',label:'Field scale',min:.4,max:5,step:.1},{k:'contrast',label:'Contrast',min:.4,max:3,step:.05},{k:'bloom',label:'Pointer bloom',min:0,max:1.5,step:.05},{g:'Motion',k:'speed',label:'Speed',min:0,max:4,step:.1}];
+/*TUNER*/
+/*SHADER*/
+const FRAG=`uniform vec3 c1,c2;uniform float size,angle,scale,contrast,bloom;void main(){float a=radians(angle);mat2 r=mat2(cos(a),-sin(a),sin(a),cos(a));vec2 g=r*gl_FragCoord.xy/(size*R.y/800.+.001);vec2 cell=(floor(g)+.5)*(size*R.y/800.);vec2 cp=(cell*r)/R;vec2 p=(cp-.5)*vec2(R.x/R.y,1.)*scale;float v=fbm(p+vec2(T*.12,-T*.07));v+=bloom*.5*smoothstep(.4,0.,distance(cp*vec2(R.x/R.y,1.),M*vec2(R.x/R.y,1.)));v=clamp((v-.5)*contrast+.5,0.,1.);float d=length(fract(g)-.5);float rad=v*v*.78;gl_FragColor=vec4(mix(c1,c2,smoothstep(rad,rad-.07,d)),1.);}`;
+const sh=shader(FRAG);
+function apply(){sh.set({c1:rgb(S.c1),c2:rgb(S.c2),size:S.size,angle:S.angle,scale:S.scale,contrast:S.contrast,bloom:S.bloom,_speed:S.speed})}
+apply();
+</script>
+</body>

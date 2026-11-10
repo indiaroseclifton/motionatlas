@@ -1,0 +1,43 @@
+<!--META {"o":27,"t":"Big type footer","cat":"Sections","tone":"dark","uses":["L24","L12","L11"],"d":"A footer that ends the page with confidence: link columns, a strip of moving words and a wordmark as wide as the screen whose letters rise into place.","how":"The wordmark is measured once and scaled with a font size computed from the container width, so it always touches both edges. Each letter sits in a clipped box and slides up with a staggered delay when the footer enters the view. Links draw their underline from the left.","use":"Studio, portfolio and product site footers, end-of-page calls to action, landing pages.","p":"Build a large-type footer in one HTML file with no libraries. Top row: a short invitation with an email link, and three columns of links (Studio, Work, Follow) whose underline draws from left to right on hover and focus. Middle: a marquee strip of words separated by dots that scrolls continuously and pauses on hover and focus, with a visible pause button. Bottom: the brand name set so wide it spans the container exactly; fit it by measuring the text at a reference size and scaling the font size on load and resize. Split the wordmark into letters, each inside an overflow-hidden box, translated down by a rise distance and revealed with a stagger when an IntersectionObserver sees the footer; provide a Replay button. Final row: copyright and a back-to-top link. Settings: wordmark text weight, letter spacing, rise distance, stagger, reveal duration, marquee speed, accent, light or dark. Reduced motion: no marquee movement and letters appear without sliding."}-->
+<style>/*BASE*/
+body{display:block;overflow:auto}
+.pre{min-height:38vh;display:grid;place-items:center;color:var(--mute);font-size:14px;text-align:center;padding:20px}
+footer{padding:44px clamp(18px,4vw,48px) 20px;border-top:1px solid var(--line);display:grid;grid-template-columns:minmax(0,1fr);gap:36px;overflow:hidden}
+.top{display:grid;grid-template-columns:1.3fr repeat(3,1fr);gap:28px}.top h2{font-size:clamp(22px,3vw,32px);line-height:1.1;letter-spacing:-.02em;max-width:14ch}.top h3{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);margin-bottom:10px}
+.top ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+a{color:inherit;text-decoration:none;background:linear-gradient(var(--ac),var(--ac)) 0 100%/0 2px no-repeat;transition:background-size .3s;padding-bottom:2px}a:hover,a:focus-visible{background-size:100% 2px}
+.mq{display:flex;align-items:center;gap:14px;border-block:1px solid var(--line);padding:10px 0}.mq .win{flex:1;overflow:hidden;-webkit-mask:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.mq .trk{display:flex;gap:28px;width:max-content;animation:mq var(--ms) linear infinite;font-weight:600;white-space:nowrap}.mq .trk span::after{content:"●";margin-left:28px;color:var(--ac);font-size:.6em;vertical-align:.2em}
+.mq:hover .trk,.mq.paused .trk,.mq:focus-within .trk{animation-play-state:paused}@keyframes mq{to{transform:translateX(-50%)}}
+.mq button{flex:none;min-height:32px;padding:0 12px;border-radius:99px;border:1px solid var(--line);background:none;font-size:12.5px;font-weight:600}
+.wm{font-weight:var(--fw);letter-spacing:var(--ls);line-height:.82;white-space:nowrap;margin:0;display:flex;justify-content:center}
+.wm span{display:inline-block;overflow:hidden;padding-top:.08em}.wm i{display:inline-block;font-style:normal;transform:translateY(var(--rise));transition:transform var(--rd) cubic-bezier(.2,.8,.2,1) calc(var(--i)*var(--stg))}
+footer.in .wm i{transform:none}.wm span:nth-child(3n) i{color:var(--ac)}
+.end{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--mute)}.end button{all:unset;cursor:pointer;color:var(--ink);font-weight:600}.end button:focus-visible{outline:2px solid var(--ac);outline-offset:3px;border-radius:4px}
+@media(max-width:720px){.top{grid-template-columns:1fr 1fr}.top>div:first-child{grid-column:1/-1}}
+@media(prefers-reduced-motion:reduce){.mq .trk{animation:none}.wm i{transition:none;transform:none}a{transition:none}}
+</style>
+<body>
+<div class="pre" id="top">The page ends below. Scroll down, or press Replay in the footer.</div>
+<footer id="ft"><div class="top"><div><h2>Have something worth making?</h2><p style="margin-top:12px"><a href="#">hello@northwind.studio</a></p></div>
+<div><h3>Studio</h3><ul><li><a href="#">About</a></li><li><a href="#">Approach</a></li><li><a href="#">Careers</a></li></ul></div><div><h3>Work</h3><ul><li><a href="#">Case studies</a></li><li><a href="#">Clients</a></li><li><a href="#">Journal</a></li></ul></div><div><h3>Follow</h3><ul><li><a href="#">Instagram</a></li><li><a href="#">LinkedIn</a></li><li><a href="#">Newsletter</a></li></ul></div></div>
+<div class="mq" id="mq"><div class="win"><div class="trk" id="trk" aria-hidden="true"></div></div><p class="sr">Brand, web, motion, product, strategy.</p><button id="pp" aria-pressed="false">Pause</button></div>
+<h2 class="wm" id="wm" aria-label="Northwind"></h2>
+<div class="end"><span>© 2026 Northwind Studio. Made with care.</span><span><button id="re">Replay</button> · <a href="#top">Back to top ↑</a></span></div></footer>
+<script type="application/json" id="settings">{"weight":800,"spacing":-0.04,"rise":110,"stagger":45,"duration":800,"marquee":22,"mode":"dark","accent":"#FF5C8A"}</script>
+<script>
+const CONTROLS=[{g:'Wordmark',k:'weight',label:'Weight',min:300,max:900,step:100},{k:'spacing',label:'Letter spacing',min:-.08,max:.06,step:.005,unit:'em'},{g:'Reveal',k:'rise',label:'Rise distance',min:20,max:120,step:5,unit:'%'},{k:'stagger',label:'Stagger',min:0,max:120,step:5,unit:'ms'},{k:'duration',label:'Duration',min:300,max:1600,step:20,unit:'ms'},
+ {g:'Marquee',k:'marquee',label:'Lap time',min:8,max:50,step:1,unit:'s'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['dark','light']},{k:'accent',label:'Accent',type:'color'}];
+/*TUNER*/
+const ft=document.getElementById('ft'),wm=document.getElementById('wm'),W='Northwind';
+wm.innerHTML=[...W].map((c,i)=>`<span aria-hidden="true"><i style="--i:${i}">${c}</i></span>`).join('');
+const words=['Brand','Web','Motion','Product','Strategy','Identity','Film'];document.getElementById('trk').innerHTML=[...words,...words].map(w=>`<span>${w}</span>`).join('');
+function fit(){wm.style.fontSize='100px';const w=[...wm.children].reduce((n,c)=>n+c.getBoundingClientRect().width,0)||1,cs=getComputedStyle(ft),inner=ft.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);wm.style.fontSize=(100*inner/w*.995)+'px'}
+function replay(){ft.classList.remove('in');void ft.offsetWidth;requestAnimationFrame(()=>ft.classList.add('in'))}
+new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)ft.classList.add('in');else ft.classList.remove('in')}),{threshold:.35}).observe(ft);
+document.getElementById('re').onclick=replay;const pp=document.getElementById('pp');pp.onclick=()=>{const p=pp.getAttribute('aria-pressed')!=='true';pp.setAttribute('aria-pressed',p);pp.textContent=p?'Play':'Pause';document.getElementById('mq').classList.toggle('paused',p)};
+function apply(){theme();const s=ft.style;s.setProperty('--fw',S.weight);s.setProperty('--ls',S.spacing+'em');s.setProperty('--rise',S.rise+'%');s.setProperty('--stg',S.stagger+'ms');s.setProperty('--rd',S.duration+'ms');s.setProperty('--ms',S.marquee+'s');fit()}
+apply();addEventListener('resize',fit);document.fonts&&document.fonts.ready.then(fit);
+if(parent!==window){document.getElementById('top').style.minHeight='6vh';if(!calm)setInterval(()=>{if(!ft.matches(':hover'))replay()},4200)}
+</script>
+</body>

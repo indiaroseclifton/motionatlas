@@ -1,0 +1,16 @@
+<!--META {"o": 19, "t": "Dither waves shader", "cat": "Backgrounds", "tone": "dark", "uses": ["L43"], "d": "Rolling waves drawn in just two colours with an ordered dither, like an early computer screen. Set the pixel size, colours and contrast.", "how": "A soft brightness field is computed at a coarse grid, then each cell compares that brightness with a repeating Bayer threshold pattern to choose one of two colours. The pattern is what turns grey into texture.", "use": "Retro and technical brands, developer tools, editorial headers, loading and empty states.", "p": "Build a full-screen animated WebGL background in one HTML file with no libraries: a canvas fixed behind the content, one full-screen triangle, a fragment shader with uniforms for resolution, time and pointer, value-noise fbm in the shader, device pixel ratio capped at 1.5, paused when off screen or in a background tab, one still frame under prefers-reduced-motion, and a CSS gradient fallback if WebGL is missing. Put a headline, a line of copy and a button over it. Shader: snap coordinates to a pixel grid of a given size, compute a brightness field from fbm plus a sine wave that drifts and brightens near the pointer, apply contrast, then compare with an 8 by 8 Bayer matrix (built from the recursive 2 by 2 formula) to output one of two colours. Settings: two colours, pixel size, scale, contrast, pointer glow, speed."}-->
+<style>/*BASE*/
+</style>
+<body>
+<div class="heroc"><h1>Two colours, many greys</h1><p>An ordered dither over rolling noise.</p><a href="#">Get started</a></div>
+<script type="application/json" id="settings">{"c1": "#0B1026", "c2": "#7CFFCB", "px": 4, "scale": 2.2, "contrast": 1.3, "glow": 0.5, "speed": 1}</script>
+<script>
+const CONTROLS=[{g:'Colour',k:'c1',label:'Dark',type:'color'},{k:'c2',label:'Light',type:'color'},{g:'Pattern',k:'px',label:'Pixel size',min:1,max:12,step:1,unit:'px'},{k:'scale',label:'Wave scale',min:.5,max:6,step:.1},{k:'contrast',label:'Contrast',min:.4,max:3,step:.05},{k:'glow',label:'Pointer glow',min:0,max:1.5,step:.05},{g:'Motion',k:'speed',label:'Speed',min:0,max:4,step:.1}];
+/*TUNER*/
+/*SHADER*/
+const FRAG=`uniform vec3 c1,c2;uniform float px,scale,contrast,glow;float b2(vec2 a){a=floor(a);return fract(a.x/2.+a.y*a.y*.75);}float b4(vec2 a){return b2(.5*a)*.25+b2(a);}float b8(vec2 a){return b4(.5*a)*.25+b2(a);}void main(){vec2 g=floor(gl_FragCoord.xy/px);vec2 uv=g*px/R;vec2 p=(g*px-.5*R)/R.y*scale;float v=fbm(p+vec2(T*.1,0.))*.7+.3*(.5+.5*sin(p.x*1.6+fbm(p*1.5)*4.+T*.5));v+=glow*.35*smoothstep(.45,0.,distance(uv*vec2(R.x/R.y,1.),M*vec2(R.x/R.y,1.)));v=(v-.62)*contrast+.5;gl_FragColor=vec4(mix(c1,c2,step(b8(g),v)),1.);}`;
+const sh=shader(FRAG);
+function apply(){sh.set({c1:rgb(S.c1),c2:rgb(S.c2),px:S.px,scale:S.scale,contrast:S.contrast,glow:S.glow,_speed:S.speed})}
+apply();
+</script>
+</body>

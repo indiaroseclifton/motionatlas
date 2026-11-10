@@ -1,0 +1,31 @@
+<!--META {"o":23,"t":"Hold to confirm","cat":"Buttons","tone":"dark","uses":["L49"],"d":"A button for actions you should not trigger by accident. Press and hold and it fills; let go early and it drains back; hold to the end and it confirms.","how":"A single progress value rises while the button is held and falls when released, at separate speeds. That value drives the fill width, a ring around the icon and a slight shrink that makes the press feel physical. Space and Enter hold it too.","use":"Delete and cancel actions, payments, sending, ending a call, emergency controls.","p":"Build a hold-to-confirm button in one HTML file with no libraries. Three buttons: Delete project (danger), Send payment and End session. While the pointer is down, or Space or Enter is held, on a button, increase a progress value toward 1 over a hold duration; when released early, decrease it at a drain speed. Render progress as a fill sweeping across the button (clip or scaleX), an SVG ring around the icon, and scale the button to 0.97 while held. At 1: lock, show a tick and a done label, announce it in a polite live region, pulse once, and reset after two seconds. Show a hint under the buttons that updates with the percentage while holding. Settings: hold time, drain speed, press shrink, corner radius, fill style (sweep or rise), shake on early release, accent, light or dark. Reduced motion: no shake or pulse, progress still shown."}-->
+<style>/*BASE*/
+.col{display:grid;gap:16px;justify-items:center;width:min(360px,88vw)}
+.hb{position:relative;width:100%;min-height:58px;border-radius:var(--r);border:1.5px solid var(--c);background:color-mix(in srgb,var(--c) 12%,transparent);color:var(--ink);font-weight:700;font-size:15.5px;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:10px;touch-action:none;user-select:none;-webkit-user-select:none;transform:scale(calc(1 - var(--p,0)*var(--sh)));transition:transform .15s}
+.hb::before{content:"";position:absolute;inset:0;background:var(--c);transform-origin:0 100%;transform:scaleX(var(--p,0));z-index:0}
+.rise .hb::before{transform:scaleY(var(--p,0))}
+.hb>*{position:relative;z-index:1}.hb.done{color:#fff;animation:pulse .5s}.hb.no{animation:no .35s}
+@keyframes pulse{40%{box-shadow:0 0 0 12px color-mix(in srgb,var(--c) 30%,transparent)}}@keyframes no{25%,75%{translate:-5px 0}50%{translate:5px 0}}
+.hb svg{width:22px;height:22px}.hb circle{fill:none;stroke-width:3}.hb .bg{stroke:color-mix(in srgb,var(--ink) 20%,transparent)}.hb .fg{stroke:currentColor;stroke-linecap:round;stroke-dasharray:56.5;stroke-dashoffset:calc(56.5*(1 - var(--p,0)));transform:rotate(-90deg);transform-origin:50% 50%}
+#live{color:var(--mute);font-size:13px;min-height:20px;text-align:center}
+@media(prefers-reduced-motion:reduce){.hb.done,.hb.no{animation:none}}
+</style>
+<body>
+<div class="col" id="col"></div>
+<script type="application/json" id="settings">{"hold":1.4,"drain":2.5,"shrink":0.04,"corner":16,"fill":"sweep","shake":true,"mode":"dark","accent":"#8B7CFF"}</script>
+<script>
+const CONTROLS=[{g:'Timing',k:'hold',label:'Hold time',min:.5,max:4,step:.1,unit:'s'},{k:'drain',label:'Drain speed',min:.5,max:6,step:.1,unit:'×'},{g:'Feel',k:'shrink',label:'Press shrink',min:0,max:.1,step:.005},{k:'shake',label:'Shake on early release',type:'toggle'},{k:'fill',label:'Fill',type:'select',options:['sweep','rise']},
+ {g:'Look',k:'corner',label:'Corner radius',min:0,max:30,step:1,unit:'px'},{k:'mode',label:'Mode',type:'select',options:['dark','light']},{k:'accent',label:'Accent',type:'color'}];
+/*TUNER*/
+const D=[['Delete project','Project deleted','#E5484D'],['Send £240.00','Payment sent',''],['End session','Session ended','#F59E0B']],col=document.getElementById('col');
+col.innerHTML=D.map(([t,,c],i)=>`<button class="hb" data-i="${i}" style="${c?'--c:'+c:''}" aria-describedby="live"><svg viewBox="0 0 22 22" aria-hidden="true"><circle class="bg" cx="11" cy="11" r="9"/><circle class="fg" cx="11" cy="11" r="9"/></svg><span>${t}</span></button>`).join('')+'<p id="live" aria-live="polite">Press and hold a button. Space or Enter works too.</p>';
+const live=document.getElementById('live'),B=[...col.querySelectorAll('.hb')].map(el=>({el,p:0,down:false,lock:false,i:+el.dataset.i}));let last=performance.now();
+B.forEach(b=>{const on=()=>{if(!b.lock)b.down=true},off=()=>{if(b.down&&!b.lock&&b.p<1&&b.p>.05){live.textContent='Released early. Keep holding to confirm.';if(S.shake&&!calm){b.el.classList.remove('no');void b.el.offsetWidth;b.el.classList.add('no')}}b.down=false};
+ b.el.addEventListener('pointerdown',e=>{b.el.setPointerCapture(e.pointerId);on()});b.el.addEventListener('pointerup',off);b.el.addEventListener('pointercancel',off);
+ b.el.addEventListener('keydown',e=>{if((e.key===' '||e.key==='Enter')&&!e.repeat){e.preventDefault();on()}else if(e.key===' '||e.key==='Enter')e.preventDefault()});b.el.addEventListener('keyup',e=>{if(e.key===' '||e.key==='Enter')off()});b.el.addEventListener('blur',off);b.el.addEventListener('contextmenu',e=>e.preventDefault())});
+function tick(now){const dt=Math.min(.05,(now-last)/1000);last=now;B.forEach(b=>{if(b.lock)return;b.p=Math.max(0,Math.min(1,b.p+(b.down?dt/S.hold:-dt/S.hold*S.drain)));b.el.style.setProperty('--p',b.p.toFixed(3));if(b.down&&b.p<1)live.textContent='Holding… '+Math.round(b.p*100)+'%';
+ if(b.p>=1){b.lock=true;b.down=false;b.el.classList.add('done');b.el.querySelector('span').textContent='✓ '+D[b.i][1];live.textContent=D[b.i][1]+'.';setTimeout(()=>{b.el.classList.remove('done');b.el.querySelector('span').textContent=D[b.i][0];b.p=0;b.el.style.setProperty('--p',0);b.lock=false},2000)}});requestAnimationFrame(tick)}
+function apply(){theme();col.style.setProperty('--r',S.corner+'px');col.style.setProperty('--sh',S.shrink);col.style.setProperty('--c',S.accent);col.classList.toggle('rise',S.fill==='rise')}
+apply();requestAnimationFrame(tick);if(parent!==window&&!calm){let k=0;setInterval(()=>{if(col.matches(':hover'))return;const b=B[k++%3];b.down=true;setTimeout(()=>b.down=false,k%2?S.hold*1100:S.hold*450)},3200)}
+</script>
+</body>

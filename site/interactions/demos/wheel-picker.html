@@ -1,0 +1,50 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Wheel picker</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0E0F13;--panel:#191B22;--ink:#F3F4F7;--mute:#9CA3B4;--line:#2A2D38;--ac:#8B7CFF}
+:root[data-mode=light]{--bg:#F3F1EC;--panel:#FFFFFF;--ink:#17181C;--mute:#646978;--line:#DEDAD0}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+
+.art{position:absolute;inset:0;display:block;pointer-events:none}
+.art::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.16;mix-blend-mode:overlay}
+.heroc{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:24px;max-width:760px;color:#fff;text-shadow:0 1px 24px rgba(0,0,0,.35)}.heroc h1{font-size:clamp(34px,7vw,76px);line-height:1;letter-spacing:-.03em}.heroc p{font-size:clamp(15px,2vw,18px);opacity:.9;max-width:46ch}.heroc a{display:inline-flex;align-items:center;min-height:46px;padding:0 22px;border-radius:99px;background:#fff;color:#111;font-weight:700;text-decoration:none;text-shadow:none}
+.card{display:grid;gap:18px;justify-items:center;padding:26px 24px;border-radius:26px;background:var(--panel);border:1px solid var(--line);width:min(340px,92vw)}
+.out{font-size:38px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}.out small{font-size:16px;color:var(--mute);font-weight:600;margin-left:6px}
+.wh{position:relative;display:flex;gap:4px;width:100%;height:calc(var(--rh)*var(--rows));-webkit-mask:linear-gradient(transparent,#000 22%,#000 78%,transparent);mask:linear-gradient(transparent,#000 22%,#000 78%,transparent)}
+.band{position:absolute;left:0;right:0;top:50%;height:var(--rh);translate:0 -50%;border-radius:var(--br);background:color-mix(in srgb,var(--ac) 14%,transparent);pointer-events:none}
+.colw{flex:1;height:100%;overflow-y:auto;scroll-snap-type:y mandatory;scrollbar-width:none;padding:calc(var(--rh)*(var(--rows) - 1)/2) 0;outline-offset:-3px;border-radius:12px;overscroll-behavior:contain}.colw::-webkit-scrollbar{display:none}
+.colw div{height:var(--rh);display:grid;place-items:center;scroll-snap-align:center;font-size:calc(var(--rh)*.5);font-weight:600;font-variant-numeric:tabular-nums;cursor:pointer;will-change:transform}
+.colw div[aria-selected=true]{color:var(--ac)}
+</style>
+<body>
+<div class="card"><p class="out" aria-live="polite" id="out"></p><div class="wh" id="wh"><div class="band"></div></div><p style="color:var(--mute);font-size:13px">Scroll, drag or use the arrow keys</p></div>
+<script type="application/json" id="settings">{"row":44,"rows":5,"curve":22,"shrink":0.1,"fade":0.3,"band":12,"mode":"light","accent":"#5B2DFF"}</script>
+<script>
+const CONTROLS=[{g:'Drum',k:'row',label:'Row height',min:32,max:60,step:1,unit:'px'},{k:'rows',label:'Rows showing',min:3,max:7,step:2},{k:'curve',label:'Curve',min:0,max:40,step:1,unit:'°'},{k:'shrink',label:'Shrink',min:0,max:.25,step:.01},{k:'fade',label:'Fade',min:0,max:.5,step:.01},
+ {g:'Look',k:'band',label:'Band radius',min:0,max:24,step:1,unit:'px'},{k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'dark';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+const COLS=[['Hour',Array.from({length:12},(_,i)=>String(i+1)),8],['Minute',Array.from({length:12},(_,i)=>String(i*5).padStart(2,'0')),6],['AM or PM',['AM','PM'],0]],wh=document.getElementById('wh'),sel=COLS.map(c=>c[2]);
+wh.insertAdjacentHTML('beforeend',COLS.map(([l,v],c)=>`<div class="colw" role="listbox" aria-label="${l}" tabindex="0" data-c="${c}">${v.map((x,i)=>`<div role="option" id="o${c}-${i}" aria-selected="false">${x}</div>`).join('')}</div>`).join(''));
+const cols=[...wh.querySelectorAll('.colw')];
+function paint(col){const c=+col.dataset.c,mid=col.scrollTop/S.row;[...col.children].forEach((r,i)=>{const d=i-mid,ad=Math.abs(d);r.style.transform=`perspective(400px) rotateX(${(-d*S.curve).toFixed(1)}deg) scale(${Math.max(.5,1-ad*S.shrink).toFixed(3)})`;r.style.opacity=Math.max(.08,1-ad*S.fade).toFixed(2)});
+ const i=Math.max(0,Math.min(col.children.length-1,Math.round(mid)));if(i!==sel[c]||col.children[i].getAttribute('aria-selected')!=='true'){sel[c]=i;[...col.children].forEach((r,k)=>r.setAttribute('aria-selected',k===i));col.setAttribute('aria-activedescendant',`o${c}-${i}`);out()}}
+function out(){document.getElementById('out').innerHTML=COLS[0][1][sel[0]]+':'+COLS[1][1][sel[1]]+'<small>'+COLS[2][1][sel[2]]+'</small>'}
+const go=(col,i)=>col.scrollTo({top:Math.max(0,Math.min(col.children.length-1,i))*S.row,behavior:calm?'auto':'smooth'});
+cols.forEach(col=>{let raf=0;col.addEventListener('scroll',()=>{if(!raf)raf=requestAnimationFrame(()=>{raf=0;paint(col)})},{passive:true});
+ col.addEventListener('click',e=>{const r=e.target.closest('[role=option]');if(r)go(col,[...col.children].indexOf(r))});
+ col.addEventListener('keydown',e=>{const c=+col.dataset.c,m={ArrowDown:1,ArrowUp:-1,PageDown:3,PageUp:-3}[e.key];if(m){e.preventDefault();go(col,sel[c]+m)}else if(e.key==='Home'){e.preventDefault();go(col,0)}else if(e.key==='End'){e.preventDefault();go(col,99)}})});
+function apply(){theme();const s=wh.style;s.setProperty('--rh',S.row+'px');s.setProperty('--rows',S.rows);s.setProperty('--br',S.band+'px');cols.forEach((col,c)=>{col.scrollTop=sel[c]*S.row;paint(col)})}
+apply();out();if(parent!==window&&!calm)setInterval(()=>{if(wh.matches(':hover'))return;const c=Math.random()<.5?0:1;go(cols[c],Math.floor(Math.random()*12))},2200);
+</script>
+</body>
+</html>

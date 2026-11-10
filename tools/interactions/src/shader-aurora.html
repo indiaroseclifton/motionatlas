@@ -1,0 +1,16 @@
+<!--META {"o": 22, "t": "Aurora rays shader", "cat": "Backgrounds", "tone": "dark", "uses": ["L43"], "d": "Curtains of light that hang and sway over a dark sky, brighter where they fold. Choose the colours, how many curtains, their sharpness and sway.", "how": "Each curtain is a sine wave across the width whose phase is pushed around by slow noise, raised to a power to make thin bright folds. Height fades it out, and two colours are mixed by how high you are.", "use": "Dark hero sections, AI and space products, music and events, night-mode backgrounds.", "p": "Build a full-screen animated WebGL background in one HTML file with no libraries: a canvas fixed behind the content, one full-screen triangle, a fragment shader with uniforms for resolution, time and pointer, value-noise fbm in the shader, device pixel ratio capped at 1.5, paused when off screen or in a background tab, one still frame under prefers-reduced-motion, and a CSS gradient fallback if WebGL is missing. Put a headline, a line of copy and a button over it. Shader: over a dark vertical gradient, sum three layers of curtains: x is offset by fbm that drifts with time, intensity = pow(abs(sin(x * count + phase)), sharpness), multiplied by a vertical falloff and a soft noise mask; colour mixes between two uniforms by height and a third for the sky; add faint stars from a hash and grain. Settings: sky colour, two curtain colours, curtain count, sharpness, sway, height, stars, speed."}-->
+<style>/*BASE*/
+</style>
+<body>
+<div class="heroc"><h1>Northern lights</h1><p>Curtains of light, drawn by a shader.</p><a href="#">Get started</a></div>
+<script type="application/json" id="settings">{"c1": "#3DDC97", "c2": "#8B5CFF", "c3": "#050814", "count": 4, "sharp": 5, "sway": 1.2, "height": 0.75, "stars": 0.6, "speed": 1}</script>
+<script>
+const CONTROLS=[{g:'Colour',k:'c1',label:'Low colour',type:'color'},{k:'c2',label:'High colour',type:'color'},{k:'c3',label:'Sky',type:'color'},{g:'Curtains',k:'count',label:'Curtains',min:1,max:8,step:.5},{k:'sharp',label:'Sharpness',min:1,max:8,step:.5},{k:'sway',label:'Sway',min:0,max:3,step:.05},{k:'height',label:'Height',min:.3,max:1.2,step:.05},{g:'Finish',k:'stars',label:'Stars',min:0,max:1,step:.05},{k:'speed',label:'Speed',min:0,max:4,step:.1}];
+/*TUNER*/
+/*SHADER*/
+const FRAG=`uniform vec3 c1,c2,c3;uniform float count,sharp,sway,height,stars;void main(){vec2 uv=gl_FragCoord.xy/R;vec2 p=vec2(uv.x*R.x/R.y,uv.y);vec3 col=c3*(1.2-uv.y*.6);float s=step(.997,h(floor(gl_FragCoord.xy/2.)))*stars*(.5+.5*sin(T*2.+h(floor(gl_FragCoord.xy/2.))*40.));col+=s;float tot=0.;for(int i=0;i<3;i++){float fi=float(i);float x=p.x+sway*(fbm(vec2(p.x*.8+fi*3.,T*.12+fi))-.5)+(M.x-.5)*.1;float ray=pow(abs(sin(x*count*1.6+fi*1.3+T*.15)),sharp);float fade=smoothstep(0.,.25,uv.y)*smoothstep(height+.15*fi,.15,uv.y);float m=.5+.5*fbm(vec2(p.x*3.+fi,uv.y*2.-T*.3));tot+=ray*fade*m*(.7-fi*.15);}col+=mix(c1,c2,smoothstep(.15,height,uv.y))*tot;col+=(h(gl_FragCoord.xy+fract(T))-.5)*.03;gl_FragColor=vec4(col,1.);}`;
+const sh=shader(FRAG);
+function apply(){sh.set({c1:rgb(S.c1),c2:rgb(S.c2),c3:rgb(S.c3),count:S.count,sharp:S.sharp,sway:S.sway,height:S.height,stars:S.stars,_speed:S.speed})}
+apply();
+</script>
+</body>

@@ -1,0 +1,16 @@
+<!--META {"o": 18, "t": "Mesh gradient shader", "cat": "Backgrounds", "tone": "dark", "uses": ["L43"], "d": "A slow, liquid gradient of four colours that folds into itself, with film grain. Tune the colours, scale, warp and speed.", "how": "Layered noise bends the coordinates before a second layer of noise picks between the colours, which is what gives the folded, silky look. A little random value per pixel adds grain so the gradient never bands.", "use": "Hero and section backgrounds, sign-in screens, app splash screens, cards and posters.", "p": "Build a full-screen animated WebGL background in one HTML file with no libraries: a canvas fixed behind the content, one full-screen triangle, a fragment shader with uniforms for resolution, time and pointer, value-noise fbm in the shader, device pixel ratio capped at 1.5, paused when off screen or in a background tab, one still frame under prefers-reduced-motion, and a CSS gradient fallback if WebGL is missing. Put a headline, a line of copy and a button over it. Shader: warp the coordinates with two fbm lookups that drift over time, then blend four colour uniforms with smoothstep on further fbm values, and add per-pixel grain. Settings: four colours, scale, warp, softness, grain, speed."}-->
+<style>/*BASE*/
+</style>
+<body>
+<div class="heroc"><h1>Colour that moves</h1><p>A liquid gradient drawn on the graphics card.</p><a href="#">Get started</a></div>
+<script type="application/json" id="settings">{"c1": "#5B2DFF", "c2": "#FF4D8D", "c3": "#FFB86B", "c4": "#0B1026", "scale": 1.4, "warp": 1.2, "soft": 0.9, "grain": 0.07, "speed": 1}</script>
+<script>
+const CONTROLS=[{g:'Colour',k:'c1',label:'Colour one',type:'color'},{k:'c2',label:'Colour two',type:'color'},{k:'c3',label:'Colour three',type:'color'},{k:'c4',label:'Shadow colour',type:'color'},{g:'Shape',k:'scale',label:'Scale',min:.4,max:4,step:.05},{k:'warp',label:'Warp',min:0,max:3,step:.05},{k:'soft',label:'Shadow amount',min:0,max:1,step:.05},{g:'Finish',k:'grain',label:'Grain',min:0,max:.25,step:.01},{k:'speed',label:'Speed',min:0,max:4,step:.1}];
+/*TUNER*/
+/*SHADER*/
+const FRAG=`uniform vec3 c1,c2,c3,c4;uniform float scale,warp,grain,soft;void main(){vec2 p=(gl_FragCoord.xy-.5*R)/R.y*scale;vec2 q=p+warp*vec2(fbm(p+T*.15),fbm(p+vec2(5.2,1.3)-T*.12))+(M-.5)*.3;float a=fbm(q+T*.05),b=fbm(q*1.3+vec2(8.,2.)-T*.07);vec3 col=mix(c1,c2,smoothstep(.25,.75,a));col=mix(col,c3,smoothstep(.35,.85,b));col=mix(col,c4,smoothstep(.45,.95,fbm(q*.7+3.+T*.04))*soft);col+=(h(gl_FragCoord.xy+fract(T))-.5)*grain;gl_FragColor=vec4(col,1.);}`;
+const sh=shader(FRAG);
+function apply(){sh.set({c1:rgb(S.c1),c2:rgb(S.c2),c3:rgb(S.c3),c4:rgb(S.c4),scale:S.scale,warp:S.warp,soft:S.soft,grain:S.grain,_speed:S.speed})}
+apply();
+</script>
+</body>

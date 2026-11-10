@@ -1,0 +1,16 @@
+<!--META {"o": 20, "t": "Fluted glass shader", "cat": "Backgrounds", "tone": "dark", "uses": ["L43"], "d": "Soft colour seen through ribbed glass: vertical flutes bend and repeat the light behind them. Change the number of ribs, how hard they bend and the colours.", "how": "The screen is cut into columns. Inside each one the sideways position is pushed by a curve, as a glass rib would bend light, before the gradient behind is sampled; a thin highlight and shadow on each edge sells the material.", "use": "Premium product pages, fintech and beauty brands, hero panels behind type, cards.", "p": "Build a full-screen animated WebGL background in one HTML file with no libraries: a canvas fixed behind the content, one full-screen triangle, a fragment shader with uniforms for resolution, time and pointer, value-noise fbm in the shader, device pixel ratio capped at 1.5, paused when off screen or in a background tab, one still frame under prefers-reduced-motion, and a CSS gradient fallback if WebGL is missing. Put a headline, a line of copy and a button over it. Shader: divide x into N flutes; within each compute f = fract(x*N) and offset the sampling x by (f - 0.5) * refraction with a curved profile; sample a slowly drifting three-colour noise gradient at the displaced position; add a faint highlight at one edge of each flute and a shadow at the other, plus grain. Settings: three colours, flute count, refraction, edge strength, blur scale, grain, speed."}-->
+<style>/*BASE*/
+</style>
+<body>
+<div class="heroc"><h1>Light through glass</h1><p>Ribbed glass bends a moving gradient.</p><a href="#">Get started</a></div>
+<script type="application/json" id="settings">{"c1": "#FF7A59", "c2": "#FFD166", "c3": "#3A0CA3", "flutes": 22, "refr": 0.22, "edge": 0.12, "scale": 1.2, "grain": 0.05, "speed": 1}</script>
+<script>
+const CONTROLS=[{g:'Colour',k:'c1',label:'Colour one',type:'color'},{k:'c2',label:'Colour two',type:'color'},{k:'c3',label:'Colour three',type:'color'},{g:'Glass',k:'flutes',label:'Ribs',min:4,max:60,step:1},{k:'refr',label:'Bend',min:0,max:.6,step:.01},{k:'edge',label:'Edge light',min:0,max:.4,step:.01},{k:'scale',label:'Colour scale',min:.4,max:3,step:.05},{g:'Finish',k:'grain',label:'Grain',min:0,max:.2,step:.01},{k:'speed',label:'Speed',min:0,max:4,step:.1}];
+/*TUNER*/
+/*SHADER*/
+const FRAG=`uniform vec3 c1,c2,c3;uniform float flutes,refr,edge,scale,grain;void main(){vec2 uv=gl_FragCoord.xy/R;float f=fract(uv.x*flutes);float k=f-.5;vec2 p=vec2(uv.x+k*abs(k)*4.*refr,uv.y);p=(p-.5)*vec2(R.x/R.y,1.)*scale+(M-.5)*.2;float a=fbm(p*1.2+vec2(T*.08,T*.05)),b=fbm(p*.9+vec2(4.,7.)-T*.06);vec3 col=mix(c3,c1,smoothstep(.3,.7,a));col=mix(col,c2,smoothstep(.45,.85,b));col+=edge*(smoothstep(.86,1.,f)-smoothstep(.14,0.,f)*.8);col+=(h(gl_FragCoord.xy+fract(T))-.5)*grain;gl_FragColor=vec4(col,1.);}`;
+const sh=shader(FRAG);
+function apply(){sh.set({c1:rgb(S.c1),c2:rgb(S.c2),c3:rgb(S.c3),flutes:S.flutes,refr:S.refr,edge:S.edge,scale:S.scale,grain:S.grain,_speed:S.speed})}
+apply();
+</script>
+</body>

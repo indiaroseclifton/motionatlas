@@ -1,0 +1,49 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dither waves shader</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0E0F13;--panel:#191B22;--ink:#F3F4F7;--mute:#9CA3B4;--line:#2A2D38;--ac:#8B7CFF}
+:root[data-mode=light]{--bg:#F3F1EC;--panel:#FFFFFF;--ink:#17181C;--mute:#646978;--line:#DEDAD0}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+
+.art{position:absolute;inset:0;display:block;pointer-events:none}
+.art::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.16;mix-blend-mode:overlay}
+.heroc{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:24px;max-width:760px;color:#fff;text-shadow:0 1px 24px rgba(0,0,0,.35)}.heroc h1{font-size:clamp(34px,7vw,76px);line-height:1;letter-spacing:-.03em}.heroc p{font-size:clamp(15px,2vw,18px);opacity:.9;max-width:46ch}.heroc a{display:inline-flex;align-items:center;min-height:46px;padding:0 22px;border-radius:99px;background:#fff;color:#111;font-weight:700;text-decoration:none;text-shadow:none}
+</style>
+<body>
+<div class="heroc"><h1>Two colours, many greys</h1><p>An ordered dither over rolling noise.</p><a href="#">Get started</a></div>
+<script type="application/json" id="settings">{"c1": "#0B1026", "c2": "#7CFFCB", "px": 4, "scale": 2.2, "contrast": 1.3, "glow": 0.5, "speed": 1}</script>
+<script>
+const CONTROLS=[{g:'Colour',k:'c1',label:'Dark',type:'color'},{k:'c2',label:'Light',type:'color'},{g:'Pattern',k:'px',label:'Pixel size',min:1,max:12,step:1,unit:'px'},{k:'scale',label:'Wave scale',min:.5,max:6,step:.1},{k:'contrast',label:'Contrast',min:.4,max:3,step:.05},{k:'glow',label:'Pointer glow',min:0,max:1.5,step:.05},{g:'Motion',k:'speed',label:'Speed',min:0,max:4,step:.1}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'dark';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+/* Tiny WebGL runner: one full-screen triangle, uniforms R (size), T (time), M (pointer 0-1) plus whatever set() is given.
+   Pauses off screen and in background tabs; reduced motion shows one still frame. */
+const NOISE='float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1.,0.)),f.x),mix(h(i+vec2(0.,1.)),h(i+vec2(1.,1.)),f.x),f.y);}float fbm(vec2 p){float a=.5,s=0.;for(int i=0;i<5;i++){s+=a*n(p);p=p*2.02+vec2(1.7,9.2);a*=.5;}return s;}';
+const rgb=x=>[1,3,5].map(i=>parseInt(x.slice(i,i+2),16)/255);
+function shader(frag){const c=document.createElement('canvas');c.style.cssText='position:fixed;inset:0;width:100%;height:100%;display:block;z-index:-1';c.setAttribute('aria-hidden','true');document.body.prepend(c);
+ const gl=c.getContext('webgl',{antialias:false,alpha:false,powerPreference:'low-power'}),vals={};if(!gl){document.body.style.background='linear-gradient(160deg,#1b1f3a,#0b0d14)';return{set(o){Object.assign(vals,o)}}}
+ const sh=(t,s)=>{const o=gl.createShader(t);gl.shaderSource(o,s);gl.compileShader(o);if(!gl.getShaderParameter(o,gl.COMPILE_STATUS))console.error(gl.getShaderInfoLog(o));return o};
+ const p=gl.createProgram();gl.attachShader(p,sh(gl.VERTEX_SHADER,'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}'));gl.attachShader(p,sh(gl.FRAGMENT_SHADER,'precision highp float;uniform vec2 R;uniform float T;uniform vec2 M;'+NOISE+frag));gl.linkProgram(p);gl.useProgram(p);
+ gl.bindBuffer(gl.ARRAY_BUFFER,gl.createBuffer());gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);const a=gl.getAttribLocation(p,'p');gl.enableVertexAttribArray(a);gl.vertexAttribPointer(a,2,gl.FLOAT,false,0,0);
+ const loc={},U=k=>loc[k]||(loc[k]=gl.getUniformLocation(p,k));let mx=.5,my=.5,t=12,last=0,vis=true;
+ addEventListener('pointermove',e=>{mx=e.clientX/innerWidth;my=1-e.clientY/innerHeight});new IntersectionObserver(e=>vis=e[0].isIntersecting).observe(c);
+ const fit=()=>{const d=Math.min(devicePixelRatio||1,1.5);c.width=Math.round(innerWidth*d);c.height=Math.round(innerHeight*d);gl.viewport(0,0,c.width,c.height)};addEventListener('resize',fit);fit();
+ function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;if(vis&&!document.hidden){t+=calm?0:dt*(vals._speed==null?1:vals._speed);gl.uniform2f(U('R'),c.width,c.height);gl.uniform1f(U('T'),t);gl.uniform2f(U('M'),mx,my);
+  for(const k in vals){if(k[0]==='_')continue;const v=vals[k];Array.isArray(v)?gl.uniform3f(U(k),v[0],v[1],v[2]):gl.uniform1f(U(k),v)}gl.drawArrays(gl.TRIANGLES,0,3)}requestAnimationFrame(frame)}
+ requestAnimationFrame(frame);return{set(o){Object.assign(vals,o)}}}
+const FRAG=`uniform vec3 c1,c2;uniform float px,scale,contrast,glow;float b2(vec2 a){a=floor(a);return fract(a.x/2.+a.y*a.y*.75);}float b4(vec2 a){return b2(.5*a)*.25+b2(a);}float b8(vec2 a){return b4(.5*a)*.25+b2(a);}void main(){vec2 g=floor(gl_FragCoord.xy/px);vec2 uv=g*px/R;vec2 p=(g*px-.5*R)/R.y*scale;float v=fbm(p+vec2(T*.1,0.))*.7+.3*(.5+.5*sin(p.x*1.6+fbm(p*1.5)*4.+T*.5));v+=glow*.35*smoothstep(.45,0.,distance(uv*vec2(R.x/R.y,1.),M*vec2(R.x/R.y,1.)));v=(v-.62)*contrast+.5;gl_FragColor=vec4(mix(c1,c2,step(b8(g),v)),1.);}`;
+const sh=shader(FRAG);
+function apply(){sh.set({c1:rgb(S.c1),c2:rgb(S.c2),px:S.px,scale:S.scale,contrast:S.contrast,glow:S.glow,_speed:S.speed})}
+apply();
+</script>
+</body>
+</html>
