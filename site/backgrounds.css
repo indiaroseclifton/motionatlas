@@ -14,7 +14,7 @@
 .bgIcon:focus-visible,.bgCard:focus-visible,.bgRatios button:focus-visible,.bgCollections button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .bgRatios{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center}
 .bgRatios button{display:grid;gap:.1rem;min-width:64px;min-height:44px;padding:.35rem .6rem;border:1px solid var(--line);border-radius:8px;background:var(--card,#fff);color:var(--ink);cursor:pointer;font:inherit}
-.bgRatios button b{font-size:13px}.bgRatios button small{font-size:10.5px;color:var(--muted)}
+.bgRatios button b{font-size:13px}.bgRatios button small{font-size:11px;color:var(--muted)}
 .bgRatios button[aria-pressed=true]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
 .bgPanel{display:grid;gap:1rem;padding:1.1rem;border:1px solid var(--line);border-radius:12px;background:var(--card,#fff)}
 .bgRow{display:grid;gap:.35rem}.bgRow>label,.bgPalette legend{font:600 12px/1.2 inherit;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}

@@ -26,7 +26,7 @@ main{padding:0 max(18px,4vw) 80px;max-width:1440px;margin:0 auto}
 .searchrow{display:flex;gap:10px;align-items:center}
 .searchrow .search{flex:1;min-width:0}
 .kbd{font:500 11px/1 'JetBrains Mono',monospace;color:var(--mute);border:1px solid var(--hair);border-radius:6px;padding:4px 6px;background:var(--panel)}
-.badge{display:inline-block;margin-left:8px;padding:3px 7px;border-radius:999px;background:var(--accent);color:#fff;font:600 9.5px/1 'JetBrains Mono',monospace;letter-spacing:.08em;vertical-align:2px}
+.badge{display:inline-block;margin-left:8px;padding:3px 7px;border-radius:999px;background:var(--accent);color:#fff;font:600 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;vertical-align:2px}
 .empty button{margin-top:12px}
 .search input{width:min(560px,100%);min-height:44px;padding:0 16px;border:1px solid var(--hair);border-radius:12px;background:var(--panel);font-size:15px}
 .search input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
@@ -45,7 +45,7 @@ main{padding:0 max(18px,4vw) 80px;max-width:1440px;margin:0 auto}
 .view .poster{position:absolute;inset:0;display:grid;place-items:center;color:rgba(255,255,255,.72);font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase}
 .view.light .poster{color:#5E5A52}
 .meta{padding:14px 16px 16px;display:grid;gap:4px}
-.meta .k{font:500 10.5px/1 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.meta .k{font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
 .meta h2{margin:0;font:600 17px/1.25 Inter,sans-serif}
 .meta p{margin:0;color:var(--mute);font-size:13.5px}
 .note{margin-top:40px;padding:18px 20px;border:1px solid var(--hair);border-radius:14px;background:var(--panel);color:var(--mute);font-size:13.5px;max-width:80ch}
@@ -59,7 +59,7 @@ dialog::backdrop{background:rgba(14,16,24,.6);backdrop-filter:blur(4px)}
 .info h2{margin:0;font:500 34px/1 'Cormorant Garamond',Georgia,serif;font-style:italic}
 .info h3{margin:6px 0 0;font:600 11px/1 Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
 .info p{margin:0;font-size:14px}
-.meta .built{margin:8px 0 0;font-size:12.5px;color:var(--mute)}.meta .built span{font:500 10px/1 'JetBrains Mono',monospace;letter-spacing:.12em;text-transform:uppercase;margin-right:4px}
+.meta .built{margin:8px 0 0;font-size:12.5px;color:var(--mute)}.meta .built span{font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.12em;text-transform:uppercase;margin-right:4px}
 .uses{display:flex;flex-wrap:wrap;gap:6px}.uses a{display:inline-flex;align-items:center;min-height:32px;padding:0 12px;border-radius:999px;border:1px solid var(--hair);font-size:13px;text-decoration:none}.uses a:hover{background:var(--soft)}
 .prompt{font:12.5px/1.55 'JetBrains Mono',monospace;background:var(--soft);border:1px solid var(--hair);border-radius:10px;padding:12px;white-space:pre-wrap;max-height:200px;overflow:auto}
 .actions{display:flex;flex-wrap:wrap;gap:8px}
@@ -86,7 +86,7 @@ dialog::backdrop{background:rgba(14,16,24,.6);backdrop-filter:blur(4px)}
 <p class="note"><b>How to use these.</b> Every piece works with a keyboard, has a phone layout and calms down when the visitor has asked for reduced motion. Copied code points its images at this site, so it runs as soon as you paste it; swap in your own images before you ship. The ideas here follow familiar patterns from interaction galleries; the designs, names and code are our own.</p>
 </main>
 <dialog id="dlg" aria-labelledby="dTitle"><button class="close" id="close" aria-label="Close">×</button><div class="dl"><div class="stage" id="stage"></div><div class="info">
-<p class="k" id="dCat" style="font:500 10.5px/1 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)"></p>
+<p class="k" id="dCat" style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)"></p>
 <h2 id="dTitle"></h2><p id="dDesc"></p>
 <div class="actions"><button class="btn primary" id="copyCode">Copy HTML</button><button class="btn" id="dlCode">Download</button><a class="btn" id="openFull" target="_blank" rel="noopener">Open full screen ↗</a></div>
 <div class="own" id="own"><h3>Use your own images</h3><p class="ownNote">Pick up to eight photos. They replace the demo pictures in the preview and in the code you copy or download (stored inside the file, so keep them small). Films stay as ours.</p><div class="actions"><label class="btn" for="ownFiles">Choose images</label><input id="ownFiles" type="file" accept="image/*" multiple class="vh"><button class="btn" id="ownClear" hidden>Back to demo images</button></div><p class="ownNote" id="ownStatus" role="status"></p></div>

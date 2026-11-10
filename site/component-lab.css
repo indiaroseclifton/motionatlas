@@ -3,7 +3,7 @@
 .clab-head{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:24px 48px;align-items:end}
 .clab-head h2{margin:6px 0 0;font-family:var(--f-display,Georgia,serif);font-weight:300;font-size:clamp(32px,3.6vw,52px);line-height:1;letter-spacing:-.02em}
 .clab-head p{margin:0;color:var(--text-dim,#4a5466);max-width:46ch}
-.clab-kicker{margin:0;font-family:var(--f-mono,ui-monospace,monospace);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim,#4a5466)}
+.clab-kicker{margin:0;font-family:var(--f-mono,ui-monospace,monospace);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim,#4a5466)}
 .clab-bar{display:flex;flex-wrap:wrap;align-items:end;gap:12px 16px;padding:14px 16px;background:var(--panel,#fff);border:1px solid var(--hair,#d9dee6);border-radius:16px}
 .clab-bar label{display:grid;gap:6px;font-size:12px;color:var(--text-dim,#4a5466)}
 .clab-bar select,.clab-bar input[type=text]{min-height:40px!important}
@@ -29,7 +29,7 @@
 .clab-title h3{margin:4px 0 0;font-family:var(--f-display,Georgia,serif);font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1}
 .clab-stage{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:12px;padding:12px;border-radius:18px;background:var(--cl-backdrop,var(--cl-bg));background-color:var(--cl-bg);border:1px solid var(--hair,#d9dee6);transition:background .4s}
 .clab-cell{margin:0;display:grid;grid-template-rows:auto 1fr;gap:10px;padding:14px;border-radius:12px;background:color-mix(in srgb,var(--cl-bg) 70%,transparent);border:1px dashed color-mix(in srgb,var(--cl-muted) 35%,transparent);min-width:0;overflow:visible}
-.clab-cell figcaption{font-family:var(--f-mono,monospace);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--cl-muted)}
+.clab-cell figcaption{font-family:var(--f-mono,monospace);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--cl-muted)}
 .clab-cellbody{display:flex;align-items:center;justify-content:flex-start;min-height:120px;overflow:auto;padding:4px}
 .clab-live{display:grid;gap:8px}
 .clab-livebox{padding:28px;border-radius:18px;background:var(--cl-backdrop,var(--cl-bg));background-color:var(--cl-bg);border:1px solid var(--hair,#d9dee6);display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:center;min-height:200px;overflow:auto}
@@ -44,7 +44,7 @@
 .clab-pre{margin:0;max-height:420px;overflow:auto;padding:16px 18px;background:#0b1020;color:#dbe4f3;border-radius:14px;font:12.5px/1.6 var(--f-mono,ui-monospace,monospace);white-space:pre;tab-size:2}
 .clab-note{margin:0;font-size:12.5px;color:var(--text-dim,#4a5466)}
 .clab-dl{display:grid;grid-template-columns:140px minmax(0,1fr);gap:12px 24px;margin:0;padding:18px 20px;background:var(--panel,#fff);border:1px solid var(--hair,#d9dee6);border-radius:14px}
-.clab-dl dt{font-family:var(--f-mono,monospace);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim,#4a5466);padding-top:3px}
+.clab-dl dt{font-family:var(--f-mono,monospace);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim,#4a5466);padding-top:3px}
 .clab-dl dd{margin:0;font-size:14.5px;max-width:64ch}
 .clab-dl ul{margin:0;padding-left:18px}
 .clab-wcag{display:flex;flex-wrap:wrap;gap:6px}

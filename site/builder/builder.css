@@ -86,7 +86,7 @@ details.menu .mlist{position:absolute;right:0;top:calc(100% + 6px);z-index:60;mi
 .grip{color:#A3A8B6;cursor:grab;font-size:12px;letter-spacing:-2px;padding:0 4px}
 .bname{flex:1;min-width:0;text-align:left;border:0;background:none;padding:6px 2px;display:grid;gap:1px;border-radius:8px}
 .bname b{font-weight:600;font-size:13px}.bname small{color:var(--mute);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ib{width:30px;height:30px;flex:0 0 30px;border-radius:8px;border:1px solid var(--hair);background:var(--panel);display:grid;place-items:center;font-size:13px;line-height:1;padding:0}
+.ib{width:32px;height:32px;flex:0 0 32px;border-radius:8px;border:1px solid var(--hair);background:var(--panel);display:grid;place-items:center;font-size:13px;line-height:1;padding:0}
 .ib:disabled{opacity:.35;cursor:default}
 .bb{padding:2px 10px 12px;display:grid;gap:10px}
 .btools{display:flex;gap:6px;flex-wrap:wrap}
@@ -147,7 +147,7 @@ details.menu .mlist{position:absolute;right:0;top:calc(100% + 6px);z-index:60;mi
 .pgl,.sitel{list-style:none;margin:0;padding:0;display:grid;gap:6px}
 .pgrow{display:flex;gap:6px;align-items:center;border:1px solid var(--hair);border-radius:10px;padding:4px 4px 4px 6px}.pgrow.cur{border-color:var(--accent);background:var(--sel)}
 .pgname{flex:1;min-width:0;display:grid;gap:1px;text-align:left;border:0;background:none;padding:4px 2px;border-radius:8px}.pgname b{font-size:13px}.pgname em{font-style:normal;font-size:11px;color:var(--accent);margin-left:4px}.pgname small{color:var(--mute);font-size:11.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.pgact{display:flex;gap:3px}.pgact .ib{width:28px;height:28px;flex-basis:28px}
+.pgact{display:flex;gap:3px}.pgact .ib{width:32px;height:32px;flex-basis:32px}
 .sitel li{border:1px solid var(--hair);border-radius:10px;padding:8px 10px;display:grid;gap:6px}.sitel li.cur{border-color:var(--accent);background:var(--sel)}.sitel b{display:block;font-size:13px}.sitel small{color:var(--mute);font-size:11.5px}.sitel span{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.sitel em{font-size:12px;color:var(--mute);font-style:normal}
 #tplList{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
 .favrow{display:flex;gap:8px;align-items:center}.favrow select{flex:1;min-width:0}.favrow img{border-radius:6px;border:1px solid var(--hair)}

@@ -16,11 +16,11 @@
 .scPanel .scLabel{font:600 12px/1.2 inherit;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
 .scChips{display:grid;grid-template-columns:repeat(4,1fr);gap:.35rem}
 .scChips button{display:grid;gap:.1rem;min-height:44px;padding:.3rem;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);cursor:pointer;font:inherit}
-.scChips b{font-size:12.5px}.scChips small{font-size:10px;color:var(--muted)}
+.scChips b{font-size:12.5px}.scChips small{font-size:11px;color:var(--muted)}
 .scSwatches{display:grid;grid-template-columns:repeat(4,1fr);gap:.4rem}
 .scSwatches button{display:grid;gap:.25rem;padding:0;border:0;background:none;color:var(--ink);cursor:pointer;font:inherit;text-align:left}
 .scSwatches i{display:block;aspect-ratio:3/2;border-radius:6px;background:#ccc center/cover;box-shadow:0 0 0 1px rgba(0,0,0,.1)}
-.scSwatches span{font-size:10.5px;line-height:1.2;color:var(--muted)}
+.scSwatches span{font-size:11px;line-height:1.2;color:var(--muted)}
 #showcase .scChips button[aria-pressed=true],#showcase .scSwatches button[aria-pressed=true] i{box-shadow:0 0 0 2px var(--ink)}
 .scChips button:focus-visible,.scSwatches button:focus-visible,.scTemplates button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .scHint{margin:0;font-size:12.5px;line-height:1.5;color:var(--muted)}

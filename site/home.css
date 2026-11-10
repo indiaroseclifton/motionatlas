@@ -110,7 +110,7 @@ body.vmaCinema>header{opacity:0;pointer-events:none}
 .vmaPlateBtn:hover,.vmaPlateBtn[aria-current=true]{opacity:1}
 .vmaBar{position:absolute;top:-1px;left:0;height:1px;width:0;background:var(--c);box-shadow:0 0 10px var(--c)}
 .vmaPlateBtn[aria-current=true] .vmaBar{width:var(--p,0%)}
-.vmaNo{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.2em;color:var(--c)}
+.vmaNo{font-family:var(--f-mono);font-size:11px;letter-spacing:.2em;color:var(--c)}
 .vmaName{font-family:var(--f-display);font-style:italic;font-size:clamp(19px,1.7vw,24px);line-height:1.1}
 .vmaDesc{font-size:12.5px;color:var(--ink-dim);line-height:1.45}
 .vmaPlates li:nth-child(1) .vmaPlateBtn{--c:var(--ice)}
@@ -145,7 +145,7 @@ body.vmaCinema>header{opacity:0;pointer-events:none}
 .vmaPlate:hover .vmaPlateImage{transform:translateY(-4px);filter:brightness(1.08)}
 .vmaPlateCaption{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:14px 0 12px;border-bottom:1px solid var(--rule)}
 .vmaPlateName{font-family:var(--f-display);font-style:italic;font-size:clamp(20px,1.7vw,24px);line-height:1.1}
-.vmaPlateTag{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--c,var(--ink-dim))}
+.vmaPlateTag{font-family:var(--f-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--c,var(--ink-dim))}
 .vmaSection>.vmaTextLink{margin-top:32px}
 .vmaLinks{display:flex;flex-wrap:wrap;gap:14px 34px;padding-top:30px}
 .vmaLinks a{text-decoration:none;color:var(--ink-dim);font-size:14.5px;font-weight:500;transition:color .2s}
@@ -189,7 +189,7 @@ body.vmaCinema>header{opacity:0;pointer-events:none}
  .vmaKinetic canvas{width:min(80%,340px)}
 }
 @media(max-width:480px){
- body.cinemaMode>header .brand{font-size:10.5px;letter-spacing:.18em}
+ body.cinemaMode>header .brand{font-size:11px;letter-spacing:.18em}
  .vmaFormula{display:none}
  .vmaBtn{padding:14px 20px}
  .vmaPlates2{grid-template-columns:1fr}
