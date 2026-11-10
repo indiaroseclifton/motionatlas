@@ -1,6 +1,6 @@
 'use strict';
 /* React export for the component lab (component-lab.js).
-   Each of the 64 components becomes one self-contained .jsx module:
+   Each of the 70 components becomes one self-contained .jsx module:
      - the markup of every real variant as JSX (DOM-parsed, not regex-converted), ids scoped with useId
      - the component CSS plus light and dark theme tokens, injected once (also exported as `css`)
      - the exact behaviour the atlas runs in its live demo, mounted in useEffect on a ref and torn

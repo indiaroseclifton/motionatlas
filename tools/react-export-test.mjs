@@ -1,10 +1,10 @@
 // React export test for the component lab (site/component-react.js).
-// For each of the 64 components: takes the exported .jsx module, transpiles it with @babel/standalone, renders it
+// For each component: takes the exported .jsx module, transpiles it with @babel/standalone, renders it
 // with React 18 (UMD) inside StrictMode, performs the component's primary interaction (click / keyboard) and asserts
 // the state or ARIA change, that onStateChange fired, and that nothing logged an error.
 //
 //   (serve site/ on :8772, e.g. cd site && python3 -m http.server 8772)
-//   node tools/react-export-test.mjs            # all 64      node tools/react-export-test.mjs C05,C11   # some
+//   node tools/react-export-test.mjs            # all         node tools/react-export-test.mjs C05,C11   # some
 // Needs the playwright package (npm i -D playwright, or run it from a folder whose node_modules has it).
 // Env: ATLAS_URL (default http://localhost:8772/), CHROME (Chromium binary), VENDOR (optional local copies of
 // react.development.js, react-dom.development.js and babel.min.js; otherwise they load from jsDelivr).
@@ -101,6 +101,12 @@ const T={
  C62:async R=>{await R.locator('.cl-mpplay').click();return await attr(R.locator('.cl-mpplay'),'aria-label')==='Pause';},
  C63:async R=>{const b=R.locator('.cl-dnb').first();await b.click();return await attr(b,'aria-expanded')==='true'&&await R.locator('.cl-dnp').first().isVisible();},
  C64:async R=>{await R.locator('.cl-ccacc').first().click();return await R.locator('.cl-ccdone').isVisible();},
+ C65:async R=>{await R.locator('.cl-stref').click();await R.page().waitForTimeout(150);return (await R.locator('[data-note]').textContent())==='Updated just now';},
+ C66:async R=>{await R.locator('.cl-anx').click();return await R.locator('.cl-anshow').isVisible();},
+ C67:async R=>{const b=R.locator('.cl-cdp');await b.click();return await attr(b,'aria-pressed')==='true';},
+ C68:async(R,pg)=>{const h=R.locator('[role=slider]');await h.focus();await pg.keyboard.press('ArrowRight');return await attr(h,'aria-valuenow')==='55';},
+ C69:async R=>{await R.locator('button[aria-label="Next quote"]').click();await R.page().waitForTimeout(350);return await attr(R.locator('.cl-tqs'),'aria-label')==='2 of 3';},
+ C70:async R=>{await R.locator('.cl-cfb').click();await R.page().waitForTimeout(200);return (await R.locator('[data-note]').textContent()).length>5;},
 };
 const ids=await pg.evaluate(()=>ComponentLab.components.map(c=>c.id));
 let pass=0;const fails=[];const sizes={};

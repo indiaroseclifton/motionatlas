@@ -566,7 +566,7 @@ if (axeSrc) {
 {
   const { ctx, pg } = await open();
   await pg.evaluate(() => PB.ux.useTemplate(0)); await waitPv(pg);
-  ok(await pg.evaluate(() => PB.src.CL().components.every(c => { const b = { id: 'x-component', vals: { cid: c.id }, uid: 't' }; const s = PB.cfg.schema(b); return s && s.groups.length >= 6 && s.presets.length >= 4; })), 'every one of the 64 components has a settings schema with groups and presets');
+  ok(await pg.evaluate(() => PB.src.CL().components.every(c => { const b = { id: 'x-component', vals: { cid: c.id }, uid: 't' }; const s = PB.cfg.schema(b); return s && s.groups.length >= 6 && s.presets.length >= 4; })), 'every component has a settings schema with groups and presets');
   const uid = await pg.evaluate(() => PB.app.addBlock('x-component', { cid: 'C01', layout: 'plain' }).uid); await waitPv(pg); await pg.waitForTimeout(500);
   await pg.evaluate(u => PB.app.selectBlock(u), uid); await pg.waitForSelector('.cfgp');
   ok(await pg.locator('.cfgp .cfgb').first().textContent().then(x => /C01/.test(x)), 'the selected item panel names the component');

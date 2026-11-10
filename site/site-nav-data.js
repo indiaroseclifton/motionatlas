@@ -20,7 +20,7 @@ window.ATLAS_NAV_GROUPS=[
    ['#showcase','Showcase reels','Motion templates for portfolios and launches.','golden-figure']]},
   {name:'Interface',items:[
    ['#systems','Design systems','Forty-eight complete visual worlds and real open-source systems.','game-of-life'],
-   ['#ux','UI components','Sixty-four components, every state, in every style.','light-mesh'],
+   ['#ux','UI components','Seventy components, every state, in every style.','light-mesh'],
    ['#icons','Icon families','Outline, solid, pixel, colour and 3D icon sets.','sketchbook-horse'],
    ['icons.html','Icon library','3,768 searchable icons in 13 families, with full packs.','sketchbook-horse'],
    ['#typography','Fonts & type','Type pairings and scales, ready to use.','light-threads'],

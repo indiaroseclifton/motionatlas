@@ -445,7 +445,7 @@ const itemKey=(id,v)=>id==='x-component'?'c:'+v.cid:id==='x-interaction'?'i:'+v.
 const isFav=k=>lsGet(LSK.fav).includes(k);
 function toggleFav(k){const a=lsGet(LSK.fav),i=a.indexOf(k);if(i<0)a.push(k);else a.splice(i,1);lsSet(LSK.fav,a);return i<0}
 function pushRecent(k){if(!k)return;const a=lsGet(LSK.rec).filter(x=>x!==k);a.unshift(k);lsSet(LSK.rec,a.slice(0,12))}
-const COMPCAT=[['Buttons and menus','C01 C02 C41 C42 C43'],['Form fields','C03 C04 C05 C06 C07 C08 C09 C10 C11 C13 C14 C44 C45 C46 C47 C48 C49 C50 C52'],['Navigation','C16 C17 C18 C19 C20 C32 C34 C63'],['Overlays and messages','C21 C22 C23 C24 C26 C27 C57 C64'],['Content and data','C12 C25 C28 C29 C30 C31 C33 C35 C36 C37 C38 C56 C58 C59 C61 C62'],['Tools and layout','C15 C39 C40 C51 C53 C54 C55 C60']];
+const COMPCAT=[['Buttons and menus','C01 C02 C41 C42 C43'],['Form fields','C03 C04 C05 C06 C07 C08 C09 C10 C11 C13 C14 C44 C45 C46 C47 C48 C49 C50 C52'],['Navigation','C16 C17 C18 C19 C20 C32 C34 C63'],['Overlays and messages','C21 C22 C23 C24 C26 C27 C57 C64 C66'],['Content and data','C12 C25 C28 C29 C30 C31 C33 C35 C36 C37 C38 C56 C58 C59 C61 C62 C65 C67 C68 C69'],['Tools and layout','C15 C39 C40 C51 C53 C54 C55 C60 C70']];
 const compCat=id=>(COMPCAT.find(([,l])=>l.split(' ').includes(id))||['Other'])[0];
 const shelfGroups=(base,key)=>{const f=lsGet(LSK.fav).filter(x=>x.startsWith(key)).length,r=lsGet(LSK.rec).filter(x=>x.startsWith(key)).length;return ['All','★ Favourites'+(f?' ('+f+')':''),'Recent'+(r?' ('+r+')':''),...base]};
 const inShelf=(g,key)=>g==='All'||(/^★/.test(g)?isFav(key):/^Recent/.test(g)?lsGet(LSK.rec).includes(key):null);

@@ -37,10 +37,10 @@ The library holds:
 
 | What | Count | Where it lives |
 | --- | --- | --- |
-| Catalogue entries (styles, art, animation, motion, components, effects, systems, films) | 381 | `site/catalogue.json` + `site/expansion.json` |
+| Catalogue entries (styles, art, animation, motion, components, effects, systems, films) | 387 | `site/catalogue.json` + `site/expansion.json` |
 | Theme kits | 48 | `site/kits/` |
 | Atlas design systems | 48 (D01–D48) | `site/expansion.json`, `systems.js`, `system-previews.js`, `system-kits.js` |
-| UI components | 64 (C01–C64) | `site/component-lab.js` |
+| UI components | 70 (C01–C70) | `site/component-lab.js` |
 | Interactions | 82 | `site/interactions/` |
 | Landing effects (techniques) | 41 (L01–L49, with gaps where older effects were retired) | `site/effects-data.js` (the techniques), `site/effects-lab.js` (the lab UI), `site/expansion.json`, clips in `site/assets/fx/clips/` |
 | Atlas themes (component lab skins) | 22 | `site/atlas-themes.js` |
@@ -284,7 +284,7 @@ A separate documentation site for 01 (graphite and platinum, routed motion, mach
 
 ## UI components (`#ux`, `site/component-lab.js`)
 
-64 native HTML/CSS components (C41–C64 fully interactive), each shown in every state, in any of
+70 native HTML/CSS components (C41–C70 fully interactive), each shown in every state, in any of
 the 22 atlas themes (`atlas-themes.js`), light or dark, comfortable or compact, with HTML, CSS,
 React and token export plus accessibility notes. Components are objects in `component-lab.js`
 (`id`, `name`, `v`, `html`, `css`, `a11y`, `live`) exposed as `ComponentLab.components`; each also
@@ -380,7 +380,7 @@ static site or publish it to a live address. Old single-page saves open as one-p
 - **Responsive and accessibility:** desktop, tablet and phone previews; the Checks list shows low contrast, heading order,
   missing alt text, unnamed links and unlabelled fields, with fixes where they can be automatic.
 - **Library:** 54 sections (including article, find-us map, menu, schedule, product grid, course outline, contact form,
-  donate, countdown), 64 components, interactions, backgrounds, films, icons and theme-kit assets, plus 26 templates: 20 multi-page
+  donate, countdown), 70 components, interactions, backgrounds, films, icons and theme-kit assets, plus 26 templates: 20 multi-page
   sites (portfolio, agency, SaaS, restaurant, photographer, event, blog, shop, nonprofit, course, app, studio, coffee shop and
   bakery, fitness studio, law firm, estate agent, wedding, podcast, documentation, conference; files `builder/templates.js` and
   `templates2.js`) and 6 one-page landings (waitlist, product launch, app download, webinar, link in bio, coming soon).
@@ -388,7 +388,7 @@ static site or publish it to a live address. Old single-page saves open as one-p
 - **Settings for every component and interaction:** select one and the panel becomes a "Selected item" form with
   collapsible groups (Content, Layout, Style, Background and frame, Behaviour, Advanced), a settings search, Looks
   (presets), Copy and Paste settings between items of the same kind, Reset to defaults and a first-run tip. The schema is
-  derived from the item itself (`builder/settings.js`): all 64 components expose every word, placeholder, picture and link,
+  derived from the item itself (`builder/settings.js`): all 70 components expose every word, placeholder, picture and link,
   state, size, width, position, accent, text and panel colours, corners, line, shadow, weight, calm motion and an anchor;
   all 82 interactions expose heading, height or shape, width, position, text and accent colour, speed, play always / on
   screen / on hover, calm motion, hidden caption, words and pictures found in the demo, and (for 14 hand-tuned demos,
