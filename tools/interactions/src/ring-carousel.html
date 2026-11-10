@@ -3,7 +3,6 @@
 .scene{width:100%;height:min(70vh,480px);perspective:var(--p);display:grid;place-items:center;touch-action:pan-y;cursor:grab;user-select:none}.scene:active{cursor:grabbing}
 .ring{position:relative;width:var(--w);aspect-ratio:3/4;transform-style:preserve-3d;will-change:transform}
 .c{position:absolute;inset:0;border-radius:var(--r);overflow:hidden;background:var(--panel);backface-visibility:hidden;box-shadow:0 0 0 1px rgba(255,255,255,.08)}
-.c img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
 .cap{position:fixed;left:0;right:0;bottom:20px;text-align:center}.cap h2{font-size:18px}.cap p{color:var(--mute);font-size:13px}
 </style>
 <body>
@@ -19,9 +18,9 @@ const CONTROLS=[{g:'Ring',k:'count',label:'Cards',min:5,max:9,step:1},{k:'radius
 const stage=document.getElementById('stage'),ring=document.getElementById('ring');let cards=[],drift=0,idle=true,last=0;
 function draw(pos){const n=S.count,step=360/n,rot=-(pos+drift)*step;ring.style.transform=`rotateX(${S.tilt}deg) rotateY(${rot.toFixed(2)}deg)`;
  cards.forEach((c,i)=>{let a=((i*step+rot)%360+540)%360-180;c.style.opacity=(.25+.75*Math.max(0,Math.cos(a*Math.PI/180))).toFixed(2)})}
-const car=carousel(stage,()=>S.count,draw,{loop:true,step:()=>S.size*.8,onChange:i=>document.getElementById('t').textContent=ITEMS[i][1]});
+const car=carousel(stage,()=>S.count,draw,{loop:true,step:()=>S.size*.8,onChange:i=>document.getElementById('t').textContent=ITEMS[i][0]});
 function apply(){theme();const n=S.count;stage.style.setProperty('--p',S.perspective+'px');ring.style.setProperty('--w',S.size+'px');ring.style.setProperty('--r',S.corner+'px');
- ring.innerHTML=ITEMS.slice(0,n).map(([f,t],i)=>`<figure class="c" data-i="${i}" style="transform:rotateY(${i*360/n}deg) translateZ(${S.radius}px)"><img src="${IMG(f)}" alt="${t}" draggable="false"></figure>`).join('');cards=[...ring.children];car.redraw()}
+ ring.innerHTML=ITEMS.slice(0,n).map(([t],i)=>`<figure class="c" data-i="${i}" style="transform:rotateY(${i*360/n}deg) translateZ(${S.radius}px)" aria-label="${t}"><i class="art" style="background:${art(i)}"></i></figure>`).join('');cards=[...ring.children];car.redraw()}
 ['pointerenter','focusin','pointerdown'].forEach(t=>stage.addEventListener(t,()=>idle=false));['pointerleave','focusout'].forEach(t=>stage.addEventListener(t,()=>idle=true));
 function spin(t){if(S.autoplay&&idle&&!calm){drift+=(t-last)/1000*S.speed;car.redraw()}last=t;requestAnimationFrame(spin)}
 apply();car.go(0);requestAnimationFrame(spin);

@@ -1,6 +1,8 @@
 /* Carousel engine: drag, arrow keys, click a card. n() is the item count, draw(pos) places the cards. */
-const IMG=n=>'../../assets/shelf/'+n+'.webp';
-const ITEMS=[['amber','Amber resin','Warm, slow, translucent'],['biolum','Night water','Light that answers touch'],['bloom','Pigment bloom','Colour let loose in water'],['origami','Folded paper','Sharp planes, soft shadow'],['nebula','Deep field','Dust, gas and distance'],['sumi','Floating ink','One breath, one line'],['threads','Light threads','Fine lines under tension'],['owl','Carved owl','Grain as feather'],['sand','Sand drawing','Patterns from vibration']];
+/* Artwork is drawn with CSS gradients, so nothing has to load. Swap art(i) for your own image URLs if you have them. */
+const PAL=[['#FF8A3D','#FFD166','#7A1E0A'],['#19C2C9','#2B4CFF','#051937'],['#FF5CA8','#8B5CFF','#2A0845'],['#F4E3C1','#D9A066','#6B4423'],['#7B5CFF','#FF4D8D','#0B1026'],['#D8DEE9','#8FA3BF','#1F2937'],['#3DDC97','#0E9F6E','#062B22'],['#FFE066','#FF7A59','#5C1A1B'],['#B8C0FF','#5E60CE','#10002B']];
+const art=i=>{const [a,b,c]=PAL[((i%PAL.length)+PAL.length)%PAL.length],k=i*37%100;return `radial-gradient(90% 70% at ${15+k*.5}% ${8+k*.25}%,${a},transparent 62%),radial-gradient(80% 80% at ${88-k*.4}% ${28+k*.3}%,${b},transparent 58%),radial-gradient(120% 90% at 50% 115%,${a}55,transparent 60%),linear-gradient(160deg,${c},#000 140%)`};
+const ITEMS=[['Ember','Warm, slow, glowing'],['Lagoon','Cool water at night'],['Orchid','Colour let loose'],['Dune','Soft planes of sand'],['Nebula','Dust, gas and distance'],['Glacier','Pale and precise'],['Moss','Deep, quiet green'],['Nectar','Sweet and bright'],['Dusk','The last light']];
 function carousel(stage,n,draw,o={}){let pos=0,target=0,drag=null,raf=0;
  const wrap=v=>o.loop?v:Math.max(0,Math.min(n()-1,v)),mod=v=>((v%n())+n())%n();
  function frame(){pos+=(target-pos)*(calm?1:.14);if(Math.abs(target-pos)<.002)pos=target;draw(pos);raf=pos===target?0:requestAnimationFrame(frame)}

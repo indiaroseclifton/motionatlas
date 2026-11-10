@@ -6,8 +6,8 @@ li a{display:flex;align-items:baseline;gap:16px;padding:16px 4px;border-bottom:1
 li a b{font-size:clamp(22px,4vw,38px);letter-spacing:-.02em;font-weight:600}li a i{font-style:normal;font-size:12px;color:var(--mute);font-variant-numeric:tabular-nums}li a span{margin-left:auto;font-size:13px;color:var(--mute)}
 ul:hover a,ul:focus-within a{opacity:var(--dim)}ul a:hover,ul a:focus-visible{opacity:1;padding-left:18px;color:var(--ac)}
 .fr{position:fixed;left:0;top:0;width:var(--fw);aspect-ratio:var(--ar);border-radius:var(--r);overflow:hidden;pointer-events:none;scale:0;opacity:0;transition:scale .3s cubic-bezier(.3,1.4,.5,1),opacity .2s;box-shadow:0 30px 60px -24px rgba(0,0,0,.5);z-index:5;will-change:transform}
-.fr.on{scale:1;opacity:1}.fr img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;clip-path:inset(100% 0 0 0);transition:clip-path .45s cubic-bezier(.2,.8,.2,1)}.fr img.on{clip-path:inset(0);z-index:1}
-@media(prefers-reduced-motion:reduce){.fr,.fr img,li a{transition:none}}
+.fr.on{scale:1;opacity:1}.fr .art{clip-path:inset(100% 0 0 0);transition:clip-path .45s cubic-bezier(.2,.8,.2,1)}.fr .art.on{clip-path:inset(0);z-index:1}
+@media(prefers-reduced-motion:reduce){.fr,.fr .art,li a{transition:none}}
 </style>
 <body>
 <ul id="list"></ul><div class="fr" id="fr" aria-hidden="true"></div>
@@ -16,8 +16,9 @@ ul:hover a,ul:focus-within a{opacity:var(--dim)}ul a:hover,ul a:focus-visible{op
 const CONTROLS=[{g:'Frame',k:'width',label:'Width',min:160,max:400,step:5,unit:'px'},{k:'aspect',label:'Aspect',min:.7,max:1.8,step:.05},{k:'corner',label:'Corner radius',min:0,max:40,step:1,unit:'px'},{g:'Motion',k:'lag',label:'Follow speed',min:.04,max:.5,step:.01},{k:'tilt',label:'Tilt',min:0,max:1.5,step:.05},
  {g:'Look',k:'dim',label:'Other rows',min:.15,max:1,step:.05},{k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
 /*TUNER*/
-const D=[['amber','Amber House','Identity'],['biolum','Night Water','Film'],['origami','Paper Planes','Packaging'],['nebula','Deep Field','Website'],['bloom','Pigment','Campaign'],['sumi','One Line','Editorial']],list=document.getElementById('list'),fr=document.getElementById('fr');
-list.innerHTML=D.map(([f,t,c],i)=>`<li><a href="#" data-i="${i}"><i>0${i+1}</i><b>${t}</b><span>${c}</span></a></li>`).join('');fr.innerHTML=D.map(([f])=>`<img src="../../assets/shelf/${f}.webp" alt="">`).join('');
+/*ART*/
+const D=[[0,'Ember House','Identity'],[1,'Night Water','Film'],[3,'Paper Dunes','Packaging'],[4,'Deep Field','Website'],[2,'Orchid','Campaign'],[5,'One Line','Editorial']],list=document.getElementById('list'),fr=document.getElementById('fr');
+list.innerHTML=D.map(([f,t,c],i)=>`<li><a href="#" data-i="${i}"><i>0${i+1}</i><b>${t}</b><span>${c}</span></a></li>`).join('');fr.innerHTML=D.map(([f])=>`<i class="art" style="background:${art(f)}"></i>`).join('');
 const imgs=[...fr.children];let x=0,y=0,tx=0,ty=0,rot=0,cur=-1;
 const show=i=>{if(i===cur)return;cur=i;imgs.forEach((m,k)=>m.classList.toggle('on',k===i));fr.classList.toggle('on',i>=0)};
 list.addEventListener('pointermove',e=>{if(e.pointerType==='touch')return;tx=e.clientX+24;ty=e.clientY-fr.offsetHeight/2;const a=e.target.closest('a');if(a)show(+a.dataset.i)});list.addEventListener('pointerleave',()=>show(-1));

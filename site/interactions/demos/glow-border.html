@@ -10,6 +10,9 @@ button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
 .hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
 .nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
 .nb:hover{border-color:var(--ac)}
+
+.art{position:absolute;inset:0;display:block;pointer-events:none}
+.art::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.16;mix-blend-mode:overlay}
 @property --a{syntax:"<angle>";inherits:false;initial-value:0deg}
 .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;width:min(900px,92vw)}
 .k{position:relative;border-radius:var(--r);background:var(--panel);padding:20px;min-height:150px;display:grid;align-content:space-between;gap:16px;isolation:isolate;outline-offset:4px}

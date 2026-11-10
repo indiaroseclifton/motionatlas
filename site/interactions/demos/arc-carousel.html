@@ -10,9 +10,11 @@ button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
 .hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
 .nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
 .nb:hover{border-color:var(--ac)}
+
+.art{position:absolute;inset:0;display:block;pointer-events:none}
+.art::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.16;mix-blend-mode:overlay}
 .stage{position:relative;width:100%;height:min(74vh,520px);touch-action:pan-y;cursor:grab;user-select:none;outline-offset:-4px}.stage:active{cursor:grabbing}
 .c{position:absolute;left:50%;top:var(--top);width:var(--w);aspect-ratio:4/5;border-radius:var(--r);overflow:hidden;background:var(--panel);box-shadow:0 18px 40px -18px rgba(0,0,0,.55);will-change:transform}
-.c img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
 .cap{position:fixed;left:0;right:0;bottom:22px;display:grid;justify-items:center;gap:8px;text-align:center;padding:0 16px}
 .cap h2{font-size:20px;letter-spacing:-.01em}.cap p{color:var(--mute);font-size:13.5px}
 .row{display:flex;align-items:center;gap:14px}.dots{display:flex;gap:6px}.dots i{width:6px;height:6px;border-radius:50%;background:var(--line);transition:.2s}.dots i.on{width:18px;border-radius:3px;background:var(--ac)}
@@ -31,8 +33,10 @@ const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'dark';
 addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
 if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
 /* Carousel engine: drag, arrow keys, click a card. n() is the item count, draw(pos) places the cards. */
-const IMG=n=>'../../assets/shelf/'+n+'.webp';
-const ITEMS=[['amber','Amber resin','Warm, slow, translucent'],['biolum','Night water','Light that answers touch'],['bloom','Pigment bloom','Colour let loose in water'],['origami','Folded paper','Sharp planes, soft shadow'],['nebula','Deep field','Dust, gas and distance'],['sumi','Floating ink','One breath, one line'],['threads','Light threads','Fine lines under tension'],['owl','Carved owl','Grain as feather'],['sand','Sand drawing','Patterns from vibration']];
+/* Artwork is drawn with CSS gradients, so nothing has to load. Swap art(i) for your own image URLs if you have them. */
+const PAL=[['#FF8A3D','#FFD166','#7A1E0A'],['#19C2C9','#2B4CFF','#051937'],['#FF5CA8','#8B5CFF','#2A0845'],['#F4E3C1','#D9A066','#6B4423'],['#7B5CFF','#FF4D8D','#0B1026'],['#D8DEE9','#8FA3BF','#1F2937'],['#3DDC97','#0E9F6E','#062B22'],['#FFE066','#FF7A59','#5C1A1B'],['#B8C0FF','#5E60CE','#10002B']];
+const art=i=>{const [a,b,c]=PAL[((i%PAL.length)+PAL.length)%PAL.length],k=i*37%100;return `radial-gradient(90% 70% at ${15+k*.5}% ${8+k*.25}%,${a},transparent 62%),radial-gradient(80% 80% at ${88-k*.4}% ${28+k*.3}%,${b},transparent 58%),radial-gradient(120% 90% at 50% 115%,${a}55,transparent 60%),linear-gradient(160deg,${c},#000 140%)`};
+const ITEMS=[['Ember','Warm, slow, glowing'],['Lagoon','Cool water at night'],['Orchid','Colour let loose'],['Dune','Soft planes of sand'],['Nebula','Dust, gas and distance'],['Glacier','Pale and precise'],['Moss','Deep, quiet green'],['Nectar','Sweet and bright'],['Dusk','The last light']];
 function carousel(stage,n,draw,o={}){let pos=0,target=0,drag=null,raf=0;
  const wrap=v=>o.loop?v:Math.max(0,Math.min(n()-1,v)),mod=v=>((v%n())+n())%n();
  function frame(){pos+=(target-pos)*(calm?1:.14);if(Math.abs(target-pos)<.002)pos=target;draw(pos);raf=pos===target?0:requestAnimationFrame(frame)}
@@ -51,9 +55,9 @@ const stage=document.getElementById('stage');let cards=[];
 function draw(pos){const n=ITEMS.length,R=S.radius,dir=S.up?-1:1;cards.forEach((c,i)=>{const d=dist(i,pos,n,true),ad=Math.abs(d),a=d*S.spacing*Math.PI/180;
  c.style.transform=`translate(-50%,-50%) translate(${(Math.sin(a)*R).toFixed(1)}px,${(dir*(1-Math.cos(a))*R).toFixed(1)}px) rotate(${(dir*d*S.spacing*S.tilt).toFixed(2)}deg) scale(${Math.max(.3,1-ad*S.shrink).toFixed(3)})`;
  c.style.opacity=ad>S.visible+.6?0:1;c.style.zIndex=100-Math.round(ad*10);c.style.pointerEvents=ad>S.visible+.6?'none':''})}
-const car=carousel(stage,()=>ITEMS.length,draw,{loop:true,step:()=>S.size*.9,onChange:i=>{document.getElementById('t').textContent=ITEMS[i][1];document.getElementById('s').textContent=ITEMS[i][2];[...document.getElementById('dots').children].forEach((d,k)=>d.classList.toggle('on',k===i))}});
+const car=carousel(stage,()=>ITEMS.length,draw,{loop:true,step:()=>S.size*.9,onChange:i=>{document.getElementById('t').textContent=ITEMS[i][0];document.getElementById('s').textContent=ITEMS[i][1];[...document.getElementById('dots').children].forEach((d,k)=>d.classList.toggle('on',k===i))}});
 function apply(){theme();stage.style.setProperty('--w',S.size+'px');stage.style.setProperty('--r',S.corner+'px');stage.style.setProperty('--top',S.up?'62%':'40%');car.redraw();car.auto(S.autoplay?2600:0)}
-stage.innerHTML=ITEMS.map(([f,t],i)=>`<figure class="c" data-i="${i}"><img src="${IMG(f)}" alt="${t}" draggable="false"></figure>`).join('');cards=[...stage.children];
+stage.innerHTML=ITEMS.map(([t],i)=>`<figure class="c" data-i="${i}" aria-label="${t}"><i class="art" style="background:${art(i)}"></i></figure>`).join('');cards=[...stage.children];
 document.getElementById('dots').innerHTML=ITEMS.map(()=>'<i></i>').join('');document.getElementById('prev').onclick=car.prev;document.getElementById('next').onclick=car.next;
 apply();car.go(0);
 </script>

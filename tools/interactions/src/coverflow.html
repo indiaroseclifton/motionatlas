@@ -2,8 +2,7 @@
 <style>/*BASE*/
 .stage{position:relative;width:100%;height:min(66vh,420px);perspective:var(--p);touch-action:pan-y;cursor:grab;user-select:none}.stage:active{cursor:grabbing}
 .c{position:absolute;left:50%;top:42%;width:var(--w);aspect-ratio:1;border-radius:var(--r);overflow:hidden;background:var(--panel);will-change:transform;box-shadow:0 20px 40px -20px #000}
-.refl .c{overflow:visible;-webkit-box-reflect:below 6px linear-gradient(transparent 62%,rgba(255,255,255,.28))}.refl .c img{border-radius:var(--r)}
-.c img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+.refl .c{overflow:visible;-webkit-box-reflect:below 6px linear-gradient(transparent 62%,rgba(255,255,255,.28))}.refl .c .art{border-radius:var(--r);overflow:hidden}
 .cap{position:fixed;left:0;right:0;bottom:22px;text-align:center}.cap h2{font-size:19px}.cap p{color:var(--mute);font-size:13px}
 </style>
 <body>
@@ -19,9 +18,9 @@ const CONTROLS=[{g:'Covers',k:'size',label:'Cover size',min:120,max:320,step:2,u
 const stage=document.getElementById('stage');let cards=[];
 function draw(pos){cards.forEach((c,i)=>{const d=i-pos,s=Math.sign(d),k=Math.min(Math.abs(d),1);
  c.style.transform=`translate(-50%,-50%) translateX(${(s*k*S.push+d*S.gap).toFixed(1)}px) translateZ(${(-k*S.depth).toFixed(1)}px) rotateY(${(-s*k*S.angle).toFixed(2)}deg)`;c.style.zIndex=100-Math.round(Math.abs(d)*10)})}
-const car=carousel(stage,()=>ITEMS.length,draw,{step:()=>S.gap*1.6,onChange:i=>{document.getElementById('t').textContent=ITEMS[i][1];document.getElementById('s').textContent=ITEMS[i][2]}});
+const car=carousel(stage,()=>ITEMS.length,draw,{step:()=>S.gap*1.6,onChange:i=>{document.getElementById('t').textContent=ITEMS[i][0];document.getElementById('s').textContent=ITEMS[i][1]}});
 function apply(){theme();stage.style.setProperty('--w',S.size+'px');stage.style.setProperty('--r',S.corner+'px');stage.style.setProperty('--p',S.perspective+'px');stage.classList.toggle('refl',!!S.reflect);car.redraw()}
-stage.innerHTML=ITEMS.map(([f,t],i)=>`<figure class="c" data-i="${i}"><img src="${IMG(f)}" alt="${t}" draggable="false"></figure>`).join('');cards=[...stage.children];
+stage.innerHTML=ITEMS.map(([t],i)=>`<figure class="c" data-i="${i}" aria-label="${t}"><i class="art" style="background:${art(i)}"></i></figure>`).join('');cards=[...stage.children];
 apply();car.go(4);
 </script>
 </body>

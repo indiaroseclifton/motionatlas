@@ -10,16 +10,19 @@ button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
 .hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
 .nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
 .nb:hover{border-color:var(--ac)}
+
+.art{position:absolute;inset:0;display:block;pointer-events:none}
+.art::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.16;mix-blend-mode:overlay}
 .g{display:flex;gap:var(--gap);width:min(1000px,94vw);height:var(--h)}
 .p{position:relative;flex:1 1 0;min-width:0;border:0;padding:0;border-radius:var(--r);overflow:hidden;background:var(--panel);transition:flex-grow var(--t) cubic-bezier(.2,.8,.2,1);text-align:left;color:#fff}
 .p[aria-pressed=true]{flex-grow:var(--grow)}
-.p img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(var(--dim));transition:filter var(--t)}.p[aria-pressed=true] img{filter:none}
+.p .art{filter:brightness(var(--dim));transition:filter var(--t)}.p[aria-pressed=true] .art{filter:none}
 .p .v{position:absolute;left:50%;bottom:18px;writing-mode:vertical-rl;transform:translateX(-50%) rotate(180deg);font-weight:600;font-size:13px;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;transition:opacity .2s}
 .p .o{position:absolute;inset:auto 0 0 0;padding:50px 18px 18px;background:linear-gradient(transparent,rgba(0,0,0,.75));opacity:0;transform:translateY(8px);transition:opacity .3s .1s,transform .3s .1s;white-space:nowrap}
 .p .o b{display:block;font-size:20px}.p .o span{font-size:13px;opacity:.85}.p .o i{display:block;width:28px;height:3px;border-radius:2px;background:var(--ac);margin-bottom:10px}
 .p[aria-pressed=true] .v{opacity:0}.p[aria-pressed=true] .o{opacity:1;transform:none}.p:focus-visible{outline-offset:-3px}
 @media(max-width:640px){.g{flex-direction:column;height:min(86vh,620px)}.p .v{writing-mode:horizontal-tb;transform:none;left:16px;bottom:50%;translate:0 50%}}
-@media(prefers-reduced-motion:reduce){.p,.p img,.p .o{transition:none}}
+@media(prefers-reduced-motion:reduce){.p,.p .art,.p .o{transition:none}}
 </style>
 <body>
 <div class="g" id="g" role="group" aria-label="Studies. Arrow keys move between panels."></div>
@@ -32,10 +35,13 @@ const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMe
 const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'dark';if(S.accent)r.style.setProperty('--ac',S.accent)};
 addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
 if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
-const D=[['amber','Amber','Warm, slow, translucent'],['biolum','Night water','Light that answers touch'],['origami','Paper','Sharp planes, soft shadow'],['nebula','Deep field','Dust, gas and distance'],['bloom','Pigment','Colour let loose in water'],['sumi','Ink','One breath, one line'],['threads','Threads','Fine lines under tension']],g=document.getElementById('g');let on=1;
+/* Artwork is drawn with CSS gradients, so nothing has to load. Swap art(i) for your own image URLs if you have them. */
+const PAL=[['#FF8A3D','#FFD166','#7A1E0A'],['#19C2C9','#2B4CFF','#051937'],['#FF5CA8','#8B5CFF','#2A0845'],['#F4E3C1','#D9A066','#6B4423'],['#7B5CFF','#FF4D8D','#0B1026'],['#D8DEE9','#8FA3BF','#1F2937'],['#3DDC97','#0E9F6E','#062B22'],['#FFE066','#FF7A59','#5C1A1B'],['#B8C0FF','#5E60CE','#10002B']];
+const art=i=>{const [a,b,c]=PAL[((i%PAL.length)+PAL.length)%PAL.length],k=i*37%100;return `radial-gradient(90% 70% at ${15+k*.5}% ${8+k*.25}%,${a},transparent 62%),radial-gradient(80% 80% at ${88-k*.4}% ${28+k*.3}%,${b},transparent 58%),radial-gradient(120% 90% at 50% 115%,${a}55,transparent 60%),linear-gradient(160deg,${c},#000 140%)`};
+const D=[[0,'Ember','Warm, slow, glowing'],[1,'Lagoon','Cool water at night'],[3,'Dune','Soft planes of sand'],[4,'Nebula','Dust, gas and distance'],[2,'Orchid','Colour let loose'],[6,'Moss','Deep, quiet green'],[8,'Dusk','The last light']],g=document.getElementById('g');let on=1;
 const set=i=>{on=i;[...g.children].forEach((p,k)=>p.setAttribute('aria-pressed',k===i))};
 function apply(){theme();const s=g.style;s.setProperty('--gap',S.gap+'px');s.setProperty('--h',S.height+'px');s.setProperty('--r',S.corner+'px');s.setProperty('--grow',S.grow);s.setProperty('--t',S.speed+'ms');s.setProperty('--dim',S.dim);
- if(g.children.length!==S.count){g.innerHTML=D.slice(0,S.count).map(([f,t,l])=>`<button class="p" aria-pressed="false"><img src="../../assets/shelf/${f}.webp" alt=""><span class="v" aria-hidden="true">${t}</span><span class="o"><i></i><b>${t}</b><span>${l}</span></span></button>`).join('');set(Math.min(on,S.count-1))}}
+ if(g.children.length!==S.count){g.innerHTML=D.slice(0,S.count).map(([f,t,l])=>`<button class="p" aria-pressed="false"><i class="art" style="background:${art(f)}"></i><span class="v" aria-hidden="true">${t}</span><span class="o"><i></i><b>${t}</b><span>${l}</span></span></button>`).join('');set(Math.min(on,S.count-1))}}
 g.addEventListener('pointerover',e=>{const p=e.target.closest('.p');if(p)set([...g.children].indexOf(p))});g.addEventListener('focusin',e=>{const p=e.target.closest('.p');if(p)set([...g.children].indexOf(p))});g.addEventListener('click',e=>{const p=e.target.closest('.p');if(p)set([...g.children].indexOf(p))});
 g.addEventListener('keydown',e=>{const d=e.key==='ArrowRight'||e.key==='ArrowDown'?1:e.key==='ArrowLeft'||e.key==='ArrowUp'?-1:0;if(d){e.preventDefault();const n=g.children.length,i=(on+d+n)%n;g.children[i].focus()}});
 apply();

@@ -10,14 +10,17 @@ button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
 .hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
 .nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
 .nb:hover{border-color:var(--ac)}
+
+.art{position:absolute;inset:0;display:block;pointer-events:none}
+.art::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.16;mix-blend-mode:overlay}
 body{overflow:hidden}
 ul{list-style:none;margin:0;padding:0;width:min(760px,90vw)}
 li a{display:flex;align-items:baseline;gap:16px;padding:16px 4px;border-bottom:1px solid var(--line);text-decoration:none;color:inherit;transition:padding .3s,opacity .3s}
 li a b{font-size:clamp(22px,4vw,38px);letter-spacing:-.02em;font-weight:600}li a i{font-style:normal;font-size:12px;color:var(--mute);font-variant-numeric:tabular-nums}li a span{margin-left:auto;font-size:13px;color:var(--mute)}
 ul:hover a,ul:focus-within a{opacity:var(--dim)}ul a:hover,ul a:focus-visible{opacity:1;padding-left:18px;color:var(--ac)}
 .fr{position:fixed;left:0;top:0;width:var(--fw);aspect-ratio:var(--ar);border-radius:var(--r);overflow:hidden;pointer-events:none;scale:0;opacity:0;transition:scale .3s cubic-bezier(.3,1.4,.5,1),opacity .2s;box-shadow:0 30px 60px -24px rgba(0,0,0,.5);z-index:5;will-change:transform}
-.fr.on{scale:1;opacity:1}.fr img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;clip-path:inset(100% 0 0 0);transition:clip-path .45s cubic-bezier(.2,.8,.2,1)}.fr img.on{clip-path:inset(0);z-index:1}
-@media(prefers-reduced-motion:reduce){.fr,.fr img,li a{transition:none}}
+.fr.on{scale:1;opacity:1}.fr .art{clip-path:inset(100% 0 0 0);transition:clip-path .45s cubic-bezier(.2,.8,.2,1)}.fr .art.on{clip-path:inset(0);z-index:1}
+@media(prefers-reduced-motion:reduce){.fr,.fr .art,li a{transition:none}}
 </style>
 <body>
 <ul id="list"></ul><div class="fr" id="fr" aria-hidden="true"></div>
@@ -30,8 +33,11 @@ const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMe
 const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'dark';if(S.accent)r.style.setProperty('--ac',S.accent)};
 addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
 if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
-const D=[['amber','Amber House','Identity'],['biolum','Night Water','Film'],['origami','Paper Planes','Packaging'],['nebula','Deep Field','Website'],['bloom','Pigment','Campaign'],['sumi','One Line','Editorial']],list=document.getElementById('list'),fr=document.getElementById('fr');
-list.innerHTML=D.map(([f,t,c],i)=>`<li><a href="#" data-i="${i}"><i>0${i+1}</i><b>${t}</b><span>${c}</span></a></li>`).join('');fr.innerHTML=D.map(([f])=>`<img src="../../assets/shelf/${f}.webp" alt="">`).join('');
+/* Artwork is drawn with CSS gradients, so nothing has to load. Swap art(i) for your own image URLs if you have them. */
+const PAL=[['#FF8A3D','#FFD166','#7A1E0A'],['#19C2C9','#2B4CFF','#051937'],['#FF5CA8','#8B5CFF','#2A0845'],['#F4E3C1','#D9A066','#6B4423'],['#7B5CFF','#FF4D8D','#0B1026'],['#D8DEE9','#8FA3BF','#1F2937'],['#3DDC97','#0E9F6E','#062B22'],['#FFE066','#FF7A59','#5C1A1B'],['#B8C0FF','#5E60CE','#10002B']];
+const art=i=>{const [a,b,c]=PAL[((i%PAL.length)+PAL.length)%PAL.length],k=i*37%100;return `radial-gradient(90% 70% at ${15+k*.5}% ${8+k*.25}%,${a},transparent 62%),radial-gradient(80% 80% at ${88-k*.4}% ${28+k*.3}%,${b},transparent 58%),radial-gradient(120% 90% at 50% 115%,${a}55,transparent 60%),linear-gradient(160deg,${c},#000 140%)`};
+const D=[[0,'Ember House','Identity'],[1,'Night Water','Film'],[3,'Paper Dunes','Packaging'],[4,'Deep Field','Website'],[2,'Orchid','Campaign'],[5,'One Line','Editorial']],list=document.getElementById('list'),fr=document.getElementById('fr');
+list.innerHTML=D.map(([f,t,c],i)=>`<li><a href="#" data-i="${i}"><i>0${i+1}</i><b>${t}</b><span>${c}</span></a></li>`).join('');fr.innerHTML=D.map(([f])=>`<i class="art" style="background:${art(f)}"></i>`).join('');
 const imgs=[...fr.children];let x=0,y=0,tx=0,ty=0,rot=0,cur=-1;
 const show=i=>{if(i===cur)return;cur=i;imgs.forEach((m,k)=>m.classList.toggle('on',k===i));fr.classList.toggle('on',i>=0)};
 list.addEventListener('pointermove',e=>{if(e.pointerType==='touch')return;tx=e.clientX+24;ty=e.clientY-fr.offsetHeight/2;const a=e.target.closest('a');if(a)show(+a.dataset.i)});list.addEventListener('pointerleave',()=>show(-1));
