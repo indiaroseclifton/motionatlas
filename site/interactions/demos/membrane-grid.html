@@ -1,0 +1,47 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Membrane grid</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0F1012;--panel:#1A1B1E;--ink:#F4F4F5;--mute:#A1A1AA;--line:#2C2D31;--ac:#111111}
+:root[data-mode=light]{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#111113;--mute:#6B6F76;--line:#E6E6E8}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+
+.art{position:absolute;inset:0;display:block;pointer-events:none}
+.art::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.16;mix-blend-mode:overlay}
+.heroc{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:24px;max-width:760px;color:#fff;text-shadow:0 1px 24px rgba(0,0,0,.35)}.heroc h1{font-size:clamp(34px,7vw,76px);line-height:1;letter-spacing:-.03em}.heroc p{font-size:clamp(15px,2vw,18px);opacity:.9;max-width:46ch}.heroc a{display:inline-flex;align-items:center;min-height:46px;padding:0 22px;border-radius:99px;background:#fff;color:#111;font-weight:700;text-decoration:none;text-shadow:none}
+canvas{position:fixed;inset:0;width:100%;height:100%}
+.heroc{color:var(--ink);text-shadow:none;pointer-events:none}.heroc a{background:var(--ink);color:var(--bg);pointer-events:auto}
+</style>
+<body>
+<canvas id="c" aria-hidden="true"></canvas>
+<div class="heroc"><h1>Press here.</h1><p>The net gives way under the pointer and springs back. Click for a shock.</p><a href="#">Get started</a></div>
+<script type="application/json" id="settings">{"spacing":38,"radius":170,"strength":6,"stiffness":0.05,"damping":0.88,"weight":1,"dots":true,"mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Net',k:'spacing',label:'Spacing',min:16,max:90,step:1,unit:'px'},{k:'weight',label:'Line weight',min:.4,max:3,step:.1,unit:'px'},{k:'dots',label:'Dots',type:'toggle'},{g:'Push',k:'radius',label:'Reach',min:60,max:400,step:5,unit:'px'},{k:'strength',label:'Strength',min:0,max:20,step:.5},
+ {g:'Spring',k:'stiffness',label:'Stiffness',min:.01,max:.2,step:.005},{k:'damping',label:'Damping',min:.7,max:.97,step:.005},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'light';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+const cv=document.getElementById('c'),x=cv.getContext('2d');let P=[],cols=0,rows=0,px=-1e4,py=-1e4,idle=999,d=1,ink='#111',line='#ccc',shock=null;
+function build(){d=Math.min(2,devicePixelRatio||1);cv.width=innerWidth*d;cv.height=innerHeight*d;const s=S.spacing;cols=Math.ceil(innerWidth/s)+3;rows=Math.ceil(innerHeight/s)+3;P=[];for(let r=0;r<rows;r++)for(let q=0;q<cols;q++){const hx=(q-1)*s,hy=(r-1)*s;P.push({hx,hy,x:hx,y:hy,vx:0,vy:0})}const cs=getComputedStyle(document.documentElement);ink=cs.getPropertyValue('--ac').trim()||'#111';line=cs.getPropertyValue('--mute').trim()||'#999'}
+addEventListener('resize',build);addEventListener('pointermove',e=>{px=e.clientX;py=e.clientY;idle=0});document.addEventListener('pointerleave',()=>{px=py=-1e4});addEventListener('pointerdown',e=>{shock={x:e.clientX,y:e.clientY,r:0}});
+function tick(t){idle++;let X=px,Y=py;if(idle>100){X=innerWidth*(.5+.36*Math.sin(t/1600));Y=innerHeight*(.5+.32*Math.sin(t/1250+1))}if(shock){shock.r+=14;if(shock.r>Math.max(innerWidth,innerHeight))shock=null}
+ if(!calm)for(const p of P){const dx=p.x-X,dy=p.y-Y,di=Math.hypot(dx,dy)||1;if(di<S.radius){const k=(1-di/S.radius);p.vx+=dx/di*k*k*S.strength;p.vy+=dy/di*k*k*S.strength}
+  if(shock){const sx=p.x-shock.x,sy=p.y-shock.y,sd=Math.hypot(sx,sy)||1,g=Math.abs(sd-shock.r);if(g<40){p.vx+=sx/sd*(1-g/40)*3;p.vy+=sy/sd*(1-g/40)*3}}
+  p.vx=(p.vx+(p.hx-p.x)*S.stiffness)*S.damping;p.vy=(p.vy+(p.hy-p.y)*S.stiffness)*S.damping;p.x+=p.vx;p.y+=p.vy}
+ x.setTransform(d,0,0,d,0,0);x.clearRect(0,0,innerWidth,innerHeight);x.lineWidth=S.weight;x.strokeStyle=line;x.globalAlpha=.55;x.beginPath();
+ for(let r=0;r<rows;r++)for(let q=0;q<cols;q++){const p=P[r*cols+q];q?x.lineTo(p.x,p.y):x.moveTo(p.x,p.y)}for(let q=0;q<cols;q++)for(let r=0;r<rows;r++){const p=P[r*cols+q];r?x.lineTo(p.x,p.y):x.moveTo(p.x,p.y)}x.stroke();x.globalAlpha=1;
+ if(S.dots){x.fillStyle=ink;for(const p of P){const m=Math.hypot(p.x-p.hx,p.y-p.hy);if(m<.6)continue;x.beginPath();x.arc(p.x,p.y,Math.min(5,1+m*.12),0,7);x.fill()}}
+ if(!calm)requestAnimationFrame(tick)}
+function apply(){theme();build();if(calm)tick(0)}
+apply();if(!calm)requestAnimationFrame(tick);
+</script>
+</body>
+</html>

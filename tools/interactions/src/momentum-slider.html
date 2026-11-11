@@ -1,0 +1,31 @@
+<!--META {"o":28,"t":"Momentum slider","cat":"Galleries","tone":"light","uses":["L49"],"d":"A strip of tall cards you throw sideways. It keeps gliding after you let go, the cards lean into the movement, and it settles on the nearest one.","how":"Dragging sets a velocity; each frame the strip moves by that velocity, which is multiplied down by a friction value. The same velocity skews and squeezes the cards, so speed is visible. Cards are placed with modulo arithmetic, which makes the strip endless.","use":"Portfolio and case-study rows, product ranges, team and speaker line-ups, editorial features.","p":"Build a momentum slider section in one HTML file with no libraries. Eight tall cards with gradient artwork, an index number and a title sit on an endless horizontal strip: card x = ((i * step - offset) mod total + total) mod total - step. Pointer drag changes offset directly and records velocity; on release the strip keeps moving, velocity multiplied by a friction setting each frame; when slow and snapping is on, ease offset to the nearest multiple of step. Apply skewX and a slight scaleX to every card from the velocity, clamped. Horizontal wheel and trackpad scroll add velocity; Left and Right arrows glide one card; show the current card's title and a counter in a polite live region. Settings: card width, card height, gap, friction, lean, snap on or off, corner radius, accent, light or dark. Reduced motion: no lean, moves without inertia."}-->
+<style>/*BASE*/
+.stage{position:relative;width:100%;height:calc(var(--h) + 40px);overflow:hidden;touch-action:pan-y;cursor:grab;user-select:none;outline-offset:-4px}.stage:active{cursor:grabbing}
+.c{position:absolute;left:50%;top:20px;width:var(--w);height:var(--h);margin-left:calc(var(--w)/-2);border-radius:var(--r);overflow:hidden;will-change:transform;color:#fff}
+.c b{position:absolute;left:16px;bottom:14px;font-size:18px}.c i.n{position:absolute;left:16px;top:14px;font-style:normal;font-size:12px;font-weight:600;letter-spacing:.1em;opacity:.85}
+.cap{position:fixed;left:0;right:0;bottom:20px;text-align:center;color:var(--mute);font-size:13px}
+</style>
+<body>
+<div class="stage" id="stage" tabindex="0" role="group" aria-roledescription="carousel" aria-label="Projects. Drag, scroll or use the arrow keys."></div>
+<p class="cap" aria-live="polite" id="cap"></p>
+<script type="application/json" id="settings">{"width":230,"height":340,"gap":22,"friction":0.94,"lean":0.9,"snap":true,"corner":18,"mode":"light","accent":"#111111"}</script>
+<script>
+const CONTROLS=[{g:'Cards',k:'width',label:'Width',min:140,max:360,step:2,unit:'px'},{k:'height',label:'Height',min:200,max:460,step:2,unit:'px'},{k:'gap',label:'Gap',min:0,max:60,step:1,unit:'px'},{k:'corner',label:'Corner radius',min:0,max:40,step:1,unit:'px'},
+ {g:'Physics',k:'friction',label:'Glide',min:.8,max:.99,step:.005},{k:'lean',label:'Lean',min:0,max:2.5,step:.05},{k:'snap',label:'Settle on a card',type:'toggle'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/*TUNER*/
+/*ART*/
+const T=['Ember','Lagoon','Blush','Dune','Tide','Glacier','Moss','Nectar'],stage=document.getElementById('stage'),cap=document.getElementById('cap');
+stage.innerHTML=T.map((t,i)=>`<figure class="c"><i class="art" style="background:${art(i)}"></i><i class="n">0${i+1}</i><b>${t}</b></figure>`).join('');
+const cards=[...stage.children];let off=0,v=0,drag=null,goal=null,last=-1;const step=()=>S.width+S.gap;
+function draw(){const st=step(),tot=st*T.length,sk=calm?0:Math.max(-16,Math.min(16,-v*S.lean));cards.forEach((c,i)=>{let x=((i*st-off)%tot+tot)%tot;if(x>tot/2)x-=tot;c.style.transform=`translateX(${x.toFixed(1)}px) skewX(${sk.toFixed(2)}deg) scaleX(${(1-Math.abs(sk)/160).toFixed(3)})`});
+ const cur=((Math.round(off/st)%T.length)+T.length)%T.length;if(cur!==last){last=cur;cap.textContent=T[cur]+' · '+(cur+1)+' of '+T.length}}
+function tick(){if(!drag){if(goal!=null){const d=goal-off;off+=d*(calm?1:.12);v=d*.12;if(Math.abs(d)<.5){off=goal;goal=null;v=0}}else{off+=v;v*=calm?0:S.friction;if(S.snap&&Math.abs(v)<.6){const t=Math.round(off/step())*step();off+=(t-off)*.14}}}draw();requestAnimationFrame(tick)}
+stage.addEventListener('pointerdown',e=>{drag={x:e.clientX,o:off,px:e.clientX};goal=null;v=0;stage.setPointerCapture(e.pointerId)});
+stage.addEventListener('pointermove',e=>{if(!drag)return;off=drag.o-(e.clientX-drag.x);v=-(e.clientX-drag.px);drag.px=e.clientX});
+const up=()=>{drag=null};stage.addEventListener('pointerup',up);stage.addEventListener('pointercancel',up);
+stage.addEventListener('wheel',e=>{const d=Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:0;if(d){e.preventDefault();goal=null;v+=d*.06}},{passive:false});
+stage.addEventListener('keydown',e=>{const d=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(d){e.preventDefault();goal=(Math.round((goal??off)/step())+d)*step()}});
+function apply(){theme();const s=stage.style;s.setProperty('--w',S.width+'px');s.setProperty('--h',`min(${S.height}px,70vh)`);s.setProperty('--r',S.corner+'px')}
+apply();requestAnimationFrame(tick);if(parent!==window&&!calm)setInterval(()=>{if(!stage.matches(':hover')&&!drag)v=(Math.random()<.5?-1:1)*(18+Math.random()*16)},2600);
+</script>
+</body>

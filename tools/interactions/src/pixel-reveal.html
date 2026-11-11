@@ -1,0 +1,25 @@
+<!--META {"o":34,"t":"Pixel reveal hero","cat":"Sections","tone":"light","uses":["L04","L16"],"d":"A hero covered by a grid of tiles. Wherever the pointer goes the tiles shrink away and show the colour underneath, then grow back behind it.","how":"A canvas draws one square per grid cell over a gradient background. Each cell holds a number from covered to open; the pointer pushes nearby cells toward open with a soft falloff, and every frame they drift back. The square's size is that number, so the reveal has a pixel edge.","use":"Hero sections, product reveals, before-and-after teasers, launch pages, section transitions.","p":"Build a pixel-reveal hero in one HTML file with no libraries. A full-size block has a colourful gradient background, and over it a canvas that draws a grid of squares in the page colour (cell size is a setting). Keep a Float32Array of reveal values per cell. Each frame: for cells within a radius of the pointer increase the value toward 1 with a smooth falloff; decrease every value by a recover rate; draw each cell as a centred square of size cell * (1 - value) (optionally rounded), so fully revealed cells vanish. Put a headline, a line and a button above the canvas in the page ink colour, using mix-blend-mode difference or a solid plate so it stays legible. When the pointer is idle, move a virtual pointer on a slow loop. Scale for device pixel ratio up to 2 and resize with the window. Settings: cell size, reveal radius, recover speed, gap, rounded cells, light or dark. Reduced motion: show a static diagonal reveal."}-->
+<style>/*BASE*/
+.under{position:fixed;inset:0}canvas{position:fixed;inset:0;width:100%;height:100%}
+.heroc{color:var(--ink);text-shadow:none;pointer-events:none;background:var(--bg);padding:26px 34px;border-radius:24px}.heroc a{background:var(--ink);color:var(--bg);pointer-events:auto}
+</style>
+<body>
+<div class="under"><i class="art" id="art"></i></div><canvas id="c" aria-hidden="true"></canvas>
+<div class="heroc"><h1>Look underneath.</h1><p>Move the pointer. The tiles pull back wherever you go.</p><a href="#">Explore</a></div>
+<script type="application/json" id="settings">{"cell":34,"radius":190,"recover":0.012,"gap":0,"round":false,"mode":"light"}</script>
+<script>
+const CONTROLS=[{g:'Grid',k:'cell',label:'Tile size',min:12,max:90,step:1,unit:'px'},{k:'gap',label:'Gap',min:0,max:8,step:1,unit:'px'},{k:'round',label:'Round tiles',type:'toggle'},{g:'Reveal',k:'radius',label:'Reach',min:60,max:420,step:5,unit:'px'},{k:'recover',label:'Close-up speed',min:.002,max:.06,step:.001},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']}];
+/*TUNER*/
+/*ART*/
+const cv=document.getElementById('c'),x=cv.getContext('2d');document.getElementById('art').style.background=art(4)+','+art(0);let V=new Float32Array(0),cols=0,rows=0,px=-1e4,py=-1e4,idle=999,d=1,bg='#fff';
+function fit(){d=Math.min(2,devicePixelRatio||1);cv.width=innerWidth*d;cv.height=innerHeight*d;cols=Math.ceil(innerWidth/S.cell);rows=Math.ceil(innerHeight/S.cell);V=new Float32Array(cols*rows);bg=getComputedStyle(document.body).backgroundColor;if(calm)for(let i=0;i<V.length;i++)V[i]=Math.max(0,Math.min(1,((i%cols)/cols+((i/cols)|0)/rows-.6)*3))}
+addEventListener('resize',fit);addEventListener('pointermove',e=>{px=e.clientX;py=e.clientY;idle=0});document.addEventListener('pointerleave',()=>{px=py=-1e4});
+function tick(t){idle++;let X=px,Y=py;if(idle>100&&!calm){X=innerWidth*(.5+.36*Math.sin(t/1700));Y=innerHeight*(.5+.34*Math.sin(t/1300+1.2))}
+ x.setTransform(d,0,0,d,0,0);x.clearRect(0,0,innerWidth,innerHeight);x.fillStyle=bg;const c=S.cell,R=S.radius;
+ for(let r=0;r<rows;r++)for(let q=0;q<cols;q++){const i=r*cols+q;if(!calm){const dist=Math.hypot(q*c+c/2-X,r*c+c/2-Y);if(dist<R){const k=1-dist/R;V[i]=Math.min(1,V[i]+k*k*.25)}V[i]=Math.max(0,V[i]-S.recover)}
+  const s=(c-S.gap)*(1-V[i]);if(s<.5)continue;const ox=q*c+(c-s)/2,oy=r*c+(c-s)/2;if(S.round){x.beginPath();x.arc(ox+s/2,oy+s/2,s/2*1.42*(1-V[i]*.3),0,7);x.fill()}else x.fillRect(ox,oy,s+.6,s+.6)}
+ requestAnimationFrame(tick)}
+function apply(){theme();fit()}
+apply();requestAnimationFrame(tick);
+</script>
+</body>

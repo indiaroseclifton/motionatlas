@@ -1,0 +1,31 @@
+<!--META {"o":29,"t":"Drag wall","cat":"Galleries","tone":"light","uses":["L30","L49"],"d":"An endless wall of cards you push around in any direction. It coasts after each throw, and cards swell slightly as they pass the centre, like a lens.","how":"The wall is a fixed set of cards whose positions wrap around in both directions, so a small number looks infinite. A two-dimensional velocity with friction gives the coast. Each card's distance from the centre sets its scale and opacity, which makes the lens.","use":"Portfolio walls, image and product explorers, moodboards, team walls, immersive landing sections.","p":"Build an endless draggable wall in one HTML file with no libraries. A grid of 7 by 5 cards with gradient artwork and a small label is positioned absolutely; with pan offset (ox, oy), each card's position is wrapped: x = ((col * stepX - ox) mod totalX + totalX) mod totalX, likewise y, then shifted so the wall is centred. Pointer drag changes the offset and records a 2D velocity; after release the wall continues with velocity multiplied by a friction setting. Scale each card by 1 + lens * (1 - distance from centre / reach) clamped at zero and fade distant cards slightly. When idle, drift slowly. Arrow keys pan by one card; a heading and a hint sit over the wall with pointer-events none. Settings: card width, card height, gap, glide, lens strength, idle drift, corner radius, light or dark. Reduced motion: no drift or inertia."}-->
+<style>/*BASE*/
+.wall{position:fixed;inset:0;overflow:hidden;touch-action:none;cursor:grab;user-select:none;outline-offset:-4px}.wall:active{cursor:grabbing}
+.c{position:absolute;left:50%;top:50%;width:var(--w);height:var(--h);margin:calc(var(--h)/-2) 0 0 calc(var(--w)/-2);border-radius:var(--r);overflow:hidden;will-change:transform;color:#fff}
+.c b{position:absolute;left:12px;bottom:10px;font-size:13px}
+.over{position:fixed;inset:0;display:grid;place-content:center;text-align:center;pointer-events:none;gap:8px}
+.over div{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:18px 26px;box-shadow:0 20px 50px -20px rgba(0,0,0,.35)}.over h1{font-size:clamp(26px,4.5vw,46px);letter-spacing:-.03em;line-height:1.05}.over p{color:var(--mute);font-size:13.5px;margin-top:4px}
+</style>
+<body>
+<div class="wall" id="wall" tabindex="0" role="group" aria-label="Wall of work. Drag or use the arrow keys to move around."></div>
+<div class="over"><div><h1>Selected work</h1><p>Drag in any direction</p></div></div>
+<script type="application/json" id="settings">{"width":190,"height":240,"gap":18,"friction":0.94,"lens":0.22,"drift":0.3,"corner":16,"mode":"light","accent":"#111111"}</script>
+<script>
+const CONTROLS=[{g:'Cards',k:'width',label:'Width',min:110,max:300,step:2,unit:'px'},{k:'height',label:'Height',min:110,max:360,step:2,unit:'px'},{k:'gap',label:'Gap',min:0,max:60,step:1,unit:'px'},{k:'corner',label:'Corner radius',min:0,max:40,step:1,unit:'px'},
+ {g:'Physics',k:'friction',label:'Glide',min:.8,max:.99,step:.005},{k:'lens',label:'Lens',min:0,max:.6,step:.01},{k:'drift',label:'Idle drift',min:0,max:1.5,step:.05},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']}];
+/*TUNER*/
+/*ART*/
+const C=7,R=5,wall=document.getElementById('wall'),N=['Ember','Lagoon','Blush','Dune','Tide','Glacier','Moss','Nectar','Dusk'];
+wall.innerHTML=Array.from({length:C*R},(_,i)=>`<figure class="c"><i class="art" style="background:${art(i*4%9+(i%2))}"></i><b>${N[i%9]} ${String(i+1).padStart(2,'0')}</b></figure>`).join('');
+const cards=[...wall.children];let ox=0,oy=0,vx=0,vy=0,drag=null,idle=0,gx=null,gy=null;
+function draw(){const sx=S.width+S.gap,sy=S.height+S.gap,tx=sx*C,ty=sy*R,reach=Math.max(innerWidth,innerHeight)*.55;cards.forEach((c,i)=>{let x=(((i%C)*sx-ox)%tx+tx)%tx-tx/2,y=((((i/C)|0)*sy-oy+((i%C)%2?sy/2:0))%ty+ty)%ty-ty/2;const d=Math.hypot(x,y),k=Math.max(0,1-d/reach);
+ c.style.transform=`translate(${x.toFixed(1)}px,${y.toFixed(1)}px) scale(${(1-S.lens*.5+S.lens*k).toFixed(3)})`;c.style.opacity=(.55+.45*k).toFixed(2)})}
+function tick(){idle++;if(!drag){if(gx!=null){ox+=(gx-ox)*.12;oy+=(gy-oy)*.12;if(Math.hypot(gx-ox,gy-oy)<.5)gx=null}else{ox+=vx;oy+=vy;const f=calm?0:S.friction;vx*=f;vy*=f;if(idle>90&&!calm){ox+=S.drift;oy+=S.drift*.5}}}draw();requestAnimationFrame(tick)}
+wall.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY};gx=null;vx=vy=0;wall.setPointerCapture(e.pointerId)});
+wall.addEventListener('pointermove',e=>{if(!drag)return;vx=-(e.clientX-drag.x);vy=-(e.clientY-drag.y);ox+=vx;oy+=vy;drag.x=e.clientX;drag.y=e.clientY;idle=0});
+const up=()=>{drag=null;idle=0};wall.addEventListener('pointerup',up);wall.addEventListener('pointercancel',up);
+wall.addEventListener('keydown',e=>{const m={ArrowRight:[1,0],ArrowLeft:[-1,0],ArrowDown:[0,1],ArrowUp:[0,-1]}[e.key];if(m){e.preventDefault();gx=(gx??ox)+m[0]*(S.width+S.gap);gy=(gy??oy)+m[1]*(S.height+S.gap);idle=0}});
+function apply(){theme();const s=wall.style;s.setProperty('--w',S.width+'px');s.setProperty('--h',S.height+'px');s.setProperty('--r',S.corner+'px')}
+apply();requestAnimationFrame(tick);
+</script>
+</body>

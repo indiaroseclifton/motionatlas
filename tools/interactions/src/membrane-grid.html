@@ -1,0 +1,28 @@
+<!--META {"o":36,"t":"Membrane grid","cat":"Canvas","tone":"light","uses":["L16","L49"],"d":"A fine net stretched across the page. The pointer presses into it and the net bulges away, then springs back with a wobble.","how":"Each crossing point of the grid remembers where it belongs. The pointer pushes nearby points outward with a force that fades with distance; a spring pulls each one home and damping stops it ringing for ever. Lines are drawn between neighbours every frame, so the net bends smoothly.","use":"Hero and section backgrounds, technical and data brands, interactive empty states, behind headlines and logos.","p":"Build an elastic grid background in one HTML file with no libraries. On a full-screen canvas create points on a regular grid (spacing is a setting), each with a home position, a current position and a velocity. Each frame: if a point is within a push radius of the pointer, add a force away from the pointer proportional to (1 - distance / radius) squared times a strength; add a spring force toward home (stiffness) and multiply velocity by a damping factor; integrate. Draw horizontal and vertical polylines through the points with a thin stroke, and optionally a dot on each point whose size grows with its displacement. A click sends a ring-shaped shock through the grid. With no pointer movement, animate a virtual pointer on a slow loop. Scale for device pixel ratio up to 2, rebuild on resize. Settings: spacing, push radius, strength, stiffness, damping, line weight, dots on or off, accent, light or dark. Reduced motion: draw the resting grid only."}-->
+<style>/*BASE*/
+canvas{position:fixed;inset:0;width:100%;height:100%}
+.heroc{color:var(--ink);text-shadow:none;pointer-events:none}.heroc a{background:var(--ink);color:var(--bg);pointer-events:auto}
+</style>
+<body>
+<canvas id="c" aria-hidden="true"></canvas>
+<div class="heroc"><h1>Press here.</h1><p>The net gives way under the pointer and springs back. Click for a shock.</p><a href="#">Get started</a></div>
+<script type="application/json" id="settings">{"spacing":38,"radius":170,"strength":6,"stiffness":0.05,"damping":0.88,"weight":1,"dots":true,"mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Net',k:'spacing',label:'Spacing',min:16,max:90,step:1,unit:'px'},{k:'weight',label:'Line weight',min:.4,max:3,step:.1,unit:'px'},{k:'dots',label:'Dots',type:'toggle'},{g:'Push',k:'radius',label:'Reach',min:60,max:400,step:5,unit:'px'},{k:'strength',label:'Strength',min:0,max:20,step:.5},
+ {g:'Spring',k:'stiffness',label:'Stiffness',min:.01,max:.2,step:.005},{k:'damping',label:'Damping',min:.7,max:.97,step:.005},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/*TUNER*/
+const cv=document.getElementById('c'),x=cv.getContext('2d');let P=[],cols=0,rows=0,px=-1e4,py=-1e4,idle=999,d=1,ink='#111',line='#ccc',shock=null;
+function build(){d=Math.min(2,devicePixelRatio||1);cv.width=innerWidth*d;cv.height=innerHeight*d;const s=S.spacing;cols=Math.ceil(innerWidth/s)+3;rows=Math.ceil(innerHeight/s)+3;P=[];for(let r=0;r<rows;r++)for(let q=0;q<cols;q++){const hx=(q-1)*s,hy=(r-1)*s;P.push({hx,hy,x:hx,y:hy,vx:0,vy:0})}const cs=getComputedStyle(document.documentElement);ink=cs.getPropertyValue('--ac').trim()||'#111';line=cs.getPropertyValue('--mute').trim()||'#999'}
+addEventListener('resize',build);addEventListener('pointermove',e=>{px=e.clientX;py=e.clientY;idle=0});document.addEventListener('pointerleave',()=>{px=py=-1e4});addEventListener('pointerdown',e=>{shock={x:e.clientX,y:e.clientY,r:0}});
+function tick(t){idle++;let X=px,Y=py;if(idle>100){X=innerWidth*(.5+.36*Math.sin(t/1600));Y=innerHeight*(.5+.32*Math.sin(t/1250+1))}if(shock){shock.r+=14;if(shock.r>Math.max(innerWidth,innerHeight))shock=null}
+ if(!calm)for(const p of P){const dx=p.x-X,dy=p.y-Y,di=Math.hypot(dx,dy)||1;if(di<S.radius){const k=(1-di/S.radius);p.vx+=dx/di*k*k*S.strength;p.vy+=dy/di*k*k*S.strength}
+  if(shock){const sx=p.x-shock.x,sy=p.y-shock.y,sd=Math.hypot(sx,sy)||1,g=Math.abs(sd-shock.r);if(g<40){p.vx+=sx/sd*(1-g/40)*3;p.vy+=sy/sd*(1-g/40)*3}}
+  p.vx=(p.vx+(p.hx-p.x)*S.stiffness)*S.damping;p.vy=(p.vy+(p.hy-p.y)*S.stiffness)*S.damping;p.x+=p.vx;p.y+=p.vy}
+ x.setTransform(d,0,0,d,0,0);x.clearRect(0,0,innerWidth,innerHeight);x.lineWidth=S.weight;x.strokeStyle=line;x.globalAlpha=.55;x.beginPath();
+ for(let r=0;r<rows;r++)for(let q=0;q<cols;q++){const p=P[r*cols+q];q?x.lineTo(p.x,p.y):x.moveTo(p.x,p.y)}for(let q=0;q<cols;q++)for(let r=0;r<rows;r++){const p=P[r*cols+q];r?x.lineTo(p.x,p.y):x.moveTo(p.x,p.y)}x.stroke();x.globalAlpha=1;
+ if(S.dots){x.fillStyle=ink;for(const p of P){const m=Math.hypot(p.x-p.hx,p.y-p.hy);if(m<.6)continue;x.beginPath();x.arc(p.x,p.y,Math.min(5,1+m*.12),0,7);x.fill()}}
+ if(!calm)requestAnimationFrame(tick)}
+function apply(){theme();build();if(calm)tick(0)}
+apply();if(!calm)requestAnimationFrame(tick);
+</script>
+</body>

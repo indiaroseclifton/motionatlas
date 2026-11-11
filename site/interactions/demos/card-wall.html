@@ -1,0 +1,52 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Drag wall</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0F1012;--panel:#1A1B1E;--ink:#F4F4F5;--mute:#A1A1AA;--line:#2C2D31;--ac:#111111}
+:root[data-mode=light]{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#111113;--mute:#6B6F76;--line:#E6E6E8}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+
+.art{position:absolute;inset:0;display:block;pointer-events:none}
+.art::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.16;mix-blend-mode:overlay}
+.heroc{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:24px;max-width:760px;color:#fff;text-shadow:0 1px 24px rgba(0,0,0,.35)}.heroc h1{font-size:clamp(34px,7vw,76px);line-height:1;letter-spacing:-.03em}.heroc p{font-size:clamp(15px,2vw,18px);opacity:.9;max-width:46ch}.heroc a{display:inline-flex;align-items:center;min-height:46px;padding:0 22px;border-radius:99px;background:#fff;color:#111;font-weight:700;text-decoration:none;text-shadow:none}
+.wall{position:fixed;inset:0;overflow:hidden;touch-action:none;cursor:grab;user-select:none;outline-offset:-4px}.wall:active{cursor:grabbing}
+.c{position:absolute;left:50%;top:50%;width:var(--w);height:var(--h);margin:calc(var(--h)/-2) 0 0 calc(var(--w)/-2);border-radius:var(--r);overflow:hidden;will-change:transform;color:#fff}
+.c b{position:absolute;left:12px;bottom:10px;font-size:13px}
+.over{position:fixed;inset:0;display:grid;place-content:center;text-align:center;pointer-events:none;gap:8px}
+.over div{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:18px 26px;box-shadow:0 20px 50px -20px rgba(0,0,0,.35)}.over h1{font-size:clamp(26px,4.5vw,46px);letter-spacing:-.03em;line-height:1.05}.over p{color:var(--mute);font-size:13.5px;margin-top:4px}
+</style>
+<body>
+<div class="wall" id="wall" tabindex="0" role="group" aria-label="Wall of work. Drag or use the arrow keys to move around."></div>
+<div class="over"><div><h1>Selected work</h1><p>Drag in any direction</p></div></div>
+<script type="application/json" id="settings">{"width":190,"height":240,"gap":18,"friction":0.94,"lens":0.22,"drift":0.3,"corner":16,"mode":"light","accent":"#111111"}</script>
+<script>
+const CONTROLS=[{g:'Cards',k:'width',label:'Width',min:110,max:300,step:2,unit:'px'},{k:'height',label:'Height',min:110,max:360,step:2,unit:'px'},{k:'gap',label:'Gap',min:0,max:60,step:1,unit:'px'},{k:'corner',label:'Corner radius',min:0,max:40,step:1,unit:'px'},
+ {g:'Physics',k:'friction',label:'Glide',min:.8,max:.99,step:.005},{k:'lens',label:'Lens',min:0,max:.6,step:.01},{k:'drift',label:'Idle drift',min:0,max:1.5,step:.05},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'light';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+/* Artwork is drawn with CSS gradients, so nothing has to load. Swap art(i) for your own image URLs if you have them. */
+const PAL=[['#FF8A3D','#FFD166','#7A1E0A'],['#19C2C9','#2B4CFF','#051937'],['#FF8FA3','#FFB703','#7A1F3D'],['#F4E3C1','#D9A066','#6B4423'],['#38BDF8','#F472B6','#0B2545'],['#D8DEE9','#8FA3BF','#1F2937'],['#3DDC97','#0E9F6E','#062B22'],['#FFE066','#FF7A59','#5C1A1B'],['#A7F3D0','#0EA5E9','#0B2E33']];
+const art=i=>{const [a,b,c]=PAL[((i%PAL.length)+PAL.length)%PAL.length],k=i*37%100;return `radial-gradient(90% 70% at ${15+k*.5}% ${8+k*.25}%,${a},transparent 62%),radial-gradient(80% 80% at ${88-k*.4}% ${28+k*.3}%,${b},transparent 58%),radial-gradient(120% 90% at 50% 115%,${a}55,transparent 60%),linear-gradient(160deg,${c},#000 140%)`};
+const C=7,R=5,wall=document.getElementById('wall'),N=['Ember','Lagoon','Blush','Dune','Tide','Glacier','Moss','Nectar','Dusk'];
+wall.innerHTML=Array.from({length:C*R},(_,i)=>`<figure class="c"><i class="art" style="background:${art(i*4%9+(i%2))}"></i><b>${N[i%9]} ${String(i+1).padStart(2,'0')}</b></figure>`).join('');
+const cards=[...wall.children];let ox=0,oy=0,vx=0,vy=0,drag=null,idle=0,gx=null,gy=null;
+function draw(){const sx=S.width+S.gap,sy=S.height+S.gap,tx=sx*C,ty=sy*R,reach=Math.max(innerWidth,innerHeight)*.55;cards.forEach((c,i)=>{let x=(((i%C)*sx-ox)%tx+tx)%tx-tx/2,y=((((i/C)|0)*sy-oy+((i%C)%2?sy/2:0))%ty+ty)%ty-ty/2;const d=Math.hypot(x,y),k=Math.max(0,1-d/reach);
+ c.style.transform=`translate(${x.toFixed(1)}px,${y.toFixed(1)}px) scale(${(1-S.lens*.5+S.lens*k).toFixed(3)})`;c.style.opacity=(.55+.45*k).toFixed(2)})}
+function tick(){idle++;if(!drag){if(gx!=null){ox+=(gx-ox)*.12;oy+=(gy-oy)*.12;if(Math.hypot(gx-ox,gy-oy)<.5)gx=null}else{ox+=vx;oy+=vy;const f=calm?0:S.friction;vx*=f;vy*=f;if(idle>90&&!calm){ox+=S.drift;oy+=S.drift*.5}}}draw();requestAnimationFrame(tick)}
+wall.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY};gx=null;vx=vy=0;wall.setPointerCapture(e.pointerId)});
+wall.addEventListener('pointermove',e=>{if(!drag)return;vx=-(e.clientX-drag.x);vy=-(e.clientY-drag.y);ox+=vx;oy+=vy;drag.x=e.clientX;drag.y=e.clientY;idle=0});
+const up=()=>{drag=null;idle=0};wall.addEventListener('pointerup',up);wall.addEventListener('pointercancel',up);
+wall.addEventListener('keydown',e=>{const m={ArrowRight:[1,0],ArrowLeft:[-1,0],ArrowDown:[0,1],ArrowUp:[0,-1]}[e.key];if(m){e.preventDefault();gx=(gx??ox)+m[0]*(S.width+S.gap);gy=(gy??oy)+m[1]*(S.height+S.gap);idle=0}});
+function apply(){theme();const s=wall.style;s.setProperty('--w',S.width+'px');s.setProperty('--h',S.height+'px');s.setProperty('--r',S.corner+'px')}
+apply();requestAnimationFrame(tick);
+</script>
+</body>
+</html>

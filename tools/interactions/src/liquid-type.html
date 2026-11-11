@@ -1,0 +1,23 @@
+<!--META {"o":31,"t":"Liquid type","cat":"Type","tone":"light","uses":["L48","L42"],"d":"A headline that behaves like it is printed on water. Move the pointer across it and the letters ripple and smear, then settle back to sharp.","how":"The heading is passed through an SVG filter: generated noise displaces every pixel. The strength of that displacement is a spring driven by how fast the pointer is moving, so stillness is crisp and movement is liquid. The text stays real text throughout.","use":"Hero headlines, drinks, beauty and music brands, section openers, loading and transition screens.","p":"Build a liquid headline in one HTML file with no libraries. A large two-line heading (real text) has filter: url(#liquid), an inline SVG filter made of feTurbulence (fractalNoise) feeding feDisplacementMap. Track pointer speed; each frame ease a strength value toward speed * sensitivity (clamped to a maximum) and let it decay by a calm-down factor, then set the displacement map's scale attribute to that strength plus a small idle amount. Slowly animate the turbulence baseFrequency or seed so the ripple moves. Add a subtle skew of the heading from horizontal pointer velocity. Settings: sensitivity, maximum strength, ripple size (base frequency), calm-down speed, idle wobble, text size, accent, light or dark. Reduced motion: remove the filter entirely."}-->
+<style>/*BASE*/
+h1{font-size:var(--fs);line-height:.95;letter-spacing:-.04em;text-align:center;font-weight:800;padding:0 16px;filter:url(#liquid);will-change:filter,transform;cursor:default}
+h1 em{font-style:normal;color:var(--ac)}
+svg.f{position:absolute;width:0;height:0}
+@media(prefers-reduced-motion:reduce){h1{filter:none}}
+</style>
+<body>
+<svg class="f" aria-hidden="true"><filter id="liquid" x="-10%" y="-20%" width="120%" height="140%"><feTurbulence id="tb" type="fractalNoise" baseFrequency="0.012 0.02" numOctaves="2" seed="3" result="n"/><feDisplacementMap id="dm" in="SourceGraphic" in2="n" scale="0" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
+<h1 id="h">Still water<br><em>runs deep</em></h1><p class="hint">Move across the words</p>
+<script type="application/json" id="settings">{"sens":1.6,"max":90,"freq":0.012,"calmdown":0.93,"idle":4,"size":110,"mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Ripple',k:'sens',label:'Sensitivity',min:.2,max:5,step:.1},{k:'max',label:'Maximum strength',min:10,max:220,step:5},{k:'freq',label:'Ripple size',min:.003,max:.05,step:.001},{k:'calmdown',label:'Settle time',min:.8,max:.99,step:.005},{k:'idle',label:'Idle wobble',min:0,max:30,step:1},
+ {g:'Look',k:'size',label:'Text size',min:44,max:170,step:2,unit:'px'},{k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/*TUNER*/
+const h=document.getElementById('h'),tb=document.getElementById('tb'),dm=document.getElementById('dm');let str=0,sk=0,lx=null,ly=0,t0=0,auto=parent!==window;
+addEventListener('pointermove',e=>{if(lx!=null){const dx=e.clientX-lx,dy=e.clientY-ly;str=Math.min(S.max,str+Math.hypot(dx,dy)*S.sens*.5);sk+=(dx*.15-sk)*.3}lx=e.clientX;ly=e.clientY;auto=false});
+function tick(t){if(auto&&Math.floor(t/1800)!==t0){t0=Math.floor(t/1800);str=S.max*.8}str*=S.calmdown;sk*=.9;dm.setAttribute('scale',(str+S.idle).toFixed(1));
+ tb.setAttribute('baseFrequency',`${(S.freq+Math.sin(t/3000)*S.freq*.25).toFixed(4)} ${(S.freq*1.7+Math.cos(t/2600)*S.freq*.25).toFixed(4)}`);h.style.transform=`skewX(${Math.max(-8,Math.min(8,-sk)).toFixed(2)}deg)`;requestAnimationFrame(tick)}
+function apply(){theme();h.style.setProperty('--fs',`min(${S.size}px,15vw)`)}
+apply();if(!calm)requestAnimationFrame(tick);
+</script>
+</body>

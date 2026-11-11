@@ -1,0 +1,49 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Riffle stack</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0F1012;--panel:#1A1B1E;--ink:#F4F4F5;--mute:#A1A1AA;--line:#2C2D31;--ac:#111111}
+:root[data-mode=light]{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#111113;--mute:#6B6F76;--line:#E6E6E8}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+
+.art{position:absolute;inset:0;display:block;pointer-events:none}
+.art::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.16;mix-blend-mode:overlay}
+.heroc{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:24px;max-width:760px;color:#fff;text-shadow:0 1px 24px rgba(0,0,0,.35)}.heroc h1{font-size:clamp(34px,7vw,76px);line-height:1;letter-spacing:-.03em}.heroc p{font-size:clamp(15px,2vw,18px);opacity:.9;max-width:46ch}.heroc a{display:inline-flex;align-items:center;min-height:46px;padding:0 22px;border-radius:99px;background:#fff;color:#111;font-weight:700;text-decoration:none;text-shadow:none}
+.row{position:relative;height:calc(var(--s) + 90px);width:100%;perspective:var(--p);perspective-origin:50% 40%;outline-offset:-4px}
+.k{position:absolute;left:50%;top:40px;width:var(--s);height:var(--s);margin-left:calc(var(--s)/-2);border:0;padding:0;border-radius:var(--r);overflow:hidden;color:#fff;text-align:left;transform:translateX(var(--x)) translateZ(var(--z,0px)) translateY(var(--y,0px)) rotateY(var(--a));transition:transform var(--t) cubic-bezier(.3,1.35,.5,1);box-shadow:-10px 14px 30px -14px rgba(0,0,0,.5);background:#222}
+.k b{position:absolute;left:14px;bottom:30px;font-size:17px}.k small{position:absolute;left:14px;bottom:12px;font-size:12px;opacity:.85}
+.cap{position:fixed;left:0;right:0;bottom:22px;text-align:center;font-size:13.5px;color:var(--mute)}.cap b{color:var(--ink)}
+@media(prefers-reduced-motion:reduce){.k{transition:none}}
+</style>
+<body>
+<div class="row" id="row" role="group" aria-label="Collection. Arrow keys move along the covers."></div>
+<p class="cap" aria-live="polite" id="cap"></p>
+<script type="application/json" id="settings">{"size":220,"angle":62,"spacing":54,"spread":120,"lift":18,"perspective":1100,"speed":520,"corner":10,"mode":"light","accent":"#111111"}</script>
+<script>
+const CONTROLS=[{g:'Covers',k:'size',label:'Cover size',min:130,max:320,step:2,unit:'px'},{k:'corner',label:'Corner radius',min:0,max:30,step:1,unit:'px'},{g:'Crate',k:'angle',label:'Rest angle',min:20,max:80,step:1,unit:'°'},{k:'spacing',label:'Spacing',min:24,max:120,step:1,unit:'px'},{k:'perspective',label:'Perspective',min:500,max:2400,step:50,unit:'px'},
+ {g:'Motion',k:'spread',label:'Spread',min:0,max:260,step:5,unit:'px'},{k:'lift',label:'Lift',min:0,max:60,step:1,unit:'px'},{k:'speed',label:'Speed',min:200,max:1000,step:10,unit:'ms'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'light';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+/* Artwork is drawn with CSS gradients, so nothing has to load. Swap art(i) for your own image URLs if you have them. */
+const PAL=[['#FF8A3D','#FFD166','#7A1E0A'],['#19C2C9','#2B4CFF','#051937'],['#FF8FA3','#FFB703','#7A1F3D'],['#F4E3C1','#D9A066','#6B4423'],['#38BDF8','#F472B6','#0B2545'],['#D8DEE9','#8FA3BF','#1F2937'],['#3DDC97','#0E9F6E','#062B22'],['#FFE066','#FF7A59','#5C1A1B'],['#A7F3D0','#0EA5E9','#0B2E33']];
+const art=i=>{const [a,b,c]=PAL[((i%PAL.length)+PAL.length)%PAL.length],k=i*37%100;return `radial-gradient(90% 70% at ${15+k*.5}% ${8+k*.25}%,${a},transparent 62%),radial-gradient(80% 80% at ${88-k*.4}% ${28+k*.3}%,${b},transparent 58%),radial-gradient(120% 90% at 50% 115%,${a}55,transparent 60%),linear-gradient(160deg,${c},#000 140%)`};
+const D=[['Ember','2026'],['Lagoon','2025'],['Blush','2025'],['Dune','2024'],['Tide','2024'],['Glacier','2023'],['Moss','2023'],['Nectar','2022'],['Dusk','2022'],['Ember II','2021']],row=document.getElementById('row'),cap=document.getElementById('cap');
+row.innerHTML=D.map(([t,y],i)=>`<button class="k" data-i="${i}" aria-pressed="false"><i class="art" style="background:${art(i)}"></i><b>${t}</b><small>${y}</small></button>`).join('');const K=[...row.children];let on=4,pin=4;
+function lay(){const n=K.length;K.forEach((k,i)=>{const d=i-on,ad=Math.abs(d),s=Math.sign(d);k.style.setProperty('--x',((i-(n-1)/2)*S.spacing+(d?s*S.spread/Math.max(1,ad*.9):0))+'px');k.style.setProperty('--a',(d===0||calm?0:S.angle)+'deg');k.style.setProperty('--z',(d===0?90:-ad*6)+'px');k.style.setProperty('--y',(d===0?-S.lift:0)+'px');k.style.zIndex=d===0?100:50-ad;k.style.outline=calm&&d===0?'3px solid var(--ink)':''})}
+function set(i,p){on=Math.max(0,Math.min(K.length-1,i));if(p){pin=on;K.forEach((k,j)=>k.setAttribute('aria-pressed',j===on));cap.innerHTML='<b></b> · '+D[on][1]+' · selected';cap.firstChild.textContent=D[on][0]}lay()}
+row.addEventListener('pointerover',e=>{const k=e.target.closest('.k');if(k)set(+k.dataset.i)});row.addEventListener('pointerleave',()=>set(pin));row.addEventListener('focusin',e=>{const k=e.target.closest('.k');if(k)set(+k.dataset.i)});
+row.addEventListener('click',e=>{const k=e.target.closest('.k');if(k)set(+k.dataset.i,true)});
+row.addEventListener('keydown',e=>{const d=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(d){e.preventDefault();const i=Math.max(0,Math.min(K.length-1,on+d));K[i].focus()}});
+function apply(){theme();const s=row.style;s.setProperty('--s',`min(${S.size}px,50vw)`);s.setProperty('--p',S.perspective+'px');s.setProperty('--t',S.speed+'ms');s.setProperty('--r',S.corner+'px');lay()}
+apply();set(4,true);if(parent!==window&&!calm){let i=0;setInterval(()=>{if(!row.matches(':hover')&&!row.contains(document.activeElement))set(i++%K.length)},1100)}
+</script>
+</body>
+</html>

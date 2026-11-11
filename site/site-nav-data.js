@@ -13,7 +13,6 @@ window.ATLAS_NAV_GROUPS=[
    ['#browse','Style catalogue','Every visual style in one searchable sheet.','hydraulic-erosion'],
    ['#art','Art styles','Sixty art styles, from museum references to specimen films.','suminagashi'],
    ['#cinema','Film looks','Cinematic directions translated into original scenes.','pixel-sorting'],
-   ['#motion','Animation studio','Live animations, films, simulations and an easing lab.','bioluminescent-trails'],
    ['#backgrounds','Backgrounds','Generate gradients, light and grain; export 4K or a loop.','petal-swirl'],
    ['#typography','Fonts & type','Type pairings and scales, ready to use.','light-threads']]},
   {name:'Make',items:[
@@ -37,6 +36,7 @@ window.ATLAS_NAV_GROUPS=[
    ['#pairings','Style pairings','Styles that work together, and why.','lion-phoenix'],
    ['#vases','Vase studies','One vase, forty treatments.','sand-drawing'],
    ['#effects','Page effects','Scroll and page techniques with code.','light-ribbons'],
+   ['#motion','Animation studio','Live animations, films, simulations and an easing lab.','bioluminescent-trails'],
    ['#icons','Icon families','Outline, solid, pixel, colour and 3D icon sets.','sketchbook-horse'],
    ['#assets','Extracted assets','Fragments cut from our original mock-ups.','paper-bird'],
    ['chart-styles.html','Chart style guides','Chart palettes and rules for every style.','game-of-life'],
@@ -47,7 +47,7 @@ window.ATLAS_NAV_GROUPS=[
 
 /* The three menus in the bar. Each is one short list; rarer pages sit in a {more} row that expands in place. */
 window.ATLAS_NAV_MENUS=[
- {id:'lib',name:'Browse',groups:[{name:'',items:['interactions.html','app-interfaces.html','#ux','#systems','theme-kits.html','icons.html',{more:'Styles and inspiration',items:['#browse','#art','#cinema','#motion','#backgrounds','#typography']}]}]},
+ {id:'lib',name:'Browse',groups:[{name:'',items:['interactions.html','app-interfaces.html','#ux','#systems','theme-kits.html','icons.html',{more:'Styles and inspiration',items:['#browse','#art','#cinema','#backgrounds','#typography']}]}]},
  {id:'make',name:'Make',groups:[{name:'',items:['page-builder.html','brand-generator.html','motion-graphics.html','chart-studio.html','diagram-studio.html','flowchart-studio.html','mockup-studio.html']}]},
  {id:'studio',name:'Yours',groups:[{name:'',items:['#projects','moodboard.html','my-fonts.html','account.html']}]}
 ];

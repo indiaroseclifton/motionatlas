@@ -1,0 +1,42 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Liquid type</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0F1012;--panel:#1A1B1E;--ink:#F4F4F5;--mute:#A1A1AA;--line:#2C2D31;--ac:#111111}
+:root[data-mode=light]{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#111113;--mute:#6B6F76;--line:#E6E6E8}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+
+.art{position:absolute;inset:0;display:block;pointer-events:none}
+.art::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.16;mix-blend-mode:overlay}
+.heroc{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:24px;max-width:760px;color:#fff;text-shadow:0 1px 24px rgba(0,0,0,.35)}.heroc h1{font-size:clamp(34px,7vw,76px);line-height:1;letter-spacing:-.03em}.heroc p{font-size:clamp(15px,2vw,18px);opacity:.9;max-width:46ch}.heroc a{display:inline-flex;align-items:center;min-height:46px;padding:0 22px;border-radius:99px;background:#fff;color:#111;font-weight:700;text-decoration:none;text-shadow:none}
+h1{font-size:var(--fs);line-height:.95;letter-spacing:-.04em;text-align:center;font-weight:800;padding:0 16px;filter:url(#liquid);will-change:filter,transform;cursor:default}
+h1 em{font-style:normal;color:var(--ac)}
+svg.f{position:absolute;width:0;height:0}
+@media(prefers-reduced-motion:reduce){h1{filter:none}}
+</style>
+<body>
+<svg class="f" aria-hidden="true"><filter id="liquid" x="-10%" y="-20%" width="120%" height="140%"><feTurbulence id="tb" type="fractalNoise" baseFrequency="0.012 0.02" numOctaves="2" seed="3" result="n"/><feDisplacementMap id="dm" in="SourceGraphic" in2="n" scale="0" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
+<h1 id="h">Still water<br><em>runs deep</em></h1><p class="hint">Move across the words</p>
+<script type="application/json" id="settings">{"sens":1.6,"max":90,"freq":0.012,"calmdown":0.93,"idle":4,"size":110,"mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Ripple',k:'sens',label:'Sensitivity',min:.2,max:5,step:.1},{k:'max',label:'Maximum strength',min:10,max:220,step:5},{k:'freq',label:'Ripple size',min:.003,max:.05,step:.001},{k:'calmdown',label:'Settle time',min:.8,max:.99,step:.005},{k:'idle',label:'Idle wobble',min:0,max:30,step:1},
+ {g:'Look',k:'size',label:'Text size',min:44,max:170,step:2,unit:'px'},{k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'light';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+const h=document.getElementById('h'),tb=document.getElementById('tb'),dm=document.getElementById('dm');let str=0,sk=0,lx=null,ly=0,t0=0,auto=parent!==window;
+addEventListener('pointermove',e=>{if(lx!=null){const dx=e.clientX-lx,dy=e.clientY-ly;str=Math.min(S.max,str+Math.hypot(dx,dy)*S.sens*.5);sk+=(dx*.15-sk)*.3}lx=e.clientX;ly=e.clientY;auto=false});
+function tick(t){if(auto&&Math.floor(t/1800)!==t0){t0=Math.floor(t/1800);str=S.max*.8}str*=S.calmdown;sk*=.9;dm.setAttribute('scale',(str+S.idle).toFixed(1));
+ tb.setAttribute('baseFrequency',`${(S.freq+Math.sin(t/3000)*S.freq*.25).toFixed(4)} ${(S.freq*1.7+Math.cos(t/2600)*S.freq*.25).toFixed(4)}`);h.style.transform=`skewX(${Math.max(-8,Math.min(8,-sk)).toFixed(2)}deg)`;requestAnimationFrame(tick)}
+function apply(){theme();h.style.setProperty('--fs',`min(${S.size}px,15vw)`)}
+apply();if(!calm)requestAnimationFrame(tick);
+</script>
+</body>
+</html>

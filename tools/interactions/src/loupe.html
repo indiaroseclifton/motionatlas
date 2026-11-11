@@ -1,0 +1,36 @@
+<!--META {"o":32,"t":"Loupe","cat":"Cards","tone":"light","uses":["L10","L04"],"d":"A magnifying glass that follows the pointer over a product sheet, enlarging whatever is underneath, including the small print.","how":"The lens is a round window containing a second copy of the same content, scaled up. Its inner position is set so the point under the pointer stays under the pointer, which is all magnification is. A little lag makes the glass feel like it has weight.","use":"Product detail pages, spec sheets, maps and diagrams, artwork and photography, pricing fine print.","p":"Build a magnifier section in one HTML file with no libraries. A product sheet (large gradient artwork with a title, a specification table and small print) fills a card. On pointer move over the card show a circular lens centred on the pointer: a div with overflow hidden and a border, containing a clone of the card content with transform-origin 0 0 and transform: translate(-x * zoom + radius, -y * zoom + radius) scale(zoom), where x and y are the pointer position inside the card. Ease the lens position toward the pointer by a follow setting. Hide the lens with a scale transition when the pointer leaves. Keyboard: the card is focusable; arrow keys move the lens in steps and Escape hides it; plus and minus change the zoom. Mark the clone aria-hidden and inert. Settings: lens size, zoom, follow speed, rim width, roundness, light or dark. Touch: dragging moves the lens."}-->
+<style>/*BASE*/
+.sheet{position:relative;width:min(760px,92vw);border-radius:22px;overflow:hidden;border:1px solid var(--line);background:var(--panel);touch-action:none;outline-offset:4px;cursor:none}
+.in{display:grid;grid-template-columns:1fr 1fr;width:100%}
+.pic{position:relative;min-height:340px}.txt{padding:26px;display:grid;gap:12px;align-content:start}
+.txt small{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}.txt h2{font-size:26px;letter-spacing:-.02em;line-height:1.1}
+.txt dl{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:0;font-size:13px}.txt dt{color:var(--mute)}.txt dd{margin:0;text-align:right;font-variant-numeric:tabular-nums}
+.fine{font-size:7.5px;line-height:1.5;color:var(--mute)}
+.lens{position:absolute;left:0;top:0;width:var(--ls);height:var(--ls);border-radius:var(--lr);overflow:hidden;border:var(--rim) solid var(--panel);box-shadow:0 0 0 1px var(--line),0 20px 40px -14px rgba(0,0,0,.45);pointer-events:none;scale:0;transition:scale .25s cubic-bezier(.3,1.4,.5,1);will-change:transform;background:var(--panel)}
+.lens.on{scale:1}.lens .in{position:absolute;left:0;top:0;transform-origin:0 0}
+@media(max-width:620px){.in{grid-template-columns:1fr}.pic{min-height:200px}}
+</style>
+<body>
+<div class="sheet" id="sheet" tabindex="0" role="group" aria-label="Product sheet with a magnifier. Arrow keys move the lens, plus and minus zoom.">
+<div class="in" id="src"><div class="pic"><i class="art" id="art"></i></div><div class="txt"><small>Field recorder</small><h2>Northwind R-2</h2><dl><dt>Channels</dt><dd>4 in, 2 out</dd><dt>Resolution</dt><dd>32-bit float</dd><dt>Battery</dt><dd>18 hours</dd><dt>Weight</dt><dd>412 g</dd><dt>Price</dt><dd>£349</dd></dl>
+<p class="fine">Battery life measured at 48 kHz with phantom power off. Weight includes two AA cells. Serial 0427-R2-88. Designed in Leeds, assembled in Porto. Keep away from open water. Two-year warranty covers defects in materials and workmanship.</p></div></div>
+<div class="lens" id="lens" aria-hidden="true"></div></div>
+<p class="hint">Move over the sheet to read the small print</p>
+<script type="application/json" id="settings">{"size":170,"zoom":2.4,"follow":0.25,"rim":4,"round":50,"mode":"light","accent":"#111111"}</script>
+<script>
+const CONTROLS=[{g:'Lens',k:'size',label:'Lens size',min:90,max:320,step:2,unit:'px'},{k:'zoom',label:'Zoom',min:1.2,max:5,step:.1,unit:'×'},{k:'follow',label:'Follow speed',min:.05,max:1,step:.01},{k:'rim',label:'Rim',min:0,max:12,step:1,unit:'px'},{k:'round',label:'Roundness',min:8,max:50,step:1,unit:'%'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']}];
+/*TUNER*/
+/*ART*/
+const sheet=document.getElementById('sheet'),src=document.getElementById('src'),lens=document.getElementById('lens');document.getElementById('art').style.background=art(1);
+const clone=src.cloneNode(true);clone.removeAttribute('id');clone.querySelectorAll('[id]').forEach(e=>e.removeAttribute('id'));clone.inert=true;lens.append(clone);
+let tx=200,ty=150,x=200,y=150,on=false,auto=parent!==window&&!calm;
+function tick(t){if(auto){tx=sheet.offsetWidth*(.5+.38*Math.sin(t/1500));ty=sheet.offsetHeight*(.5+.34*Math.sin(t/1100+1));lens.classList.add('on')}const k=calm?1:S.follow;x+=(tx-x)*k;y+=(ty-y)*k;const r=S.size/2;
+ lens.style.transform=`translate(${(x-r).toFixed(1)}px,${(y-r).toFixed(1)}px)`;clone.style.width=sheet.clientWidth+'px';clone.style.transform=`translate(${(-x*S.zoom+r-S.rim).toFixed(1)}px,${(-y*S.zoom+r-S.rim).toFixed(1)}px) scale(${S.zoom})`;requestAnimationFrame(tick)}
+const at=e=>{const b=sheet.getBoundingClientRect();tx=e.clientX-b.left;ty=e.clientY-b.top};
+sheet.addEventListener('pointermove',e=>{auto=false;at(e);lens.classList.add('on')});sheet.addEventListener('pointerdown',e=>{auto=false;at(e);lens.classList.add('on')});sheet.addEventListener('pointerleave',()=>lens.classList.remove('on'));
+sheet.addEventListener('keydown',e=>{const m={ArrowRight:[24,0],ArrowLeft:[-24,0],ArrowDown:[0,24],ArrowUp:[0,-24]}[e.key];auto=false;if(m){e.preventDefault();lens.classList.add('on');tx=Math.max(0,Math.min(sheet.offsetWidth,tx+m[0]));ty=Math.max(0,Math.min(sheet.offsetHeight,ty+m[1]))}else if(e.key==='Escape')lens.classList.remove('on');else if(e.key==='+'||e.key==='='){S.zoom=Math.min(5,S.zoom+.2)}else if(e.key==='-'){S.zoom=Math.max(1.2,S.zoom-.2)}});
+sheet.addEventListener('blur',()=>lens.classList.remove('on'));
+function apply(){theme();const s=sheet.style;s.setProperty('--ls',S.size+'px');s.setProperty('--rim',S.rim+'px');s.setProperty('--lr',S.round+'%')}
+apply();requestAnimationFrame(tick);
+</script>
+</body>

@@ -1,0 +1,47 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Shape trail</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0F1012;--panel:#1A1B1E;--ink:#F4F4F5;--mute:#A1A1AA;--line:#2C2D31;--ac:#111111}
+:root[data-mode=light]{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#111113;--mute:#6B6F76;--line:#E6E6E8}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+
+.art{position:absolute;inset:0;display:block;pointer-events:none}
+.art::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.16;mix-blend-mode:overlay}
+.heroc{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:24px;max-width:760px;color:#fff;text-shadow:0 1px 24px rgba(0,0,0,.35)}.heroc h1{font-size:clamp(34px,7vw,76px);line-height:1;letter-spacing:-.03em}.heroc p{font-size:clamp(15px,2vw,18px);opacity:.9;max-width:46ch}.heroc a{display:inline-flex;align-items:center;min-height:46px;padding:0 22px;border-radius:99px;background:#fff;color:#111;font-weight:700;text-decoration:none;text-shadow:none}
+canvas{position:fixed;inset:0;width:100%;height:100%}
+.heroc{color:var(--ink);text-shadow:none;pointer-events:none}.heroc a{background:var(--ink);color:var(--bg);pointer-events:auto}
+</style>
+<body>
+<canvas id="c" aria-hidden="true"></canvas>
+<div class="heroc"><h1>Make a mess.</h1><p>Move around. Every shape is drawn, sprung and faded on one canvas.</p><a href="#">See how</a></div>
+<script type="application/json" id="settings">{"shape":"mix","size":34,"spacing":26,"life":1.6,"spin":1,"gravity":0.25,"outline":false,"mode":"light"}</script>
+<script>
+const CONTROLS=[{g:'Shapes',k:'shape',label:'Shape',type:'select',options:['mix','circle','square','triangle','plus','ring']},{k:'size',label:'Size',min:10,max:90,step:1,unit:'px'},{k:'outline',label:'Outline only',type:'toggle'},
+ {g:'Trail',k:'spacing',label:'Spacing',min:8,max:80,step:1,unit:'px'},{k:'life',label:'Linger',min:.4,max:4,step:.1,unit:'s'},{k:'spin',label:'Spin',min:0,max:4,step:.1},{k:'gravity',label:'Gravity',min:-.6,max:1,step:.05},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'light';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+const cv=document.getElementById('c'),x=cv.getContext('2d'),COL=['#111111','#E4572E','#2563EB','#F2B705','#12805C'],KIND=['circle','square','triangle','plus','ring'];let P=[],px=null,py=0,lx=0,ly=0,idle=999,d=1;
+function fit(){d=Math.min(2,devicePixelRatio||1);cv.width=innerWidth*d;cv.height=innerHeight*d}fit();addEventListener('resize',()=>{fit();if(calm)still()});
+function add(X,Y,vx,vy){P.push({x:X,y:Y,vx:vx*.12+(Math.random()-.5)*1.5,vy:vy*.12+(Math.random()-.5)*1.5,r:Math.random()*6,s:(Math.random()-.5)*.2,c:COL[P.length%5],k:S.shape==='mix'?KIND[(Math.random()*5)|0]:S.shape,l:1,z:.7+Math.random()*.6});if(P.length>300)P.shift()}
+function shape(p,sc){const r=S.size*p.z*sc/2;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.beginPath();
+ if(p.k==='circle'||p.k==='ring')x.arc(0,0,r,0,7);else if(p.k==='square')x.rect(-r,-r,r*2,r*2);else if(p.k==='triangle'){x.moveTo(0,-r*1.1);x.lineTo(r,r*.8);x.lineTo(-r,r*.8);x.closePath()}else{const t=r*.36;x.rect(-r,-t,r*2,t*2);x.rect(-t,-r,t*2,r*2)}
+ if(S.outline||p.k==='ring'){x.lineWidth=Math.max(2,r*.22);x.strokeStyle=p.c;x.stroke()}else{x.fillStyle=p.c;x.fill()}x.restore()}
+function move(X,Y){if(px==null){lx=X;ly=Y}px=X;py=Y;const dist=Math.hypot(X-lx,Y-ly);if(dist>S.spacing){add(X,Y,X-lx,Y-ly);lx=X;ly=Y}}
+addEventListener('pointermove',e=>{idle=0;move(e.clientX,e.clientY)});
+function tick(t){idle++;if(idle>120){const a=t/700;move(innerWidth/2+Math.sin(a)*innerWidth*.32,innerHeight/2+Math.sin(a*2)*innerHeight*.26)}
+ x.setTransform(d,0,0,d,0,0);x.clearRect(0,0,innerWidth,innerHeight);P=P.filter(p=>p.l>0);P.forEach(p=>{p.l-=1/(S.life*60);p.vy+=S.gravity*.12;p.vx*=.985;p.vy*=.985;p.x+=p.vx;p.y+=p.vy;p.r+=p.s*S.spin;const a=1-p.l,k=Math.min(1,a*7),sc=k<1?k*(1.35-.35*k):1;x.globalAlpha=Math.max(0,Math.min(1,p.l*1.6));shape(p,sc)});x.globalAlpha=1;requestAnimationFrame(tick)}
+function still(){x.setTransform(d,0,0,d,0,0);x.clearRect(0,0,innerWidth,innerHeight);for(let i=0;i<26;i++){const p={x:(i*137.5)%innerWidth,y:(i*89.3)%innerHeight,r:i,c:COL[i%5],k:S.shape==='mix'?KIND[i%5]:S.shape,z:1};x.globalAlpha=.8;shape(p,1)}}
+function apply(){theme();if(calm)still()}
+apply();if(!calm)requestAnimationFrame(tick);
+</script>
+</body>
+</html>

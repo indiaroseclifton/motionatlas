@@ -1,0 +1,46 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pixel reveal hero</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0F1012;--panel:#1A1B1E;--ink:#F4F4F5;--mute:#A1A1AA;--line:#2C2D31;--ac:#111111}
+:root[data-mode=light]{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#111113;--mute:#6B6F76;--line:#E6E6E8}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+
+.art{position:absolute;inset:0;display:block;pointer-events:none}
+.art::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.16;mix-blend-mode:overlay}
+.heroc{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:24px;max-width:760px;color:#fff;text-shadow:0 1px 24px rgba(0,0,0,.35)}.heroc h1{font-size:clamp(34px,7vw,76px);line-height:1;letter-spacing:-.03em}.heroc p{font-size:clamp(15px,2vw,18px);opacity:.9;max-width:46ch}.heroc a{display:inline-flex;align-items:center;min-height:46px;padding:0 22px;border-radius:99px;background:#fff;color:#111;font-weight:700;text-decoration:none;text-shadow:none}
+.under{position:fixed;inset:0}canvas{position:fixed;inset:0;width:100%;height:100%}
+.heroc{color:var(--ink);text-shadow:none;pointer-events:none;background:var(--bg);padding:26px 34px;border-radius:24px}.heroc a{background:var(--ink);color:var(--bg);pointer-events:auto}
+</style>
+<body>
+<div class="under"><i class="art" id="art"></i></div><canvas id="c" aria-hidden="true"></canvas>
+<div class="heroc"><h1>Look underneath.</h1><p>Move the pointer. The tiles pull back wherever you go.</p><a href="#">Explore</a></div>
+<script type="application/json" id="settings">{"cell":34,"radius":190,"recover":0.012,"gap":0,"round":false,"mode":"light"}</script>
+<script>
+const CONTROLS=[{g:'Grid',k:'cell',label:'Tile size',min:12,max:90,step:1,unit:'px'},{k:'gap',label:'Gap',min:0,max:8,step:1,unit:'px'},{k:'round',label:'Round tiles',type:'toggle'},{g:'Reveal',k:'radius',label:'Reach',min:60,max:420,step:5,unit:'px'},{k:'recover',label:'Close-up speed',min:.002,max:.06,step:.001},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'light';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+/* Artwork is drawn with CSS gradients, so nothing has to load. Swap art(i) for your own image URLs if you have them. */
+const PAL=[['#FF8A3D','#FFD166','#7A1E0A'],['#19C2C9','#2B4CFF','#051937'],['#FF8FA3','#FFB703','#7A1F3D'],['#F4E3C1','#D9A066','#6B4423'],['#38BDF8','#F472B6','#0B2545'],['#D8DEE9','#8FA3BF','#1F2937'],['#3DDC97','#0E9F6E','#062B22'],['#FFE066','#FF7A59','#5C1A1B'],['#A7F3D0','#0EA5E9','#0B2E33']];
+const art=i=>{const [a,b,c]=PAL[((i%PAL.length)+PAL.length)%PAL.length],k=i*37%100;return `radial-gradient(90% 70% at ${15+k*.5}% ${8+k*.25}%,${a},transparent 62%),radial-gradient(80% 80% at ${88-k*.4}% ${28+k*.3}%,${b},transparent 58%),radial-gradient(120% 90% at 50% 115%,${a}55,transparent 60%),linear-gradient(160deg,${c},#000 140%)`};
+const cv=document.getElementById('c'),x=cv.getContext('2d');document.getElementById('art').style.background=art(4)+','+art(0);let V=new Float32Array(0),cols=0,rows=0,px=-1e4,py=-1e4,idle=999,d=1,bg='#fff';
+function fit(){d=Math.min(2,devicePixelRatio||1);cv.width=innerWidth*d;cv.height=innerHeight*d;cols=Math.ceil(innerWidth/S.cell);rows=Math.ceil(innerHeight/S.cell);V=new Float32Array(cols*rows);bg=getComputedStyle(document.body).backgroundColor;if(calm)for(let i=0;i<V.length;i++)V[i]=Math.max(0,Math.min(1,((i%cols)/cols+((i/cols)|0)/rows-.6)*3))}
+addEventListener('resize',fit);addEventListener('pointermove',e=>{px=e.clientX;py=e.clientY;idle=0});document.addEventListener('pointerleave',()=>{px=py=-1e4});
+function tick(t){idle++;let X=px,Y=py;if(idle>100&&!calm){X=innerWidth*(.5+.36*Math.sin(t/1700));Y=innerHeight*(.5+.34*Math.sin(t/1300+1.2))}
+ x.setTransform(d,0,0,d,0,0);x.clearRect(0,0,innerWidth,innerHeight);x.fillStyle=bg;const c=S.cell,R=S.radius;
+ for(let r=0;r<rows;r++)for(let q=0;q<cols;q++){const i=r*cols+q;if(!calm){const dist=Math.hypot(q*c+c/2-X,r*c+c/2-Y);if(dist<R){const k=1-dist/R;V[i]=Math.min(1,V[i]+k*k*.25)}V[i]=Math.max(0,V[i]-S.recover)}
+  const s=(c-S.gap)*(1-V[i]);if(s<.5)continue;const ox=q*c+(c-s)/2,oy=r*c+(c-s)/2;if(S.round){x.beginPath();x.arc(ox+s/2,oy+s/2,s/2*1.42*(1-V[i]*.3),0,7);x.fill()}else x.fillRect(ox,oy,s+.6,s+.6)}
+ requestAnimationFrame(tick)}
+function apply(){theme();fit()}
+apply();requestAnimationFrame(tick);
+</script>
+</body>
+</html>

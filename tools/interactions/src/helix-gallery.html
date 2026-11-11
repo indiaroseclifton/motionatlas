@@ -1,0 +1,27 @@
+<!--META {"o":33,"t":"Helix gallery","cat":"Galleries","tone":"light","uses":["L08"],"d":"Cards wound around a spiral staircase. Drag or use the arrows and the whole helix turns, bringing the next card round to face you.","how":"Each card's place in the list gives it an angle and a height, which together make a spiral. Moving the position turns every card by the same amount and slides the spiral vertically, so the current card is always at eye level in front. Cards facing away fade.","use":"Immersive portfolio sections, timelines, product histories, playlists, event programmes.","p":"Build a helix gallery in one HTML file with no libraries. A perspective container holds N cards with gradient artwork, a number and a title. For card i and float position p: angle = (i - p) * turn degrees, y = (i - p) * rise pixels; transform = translateY(y) rotateY(angle) translateZ(radius). Opacity falls as the card turns away (cosine of its angle) and beyond a few steps. Position eases toward an integer target; horizontal drag, vertical wheel, Left/Right and Up/Down arrows, Home and End change it; clicking a card brings it to the front. Show the front card's title and index in a polite live region. Optional slow auto-advance that pauses on hover and focus. Settings: radius, rise per card, turn per card, perspective, card width, corner radius, auto-advance, light or dark."}-->
+<style>/*BASE*/
+.stage{position:fixed;inset:0;perspective:var(--p);display:grid;place-items:center;touch-action:none;cursor:grab;user-select:none;outline-offset:-4px}.stage:active{cursor:grabbing}
+.hx{position:relative;width:var(--w);aspect-ratio:4/5;transform-style:preserve-3d}
+.c{position:absolute;inset:0;border-radius:var(--r);overflow:hidden;color:#fff;will-change:transform;backface-visibility:hidden}
+.c b{position:absolute;left:14px;bottom:12px;font-size:16px}.c i.n{position:absolute;left:14px;top:12px;font-style:normal;font-size:11.5px;font-weight:600;letter-spacing:.1em}
+.cap{position:fixed;left:20px;bottom:20px;font-size:13px;color:var(--mute)}.cap b{display:block;color:var(--ink);font-size:20px}
+</style>
+<body>
+<div class="stage" id="stage" tabindex="0" role="group" aria-roledescription="carousel" aria-label="Helix of projects. Drag or use the arrow keys."><div class="hx" id="hx"></div></div>
+<p class="cap" aria-live="polite"><b id="t"></b><span id="n"></span></p>
+<script type="application/json" id="settings">{"radius":300,"rise":70,"turn":48,"perspective":1200,"size":190,"corner":16,"autoplay":true,"mode":"light","accent":"#111111"}</script>
+<script>
+const CONTROLS=[{g:'Spiral',k:'radius',label:'Radius',min:140,max:520,step:5,unit:'px'},{k:'rise',label:'Rise per card',min:0,max:160,step:2,unit:'px'},{k:'turn',label:'Turn per card',min:20,max:90,step:1,unit:'°'},{k:'perspective',label:'Perspective',min:500,max:2400,step:50,unit:'px'},
+ {g:'Cards',k:'size',label:'Card width',min:110,max:280,step:2,unit:'px'},{k:'corner',label:'Corner radius',min:0,max:36,step:1,unit:'px'},{g:'Behaviour',k:'autoplay',label:'Advance by itself',type:'toggle'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']}];
+/*TUNER*/
+/*CAROUSEL*/
+const stage=document.getElementById('stage'),hx=document.getElementById('hx'),L=[...ITEMS,...ITEMS.slice(0,5)];
+hx.innerHTML=L.map(([t],i)=>`<figure class="c" data-i="${i}"><i class="art" style="background:${art(i)}"></i><i class="n">${String(i+1).padStart(2,'0')}</i><b>${t}</b></figure>`).join('');const cards=[...hx.children];
+function draw(pos){cards.forEach((c,i)=>{const d=i-pos,a=d*S.turn,f=Math.cos(a*Math.PI/180);c.style.transform=`translateY(${(d*S.rise).toFixed(1)}px) rotateY(${a.toFixed(2)}deg) translateZ(${S.radius}px)`;c.style.opacity=Math.abs(d)>5?0:Math.max(.12,.25+.75*Math.max(0,f)).toFixed(2);c.style.zIndex=Math.round(f*100)+100})}
+const car=carousel(stage,()=>L.length,draw,{step:()=>S.size*.9,onChange:i=>{document.getElementById('t').textContent=L[i][0];document.getElementById('n').textContent=(i+1)+' of '+L.length}});
+stage.addEventListener('wheel',e=>{e.preventDefault();clearTimeout(stage._w);stage._w=setTimeout(()=>e.deltaY>0?car.next():car.prev(),30)},{passive:false});
+stage.addEventListener('keydown',e=>{if(e.key==='ArrowDown'){e.preventDefault();car.next()}else if(e.key==='ArrowUp'){e.preventDefault();car.prev()}});
+function apply(){theme();stage.style.setProperty('--p',S.perspective+'px');hx.style.setProperty('--w',S.size+'px');hx.style.setProperty('--r',S.corner+'px');car.redraw();car.auto(S.autoplay?2200:0)}
+apply();car.go(3);
+</script>
+</body>

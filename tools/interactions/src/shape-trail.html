@@ -1,0 +1,28 @@
+<!--META {"o":30,"t":"Shape trail","cat":"Canvas","tone":"light","uses":["L29","L16"],"d":"Move the pointer and it leaves a trail of shapes that pop in, spin, drift and fade. Pick the shape, size and how long they linger.","how":"Every time the pointer has travelled a set distance, a shape is added to a list with its own colour, spin and velocity. A canvas redraws the list each frame: scale springs up from nothing, gravity and drag move it, and opacity follows its remaining life.","use":"Playful hero sections, agency and portfolio sites, celebration moments, kids and creative brands, 404 pages.","p":"Build a pointer shape trail in one HTML file with no libraries. A full-screen canvas sits behind a headline and a button. Track the pointer; whenever it has moved more than a spacing distance, push a particle {x, y, velocity from pointer movement plus a little randomness, rotation, spin, colour from a five-colour palette, life 1}. Each frame: scale eases from 0 to 1 with overshoot during the first part of life, position moves with velocity, slight gravity and drag, rotation increases by spin, life decreases by 1 / (lifetime * 60); draw the chosen shape (circle, square, triangle, plus, ring or a mix) filled or outlined with globalAlpha = life. Cap the list at 300. Scale the canvas for device pixel ratio up to 2. When no pointer has moved for two seconds, move a virtual pointer along a figure of eight so the piece stays alive. Settings: shape, size, spacing, lifetime, spin, gravity, outline only, light or dark. Reduced motion: no trail, static scattered shapes."}-->
+<style>/*BASE*/
+canvas{position:fixed;inset:0;width:100%;height:100%}
+.heroc{color:var(--ink);text-shadow:none;pointer-events:none}.heroc a{background:var(--ink);color:var(--bg);pointer-events:auto}
+</style>
+<body>
+<canvas id="c" aria-hidden="true"></canvas>
+<div class="heroc"><h1>Make a mess.</h1><p>Move around. Every shape is drawn, sprung and faded on one canvas.</p><a href="#">See how</a></div>
+<script type="application/json" id="settings">{"shape":"mix","size":34,"spacing":26,"life":1.6,"spin":1,"gravity":0.25,"outline":false,"mode":"light"}</script>
+<script>
+const CONTROLS=[{g:'Shapes',k:'shape',label:'Shape',type:'select',options:['mix','circle','square','triangle','plus','ring']},{k:'size',label:'Size',min:10,max:90,step:1,unit:'px'},{k:'outline',label:'Outline only',type:'toggle'},
+ {g:'Trail',k:'spacing',label:'Spacing',min:8,max:80,step:1,unit:'px'},{k:'life',label:'Linger',min:.4,max:4,step:.1,unit:'s'},{k:'spin',label:'Spin',min:0,max:4,step:.1},{k:'gravity',label:'Gravity',min:-.6,max:1,step:.05},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']}];
+/*TUNER*/
+const cv=document.getElementById('c'),x=cv.getContext('2d'),COL=['#111111','#E4572E','#2563EB','#F2B705','#12805C'],KIND=['circle','square','triangle','plus','ring'];let P=[],px=null,py=0,lx=0,ly=0,idle=999,d=1;
+function fit(){d=Math.min(2,devicePixelRatio||1);cv.width=innerWidth*d;cv.height=innerHeight*d}fit();addEventListener('resize',()=>{fit();if(calm)still()});
+function add(X,Y,vx,vy){P.push({x:X,y:Y,vx:vx*.12+(Math.random()-.5)*1.5,vy:vy*.12+(Math.random()-.5)*1.5,r:Math.random()*6,s:(Math.random()-.5)*.2,c:COL[P.length%5],k:S.shape==='mix'?KIND[(Math.random()*5)|0]:S.shape,l:1,z:.7+Math.random()*.6});if(P.length>300)P.shift()}
+function shape(p,sc){const r=S.size*p.z*sc/2;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.beginPath();
+ if(p.k==='circle'||p.k==='ring')x.arc(0,0,r,0,7);else if(p.k==='square')x.rect(-r,-r,r*2,r*2);else if(p.k==='triangle'){x.moveTo(0,-r*1.1);x.lineTo(r,r*.8);x.lineTo(-r,r*.8);x.closePath()}else{const t=r*.36;x.rect(-r,-t,r*2,t*2);x.rect(-t,-r,t*2,r*2)}
+ if(S.outline||p.k==='ring'){x.lineWidth=Math.max(2,r*.22);x.strokeStyle=p.c;x.stroke()}else{x.fillStyle=p.c;x.fill()}x.restore()}
+function move(X,Y){if(px==null){lx=X;ly=Y}px=X;py=Y;const dist=Math.hypot(X-lx,Y-ly);if(dist>S.spacing){add(X,Y,X-lx,Y-ly);lx=X;ly=Y}}
+addEventListener('pointermove',e=>{idle=0;move(e.clientX,e.clientY)});
+function tick(t){idle++;if(idle>120){const a=t/700;move(innerWidth/2+Math.sin(a)*innerWidth*.32,innerHeight/2+Math.sin(a*2)*innerHeight*.26)}
+ x.setTransform(d,0,0,d,0,0);x.clearRect(0,0,innerWidth,innerHeight);P=P.filter(p=>p.l>0);P.forEach(p=>{p.l-=1/(S.life*60);p.vy+=S.gravity*.12;p.vx*=.985;p.vy*=.985;p.x+=p.vx;p.y+=p.vy;p.r+=p.s*S.spin;const a=1-p.l,k=Math.min(1,a*7),sc=k<1?k*(1.35-.35*k):1;x.globalAlpha=Math.max(0,Math.min(1,p.l*1.6));shape(p,sc)});x.globalAlpha=1;requestAnimationFrame(tick)}
+function still(){x.setTransform(d,0,0,d,0,0);x.clearRect(0,0,innerWidth,innerHeight);for(let i=0;i<26;i++){const p={x:(i*137.5)%innerWidth,y:(i*89.3)%innerHeight,r:i,c:COL[i%5],k:S.shape==='mix'?KIND[i%5]:S.shape,z:1};x.globalAlpha=.8;shape(p,1)}}
+function apply(){theme();if(calm)still()}
+apply();if(!calm)requestAnimationFrame(tick);
+</script>
+</body>
