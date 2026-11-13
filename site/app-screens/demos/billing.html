@@ -1,0 +1,88 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Billing and usage</title>
+<style>/* Tokens: change these to restyle the whole screen. --ac is the brand colour. */
+:root{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#141824;--mute:#5F677B;--line:#E3E6EE;--soft:#EEF0F6;--ac:#18181B;--ac-ink:#FFFFFF;--ac-soft:#F1F1F3;--ok:#12805C;--warn:#96560A;--bad:#C2362B;--ok-soft:#E3F5EC;--warn-soft:#FCF0D9;--bad-soft:#FBE6E3;--r:12px;--sh:0 1px 2px rgba(16,24,40,.05),0 8px 24px -16px rgba(16,24,40,.22);--font:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:light}
+html[data-theme=dark]{--bg:#0E1117;--panel:#161A23;--ink:#ECEEF4;--mute:#9AA3B5;--line:#272D3A;--soft:#1D2230;--ac:#FAFAFA;--ac-ink:#0E1117;--ac-soft:#272A33;--ok:#4ADE9B;--warn:#F0B454;--bad:#FF8B80;--ok-soft:#12301F;--warn-soft:#33260C;--bad-soft:#3A1714;--sh:0 1px 2px rgba(0,0,0,.45);color-scheme:dark}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:14px/1.5 var(--font);-webkit-font-smoothing:antialiased}
+h1,h2,h3,p{margin:0}h1{font-size:20px;line-height:1.2;letter-spacing:-.01em}h2{font-size:15px}h3{font-size:13px}
+a{color:inherit}button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px;border-radius:6px}
+[hidden]{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.mute{color:var(--mute)}.num{font-variant-numeric:tabular-nums}
+.ic{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:36px;padding:0 13px;border-radius:9px;border:1px solid var(--line);background:var(--panel);font-weight:600;font-size:13px;white-space:nowrap;text-decoration:none}
+.btn:hover{background:var(--soft)}.btn.pri{background:var(--ac);border-color:var(--ac);color:var(--ac-ink)}.btn.pri:hover{filter:brightness(1.08)}
+.btn.ghost{border-color:transparent;background:none}.btn.ghost:hover{background:var(--soft)}.btn.sq{width:36px;padding:0}.btn:disabled{opacity:.5;cursor:default}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh)}
+.pad{padding:16px}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:99px;font-size:12px;font-weight:600;background:var(--soft);color:var(--mute);white-space:nowrap}
+.badge.ok{background:var(--ok-soft);color:var(--ok)}.badge.warn{background:var(--warn-soft);color:var(--warn)}.badge.bad{background:var(--bad-soft);color:var(--bad)}.badge.ac{background:var(--ac-soft);color:var(--ac)}
+.badge i{width:6px;height:6px;border-radius:50%;background:currentColor}
+.av{display:grid;place-items:center;flex:none;width:30px;height:30px;border-radius:50%;background:var(--ac-soft);color:var(--ac);font-size:11.5px;font-weight:700}
+.in{min-height:36px;padding:0 11px;border:1px solid var(--line);border-radius:9px;background:var(--panel);min-width:0}
+.in::placeholder{color:var(--mute)}
+.seg{display:inline-flex;padding:3px;border-radius:10px;background:var(--soft);gap:2px}
+.seg button{min-height:30px;padding:0 11px;border:0;border-radius:8px;background:none;font-size:13px;font-weight:600;color:var(--mute)}
+.seg button[aria-pressed=true],.seg button[aria-selected=true]{background:var(--panel);color:var(--ink);box-shadow:0 1px 2px rgba(16,24,40,.12)}
+.row{display:flex;align-items:center;gap:10px}.sp{margin-left:auto}
+table{border-collapse:collapse;width:100%}th{font-size:12px;font-weight:600;color:var(--mute);text-align:left}th,td{padding:10px 14px;border-bottom:1px solid var(--line);white-space:nowrap}tbody tr:last-child td{border-bottom:0}
+.scroll{overflow:auto;position:relative}
+/* App shell: sidebar, top bar, content */
+.app{display:grid;grid-template-columns:232px minmax(0,1fr);height:100%}
+.side{display:flex;flex-direction:column;gap:4px;padding:14px 10px;background:var(--panel);border-right:1px solid var(--line);overflow:auto}
+.logo{display:flex;align-items:center;gap:9px;padding:4px 8px 14px;font-weight:700;font-size:15px}
+.logo span{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--ac);color:var(--ac-ink)}
+.side a{display:flex;align-items:center;gap:10px;min-height:36px;padding:0 10px;border-radius:9px;color:var(--mute);font-weight:500;text-decoration:none}
+.side a:hover{background:var(--soft);color:var(--ink)}.side a[aria-current=page]{background:var(--ac-soft);color:var(--ac);font-weight:600}
+.side a b{margin-left:auto;font-size:11.5px;padding:0 7px;border-radius:99px;background:var(--soft)}
+.side .who{margin-top:auto;display:flex;align-items:center;gap:9px;padding:10px 8px 2px;border-top:1px solid var(--line);font-size:13px}
+.side .who small{display:block;color:var(--mute);font-size:12px}
+.work{display:flex;flex-direction:column;min-width:0;min-height:0}
+.top{display:flex;align-items:center;gap:10px;padding:10px 20px;border-bottom:1px solid var(--line);background:var(--panel)}
+.top .find{position:relative;flex:1;max-width:340px}.top .find .ic{position:absolute;left:10px;top:9px;color:var(--mute)}.top .find input{width:100%;padding-left:34px}
+.main{flex:1;min-height:0;overflow:auto;padding:20px}
+.head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}.head p{color:var(--mute);font-size:13px}
+#menu{display:none}
+@media(max-width:860px){.app{grid-template-columns:1fr}#menu{display:inline-flex}.side{position:fixed;inset:0 auto 0 0;width:250px;z-index:30;transform:translateX(-102%);transition:transform .2s;box-shadow:0 0 0 100vmax rgba(0,0,0,0)}.side.open{transform:none;box-shadow:0 0 0 100vmax rgba(10,12,20,.45)}.top{padding:10px 14px}.main{padding:14px}.top .find{display:none}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+.two{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:14px;margin-bottom:14px}
+.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:14px}
+.pl{display:grid;gap:8px;align-content:start}.pl[data-on=true]{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac)}.pl b.p{font-size:26px;letter-spacing:-.02em}.pl ul{list-style:none;margin:0;padding:0;font-size:13px;color:var(--mute);display:grid;gap:4px}.pl li::before{content:"✓ ";color:var(--ok)}
+.use{display:grid;gap:14px}.m label{display:flex;justify-content:space-between;font-size:13.5px;font-weight:600}.m label span{color:var(--mute);font-weight:400}
+.tr{height:8px;border-radius:4px;background:var(--soft);margin-top:6px;overflow:hidden}.tr i{display:block;height:100%;border-radius:4px;background:var(--ac)}.tr i.w{background:var(--warn)}.tr i.b{background:var(--bad)}
+.cf{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:12px 14px;border-radius:var(--r);background:var(--ac-soft);margin-bottom:14px}
+.cc{display:flex;align-items:center;gap:12px}.cc i{width:46px;height:30px;border-radius:6px;background:linear-gradient(135deg,#1e3a8a,#2563eb);display:block}
+@media(max-width:900px){.two{grid-template-columns:1fr}}
+</style>
+<body>
+<div class="app"><nav class="side" aria-label="Main"><div class="logo"><span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 3 5 13.500h6L10 21l8-10.500h-6Z"/></svg></span>Northwind</div><a href="#" ><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11 12 4l8 7v9h-5v-6H9v6H4Z"/></svg>Overview</a><a href="#" ><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V4M4 20h16M8 16v-5M12 16V8M16 16v-3"/></svg>Analytics</a><a href="#" ><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c1-3.6 3.4-5.5 6.5-5.5s5.500 1.900 6.500 5.500M16 4.800a3.500 3.500 0 0 1 0 6.400M18 14.800c1.700.8 2.900 2.500 3.500 5.200"/></svg>Customers</a><a href="#" ><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13 6.500 5h11L20 13v6H4Z"/><path d="M4 13h5l1 2.500h4l1-2.500h5"/></svg>Inbox<b>12</b></a><a href="#" ><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9.300 4v16M14.700 4v10"/></svg>Projects</a><a href="#" ><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4Z"/></svg>Assistant</a><a href="#" ><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>Calendar</a><a href="#" ><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h7l2 2h9v11H3Z"/></svg>Files</a><a href="#" aria-current="page"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10.500h18"/></svg>Billing</a><a href="#" ><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.600 5.600l2.100 2.100M16.300 16.300l2.100 2.100M5.600 18.400l2.100-2.100M16.300 7.700l2.100-2.100"/></svg>Settings</a><div class="who"><span class="av">AK</span><span>Amara Khan<small>Admin</small></span></div></nav>
+<div class="work"><header class="top"><button class="btn sq ghost" id="menu" aria-label="Menu" aria-expanded="false"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><label class="find"><span class="sr">Search</span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.500"/><path d="m16 16 4.500 4.500"/></svg><input class="in" type="search" placeholder="Search invoices"></label><span class="sp"></span><button class="btn sq ghost" id="theme" aria-pressed="false" aria-label="Switch to dark theme"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.500A8 8 0 0 1 9.500 4a8 8 0 1 0 10.500 10.500Z"/></svg></button><button class="btn sq ghost" aria-label="Notifications"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4Z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></button><span class="av" aria-label="Your account">AK</span></header>
+<main class="main" id="main"><div class="head"><div><h1>Billing</h1><p>Plan, usage and invoices for Northwind.</p></div><span class="sp"></span><div class="seg" role="group" aria-label="Billing period" id="per"><button aria-pressed="true">Monthly</button><button aria-pressed="false">Yearly</button></div></div>
+<div class="cf" id="cf" role="status" hidden></div>
+<section class="plans" id="plans" aria-label="Plans"></section>
+<div class="two"><section class="card pad"><h2 style="margin-bottom:14px">Usage this period</h2><div class="use" id="use"></div></section>
+<section class="card pad"><h2 style="margin-bottom:12px">Payment method</h2><div class="cc"><i></i><div><b>Visa ending 4242</b><div class="mute" style="font-size:13px">Expires 08 / 2028</div></div><span class="sp"></span><button class="btn" id="upd">Update</button></div><p class="mute" style="font-size:13px;margin-top:14px" id="renew"></p></section></div>
+<section class="card"><div class="pad" style="padding-bottom:6px"><h2>Invoices</h2></div><div class="scroll"><table><thead><tr><th>Date</th><th>Number</th><th>Amount</th><th>Status</th><th><span class="sr">Download</span></th></tr></thead><tbody id="inv"></tbody></table></div></section></main></div></div>
+<script>/* Shared helpers: element lookup, theme switch (add #dark to the address to start dark), mobile menu. */
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const root=document.documentElement;
+function setTheme(dark){root.dataset.theme=dark?'dark':'light';const b=$('#theme');if(b){b.setAttribute('aria-pressed',dark);b.setAttribute('aria-label',dark?'Switch to light theme':'Switch to dark theme')}document.dispatchEvent(new Event('themechange'))}
+setTheme(/dark/.test(location.hash));addEventListener('hashchange',()=>setTheme(/dark/.test(location.hash)));
+$('#theme')?.addEventListener('click',()=>setTheme(root.dataset.theme!=='dark'));
+{const m=$('#menu'),s=$('.side');if(m&&s){const set=o=>{s.classList.toggle('open',o);m.setAttribute('aria-expanded',o)};m.addEventListener('click',()=>set(!s.classList.contains('open')));addEventListener('keydown',e=>{if(e.key==='Escape')set(false)});document.addEventListener('click',e=>{if(s.classList.contains('open')&&!s.contains(e.target)&&!m.contains(e.target))set(false)})}}
+function toast(t){let n=$('#toast');if(!n){n=document.createElement('div');n.id='toast';n.setAttribute('role','status');n.style.cssText='position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 14px;border-radius:10px;font-size:13px;font-weight:600;z-index:60;transition:opacity .2s;max-width:calc(100vw - 32px)';document.body.append(n)}n.textContent=t;n.style.opacity=1;clearTimeout(toast.t);toast.t=setTimeout(()=>n.style.opacity=0,2000)}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const PLANS=[['Starter',19,['3 seats','10 GB storage','Email support']],['Team',79,['10 seats','100 GB storage','Automation','Priority support']],['Business',249,['Unlimited seats','1 TB storage','SSO and audit log','Dedicated manager']]],USE=[['Seats',8,10,''],['Storage',62,100,' GB'],['API calls',93400,100000,''],['Automation runs',1180,2500,'']];
+let cur=1,yearly=false,pick=null;const price=p=>yearly?Math.round(p*10):p,per=()=>yearly?'year':'month',nf=n=>n.toLocaleString('en-GB');
+function render(){$('#plans').innerHTML=PLANS.map(([n,p,f],i)=>`<article class="card pad pl" data-on="${i===cur}"><div class="row"><h2>${n}</h2>${i===cur?'<span class="badge ac">Current</span>':''}</div><div><b class="p num">£${nf(price(p))}</b> <span class="mute">per ${per()}</span></div><ul>${f.map(x=>`<li>${x}</li>`).join('')}</ul>${i===cur?'':`<button class="btn ${i>cur?'pri':''}" data-p="${i}">${i>cur?'Upgrade':'Downgrade'} to ${n}</button>`}</article>`).join('');
+ $('#use').innerHTML=USE.map(([n,u,l,s])=>{const pc=u/l*100,k=pc>90?'b':pc>75?'w':'';return `<div class="m"><label id="u${n[0]}">${n}<span class="num">${nf(u)}${s} of ${nf(l)}${s}${k==='b'?' · nearly full':''}</span></label><div class="tr" role="progressbar" aria-labelledby="u${n[0]}" aria-valuemin="0" aria-valuemax="${l}" aria-valuenow="${u}"><i class="${k}" style="width:${pc}%"></i></div></div>`}).join('');
+ $('#renew').textContent=`${PLANS[cur][0]} renews on 1 December 2026 for £${nf(price(PLANS[cur][1]))}.`;
+ const c=$('#cf');c.hidden=pick==null;if(pick!=null){const d=price(PLANS[pick][1])-price(PLANS[cur][1]);c.innerHTML=`<span><b>Switch to ${PLANS[pick][0]}?</b> You will pay £${nf(Math.abs(d))} ${d>0?'more':'less'} per ${per()}, starting today.</span><span class="sp"></span><button class="btn" id="no">Cancel</button><button class="btn pri" id="yes">Confirm change</button>`;$('#no').onclick=()=>{pick=null;render()};$('#yes').onclick=()=>{cur=pick;pick=null;render();toast('Plan changed to '+PLANS[cur][0])}}}
+$('#plans').onclick=e=>{const b=e.target.closest('[data-p]');if(b){pick=+b.dataset.p;render();$('#yes').focus()}};
+$$('#per button').forEach((b,i)=>b.onclick=()=>{yearly=!!i;$$('#per button').forEach(x=>x.setAttribute('aria-pressed',x===b));render()});
+$('#inv').innerHTML=[['1 Nov 2026','INV-2041',79,'Paid'],['1 Oct 2026','INV-1987',79,'Paid'],['1 Sep 2026','INV-1930',79,'Paid'],['1 Aug 2026','INV-1876',19,'Refunded'],['1 Jul 2026','INV-1822',19,'Paid']].map(([d,n,a,s])=>`<tr><td>${d}</td><td class="num">${n}</td><td class="num">£${a}.00</td><td><span class="badge ${s==='Paid'?'ok':'warn'}"><i></i>${s}</span></td><td style="text-align:right"><button class="btn ghost" aria-label="Download ${n}">PDF ↓</button></td></tr>`).join('');
+$('#inv').onclick=e=>{if(e.target.closest('button'))toast('Invoice downloaded')};$('#upd').onclick=()=>toast('Card form would open here');render();
+</script>
+</body>
+</html>

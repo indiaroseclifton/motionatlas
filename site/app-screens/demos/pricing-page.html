@@ -1,0 +1,97 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pricing page</title>
+<style>/* Tokens: change these to restyle the whole screen. --ac is the brand colour. */
+:root{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#141824;--mute:#5F677B;--line:#E3E6EE;--soft:#EEF0F6;--ac:#18181B;--ac-ink:#FFFFFF;--ac-soft:#F1F1F3;--ok:#12805C;--warn:#96560A;--bad:#C2362B;--ok-soft:#E3F5EC;--warn-soft:#FCF0D9;--bad-soft:#FBE6E3;--r:12px;--sh:0 1px 2px rgba(16,24,40,.05),0 8px 24px -16px rgba(16,24,40,.22);--font:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:light}
+html[data-theme=dark]{--bg:#0E1117;--panel:#161A23;--ink:#ECEEF4;--mute:#9AA3B5;--line:#272D3A;--soft:#1D2230;--ac:#FAFAFA;--ac-ink:#0E1117;--ac-soft:#272A33;--ok:#4ADE9B;--warn:#F0B454;--bad:#FF8B80;--ok-soft:#12301F;--warn-soft:#33260C;--bad-soft:#3A1714;--sh:0 1px 2px rgba(0,0,0,.45);color-scheme:dark}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:14px/1.5 var(--font);-webkit-font-smoothing:antialiased}
+h1,h2,h3,p{margin:0}h1{font-size:20px;line-height:1.2;letter-spacing:-.01em}h2{font-size:15px}h3{font-size:13px}
+a{color:inherit}button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px;border-radius:6px}
+[hidden]{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.mute{color:var(--mute)}.num{font-variant-numeric:tabular-nums}
+.ic{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:36px;padding:0 13px;border-radius:9px;border:1px solid var(--line);background:var(--panel);font-weight:600;font-size:13px;white-space:nowrap;text-decoration:none}
+.btn:hover{background:var(--soft)}.btn.pri{background:var(--ac);border-color:var(--ac);color:var(--ac-ink)}.btn.pri:hover{filter:brightness(1.08)}
+.btn.ghost{border-color:transparent;background:none}.btn.ghost:hover{background:var(--soft)}.btn.sq{width:36px;padding:0}.btn:disabled{opacity:.5;cursor:default}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh)}
+.pad{padding:16px}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:99px;font-size:12px;font-weight:600;background:var(--soft);color:var(--mute);white-space:nowrap}
+.badge.ok{background:var(--ok-soft);color:var(--ok)}.badge.warn{background:var(--warn-soft);color:var(--warn)}.badge.bad{background:var(--bad-soft);color:var(--bad)}.badge.ac{background:var(--ac-soft);color:var(--ac)}
+.badge i{width:6px;height:6px;border-radius:50%;background:currentColor}
+.av{display:grid;place-items:center;flex:none;width:30px;height:30px;border-radius:50%;background:var(--ac-soft);color:var(--ac);font-size:11.5px;font-weight:700}
+.in{min-height:36px;padding:0 11px;border:1px solid var(--line);border-radius:9px;background:var(--panel);min-width:0}
+.in::placeholder{color:var(--mute)}
+.seg{display:inline-flex;padding:3px;border-radius:10px;background:var(--soft);gap:2px}
+.seg button{min-height:30px;padding:0 11px;border:0;border-radius:8px;background:none;font-size:13px;font-weight:600;color:var(--mute)}
+.seg button[aria-pressed=true],.seg button[aria-selected=true]{background:var(--panel);color:var(--ink);box-shadow:0 1px 2px rgba(16,24,40,.12)}
+.row{display:flex;align-items:center;gap:10px}.sp{margin-left:auto}
+table{border-collapse:collapse;width:100%}th{font-size:12px;font-weight:600;color:var(--mute);text-align:left}th,td{padding:10px 14px;border-bottom:1px solid var(--line);white-space:nowrap}tbody tr:last-child td{border-bottom:0}
+.scroll{overflow:auto;position:relative}
+/* App shell: sidebar, top bar, content */
+.app{display:grid;grid-template-columns:232px minmax(0,1fr);height:100%}
+.side{display:flex;flex-direction:column;gap:4px;padding:14px 10px;background:var(--panel);border-right:1px solid var(--line);overflow:auto}
+.logo{display:flex;align-items:center;gap:9px;padding:4px 8px 14px;font-weight:700;font-size:15px}
+.logo span{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--ac);color:var(--ac-ink)}
+.side a{display:flex;align-items:center;gap:10px;min-height:36px;padding:0 10px;border-radius:9px;color:var(--mute);font-weight:500;text-decoration:none}
+.side a:hover{background:var(--soft);color:var(--ink)}.side a[aria-current=page]{background:var(--ac-soft);color:var(--ac);font-weight:600}
+.side a b{margin-left:auto;font-size:11.5px;padding:0 7px;border-radius:99px;background:var(--soft)}
+.side .who{margin-top:auto;display:flex;align-items:center;gap:9px;padding:10px 8px 2px;border-top:1px solid var(--line);font-size:13px}
+.side .who small{display:block;color:var(--mute);font-size:12px}
+.work{display:flex;flex-direction:column;min-width:0;min-height:0}
+.top{display:flex;align-items:center;gap:10px;padding:10px 20px;border-bottom:1px solid var(--line);background:var(--panel)}
+.top .find{position:relative;flex:1;max-width:340px}.top .find .ic{position:absolute;left:10px;top:9px;color:var(--mute)}.top .find input{width:100%;padding-left:34px}
+.main{flex:1;min-height:0;overflow:auto;padding:20px}
+.head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}.head p{color:var(--mute);font-size:13px}
+#menu{display:none}
+@media(max-width:860px){.app{grid-template-columns:1fr}#menu{display:inline-flex}.side{position:fixed;inset:0 auto 0 0;width:250px;z-index:30;transform:translateX(-102%);transition:transform .2s;box-shadow:0 0 0 100vmax rgba(0,0,0,0)}.side.open{transform:none;box-shadow:0 0 0 100vmax rgba(10,12,20,.45)}.top{padding:10px 14px}.main{padding:14px}.top .find{display:none}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+html,body{height:auto}
+.w{max-width:1040px;margin:0 auto;padding:0 20px}
+.top{display:flex;align-items:center;height:60px;gap:12px}.lg{display:flex;align-items:center;gap:9px;font-weight:700}.lg span{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--ac);color:var(--ac-ink)}
+.hd{text-align:center;padding:44px 0 30px;display:grid;gap:14px;justify-items:center}.hd h1{font-size:clamp(34px,5.5vw,56px);letter-spacing:-.035em;line-height:1.04}.hd p{color:var(--mute);font-size:17px;max-width:48ch}
+.save{font-size:12px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--ok-soft);color:var(--ok);margin-left:6px}
+.plans{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:stretch}
+.pl{padding:24px;display:grid;gap:14px;align-content:start;position:relative}.pl.hi{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink),var(--sh)}.pl .tag{position:absolute;top:-11px;left:24px;background:var(--ink);color:var(--bg);font-size:12px;font-weight:700;padding:3px 10px;border-radius:99px}
+.pr{display:flex;align-items:baseline;gap:6px}.pr b{font-size:44px;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums;display:inline-block}.pr b.roll{animation:roll .35s}@keyframes roll{from{transform:translateY(-10px);opacity:0}}
+.pl ul{list-style:none;margin:0;padding:0;display:grid;gap:8px;font-size:14.5px}.pl li::before{content:"✓";color:var(--ok);font-weight:700;margin-right:8px}.pl .btn{min-height:44px}
+.seats{margin:28px 0;padding:20px;display:grid;gap:12px}.seats input{width:100%;accent-color:var(--ac)}.tot{display:flex;flex-wrap:wrap;gap:8px 26px;font-size:14.5px}
+.cmp{margin:40px 0}.cmp table{min-width:640px}.cmp caption{text-align:left;font-size:22px;font-weight:700;letter-spacing:-.02em;padding:0 0 14px}.cmp thead th{position:sticky;top:0;background:var(--panel);z-index:1;font-size:14px;color:var(--ink)}.cmp th[scope=row]{font-weight:500;color:var(--ink);font-size:14px}.cmp td{text-align:center}.cmp tr.grp th{background:var(--soft);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+details{border-bottom:1px solid var(--line);padding:16px 0}summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between}summary::-webkit-details-marker{display:none}summary::after{content:"+";font-size:20px;line-height:1;transition:transform .2s}details[open] summary::after{transform:rotate(45deg)}details p{color:var(--mute);margin-top:10px}
+.band{margin:44px 0 60px;padding:28px;border-radius:20px;background:var(--soft);display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+@media(max-width:800px){.plans{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.pr b.roll{animation:none}}
+</style>
+<body>
+<header class="w top"><span class="lg"><span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 3 5 13.500h6L10 21l8-10.500h-6Z"/></svg></span>Northwind</span><span class="sp"></span><button class="btn sq ghost" id="theme" aria-pressed="false" aria-label="Switch to dark theme"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.500A8 8 0 0 1 9.500 4a8 8 0 1 0 10.500 10.500Z"/></svg></button><a class="btn" href="#">Sign in</a></header>
+<main class="w">
+<div class="hd"><h1>Simple pricing that grows with you</h1><p>Start free. Upgrade when the team does. Change or cancel whenever you like.</p><div class="seg" role="group" aria-label="Billing period" id="per"><button aria-pressed="true">Monthly</button><button aria-pressed="false">Yearly<span class="save">Save 20%</span></button></div></div>
+<section class="plans" id="plans" aria-label="Plans"></section>
+<section class="card seats"><label for="seat" style="font-weight:600;display:flex;justify-content:space-between">Team size <output id="so" for="seat" class="num"></output></label><input type="range" id="seat" min="1" max="50" value="8"><div class="tot" id="tot" aria-live="polite"></div></section>
+<section class="cmp card"><div class="scroll" style="padding:20px" tabindex="0" aria-label="Plan comparison, scrolls sideways"><table><caption>Compare plans</caption><thead><tr><th scope="col" style="width:40%">Feature</th><th scope="col">Starter</th><th scope="col">Team</th><th scope="col">Business</th></tr></thead><tbody id="cmp"></tbody></table></div></section>
+<section style="max-width:720px;margin:0 auto"><h2 style="font-size:22px;letter-spacing:-.02em;margin-bottom:8px">Billing questions</h2><div id="faq"></div></section>
+<div class="band"><div><b style="font-size:18px">More than 50 people?</b><div class="mute">We will put together a plan with volume pricing and onboarding.</div></div><span class="sp"></span><a class="btn pri" href="#" style="min-height:44px">Talk to sales</a></div>
+</main>
+<script>/* Shared helpers: element lookup, theme switch (add #dark to the address to start dark), mobile menu. */
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const root=document.documentElement;
+function setTheme(dark){root.dataset.theme=dark?'dark':'light';const b=$('#theme');if(b){b.setAttribute('aria-pressed',dark);b.setAttribute('aria-label',dark?'Switch to light theme':'Switch to dark theme')}document.dispatchEvent(new Event('themechange'))}
+setTheme(/dark/.test(location.hash));addEventListener('hashchange',()=>setTheme(/dark/.test(location.hash)));
+$('#theme')?.addEventListener('click',()=>setTheme(root.dataset.theme!=='dark'));
+{const m=$('#menu'),s=$('.side');if(m&&s){const set=o=>{s.classList.toggle('open',o);m.setAttribute('aria-expanded',o)};m.addEventListener('click',()=>set(!s.classList.contains('open')));addEventListener('keydown',e=>{if(e.key==='Escape')set(false)});document.addEventListener('click',e=>{if(s.classList.contains('open')&&!s.contains(e.target)&&!m.contains(e.target))set(false)})}}
+function toast(t){let n=$('#toast');if(!n){n=document.createElement('div');n.id='toast';n.setAttribute('role','status');n.style.cssText='position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 14px;border-radius:10px;font-size:13px;font-weight:600;z-index:60;transition:opacity .2s;max-width:calc(100vw - 32px)';document.body.append(n)}n.textContent=t;n.style.opacity=1;clearTimeout(toast.t);toast.t=setTimeout(()=>n.style.opacity=0,2000)}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const PLANS=[['Starter','For small teams getting organised',0,['3 seats included','Boards and docs','10 GB storage'],'Start free'],['Team','For teams that ship every week',9,['Unlimited projects','Timelines and automation','100 GB storage','Priority support'],'Start 14-day trial'],['Business','For companies with several teams',19,['Everything in Team','SSO and audit log','1 TB storage','Dedicated manager'],'Start 14-day trial']];
+const CMP=[['Core'],['Projects','3','Unlimited','Unlimited'],['Boards and docs',1,1,1],['Timelines',0,1,1],['Storage','10 GB','100 GB','1 TB'],['Collaboration'],['Guests',0,'10','Unlimited'],['Reviews and approvals',0,1,1],['Automation runs','—','2,500','25,000'],['Security'],['Two-step sign-in',1,1,1],['Single sign-on',0,0,1],['Audit log',0,0,1]];
+let yearly=false,seats=8;const price=p=>yearly?p*.8:p,f=n=>'£'+(n%1?n.toFixed(2):n);
+function render(roll){$('#plans').innerHTML=PLANS.map(([n,w,p,fs,cta],i)=>`<article class="card pl ${i===1?'hi':''}">${i===1?'<span class="tag">Most popular</span>':''}<div><h2 style="font-size:18px">${n}</h2><p class="mute" style="font-size:14px">${w}</p></div><div class="pr"><b class="${roll?'roll':''}">${f(price(p))}</b><span class="mute">${p?'per seat a month':'for ever'}</span></div><p class="mute" style="font-size:13px;min-height:18px">${p&&yearly?'Billed yearly at '+f(price(p)*12)+' per seat':p?'Billed monthly':'No card needed'}</p><a class="btn ${i===1?'pri':''}" href="#">${cta}</a><ul>${fs.map(x=>`<li>${x}</li>`).join('')}</ul></article>`).join('');total()}
+function total(){$('#so').textContent=seats+(seats===1?' person':' people');$('#tot').innerHTML=PLANS.map(([n,,p])=>`<span>${n}: <b class="num">${p?f(Math.round(price(p)*Math.max(seats,1)*100)/100):seats<=3?'£0':'not available'}</b>${p||seats<=3?' a month':''}</span>`).join('')}
+$$('#per button').forEach((b,i)=>b.onclick=()=>{yearly=!!i;$$('#per button').forEach(x=>x.setAttribute('aria-pressed',x===b));render(true)});
+$('#seat').oninput=e=>{seats=+e.target.value;total()};
+const cell=v=>v===1?'<span aria-label="Included">✓</span>':v===0?'<span class="mute" aria-label="Not included">—</span>':v;
+$('#cmp').innerHTML=CMP.map(r=>r.length===1?`<tr class="grp"><th colspan="4" scope="colgroup">${r[0]}</th></tr>`:`<tr><th scope="row">${r[0]}</th>${r.slice(1).map(v=>`<td>${cell(v)}</td>`).join('')}</tr>`).join('');
+$('#faq').innerHTML=[['Can I change plan later?','Yes. Upgrades apply straight away and we only charge the difference.'],['What counts as a seat?','Anyone who can edit. Guests who only view or comment are free.'],['Do you offer refunds?','Yearly plans can be refunded in full within 30 days.'],['Which payment methods do you take?','All major cards, and bank transfer for yearly Business plans.']].map(([q,a])=>`<details><summary>${q}</summary><p>${a}</p></details>`).join('');
+render();
+</script>
+</body>
+</html>

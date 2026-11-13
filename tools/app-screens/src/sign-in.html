@@ -1,0 +1,41 @@
+<!--META {"o":11,"t":"Sign in and sign up","cat":"Account & admin","tone":"light","d":"A split sign-in screen: a form with validation, show-password, single sign-on buttons and a switch to create an account with a password strength meter.","how":"One form serves both modes; a toggle changes the heading, shows the name field and swaps the button text. Each field validates when you leave it and again on submit, with the message tied to the field. The strength meter scores the password on length and character variety.","use":"Any product with accounts: SaaS, dashboards, mobile web apps, customer portals.","p":"Build a sign-in screen as one HTML file with no libraries. Two columns: a form column and a brand panel with a headline, three short benefit lines and a quote (the panel hides under 820px). The form has a logo, a heading, Continue with Google and Continue with Apple buttons, a divider, then email and password fields with visible labels; password has a Show / Hide button with aria-pressed; a Remember me checkbox and a Forgot password link; a primary submit button. A link switches to Create account mode, which adds a full name field, a strength meter (four segments and a word: weak, fair, good, strong) and a terms checkbox. Validate on blur and on submit: required, email pattern, password at least eight characters; set aria-invalid and show an error linked with aria-describedby; focus the first invalid field. On success show a spinner in the button, then a confirmation message with role=status. Include a light and dark theme toggle."}-->
+<style>/*BASE*/
+.wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);min-height:100%}
+.fc{display:grid;place-items:center;padding:32px 20px}.fm{width:min(380px,100%);display:grid;gap:14px}
+.logo{padding:0}.sso{display:grid;gap:8px}.sso .btn{min-height:42px}
+.or{display:flex;align-items:center;gap:10px;color:var(--mute);font-size:12.5px}.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
+.f{display:grid;gap:5px}.f label{font-weight:600;font-size:13px}.f .in{width:100%;min-height:42px}.f .err{color:var(--bad);font-size:12.5px;min-height:0}.in[aria-invalid=true]{border-color:var(--bad)}
+.pw{position:relative}.pw button{position:absolute;right:6px;top:6px;min-height:30px;padding:0 10px;font-size:12px}
+.meter{display:flex;gap:4px;align-items:center;font-size:12px;color:var(--mute)}.meter i{flex:1;height:4px;border-radius:2px;background:var(--line)}.meter i.on{background:var(--ok)}.meter[data-s="1"] i.on{background:var(--bad)}.meter[data-s="2"] i.on{background:var(--warn)}
+.chk{display:flex;gap:8px;align-items:center;font-size:13.5px}.chk input{width:16px;height:16px;accent-color:var(--ac)}
+.go{min-height:44px}.spin{width:16px;height:16px;border-radius:50%;border:2px solid color-mix(in srgb,var(--ac-ink) 40%,transparent);border-top-color:var(--ac-ink);animation:sp .7s linear infinite}@keyframes sp{to{transform:rotate(1turn)}}
+.side{background:var(--ink);color:var(--bg);display:grid;align-content:center;gap:22px;padding:48px}.side h2{font-size:clamp(26px,3vw,40px);line-height:1.08;letter-spacing:-.02em;max-width:14ch}.side ul{list-style:none;margin:0;padding:0;display:grid;gap:10px;opacity:.85}.side li::before{content:"✓  "}.side blockquote{margin:0;padding-left:16px;border-left:2px solid currentColor;opacity:.8;max-width:38ch}
+.lnk{all:unset;cursor:pointer;font-weight:600;text-decoration:underline;text-underline-offset:3px}.lnk:focus-visible{outline:2px solid var(--ac);outline-offset:3px;border-radius:4px}
+@media(max-width:820px){.wrap{grid-template-columns:1fr}.side{display:none}}
+</style>
+<body>
+<div class="wrap"><main class="fc"><form class="fm" id="f" novalidate>
+<div class="row"><div class="logo"><span><!--IC bolt--></span>Northwind</div><span class="sp"></span><button type="button" class="btn sq ghost" id="theme" aria-pressed="false" aria-label="Switch to dark theme"><!--IC moon--></button></div>
+<div><h1 id="h">Welcome back</h1><p class="mute" id="sub">Sign in to your workspace.</p></div>
+<div class="sso"><button type="button" class="btn" data-sso="Google">Continue with Google</button><button type="button" class="btn" data-sso="Apple">Continue with Apple</button></div><div class="or">or with email</div>
+<div class="f" id="nameF" hidden><label for="nm">Full name</label><input class="in" id="nm" autocomplete="name" aria-describedby="nmE"><span class="err" id="nmE" role="alert"></span></div>
+<div class="f"><label for="em">Email</label><input class="in" id="em" type="email" autocomplete="email" aria-describedby="emE"><span class="err" id="emE" role="alert"></span></div>
+<div class="f"><label for="pw">Password</label><div class="pw"><input class="in" id="pw" type="password" autocomplete="current-password" aria-describedby="pwE"><button type="button" class="btn ghost" id="show" aria-pressed="false">Show</button></div><div class="meter" id="meter" hidden><i></i><i></i><i></i><i></i><span id="mw" style="min-width:44px;text-align:right"></span></div><span class="err" id="pwE" role="alert"></span></div>
+<div class="row" id="rem"><label class="chk"><input type="checkbox" checked> Remember me</label><span class="sp"></span><a href="#" style="font-size:13.5px">Forgot password?</a></div>
+<label class="chk" id="terms" hidden><input type="checkbox" id="tc"> I agree to the terms and privacy policy</label>
+<button class="btn pri go" id="go">Sign in</button><p role="status" id="done" class="mute" style="min-height:20px;font-size:13.5px"></p>
+<p class="mute" style="font-size:13.5px"><span id="q">New here?</span> <button type="button" class="lnk" id="sw">Create an account</button></p></form></main>
+<aside class="side"><h2>Everything your team ships, in one place.</h2><ul><li>Projects, files and reviews together</li><li>Works on every device</li><li>Free for teams of three</li></ul><blockquote>“We replaced four tools in a week and nobody asked for them back.”<br><br>Priya Nair, Slow Mornings</blockquote></aside></div>
+<script>/*BASEJS*/
+let up=false;const em=$('#em'),pw=$('#pw'),nm=$('#nm'),E=(el,m)=>{el.setAttribute('aria-invalid',!!m);$('#'+el.id+'E').textContent=m||'';return !m};
+const V={em:()=>E(em,!em.value.trim()?'Enter your email address.':/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em.value)?'':'That does not look like an email address.'),pw:()=>E(pw,!pw.value?'Enter your password.':up&&pw.value.length<8?'Use at least 8 characters.':''),nm:()=>!up||E(nm,nm.value.trim()?'':'Enter your name.')};
+em.onblur=V.em;pw.onblur=V.pw;nm.onblur=V.nm;
+function score(){const v=pw.value;let s=0;if(v.length>=8)s++;if(v.length>=12)s++;if(/[A-Z]/.test(v)&&/[a-z]/.test(v))s++;if(/\d/.test(v)&&/[^\w\s]/.test(v))s++;s=v?Math.max(1,s):0;const m=$('#meter');m.dataset.s=s;$$('i',m).forEach((i,k)=>i.classList.toggle('on',k<s));$('#mw').textContent=['','Weak','Fair','Good','Strong'][s]}
+pw.oninput=()=>{if(up)score()};
+$('#show').onclick=e=>{const on=pw.type==='password';pw.type=on?'text':'password';e.target.setAttribute('aria-pressed',on);e.target.textContent=on?'Hide':'Show'};
+$('#sw').onclick=()=>{up=!up;$('#h').textContent=up?'Create your account':'Welcome back';$('#sub').textContent=up?'Free for teams of three. No card needed.':'Sign in to your workspace.';$('#nameF').hidden=!up;$('#meter').hidden=!up;$('#terms').hidden=!up;$('#rem').hidden=up;$('#go').textContent=up?'Create account':'Sign in';$('#q').textContent=up?'Already have an account?':'New here?';$('#sw').textContent=up?'Sign in':'Create an account';pw.autocomplete=up?'new-password':'current-password';[em,pw,nm].forEach(x=>E(x,''));$('#done').textContent='';if(up)score();(up?nm:em).focus()};
+$('#f').onsubmit=e=>{e.preventDefault();const ok=[V.nm(),V.em(),V.pw()];if(up&&!$('#tc').checked){$('#done').textContent='Please agree to the terms to continue.';$('#tc').focus();return}const bad=[nm,em,pw][ok.indexOf(false)];if(bad){bad.focus();return}
+ const b=$('#go'),t=b.textContent;b.innerHTML='<span class="spin" role="img" aria-label="Working"></span>';b.disabled=true;setTimeout(()=>{b.textContent=t;b.disabled=false;$('#done').textContent=up?'Account created. Check your inbox to confirm your email.':'Signed in. Taking you to your workspace…'},1100)};
+$$('[data-sso]').forEach(b=>b.onclick=()=>toast('Continuing with '+b.dataset.sso));
+</script>
+</body>

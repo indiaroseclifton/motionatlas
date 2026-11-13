@@ -4,7 +4,7 @@
 window.ATLAS_NAV_GROUPS=[
   {name:'Browse',items:[
    ['interactions.html','UI interactions','Modern interactions to embed in sites and apps, with live sliders.','golden-dove'],
-   ['app-interfaces.html','App screens','Dashboards, tables, boards, inboxes and settings screens.','light-mesh'],
+   ['app-interfaces.html','App templates','Dashboards, apps and pages: sixteen finished screens to copy, light and dark.','light-mesh'],
    ['#ux','UI components','Seventy components, every state, in every style.','light-mesh'],
    ['#systems','Design systems','Forty-eight complete visual worlds and real open-source systems.','game-of-life'],
    ['theme-kits.html','Theme kits','Forty-eight kits: tokens, components, backgrounds and assets.','game-of-life'],
@@ -35,8 +35,6 @@ window.ATLAS_NAV_GROUPS=[
    ['#compare','Compare styles','Two styles side by side on the same subject.','ferrofluid'],
    ['#pairings','Style pairings','Styles that work together, and why.','lion-phoenix'],
    ['#vases','Vase studies','One vase, forty treatments.','sand-drawing'],
-   ['#effects','Page effects','Scroll and page techniques with code.','light-ribbons'],
-   ['#motion','Animation studio','Live animations, films, simulations and an easing lab.','bioluminescent-trails'],
    ['#icons','Icon families','Outline, solid, pixel, colour and 3D icon sets.','sketchbook-horse'],
    ['#assets','Extracted assets','Fragments cut from our original mock-ups.','paper-bird'],
    ['chart-styles.html','Chart style guides','Chart palettes and rules for every style.','game-of-life'],

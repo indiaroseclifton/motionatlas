@@ -4,7 +4,7 @@
    Blurbs may carry {tokens}; they are filled from counts.json (made by tools/site-counts.mjs) so the numbers never go stale.
    Fallback numbers below are used only if counts.json cannot be read. */
 (()=>{
- const FALLBACK={siteTemplates:26,siteSections:56,photos:82,icons:3768,iconFamilies:13,kits:48,systems:48,components:70,effects:41,interactions:119,chartTypes:26,diagramTypes:18,flowTemplates:24,devices:8,backgrounds:80,animationStudies:74,tours:6,entries:387,motionGraphics:28,appScreens:8};
+ const FALLBACK={siteTemplates:26,siteSections:56,photos:82,icons:3768,iconFamilies:13,kits:48,systems:48,components:70,effects:41,interactions:119,chartTypes:26,diagramTypes:18,flowTemplates:24,devices:8,backgrounds:80,animationStudies:74,tours:6,entries:387,motionGraphics:28,appScreens:16};
  const TOOLS=[
   {id:'site-builder',group:'Make',name:'Site builder',href:'page-builder.html',film:'paper-bird',
    blurb:'Build a multi-page site from {siteTemplates} templates, {siteSections} sections and {photos} photographs; export HTML or publish it.'},
@@ -22,14 +22,12 @@
    blurb:'The lighter, text-first flowchart editor: write the flow, then drag and connect on the canvas. It opens the same chart as the Flowchart studio.'},
   {id:'motion-graphics',group:'Make',name:'Motion graphics studio',href:'motion-graphics.html',film:'light-ribbons',
    blurb:'Make video: {motionGraphics} animated titles, lower thirds, logo stings and transitions. Edit the words and colours, then export video, GIF or HTML.'},
-  {id:'app-interfaces',group:'Make',name:'App interfaces',href:'app-interfaces.html',film:'light-mesh',
-   blurb:'{appScreens} finished app and tool screens: dashboards, data tables, boards, inboxes, chat and settings. Light and dark, one HTML file each.'},
+  {id:'app-interfaces',group:'Make',name:'App templates',href:'app-interfaces.html',film:'light-mesh',
+   blurb:'{appScreens} finished screens: dashboards, a mobile app, landing and pricing pages, tables, boards, inbox, chat and account screens. Light and dark, one HTML file each.'},
   {id:'interactions',group:'Make',name:'UI interactions',href:'interactions.html',film:'golden-dove',
    blurb:'{interactions} modern interactions to embed in sites and apps. Tune the new ones with live sliders, then copy one HTML file with your settings baked in.'},
   {id:'backgrounds',group:'Make',name:'Background generator',href:'atlas.html#backgrounds',film:'petal-swirl',
    blurb:'Gradients, light and grain: {backgrounds} backgrounds you can tune and export at 4K or as a loop.'},
-  {id:'effects',group:'Library',name:'Landing effects lab',href:'atlas.html#effects',film:'light-ribbons',
-   blurb:'The technique library: {effects} scroll and page effects running live, with tunable settings and copyable code. Come here to learn how an effect is built.'},
   {id:'components',group:'Library',name:'Component lab',href:'atlas.html#ux',film:'light-mesh',
    blurb:'{components} components in every state and every style, with HTML, CSS, React and token export.'},
   {id:'theme-kits',group:'Library',name:'Theme kits',href:'theme-kits.html',film:'game-of-life',
@@ -38,8 +36,6 @@
    blurb:'{icons} searchable icons in {iconFamilies} families, with full packs and SVG, PNG and React export.'},
   {id:'chart-styles',group:'Library',name:'Chart style guides',href:'chart-styles.html',film:'game-of-life',
    blurb:'Chart palettes, type and rules for every atlas style.'},
-  {id:'motion',group:'Library',name:'Animation studio',href:'atlas.html#motion',film:'bioluminescent-trails',
-   blurb:'Watch and study: {animationStudies} live animations, films and simulations, plus an easing lab for tuning curves.'},
   {id:'projects',group:'Your studio',name:'My projects',href:'atlas.html#projects',film:'particle-tree',
    blurb:'Save specimens, kits, sites and boards into a project for a client or an idea.'},
   {id:'moodboard',group:'Your studio',name:'Moodboards',href:'moodboard.html',film:'embroidery',

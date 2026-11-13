@@ -26,7 +26,7 @@ a{color:inherit}button,input,select,textarea{font:inherit;color:inherit}button{c
 .seg button[aria-pressed=true],.seg button[aria-selected=true]{background:var(--panel);color:var(--ink);box-shadow:0 1px 2px rgba(16,24,40,.12)}
 .row{display:flex;align-items:center;gap:10px}.sp{margin-left:auto}
 table{border-collapse:collapse;width:100%}th{font-size:12px;font-weight:600;color:var(--mute);text-align:left}th,td{padding:10px 14px;border-bottom:1px solid var(--line);white-space:nowrap}tbody tr:last-child td{border-bottom:0}
-.scroll{overflow:auto}
+.scroll{overflow:auto;position:relative}
 /* App shell: sidebar, top bar, content */
 .app{display:grid;grid-template-columns:232px minmax(0,1fr);height:100%}
 .side{display:flex;flex-direction:column;gap:4px;padding:14px 10px;background:var(--panel);border-right:1px solid var(--line);overflow:auto}

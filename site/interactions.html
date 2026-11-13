@@ -60,7 +60,7 @@ dialog::backdrop{background:rgba(14,16,24,.6);backdrop-filter:blur(4px)}
 .info h3{margin:6px 0 0;font:600 11px/1 Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
 .info p{margin:0;font-size:14px}
 .meta .built{margin:8px 0 0;font-size:12.5px;color:var(--mute)}.meta .built span{font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.12em;text-transform:uppercase;margin-right:4px}
-.uses{display:flex;flex-wrap:wrap;gap:6px}.uses a{display:inline-flex;align-items:center;min-height:32px;padding:0 12px;border-radius:999px;border:1px solid var(--hair);font-size:13px;text-decoration:none}.uses a:hover{background:var(--soft)}
+.uses{display:flex;flex-wrap:wrap;gap:6px}.uses span,.uses a{display:inline-flex;align-items:center;min-height:32px;padding:0 12px;border-radius:999px;border:1px solid var(--hair);font-size:13px;text-decoration:none}.uses a:hover{background:var(--soft)}
 .prompt{font:12.5px/1.55 'JetBrains Mono',monospace;background:var(--soft);border:1px solid var(--hair);border-radius:10px;padding:12px;white-space:pre-wrap;max-height:200px;overflow:auto}
 .actions{display:flex;flex-wrap:wrap;gap:8px}
 .btn{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 14px;border-radius:10px;border:1px solid var(--hair);background:var(--panel);font-weight:500;font-size:13px;text-decoration:none}
@@ -121,7 +121,7 @@ const pinTools=()=>{const h=document.querySelector('header');document.querySelec
 render();
 const dlg=document.getElementById('dlg'),stage=document.getElementById('stage'),toast=document.getElementById('toast');let cur=null;
 function say(m){toast.textContent=m;toast.classList.add('on');clearTimeout(say.t);say.t=setTimeout(()=>toast.classList.remove('on'),1800)}
-function open(x){cur=x;document.getElementById('dCat').textContent=x.cat;document.getElementById('dTitle').textContent=x.t;document.getElementById('dDesc').textContent=x.d;document.getElementById('dHow').textContent=x.how;document.getElementById('dUse').textContent=x.use;const du=document.getElementById('dUses');du.innerHTML=techs(x).map(id=>`<a href="atlas.html#effects?fx=${id}">${TECH[id]}</a>`).join('')||'Original code';document.getElementById('dPrompt').textContent=x.p;const hs=x.hash?'#'+x.hash:'';document.getElementById('openFull').href=`interactions/demos/${x.id}.html${hs}`;
+function open(x){cur=x;document.getElementById('dCat').textContent=x.cat;document.getElementById('dTitle').textContent=x.t;document.getElementById('dDesc').textContent=x.d;document.getElementById('dHow').textContent=x.how;document.getElementById('dUse').textContent=x.use;const du=document.getElementById('dUses');du.innerHTML=techs(x).map(id=>`<span>${TECH[id]}</span>`).join('')||'Original code';document.getElementById('dPrompt').textContent=x.p;const hs=x.hash?'#'+x.hash:'';document.getElementById('openFull').href=`interactions/demos/${x.id}.html${hs}`;
 TV=null;TD=null;tuneBox.hidden=true;own=null;ownClear.hidden=true;ownStatus.textContent='';const ownBox=document.getElementById('own');ownBox.hidden=true;showPreview();dlg.showModal();code().then(t=>{if(cur===x)ownBox.hidden=!t.includes(SITE+'assets/shelf/')});history.replaceState(null,'',location.pathname+location.search+'#'+x.id)}
 let own=null;
 /* Settings panel: a tunable demo posts its controls and values; we draw sliders and post changes back. */
