@@ -1,0 +1,54 @@
+<!--META {"o":3.5,"t":"CRM pipeline","cat":"Dashboards","tone":"light","d":"A sales pipeline: open value, weighted forecast and win rate, a funnel by stage, a deals table where changing a stage updates every number, and a team activity feed.","how":"Deals are one array and every figure is derived from it: the funnel bars, the open total and the forecast (each deal's value times the chance of its stage). Changing a deal's stage in the table edits the array and redraws, so the bars slide to their new widths.","use":"Sales teams, agencies tracking proposals, recruiting pipelines, fundraising trackers.","p":"Build a CRM pipeline dashboard as one HTML file with no libraries, inside an app shell (sidebar, top bar, content; the sidebar becomes a slide-in menu under 860px). Content: a heading with an owner filter and an Add deal button; four stat cards (open pipeline, weighted forecast, won this quarter, win rate); a funnel card with one horizontal bar per stage (Lead, Qualified, Proposal, Negotiation, Won) showing count and value, with bar widths animated from the data; an activity feed card beside it; and a deals table (deal, company, value, stage as a select, owner avatar, expected close) where changing the stage recalculates the funnel and the stats. Forecast is value times stage probability (10, 30, 50, 75 and 100 percent). Colours are CSS variables with a dark theme."}-->
+<style>/*BASE*/
+.g4{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px}
+.big{font-size:26px;font-weight:700;letter-spacing:-.02em;line-height:1.15;margin-top:2px}
+.two{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:14px;margin:14px 0}
+.fun{display:grid;gap:9px;margin-top:12px}
+.st{display:grid;grid-template-columns:104px minmax(0,1fr) 86px;gap:12px;align-items:center}
+.st small{display:block;color:var(--mute);font-size:12px}
+.bar{height:34px;border-radius:8px;background:var(--soft);overflow:hidden}
+.bar i{display:block;height:100%;min-width:4px;border-radius:8px;background:var(--ac);transition:width .45s cubic-bezier(.2,.8,.2,1)}
+.st:last-child .bar i{background:var(--ok)}
+.st b{text-align:right}
+.feed{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:12px}
+.feed li{display:flex;gap:10px;font-size:13px}.feed small{display:block;color:var(--mute);font-size:12px}
+td select{min-height:32px;border-radius:8px;border:1px solid var(--line);background:var(--panel);padding:0 8px}
+@media(max-width:900px){.two{grid-template-columns:1fr}}
+</style>
+<body>
+<!--SHELL Customers|Search deals and companies-->
+<div class="head"><div><h1>Pipeline</h1><p>Quarter four, 1 October to 31 December.</p></div><span class="sp"></span><label class="sr" for="own">Owner</label><select class="in" id="own"></select><button class="btn pri" id="add">+ Add deal</button></div>
+<section class="g4" aria-label="Pipeline totals" id="stats"></section>
+<div class="two">
+ <section class="card pad"><div class="row"><h2>Deals by stage</h2><span class="sp"></span><span class="mute" id="count"></span></div><div class="fun" id="fun"></div></section>
+ <section class="card pad"><h2>Activity</h2><ul class="feed" id="feed"></ul></section>
+</div>
+<section class="card"><div class="pad" style="padding-bottom:8px"><h2>Open and won deals</h2></div><div class="scroll"><table><thead><tr><th>Deal</th><th>Company</th><th>Value</th><th>Stage</th><th>Owner</th><th>Expected close</th></tr></thead><tbody id="deals"></tbody></table></div></section>
+<!--/SHELL-->
+<script>/*BASEJS*/
+/* DATA: name, company, value, stage index, owner, expected close */
+const STAGES=['Lead','Qualified','Proposal','Negotiation','Won'],CHANCE=[.1,.3,.5,.75,1],LOST=6;
+const DEALS=[['Annual platform licence','Halden Freight',48000,3,'Amara Khan','21 Nov'],['Design system audit','Brightwell Health',18500,2,'Tom Becker','28 Nov'],['Team plan, 60 seats','Odera Studios',21600,4,'Amara Khan','4 Nov'],['Onboarding package','Marlow & Finch',7200,1,'Priya Nair','5 Dec'],['Enterprise rollout','Castellan Bank',96000,2,'Tom Becker','12 Dec'],['Support add-on','Juniper Labs',5400,0,'Priya Nair','19 Dec'],['Analytics module','Northgate Retail',14800,1,'Amara Khan','2 Dec'],['Renewal, two years','Pellow Architects',31200,4,'Priya Nair','7 Nov'],['Pilot, one region','Vasquez Logistics',12000,0,'Tom Becker','15 Dec'],['Training workshops','Ashdown College',8900,3,'Priya Nair','24 Nov']];
+const FEED=[['TB','Tom Becker sent a proposal','Castellan Bank · 20 minutes ago'],['PN','Priya Nair booked a call','Marlow & Finch · 1 hour ago'],['AK','You moved a deal to Negotiation','Halden Freight · 3 hours ago'],['PN','Priya Nair won a renewal','Pellow Architects · Saturday'],['TB','Tom Becker added a lead','Vasquez Logistics · Friday']];
+const gbp=n=>'£'+Math.round(n).toLocaleString('en-GB'),ini=n=>n.split(' ').map(w=>w[0]).join('');
+let owner='Everyone';
+const owners=['Everyone',...new Set(DEALS.map(d=>d[4]))];
+$('#own').innerHTML=owners.map(o=>`<option>${o}</option>`).join('');
+$('#own').onchange=e=>{owner=e.target.value;draw()};
+$('#feed').innerHTML=FEED.map(f=>`<li><span class="av">${f[0]}</span><span>${f[1]}<small>${f[2]}</small></span></li>`).join('');
+function draw(){
+ const list=DEALS.filter(d=>owner==='Everyone'||d[4]===owner),open=list.filter(d=>d[3]<4),won=list.filter(d=>d[3]===4);
+ const sum=a=>a.reduce((t,d)=>t+d[2],0),fore=open.reduce((t,d)=>t+d[2]*CHANCE[d[3]],0),rate=won.length/(won.length+LOST);
+ $('#stats').innerHTML=[['Open pipeline',gbp(sum(open)),open.length+' deals in progress'],['Weighted forecast',gbp(fore),'Value times chance of each stage'],['Won this quarter',gbp(sum(won)),won.length+' deals closed'],['Win rate',Math.round(rate*100)+'%',won.length+' won, '+LOST+' lost']].map(s=>`<article class="card pad"><span class="mute">${s[0]}</span><div class="big num">${s[1]}</div><span class="mute" style="font-size:13px">${s[2]}</span></article>`).join('');
+ const per=STAGES.map((s,i)=>list.filter(d=>d[3]===i)),max=Math.max(1,...per.map(sum));
+ $('#count').textContent=list.length+' deals';
+ /* Keep the bar elements between draws so their widths animate. */
+ if(!$('#fun').children.length)$('#fun').innerHTML=STAGES.map(s=>`<div class="st"><span><b>${s}</b><small></small></span><div class="bar"><i style="width:0"></i></div><b class="num"></b></div>`).join('');
+ $$('#fun .st').forEach((row,i)=>{row.querySelector('small').textContent=per[i].length+(per[i].length===1?' deal':' deals')+' · '+CHANCE[i]*100+'%';row.querySelector('i').style.width=sum(per[i])/max*100+'%';row.lastChild.textContent=gbp(sum(per[i]))});
+ $('#deals').innerHTML=list.map(d=>{const k=DEALS.indexOf(d);return `<tr><td><b>${esc(d[0])}</b></td><td>${esc(d[1])}</td><td class="num">${gbp(d[2])}</td><td><select data-k="${k}" aria-label="Stage for ${esc(d[0])}">${STAGES.map((s,i)=>`<option value="${i}" ${i===d[3]?'selected':''}>${s}</option>`).join('')}</select></td><td><span class="row"><span class="av">${ini(d[4])}</span>${d[4]}</span></td><td class="mute">${d[5]}</td></tr>`}).join('')||'<tr><td colspan="6" class="mute">No deals for this owner yet.</td></tr>';
+}
+$('#deals').onchange=e=>{const s=e.target.closest('select');if(!s)return;const d=DEALS[s.dataset.k];d[3]=+s.value;draw();toast(d[1]+' moved to '+STAGES[d[3]]);$(`#deals select[data-k="${s.dataset.k}"]`)?.focus()};
+$('#add').onclick=()=>{DEALS.unshift(['New deal','Untitled company',10000,0,owner==='Everyone'?'Amara Khan':owner,'31 Dec']);draw();toast('Deal added as a lead')};
+requestAnimationFrame(draw);
+</script>
+</body>

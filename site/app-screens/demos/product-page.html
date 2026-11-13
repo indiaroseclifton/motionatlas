@@ -1,0 +1,144 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Shop product page</title>
+<style>/* Tokens: change these to restyle the whole screen. --ac is the brand colour. */
+:root{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#141824;--mute:#5F677B;--line:#E3E6EE;--soft:#EEF0F6;--ac:#18181B;--ac-ink:#FFFFFF;--ac-soft:#F1F1F3;--ok:#12805C;--warn:#96560A;--bad:#C2362B;--ok-soft:#E3F5EC;--warn-soft:#FCF0D9;--bad-soft:#FBE6E3;--r:12px;--sh:0 1px 2px rgba(16,24,40,.05),0 8px 24px -16px rgba(16,24,40,.22);--font:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:light}
+html[data-theme=dark]{--bg:#0E1117;--panel:#161A23;--ink:#ECEEF4;--mute:#9AA3B5;--line:#272D3A;--soft:#1D2230;--ac:#FAFAFA;--ac-ink:#0E1117;--ac-soft:#272A33;--ok:#4ADE9B;--warn:#F0B454;--bad:#FF8B80;--ok-soft:#12301F;--warn-soft:#33260C;--bad-soft:#3A1714;--sh:0 1px 2px rgba(0,0,0,.45);color-scheme:dark}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:14px/1.5 var(--font);-webkit-font-smoothing:antialiased}
+h1,h2,h3,p{margin:0}h1{font-size:20px;line-height:1.2;letter-spacing:-.01em}h2{font-size:15px}h3{font-size:13px}
+a{color:inherit}button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px;border-radius:6px}
+[hidden]{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.mute{color:var(--mute)}.num{font-variant-numeric:tabular-nums}
+.ic{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:36px;padding:0 13px;border-radius:9px;border:1px solid var(--line);background:var(--panel);font-weight:600;font-size:13px;white-space:nowrap;text-decoration:none}
+.btn:hover{background:var(--soft)}.btn.pri{background:var(--ac);border-color:var(--ac);color:var(--ac-ink)}.btn.pri:hover{filter:brightness(1.08)}
+.btn.ghost{border-color:transparent;background:none}.btn.ghost:hover{background:var(--soft)}.btn.sq{width:36px;padding:0}.btn:disabled{opacity:.5;cursor:default}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh)}
+.pad{padding:16px}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:99px;font-size:12px;font-weight:600;background:var(--soft);color:var(--mute);white-space:nowrap}
+.badge.ok{background:var(--ok-soft);color:var(--ok)}.badge.warn{background:var(--warn-soft);color:var(--warn)}.badge.bad{background:var(--bad-soft);color:var(--bad)}.badge.ac{background:var(--ac-soft);color:var(--ac)}
+.badge i{width:6px;height:6px;border-radius:50%;background:currentColor}
+.av{display:grid;place-items:center;flex:none;width:30px;height:30px;border-radius:50%;background:var(--ac-soft);color:var(--ac);font-size:11.5px;font-weight:700}
+.in{min-height:36px;padding:0 11px;border:1px solid var(--line);border-radius:9px;background:var(--panel);min-width:0}
+.in::placeholder{color:var(--mute)}
+.seg{display:inline-flex;padding:3px;border-radius:10px;background:var(--soft);gap:2px}
+.seg button{min-height:30px;padding:0 11px;border:0;border-radius:8px;background:none;font-size:13px;font-weight:600;color:var(--mute)}
+.seg button[aria-pressed=true],.seg button[aria-selected=true]{background:var(--panel);color:var(--ink);box-shadow:0 1px 2px rgba(16,24,40,.12)}
+.row{display:flex;align-items:center;gap:10px}.sp{margin-left:auto}
+table{border-collapse:collapse;width:100%}th{font-size:12px;font-weight:600;color:var(--mute);text-align:left}th,td{padding:10px 14px;border-bottom:1px solid var(--line);white-space:nowrap}tbody tr:last-child td{border-bottom:0}
+.scroll{overflow:auto;position:relative}
+/* App shell: sidebar, top bar, content */
+.app{display:grid;grid-template-columns:232px minmax(0,1fr);height:100%}
+.side{display:flex;flex-direction:column;gap:4px;padding:14px 10px;background:var(--panel);border-right:1px solid var(--line);overflow:auto}
+.logo{display:flex;align-items:center;gap:9px;padding:4px 8px 14px;font-weight:700;font-size:15px}
+.logo span{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--ac);color:var(--ac-ink)}
+.side a{display:flex;align-items:center;gap:10px;min-height:36px;padding:0 10px;border-radius:9px;color:var(--mute);font-weight:500;text-decoration:none}
+.side a:hover{background:var(--soft);color:var(--ink)}.side a[aria-current=page]{background:var(--ac-soft);color:var(--ac);font-weight:600}
+.side a b{margin-left:auto;font-size:11.5px;padding:0 7px;border-radius:99px;background:var(--soft)}
+.side .who{margin-top:auto;display:flex;align-items:center;gap:9px;padding:10px 8px 2px;border-top:1px solid var(--line);font-size:13px}
+.side .who small{display:block;color:var(--mute);font-size:12px}
+.work{display:flex;flex-direction:column;min-width:0;min-height:0}
+.top{display:flex;align-items:center;gap:10px;padding:10px 20px;border-bottom:1px solid var(--line);background:var(--panel)}
+.top .find{position:relative;flex:1;max-width:340px}.top .find .ic{position:absolute;left:10px;top:9px;color:var(--mute)}.top .find input{width:100%;padding-left:34px}
+.main{flex:1;min-height:0;overflow:auto;padding:20px}
+.head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}.head p{color:var(--mute);font-size:13px}
+#menu{display:none}
+@media(max-width:860px){.app{grid-template-columns:1fr}#menu{display:inline-flex}.side{position:fixed;inset:0 auto 0 0;width:250px;z-index:30;transform:translateX(-102%);transition:transform .2s;box-shadow:0 0 0 100vmax rgba(0,0,0,0)}.side.open{transform:none;box-shadow:0 0 0 100vmax rgba(10,12,20,.45)}.top{padding:10px 14px}.main{padding:14px}.top .find{display:none}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+html,body{height:auto}body{font-size:15px}
+.w{max-width:1120px;margin:0 auto;padding:0 20px}
+.nav{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav .w{display:flex;align-items:center;gap:20px;height:58px}.nav a{text-decoration:none;font-weight:500;color:var(--mute);font-size:14px}.nav a:hover{color:var(--ink)}
+.lg{font-weight:700;font-size:17px;letter-spacing:-.01em;color:var(--ink)!important}
+.pp{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:40px;padding:28px 0 48px;align-items:start}
+.pic{border-radius:18px;overflow:hidden;aspect-ratio:1;background:var(--soft)}.pic svg{display:block;width:100%;height:100%}
+.th{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}.th button{padding:0;border:2px solid transparent;border-radius:12px;overflow:hidden;aspect-ratio:1;background:var(--soft)}.th button[aria-pressed=true]{border-color:var(--ink)}.th svg{display:block;width:100%;height:100%}
+.info{display:grid;gap:18px}.info h1{font-size:30px;letter-spacing:-.02em}
+.crumb{font-size:13px;color:var(--mute)}
+.stars{color:#E0A100;letter-spacing:2px}
+.price{font-size:24px;font-weight:700}.price s{font-size:16px;font-weight:500;color:var(--mute);margin-left:8px}
+fieldset{border:0;margin:0;padding:0;min-width:0}legend{padding:0;font-weight:600;font-size:13px;margin-bottom:8px}legend span{font-weight:400;color:var(--mute)}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opts input{position:absolute;opacity:0;pointer-events:none}
+.swt span{display:block;width:34px;height:34px;border-radius:50%;background:var(--c);border:3px solid var(--bg);box-shadow:0 0 0 1px var(--line);cursor:pointer}.swt input:checked+span{box-shadow:0 0 0 2px var(--ink)}.swt input:focus-visible+span{outline:2px solid var(--ac);outline-offset:3px}
+.chip span{display:grid;place-items:center;min-width:52px;height:40px;padding:0 12px;border:1px solid var(--line);border-radius:10px;font-weight:600;font-size:13px;cursor:pointer;background:var(--panel)}.chip input:checked+span{background:var(--ink);color:var(--bg);border-color:var(--ink)}.chip input:focus-visible+span{outline:2px solid var(--ac);outline-offset:2px}.chip input:disabled+span{color:var(--mute);text-decoration:line-through;cursor:not-allowed;background:var(--soft)}
+.stp{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--panel)}.stp button{width:40px;height:44px;border:0;background:none;font-size:18px}.stp button:hover{background:var(--soft)}.stp b{min-width:36px;text-align:center}
+.buy{display:flex;gap:10px}.buy .btn{flex:1;min-height:46px;font-size:15px}
+.notes{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:14px;color:var(--mute)}.notes li::before{content:"✓ ";color:var(--ok);font-weight:700}
+details{border-top:1px solid var(--line);padding:12px 0}details:last-of-type{border-bottom:1px solid var(--line)}summary{cursor:pointer;font-weight:600;list-style:none;display:flex}summary::-webkit-details-marker{display:none}summary::after{content:"+";margin-left:auto;font-size:18px;line-height:1;transition:transform .2s}details[open] summary::after{transform:rotate(45deg)}details p{margin-top:8px;color:var(--mute)}
+.band{border-top:1px solid var(--line);padding:40px 0}.band h2{font-size:22px;letter-spacing:-.01em;margin-bottom:18px}
+.rv{display:grid;grid-template-columns:260px minmax(0,1fr);gap:36px}.avg{font-size:44px;font-weight:700;letter-spacing:-.03em;line-height:1}
+.dist{display:grid;gap:6px;margin-top:14px;font-size:13px}.dist div{display:grid;grid-template-columns:14px 1fr 34px;gap:8px;align-items:center}.dist i{height:6px;border-radius:3px;background:var(--soft);overflow:hidden}.dist i b{display:block;height:100%;background:var(--ink);border-radius:3px}
+.rvs{display:grid;gap:18px}.rvs article{padding-bottom:18px;border-bottom:1px solid var(--line)}.rvs article:last-child{border:0}.rvs p{margin-top:6px}
+.rel{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px}.rel a{text-decoration:none;display:grid;gap:8px}.rel .pic{border-radius:14px;transition:transform .25s}.rel a:hover .pic{transform:translateY(-3px)}
+.scrim{position:fixed;inset:0;background:rgba(10,12,20,.45);z-index:40;opacity:0;pointer-events:none;transition:opacity .2s}.scrim.on{opacity:1;pointer-events:auto}
+.bag{position:fixed;inset:0 0 0 auto;width:min(400px,100vw);z-index:41;background:var(--panel);border-left:1px solid var(--line);display:flex;flex-direction:column;transform:translateX(102%);transition:transform .28s cubic-bezier(.2,.8,.2,1);visibility:hidden}.bag.on{transform:none;visibility:visible}
+.bag header,.bag footer{padding:16px 18px;border-bottom:1px solid var(--line)}.bag footer{border-bottom:0;border-top:1px solid var(--line);display:grid;gap:12px}
+.bag ul{list-style:none;margin:0;padding:6px 18px;flex:1;overflow:auto}.bag li{display:grid;grid-template-columns:64px 1fr auto;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);align-items:center}.bag li .pic{border-radius:10px}.bag small{display:block;color:var(--mute)}
+.bag .stp button{width:28px;height:28px;font-size:15px}.bag .stp b{min-width:26px;font-size:13px}
+.lnk{all:unset;cursor:pointer;font-size:12px;color:var(--mute);text-decoration:underline}.lnk:focus-visible{outline:2px solid var(--ac)}
+@media(max-width:820px){.pp{grid-template-columns:1fr;gap:22px;padding-top:16px}.rv{grid-template-columns:1fr;gap:20px}.nav .hide{display:none}.info h1{font-size:26px}}
+</style>
+<body>
+<header class="nav"><div class="w"><a class="lg" href="#">Fernhill</a><a class="hide" href="#">Lighting</a><a class="hide" href="#">Furniture</a><a class="hide" href="#">Journal</a><span class="sp"></span><button class="btn sq ghost" id="theme" aria-pressed="false" aria-label="Switch to dark theme"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.500A8 8 0 0 1 9.500 4a8 8 0 1 0 10.500 10.500Z"/></svg></button><button class="btn" id="open" aria-haspopup="dialog">Bag <b class="num" id="n">0</b></button></div></header>
+<main class="w">
+<div class="pp">
+ <section aria-label="Product pictures"><div class="pic" id="pic" role="img"></div><div class="th" id="th"></div></section>
+ <section class="info">
+  <div><p class="crumb">Lighting / Table lamps</p><h1>Arc table lamp</h1><p class="row" style="margin-top:6px"><span class="stars" aria-hidden="true">★★★★★</span><span class="mute">4.8 out of 5, 126 reviews</span></p></div>
+  <p class="price num">£89 <s>£110</s> <span class="badge ok">Save £21</span></p>
+  <fieldset><legend>Colour: <span id="cn"></span></legend><div class="opts" id="cols"></div></fieldset>
+  <fieldset><legend>Size</legend><div class="opts" id="sizes"></div></fieldset>
+  <div class="buy"><span class="stp" role="group" aria-label="Quantity"><button id="less" aria-label="One fewer">−</button><b class="num" id="qty" aria-live="polite">1</b><button id="more" aria-label="One more">+</button></span><button class="btn pri" id="addb">Add to bag</button></div>
+  <ul class="notes"><li>Free delivery over £50, arrives in 2 to 4 days</li><li>30-day returns, no questions</li><li>Two-year guarantee on all lighting</li></ul>
+  <div><details open><summary>Description</summary><p>A spun-steel dome on a slim stem, with a warm dimmable bulb included. The shade tilts to throw light where you read, and the weighted base keeps it steady.</p></details><details><summary>Materials and care</summary><p>Powder-coated steel, cast-iron base, braided cotton cable. Wipe with a dry cloth. Bulb: E14, 4 watt LED.</p></details><details><summary>Dimensions</summary><p>Small: 32 cm tall, 22 cm shade. Medium: 44 cm tall, 28 cm shade. Large: 58 cm tall, 34 cm shade.</p></details></div>
+ </section>
+</div>
+<section class="band"><h2>Reviews</h2><div class="rv"><div><div class="avg num">4.8</div><span class="stars" aria-hidden="true">★★★★★</span><p class="mute">Based on 126 reviews</p><div class="dist" id="dist"></div></div><div class="rvs" id="rvs"></div></div></section>
+<section class="band"><h2>Goes well with</h2><div class="rel" id="rel"></div></section>
+</main>
+<div class="scrim" id="scrim"></div>
+<aside class="bag" id="bag" role="dialog" aria-modal="true" aria-labelledby="bt" tabindex="-1"><header class="row"><h2 id="bt">Your bag</h2><span class="sp"></span><button class="btn sq ghost" id="shut" aria-label="Close bag">✕</button></header><ul id="lines"></ul><footer><div class="row"><span>Subtotal</span><b class="sp num" id="sub"></b></div><button class="btn pri" id="pay" style="min-height:44px">Checkout</button><span class="mute" style="font-size:13px;text-align:center">Delivery is worked out at checkout.</span></footer></aside>
+<script>/* Shared helpers: element lookup, theme switch (add #dark to the address to start dark), mobile menu. */
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const root=document.documentElement;
+function setTheme(dark){root.dataset.theme=dark?'dark':'light';const b=$('#theme');if(b){b.setAttribute('aria-pressed',dark);b.setAttribute('aria-label',dark?'Switch to light theme':'Switch to dark theme')}document.dispatchEvent(new Event('themechange'))}
+setTheme(/dark/.test(location.hash));addEventListener('hashchange',()=>setTheme(/dark/.test(location.hash)));
+$('#theme')?.addEventListener('click',()=>setTheme(root.dataset.theme!=='dark'));
+{const m=$('#menu'),s=$('.side');if(m&&s){const set=o=>{s.classList.toggle('open',o);m.setAttribute('aria-expanded',o)};m.addEventListener('click',()=>set(!s.classList.contains('open')));addEventListener('keydown',e=>{if(e.key==='Escape')set(false)});document.addEventListener('click',e=>{if(s.classList.contains('open')&&!s.contains(e.target)&&!m.contains(e.target))set(false)})}}
+function toast(t){let n=$('#toast');if(!n){n=document.createElement('div');n.id='toast';n.setAttribute('role','status');n.style.cssText='position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 14px;border-radius:10px;font-size:13px;font-weight:600;z-index:60;transition:opacity .2s;max-width:calc(100vw - 32px)';document.body.append(n)}n.textContent=t;n.style.opacity=1;clearTimeout(toast.t);toast.t=setTimeout(()=>n.style.opacity=0,2000)}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+/* DATA */
+const PRICE=89,COLOURS=[['Clay','#C4633F'],['Sage','#7D9072'],['Ink','#2B3350'],['Butter','#E8C766']],SIZES=[['Small',true],['Medium',true],['Large',false]];
+const DIST=[[5,104],[4,16],[3,4],[2,1],[1,1]],REVIEWS=[['Hannah W.','5','Looks far more expensive than it is','The clay colour is exactly as pictured and the dimmer is smooth. It sits on my desk and I use it every evening.'],['Marcus O.','5','Sturdy and well packed','Heavy base, so it does not tip when the cat gets involved. Arrived in three days.'],['Yuki T.','4','Lovely, cable could be longer','Great light for reading. I needed an extension lead to reach the socket behind the sofa.']];
+const RELATED=[['Arc floor lamp','£149','#7D9072'],['Dome pendant','£72','#2B3350'],['Arc wall light','£64','#E8C766'],['Reading lamp','£58','#C4633F']];
+/* The product picture: an SVG lamp drawn from a colour. v picks one of four views. */
+const VIEWS=['','rotate(-9 100 110)','translate(-110 -70) scale(2.1)','translate(52 70) scale(.5)'],VNAME=['front','tilted','shade close-up','on a table'];
+const lamp=(c,v=0)=>`<svg viewBox="0 0 200 200" aria-hidden="true"><rect width="200" height="200" fill="${c}" opacity=".16"/>${v===3?'<rect y="162" width="200" height="38" fill="var(--line)"/>':''}<g transform="${VIEWS[v]}"><ellipse cx="100" cy="166" rx="34" ry="5" fill="rgba(0,0,0,.12)"/><rect x="97.500" y="96" width="5" height="62" fill="#2A2A2E"/><ellipse cx="100" cy="160" rx="27" ry="5.500" fill="#2A2A2E"/><path d="M58 98a42 42 0 0 1 84 0Z" fill="${c}"/><path d="M58 98a42 42 0 0 1 20-35.800A60 60 0 0 0 70 98Z" fill="rgba(255,255,255,.22)"/><ellipse cx="100" cy="98" rx="42" ry="5" fill="rgba(255,244,214,.85)"/></g></svg>`;
+let col=0,size=1,qty=1,view=0;const BAG=[];
+$('#cols').innerHTML=COLOURS.map(([n,c],i)=>`<label class="swt"><input type="radio" name="col" value="${i}" ${i?'':'checked'}><span style="--c:${c}"></span><span class="sr">${n}</span></label>`).join('');
+$('#sizes').innerHTML=SIZES.map(([n,ok],i)=>`<label class="chip"><input type="radio" name="size" value="${i}" ${i===size?'checked':''} ${ok?'':'disabled'}><span>${n}${ok?'':'<span class="sr">, sold out</span>'}</span></label>`).join('');
+function gallery(){const c=COLOURS[col];$('#cn').textContent=c[0];$('#pic').innerHTML=lamp(c[1],view);$('#pic').setAttribute('aria-label','Arc table lamp in '+c[0]+', '+VNAME[view]);
+ $('#th').innerHTML=VIEWS.map((_,i)=>`<button aria-pressed="${i===view}" aria-label="Show ${VNAME[i]}" data-v="${i}">${lamp(c[1],i)}</button>`).join('')}
+$('#th').onclick=e=>{const b=e.target.closest('button');if(b){view=+b.dataset.v;gallery();$(`#th [data-v="${view}"]`).focus()}};
+$('#cols').onchange=e=>{col=+e.target.value;gallery()};$('#sizes').onchange=e=>{size=+e.target.value};
+const setQty=n=>{qty=Math.max(1,Math.min(9,n));$('#qty').textContent=qty};$('#less').onclick=()=>setQty(qty-1);$('#more').onclick=()=>setQty(qty+1);
+const gbp=n=>'£'+n.toLocaleString('en-GB');
+function bag(){const n=BAG.reduce((a,l)=>a+l.q,0);$('#n').textContent=n;$('#open').setAttribute('aria-label','Bag, '+n+(n===1?' item':' items'));$('#sub').textContent=gbp(n*PRICE);$('#pay').disabled=!n;
+ $('#lines').innerHTML=BAG.map((l,i)=>`<li><div class="pic">${lamp(COLOURS[l.c][1])}</div><div><b>Arc table lamp</b><small>${COLOURS[l.c][0]}, ${SIZES[l.s][0]}</small><span class="stp" role="group" aria-label="Quantity" style="margin-top:6px"><button data-i="${i}" data-d="-1" aria-label="One fewer">−</button><b class="num">${l.q}</b><button data-i="${i}" data-d="1" aria-label="One more">+</button></span></div><div style="text-align:right"><b class="num">${gbp(l.q*PRICE)}</b><br><button class="lnk" data-rm="${i}">Remove</button></div></li>`).join('')||'<li style="display:block;border:0;text-align:center;padding:40px 0" class="mute">Your bag is empty.</li>'}
+let opener=null;
+const show=o=>{$('#bag').classList.toggle('on',o);$('#scrim').classList.toggle('on',o);if(o){opener=document.activeElement;$('#bag').focus()}else opener?.focus()};
+$('#open').onclick=()=>show(true);$('#shut').onclick=$('#scrim').onclick=()=>show(false);
+addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#bag').classList.contains('on'))show(false)});
+$('#addb').onclick=()=>{const l=BAG.find(l=>l.c===col&&l.s===size);l?l.q+=qty:BAG.push({c:col,s:size,q:qty});setQty(1);bag();show(true)};
+$('#lines').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.rm)BAG.splice(+b.dataset.rm,1);else{const l=BAG[b.dataset.i];l.q+=+b.dataset.d;if(l.q<1)BAG.splice(+b.dataset.i,1)}bag();$('#bag').focus()};
+$('#pay').onclick=()=>{BAG.length=0;bag();show(false);toast('Order placed. Thank you!')};
+const total=DIST.reduce((a,d)=>a+d[1],0);
+$('#dist').innerHTML=DIST.map(([s,n])=>`<div><span>${s}</span><i role="img" aria-label="${n} reviews with ${s} stars"><b style="width:${n/total*100}%"></b></i><span class="mute num">${n}</span></div>`).join('');
+$('#rvs').innerHTML=REVIEWS.map(r=>`<article><div class="row"><span class="stars" role="img" aria-label="${r[1]} out of 5 stars">${'★'.repeat(+r[1])}<span style="opacity:.25">${'★'.repeat(5-r[1])}</span></span><b>${r[2]}</b></div><p>${r[3]}</p><p class="mute" style="font-size:13px">${r[0]} · Verified buyer</p></article>`).join('');
+$('#rel').innerHTML=RELATED.map(([n,p,c])=>`<a href="#"><div class="pic">${lamp(c,1)}</div><b>${n}</b><span class="mute num">${p}</span></a>`).join('');
+gallery();bag();
+</script>
+</body>
+</html>

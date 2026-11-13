@@ -1,0 +1,58 @@
+<!--META {"o":10.5,"t":"Product inventory","cat":"Tables & lists","tone":"light","d":"A stock room screen: totals that react, search and category filters, a low-stock switch, stock you adjust in place with plus and minus, a live status for every row and a dialog to add a product.","how":"Products are an array. Status is never stored, it is worked out from the stock number each time the table draws, so pressing plus or minus changes the badge, the low-stock count and the stock value together. The add form is a native dialog element, which handles focus and Escape for you.","use":"Shop back offices, warehouse and stock tools, catalogue admin, any list people edit in place.","p":"Build a product inventory screen as one HTML file with no libraries, inside an app shell (sidebar, top bar, content; sidebar becomes a slide-in menu under 860px). A heading with an Add product button; four stat cards (products, low stock, out of stock, stock value) computed from the data; a toolbar with a search field, a category select and a Low stock only switch (role=switch); and a table with a colour swatch and name, SKU, category, price, a stock stepper with minus and plus buttons around the number, a status badge derived from stock (In stock, Low under 10, Out at 0) and a Listed switch. Adjusting stock updates the stats at once. Add product opens a native dialog with name, category, price and stock fields and validation, and adds a row. Show an empty state when nothing matches. Colours are CSS variables with a dark theme."}-->
+<style>/*BASE*/
+.g4{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:14px}
+.big{font-size:26px;font-weight:700;letter-spacing:-.02em;line-height:1.15;margin-top:2px}
+.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line)}
+.bar .in{flex:1 1 180px}.bar select.in{flex:0 1 170px}
+.sw{all:unset;box-sizing:border-box;flex:none;width:40px;height:24px;border-radius:99px;background:var(--line);position:relative;cursor:pointer}.sw::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .15s}.sw[aria-checked=true]{background:var(--ac)}.sw[aria-checked=true]::after{transform:translateX(16px)}.sw:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+html[data-theme=dark] .sw[aria-checked=true]::after{background:var(--ac-ink)}
+.pr{display:flex;align-items:center;gap:10px}.pr i{width:34px;height:34px;border-radius:9px;flex:none}
+.stp{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.stp button{width:30px;height:30px;border:0;background:none;font-size:16px;line-height:1}.stp button:hover{background:var(--soft)}.stp b{min-width:38px;text-align:center}
+dialog{border:1px solid var(--line);border-radius:16px;background:var(--panel);color:var(--ink);padding:20px;width:min(420px,calc(100vw - 32px));box-shadow:0 24px 60px -20px rgba(0,0,0,.4)}
+dialog::backdrop{background:rgba(10,12,20,.45)}
+dialog form{display:grid;gap:12px}dialog label{display:grid;gap:5px;font-size:13px;font-weight:600}.f2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.err{color:var(--bad);font-size:13px;min-height:1.2em}
+</style>
+<body>
+<!--SHELL Files|Search the whole shop-->
+<div class="head"><div><h1>Inventory</h1><p>Stock across the Leeds warehouse, counted this morning.</p></div><span class="sp"></span><button class="btn pri" id="add">+ Add product</button></div>
+<section class="g4" aria-label="Stock totals" id="stats"></section>
+<section class="card"><div class="bar"><label class="sr" for="q">Search products</label><input class="in" id="q" type="search" placeholder="Search by name or SKU"><label class="sr" for="cat">Category</label><select class="in" id="cat"></select><span class="row"><button class="sw" id="low" role="switch" aria-checked="false" aria-labelledby="lowl"></button><span id="lowl">Low stock only</span></span></div>
+<div class="scroll"><table><thead><tr><th>Product</th><th>SKU</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th>Listed</th></tr></thead><tbody id="rows"></tbody></table></div></section>
+<dialog id="dlg" aria-labelledby="dt"><form id="form" novalidate><h2 id="dt">Add a product</h2>
+<label>Name<input class="in" name="name" autocomplete="off"></label>
+<label>Category<select class="in" name="cat"></select></label>
+<div class="f2"><label>Price, £<input class="in" name="price" inputmode="decimal"></label><label>Stock<input class="in" name="stock" inputmode="numeric" value="0"></label></div>
+<p class="err" id="err" role="alert"></p>
+<div class="row"><span class="sp"></span><button class="btn" type="button" id="cancel">Cancel</button><button class="btn pri">Add product</button></div></form></dialog>
+<!--/SHELL-->
+<script>/*BASEJS*/
+/* DATA: name, SKU, category, price, stock, listed, swatch colour */
+const LOW=10,ITEMS=[['Linen throw, oat','TX-1042','Textiles',68,34,true,'#D9C7A8'],['Stoneware mug, moss','CR-2210','Ceramics',18,7,true,'#7A8C6A'],['Beeswax candle set','HM-3015','Home',24,0,true,'#E6B450'],['Oak serving board','KT-4107','Kitchen',42,58,true,'#A9764A'],['Wool cushion, rust','TX-1077','Textiles',39,12,true,'#B5553C'],['Speckled bowl, large','CR-2254','Ceramics',32,4,true,'#C9C2B4'],['Brass candle holder','HM-3090','Home',27,21,false,'#C8A24A'],['Linen apron, ink','KT-4160','Kitchen',36,9,true,'#2F3A56'],['Glass carafe','KT-4188','Kitchen',29,0,false,'#9CC3C9'],['Cotton napkins, set of 4','TX-1103','Textiles',22,46,true,'#E8DDD0']];
+const CATS=['All categories',...new Set(ITEMS.map(i=>i[2]))];
+let q='',cat=CATS[0],low=false;
+const gbp=n=>'£'+n.toLocaleString('en-GB',{minimumFractionDigits:n%1?2:0,maximumFractionDigits:2});
+const state=n=>n===0?['bad','Out of stock']:n<LOW?['warn','Low stock']:['ok','In stock'];
+$('#cat').innerHTML=CATS.map(c=>`<option>${c}</option>`).join('');$('#form [name=cat]').innerHTML=CATS.slice(1).map(c=>`<option>${c}</option>`).join('');
+function stats(){const v=ITEMS.reduce((a,i)=>a+i[3]*i[4],0);
+ $('#stats').innerHTML=[['Products',ITEMS.length,ITEMS.filter(i=>i[5]).length+' listed in the shop'],['Low stock',ITEMS.filter(i=>i[4]>0&&i[4]<LOW).length,'Fewer than '+LOW+' left'],['Out of stock',ITEMS.filter(i=>!i[4]).length,'Hidden from buyers'],['Stock value',gbp(v),'At retail price']].map(s=>`<article class="card pad"><span class="mute">${s[0]}</span><div class="big num">${s[1]}</div><span class="mute" style="font-size:13px">${s[2]}</span></article>`).join('')}
+function rows(){const list=ITEMS.filter(i=>(cat===CATS[0]||i[2]===cat)&&(!low||i[4]<LOW)&&(i[0]+i[1]).toLowerCase().includes(q));
+ $('#rows').innerHTML=list.map(i=>{const k=ITEMS.indexOf(i),s=state(i[4]);return `<tr><td><span class="pr"><i style="background:${i[6]}"></i><b>${esc(i[0])}</b></span></td><td class="num mute">${i[1]}</td><td>${i[2]}</td><td class="num">${gbp(i[3])}</td><td><span class="stp" role="group" aria-label="Stock for ${esc(i[0])}"><button data-k="${k}" data-d="-1" aria-label="Remove one" ${i[4]?'':'disabled'}>−</button><b class="num" aria-live="polite">${i[4]}</b><button data-k="${k}" data-d="1" aria-label="Add one">+</button></span></td><td><span class="badge ${s[0]}"><i></i>${s[1]}</span></td><td><button class="sw" role="switch" data-l="${k}" aria-checked="${i[5]}" aria-label="${esc(i[0])} listed in the shop"></button></td></tr>`}).join('')||'<tr><td colspan="7" class="mute" style="padding:28px 14px;text-align:center">No products match. Clear the search or filters to see everything.</td></tr>'}
+const draw=()=>{stats();rows()};
+$('#q').oninput=e=>{q=e.target.value.trim().toLowerCase();rows()};$('#cat').onchange=e=>{cat=e.target.value;rows()};
+$('#low').onclick=e=>{low=!low;e.currentTarget.setAttribute('aria-checked',low);rows()};
+$('#rows').onclick=e=>{const b=e.target.closest('button');if(!b)return;
+ if(b.dataset.d){const i=ITEMS[b.dataset.k];i[4]=Math.max(0,i[4]+ +b.dataset.d);draw();$(`#rows button[data-k="${b.dataset.k}"][data-d="${i[4]||b.dataset.d==='1'?b.dataset.d:'1'}"]`)?.focus()}
+ else if(b.dataset.l){const i=ITEMS[b.dataset.l];i[5]=!i[5];draw();$(`#rows [data-l="${b.dataset.l}"]`)?.focus();toast(i[0]+(i[5]?' is listed':' is hidden'))}};
+const dlg=$('#dlg'),form=$('#form');
+$('#add').onclick=()=>{form.reset();$('#err').textContent='';dlg.showModal();form.name.focus()};$('#cancel').onclick=()=>dlg.close();
+dlg.onclick=e=>{if(e.target===dlg)dlg.close()};
+form.onsubmit=e=>{e.preventDefault();const name=form.name.value.trim(),price=parseFloat(form.price.value),stock=parseInt(form.stock.value,10);
+ if(!name){$('#err').textContent='Give the product a name.';form.name.focus();return}
+ if(!(price>0)){$('#err').textContent='Enter a price above zero.';form.price.focus();return}
+ if(!(stock>=0)){$('#err').textContent='Stock must be zero or more.';form.stock.focus();return}
+ const c=form.cat.value;ITEMS.unshift([name,c.slice(0,2).toUpperCase()+'-'+(5000+ITEMS.length),c,price,stock,true,'#B8BCC8']);dlg.close();draw();toast(name+' added')};
+draw();
+</script>
+</body>

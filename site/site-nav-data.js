@@ -4,7 +4,7 @@
 window.ATLAS_NAV_GROUPS=[
   {name:'Browse',items:[
    ['interactions.html','UI interactions','Modern interactions to embed in sites and apps, with live sliders.','golden-dove'],
-   ['app-interfaces.html','App templates','Dashboards, apps and pages: sixteen finished screens to copy, light and dark.','light-mesh'],
+   ['app-interfaces.html','App templates','Dashboards, apps and pages: twenty-two finished screens to copy, light and dark.','light-mesh'],
    ['#ux','UI components','Seventy components, every state, in every style.','light-mesh'],
    ['#systems','Design systems','Forty-eight complete visual worlds and real open-source systems.','game-of-life'],
    ['theme-kits.html','Theme kits','Forty-eight kits: tokens, components, backgrounds and assets.','game-of-life'],

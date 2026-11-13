@@ -1,0 +1,66 @@
+<!--META {"o":9.5,"t":"Project timeline","cat":"Work & projects","tone":"light","d":"A Gantt-style timeline: phases you can fold, task bars with progress, milestones, a today line and a week or day zoom. Pick a task to change its progress.","how":"Every bar is placed from two numbers, a start day and a length, multiplied by one CSS variable for the width of a day. Zooming only changes that variable. The names column is sticky so it stays put while the timeline scrolls sideways.","use":"Project and release planning, agency schedules, roadmaps, construction and event plans.","p":"Build a project timeline (Gantt chart) as one HTML file with no libraries, inside an app shell (sidebar, top bar, content; sidebar becomes a slide-in menu under 860px). A heading with overall progress, a Weeks / Days zoom switch and a Today button. The chart is a horizontally scrolling grid covering eight weeks: a sticky left column of names, a sticky header of week labels (and day numbers when zoomed in), weekly grid lines and a vertical today line. Tasks are grouped into four phases that collapse with a button (aria-expanded). Each task is a button positioned with left and width computed from start day and duration times a --cw CSS variable, with an inner fill for progress; milestones are diamonds. Selecting a task shows a details card with dates, owner, a status badge and a range slider that updates the bar and the overall progress. Colours are CSS variables with a dark theme."}-->
+<style>/*BASE*/
+.gt{--cw:18px;--lab:210px;overflow:hidden}
+.gt.z2{--cw:38px}
+.grid{position:relative;width:calc(var(--lab) + 56*var(--cw))}
+.rw{display:flex;border-bottom:1px solid var(--line);min-height:42px}
+.rw:last-child{border-bottom:0}
+.lb{position:sticky;left:0;z-index:3;flex:none;width:var(--lab);display:flex;align-items:center;gap:8px;padding:0 12px;background:var(--panel);border-right:1px solid var(--line);font-size:13px;overflow:hidden;white-space:nowrap}
+.lb span{overflow:hidden;text-overflow:ellipsis}
+.tr{position:relative;flex:1;background:repeating-linear-gradient(90deg,var(--line) 0 1px,transparent 1px calc(7*var(--cw)))}
+.hd{position:sticky;top:0;z-index:4;background:var(--panel)}
+.hd .tr{display:flex;background:none}
+.wk{flex:none;width:calc(7*var(--cw));padding:8px 8px 6px;font-size:12px;font-weight:600;color:var(--mute);border-left:1px solid var(--line)}
+.dn{display:none;margin-top:4px;font-weight:500}.z2 .dn{display:flex}.dn i{flex:1;font-style:normal;text-align:center;font-size:11px}
+.grp .lb{font-weight:700}.grp{background:var(--soft)}.grp .lb,.grp .tr{background:var(--soft)}
+.fold{all:unset;cursor:pointer;display:grid;place-items:center;width:22px;height:22px;border-radius:6px;transition:transform .15s}.fold:focus-visible{outline:2px solid var(--ac)}.fold[aria-expanded=false]{transform:rotate(-90deg)}
+.tk{position:absolute;top:8px;height:26px;left:calc(var(--s)*var(--cw));width:calc(var(--d)*var(--cw));border:0;padding:0;border-radius:7px;background:color-mix(in srgb,var(--c) 28%,var(--panel));overflow:hidden;text-align:left;transition:left .25s,width .25s}
+.tk i{position:absolute;inset:0 auto 0 0;background:var(--c);border-radius:7px}
+.tk b{position:relative;display:block;padding:0 8px;line-height:26px;font-size:12px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tk[aria-pressed=true]{outline:2px solid var(--ink);outline-offset:2px}
+.ms{position:absolute;top:12px;left:calc(var(--s)*var(--cw) - 9px);width:18px;height:18px;border:0;padding:0;background:var(--ink);transform:rotate(45deg);border-radius:3px}
+.now{position:absolute;top:0;bottom:0;left:calc(var(--lab) + 11.5*var(--cw));width:2px;background:var(--bad);z-index:2;pointer-events:none}
+.now::before{content:"Today";position:absolute;bottom:6px;left:5px;font-size:11px;font-weight:700;color:var(--bad)}
+.det{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;align-items:center;margin-top:14px}
+.det input[type=range]{width:100%;accent-color:var(--ac)}
+@media(max-width:860px){.gt{--lab:124px}}
+</style>
+<body>
+<!--SHELL Projects|Search tasks-->
+<div class="head"><div><h1>Website relaunch</h1><p id="sub"></p></div><span class="sp"></span><div class="seg" role="group" aria-label="Zoom"><button aria-pressed="true" data-z="">Weeks</button><button aria-pressed="false" data-z="z2">Days</button></div><button class="btn" id="today">Today</button></div>
+<section class="card gt" id="gt" aria-label="Timeline"><div class="scroll" id="gs" tabindex="0"><div class="grid" id="grid"></div></div></section>
+<section class="card pad det" id="det" aria-live="polite"></section>
+<!--/SHELL-->
+<script>/*BASEJS*/
+/* DATA: day 0 is Monday 2 November 2026. Tasks: name, start day, length in days (0 = milestone), progress 0 to 100, owner. */
+const START=new Date(2026,10,2),TODAY=11;
+const PHASES=[['Discovery','#2563EB',[['Stakeholder interviews',0,5,100,'Priya Nair'],['Content audit',3,6,100,'Tom Becker'],['Brief signed off',9,0,100,'Amara Khan']]],
+ ['Design','#9333EA',[['Wireframes',8,8,70,'Lena Fischer'],['Visual direction',12,9,35,'Lena Fischer'],['Design review',21,0,0,'Amara Khan']]],
+ ['Build','#0EA5A4',[['Component library',16,14,10,'Omar Haddad'],['Page templates',24,14,0,'Omar Haddad'],['Content migration',30,12,0,'Tom Becker']]],
+ ['Launch','#E4572E',[['Testing and fixes',40,9,0,'Priya Nair'],['Go live',50,0,0,'Amara Khan'],['Post-launch checks',50,5,0,'Priya Nair']]]];
+const day=n=>new Date(2026,10,2+n),fmt=d=>d.toLocaleDateString('en-GB',{day:'numeric',month:'short'}),ini=n=>n.split(' ').map(w=>w[0]).join('');
+const TASKS=PHASES.flatMap((p,g)=>p[2].map(t=>({g,name:t[0],s:t[1],d:t[2],pc:t[3],who:t[4]})));
+let sel=TASKS[3];const shut=new Set();
+function draw(){
+ let h=`<div class="rw hd"><div class="lb mute">Task</div><div class="tr">${Array.from({length:8},(_,w)=>`<div class="wk">${fmt(day(w*7))}<div class="dn">${Array.from({length:7},(_,i)=>`<i>${day(w*7+i).getDate()}</i>`).join('')}</div></div>`).join('')}</div></div>`;
+ PHASES.forEach((p,g)=>{const open=!shut.has(g);
+  h+=`<div class="rw grp"><div class="lb"><button class="fold" data-g="${g}" aria-expanded="${open}" aria-label="${open?'Fold':'Unfold'} ${p[0]}">▾</button><span>${p[0]}</span></div><div class="tr"></div></div>`;
+  if(open)TASKS.filter(t=>t.g===g).forEach(t=>{const k=TASKS.indexOf(t);
+   h+=`<div class="rw"><div class="lb"><span>${t.name}</span></div><div class="tr">${t.d?`<button class="tk" data-k="${k}" aria-pressed="${t===sel}" style="--s:${t.s};--d:${t.d};--c:${p[1]}" aria-label="${t.name}, ${fmt(day(t.s))} to ${fmt(day(t.s+t.d-1))}, ${t.pc}% done"><i style="width:${t.pc}%"></i><b>${t.pc}%</b></button>`:`<button class="ms" data-k="${k}" aria-pressed="${t===sel}" style="--s:${t.s+1}" aria-label="Milestone: ${t.name}, ${fmt(day(t.s))}"></button>`}</div></div>`})});
+ $('#grid').innerHTML=h+'<div class="now"></div>';
+ const work=TASKS.filter(t=>t.d),all=work.reduce((a,t)=>a+t.d,0),done=work.reduce((a,t)=>a+t.d*t.pc/100,0);
+ $('#sub').textContent=Math.round(done/all*100)+'% complete · 2 Nov to 27 Dec · '+work.length+' tasks, '+(TASKS.length-work.length)+' milestones';
+ detail();
+}
+function detail(){const t=sel,p=PHASES[t.g],state=t.pc>=100?['ok','Done']:t.s>TODAY?['','Not started']:t.s+t.d<=TODAY&&t.d?['bad','Late']:['warn','In progress'];
+ $('#det').innerHTML=`<div><span class="mute">${p[0]}</span><h2>${t.name}</h2></div><div><span class="mute">Dates</span><div><b>${t.d?fmt(day(t.s))+' to '+fmt(day(t.s+t.d-1)):fmt(day(t.s))}</b></div></div><div class="row"><span class="av">${ini(t.who)}</span><span>${t.who}<br><span class="badge ${state[0]}">${t.d?state[1]:'Milestone'}</span></span></div>`+(t.d?`<label>Progress <b class="num" id="pv">${t.pc}%</b><input type="range" id="pr" min="0" max="100" step="5" value="${t.pc}"></label>`:'<span class="mute">Milestones have no progress.</span>')}
+$('#grid').onclick=e=>{const f=e.target.closest('.fold'),b=e.target.closest('[data-k]');
+ if(f){const g=+f.dataset.g;shut.has(g)?shut.delete(g):shut.add(g);draw();$(`.fold[data-g="${g}"]`).focus()}
+ else if(b){sel=TASKS[b.dataset.k];draw();$(`[data-k="${b.dataset.k}"]`).focus()}};
+$('#det').oninput=e=>{if(e.target.id!=='pr')return;sel.pc=+e.target.value;$('#pv').textContent=sel.pc+'%';const b=$(`.tk[data-k="${TASKS.indexOf(sel)}"]`);if(b){b.firstChild.style.width=sel.pc+'%';b.lastChild.textContent=sel.pc+'%'}};
+$('#det').onchange=e=>{if(e.target.id==='pr'){draw();$('#pr').focus()}};
+const toToday=()=>{const cw=parseFloat(getComputedStyle($('#gt')).getPropertyValue('--cw'));$('#gs').scrollTo({left:Math.max(0,TODAY*cw-80),behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'})};
+$$('.seg button').forEach(b=>b.onclick=()=>{$$('.seg button').forEach(x=>x.setAttribute('aria-pressed',x===b));$('#gt').className='card gt '+b.dataset.z;toToday()});
+$('#today').onclick=toToday;draw();
+</script>
+</body>

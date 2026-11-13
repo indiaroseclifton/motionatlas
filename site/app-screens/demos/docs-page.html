@@ -1,0 +1,142 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Documentation page</title>
+<style>/* Tokens: change these to restyle the whole screen. --ac is the brand colour. */
+:root{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#141824;--mute:#5F677B;--line:#E3E6EE;--soft:#EEF0F6;--ac:#18181B;--ac-ink:#FFFFFF;--ac-soft:#F1F1F3;--ok:#12805C;--warn:#96560A;--bad:#C2362B;--ok-soft:#E3F5EC;--warn-soft:#FCF0D9;--bad-soft:#FBE6E3;--r:12px;--sh:0 1px 2px rgba(16,24,40,.05),0 8px 24px -16px rgba(16,24,40,.22);--font:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:light}
+html[data-theme=dark]{--bg:#0E1117;--panel:#161A23;--ink:#ECEEF4;--mute:#9AA3B5;--line:#272D3A;--soft:#1D2230;--ac:#FAFAFA;--ac-ink:#0E1117;--ac-soft:#272A33;--ok:#4ADE9B;--warn:#F0B454;--bad:#FF8B80;--ok-soft:#12301F;--warn-soft:#33260C;--bad-soft:#3A1714;--sh:0 1px 2px rgba(0,0,0,.45);color-scheme:dark}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:14px/1.5 var(--font);-webkit-font-smoothing:antialiased}
+h1,h2,h3,p{margin:0}h1{font-size:20px;line-height:1.2;letter-spacing:-.01em}h2{font-size:15px}h3{font-size:13px}
+a{color:inherit}button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px;border-radius:6px}
+[hidden]{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.mute{color:var(--mute)}.num{font-variant-numeric:tabular-nums}
+.ic{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:36px;padding:0 13px;border-radius:9px;border:1px solid var(--line);background:var(--panel);font-weight:600;font-size:13px;white-space:nowrap;text-decoration:none}
+.btn:hover{background:var(--soft)}.btn.pri{background:var(--ac);border-color:var(--ac);color:var(--ac-ink)}.btn.pri:hover{filter:brightness(1.08)}
+.btn.ghost{border-color:transparent;background:none}.btn.ghost:hover{background:var(--soft)}.btn.sq{width:36px;padding:0}.btn:disabled{opacity:.5;cursor:default}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh)}
+.pad{padding:16px}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:99px;font-size:12px;font-weight:600;background:var(--soft);color:var(--mute);white-space:nowrap}
+.badge.ok{background:var(--ok-soft);color:var(--ok)}.badge.warn{background:var(--warn-soft);color:var(--warn)}.badge.bad{background:var(--bad-soft);color:var(--bad)}.badge.ac{background:var(--ac-soft);color:var(--ac)}
+.badge i{width:6px;height:6px;border-radius:50%;background:currentColor}
+.av{display:grid;place-items:center;flex:none;width:30px;height:30px;border-radius:50%;background:var(--ac-soft);color:var(--ac);font-size:11.5px;font-weight:700}
+.in{min-height:36px;padding:0 11px;border:1px solid var(--line);border-radius:9px;background:var(--panel);min-width:0}
+.in::placeholder{color:var(--mute)}
+.seg{display:inline-flex;padding:3px;border-radius:10px;background:var(--soft);gap:2px}
+.seg button{min-height:30px;padding:0 11px;border:0;border-radius:8px;background:none;font-size:13px;font-weight:600;color:var(--mute)}
+.seg button[aria-pressed=true],.seg button[aria-selected=true]{background:var(--panel);color:var(--ink);box-shadow:0 1px 2px rgba(16,24,40,.12)}
+.row{display:flex;align-items:center;gap:10px}.sp{margin-left:auto}
+table{border-collapse:collapse;width:100%}th{font-size:12px;font-weight:600;color:var(--mute);text-align:left}th,td{padding:10px 14px;border-bottom:1px solid var(--line);white-space:nowrap}tbody tr:last-child td{border-bottom:0}
+.scroll{overflow:auto;position:relative}
+/* App shell: sidebar, top bar, content */
+.app{display:grid;grid-template-columns:232px minmax(0,1fr);height:100%}
+.side{display:flex;flex-direction:column;gap:4px;padding:14px 10px;background:var(--panel);border-right:1px solid var(--line);overflow:auto}
+.logo{display:flex;align-items:center;gap:9px;padding:4px 8px 14px;font-weight:700;font-size:15px}
+.logo span{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--ac);color:var(--ac-ink)}
+.side a{display:flex;align-items:center;gap:10px;min-height:36px;padding:0 10px;border-radius:9px;color:var(--mute);font-weight:500;text-decoration:none}
+.side a:hover{background:var(--soft);color:var(--ink)}.side a[aria-current=page]{background:var(--ac-soft);color:var(--ac);font-weight:600}
+.side a b{margin-left:auto;font-size:11.5px;padding:0 7px;border-radius:99px;background:var(--soft)}
+.side .who{margin-top:auto;display:flex;align-items:center;gap:9px;padding:10px 8px 2px;border-top:1px solid var(--line);font-size:13px}
+.side .who small{display:block;color:var(--mute);font-size:12px}
+.work{display:flex;flex-direction:column;min-width:0;min-height:0}
+.top{display:flex;align-items:center;gap:10px;padding:10px 20px;border-bottom:1px solid var(--line);background:var(--panel)}
+.top .find{position:relative;flex:1;max-width:340px}.top .find .ic{position:absolute;left:10px;top:9px;color:var(--mute)}.top .find input{width:100%;padding-left:34px}
+.main{flex:1;min-height:0;overflow:auto;padding:20px}
+.head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}.head p{color:var(--mute);font-size:13px}
+#menu{display:none}
+@media(max-width:860px){.app{grid-template-columns:1fr}#menu{display:inline-flex}.side{position:fixed;inset:0 auto 0 0;width:250px;z-index:30;transform:translateX(-102%);transition:transform .2s;box-shadow:0 0 0 100vmax rgba(0,0,0,0)}.side.open{transform:none;box-shadow:0 0 0 100vmax rgba(10,12,20,.45)}.top{padding:10px 14px}.main{padding:14px}.top .find{display:none}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+html,body{height:auto}html{scroll-padding-top:76px}body{font-size:15px}
+.top{position:sticky;top:0;z-index:20;height:58px;padding:0 20px}
+.lg{display:flex;align-items:center;gap:9px;font-weight:700;text-decoration:none}.lg span{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--ac);color:var(--ac-ink)}
+.lay{display:grid;grid-template-columns:250px minmax(0,1fr) 210px;max-width:1280px;margin:0 auto}
+.side{position:sticky;top:58px;height:calc(100vh - 58px);padding:20px 12px;background:none}
+.side h3{margin:14px 10px 4px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute)}.side h3:first-child{margin-top:0}
+.side a{min-height:34px;font-size:14px}
+.art{padding:32px 40px 64px;min-width:0;max-width:780px}
+.art h1{font-size:32px;letter-spacing:-.02em;margin:6px 0 10px}.art h2{font-size:21px;letter-spacing:-.01em;margin:36px 0 10px}.art p{margin:10px 0;line-height:1.65}.lead{font-size:17px;color:var(--mute)}
+.art :not(pre)>code{font:13px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--soft);padding:2px 6px;border-radius:6px}
+.code{position:relative;margin:14px 0;border-radius:12px;background:#12151C;border:1px solid #272D3A}
+.code pre{margin:0;padding:16px 18px;overflow-x:auto;font:13px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace;color:#E6E9F2}
+.code .k{color:#8AB4FF}.code .s{color:#9CE0B0}.code .c{color:#7C869C}
+.cp{position:absolute;top:8px;right:8px;min-height:30px;padding:0 10px;border-radius:8px;border:1px solid #333B4C;background:#1B202B;color:#C9CFDD;font-size:12px;font-weight:600}.cp:hover{background:#252C3A}
+.tabs{display:flex;gap:2px;padding:6px 8px 0;border-bottom:1px solid #272D3A}.tabs button{border:0;background:none;color:#8F98AC;font-size:13px;font-weight:600;padding:8px 12px;border-bottom:2px solid transparent}.tabs button[aria-selected=true]{color:#fff;border-color:#fff}
+.note{display:flex;gap:12px;padding:14px 16px;border-radius:12px;background:var(--ac-soft);border:1px solid var(--line);margin:16px 0}.note b{flex:none}
+.art table{margin:12px 0;font-size:14px}.art td{white-space:normal}.art td:first-child{white-space:nowrap}
+.help{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:40px;padding:16px;border-radius:12px;border:1px solid var(--line)}
+.pn{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}.pn a{display:grid;gap:2px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;text-decoration:none;background:var(--panel)}.pn a:hover{border-color:var(--ink)}.pn a:last-child{text-align:right}.pn small{color:var(--mute)}
+.toc{position:sticky;top:58px;align-self:start;padding:32px 16px;font-size:13px}.toc h3{margin-bottom:8px}.toc a{display:block;padding:5px 12px;border-left:2px solid var(--line);color:var(--mute);text-decoration:none}.toc a:hover{color:var(--ink)}.toc a[aria-current=true]{border-color:var(--ink);color:var(--ink);font-weight:600}
+@media(max-width:1100px){.lay{grid-template-columns:250px minmax(0,1fr)}.toc{display:none}}
+@media(max-width:860px){.lay{grid-template-columns:minmax(0,1fr)}.side{position:fixed;top:0;height:auto;background:var(--panel);padding-top:16px}.art{padding:22px 16px 48px}.art h1{font-size:27px}.top{padding:0 12px}.ver{display:none}}
+</style>
+<body>
+<header class="top"><button class="btn sq ghost" id="menu" aria-label="Menu" aria-expanded="false"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><a class="lg" href="#"><span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 3 5 13.500h6L10 21l8-10.500h-6Z"/></svg></span>Northwind Docs</a><span class="badge ver">v4.2</span><span class="sp"></span><label class="find" style="display:block;max-width:240px"><span class="sr">Filter the menu</span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.500"/><path d="m16 16 4.500 4.500"/></svg><input class="in" id="q" type="search" placeholder="Filter pages"></label><button class="btn sq ghost" id="theme" aria-pressed="false" aria-label="Switch to dark theme"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.500A8 8 0 0 1 9.500 4a8 8 0 1 0 10.500 10.500Z"/></svg></button></header>
+<div class="lay">
+<nav class="side" aria-label="Documentation" id="nav"></nav>
+<main class="art" id="art">
+<p class="mute" style="font-size:13px">Getting started / Quick start</p>
+<h1>Quick start</h1>
+<p class="lead">Install the client, create a key and send your first request. It takes about five minutes.</p>
+<h2 id="install">Install the client</h2>
+<p>The client works in Node 18 or later and in every modern browser. Pick your package manager.</p>
+<div class="code"><div class="tabs" role="tablist" aria-label="Package manager" id="pm"></div><button class="cp">Copy</button><pre id="pmc" role="tabpanel" tabindex="0"></pre></div>
+<h2 id="key">Create an API key</h2>
+<p>Open <b>Settings</b>, then <b>API keys</b>, and choose <b>New key</b>. Keys start with <code>nw_live_</code> or <code>nw_test_</code>. Store the key in an environment variable so it never lands in your code.</p>
+<div class="code"><button class="cp">Copy</button><pre><span class="c"># .env</span>
+NORTHWIND_KEY=<span class="s">nw_test_4f9a…</span></pre></div>
+<div class="note"><b aria-hidden="true">ⓘ</b><p style="margin:0"><b>Test keys are free.</b> Requests made with a test key never touch live data and do not count towards your plan.</p></div>
+<h2 id="request">Send a request</h2>
+<p>Create a client with your key, then call <code>projects.list()</code>. Every method returns a promise.</p>
+<div class="code"><button class="cp">Copy</button><pre><span class="k">import</span> { Northwind } <span class="k">from</span> <span class="s">'@northwind/client'</span>;
+
+<span class="k">const</span> nw = <span class="k">new</span> Northwind({ key: process.env.NORTHWIND_KEY });
+
+<span class="k">const</span> projects = <span class="k">await</span> nw.projects.list({ status: <span class="s">'active'</span>, limit: 10 });
+console.log(projects.data.map(p => p.name));</pre></div>
+<h2 id="params">Parameters</h2>
+<p>All list methods accept the same options.</p>
+<div class="scroll"><table><thead><tr><th>Name</th><th>Type</th><th>What it does</th></tr></thead><tbody><tr><td><code>status</code></td><td>string</td><td>Only return items with this status: <code>active</code>, <code>paused</code> or <code>archived</code>.</td></tr><tr><td><code>limit</code></td><td>number</td><td>How many items to return, from 1 to 100. The default is 25.</td></tr><tr><td><code>after</code></td><td>string</td><td>A cursor from the previous page, to fetch the next one.</td></tr></tbody></table></div>
+<h2 id="errors">Handle errors</h2>
+<p>Failed requests throw a <code>NorthwindError</code> with a <code>status</code> and a readable <code>message</code>. Rate-limited requests are retried for you up to three times.</p>
+<div class="code"><button class="cp">Copy</button><pre><span class="k">try</span> {
+  <span class="k">await</span> nw.projects.get(<span class="s">'prj_missing'</span>);
+} <span class="k">catch</span> (err) {
+  <span class="k">if</span> (err.status === 404) console.log(<span class="s">'No such project'</span>);
+  <span class="k">else throw</span> err;
+}</pre></div>
+<div class="help" id="help"><b>Was this page helpful?</b><span class="sp"></span><button class="btn" data-a="Yes">Yes</button><button class="btn" data-a="No">No</button></div>
+<div class="pn"><a href="#"><small>Previous</small><b>Introduction</b></a><a href="#"><small>Next</small><b>Authentication</b></a></div>
+</main>
+<aside class="toc" aria-label="On this page"><h3>On this page</h3><div id="toc"></div></aside>
+</div>
+<script>/* Shared helpers: element lookup, theme switch (add #dark to the address to start dark), mobile menu. */
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const root=document.documentElement;
+function setTheme(dark){root.dataset.theme=dark?'dark':'light';const b=$('#theme');if(b){b.setAttribute('aria-pressed',dark);b.setAttribute('aria-label',dark?'Switch to light theme':'Switch to dark theme')}document.dispatchEvent(new Event('themechange'))}
+setTheme(/dark/.test(location.hash));addEventListener('hashchange',()=>setTheme(/dark/.test(location.hash)));
+$('#theme')?.addEventListener('click',()=>setTheme(root.dataset.theme!=='dark'));
+{const m=$('#menu'),s=$('.side');if(m&&s){const set=o=>{s.classList.toggle('open',o);m.setAttribute('aria-expanded',o)};m.addEventListener('click',()=>set(!s.classList.contains('open')));addEventListener('keydown',e=>{if(e.key==='Escape')set(false)});document.addEventListener('click',e=>{if(s.classList.contains('open')&&!s.contains(e.target)&&!m.contains(e.target))set(false)})}}
+function toast(t){let n=$('#toast');if(!n){n=document.createElement('div');n.id='toast';n.setAttribute('role','status');n.style.cssText='position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 14px;border-radius:10px;font-size:13px;font-weight:600;z-index:60;transition:opacity .2s;max-width:calc(100vw - 32px)';document.body.append(n)}n.textContent=t;n.style.opacity=1;clearTimeout(toast.t);toast.t=setTimeout(()=>n.style.opacity=0,2000)}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+/* DATA */
+const MENU=[['Getting started',['Introduction','Quick start','Authentication','Rate limits']],['Guides',['Projects','Tasks and comments','File uploads','Webhooks','Pagination']],['Reference',['REST API','JavaScript client','Python client','Error codes']],['More',['Changelog','Status','Support']]],HERE='Quick start';
+const PM={npm:'npm install @northwind/client',pnpm:'pnpm add @northwind/client',yarn:'yarn add @northwind/client'};
+function menu(q=''){const h=MENU.map(([g,items])=>{const hit=items.filter(i=>i.toLowerCase().includes(q));return hit.length?`<h3>${g}</h3>`+hit.map(i=>`<a href="#" ${i===HERE?'aria-current="page"':''}>${i}</a>`).join(''):''}).join('');$('#nav').innerHTML=h||'<p class="mute" style="padding:0 10px">No pages match.</p>'}
+menu();$('#q').oninput=e=>menu(e.target.value.trim().toLowerCase());
+/* Install tabs */
+let pm='npm';const keys=Object.keys(PM);
+function tabs(focus){$('#pm').innerHTML=keys.map(k=>`<button role="tab" aria-selected="${k===pm}" tabindex="${k===pm?0:-1}">${k}</button>`).join('');$('#pmc').textContent=PM[pm];if(focus)$('#pm [aria-selected=true]').focus()}
+tabs();$('#pm').onclick=e=>{const b=e.target.closest('button');if(b){pm=b.textContent;tabs(true)}};
+$('#pm').onkeydown=e=>{const d=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(d){e.preventDefault();pm=keys[(keys.indexOf(pm)+d+keys.length)%keys.length];tabs(true)}};
+/* Copy buttons read the code block they sit in. */
+$('#art').addEventListener('click',e=>{const b=e.target.closest('.cp');if(!b)return;const t=b.parentNode.querySelector('pre').textContent;const ok=()=>{b.textContent='Copied';setTimeout(()=>b.textContent='Copy',1500)};
+ (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(ok,()=>{const r=document.createRange();r.selectNodeContents(b.parentNode.querySelector('pre'));getSelection().removeAllRanges();getSelection().addRange(r);b.textContent='Selected';setTimeout(()=>b.textContent='Copy',1500)})});
+/* On this page: built from the h2 headings, then follows the scroll. */
+const hs=$$('#art h2');$('#toc').innerHTML=hs.map(h=>`<a href="#${h.id}">${h.textContent}</a>`).join('');
+const mark=id=>$$('#toc a').forEach(a=>a.setAttribute('aria-current',a.hash==='#'+id));mark(hs[0].id);
+const spy=()=>{const end=innerHeight+scrollY>=document.documentElement.scrollHeight-4,top=hs.filter(h=>h.getBoundingClientRect().top<140).pop();mark((end?hs[hs.length-1]:top||hs[0]).id)};
+const io=new IntersectionObserver(spy,{rootMargin:'-80px 0px -60% 0px',threshold:[0,1]});hs.forEach(h=>io.observe(h));addEventListener('scroll',spy,{passive:true});
+$('#help').onclick=e=>{const b=e.target.closest('button');if(b)$('#help').innerHTML=`<b>Thanks for telling us.</b><span class="mute">${b.dataset.a==='Yes'?'Glad it helped.':'We will use this to improve the page.'}</span>`};
+</script>
+</body>
+</html>

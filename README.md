@@ -120,7 +120,7 @@ Every tool is listed once in `site/tools-data.js` (name, page, group, one-line p
 | Brand kit generator | `brand-generator.html` | palette, fonts, logo, tokens and a theme kit |
 | Mockup studio | `mockup-studio.html` | device frames and every social size |
 | Chart / Diagram / Flowchart studios | `chart-studio.html`, `diagram-studio.html`, `flowchart-studio.html` (and the lighter `flowchart-canvas.html`) | SVG, PNG, video, GIF |
-| App templates | `app-interfaces.html`, `app-screens/`, `tools/app-screens/` | 16 screens (three dashboards, landing and pricing pages, mobile banking, calendar, kanban, data table, files, inbox, AI chat, sign-in, onboarding, billing, settings); light and dark; built from `tools/app-screens/src` by `node tools/build-app-screens.mjs` |
+| App templates | `app-interfaces.html`, `app-screens/`, `tools/app-screens/` | 22 screens (four dashboards including a CRM pipeline, a project timeline, product inventory, a shop product page, a documentation page, a fitness tracker, landing and pricing pages, mobile banking, calendar, kanban, data table, files, inbox, AI chat, sign-in, onboarding, billing, settings); light and dark; built from `tools/app-screens/src` by `node tools/build-app-screens.mjs` |
 | Motion graphics studio | `motion-graphics.html`, `motiongfx/templates.js`, `motiongfx/studio.js` | 28 canvas animations (titles, lower thirds, logo stings, transitions, numbers, social, backdrops); export WebM (keeps transparency), GIF, PNG, PNG sequence or one HTML file |
 | Interactions shelf, Background generator | `interactions.html`, `atlas.html#backgrounds` | single-file motion |
 | Theme kits, Icon library, Chart style guides | `theme-kits.html`, `icons.html`, `chart-styles.html` | tokens, packs, palettes |
