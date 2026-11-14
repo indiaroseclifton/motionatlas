@@ -14,7 +14,7 @@ body.cinemaMode{
  --rose:#fda4af;            /* Plate III dimension */
  --gold:#fde68a;            /* Plate IV  biosphere */
  --f-display:"Cormorant Garamond","Cormorant",Garamond,"Times New Roman",serif;
- --f-body:"Manrope","Segoe UI",system-ui,sans-serif;
+ --f-body:"Inter","Segoe UI",system-ui,sans-serif;
  --f-mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
  --gutter:clamp(16px,4.5vw,72px);
  --plate:var(--ice);

@@ -9,7 +9,7 @@
    Everything degrades to the plain page if this script does not run. */
 (()=>{
  const PAGES={
-  browse:{no:1,name:'Catalogue',family:'Index',color:'ice',related:['systems','motion','art','compare'],h:[1,-2,3,-5],
+  browse:{no:1,name:'Style catalogue',family:'Index',color:'ice',related:['systems','motion','art','compare'],h:[1,-2,3,-5],
    film:{src:'assets/films/hydraulic-erosion-720.mp4',webm:'assets/films/hydraulic-erosion-720.webm',poster:'assets/films/hydraulic-erosion-1280.webp',label:'Hydraulic erosion',tone:'light'}},
   systems:{no:2,name:'Design systems',family:'Systems',color:'mint',related:['playground','ux','typography','assets'],h:[1,3,-4,7],
    film:{src:'assets/films/game-of-life-720.mp4',webm:'assets/films/game-of-life-720.webm',poster:'assets/films/game-of-life-1280.webp',label:'Game of Life',tone:'dark'}},
@@ -35,9 +35,9 @@
    film:{src:'assets/films/sand-drawing-720.mp4',webm:'assets/films/sand-drawing-720.webm',poster:'assets/films/sand-drawing-1280.webp',label:'Sand drawing',tone:'light'}},
   pairings:{no:15,name:'Style pairings',family:'Motion',color:'rose',related:['systems','motion','typography'],h:[1,2,-5],
    film:{src:'assets/films/lion-phoenix-720.mp4',webm:'assets/films/lion-phoenix-720.webm',poster:'assets/films/lion-phoenix-1280.webp',label:'Lion to phoenix',tone:'dark'}},
-  effects:{no:16,name:'Page effects',family:'Motion',color:'rose',related:['motion','ux','playground'],h:[1,-3,2,-6],
+  effects:{no:16,name:'Landing effects',family:'Motion',color:'rose',related:['motion','ux','playground'],h:[1,-3,2,-6],
    film:{src:'assets/films/light-ribbons-720.mp4',webm:'assets/films/light-ribbons-720.webm',poster:'assets/films/light-ribbons-1280.webp',label:'Light ribbons',tone:'dark'}},
-  compare:{no:17,name:'Comparison desk',family:'Motion',color:'rose',related:['art','systems','vases'],h:[1,3,-6],
+  compare:{no:17,name:'Compare styles',family:'Motion',color:'rose',related:['art','systems','vases'],h:[1,3,-6],
    film:{src:'assets/films/ferrofluid-720.mp4',webm:'assets/films/ferrofluid-720.webm',poster:'assets/films/ferrofluid-1280.webp',label:'Ferrofluid',tone:'dark'}},
   references:{no:18,name:'Sources & credits',family:'Studio',color:'gold',related:['browse','systems','typography'],h:[1,-2,4],
    film:{src:'assets/films/smoke-plume-720.mp4',webm:'assets/films/smoke-plume-720.webm',poster:'assets/films/smoke-plume-1280.webp',label:'Smoke plume',tone:'dark',pos:'40% 50%'}}
@@ -49,6 +49,9 @@
  const current=()=>{const id=location.hash.replace('#','').split('?')[0];return PAGES[id]?id:null;};
 
  /* ---------- Plate band + related links ---------- */
+ /* CALM: section headers are a plain title, one line of text and related links. Set to false to bring back the
+    film behind each header, the "Plate 08 · Systems · of 18" label and the curve drawing. */
+ const CALM=true;
  const drawings=new Map();
  function decorate(id){
   const page=document.getElementById(id);const meta=PAGES[id];
@@ -59,15 +62,17 @@
   const band=document.createElement('div');band.className='aeBand';band.style.setProperty('--c',COLORS[meta.color][1]);band.style.setProperty('--cb',COLORS[meta.color][0]);
   band.innerHTML=`<p class="aeMark"><span class="aeNo">Plate ${pad(meta.no)}</span><span>${meta.family}</span><span class="aeOf">of 18</span></p><canvas class="aeCurve" width="520" height="520" aria-hidden="true"></canvas>`;
   head.parentNode.insertBefore(band,head);
-  page.classList.add('aeHasBand');
+  page.classList.add('aeHasBand');if(CALM)page.classList.add('aeCalm');
   // Pages with actions beside the title get a compact drawing next to the plate label
   if(head!==h1){band.classList.add('aeCompact');const cv=$('canvas',band);cv.width=cv.height=112;}
   const intro=$(':scope > .intro, :scope > div > .intro, .archivenote',page);
   const rel=document.createElement('nav');rel.className='aeRelated';rel.setAttribute('aria-label','Related sections');
-  rel.innerHTML=`<span class="aeRelLabel">Pairs well with</span>`+meta.related.map(r=>`<a href="#${r}" style="--c:${COLORS[PAGES[r].color][1]}"><span class="aeRelNo">${pad(PAGES[r].no)}</span>${PAGES[r].name}<span aria-hidden="true">→</span></a>`).join('');
+  rel.innerHTML=`<span class="aeRelLabel">${CALM?'See also':'Pairs well with'}</span>`+meta.related.map(r=>`<a href="#${r}" style="--c:${COLORS[PAGES[r].color][1]}">${CALM?'':`<span class="aeRelNo">${pad(PAGES[r].no)}</span>`}${PAGES[r].name}<span aria-hidden="true">→</span></a>`).join('');
   if(intro)intro.insertAdjacentElement('afterend',rel);else head.insertAdjacentElement('afterend',rel);
-  drawings.set(id,curve($('canvas',band),meta));
-  if(meta.film)film(page,band,rel,meta);
+  drawings.set(id,CALM?null:curve($('canvas',band),meta));
+  if(meta.film&&!CALM)film(page,band,rel,meta);
+  /* a section whose cards are h3 directly under the title gets a hidden h2, so heading levels do not skip */
+  setTimeout(()=>{const hs=[...page.querySelectorAll('h2,h3')].filter(h=>h.offsetParent);if(hs[0]&&hs[0].tagName==='H3'&&!page.querySelector('.aeH2')){const g=hs[0].closest('.expansiongrid,.grid,.assetGrid,.referencegrid,.artGrid')||hs[0].parentNode;const h=document.createElement('h2');h.className='visuallyHidden aeH2';h.textContent='All '+meta.name.toLowerCase();g.parentNode.insertBefore(h,g)}},1500);
  }
 
  /* A film behind the page header (pages with a film), like the home hero: it runs full width, fades into the

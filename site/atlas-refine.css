@@ -7,12 +7,12 @@ header .studioGroup>summary::-webkit-details-marker{display:none}
 header .studioGroup>summary::after{content:"";width:6px;height:6px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:translateY(-2px) rotate(45deg);opacity:.7}
 header .studioGroup[open]>summary::after{transform:translateY(1px) rotate(-135deg)}
 header .studioGroup>div{right:auto;left:-12px;top:calc(100% + 12px);width:200px;background:#0b1120!important;border:1px solid rgba(190,210,240,.18);border-radius:12px;box-shadow:0 18px 40px rgba(0,0,0,.45);padding:8px}
-header .studioGroup>div a{display:block;padding:10px 12px;border-radius:8px;color:#c9d3e3!important;font:500 13.5px "Manrope",system-ui,sans-serif;text-decoration:none;white-space:nowrap}
+header .studioGroup>div a{display:block;padding:10px 12px;border-radius:8px;color:#c9d3e3!important;font:500 13.5px "Inter",system-ui,sans-serif;text-decoration:none;white-space:nowrap}
 header .studioGroup>div a:hover,header .studioGroup>div a.active{background:rgba(190,210,240,.08);color:#fff!important}
 header .studioGroup>div a::after{display:none!important}
 body.cinemaMode>header .studioGroup>summary{color:var(--ink-dim);font:500 13.5px var(--f-body);letter-spacing:.02em}
 body.cinemaMode>header .studioGroup>summary:hover{color:var(--ink)}
-body:not(.cinemaMode)>header .studioGroup>summary{color:var(--hd-dim,#a8b3c7);font:500 13.5px var(--f-body,"Manrope",sans-serif)}
+body:not(.cinemaMode)>header .studioGroup>summary{color:var(--hd-dim,#a8b3c7);font:500 13.5px var(--f-body,"Inter",sans-serif)}
 body:not(.cinemaMode)>header .studioGroup>summary:hover{color:var(--hd-ink,#eef2f8)}
 header .studioGroup summary:focus-visible{outline:2px solid #fde68a;outline-offset:4px;border-radius:4px}
 /* narrow screens: the main nav scrolls sideways, so studio links sit inline */
@@ -44,3 +44,8 @@ body.cinemaMode>header nav[aria-label=Main] a[href="#browse"]:hover{color:var(--
 
 /* tap targets: 24px minimum (WCAG 2.5.8) on the small text links */
 #routeTrail a,#routeTrail .anTrailGroup,body.anNav>footer a,.vmaLinks a,#exploreBar .exTours,#references td a,#references a[target=_blank],#art a[target=_blank],#cinema a[target=_blank],#typography a[target=_blank],#inspiration a[target=_blank],.componentThemeTools a,.vmaHome footer a,#vmaBackToFilm{padding-block:5px}
+
+/* calm section headers (2026-11): no plate label or drawing, a plain title and one line of text */
+.aeCalm>.aeBand{display:none}
+.aeCalm>.aeRelated .aeRelLabel{letter-spacing:.12em}
+main input[type=range]{min-height:24px}

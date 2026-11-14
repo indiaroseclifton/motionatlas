@@ -38,6 +38,12 @@
   <aside class="anPreview" aria-hidden="true"><div class="anSpot"><span class="anBig"></span><p class="anPGroup"></p><p class="anPName"></p><p class="anPNote"></p><p class="anGo">Open <i>→</i></p></div></aside>`;
   document.body.append(d);
   const spot=d.querySelector('.anSpot');let shown='';
+  /* phones have no hover: groups fold, and the open group lists each item with its one-line description */
+  const narrow=matchMedia('(max-width:760px)');
+  const fold=()=>d.querySelectorAll('.anGroup>h2').forEach(h=>{if(narrow.matches){h.setAttribute('role','button');h.tabIndex=0;h.setAttribute('aria-expanded',String(h.parentNode.classList.contains('anOpenG')))}else{h.removeAttribute('role');h.removeAttribute('tabindex');h.removeAttribute('aria-expanded')}});
+  const openGroup=g=>{d.querySelectorAll('.anGroup').forEach(x=>x.classList.toggle('anOpenG',x===g));fold()};
+  d.querySelectorAll('.anGroup>h2').forEach(h=>{h.addEventListener('click',()=>{if(narrow.matches)openGroup(h.parentNode.classList.contains('anOpenG')?null:h.parentNode)});h.addEventListener('keydown',e=>{if(narrow.matches&&(e.key==='Enter'||e.key===' ')){e.preventDefault();h.click()}})});
+  narrow.addEventListener('change',fold);
   function preview(a){if(!a)return;const it=ALL.find(i=>i.href===a.getAttribute('href'));if(!it||shown===it.href)return;shown=it.href;
    const n=[...d.querySelectorAll('.anGroups a')].indexOf(a)+1;
    d.querySelector('.anPGroup').textContent=String(n).padStart(2,'0')+' · '+it.group;d.querySelector('.anPName').textContent=it.name;d.querySelector('.anPNote').textContent=it.note;
@@ -49,6 +55,7 @@
   function open(group){markCurrent();d.showModal();document.body.classList.add('anOpen');
    const sec=group&&d.querySelector(`.anGroup[data-group="${CSS.escape(group)}"]`);
    const target=(sec&&sec.querySelector('a'))||d.querySelector('.anGroups a[aria-current="page"]')||d.querySelector('.anGroups a');
+   if(narrow.matches)openGroup(sec||target.closest('.anGroup'));
    if(sec)sec.scrollIntoView({block:'start'});target.focus({preventScroll:!!sec});preview(target)}
   function close(){if(d.open)d.close()}
   d.addEventListener('close',()=>{document.body.classList.remove('anOpen');shown='';bar.querySelector('.anLibBtn').focus({preventScroll:true})});

@@ -106,7 +106,7 @@
    else if(t){x.fillStyle=t.light.bg;x.fillRect(cx,cy,gw,gh-40);[t.light.accent,t.light.text,t.light.success,t.light.danger].forEach((col,k)=>{x.fillStyle=col;x.beginPath();x.arc(cx+30+k*36,cy+40,13,0,7);x.fill();});x.fillStyle=t.light.text;x.font=`600 30px "${t.fonts.display}", Georgia, serif`;x.fillText(fit(t.name,gw-48),cx+24,cy+gh-80);}
    else{const g=x.createLinearGradient(cx,cy,cx+gw,cy+gh);g.addColorStop(0,'#0d1220');g.addColorStop(1,'#1e3a5f');x.fillStyle=g;x.fillRect(cx,cy,gw,gh-40);x.fillStyle='#eef2f8';x.font='500 15px "JetBrains Mono", monospace';x.fillText(e.id,cx+22,cy+36);x.font='300 34px "Cormorant Garamond", Georgia, serif';x.fillText(fit(e.title,gw-44),cx+22,cy+gh-80);}
    x.restore();x.fillStyle='#0d1220';x.font='400 22px "Cormorant Garamond", Georgia, serif';x.fillText(fit(e.title,gw),cx,cy+gh-10);x.fillStyle='#4a5466';x.font='500 12px "JetBrains Mono", monospace';x.fillText(`${e.id} · ${(e.group||'').toUpperCase()}`,cx,cy+gh+12);}
-  if(!entries.length){x.fillStyle='#4a5466';x.font='400 24px Manrope, sans-serif';x.fillText('Add styles, effects and references to this project to fill the board.',64,260);}
+  if(!entries.length){x.fillStyle='#4a5466';x.font='400 24px Inter, sans-serif';x.fillText('Add styles, effects and references to this project to fill the board.',64,260);}
   x.fillStyle='#4a5466';x.font='500 12px "JetBrains Mono", monospace';x.fillText('VISUAL & MOTION ATLAS · MOODBOARD',64,H-32);
   c.toBlob(b=>download(`${(p.name||'project').replace(/\s+/g,'-').toLowerCase()}-moodboard.png`,b),'image/png');}
 

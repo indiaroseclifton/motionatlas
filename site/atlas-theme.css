@@ -14,7 +14,7 @@ body:not(.cinemaMode){
  --ice-d:#0369a1;--mint-d:#047857;--rose-d:#be123c;--gold-d:#854d0e;
  --plate:var(--ice);--plate-d:var(--ice-d);
  --f-display:"Cormorant Garamond","Cormorant",Garamond,"Times New Roman",serif;
- --f-body:"Manrope","Segoe UI",system-ui,sans-serif;
+ --f-body:"Inter","Segoe UI",system-ui,sans-serif;
  --f-mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
  --gutter:clamp(16px,4.5vw,72px);
  --ease:cubic-bezier(.2,.7,.1,1);

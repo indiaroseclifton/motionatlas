@@ -211,7 +211,7 @@ Scripts are plain globals loaded in order at the end of `atlas.html`; feature mo
 atlas card one shell: white panel, hairline border, 16 px corners, a preview inset 8 px with 10 px corners, an
 11 px mono kicker, a 22 px display title and 14 px text, with a 4 px lift on hover for cards that open something
 (`.cataloguecard`, `.artcard`, `.assetCard`, `.iconChoice`, `.bgCard`; text-only `.refcard`, `.fontpair`,
-`.fontspecimen`, `.paircard`). Give a new card type that shell by adding its class there.
+`.fontspecimen`, `.paircard`). Give a new card type that shell by adding its class there. Section headers are plain (title, one line, "See also" links): `CALM` in `atlas-enhance.js` switches the header films, plate labels and curve drawings back on. The brand kit generator and a rendered theme kit show one part at a time under tabs (`brand-generator.html`, `kits/tabs.js`).
 
 Inner pages get a plate band, "Pairs well with" links and, for most, a looping header film.
 These are set per page in `PAGES` at the top of `atlas-enhance.js` (film, poster, tone). Header

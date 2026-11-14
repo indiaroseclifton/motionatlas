@@ -12,7 +12,57 @@ states, the serverless API, and the project's own Playwright gate.
 heading order, missing alt text, sideways scroll, text under 11 px, fonts, corner radii and page background. Console
 errors were attributed per page. Suspicious readings were checked by eye before being reported.
 
-## Summary
+## What the first pass missed, and the second pass
+
+The first pass measured markup. It did not try to use each tool the way a person would, so it reported the site as
+"in good technical shape" while tools such as the brand kit generator were close to unusable. That was the wrong
+conclusion, and the owner called it out. The second pass, the same day, used the tools by hand. What it found:
+
+**A · Critical · Sign-in is down.** `supabase-client.js` points at `ymrbfnxesuuohysgwxtw.supabase.co`, and that host
+does not exist in DNS:
+
+```
+nslookup ymrbfnxesuuohysgwxtw.supabase.co   ->  NXDOMAIN
+curl .../auth/v1/health                      ->  no connection
+```
+
+Every page that loads the client logs `ERR_NAME_NOT_RESOLVED`. "Email me a sign-in link" on the account page, cloud
+sync of projects and public project hubs cannot work until the Supabase project is restored or the URL is replaced.
+Nothing in the UI says so. Not fixable from the code alone.
+
+**B · Critical · The brand kit generator was one page 20 screens tall** (18,472 px at 1440 × 900, 250 controls). The
+download and save buttons were 7,500 px and 17,600 px down. The form stuck 12 px from the top and slid under the
+44 px site bar, hiding the first field. The Colours section opened with contrast tables and a colour-blind matrix.
+*Fixed:* seven tabs (Colours, Fonts, Logo, Examples, Guide, Code, Full kit), the actions in one row under them, the
+form clear of the bar, shades and checks folded into one disclosure, a plain-words intro. The page is now 1.4 screens.
+
+**C · Major · A theme kit was one page 10 screens tall.** *Fixed:* `kits/tabs.js` shows Overview, Colours, Light &
+dark, Fonts, Components, Examples, Assets, Guidelines and Download as tabs. Now 2.1 screens.
+
+**D · Major · Section titles did not match the menu.** You chose "Icon families" and landed on "Different visual
+voices."; "Fonts & type" opened "Type / together."; "Compare styles" opened "Comparison desk." *Fixed:* ten titles
+now say what the menu says.
+
+**E · Major · Every atlas section opened with a film, a "Plate 08 · Systems · of 18" label and a curve drawing**, ten
+of them dark and nine light. *Fixed:* headers are a plain title, one line of text and "See also" links, all light.
+One switch (`CALM` in `atlas-enhance.js`) brings the films back.
+
+**F · Major · On phones the menu had no descriptions.** *Fixed:* the menu sheet shows each page's one-line description
+under its name, and the library drawer folds into groups with descriptions in the open one.
+
+**G · Open · Very long pages on phones.** UI components is 46 screens and the animation studio 44 at 390 px. They need
+"show 12, load more" like the catalogue has.
+
+**H · Open · The animation studio's content area is still dark** below its now-light header.
+
+Also fixed in the second pass: one body font (Inter) on the atlas, icon library and account page; the strips of
+cropped mock-up fragments removed from UI components, art styles and fonts; the tools page's duplicate nav removed;
+a hidden `h2` where cards sat directly under the page title; sliders 24 px tall.
+
+Still not done by hand: the chart, diagram, flowchart and mockup studios, motion graphics, moodboards and the site
+builder editor got a first-screen look only, not a full task walkthrough.
+
+## Summary (first pass)
 
 The site is in good technical shape. The open work is consistency, not breakage.
 
@@ -125,7 +175,55 @@ views, and 138 controls inside the component specimens on `#ux` at phone width.
   leaves the control's own options out, and I could not confirm a problem in the browser's accessibility tree. My
   earlier note about the icon family select should be read the same way.
 
-## Ideas from the reference sites
+## Animation and interaction opportunities from the reference sites
+
+This is what the reference links were for. The shelf's 114 pieces and 41 techniques were compared with Aceternity UI
+(names and functions read from the site), Magic UI and 21st.dev (names read; behaviour partly inferred from the
+names), hoverstat.es and Haikei. Oversight Supply returned section names only.
+
+**Already covered, do not rebuild:** carousels (arc, ring, cover flow), card decks, tilt and holographic cards,
+spotlight and glowing borders, compare slider, magnifier, masonry, dock, gooey tabs, radial menus, magnetic and
+confetti buttons, toasts, scramble, split-flap, odometer, typewriter, marquee, particle globe, and mesh, dither,
+halftone and aurora shaders. The manifest also has near-duplicates worth merging: expanding panels ×2, stacked toasts
+×2, hold-to-confirm ×2, radial menu ×2.
+
+**Gaps, ranked.** S is under about 80 lines, M medium, L needs WebGL.
+
+| # | Piece | What you see | Seen at | Shelf category | Build | Size |
+|---|---|---|---|---|---|---|
+| 1 | Scroll text reveal | Words go from grey to ink as you scroll | Magic UI | Type | per-word `animation-timeline: view()` | S |
+| 2 | Flashlight reveal | The cursor is a round window onto a second layer | Aceternity, 21st | Type | CSS mask + pointer | S |
+| 3 | Liquid metal, silk, caustics | Flowing chrome, cloth folds, pool light | 21st shaders | Backgrounds | WebGL fragment shader each | L |
+| 4 | Burn-away transition | An image chars and dissolves into the next | Aceternity, 21st | Carousels | WebGL noise threshold | L |
+| 5 | Scratch to reveal | Rub off foil to uncover a code | Magic UI, 21st | Cards | canvas `destination-out` | S |
+| 6 | Expanding card to detail | A card grows in place into a detail sheet | Aceternity | Cards | View Transitions, FLIP fallback | M |
+| 7 | Morphing text | One word melts into the next | Magic UI | Type | blur crossfade + SVG threshold | S |
+| 8 | Orbiting icons | Logos circle a centre mark on rings | Magic UI | Sections | CSS rotate + counter-rotate | S |
+| 9 | Fluid ink | Coloured smoke swirls after the pointer | 21st | Backgrounds | WebGL fluid simulation | L |
+| 10 | World map with arcs | Dotted map, lines flying between cities | Aceternity, Magic UI | Signal & data | SVG dots + dash-offset arcs | M |
+| 11 | Icon cloud sphere | Logos on a draggable sphere | Magic UI, 21st | Canvas | Fibonacci sphere, depth sort | M |
+| 12 | Vanishing input | Submitted text crumbles into particles | Aceternity | Controls | canvas pixel particles | M |
+| 13 | Grid backgrounds | Flickering cells, retro floor, hover-lit boxes | Magic UI, Aceternity | Backgrounds | canvas grid, CSS perspective | S |
+| 14 | Hero parallax wall | Rows of screens slide opposite ways on scroll | Aceternity | Scroll | scroll-driven transforms | M |
+| 15 | Tracing beam timeline | A glowing line follows your scroll | Aceternity | Scroll | SVG dash-offset on `scroll()` | S |
+| 16 | Page preloader | Counter to 100, then a curtain lifts | 21st | Feedback | counter + clip-path | S |
+| 17 | Liquid glass | A lens that refracts what is behind it | Aceternity, 21st | Navigation | backdrop-filter + displacement map | M |
+| 18 | Lanyard badge | An ID card on a strap you can swing | 21st | Cards | Verlet rope + drag | M |
+| 19 | Page-turn book | Pages curl like a journal | 21st | Galleries | CSS 3D pages | M |
+| 20 | ASCII image | A photo redrawn in characters | Aceternity, 21st | Canvas | luminance to glyph grid | M |
+| 21 | Direction-aware hover | The overlay enters from the side you came in | Aceternity | Galleries | entry-angle maths, `:has()` | S |
+| 22 | Scatter to list | Scattered images fly into an ordered list | hoverstat.es | Lists | FLIP between layouts | M |
+| 23 | Meteors | Streaks fall across a dark hero | Magic UI, Aceternity | Backgrounds | CSS keyframes | S |
+| 24 | Layered waves | Stacked wave bands drift, reseedable | Haikei | Backgrounds | generated SVG paths | S |
+| 25 | Metaball loader | Blobs merge and split | 21st | Feedback | SVG goo filter | S |
+
+**Where the references are ahead:** shader backgrounds (21st lists about 30 kinds, the shelf has five); material
+transitions such as burn, ink and liquid glass (the shelf has none); scroll and entrance text effects (the shelf's
+type pieces are pointer or loop driven); ambient pattern backgrounds and generators.
+
+A sensible first batch is the twelve S pieces: 1, 2, 5, 7, 8, 13, 15, 16, 21, 23, 24, 25.
+
+## Layout notes from the same sites (not what was asked for, kept for reference)
 
 Read from the pages' own markup: 21st.dev, Magic UI, Aceternity UI, Oversight Supply, Hoverstat.es, Minimal Gallery,
 Typewolf, Haikei. Siteinspire was summaries only; Maxibestof would not load. None of them shows descriptions inside a

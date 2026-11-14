@@ -49,7 +49,7 @@ body.cinemaMode .aeProgress{display:none}
 .aeTop:focus-visible{outline:2px solid var(--plate-d,#0369a1);outline-offset:3px}
 
 /* ---------- Search trigger (in the header) ---------- */
-.aeSearchBtn{display:inline-flex;align-items:center;gap:10px;min-height:36px;padding:6px 8px 6px 14px;border-radius:999px;border:1px solid rgba(190,210,240,.24);background:rgba(255,255,255,.04);color:#c9d3e3;font:500 13px/1 "Manrope","Segoe UI",system-ui,sans-serif;cursor:pointer;transition:border-color .2s,background .2s,color .2s}
+.aeSearchBtn{display:inline-flex;align-items:center;gap:10px;min-height:36px;padding:6px 8px 6px 14px;border-radius:999px;border:1px solid rgba(190,210,240,.24);background:rgba(255,255,255,.04);color:#c9d3e3;font:500 13px/1 "Inter","Segoe UI",system-ui,sans-serif;cursor:pointer;transition:border-color .2s,background .2s,color .2s}
 .aeSearchBtn:hover{border-color:rgba(190,210,240,.5);background:rgba(255,255,255,.08);color:#fff}
 .aeSearchBtn svg{width:14px;height:14px}
 .aeSearchBtn kbd,.aePalette kbd{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11px;padding:2px 6px;border-radius:5px;border:1px solid rgba(190,210,240,.3);color:inherit;opacity:.8}
@@ -58,13 +58,13 @@ body.cinemaMode .aeSearchBtn{order:2}
 @media(max-width:900px){.aeSearchBtn span,.aeSearchBtn kbd{display:none}.aeSearchBtn{padding:8px;min-width:40px;min-height:40px;justify-content:center;margin-left:auto}}
 
 /* ---------- Search palette ---------- */
-.aePalette{width:min(680px,calc(100vw - 32px));max-height:min(640px,calc(100vh - 80px));margin:10vh auto auto;padding:0;border:1px solid #d9dee6;border-radius:18px;background:#fff;color:#0d1220;box-shadow:0 40px 90px -30px rgba(2,4,11,.55);overflow:hidden;font-family:"Manrope","Segoe UI",system-ui,sans-serif}
+.aePalette{width:min(680px,calc(100vw - 32px));max-height:min(640px,calc(100vh - 80px));margin:10vh auto auto;padding:0;border:1px solid #d9dee6;border-radius:18px;background:#fff;color:#0d1220;box-shadow:0 40px 90px -30px rgba(2,4,11,.55);overflow:hidden;font-family:"Inter","Segoe UI",system-ui,sans-serif}
 .aePalette::backdrop{background:rgba(2,4,11,.55);backdrop-filter:blur(4px)}
 @media(prefers-reduced-motion:no-preference){.aePalette[open]{animation:aePop .28s cubic-bezier(.2,.7,.1,1)}@keyframes aePop{from{opacity:0;transform:translateY(-8px) scale(.98)}to{opacity:1;transform:none}}}
 .aePalForm{display:flex;flex-direction:column;max-height:inherit;margin:0}
 .aePalField{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid #e6eaf0;color:#4a5466}
 .aePalField svg{width:18px;height:18px;flex:none}
-.aePalField input{flex:1;min-width:0;border:0!important;outline:0;background:transparent!important;font:500 17px/1.3 "Manrope","Segoe UI",system-ui,sans-serif;color:#0d1220;min-height:32px;box-shadow:none!important}
+.aePalField input{flex:1;min-width:0;border:0!important;outline:0;background:transparent!important;font:500 17px/1.3 "Inter","Segoe UI",system-ui,sans-serif;color:#0d1220;min-height:32px;box-shadow:none!important}
 .aePalList{list-style:none;margin:0;padding:8px;overflow:auto;flex:1}
 .aeOpt{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:14px;padding:11px 12px;border-radius:12px;cursor:pointer}
 .aeOpt[aria-selected=true]{background:#f2f4f7}

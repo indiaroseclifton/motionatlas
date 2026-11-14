@@ -66,7 +66,7 @@
   page.querySelector('[data-tcard]')?.addEventListener('click',async()=>{const b=await card(current);const url=URL.createObjectURL(b);const a=document.createElement('a');a.href=url;a.download=`atlas-tour-${current.k}.png`;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000);st.textContent='Tour card saved to your downloads.';});}
  const loadImg=src=>new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src=src;});
  async function card(t){const c=document.createElement('canvas');c.width=1200;c.height=630;const x=c.getContext('2d');
-  try{await Promise.all(['300 80px "Cormorant Garamond"','500 18px "JetBrains Mono"','400 22px Manrope'].map(f=>document.fonts.load(f)));}catch{}
+  try{await Promise.all(['300 80px "Cormorant Garamond"','500 18px "JetBrains Mono"','400 22px Inter'].map(f=>document.fonts.load(f)));}catch{}
   x.fillStyle='#02040b';x.fillRect(0,0,1200,630);
   const stops=t.stops.slice(0,4).map(([id])=>stopInfo(id)).filter(Boolean);const cells=[[640,40],[920,40],[640,330],[920,330]];
   for(let i=0;i<stops.length;i++){const s=stops[i];const src=s.film?.poster||s.poster||(s.ref&&(s.ref.columns===1?s.ref.url:null))||cover(t);const img=src&&await loadImg(src);const [cx,cy]=cells[i],w=260,h=260;
@@ -74,7 +74,7 @@
    x.fillStyle='rgba(2,4,11,.55)';x.fillRect(cx,cy+h-44,w,44);x.fillStyle='#eef2f8';x.font='500 14px "JetBrains Mono", monospace';x.fillText(`${String(i+1).padStart(2,'0')} · ${s.id}`,cx+14,cy+h-17);x.restore();}
   x.fillStyle='#fda4af';x.font='500 18px "JetBrains Mono", monospace';x.fillText(`${t.kicker.toUpperCase()} · GUIDED TOUR · ${t.stops.length} STOPS`,64,96);
   x.fillStyle='#eef2f8';x.font='300 84px "Cormorant Garamond", Georgia, serif';const words=t.title.split(' ');let line='',y=190;for(const w of words){const tt=line?line+' '+w:w;if(x.measureText(tt).width>520&&line){x.fillText(line,64,y);y+=84;line=w;}else line=tt;}x.fillText(line,64,y);
-  x.fillStyle='#c4cddc';x.font='400 22px Manrope, sans-serif';let l2='',y2=y+60;for(const w of t.intro.split(' ')){const tt=l2?l2+' '+w:w;if(x.measureText(tt).width>520&&l2){x.fillText(l2,64,y2);y2+=32;l2=w;if(y2>520)break;}else l2=tt;}if(y2<=520)x.fillText(l2,64,y2);
+  x.fillStyle='#c4cddc';x.font='400 22px Inter, sans-serif';let l2='',y2=y+60;for(const w of t.intro.split(' ')){const tt=l2?l2+' '+w:w;if(x.measureText(tt).width>520&&l2){x.fillText(l2,64,y2);y2+=32;l2=w;if(y2>520)break;}else l2=tt;}if(y2<=520)x.fillText(l2,64,y2);
   x.fillStyle='#eef2f8';x.font='italic 300 28px "Cormorant Garamond", Georgia, serif';x.fillText('Visual & Motion Atlas',64,590);
   return new Promise(r=>c.toBlob(r,'image/png'));}
 

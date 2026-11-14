@@ -2,22 +2,22 @@
 body.anNav>header nav[aria-label=Main],body.anNav>header .librarynav,body.anNav .mobileNavHint,body.anNav>header .finderBtn{display:none!important}
 body.anNav>header{flex-wrap:nowrap;row-gap:0;padding-bottom:12px}
 .anBar{order:1;display:flex;align-items:center;gap:6px;flex:1;min-width:0;margin-left:clamp(8px,2vw,28px)}
-.anLibBtn{display:inline-flex;align-items:center;gap:9px;min-height:40px;padding:0 16px 0 13px;border-radius:999px;border:1px solid rgba(0,0,0,.6);background:rgba(0,0,0,.06);color:#111113;font:600 13.5px/1 "Manrope",system-ui,sans-serif;letter-spacing:.01em;cursor:pointer;transition:background .2s,border-color .2s}
+.anLibBtn{display:inline-flex;align-items:center;gap:9px;min-height:40px;padding:0 16px 0 13px;border-radius:999px;border:1px solid rgba(0,0,0,.6);background:rgba(0,0,0,.06);color:#111113;font:600 13.5px/1 "Inter",system-ui,sans-serif;letter-spacing:.01em;cursor:pointer;transition:background .2s,border-color .2s}
 .anLibBtn:hover{background:rgba(0,0,0,.06);border-color:rgba(0,0,0,.6)}
 .anLibBtn svg{width:16px;height:16px}
 .anLibBtn:focus-visible,.anMenu summary:focus-visible,.anDrawer a:focus-visible,.anDrawer button:focus-visible,.anTrailGroup:focus-visible,.anFilterBtn:focus-visible{outline:2px solid #111113;outline-offset:3px}
 .anMenu{position:relative}
-.anMenu summary{list-style:none;display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 12px;border-radius:999px;color:#3f4249;font:500 14px/1 "Manrope",system-ui,sans-serif;cursor:pointer;white-space:nowrap}
+.anMenu summary{list-style:none;display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 12px;border-radius:999px;color:#3f4249;font:500 14px/1 "Inter",system-ui,sans-serif;cursor:pointer;white-space:nowrap}
 .anMenu summary::-webkit-details-marker{display:none}
 .anMenu summary:hover,.anMenu[open] summary{color:#000;background:rgba(0,0,0,.05)}
 .anMenu.anHere summary{color:#000;box-shadow:inset 0 -2px 0 #111113}
 .anMenu summary svg{width:10px;height:10px;transition:transform .2s}
 .anMenu[open] summary svg{transform:rotate(180deg)}
-.anToolsLink{display:inline-flex;align-items:center;min-height:40px;padding:0 12px;border-radius:999px;color:#3f4249;font:500 14px/1 "Manrope",system-ui,sans-serif;text-decoration:none;white-space:nowrap}.anToolsLink:hover{color:#000;background:rgba(0,0,0,.05)}.anToolsLink:focus-visible{outline:2px solid #111113;outline-offset:3px}
+.anToolsLink{display:inline-flex;align-items:center;min-height:40px;padding:0 12px;border-radius:999px;color:#3f4249;font:500 14px/1 "Inter",system-ui,sans-serif;text-decoration:none;white-space:nowrap}.anToolsLink:hover{color:#000;background:rgba(0,0,0,.05)}.anToolsLink:focus-visible{outline:2px solid #111113;outline-offset:3px}
 .anMenu>div{max-height:calc(100vh - 90px);overflow:auto;position:absolute;top:calc(100% + 8px);left:0;z-index:60;display:grid;gap:2px;width:min(330px,80vw);padding:8px;border-radius:16px;background:#ffffff;border:1px solid rgba(0,0,0,.12);box-shadow:0 24px 60px -20px rgba(0,0,0,.22)}
 .anMenu>div a{display:grid;gap:2px;padding:10px 12px;border-radius:10px;text-decoration:none;color:#111113}
 .anMenu>div a:hover,.anMenu>div a.active{background:rgba(0,0,0,.05)}
-.anMenu>div a b{font:600 14px/1.25 "Manrope",system-ui,sans-serif}
+.anMenu>div a b{font:600 14px/1.25 "Inter",system-ui,sans-serif}
 .anMenu>div a span{font-size:12.5px;line-height:1.4;color:#6b6f76}
 body.anNav>header .aeSearchBtn{margin-left:auto}
 
@@ -33,7 +33,7 @@ body.anOpen{overflow:hidden}
 .anClose{width:40px;height:40px;border-radius:50%;border:1px solid rgba(0,0,0,.12);background:transparent;color:inherit;display:grid;place-items:center;cursor:pointer}
 .anClose svg{width:16px;height:16px}
 .anQuick{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
-.anQ{display:flex;align-items:center;gap:9px;min-height:44px;padding:0 12px;border-radius:12px;border:1px solid rgba(0,0,0,.12);background:rgba(0,0,0,.05);color:#111113;font:500 13.5px/1.2 "Manrope",system-ui,sans-serif;text-align:left;cursor:pointer}
+.anQ{display:flex;align-items:center;gap:9px;min-height:44px;padding:0 12px;border-radius:12px;border:1px solid rgba(0,0,0,.12);background:rgba(0,0,0,.05);color:#111113;font:500 13.5px/1.2 "Inter",system-ui,sans-serif;text-align:left;cursor:pointer}
 .anQ:hover{background:rgba(0,0,0,.05)}
 .anQ svg{width:16px;height:16px;flex:0 0 16px}
 .anQ kbd{margin-left:auto;font:500 11px/1 "JetBrains Mono",monospace;padding:3px 6px;border:1px solid rgba(0,0,0,.12);border-radius:5px;color:#6b6f76}
@@ -45,7 +45,7 @@ body.anOpen{overflow:hidden}
 .anGroup a:hover,.anGroup a:focus-visible{background:rgba(0,0,0,.05)}
 .anGroup a[aria-current=page]{background:rgba(0,0,0,.06);box-shadow:inset 3px 0 0 #111113}
 .anGroup img{width:40px;height:40px;border-radius:9px;object-fit:cover;background:#1a2030}
-.anGroup b{display:block;font:600 14.5px/1.25 "Manrope",system-ui,sans-serif}
+.anGroup b{display:block;font:600 14.5px/1.25 "Inter",system-ui,sans-serif}
 .anGroup small{display:block;font-size:12.5px;line-height:1.4;color:#6b6f76}
 .anPreview{display:flex;flex-direction:column;gap:8px;padding:24px 24px 28px;min-width:0;min-height:0}
 .anFilm{position:relative;flex:1;min-height:0;border-radius:18px;overflow:hidden;background:#151a26;margin-bottom:10px}
@@ -134,7 +134,7 @@ body.anNav>header .anMenu>div a.active{background:rgba(0,0,0,.06)!important}
 .anDrawer .anGroup ul{gap:0}
 .anDrawer .anGroup a{display:flex;align-items:center;gap:10px;min-height:36px;padding:0 10px;border-radius:9px;transition:background .15s,padding .2s}
 .anGroup a .anIcoBox{width:18px;height:18px;flex:none;border:0;background:none;border-radius:0;color:#8A8D94}.anGroup a .anIcoBox svg{width:18px;height:18px}
-.anGroup a b{font:500 14.5px/1.2 "Manrope",system-ui,sans-serif}
+.anGroup a b{font:500 14.5px/1.2 "Inter",system-ui,sans-serif}
 .anGroup a small{display:none}
 .anDrawer .anGroup a:hover,.anDrawer .anGroup a:focus-visible,.anDrawer .anGroup a.anOn{background:#F4F4F5;padding-left:14px}
 .anGroup a.anOn .anIcoBox,.anGroup a:hover .anIcoBox{color:#111113}
@@ -145,10 +145,22 @@ body.anNav>header .anMenu>div a.active{background:rgba(0,0,0,.06)!important}
 .anPGroup{font:500 11px/1 "JetBrains Mono",monospace;letter-spacing:.16em;text-transform:uppercase;color:#8A8D94}
 .anPName{font:italic 500 clamp(44px,5.4vw,76px)/.95 "Cormorant Garamond",Georgia,serif;letter-spacing:-.02em;max-width:9ch}
 .anPreview p.anPNote{font-size:17px;line-height:1.5;color:#3f4249;max-width:30ch}
-.anGo{display:inline-flex;align-items:center;gap:8px;margin-top:8px!important;font:600 13px/1 "Manrope",system-ui,sans-serif;color:#111113}.anGo i{font-style:normal;display:inline-block}
+.anGo{display:inline-flex;align-items:center;gap:8px;margin-top:8px!important;font:600 13px/1 "Inter",system-ui,sans-serif;color:#111113}.anGo i{font-style:normal;display:inline-block}
 .anSwap .anPGroup{animation:anUp .35s cubic-bezier(.2,.8,.2,1) both}.anSwap .anPName{animation:anUp .45s .03s cubic-bezier(.2,.8,.2,1) both}.anSwap .anPNote{animation:anUp .45s .08s cubic-bezier(.2,.8,.2,1) both}.anSwap .anGo{animation:anUp .45s .13s cubic-bezier(.2,.8,.2,1) both}.anSwap .anGo i{animation:anNudge 1.6s .5s ease-in-out infinite}.anSwap .anBig{animation:anBig .7s cubic-bezier(.2,.8,.2,1) both}
 @keyframes anUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @keyframes anBig{from{opacity:0;transform:scale(.9) rotate(-6deg)}to{opacity:.06;transform:none}}
 @keyframes anNudge{0%,100%{transform:none}50%{transform:translateX(5px)}}
 @media (max-width:760px){.anDrawer{grid-template-columns:1fr;width:min(340px,100vw)}.anPanel{border-right:0}}
 @media (prefers-reduced-motion:reduce){.anSwap *{animation:none!important}.anDrawer .anGroup a{transition:none}}
+
+/* library drawer on phones: folded groups; the open one shows descriptions */
+@media (max-width:760px){
+.anDrawer .anGroup{padding-top:0;border-top:1px solid #ECECEE}
+.anDrawer .anGroup>h2{display:flex;align-items:center;justify-content:space-between;min-height:48px;margin:0;padding:0 10px;font-size:12px;color:#111113;cursor:pointer}
+.anDrawer .anGroup>h2::after{content:"+";font:400 18px/1 "JetBrains Mono",monospace;color:#8A8D94}
+.anDrawer .anGroup.anOpenG>h2::after{content:"\2212"}
+.anDrawer .anGroup:not(.anOpenG)>ul{display:none}
+.anDrawer .anGroup.anOpenG>ul{padding-bottom:10px}
+.anDrawer .anGroup a{flex-wrap:wrap;row-gap:2px;min-height:44px;padding:8px 10px}
+.anDrawer .anGroup a small{display:block;flex-basis:100%;padding-left:28px;font:400 12.5px/1.4 Inter,system-ui,sans-serif;color:#6B6F76}
+}

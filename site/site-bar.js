@@ -27,7 +27,7 @@
 html.sbReady body::before{display:none}
 /* the pages' own cross-links between studios are now in the bar's menus */
 html.sbReady nav[aria-label="Other studios"],html.sbReady header nav[aria-label=Related]{display:none}
-.sbar{position:fixed;top:0;left:0;right:0;z-index:2147483000;box-sizing:border-box;height:var(--sb-h);padding:env(safe-area-inset-top,0px) max(12px,env(safe-area-inset-right,0px)) 0 max(12px,env(safe-area-inset-left,0px));display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.94);color:#111113;border-bottom:1px solid rgba(0,0,0,.12);font:500 13.5px/1 "Manrope",Inter,system-ui,sans-serif;-webkit-text-size-adjust:100%;text-align:left}
+.sbar{position:fixed;top:0;left:0;right:0;z-index:2147483000;box-sizing:border-box;height:var(--sb-h);padding:env(safe-area-inset-top,0px) max(12px,env(safe-area-inset-right,0px)) 0 max(12px,env(safe-area-inset-left,0px));display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.94);color:#111113;border-bottom:1px solid rgba(0,0,0,.12);font:500 13.5px/1 "Inter",Inter,system-ui,sans-serif;-webkit-text-size-adjust:100%;text-align:left}
 .sbar *{box-sizing:border-box}
 .sbar a,.sbar button{font:inherit;color:inherit;text-decoration:none;background:none;border:0;cursor:pointer}
 .sbBrand{display:inline-flex;align-items:center;gap:9px;height:36px;padding:0 10px 0 4px;border-radius:10px;font-weight:700;letter-spacing:.02em;white-space:nowrap}
@@ -37,6 +37,9 @@ html.sbReady nav[aria-label="Other studios"],html.sbReady header nav[aria-label=
 .sbTop[aria-current=page],.sbTop.sbHere{color:#000;box-shadow:inset 0 -2px 0 #111113;border-radius:8px}
 .sbTop svg{width:10px;height:10px;transition:transform .2s}.sbTop[aria-expanded=true] svg{transform:rotate(180deg)}
 .sbGrow{flex:1}
+/* phones have no hover, so the menu sheet shows each page's one-line description under its name */
+.sbSheet a[data-note]::after{content:attr(data-note);display:block;margin-top:3px;font:400 12.5px/1.4 Inter,system-ui,sans-serif;color:#6B6F76;white-space:normal}
+.sbSheet a[data-note]{display:block;height:auto;min-height:44px;padding-top:9px;padding-bottom:9px;white-space:normal}
 .sbar :focus-visible{outline:2px solid #111113;outline-offset:2px}
 .sbSearch{display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 12px;border-radius:999px;border:1px solid rgba(0,0,0,.12);color:#3f4249}
 .sbSearch kbd{font:500 11px "JetBrains Mono",monospace;border:1px solid rgba(0,0,0,.12);border-radius:5px;padding:2px 6px}
@@ -44,7 +47,7 @@ html.sbReady nav[aria-label="Other studios"],html.sbReady header nav[aria-label=
 .sbMenuBtn{display:none;align-items:center;gap:7px;height:36px;padding:0 12px;border-radius:999px;border:1px solid rgba(0,0,0,.12)!important}
 .sbPanel{position:fixed;z-index:2147483001;top:var(--sb-h);left:8px;max-width:calc(100vw - 16px);max-height:calc(100vh - var(--sb-h) - 12px);max-height:calc(100dvh - var(--sb-h) - 12px);overflow:auto;background:#ffffff;border:1px solid rgba(0,0,0,.12);border-radius:16px;box-shadow:0 24px 60px -20px rgba(0,0,0,.25);padding:10px;color:#111113}
 .sbPanel[hidden]{display:none}
-.sbPanel{font:500 14px/1.3 "Manrope",Inter,system-ui,sans-serif}.sbPanel *{box-sizing:border-box}.sbPanel a,.sbPanel button{font:inherit;text-decoration:none;background:none;border:0;cursor:pointer;color:inherit}.sbPanel :focus-visible{outline:2px solid #111113;outline-offset:-2px}
+.sbPanel{font:500 14px/1.3 "Inter",Inter,system-ui,sans-serif}.sbPanel *{box-sizing:border-box}.sbPanel a,.sbPanel button{font:inherit;text-decoration:none;background:none;border:0;cursor:pointer;color:inherit}.sbPanel :focus-visible{outline:2px solid #111113;outline-offset:-2px}
 .sbPanel h2{margin:10px 8px 4px;font:600 10.5px/1 "JetBrains Mono",ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase;color:#6b6f76}.sbPanel h2:first-child{margin-top:4px}
 .sbPanel .sbList{display:grid;gap:2px}
 .sbPanel a{display:grid;gap:3px;padding:9px 12px;border-radius:10px;color:#111113}
@@ -75,10 +78,10 @@ html.sbReady nav[aria-label="Other studios"],html.sbReady header nav[aria-label=
 .sbSkip{position:fixed;left:8px;top:-60px;z-index:2147483002;background:#111113;color:#fff;padding:10px 14px;border-radius:8px;font:600 14px/1 Inter,sans-serif}.sbSkip:focus{top:calc(var(--sb-h) + 6px)}
 .sbSrch{width:min(640px,calc(100vw - 24px));margin:0;padding:0;border:1px solid rgba(0,0,0,.12);border-radius:16px;background:#ffffff;color:#111113;position:fixed;top:12vh;left:50%;transform:translateX(-50%)}
 .sbSrch::backdrop{background:rgba(20,20,24,.35)}
-.sbSrch input{width:100%;box-sizing:border-box;padding:16px 18px;font:500 16px "Manrope",Inter,system-ui,sans-serif;background:transparent;border:0;border-bottom:1px solid rgba(0,0,0,.12);color:#111113;outline:0}
+.sbSrch input{width:100%;box-sizing:border-box;padding:16px 18px;font:500 16px "Inter",Inter,system-ui,sans-serif;background:transparent;border:0;border-bottom:1px solid rgba(0,0,0,.12);color:#111113;outline:0}
 .sbSrch ul{list-style:none;margin:0;padding:6px;max-height:55vh;overflow:auto}.sbSrch li a{display:grid;gap:2px;padding:9px 12px;border-radius:10px;color:#111113;text-decoration:none}
-.sbSrch li a:hover,.sbSrch li a.on{background:rgba(0,0,0,.06)}.sbSrch li b{font:600 14px Manrope,Inter,sans-serif}.sbSrch li small{font:400 12px/1.35 Manrope,Inter,sans-serif;color:#6b6f76}
-.sbSrch p{margin:0;padding:10px 18px 14px;font:400 12px Manrope,Inter,sans-serif;color:#6b6f76}
+.sbSrch li a:hover,.sbSrch li a.on{background:rgba(0,0,0,.06)}.sbSrch li b{font:600 14px Inter,Inter,sans-serif}.sbSrch li small{font:400 12px/1.35 Inter,Inter,sans-serif;color:#6b6f76}
+.sbSrch p{margin:0;padding:10px 18px 14px;font:400 12px Inter,Inter,sans-serif;color:#6b6f76}
 @media (max-width:900px){.sbTop.sbDesk,.sbSearch kbd,.sbSearch span.sbLbl{display:none}.sbMenuBtn{display:inline-flex}.sbSearch{width:36px;height:36px;padding:0;justify-content:center}}
 @media (max-width:520px){.sbBrand .sbName{display:none}}
 @media (prefers-reduced-motion:reduce){.sbTop svg{transition:none}}

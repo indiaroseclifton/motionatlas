@@ -9,7 +9,7 @@ function fxLab(){
  const E=window.FX_TECHNIQUES||[];
  const SITE='https://motionatlas-ten.vercel.app/';
  const BASE_CSS=`*{box-sizing:border-box}
-body{margin:0;font-family:"Manrope",system-ui,sans-serif;background:#0b0d12;color:#f2f4f8;-webkit-font-smoothing:antialiased}
+body{margin:0;font-family:"Inter",system-ui,sans-serif;background:#0b0d12;color:#f2f4f8;-webkit-font-smoothing:antialiased}
 h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:300;letter-spacing:-.02em;line-height:.92;margin:0}
 p{margin:0}
 img,video,canvas,svg{display:block;max-width:100%}
@@ -18,7 +18,7 @@ img,video,canvas,svg{display:block;max-width:100%}
 .display{font-size:clamp(60px,10.5vw,168px)}
 .cover{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.pill{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 20px;border-radius:999px;border:1px solid currentColor;background:none;color:inherit;font:600 14px "Manrope",sans-serif;cursor:pointer}
+.pill{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 20px;border-radius:999px;border:1px solid currentColor;background:none;color:inherit;font:600 14px "Inter",sans-serif;cursor:pointer}
 .pill.solid{background:#f2f4f8;color:#0b0d12;border-color:#f2f4f8}
 :focus-visible{outline:3px solid #7dd3fc;outline-offset:3px}
 .end{min-height:100vh;display:grid;place-content:center;gap:16px;text-align:center;padding:10vh 6vw;background:#0b0d12;color:#f2f4f8}
@@ -27,7 +27,7 @@ html.reduce *,html.reduce *::before,html.reduce *::after{animation:none!importan
  const BASE_JS=`if(matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('reduce');
 const FX=(()=>{const cs=getComputedStyle(document.documentElement);const n=(v,d)=>{const x=parseFloat(cs.getPropertyValue(v));return isNaN(x)?d:x;};return {i:n('--fx-intensity',1),d:n('--fx-duration',900),ease:cs.getPropertyValue('--fx-ease').trim()||'ease',R:document.documentElement.classList.contains('reduce'),clamp:(v,a,b)=>Math.min(b,Math.max(a,v)),progress(el){const r=el.getBoundingClientRect();return FX.clamp(-r.top/Math.max(1,el.offsetHeight-innerHeight),0,1);}};})();`;
  const EASES={expressive:['Expressive','cubic-bezier(.2,.7,.1,1)'],standard:['Standard','cubic-bezier(.4,0,.2,1)'],spring:['Spring','linear(0,.009,.035 2.1%,.141,.281 6.7%,.723 12.9%,.938 16.7%,1.017,1.077,1.121,1.149 24.3%,1.159,1.163,1.161,1.154 29.9%,1.129 32.8%,1.051 39.6%,1.017 43.1%,.991,.977 51%,.974 53.8%,.975 57.1%,.997 69.8%,1.003 76.9%,1.004 83.8%,1)'],linear:['Linear','linear'],snappy:['Snappy','cubic-bezier(.7,0,.2,1)']};
- const FONTS='<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=Manrope:wght@400;600;700;800&family=JetBrains+Mono:wght@500&display=swap">';
+ const FONTS='<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@500&display=swap">';
  const abs=s=>s.replace(/(["'(])assets\//g,'$1'+SITE+'assets/');
  const vars=o=>`html{--fx-intensity:${o.intensity};--fx-duration:${o.duration}ms;--fx-ease:${EASES[o.ease][1]}}`;
  function doc(e,o,forExport){

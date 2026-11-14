@@ -14,7 +14,7 @@ window.HomeAtlas={
  if(document.getElementById('home'))return;
  if(!document.getElementById('atlasHomeFonts')){
   const f=document.createElement('link');f.id='atlasHomeFonts';f.rel='stylesheet';
-  f.href='https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Manrope:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap';
+  f.href='https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap';
   document.head.append(f);
  }
  const section=document.createElement('section');section.id='home';section.className='page';
