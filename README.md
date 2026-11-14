@@ -45,7 +45,7 @@ The library holds:
 | Landing effects (techniques) | 41 (L01–L49, with gaps where older effects were retired) | `site/effects-data.js` (the techniques), `site/effects-lab.js` (the lab UI), `site/expansion.json`, clips in `site/assets/fx/clips/` |
 | Atlas themes (component lab skins) | 22 | `site/atlas-themes.js` |
 | Site-builder templates / sections / photographs | 26 / 56 / 82 (CC0, `site/assets/photos/`) | `site/builder/` |
-| Icons | 6,468 in 22 families, shown as 15 looks | `site/icons/`, `site/icon-library.js`, `site/specimens.js` |
+| Icons | 13,709 in 27 families, shown as 15 looks | `site/icons/`, `site/icon-library.js`, `site/specimens.js` |
 | Chart types / diagram types / flowchart templates | 26 / 18 / 24 | `site/dataviz/` |
 
 ### Landing effects and the Interactions shelf
@@ -275,7 +275,7 @@ in `system-kits.js`, and a credit line if it interprets someone else's system. U
 
 ## Icon families (`#icons`, `site/icon-library.js`) and project icons
 
-`atlas.html#icons` shows the 22 families as 15 **looks**, one card each (`SpecimenAtlas.looks` in
+`atlas.html#icons` shows the 27 families as 15 **looks**, one card each (`SpecimenAtlas.looks` in
 `specimens.js`): Outline (the four Phosphor weights plus Lucide, Tabler and Heroicons as draws of
 the same idea), Solid, Duotone, Broken line, Bold duotone, Rounded filled, Hand-drawn, Pixel,
 Two-tone colour, Flat colour, Colour pictograms, 3D emoji, Illustrative, Brand logos and Animated
@@ -289,6 +289,11 @@ add single icons to a project as `project.iconPicks = [{family, name, colour}]`;
 colour swatch on the project page and is listed in the exported brief. Whole families can still be
 saved (`project.icons`). The nine families added in November 2026 come from Iconify bundles
 (`ICONIFY` in `tools/icons.py`); run `python3 tools/icons.py` (Pillow needed for Fluent) to rebuild.
+
+`tools/icons-more.py` deepens the outline and solid looks from pinned npm tarballs (read in memory, never unpacked or
+run): Lucide (1,500), Tabler outline (1,800) and filled (900), Iconoir outline and solid, and Bootstrap Icons outline
+and filled. It rewrites those families' sets, packs and 13 specimens in place and updates `icons/index.json`;
+licences are in `icons/LICENSES-more.txt`.
 
 ## UI components (`#ux`, `site/component-lab.js`)
 

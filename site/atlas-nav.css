@@ -164,3 +164,5 @@ body.anNav>header .anMenu>div a.active{background:rgba(0,0,0,.06)!important}
 .anDrawer .anGroup a{flex-wrap:wrap;row-gap:2px;min-height:44px;padding:8px 10px}
 .anDrawer .anGroup a small{display:block;flex-basis:100%;padding-left:28px;font:400 12.5px/1.4 Inter,system-ui,sans-serif;color:#6B6F76}
 }
+/* quick actions: one row each, so the labels never wrap in the narrow list column */
+@media (min-width:761px){.anQuick{grid-template-columns:1fr;gap:6px}.anQ{min-height:40px;white-space:nowrap}}

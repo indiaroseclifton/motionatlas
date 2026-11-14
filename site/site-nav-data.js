@@ -14,7 +14,7 @@ window.ATLAS_NAV_GROUPS=[
   {name:'Library',items:[
    ['app-interfaces.html','App templates','Twenty-two finished screens to copy, light and dark.','light-mesh'],
    ['#ux','UI components','Seventy components with every state, in any style.','light-mesh'],
-   ['#icons','Icons','6,468 icons in fifteen looks. Recolour, copy or download.','sketchbook-horse'],
+   ['#icons','Icons','13,709 icons in fifteen looks. Recolour, copy or download.','sketchbook-horse'],
    ['#systems','Design systems','Forty-eight complete looks, each with a kit to download.','game-of-life'],
    ['#backgrounds','Backgrounds','Gradients, light and grain. Export a picture or a loop.','petal-swirl']]},
   {name:'Styles',items:[
