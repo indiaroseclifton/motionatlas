@@ -13,9 +13,9 @@
 .pgbox>.sec,.pgsb{padding:0 10px 4px}.pgbox .sec{border-bottom:0;margin-bottom:6px}.pgsb .sec:last-child{border-bottom:0}
 #pgSettings{margin-top:14px}
 /* start dialog */
-.startdlg{width:min(1080px,calc(100vw - 24px))}
+.startdlg{width:100vw;height:100vh;max-width:100vw;max-height:100vh;margin:0;border-radius:0;box-shadow:none;background:var(--bg)}.startdlg::backdrop{background:var(--bg)}.startdlg .pkhead{width:100%;max-width:1180px;margin:0 auto;box-sizing:border-box;padding:18px 24px 6px}.startdlg .stbody{width:100%;max-width:1180px;margin:0 auto;box-sizing:border-box;padding:4px 24px 56px}.stlead{color:var(--mute);font-size:14px;margin:0 0 22px;max-width:62ch}.stsec{margin:0 0 36px}.sthead2{display:flex;align-items:end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}.sthead2 .sth3,.sthead2 .lcount{margin:0}.sthint{padding-left:0}@media (max-width:560px){.startdlg .pkhead,.startdlg .stbody{padding-left:14px;padding-right:14px}}
 .stbody{flex:1;min-height:0;overflow:auto;padding:6px 18px 20px}
-.stopts{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:6px 0 4px}
+.stopts{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin:6px 0 4px}
 .stopt{display:grid;gap:3px;text-align:left;padding:14px;border:1px solid var(--hair);border-radius:14px;background:var(--panel);align-content:start}
 .stopt svg{width:26px;height:26px;color:var(--accent);margin-bottom:6px}.stopt b{font-size:14px}.stopt small{color:var(--mute);font-size:12.5px}
 .stopt:hover{border-color:var(--accent);box-shadow:0 10px 26px -18px rgba(17,17,19,.7)}
@@ -135,3 +135,4 @@
 /* Page list: one line per page, with small icon buttons beside the name instead of a second row */
 .pgrow{flex-wrap:nowrap}.pgrow .pgname{flex:1 1 0;min-width:0}.pgrow .pgname small,.pgrow .pgname b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
 .pgrow .pgact{display:flex;gap:2px;flex:none}.pgrow .pgact .ib{width:28px;height:28px;min-width:0;padding:0;font-size:13px}
+@media (max-width:560px){.startdlg .pkhead h2{display:block;font-size:22px}}

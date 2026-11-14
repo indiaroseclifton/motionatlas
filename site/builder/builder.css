@@ -137,7 +137,7 @@ details.menu .mlist{position:absolute;right:0;top:calc(100% + 6px);z-index:60;mi
 @media (max-width:560px){.brandline h1{font-size:22px}.brandline a{display:none}header{padding:8px 12px}.tools .btn{padding:0 9px}}
 @media (prefers-reduced-motion:reduce){.frameWrap iframe,.toast{transition:none}}
 
-#ltabs{flex-wrap:wrap;overflow:visible}
+#ltabs{display:block;flex-wrap:wrap;overflow:visible;padding:0}
 .lth div>svg{width:100%;height:auto;display:block}
 .ixthumb.light span{color:#5E5A52}
 
@@ -182,3 +182,6 @@ details.menu .mlist{position:absolute;right:0;top:calc(100% + 6px);z-index:60;mi
 .pubdlg{height:auto!important;max-height:90vh;width:min(520px,calc(100vw - 24px))}.pubb{padding:6px 16px 18px;display:grid;gap:12px}.pubb p{margin:0}.pubb #pubLink{word-break:break-all;font-size:13px}
 
 #moreMenu .mlist{min-width:260px}#moreMenu .mlist .btn{width:100%;min-height:0;height:auto;border:0;background:none;box-shadow:none;text-align:left;padding:9px 10px;border-radius:8px;display:grid;gap:1px;font-weight:600}#moreMenu .mlist .btn:hover,#moreMenu .mlist .btn:focus-visible{background:var(--soft)}#moreMenu .mlist small{font-weight:400}#moreMenu summary .moreBadge{margin-left:4px}
+
+/* library source and category selects (2026-11) */
+#ltabs{display:block;padding:0}.libsrc{display:grid;gap:4px;padding:0 16px 10px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}.libsrc select{width:100%;min-height:36px;padding:7px 10px;border:1px solid var(--hair);border-radius:9px;background:var(--panel);font:inherit;font-size:13px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--ink)}.gsel{padding:0 16px;margin-bottom:10px}.gsel label{display:grid;gap:4px;font-size:11px;color:var(--mute)}.gsel select{width:100%;min-height:34px;padding:6px 10px;border:1px solid var(--hair);border-radius:9px;background:var(--panel);font:inherit;font-size:12.5px;color:var(--ink)}

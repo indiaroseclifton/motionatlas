@@ -321,16 +321,18 @@ it New. `hash` picks a style for `sec-*` pieces. The page builder picks it up au
 A website builder that runs in the browser: multi-page sites, edit on the canvas, one design system, export a
 static site or publish it to a live address. Old single-page saves open as one-page sites.
 
-- **Start screen and sites home:** first-time visitors (no saved site) get a start dialog; "Sites & templates" in the
-  header reopens it. Paths: **Continue** the last site, **Start from a template** (gallery with category filter, a large
-  preview and a page list per template), **Describe your site** (AI when on, otherwise the closest template filled with
-  your words), **Blank site** (the empty page explains how to begin) and **From a brand kit** (the Brand generator's
-  "Use in the site builder" hands over its name, tagline, description, feel words, colours, corners, fonts and mark via
-  `atlas-pb-brand-handoff`; the builder suggests a template from the description and builds a populated multi-page site
-  with the brand's tokens and the mark next to the name). Your sites are listed with thumbnails drawn from their own colours and
-  headline; rename, duplicate and delete (with undo). Template thumbnails are pre-rendered WebP files in
+- **Home screen (sites and templates):** opening the builder shows a full-page home, not the editor: your sites as
+  cards (rename, duplicate, delete with undo, open a site file, download, sync to My projects), the 26 templates with a
+  category filter and a preview page per template, and "Start another way" (Continue, Describe your site, Blank site,
+  From a brand kit). First-time visitors see the templates first. "Sites & templates" in the editor header returns home;
+  "Go to editor" leaves it. Template thumbnails are pre-rendered WebP files in
   `site/builder/thumbs/<template>-<page>.webp` (about 10 KB each); regenerate them after editing a template with
-  `BASE=http://localhost:8797/ node tools/builder-thumbs.mjs [templateId...]` (needs Playwright and Pillow).
+  `BASE=http://localhost:8797/ node tools/builder-thumbs.mjs [templateId...]` (needs Playwright and Pillow). "From a
+  brand kit" takes the Brand generator's hand-off (`atlas-pb-brand-handoff`: name, tagline, description, feel words,
+  colours, corners, fonts and mark), suggests a template from the description and builds a populated multi-page site.
+- **Library panel:** one "Library" dropdown chooses the source (Sections, Components, Interactions, Photos, My images,
+  Media & backgrounds, Icons, Kit assets, My blocks) and a "Category" dropdown filters within it, with the search box
+  above both; the panel no longer wraps rows of tabs and chips.
 - **Layout of the editor:** header shows the site name, a saved / unsaved indicator, Undo and Redo, a **Checks** badge
   (issue count for the page; click for the list), **History** (last 20 automatic snapshots per site, kept in IndexedDB with no size cap, restore is
   undoable) and `?` for the shortcut sheet. The right panel has four tabs: Outline (pages, sections, this page's
