@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Clothesline gallery</title>
 <style>
-:root{--bg:#EFE9DF;--ink:#2A241D;--mute:#6A5F52;--line:#8A7B68}
+:root{--bg:#FAFAFA;--ink:#111113;--mute:#6B6F76;--line:#E6E6E8}
 *{box-sizing:border-box}html,body{margin:0;height:100%}
 body{background:var(--bg);color:var(--ink);font:15px/1.5 Georgia,serif;overflow-x:hidden}
 h1{font-weight:500;font-size:clamp(26px,4vw,44px);margin:0;padding:6vh 0 0;text-align:center;letter-spacing:-.01em}
@@ -22,7 +22,7 @@ svg{position:absolute;left:0;top:0;height:120px;pointer-events:none}
 <script>
 const items=[['sumi','Marbling'],['embroidery','Thread'],['sand','Sand'],['erosion','Terrain'],['bloom','Pigment'],['origami','Fold'],['statue','Plaster'],['amber','Resin'],['owl','Night'],['lighthouse','Coast']];
 const row=document.getElementById('row'),wrap=document.getElementById('wrap'),cord=document.getElementById('cord'),svg=document.getElementById('svg');
-items.forEach(([n,c])=>{const d=document.createElement('div');d.className='pin';d.innerHTML=`<figure><img src="../../assets/shelf/${n}.webp" alt="${c}"><figcaption>${c}</figcaption></figure>`;row.append(d)});
+items.forEach(([n,c])=>{const d=document.createElement('div');d.className='pin';d.innerHTML=`<figure><img src="../../assets/art/${n}.svg" alt="${c}"><figcaption>${c}</figcaption></figure>`;row.append(d)});
 const pins=[...row.children].map(el=>({el,a:0,v:0}));
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 let last=wrap.scrollLeft,down=false,sx=0,sl=0,mvx=0;

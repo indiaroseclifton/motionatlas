@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Scroll index</title>
 <style>
-:root{--bg:#F5F3EE;--ink:#191714;--mute:#69645A;--hair:#DAD5CA}
+:root{--bg:#FAFAFA;--ink:#111113;--mute:#6B6F76;--hair:#E6E6E8}
 *{box-sizing:border-box}html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,sans-serif}
 .wrap{display:grid;grid-template-columns:minmax(150px,240px) 1fr;gap:5vw;padding:0 max(16px,5vw)}
@@ -23,7 +23,7 @@ section p{margin:0;max-width:52ch;color:#4A463F}
 <script>
 const ch=[['Tide','We start at the waterline, where the light is flattest and the colours are honest.','erosion'],['Salt','Crystals on slate, sorted by size and photographed at noon.','sand'],['Ink','Every label is printed in a single blue, overprinted until it goes nearly black.','sumi'],['Glass','The shop window becomes a lens; we design for the reflection as much as the room.','soap'],['Night','After closing, the sign stays lit. One glow, one word.','biolum']];
 const nav=document.getElementById('nav'),main=document.getElementById('main');
-ch.forEach(([t,p,img],i)=>{nav.insertAdjacentHTML('beforeend',`<a href="#c${i}"><i>0${i+1}</i><b>${t}</b></a>`);main.insertAdjacentHTML('beforeend',`<section id="c${i}"><h2>${t}</h2><p>${p}</p><img src="../../assets/shelf/${img}.webp" alt="" loading="lazy"></section>`)});
+ch.forEach(([t,p,img],i)=>{nav.insertAdjacentHTML('beforeend',`<a href="#c${i}"><i>0${i+1}</i><b>${t}</b></a>`);main.insertAdjacentHTML('beforeend',`<section id="c${i}"><h2>${t}</h2><p>${p}</p><img src="../../assets/art/${img}.svg" alt="" loading="lazy"></section>`)});
 nav.insertAdjacentHTML('beforeend','<div class="bar"><span id="bar"></span></div>');
 const A=[...nav.querySelectorAll('a')],S=[...main.children];
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){const i=S.indexOf(e.target);A.forEach((a,j)=>{a.classList.toggle('on',i===j);if(i===j)a.setAttribute('aria-current','true');else a.removeAttribute('aria-current')})}}),{rootMargin:'-45% 0px -45% 0px'});S.forEach(s=>io.observe(s));

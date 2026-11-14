@@ -1,11 +1,11 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Press-and-hold confirm</title>
 <style>
-:root{--bg:#0F0F12;--ink:#F3F2EF;--mute:#A3A2AA;--red:#FF4D4D;--green:#3DDC84;--T:1300ms}
+:root{--bg:#FAFAFA;--ink:#111113;--mute:#6B6F76;--red:#BD0F0F;--green:#1FAD5E;--T:1300ms}
 *{box-sizing:border-box}html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;min-height:100vh;display:grid;place-items:center;padding:28px 16px}
 .wrap{width:min(560px,100%);display:grid;gap:22px;justify-items:center;text-align:center}
-.file{display:flex;align-items:center;gap:14px;width:100%;background:#17171C;border:1px solid #2A2A31;border-radius:16px;padding:14px;text-align:left;transition:opacity .4s,transform .5s cubic-bezier(.2,.8,.2,1)}
+.file{display:flex;align-items:center;gap:14px;width:100%;background:#FFFFFF;border:1px solid #2A2A31;border-radius:16px;padding:14px;text-align:left;transition:opacity .4s,transform .5s cubic-bezier(.2,.8,.2,1)}
 .file img{width:54px;height:54px;border-radius:10px;object-fit:cover}
 .file b{display:block}.file span{color:var(--mute);font-size:13px}
 .file.gone{opacity:.25;transform:scale(.96)}
@@ -30,7 +30,7 @@ p{margin:0;color:var(--mute);max-width:44ch}
 <div class="wrap">
 <h1>Some things deserve a pause.</h1>
 <p>To delete, press and hold. Let go early and it drains back. Keyboard users hold Space or Enter. A single quick click explains what to do instead of deleting.</p>
-<div class="file" id="file"><img src="../../assets/shelf/statue.webp" alt=""><div><b>Final_campaign_v12.psd</b><span>2.4 GB · edited 3 minutes ago</span></div></div>
+<div class="file" id="file"><img src="../../assets/art/statue.svg" alt=""><div><b>Final_campaign_v12.psd</b><span>2.4 GB · edited 3 minutes ago</span></div></div>
 <button class="hold" id="hold" aria-describedby="hint"><span class="fill" aria-hidden="true"></span><span class="lab" id="lab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>Hold to delete</span></button>
 <p id="hint" role="status">Press and hold for about a second.</p>
 <button class="undo" id="undo" hidden>Undo</button>

@@ -34,15 +34,16 @@
   const d=document.createElement('dialog');d.id='anDrawer';d.className='anDrawer';d.setAttribute('aria-label','Library');
   d.innerHTML=`<div class="anPanel"><div class="anHead"><p class="anTitle">Library</p><button type="button" class="anClose" aria-label="Close the library">${icon.close}</button></div>
   <div class="anQuick"><button type="button" class="anQ" data-act="search">${icon.search}<span>Search everything</span><kbd>/</kbd></button><button type="button" class="anQ anFind" data-act="find">${icon.compass}<span>Find a direction</span></button></div>
-  <nav class="anGroups" aria-label="All sections">${GROUPS.map(g=>`<section class="anGroup" data-group="${esc(g.name)}"><h2>${esc(g.name)}</h2><ul>${g.items.map(i=>`<li><a href="${i[0]}" data-film="${i[3]}"><span class="anIcoBox">${svgIcon(i[0])}</span><span><b>${esc(i[1])}</b><small>${esc(i[2])}</small></span></a></li>`).join('')}</ul></section>`).join('')}</nav></div>
-  <aside class="anPreview" aria-hidden="true"><div class="anFilm"><img alt=""><video muted loop playsinline preload="none"></video></div><p class="anPGroup"></p><p class="anPName"></p><p class="anPNote"></p></aside>`;
+  <nav class="anGroups" aria-label="All sections">${GROUPS.map(g=>`<section class="anGroup" data-group="${esc(g.name)}"><h2>${esc(g.name)}</h2><ul>${g.items.map(i=>`<li><a href="${i[0]}" data-film="${i[3]}"><span class="anIcoBox">${svgIcon(i[0])}</span><b>${esc(i[1])}</b><small>${esc(i[2])}</small></a></li>`).join('')}</ul></section>`).join('')}</nav></div>
+  <aside class="anPreview" aria-hidden="true"><div class="anSpot"><span class="anBig"></span><p class="anPGroup"></p><p class="anPName"></p><p class="anPNote"></p><p class="anGo">Open <i>→</i></p></div></aside>`;
   document.body.append(d);
-  const vid=d.querySelector('.anFilm video'),img=d.querySelector('.anFilm img');let shown='';
+  const spot=d.querySelector('.anSpot');let shown='';
   function preview(a){if(!a)return;const it=ALL.find(i=>i.href===a.getAttribute('href'));if(!it||shown===it.href)return;shown=it.href;
-   d.querySelector('.anPGroup').textContent=it.group;d.querySelector('.anPName').textContent=it.name;d.querySelector('.anPNote').textContent=it.note;
-   img.src=F+it.film+'.jpg';img.hidden=false;vid.pause();vid.removeAttribute('src');vid.load();
-   if(reduce.matches||!matchMedia('(min-width: 900px)').matches)return;
-   vid.src=F+it.film+'-720.mp4';vid.oncanplay=()=>{img.hidden=true;vid.play().catch(()=>{})};}
+   const n=[...d.querySelectorAll('.anGroups a')].indexOf(a)+1;
+   d.querySelector('.anPGroup').textContent=String(n).padStart(2,'0')+' · '+it.group;d.querySelector('.anPName').textContent=it.name;d.querySelector('.anPNote').textContent=it.note;
+   d.querySelector('.anBig').innerHTML=svgIcon(it.href);
+   d.querySelectorAll('.anGroups a.anOn').forEach(x=>x.classList.remove('anOn'));a.classList.add('anOn');
+   spot.classList.remove('anSwap');void spot.offsetWidth;spot.classList.add('anSwap')}
   d.addEventListener('pointerover',e=>preview(e.target.closest('.anGroups a')));
   d.addEventListener('focusin',e=>preview(e.target.closest('.anGroups a')));
   function open(group){markCurrent();d.showModal();document.body.classList.add('anOpen');
@@ -50,7 +51,7 @@
    const target=(sec&&sec.querySelector('a'))||d.querySelector('.anGroups a[aria-current="page"]')||d.querySelector('.anGroups a');
    if(sec)sec.scrollIntoView({block:'start'});target.focus({preventScroll:!!sec});preview(target)}
   function close(){if(d.open)d.close()}
-  d.addEventListener('close',()=>{document.body.classList.remove('anOpen');vid.pause();vid.removeAttribute('src');vid.load();shown='';bar.querySelector('.anLibBtn').focus({preventScroll:true})});
+  d.addEventListener('close',()=>{document.body.classList.remove('anOpen');shown='';bar.querySelector('.anLibBtn').focus({preventScroll:true})});
   d.addEventListener('click',e=>{if(e.target===d)close();if(e.target.closest('.anClose'))close();if(e.target.closest('.anGroups a'))close();
    const q=e.target.closest('.anQ');if(q){close();if(q.dataset.act==='search')document.querySelector('.aeSearchBtn')?.click();else document.querySelector('.finderBtn')?.click()}});
   bar.querySelector('.anLibBtn').onclick=()=>open();

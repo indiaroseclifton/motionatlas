@@ -1,11 +1,11 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Scroll-scrubbed product reveal</title>
 <style>
-:root{--bg:#0A0B0F;--ink:#F1F2F5;--mute:#A0A4B0;--acc:#7CC8FF;--w:min(250px,52vw)}
+:root{--bg:#FAFAFA;--ink:#111113;--mute:#6B6F76;--acc:#0F74BD;--w:min(250px,52vw)}
 *{box-sizing:border-box}html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,sans-serif}
 .scrub{position:relative;height:460vh}
-.sticky{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);align-items:center;padding:0 clamp(16px,6vw,90px);background:radial-gradient(60% 70% at 70% 50%,#1A2233,transparent 70%)}
+.sticky{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);align-items:center;padding:0 clamp(16px,6vw,90px);background:radial-gradient(60% 70% at 70% 50%,#EEF0F3,transparent 70%)}
 .copy{position:relative;min-height:240px}
 .step{position:absolute;inset:0 0 auto 0;opacity:0;transform:translateY(16px);transition:opacity .45s,transform .45s cubic-bezier(.2,.8,.2,1)}
 .step.on{opacity:1;transform:none}
@@ -15,7 +15,7 @@ body{background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,sans-serif}
 .scene{height:100%;display:grid;place-items:center;perspective:1400px}
 .dev{position:relative;width:var(--w);aspect-ratio:9/17;transform-style:preserve-3d}
 .layer{position:absolute;inset:0;border-radius:calc(var(--w)*.16);transform-style:preserve-3d}
-.shell{background:linear-gradient(150deg,#3A4150,#151820 60%);box-shadow:0 40px 80px -20px rgba(0,0,0,.8),inset 0 0 0 1px rgba(255,255,255,.08)}
+.shell{background:linear-gradient(150deg,#3A4150,#151820 60%);box-shadow:0 40px 80px -20px rgba(0,0,0,.8),inset 0 0 0 1px rgba(17,17,19,.08)}
 .board{inset:6%;border-radius:calc(var(--w)*.11);background:#0E3B2E;background-image:linear-gradient(rgba(124,255,200,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(124,255,200,.12) 1px,transparent 1px);background-size:14px 14px;box-shadow:inset 0 0 0 1px rgba(124,255,200,.3)}
 .board i{position:absolute;background:#1C1F24;border-radius:4px;box-shadow:inset 0 0 0 1px #3d4350}
 .board i:nth-child(1){left:18%;top:12%;width:64%;height:18%}
@@ -24,7 +24,7 @@ body{background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,sans-serif}
 .board i:nth-child(4){left:14%;top:58%;width:72%;height:30%;background:linear-gradient(#5d6575,#2a2f3a);border-radius:10px}
 .screen{inset:3.5%;border-radius:calc(var(--w)*.13);overflow:hidden;background:#000}
 .screen img{width:100%;height:100%;object-fit:cover;opacity:var(--lit,.15);transition:opacity .3s}
-.glass{background:linear-gradient(125deg,rgba(255,255,255,.22),rgba(255,255,255,0) 40%,rgba(255,255,255,.06) 70%,rgba(255,255,255,0));box-shadow:inset 0 0 0 1px rgba(255,255,255,.25)}
+.glass{background:linear-gradient(125deg,rgba(17,17,19,.22),rgba(17,17,19,0) 40%,rgba(17,17,19,.06) 70%,rgba(17,17,19,0));box-shadow:inset 0 0 0 1px rgba(17,17,19,.25)}
 .tag{position:absolute;left:100%;top:50%;margin-left:14px;white-space:nowrap;font:500 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);opacity:var(--tag,0);transform:translateZ(1px)}
 .tag::before{content:"";display:inline-block;width:28px;height:1px;background:var(--acc);vertical-align:middle;margin-right:8px}
 .rail{position:absolute;right:clamp(12px,3vw,32px);top:50%;transform:translateY(-50%);display:grid;gap:10px}
@@ -44,7 +44,7 @@ body{background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,sans-serif}
  <div class="scene" aria-hidden="true"><div class="dev" id="dev">
   <div class="layer shell"><span class="tag">Aluminium shell</span></div>
   <div class="layer board"><i></i><i></i><i></i><i></i><span class="tag">Logic board</span></div>
-  <div class="layer screen"><img src="../../assets/shelf/nebula.webp" alt=""><span class="tag">OLED panel</span></div>
+  <div class="layer screen"><img src="../../assets/art/nebula.svg" alt=""><span class="tag">OLED panel</span></div>
   <div class="layer glass"><span class="tag">Sapphire glass</span></div>
  </div></div>
  <nav class="rail" id="rail" aria-label="Jump to step"></nav>

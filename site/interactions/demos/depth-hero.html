@@ -1,10 +1,10 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Parallax depth hero</title>
 <style>
-:root{--ink:#FFF6EA;--mute:#F2D9C4}
+:root{--ink:#111113;--mute:#6B6F76}
 *{box-sizing:border-box}html,body{margin:0}
-body{background:#1B1230;color:var(--ink);font:15px/1.55 system-ui,sans-serif;overflow-x:hidden}
-.hero{position:relative;height:100vh;height:100svh;min-height:520px;overflow:hidden;background:linear-gradient(#2B1B4A 0%,#7A3B6B 38%,#F08A5D 70%,#FFC58A 100%)}
+body{background:#122C30;color:var(--ink);font:15px/1.55 system-ui,sans-serif;overflow-x:hidden}
+.hero{position:relative;height:100vh;height:100svh;min-height:520px;overflow:hidden;background:linear-gradient(#1B424A 0%,#3F3B7A 38%,#F08A5D 70%,#FFC58A 100%)}
 .l{position:absolute;left:-6%;right:-6%;bottom:0;will-change:transform}
 .l svg{display:block;width:100%;height:auto}
 .sun{position:absolute;left:50%;top:44%;width:clamp(120px,18vw,240px);aspect-ratio:1;margin-left:calc(clamp(120px,18vw,240px)/-2);border-radius:50%;background:radial-gradient(circle,#FFF2C9 0 45%,#FFD27A 60%,rgba(255,190,110,0) 71%);will-change:transform}
@@ -14,10 +14,10 @@ body{background:#1B1230;color:var(--ink);font:15px/1.55 system-ui,sans-serif;ove
 .title h1{margin:0;font:800 clamp(64px,16vw,230px)/.82 system-ui;letter-spacing:-.06em;color:#FFF3E2;text-shadow:0 10px 60px rgba(120,40,80,.35)}
 .mist{position:absolute;left:0;right:0;bottom:16%;height:22%;background:linear-gradient(transparent,rgba(255,220,200,.35),transparent);filter:blur(8px);will-change:transform}
 .birds{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
-.cue{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);font:600 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.2em;text-transform:uppercase;color:#EBD7FF;z-index:5}
-.after{background:#160F27;padding:clamp(48px,10vh,110px) clamp(16px,6vw,90px);display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:28px}
+.cue{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);font:600 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.2em;text-transform:uppercase;color:#D7F2FF;z-index:5}
+.after{background:#0F2427;padding:clamp(48px,10vh,110px) clamp(16px,6vw,90px);display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:28px}
 .after h2{margin:0 0 8px;font:700 24px/1.1 system-ui;letter-spacing:-.02em}
-.after p{margin:0;color:#C9BEDC}
+.after p{margin:0;color:#BED6DC}
 @media (prefers-reduced-motion:reduce){.l,.sun,.title,.mist{transform:none!important}}
 </style></head><body>
 <header class="hero" id="hero">
@@ -25,22 +25,22 @@ body{background:#1B1230;color:var(--ink);font:15px/1.55 system-ui,sans-serif;ove
  <div class="sun" data-d="0.12" aria-hidden="true"></div>
  <div class="l" data-d="0.18" aria-hidden="true"><svg viewBox="0 0 1600 600" preserveAspectRatio="none" style="height:62vh"><path d="M0 330 L120 250 L220 300 L360 170 L480 260 L600 200 L760 290 L900 150 L1040 250 L1180 190 L1320 280 L1460 210 L1600 270 V600 H0Z" fill="#B8577A" opacity=".7"/></svg></div>
  <div class="title" data-d="0.3"><p class="k">Northern ranges · Field guide</p><h1>Altitude</h1></div>
- <div class="l" data-d="0.42" aria-hidden="true"><svg viewBox="0 0 1600 600" preserveAspectRatio="none" style="height:50vh"><path d="M0 360 L160 280 L300 340 L420 240 L560 330 L700 270 L860 350 L1000 230 L1150 320 L1300 260 L1460 340 L1600 290 V600 H0Z" fill="#7C3463"/></svg></div>
+ <div class="l" data-d="0.42" aria-hidden="true"><svg viewBox="0 0 1600 600" preserveAspectRatio="none" style="height:50vh"><path d="M0 360 L160 280 L300 340 L420 240 L560 330 L700 270 L860 350 L1000 230 L1150 320 L1300 260 L1460 340 L1600 290 V600 H0Z" fill="#41347C"/></svg></div>
  <div class="mist" data-d="0.55" aria-hidden="true"></div>
- <div class="l" data-d="0.7" aria-hidden="true"><svg viewBox="0 0 1600 600" preserveAspectRatio="none" style="height:38vh"><path d="M0 380 L200 300 L340 360 L520 260 L680 360 L820 310 L980 380 L1120 290 L1280 370 L1440 310 L1600 360 V600 H0Z" fill="#4A1E4A"/></svg></div>
- <div class="l" data-d="1" aria-hidden="true"><svg viewBox="0 0 1600 600" preserveAspectRatio="none" style="height:24vh"><path d="M0 420 C160 360 260 380 380 330 C500 280 620 400 760 380 C900 360 1000 300 1160 340 C1320 380 1440 320 1600 350 V600 H0Z" fill="#24102C"/><g fill="#24102C"><path d="M230 360 l14 -60 l14 60z"/><path d="M262 350 l10 -44 l10 44z"/><path d="M1220 350 l16 -70 l16 70z"/><path d="M1256 356 l11 -48 l11 48z"/></g></svg></div>
+ <div class="l" data-d="0.7" aria-hidden="true"><svg viewBox="0 0 1600 600" preserveAspectRatio="none" style="height:38vh"><path d="M0 380 L200 300 L340 360 L520 260 L680 360 L820 310 L980 380 L1120 290 L1280 370 L1440 310 L1600 360 V600 H0Z" fill="#1E254A"/></svg></div>
+ <div class="l" data-d="1" aria-hidden="true"><svg viewBox="0 0 1600 600" preserveAspectRatio="none" style="height:24vh"><path d="M0 420 C160 360 260 380 380 330 C500 280 620 400 760 380 C900 360 1000 300 1160 340 C1320 380 1440 320 1600 350 V600 H0Z" fill="#101D2C"/><g fill="#101D2C"><path d="M230 360 l14 -60 l14 60z"/><path d="M262 350 l10 -44 l10 44z"/><path d="M1220 350 l16 -70 l16 70z"/><path d="M1256 356 l11 -48 l11 48z"/></g></svg></div>
  <svg class="birds" id="birds" aria-hidden="true"></svg>
  <span class="cue" aria-hidden="true">Scroll ↓</span>
 </header>
 <section class="after"><div><h2>Seven layers deep</h2><p>Each layer moves at its own speed when you scroll and when you move the pointer, so flat shapes read as distance.</p></div><div><h2>Title in the middle</h2><p>The headline sits between the ridges, so the near hills slide over it as you scroll down.</p></div><div><h2>Calm when asked</h2><p>With reduced motion turned on, the scene stays still and reads as a poster.</p></div></section>
-<div style="height:40vh;background:#160F27"></div>
+<div style="height:40vh;background:#0F2427"></div>
 <script>
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const hero=document.getElementById('hero'),L=[...hero.querySelectorAll('[data-d]')];
 let px=0,py=0,tx=0,ty=0;
 hero.addEventListener('pointermove',e=>{const r=hero.getBoundingClientRect();tx=(e.clientX/r.width-.5);ty=(e.clientY/r.height-.5)});
 hero.addEventListener('pointerleave',()=>{tx=ty=0});
-const birds=document.getElementById('birds'),B=[];for(let i=0;i<7;i++){const p=document.createElementNS('http://www.w3.org/2000/svg','path');p.setAttribute('fill','none');p.setAttribute('stroke','#3A1838');p.setAttribute('stroke-width','2');p.setAttribute('stroke-linecap','round');birds.append(p);B.push({x:Math.random()*innerWidth,y:innerHeight*(.2+Math.random()*.2),s:.6+Math.random()*.6,ph:Math.random()*6})}
+const birds=document.getElementById('birds'),B=[];for(let i=0;i<7;i++){const p=document.createElementNS('http://www.w3.org/2000/svg','path');p.setAttribute('fill','none');p.setAttribute('stroke','#181C3A');p.setAttribute('stroke-width','2');p.setAttribute('stroke-linecap','round');birds.append(p);B.push({x:Math.random()*innerWidth,y:innerHeight*(.2+Math.random()*.2),s:.6+Math.random()*.6,ph:Math.random()*6})}
 function frame(t){px+=(tx-px)*.06;py+=(ty-py)*.06;const sy=scrollY;
  L.forEach(l=>{const d=+l.dataset.d;l.style.transform=`translate3d(${-px*d*60}px,${sy*(1-d)*.6+(-py*d*24)}px,0)`});
  B.forEach(b=>{b.x+=.6*b.s;if(b.x>innerWidth+40)b.x=-40;const f=Math.sin(t/180+b.ph)*5*b.s,w=10*b.s;const y=b.y+sy*.3;B.p=0;b.el=b.el||birds.children[B.indexOf(b)];b.el.setAttribute('d',`M${b.x-w} ${y-f} Q${b.x-w/2} ${y-2} ${b.x} ${y} Q${b.x+w/2} ${y-2} ${b.x+w} ${y-f}`)});

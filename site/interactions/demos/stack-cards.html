@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Sticky stacking cards</title>
 <style>
-:root{--bg:#F3F0EA;--ink:#191714;--mute:#5E584D}
+:root{--bg:#FAFAFA;--ink:#111113;--mute:#6B6F76}
 *{box-sizing:border-box}html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,sans-serif}
 .intro{min-height:52vh;display:grid;align-content:end;padding:40px clamp(16px,6vw,90px) 30px}
@@ -27,7 +27,7 @@ body{background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,sans-serif}
 const CONFIG=[['01','Listen','Two weeks of interviews, walks and reading before we draw anything.','#E8DCC8','#191714','sand'],['02','Look','Moodboards from real materials, photographed close and in daylight.','#1F2A24','#EEF3EE','tree'],['03','Make','Three directions, built far enough to feel, not just to see.','#C9D7F2','#121A2E','origami'],['04','Test','Real people, real screens, and notes we actually act on.','#2A1730','#F6ECF8','bloom'],['05','Ship','Files, guides and a launch day we stay around for.','#F4C27A','#20160A','amber']];
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const st=document.getElementById('stack');
-CONFIG.forEach(([n,t,p,bg,fg,img],i)=>{const a=document.createElement('article');a.className='card';a.style.setProperty('--i',i);a.style.background=bg;a.style.color=fg;a.innerHTML=`<div><p class="n">Step ${n} / 05</p><h2>${t}</h2><p>${p}</p></div><img src="../../assets/shelf/${img}.webp" alt=""><div class="dim"></div>`;st.append(a)});
+CONFIG.forEach(([n,t,p,bg,fg,img],i)=>{const a=document.createElement('article');a.className='card';a.style.setProperty('--i',i);a.style.background=bg;a.style.color=fg;a.innerHTML=`<div><p class="n">Step ${n} / 05</p><h2>${t}</h2><p>${p}</p></div><img src="../../assets/art/${img}.svg" alt=""><div class="dim"></div>`;st.append(a)});
 const C=[...st.children];
 function update(){if(reduce)return;const T=C.map(c=>c.getBoundingClientRect().top),span=innerHeight*.7;C.forEach((c,i)=>{let sum=0;for(let j=i+1;j<C.length;j++)sum+=Math.max(0,Math.min(1,1-(T[j]-T[i])/span));sum=Math.min(sum,3);
  c.style.transform=`scale(${1-sum*.045})`;c.querySelector('.dim').style.opacity=Math.min(.5,sum*.16)})}

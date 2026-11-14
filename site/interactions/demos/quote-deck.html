@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Swipe quote deck</title>
 <style>
-:root{--bg:#EDEAE3;--ink:#1D1B18;--mute:#6F695F;--c1:#F7F3EA;--c2:#E3DCCD;--c3:#D6CDBA}
+:root{--bg:#FAFAFA;--ink:#111113;--mute:#6B6F76;--c1:#FFFFFF;--c2:#E6E6E8;--c3:#D4D4D8}
 *{box-sizing:border-box}html,body{margin:0;height:100%}
 body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;display:grid;place-items:center;overflow:hidden;padding:0 16px}
 .stack{position:relative;width:min(440px,100%);aspect-ratio:5/4}
@@ -23,7 +23,7 @@ button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 <script>
 const Q=[['They found the thing we couldn\'t say about ourselves, then made it look obvious.','Mara Quist','Owner, Saltwater Fish Co.','soap'],['The launch film did more in a week than our ads did in a quarter.','Theo Bannerman','Head of brand, Night Shift Bakery','owl'],['Every decision came with a reason we could repeat to our board.','Ines Okafor','Director, Plaster & Light','statue'],['Calm, fast and slightly obsessive about paper stock. We loved it.','Ruth Ellery','Founder, Fold Studio','origami']];
 const st=document.getElementById('stack');let order=Q.map((_,i)=>i);
-Q.forEach(([q,n,r,img],i)=>{const c=document.createElement('article');c.className='q';c.innerHTML=`<blockquote>“${q}”</blockquote><footer><img src="../../assets/shelf/${img}.webp" alt=""><div><b>${n}</b>${r}</div></footer>`;st.append(c)});
+Q.forEach(([q,n,r,img],i)=>{const c=document.createElement('article');c.className='q';c.innerHTML=`<blockquote>“${q}”</blockquote><footer><img src="../../assets/art/${img}.svg" alt=""><div><b>${n}</b>${r}</div></footer>`;st.append(c)});
 const C=[...st.children];
 function lay(){order.forEach((ci,pos)=>{const c=C[ci];c.classList.toggle('top',pos===0);c.style.zIndex=10-pos;c.style.background=`var(--c${Math.min(3,pos+1)})`;c.style.transform=`translateY(${pos*14}px) scale(${1-pos*.05})`;c.style.opacity=pos>2?0:1;c.setAttribute('aria-hidden',pos!==0)})}
 function next(dir=1){const c=C[order[0]];c.style.transform=`translateX(${dir*120}%) rotate(${dir*14}deg)`;c.style.opacity=0;setTimeout(()=>{order.push(order.shift());lay()},260)}

@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Hover list with cursor image</title>
 <style>
-:root{--bg:#F3F1EC;--ink:#151412;--mute:#67625A;--hair:#D5D0C5}
+:root{--bg:#FAFAFA;--ink:#111113;--mute:#6B6F76;--hair:#E6E6E8}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%}
 body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;padding:8vh max(16px,6vw)}
 p.k{font:600 11px/1 system-ui;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);margin:0 0 18px}
@@ -25,7 +25,7 @@ a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 <script>
 const work=[['Saltwater','Fishmonger identity','soap'],['Night Shift','Bakery film series','owl'],['Plaster & Light','Gallery catalogue','statue'],['Fold','Packaging system','origami'],['Low Tide','Hotel website','lighthouse'],['Amber Hour','Distillery labels','amber']];
 const list=document.getElementById('list'),peek=document.getElementById('peek');
-work.forEach(([t,s,img],i)=>{const li=document.createElement('li');li.innerHTML=`<a href="#" data-i="${i}"><span>0${i+1}</span><b>${t}</b><em>${s}</em></a>`;list.append(li);const im=new Image();im.src=`../../assets/shelf/${img}.webp`;im.alt='';peek.append(im)});
+work.forEach(([t,s,img],i)=>{const li=document.createElement('li');li.innerHTML=`<a href="#" data-i="${i}"><span>0${i+1}</span><b>${t}</b><em>${s}</em></a>`;list.append(li);const im=new Image();im.src=`../../assets/art/${img}.svg`;im.alt='';peek.append(im)});
 const ims=[...peek.children];let tx=0,ty=0,x=0,y=0;
 list.addEventListener('pointermove',e=>{tx=e.clientX;ty=e.clientY});
 list.addEventListener('pointerover',e=>{const a=e.target.closest('a');if(!a)return;peek.classList.add('on');ims.forEach((m,i)=>m.classList.toggle('on',i==a.dataset.i))});

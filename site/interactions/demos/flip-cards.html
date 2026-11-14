@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>3D flip cards</title>
 <style>
-:root{--bg:#0F0E12;--ink:#F3EFE8;--mute:#A9A39A;--gold:#D9B26A}
+:root{--bg:#FAFAFA;--ink:#111113;--mute:#6B6F76;--gold:#A37829}
 *{box-sizing:border-box}html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;min-height:100vh;display:grid;place-items:center;padding:30px 16px}
 .wrap{width:min(1100px,100%)}
@@ -43,7 +43,7 @@ const CONFIG=[['I','Amber','amber','Resin that kept a forest. Warm, slow and ful
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const g=document.getElementById('grid');
 CONFIG.forEach(([n,t,img,p,dl])=>{const b=document.createElement('button');b.className='card';b.setAttribute('aria-pressed','false');b.setAttribute('aria-label',t+': show details');
- b.innerHTML=`<div class="face front"><img src="../../assets/shelf/${img}.webp" alt=""><div class="lab"><span class="n">${n}</span><h2>${t}</h2></div></div><div class="face back" aria-hidden="true"><span class="n">${n} · Material</span><h2>${t}</h2><p>${p}</p><dl>${dl.map(([a,b])=>`<dt>${a}</dt><dd>${b}</dd>`).join('')}</dl></div>`;
+ b.innerHTML=`<div class="face front"><img src="../../assets/art/${img}.svg" alt=""><div class="lab"><span class="n">${n}</span><h2>${t}</h2></div></div><div class="face back" aria-hidden="true"><span class="n">${n} · Material</span><h2>${t}</h2><p>${p}</p><dl>${dl.map(([a,b])=>`<dt>${a}</dt><dd>${b}</dd>`).join('')}</dl></div>`;
  b._r=0;b.addEventListener('click',e=>{let dir='y+';if(e.detail&&e.clientX){const r=b.getBoundingClientRect(),dx=(e.clientX-r.left)/r.width-.5,dy=(e.clientY-r.top)/r.height-.5;dir=Math.abs(dy)>Math.abs(dx)?(dy<0?'x+':'x-'):(dx<0?'y-':'y+')}flip(b,dir)});g.append(b)});
 function flip(b,dir){const on=b.getAttribute('aria-pressed')!=='true';const axisX=on?dir[0]==='x':b.classList.contains('y');if(on)b.classList.toggle('y',axisX);
  if(reduce){b.style.transform=on?(axisX?'rotateX(180deg)':'rotateY(180deg)'):'';}else{b._r=on?(dir[1]==='+'?180:-180):0;b.style.transform=axisX?`rotateX(${b._r}deg)`:`rotateY(${-b._r}deg)`}

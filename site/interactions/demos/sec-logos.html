@@ -1,4 +1,4 @@
-<!doctype html><html lang="en" data-style="noir"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<!doctype html><html lang="en" data-style="studio"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Logo cloud marquee</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Cormorant+Garamond:ital,wght@1,500&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap">
@@ -6,7 +6,7 @@
 /* Four interchangeable styles. Pick one with data-style on <html>, or delete the ones you don't need. */
 :root,[data-style=noir]{--bg:#16120F;--surface:#211B16;--ink:#F3EADB;--mute:#B3A592;--line:#3B3129;--accent:#E2A24A;--on-accent:#1A120A;--head:Fraunces,Georgia,serif;--body:'DM Sans',system-ui,sans-serif;--hw:400;--hs:normal;--radius:14px;--track:-.02em;color-scheme:dark}
 [data-style=paper]{--bg:#F6F0E6;--surface:#FFFBF4;--ink:#231C15;--mute:#6A5D4E;--line:#E3D7C4;--accent:#9A5B12;--on-accent:#FFFFFF;--accent-ink:#8A520C;--head:Fraunces,Georgia,serif;--body:'DM Sans',system-ui,sans-serif;--hw:400;--hs:normal;--radius:14px;--track:-.02em;color-scheme:light}
-[data-style=studio]{--bg:#F4F5F8;--surface:#FFFFFF;--ink:#1C1F2A;--mute:#5E6476;--line:#E1E4EC;--accent:#5B2DFF;--on-accent:#FFFFFF;--head:'Cormorant Garamond',Georgia,serif;--body:Inter,system-ui,sans-serif;--hw:500;--hs:italic;--radius:16px;--track:-.01em;color-scheme:light}
+[data-style=studio]{--bg:#F4F5F8;--surface:#FFFFFF;--ink:#1C1F2A;--mute:#5E6476;--line:#E1E4EC;--accent:#111113;--on-accent:#FFFFFF;--head:'Cormorant Garamond',Georgia,serif;--body:Inter,system-ui,sans-serif;--hw:500;--hs:italic;--radius:16px;--track:-.01em;color-scheme:light}
 [data-style=signal]{--bg:#05070B;--surface:#0C1119;--ink:#EAF0F8;--mute:#93A0B4;--line:#1C2533;--accent:#7CF0FF;--on-accent:#04121A;--head:'Space Grotesk',Inter,sans-serif;--body:Inter,system-ui,sans-serif;--hw:500;--hs:normal;--radius:18px;--track:-.03em;color-scheme:dark}
 *{box-sizing:border-box}html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font:16px/1.6 var(--body);-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
@@ -39,8 +39,8 @@ a{color:inherit}button,input,textarea,select{font:inherit;color:inherit}
 <div class="row" id="r1"></div><div class="row r2" id="r2"></div></section></div>
 <div class="styles" role="group" aria-label="Style"><button data-s="noir">Noir</button><button data-s="paper">Paper</button><button data-s="studio">Studio</button><button data-s="signal">Signal</button></div>
 <script>
-(()=>{const B=[...document.querySelectorAll('.styles button')];const set=s=>{document.documentElement.dataset.style=s;B.forEach(b=>b.setAttribute('aria-pressed',b.dataset.s===s));try{localStorage.setItem('atlas-section-style',s)}catch(e){}};
-let s=location.hash.slice(1);if(!B.some(b=>b.dataset.s===s)){try{s=localStorage.getItem('atlas-section-style')}catch(e){}}set(B.some(b=>b.dataset.s===s)?s:'noir');B.forEach(b=>b.onclick=()=>set(b.dataset.s));})();
+(()=>{const B=[...document.querySelectorAll('.styles button')];const set=s=>{document.documentElement.dataset.style=s;B.forEach(b=>b.setAttribute('aria-pressed',b.dataset.s===s));try{localStorage.setItem('atlas-section-style-2',s)}catch(e){}};
+let s=location.hash.slice(1);if(!B.some(b=>b.dataset.s===s)){try{s=localStorage.getItem('atlas-section-style-2')}catch(e){}}set(B.some(b=>b.dataset.s===s)?s:'studio');B.forEach(b=>b.onclick=()=>set(b.dataset.s));})();
 (()=>{const root=document.querySelector(".b-sec-logos");
 const icons=['<circle cx="12" cy="12" r="8"/>','<path d="M4 18 12 5l8 13z"/>','<rect x="5" y="5" width="14" height="14" rx="3"/>','<path d="M5 12h14M12 5v14"/>','<path d="M12 4c4 4 4 12 0 16-4-4-4-12 0-16z"/>','<path d="M4 12c4-6 12-6 16 0-4 6-12 6-16 0z"/>'];
 const names=[['Northfield Farm',''],['Kettle & Co','serif'],['GRAIN/LAB','mono'],['Olive Row',''],['Ember','serif'],['MISE','mono'],['Salt Society',''],['Larder','serif'],['Brine Bros',''],['FORAGE','mono']];

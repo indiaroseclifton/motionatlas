@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Liquid tab indicator</title>
 <style>
-:root{--bg:#EFECE6;--ink:#17161A;--mute:#5A564F;--track:#E1DCD3;--pill:#17161A;--on:#F6F3EC;--ease:cubic-bezier(.2,.8,.2,1)}
+:root{--bg:#FAFAFA;--ink:#111113;--mute:#6B6F76;--track:#E6E6E8;--pill:#17161A;--on:#F6F3EC;--ease:cubic-bezier(.2,.8,.2,1)}
 *{box-sizing:border-box}html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,sans-serif;min-height:100vh;display:grid;place-items:center;padding:28px 16px}
 .wrap{width:min(760px,100%);display:grid;gap:26px}
@@ -49,7 +49,7 @@ function liquid(list,mark,opts){
 }
 const t1=document.getElementById('t1'),panels=document.getElementById('panels');
 CONFIG.tabs.forEach(([name,h,p,img],i)=>{const b=document.createElement('button');b.setAttribute('role','tab');b.id='tab'+i;b.setAttribute('aria-controls','p'+i);b.textContent=name;t1.append(b);
- const s=document.createElement('section');s.className='panel';s.id='p'+i;s.setAttribute('role','tabpanel');s.setAttribute('aria-labelledby','tab'+i);s.tabIndex=0;s.hidden=i>0;s.innerHTML=`<div><h2>${h}</h2><p>${p}</p></div><img src="../../assets/shelf/${img}.webp" alt="">`;panels.append(s)});
+ const s=document.createElement('section');s.className='panel';s.id='p'+i;s.setAttribute('role','tabpanel');s.setAttribute('aria-labelledby','tab'+i);s.tabIndex=0;s.hidden=i>0;s.innerHTML=`<div><h2>${h}</h2><p>${p}</p></div><img src="../../assets/art/${img}.svg" alt="">`;panels.append(s)});
 liquid(t1,t1.querySelector('.blob'),{squash:true,onSelect:i=>{[...panels.children].forEach((s,j)=>{s.hidden=j!==i;if(j===i){s.classList.remove('in');void s.offsetWidth;s.classList.add('in')}})}});
 const t2=document.getElementById('t2');
 CONFIG.line.forEach(n=>{const b=document.createElement('button');b.setAttribute('role','tab');b.textContent=n;t2.append(b)});

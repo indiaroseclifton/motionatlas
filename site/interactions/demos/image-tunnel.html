@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Image tunnel</title>
 <style>
-:root{--bg:#050506;--ink:#F2F2F2;--mute:#9A9AA0}
+:root{--bg:#FAFAFA;--ink:#111113;--mute:#6B6F76}
 *{box-sizing:border-box}html,body{margin:0;height:100%}
 body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;overflow:hidden}
 .tunnel{position:fixed;inset:0;perspective:600px;overflow:hidden}
@@ -16,7 +16,7 @@ p{position:fixed;bottom:18px;width:100%;text-align:center;color:var(--mute);font
 const $p=window.__ixp||((k,d)=>d);
 const names=['jellyfish','dove','threads','bloom','tree','smoke','ferro','sumi','soap','embroidery','lion','erosion','sand','biolum','owl','lighthouse','origami','statue','nebula','amber'];
 const t=document.getElementById('t');const D=2400;const items=[];
-names.concat(names).forEach((n,i)=>{const im=new Image();im.src=`../../assets/shelf/${n}.webp`;im.alt='';t.append(im);const a=i*2.39996;items.push({el:im,x:Math.cos(a)*(260+(i%3)*90),y:Math.sin(a)*(170+(i%4)*50),z:-i*(D/40)})});
+names.concat(names).forEach((n,i)=>{const im=new Image();im.src=`../../assets/art/${n}.svg`;im.alt='';t.append(im);const a=i*2.39996;items.push({el:im,x:Math.cos(a)*(260+(i%3)*90),y:Math.sin(a)*(170+(i%4)*50),z:-i*(D/40)})});
 let speed=0,base=matchMedia('(prefers-reduced-motion: reduce)').matches?0:$p('base',1.4);
 addEventListener('wheel',e=>{speed+=e.deltaY*.05},{passive:true});
 let ty=0;addEventListener('touchstart',e=>ty=e.touches[0].clientY,{passive:true});addEventListener('touchmove',e=>{const y=e.touches[0].clientY;speed+=(ty-y)*.15;ty=y},{passive:true});

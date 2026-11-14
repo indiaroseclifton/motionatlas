@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Dot-matrix clock</title>
 <style>
-:root{--bg:#090A0C;--ink:#ECEDEF;--mute:#9A9EA8;--led:#FF5B2E}
+:root{--bg:#FAFAFA;--ink:#111113;--mute:#6B6F76;--led:#BD350F}
 *{box-sizing:border-box}html,body{margin:0;height:100%}
 body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;display:grid;place-items:center;overflow:hidden;padding:20px 16px}
 .wrap{width:min(1100px,100%);display:grid;gap:18px;justify-items:center;text-align:center}
@@ -10,7 +10,7 @@ canvas{width:100%;display:block;touch-action:none;border-radius:16px;outline:non
 canvas:focus-visible{box-shadow:0 0 0 2px var(--led)}
 .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
 button{font:600 13px/1 system-ui;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid #2E3138;background:transparent;color:var(--ink);cursor:pointer}
-button[aria-pressed=true]{background:var(--ink);color:#111}
+button[aria-pressed=true]{background:var(--ink);color:#fff}
 button:focus-visible{outline:2px solid var(--led);outline-offset:3px}
 p.s{margin:0;color:var(--mute);max-width:52ch}
 .vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
@@ -42,7 +42,7 @@ function tick(){const s=text();if(s===str)return;str=s;const n=cols(s),ox=(W-n*c
  document.getElementById('tm').textContent='The time is '+s;c.setAttribute('aria-label','Dot-matrix clock showing '+s);
  const dd=new Date();document.getElementById('date').textContent=dd.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})}
 function draw(){x.clearRect(0,0,W,H);const n=cols(str),ox=(W-n*cell)/2+cell/2,oy=2*cell+cell/2;
- x.fillStyle='rgba(255,255,255,.05)';for(let r=0;r<7;r++)for(let k=0;k<n;k++){x.beginPath();x.arc(ox+k*cell,oy+r*cell,cell*.32,0,7);x.fill()}
+ x.fillStyle='rgba(17,17,19,.05)';for(let r=0;r<7;r++)for(let k=0;k<n;k++){x.beginPath();x.arc(ox+k*cell,oy+r*cell,cell*.32,0,7);x.fill()}
  x.fillStyle=led;x.shadowColor=led;x.shadowBlur=cell*.6;
  D.forEach(d=>{if(!reduce){const dx=d.x-px,dy=d.y-py,dist=Math.hypot(dx,dy),R=cell*4;if(dist<R){const f=(1-dist/R)*3.2;d.vx+=dx/dist*f;d.vy+=dy/dist*f}d.vx=(d.vx+(d.tx-d.x)*.07)*.78;d.vy=(d.vy+(d.ty-d.y)*.07)*.78;d.x+=d.vx;d.y+=d.vy}d.a+=((d.on?1:0)-d.a)*.15;if(d.a<.02)return;x.globalAlpha=d.a;x.beginPath();x.arc(d.x,d.y,cell*.36,0,7);x.fill()});
  x.globalAlpha=1;x.shadowBlur=0;requestAnimationFrame(draw)}

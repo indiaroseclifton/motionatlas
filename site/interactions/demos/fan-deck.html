@@ -1,11 +1,11 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Fanned card deck</title>
 <style>
-:root{--bg:#14110F;--ink:#F3EEE6;--mute:#A79E92;--accent:#E9B35A}
+:root{--bg:#FAFAFA;--ink:#111113;--mute:#6B6F76;--accent:#B47918}
 *{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
-body{background:radial-gradient(120% 90% at 50% 110%,#2A211A 0,var(--bg) 60%);color:var(--ink);font:15px/1.5 system-ui,sans-serif;display:grid;place-items:center;overflow:hidden}
+body{background:radial-gradient(120% 90% at 50% 110%,#EEF0F3 0,var(--bg) 60%);color:var(--ink);font:15px/1.5 system-ui,sans-serif;display:grid;place-items:center;overflow:hidden}
 .deck{position:relative;width:min(220px,46vw);aspect-ratio:4/5;margin-top:-4vh}
-.card{position:absolute;inset:0;border:0;padding:0;border-radius:16px;overflow:hidden;cursor:pointer;background:#000;box-shadow:0 30px 60px -25px #000,0 0 0 1px rgba(255,255,255,.08);transform-origin:50% 120%;transition:transform .55s cubic-bezier(.2,.8,.2,1),filter .4s}
+.card{position:absolute;inset:0;border:0;padding:0;border-radius:16px;overflow:hidden;cursor:pointer;background:#000;box-shadow:0 30px 60px -25px #000,0 0 0 1px rgba(17,17,19,.08);transform-origin:50% 120%;transition:transform .55s cubic-bezier(.2,.8,.2,1),filter .4s}
 .card img{width:100%;height:100%;object-fit:cover;display:block}
 .card span{position:absolute;left:12px;bottom:10px;font:600 12px/1 system-ui;letter-spacing:.12em;text-transform:uppercase;text-shadow:0 1px 8px #000}
 .card:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
@@ -20,7 +20,7 @@ body{background:radial-gradient(120% 90% at 50% 110%,#2A211A 0,var(--bg) 60%);co
 const $p=window.__ixp||((k,d)=>d);
 const imgs=['jellyfish','dove','threads','bloom','tree','smoke','ferro'];
 const deck=document.getElementById('deck');let active=3,open=false;
-imgs.forEach((n,i)=>{const b=document.createElement('button');b.className='card';b.innerHTML=`<img src="../../assets/shelf/${n}.webp" alt=""><span>${n}</span>`;b.setAttribute('aria-label','Card '+(i+1)+': '+n);b.onclick=()=>{active=i;layout()};deck.append(b)});
+imgs.forEach((n,i)=>{const b=document.createElement('button');b.className='card';b.innerHTML=`<img src="../../assets/art/${n}.svg" alt=""><span>${n}</span>`;b.setAttribute('aria-label','Card '+(i+1)+': '+n);b.onclick=()=>{active=i;layout()};deck.append(b)});
 const cards=[...deck.children];
 function layout(){const n=cards.length,spread=open?Math.min($p('fan',16),90/n):3;cards.forEach((c,i)=>{const d=i-active;const rot=d*spread;const x=open?d*Math.min(46,innerWidth/14):d*3;const y=open?Math.abs(d)*8:Math.abs(d)*2;const lift=i===active?(open?-34:-8):0;c.style.transform=`translate(${x}px,${y+lift}px) rotate(${rot}deg)`;c.style.zIndex=100-Math.abs(d)})}
 deck.addEventListener('pointerenter',()=>{open=true;layout()});deck.addEventListener('pointerleave',()=>{if(!deck.contains(document.activeElement)){open=false;layout()}});

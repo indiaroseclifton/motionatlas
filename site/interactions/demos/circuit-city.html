@@ -4,10 +4,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 /* Change the look here. The 3D scene reads its own colours from CONFIG below. */
-:root{--bg:#07090C;--ink:#E7EAEE;--ink-2:#B7BFCA;--mute:#8A94A2;--accent:#7FE7F7;--live:#3CF29A;--line:#34404F;--sans:'Geist',system-ui,sans-serif;--mono:'Geist Mono',ui-monospace,monospace;--gut:max(20px,4.2vw)}
+:root{--bg:#FAFAFA;--ink:#111113;--ink-2:#3F4249;--mute:#6B6F76;--accent:#0FA6BD;--live:#0FBD69;--line:#E6E6E8;--sans:'Geist',system-ui,sans-serif;--mono:'Geist Mono',ui-monospace,monospace;--gut:max(20px,4.2vw)}
 *{box-sizing:border-box}html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font:400 17px/1.55 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:clip}
-#city{position:fixed;inset:0;width:100%;height:100%;display:block;background:radial-gradient(120% 90% at 70% 60%,#0F1A22,var(--bg) 60%)}
+#city{position:fixed;inset:0;width:100%;height:100%;display:block;background:radial-gradient(120% 90% at 70% 60%,#ECEEF2,var(--bg) 60%)}
 .scrim{position:fixed;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(7,9,12,.92),rgba(7,9,12,.65) 30%,rgba(7,9,12,.1) 62%,rgba(7,9,12,0) 80%),linear-gradient(0deg,rgba(7,9,12,.85),rgba(7,9,12,0) 34%)}
 header{position:fixed;inset:0 0 auto;z-index:5;display:flex;justify-content:space-between;align-items:flex-start;gap:20px;padding:22px var(--gut)}
 .logo{font:600 30px/1 var(--sans);letter-spacing:-.04em;text-decoration:none;color:var(--ink)}.logo i{display:inline-block;width:.22em;height:.22em;background:var(--accent);margin-left:.06em}
@@ -70,7 +70,7 @@ window.CityCircuits=(()=>{
    for(let yy=14;yy<h-40;yy+=12)for(let xx=8;xx<w-8;xx+=10){const v=r();if(v<lit){const c=v<lit*.12?'127,231,247':'221,251,255';x.fillStyle=`rgba(${c},${.35+r()*.6})`}else x.fillStyle='rgba(150,165,180,.07)';x.fillRect(xx,yy,6,5)}
    x.fillStyle='rgba(200,210,222,.75)';for(let i=4;i<w;i+=10)x.fillRect(i,h-26,5,26);x.fillStyle='rgba(127,231,247,.5)';x.fillRect(0,0,w,2)})}
  function darkSide(){return canvasTex(256,64,(x,w,h)=>{x.fillStyle='#0D1015';x.fillRect(0,0,w,h);x.fillStyle='rgba(190,200,212,.55)';for(let i=6;i<w;i+=14)x.fillRect(i,h-10,6,10);x.fillStyle='rgba(127,231,247,.25)';x.fillRect(0,0,w,2)})}
- function glowSprite(){return canvasTex(64,64,(x,w,h)=>{const g=x.createRadialGradient(32,32,0,32,32,32);g.addColorStop(0,'rgba(255,255,255,1)');g.addColorStop(.25,'rgba(255,255,255,.55)');g.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=g;x.fillRect(0,0,w,h)})}
+ function glowSprite(){return canvasTex(64,64,(x,w,h)=>{const g=x.createRadialGradient(32,32,0,32,32,32);g.addColorStop(0,'rgba(255,255,255,1)');g.addColorStop(.25,'rgba(255,255,255,.55)');g.addColorStop(1,'rgba(17,17,19,0)');x.fillStyle=g;x.fillRect(0,0,w,h)})}
 
  function start(canvas,{still=false,seed=1}={}){
   if(!T)return null;

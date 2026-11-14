@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Elastic pull-to-refresh</title>
 <style>
-:root{--bg:#E9EEF2;--ink:#14181F;--mute:#56606E;--card:#FFFFFF;--acc:#3557E8}
+:root{--bg:#FAFAFA;--ink:#111113;--mute:#6B6F76;--card:#FFFFFF;--acc:#1534B7}
 *{box-sizing:border-box}html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;min-height:100vh;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:clamp(20px,6vw,90px);padding:24px clamp(16px,7vw,110px)}
 .side h1{margin:0 0 10px;font:650 clamp(30px,4.2vw,50px)/1.02 system-ui;letter-spacing:-.04em;max-width:13ch}
@@ -45,7 +45,7 @@ button:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
 const CONFIG={threshold:90,max:150,items:[['Studio Fold','Proofs for the autumn catalogue are in.','origami'],['Harbour Lights','Your booking for Friday is confirmed.','lighthouse'],['Ada Moreno','Can we try the headline in italic?','bloom'],['Field Notes','Week 42: what the sand remembers.','sand'],['Night Owl Press','Your print order has shipped.','owl'],['Amber Lab','Three new colourways ready to review.','amber'],['Smoke & Mirror','Moodboard updated with 12 images.','smoke']],fresh:[['Jelly Bureau','New: a tidepool series just landed.','jellyfish'],['Threadwork','Embroidery samples photographed.','threads'],['Sumi Studio','Ink tests from this morning.','sumi'],['Nebula FM','Tonight’s mix is live.','nebula']]};
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const feed=document.getElementById('feed'),list=document.getElementById('list'),ring=document.getElementById('ring'),pr=document.getElementById('pr'),msg=document.getElementById('msg'),stamp=document.getElementById('stamp');
-const row=([t,s,i],fresh)=>{const li=document.createElement('li');li.className='it'+(fresh?' new':'');li.innerHTML=`<img src="../../assets/shelf/${i}.webp" alt=""><div><b>${t}</b><span>${s}</span></div>`;return li};
+const row=([t,s,i],fresh)=>{const li=document.createElement('li');li.className='it'+(fresh?' new':'');li.innerHTML=`<img src="../../assets/art/${i}.svg" alt=""><div><b>${t}</b><span>${s}</span></div>`;return li};
 CONFIG.items.forEach(x=>list.append(row(x)));
 let y=0,start=null,busy=false,f=0,mins=0;
 const rubber=d=>CONFIG.max*(1-Math.exp(-d/CONFIG.max/1.1));

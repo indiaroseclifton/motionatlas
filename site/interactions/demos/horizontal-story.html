@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Horizontal scroll story</title>
 <style>
-:root{--bg:#F1ECE2;--ink:#1D1A16;--mute:#5E574C;--acc:#B5452A}
+:root{--bg:#FAFAFA;--ink:#111113;--mute:#6B6F76;--acc:#B5452A}
 *{box-sizing:border-box}html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,sans-serif}
 .story{position:relative}
@@ -43,7 +43,7 @@ body{background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,sans-serif}
 const CONFIG=[['I','Source','It starts as snowmelt under a ridge, colder than anything you have touched.','tree'],['II','Gorge','Then it finds a crack and makes a canyon of it, one grain at a time.','erosion'],['III','Delta','Slow now, it spreads into a hundred silver threads.','threads'],['IV','Sea','And finally it forgets its name, and the tide takes over.','soap']];
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const strip=document.getElementById('strip'),story=document.getElementById('story'),chap=document.getElementById('chap'),bar=document.getElementById('bar');
-CONFIG.forEach(([n,t,p,img],i)=>{const s=document.createElement('article');s.className='panel';s.innerHTML=`<div><p class="n">Chapter ${n}</p><h2>${t}</h2><p>${p}</p></div><div class="ph"><img src="../../assets/shelf/${img}.webp" alt="${t}"></div>`;strip.append(s);
+CONFIG.forEach(([n,t,p,img],i)=>{const s=document.createElement('article');s.className='panel';s.innerHTML=`<div><p class="n">Chapter ${n}</p><h2>${t}</h2><p>${p}</p></div><div class="ph"><img src="../../assets/art/${img}.svg" alt="${t}"></div>`;strip.append(s);
  const b=document.createElement('button');b.textContent=n+' · '+t;b.onclick=()=>jump(i+1);chap.append(b)});
 const P=[...strip.children],B=[...chap.children],IM=[...strip.querySelectorAll('.ph img')];
 let dist=0;

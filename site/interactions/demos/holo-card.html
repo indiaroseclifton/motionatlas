@@ -1,11 +1,11 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Holographic card</title>
 <style>
-:root{--bg:#0A0A12;--ink:#F4F4FF;--mute:#8E8EA8}
+:root{--bg:#FAFAFA;--ink:#111113;--mute:#6B6F76}
 *{box-sizing:border-box}html,body{margin:0;height:100%}
-body{background:radial-gradient(70% 60% at 50% 30%,#1A1730,var(--bg));color:var(--ink);font:15px/1.5 system-ui,sans-serif;display:grid;place-items:center;padding:24px}
+body{background:radial-gradient(70% 60% at 50% 30%,#ECEEF2,var(--bg));color:var(--ink);font:15px/1.5 system-ui,sans-serif;display:grid;place-items:center;padding:24px}
 .scene{perspective:900px;text-align:center}
-.card{--rx:0deg;--ry:0deg;--mx:50%;--my:50%;--o:0;position:relative;width:min(300px,72vw);aspect-ratio:5/7;border-radius:18px;border:0;padding:0;cursor:pointer;transform:rotateX(var(--rx)) rotateY(var(--ry));transition:transform .5s cubic-bezier(.2,.8,.2,1);background:linear-gradient(160deg,#2B2466,#0F1638 60%,#3A1456);box-shadow:0 30px 60px -30px #000,0 0 0 1px rgba(255,255,255,.12) inset;overflow:hidden;color:inherit;text-align:left;font:inherit}
+.card{--rx:0deg;--ry:0deg;--mx:50%;--my:50%;--o:0;position:relative;width:min(300px,72vw);aspect-ratio:5/7;border-radius:18px;border:0;padding:0;cursor:pointer;transform:rotateX(var(--rx)) rotateY(var(--ry));transition:transform .5s cubic-bezier(.2,.8,.2,1);background:linear-gradient(160deg,#2B2466,#0F1638 60%,#3A1456);box-shadow:0 30px 60px -30px #000,0 0 0 1px rgba(17,17,19,.12) inset;overflow:hidden;color:#fff;text-align:left;font:inherit}
 .card.live{transition:none}.card:focus-visible{outline:3px solid #fff;outline-offset:6px}
 .card::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(115deg,#ff5cf0 0,#5cf0ff 12%,#f0ff5c 24%,#5cff9d 36%,#ff5cf0 48%);background-size:300% 300%;background-position:var(--mx) var(--my);mix-blend-mode:color-dodge;opacity:calc(var(--o)*.55);transition:opacity .4s}
 .card::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at var(--mx) var(--my),rgba(255,255,255,.75),transparent 45%);mix-blend-mode:overlay;opacity:var(--o);transition:opacity .4s}

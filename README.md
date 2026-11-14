@@ -40,7 +40,7 @@ The library holds:
 | Theme kits | 48 | `site/kits/` |
 | Atlas design systems | 48 (D01–D48) | `site/expansion.json`, `systems.js`, `system-previews.js`, `system-kits.js` |
 | UI components | 70 (C01–C70) | `site/component-lab.js` |
-| Interactions | 119 | `site/interactions/` |
+| Interactions | 114 | `site/interactions/` |
 | Landing effects (techniques) | 41 (L01–L49, with gaps where older effects were retired) | `site/effects-data.js` (the techniques), `site/effects-lab.js` (the lab UI), `site/expansion.json`, clips in `site/assets/fx/clips/` |
 | Atlas themes (component lab skins) | 22 | `site/atlas-themes.js` |
 | Site-builder templates / sections / photographs | 26 / 56 / 82 (CC0, `site/assets/photos/`) | `site/builder/` |

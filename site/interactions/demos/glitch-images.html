@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Glitch hover on images</title>
 <style>
-:root{--bg:#050506;--ink:#EDEDED;--mute:#9A9AA0;--acc:#00F0FF;--acc2:#FF2A6D}
+:root{--bg:#FAFAFA;--ink:#111113;--mute:#6B6F76;--acc:#00F0FF;--acc2:#BD0F46}
 *{box-sizing:border-box}html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;min-height:100vh;padding:clamp(24px,6vh,60px) clamp(16px,5vw,60px)}
 header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:14px 30px;margin-bottom:26px}
@@ -35,7 +35,7 @@ header p{margin:0;color:var(--mute);max-width:42ch}
 const CONFIG=[['Jellyfish','jellyfish','001'],['Ferro','ferro','002'],['Nebula','nebula','003'],['Smoke','smoke','004'],['Biolume','biolum','005'],['Statue','statue','006'],['Erosion','erosion','007'],['Owl','owl','008']];
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const g=document.getElementById('grid');
-CONFIG.forEach(([t,img,n])=>{const a=document.createElement('a');a.href='#';a.className='tile';a.innerHTML=`<div class="fr"><img class="base" src="../../assets/shelf/${img}.webp" alt="${t}"><img class="sl r" src="../../assets/shelf/${img}.webp" alt=""><img class="sl c" src="../../assets/shelf/${img}.webp" alt=""><div class="scan"></div></div><div class="cap"><span>${t}</span><span>${n}</span></div>`;a.onclick=e=>e.preventDefault();g.append(a);
+CONFIG.forEach(([t,img,n])=>{const a=document.createElement('a');a.href='#';a.className='tile';a.innerHTML=`<div class="fr"><img class="base" src="../../assets/art/${img}.svg" alt="${t}"><img class="sl r" src="../../assets/art/${img}.svg" alt=""><img class="sl c" src="../../assets/art/${img}.svg" alt=""><div class="scan"></div></div><div class="cap"><span>${t}</span><span>${n}</span></div>`;a.onclick=e=>e.preventDefault();g.append(a);
  const R=a.querySelector('.r'),C=a.querySelector('.c');let raf=0,until=0,on=false;
  function slices(){let s='';const n=3+Math.floor(Math.random()*4);let y=0;const pts=[];for(let i=0;i<n;i++){const h=Math.random()*18+4,y0=Math.random()*90;pts.push([y0,y0+h])}return pts}
  function glitch(t){if(!on&&t>until){R.style.transform=C.style.transform='';C.style.clipPath='inset(0 0 100% 0)';raf=0;return}

@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Magnifier lens</title>
 <style>
-:root{--bg:#0E0D0C;--ink:#F2EEE6;--mute:#A8A195;--acc:#E9C46A;--L:190px}
+:root{--bg:#FAFAFA;--ink:#111113;--mute:#6B6F76;--acc:#B2861A;--L:190px}
 *{box-sizing:border-box}html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;min-height:100vh;display:grid;place-items:center;padding:26px 16px}
 .wrap{width:min(1040px,100%);display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:clamp(20px,4vw,52px);align-items:center}
@@ -24,7 +24,7 @@ button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 @media (prefers-reduced-motion:reduce){.lens{transition:opacity .15s;transform:none!important}}
 </style></head><body>
 <div class="wrap">
-<div class="pic" id="pic" tabindex="0" role="img" aria-label="Embroidery close-up. Focus and use arrow keys to move the magnifier, plus and minus to zoom."><img id="img" src="../../assets/shelf/embroidery.webp" alt=""><div class="lens" id="lens" data-z="2.5×"></div></div>
+<div class="pic" id="pic" tabindex="0" role="img" aria-label="Embroidery close-up. Focus and use arrow keys to move the magnifier, plus and minus to zoom."><img id="img" src="../../assets/art/embroidery.svg" alt=""><div class="lens" id="lens" data-z="2.5×"></div></div>
 <div class="side"><h1>Look closer.</h1><p>Move over the picture and a lens follows you. Scroll the wheel, pinch or press + and − to change the zoom. On a phone the lens floats above your finger so it never hides what you are looking at.</p>
 <div class="row"><button id="out" aria-label="Zoom out">−</button><button id="in" aria-label="Zoom in">+</button><button id="tog" aria-pressed="false">Show lens</button></div>
 <div class="thumbs" id="thumbs" role="group" aria-label="Choose picture"></div></div>
@@ -48,7 +48,7 @@ pic.addEventListener('wheel',e=>{if(!on)return;e.preventDefault();setZ(z-e.delta
 pic.addEventListener('focus',()=>show(true));pic.addEventListener('blur',()=>show(false));
 pic.addEventListener('keydown',e=>{const s=e.shiftKey?.1:.03,m={ArrowLeft:[-s,0],ArrowRight:[s,0],ArrowUp:[0,-s],ArrowDown:[0,s]}[e.key];if(m){e.preventDefault();lx=Math.max(0,Math.min(1,lx+m[0]));ly=Math.max(0,Math.min(1,ly+m[1]))}if(e.key==='+'||e.key==='='){e.preventDefault();setZ(z+.5)}if(e.key==='-'){e.preventDefault();setZ(z-.5)}if(e.key==='Escape')show(false)});
 document.getElementById('in').onclick=()=>{setZ(z+.5);show(true)};document.getElementById('out').onclick=()=>{setZ(z-.5);show(true)};document.getElementById('tog').onclick=()=>show(!on);
-const th=document.getElementById('thumbs');CONFIG.forEach(([f,t],i)=>{const b=document.createElement('button');b.setAttribute('aria-pressed',i===0);b.setAttribute('aria-label',t);b.innerHTML=`<img src="../../assets/shelf/${f}.webp" alt="">`;b.onclick=()=>{img.src=`../../assets/shelf/${f}.webp`;pic.setAttribute('aria-label',t+'. Focus and use arrow keys to move the magnifier, plus and minus to zoom.');bg();[...th.children].forEach(x=>x.setAttribute('aria-pressed',x===b))};th.append(b)});
+const th=document.getElementById('thumbs');CONFIG.forEach(([f,t],i)=>{const b=document.createElement('button');b.setAttribute('aria-pressed',i===0);b.setAttribute('aria-label',t);b.innerHTML=`<img src="../../assets/art/${f}.svg" alt="">`;b.onclick=()=>{img.src=`../../assets/art/${f}.svg`;pic.setAttribute('aria-label',t+'. Focus and use arrow keys to move the magnifier, plus and minus to zoom.');bg();[...th.children].forEach(x=>x.setAttribute('aria-pressed',x===b))};th.append(b)});
 bg();loop();
 if(!reduce){show(true);let t=0;const intro=()=>{t+=.012;if(t<2.6){lx=.5+Math.cos(t*2.2)*.22;ly=.45+Math.sin(t*2.2)*.2;requestAnimationFrame(intro)}};intro()}
 </script></body></html>

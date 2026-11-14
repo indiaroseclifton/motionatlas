@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Draggable physics stickers</title>
 <style>
-:root{--bg:#F2EEE6;--ink:#1B1A18;--mute:#5E584E}
+:root{--bg:#FAFAFA;--ink:#111113;--mute:#6B6F76}
 *{box-sizing:border-box}html,body{margin:0;height:100%}
 body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;overflow:hidden}
 .board{position:fixed;inset:0;background-image:radial-gradient(#D5CEC0 1.2px,transparent 1.3px);background-size:22px 22px;touch-action:none}
@@ -34,7 +34,7 @@ const S=CONFIG.stickers.map((c,i)=>{const el=document.createElement('div');el.cl
  el.style.width=w+'px';el.style.height=h+'px';
  if(c.k==='round'||c.k==='pill'){el.style.background=c.bg;el.style.color=c.fg;el.innerHTML='<span>'+c.t+'</span>';el.setAttribute('aria-label','Sticker: '+c.t.replace(/<br>/g,' '))}
  if(c.k==='star'){el.innerHTML=`<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 4l12 30 32 2-25 20 9 32-28-18-28 18 9-32L6 36l32-2z" fill="${c.bg}" stroke="#fff" stroke-width="5" stroke-linejoin="round"/></svg>`;el.setAttribute('aria-label','Sticker: star')}
- if(c.k==='img'){el.innerHTML=`<img src="../../assets/shelf/${c.src}.webp" alt="">`;el.setAttribute('aria-label','Sticker: photo')}
+ if(c.k==='img'){el.innerHTML=`<img src="../../assets/art/${c.src}.svg" alt="">`;el.setAttribute('aria-label','Sticker: photo')}
  B.append(el);
  const o={el,w,h,r:Math.max(w,h)/2*.82,x:0,y:0,vx:0,vy:0,a:(Math.random()-.5)*24,va:0,drag:false};home(o,i);return o});
 function home(o,i){const cols=W<600?2:4,cw=(W-40)/cols;o.x=20+cw*(i%cols+.5);o.y=H*(W<600?.5:.56)+Math.floor(i/cols)*(W<600?110:140);o.x=Math.min(W-o.w/2-8,o.x);o.y=Math.min(H-o.h/2-80,o.y)}
