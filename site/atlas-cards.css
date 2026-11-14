@@ -1,0 +1,56 @@
+/* One card for the atlas sections (2026-11). Loaded last in atlas.html.
+   Anatomy, taken from the landing-effects card (.fxl-card) and the interactions shelf:
+   a white shell with a hairline border and 16px corners, a preview inset 8px with 10px corners,
+   an 11px mono kicker, a 22px display title, muted 14px text. Cards that open something lift 4px on hover.
+   Shell cards: .cataloguecard .artcard .assetCard .iconChoice .bgCard (with a preview)
+                .refcard .fontpair .fontspecimen .paircard (text only). */
+:is(body:not(.cinemaMode),body) main :is(.cataloguecard,.artcard,.assetCard,.iconChoice,.refcard,.fontpair,.fontspecimen,.paircard){
+ box-sizing:border-box;position:relative;min-width:0;
+ background:var(--panel,#fff);border:1px solid var(--hair,#d9dee6);border-radius:16px;
+ padding:16px 16px 18px;
+ transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s,border-color .3s}
+:is(body:not(.cinemaMode),body) main :is(.refcard,.fontpair,.fontspecimen,.paircard){padding:20px}
+
+/* the preview: inset 8px from the shell, smaller radius */
+:is(body:not(.cinemaMode),body) main :is(.cataloguecard,.artcard)>.cardmedia,:is(body:not(.cinemaMode),body) main .assetCard>.assetPreview,:is(body:not(.cinemaMode),body) main .iconChoice>.iconChoiceart{
+ display:block;box-sizing:border-box;width:calc(100% + 16px);max-width:none;margin:-8px -8px 14px;
+ border-radius:10px!important;overflow:hidden}
+:is(body:not(.cinemaMode),body) main .iconChoice>.iconChoiceart{display:grid}
+:is(body:not(.cinemaMode),body) main .iconFamilyCards[data-tile=round] .iconChoiceart{border-radius:10px}
+:is(body:not(.cinemaMode),body) main :is(.cataloguecard,.artcard) .cardmedia>*{transition:transform .9s cubic-bezier(.2,.8,.2,1)}
+:is(body:not(.cinemaMode),body) main .cataloguecard>.savebutton{top:16px;right:16px}
+
+/* type */
+:is(body:not(.cinemaMode),body) main :is(.cataloguecard,.artcard,.assetCard,.refcard) h3,:is(body:not(.cinemaMode),body) main .iconChoice h2{font-size:22px!important;line-height:1.15;margin:4px 0 8px}
+:is(body:not(.cinemaMode),body) main .paircard h2{font-size:28px!important;line-height:1.1;margin:0 0 12px}
+:is(body:not(.cinemaMode),body) main :is(.cataloguecard,.artcard,.assetCard,.iconChoice,.refcard,.paircard) p{font-size:14px;line-height:1.55}
+:is(body:not(.cinemaMode),body) main :is(.cataloguecard,.artcard,.assetCard,.fontpair,.fontspecimen)>.cardcode{margin-top:0}
+
+/* background presets: a compact version of the same shell */
+:is(body:not(.cinemaMode),body) main .bgCard{box-sizing:border-box;background:var(--panel,#fff);border:1px solid var(--hair,#d9dee6);border-radius:16px;padding:8px 8px 12px;
+ transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s,border-color .3s}
+:is(body:not(.cinemaMode),body) main .bgCard>.bgThumb{border-radius:10px;overflow:hidden}
+:is(body:not(.cinemaMode),body) main .bgCard>b,:is(body:not(.cinemaMode),body) main .bgCard>small{padding-inline:6px}
+:is(body:not(.cinemaMode),body) main .bgCard[aria-pressed=true]{border-color:var(--ink,#0d1220);box-shadow:inset 0 0 0 1px var(--ink,#0d1220)}
+
+/* the cards that were already shells share the radius */
+:is(body:not(.cinemaMode),body) main :is(.tourCard,.vmaBuildCard,.umCard,.ttCard){border-radius:16px}
+
+/* one hover, only where there is a pointer */
+@media (hover:hover){
+ :is(body:not(.cinemaMode),body) main :is(.cataloguecard,.artcard,.assetCard,.iconChoice,.bgCard):hover{transform:translateY(-4px);box-shadow:0 18px 36px -22px rgba(13,18,32,.45);border-color:#c3cad6}
+ :is(body:not(.cinemaMode),body) main :is(.cataloguecard,.artcard):hover .cardmedia>*{transform:scale(1.025)}
+}
+@media (prefers-reduced-motion:reduce){
+ :is(body:not(.cinemaMode),body) main :is(.cataloguecard,.artcard,.assetCard,.iconChoice,.bgCard,.refcard,.fontpair,.fontspecimen,.paircard),:is(body:not(.cinemaMode),body) main .cardmedia>*{transition:none!important}
+ :is(body:not(.cinemaMode),body) main :is(.cataloguecard,.artcard,.assetCard,.iconChoice,.bgCard):hover{transform:none}
+ :is(body:not(.cinemaMode),body) main :is(.cataloguecard,.artcard):hover .cardmedia>*{transform:none}
+}
+@media (max-width:760px){
+ :is(body:not(.cinemaMode),body) main :is(.cataloguecard,.artcard,.assetCard,.iconChoice,.refcard,.fontpair,.fontspecimen,.paircard){padding:12px 12px 14px}
+ :is(body:not(.cinemaMode),body) main :is(.cataloguecard,.artcard)>.cardmedia,:is(body:not(.cinemaMode),body) main .assetCard>.assetPreview,:is(body:not(.cinemaMode),body) main .iconChoice>.iconChoiceart{width:calc(100% + 12px);margin:-6px -6px 12px}
+ :is(body:not(.cinemaMode),body) main :is(.cataloguecard,.artcard,.assetCard,.refcard) h3,:is(body:not(.cinemaMode),body) main .iconChoice h2{font-size:19px!important}
+ :is(body:not(.cinemaMode),body) main .paircard h2{font-size:23px!important}
+}
+/* title buttons sit flush with the text below them */
+:is(body:not(.cinemaMode),body) main :is(.cataloguecard,.artcard,.assetCard) h3>button,:is(body:not(.cinemaMode),body) main .iconChoice h2>button{padding:0;text-align:left}
