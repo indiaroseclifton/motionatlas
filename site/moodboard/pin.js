@@ -11,6 +11,7 @@
  function button(){const body=document.getElementById('detailBody');const notes=body&&body.querySelector('.detailnotes');if(!notes||notes.querySelector('.mbPinBtn'))return;
   const b=document.createElement('button');b.type='button';b.className='secondary mbPinBtn';b.innerHTML='<svg viewBox="0 0 16 16" aria-hidden="true" width="14" height="14" style="margin-right:6px;vertical-align:-2px"><path d="M9.5 1.5 14.5 6.5 12 7l-2 3 .5 3-1 1-3-3-4.5 4.5M7 6l-2 .5L4 5.5l1-1 3 .5z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>Pin to moodboard';
   b.onclick=()=>{const id=(typeof selected!=='undefined'&&selected&&selected.id)||(notes.closest('dialog')&&document.getElementById('detailCode')?.textContent||'').slice(0,3);const e=cat().find(x=>x.id===id);if(e)pin(e)};
+  const more=notes.querySelector('.detailMoreList');if(more){b.className='mbPinBtn';more.insertBefore(b,more.querySelector('.shareDirBtn'));return}
   const after=notes.querySelector('.shareDirBtn')||notes.querySelector('[data-project-add]');(after||notes.firstElementChild)?.insertAdjacentElement('afterend',b)}
  function init(){if(!window.MoodStore)return;const body=document.getElementById('detailBody');if(!body)return;new MutationObserver(button).observe(body,{childList:true});button()}
  function load(){if(window.MoodStore)return init();const s=document.createElement('script');s.src='moodboard/store.js';s.onload=init;document.head.append(s)}

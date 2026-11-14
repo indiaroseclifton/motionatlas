@@ -74,7 +74,7 @@ function mount(root,api){let M=null,open=new Set(),lastSrc=null;
     <button type="button" class="fe-ic" data-act="sup" data-stage="${it.id}" data-k="su:${it.id}" aria-label="Move stage up"${ii===0?' disabled':''}>↑</button><button type="button" class="fe-ic" data-act="sdown" data-stage="${it.id}" data-k="sd:${it.id}" aria-label="Move stage down"${ii===M.items.length-1?' disabled':''}>↓</button><button type="button" class="fe-ic" data-act="sremove" data-stage="${it.id}" aria-label="Remove stage (keeps its steps)" title="Remove stage (keeps its steps)">×</button></div>
     <ol class="fe-steps">${it.steps.map((id,i)=>stepRow(id,i,it.steps.length)).join('')}</ol><button type="button" class="fe-add" data-act="add" data-stage="${it.id}">+ Add step</button></section>`;}
    else html+=`<ol class="fe-steps fe-loose">${stepRow(it.id,ii,M.items.length)}</ol>`;});
-  html+=`<div class="fe-acts fe-foot"><button type="button" class="fe-btn" data-act="addstage">+ Add stage</button><button type="button" class="fe-btn" data-act="addloose">+ Step outside stages</button></div>`;
+  html+=`<div class="fe-acts fe-foot"><button type="button" class="fe-btn" data-act="addloose">+ Add a step</button><button type="button" class="fe-btn" data-act="addstage" title="A stage is a named group of steps">+ Add a stage</button></div>`;
   root.innerHTML=html;if(keep)focusKey(keep);}
  function focusKey(k,select){requestAnimationFrame(()=>{const el=root.querySelector(`[data-k="${CSS.escape(k)}"]`);if(el){el.focus({preventScroll:false});if(select&&el.select)el.select();}});}
 

@@ -704,3 +704,5 @@ groups of tiles, read from `ATLAS_NAV_GROUPS` in `site/site-nav-data.js`: Browse
 has the same three short menus (Browse, Make, Yours), defined in `ATLAS_NAV_MENUS`; pages that are not in a menu sit in the
 More group so their breadcrumbs and search still work. Both bars (`site-bar.js` and the atlas page's `atlas-nav.js`) are
 white with black text.
+
+- `site/studio-tabs.js` gives the diagram, flowchart and motion graphics studios a tabbed side panel. Each page's panes are listed at the bottom of that file. In `atlas.html`, `.listBar` is the one search-plus-filter row and `.foldTool` folds a tool that sits above a list (see `atlas-cards.css`).

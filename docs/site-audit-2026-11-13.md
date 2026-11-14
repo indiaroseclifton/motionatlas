@@ -12,6 +12,30 @@ states, the serverless API, and the project's own Playwright gate.
 heading order, missing alt text, sideways scroll, text under 11 px, fonts, corner radii and page background. Console
 errors were attributed per page. Suspicious readings were checked by eye before being reported.
 
+## Fifth pass: tool layouts, missing content, one save control, one toolbar
+
+14 November 2026. Each change was checked at 1440 × 900 and 390 × 844.
+
+| Area | Before | After |
+|---|---|---|
+| Motion graphics studio | Stage, then 28 templates below it: 2.2 screens on desktop. On a phone the edit controls sat under all 28 templates | Side panel has two tabs, Templates and Edit, and scrolls on its own. 1.0 screen on desktop, 1.6 on a phone |
+| Diagram studio | One side panel 3,186 px tall holding type, title, content, style and checks | Four tabs: Type, Content, Style, Checks. Type, Style and Checks fit without scrolling |
+| Flowchart studio and canvas | Four panel sections stacked, with tab styles in the page but no tab bar | Four tabs: Steps, Chart, Layout, Checks. "+ Add a step" comes first, then "+ Add a stage" |
+| Site builder export menu | Ten rows in one list | Three groups: Download, Share, Back up and hand off. Rows reworded |
+| Art styles, content | 60 entries where "What to notice" repeated the summary and the other notes were shared boilerplate, folded away last pass | Each entry has its own five notes: what to notice, good for, how it moves, how to make it, avoid. 300 notes, none repeated |
+| Art styles, layout | A 1,354 px prompt builder sat above the list. Clicking a card image jumped to the builder | Search and family filter first, the builder folded into one row, then the 60 styles. A card opens its entry like every other card; "Use in prompt builder" opens the builder |
+| Entry view actions | Five buttons: Add to project, Share, Pin to moodboard, Save for later, Add to inspiration | Add to project, Save, and a More menu holding the other three |
+| List toolbars | Search and filter rows differed by section: label rows on two, text from 12 to 15 px, heights from 38 to 45 px, a 50/50 split on Art styles | One row: search grows, one 230 px filter beside it, 44 px high, 14 px text, labels kept for screen readers |
+| Section headings | Backgrounds and Guided tours started 36 to 76 px lower than the rest, under a label line | All section titles start at the same height |
+
+How it is built: `site/studio-tabs.js` adds the tab bar to the three studios from their existing panel sections, so no
+studio logic changed. The new art notes were drafted by a writing agent from each entry's title, summary and tags, then
+checked by script (60 ids, five fields, no repeats) and by reading a sample of thirteen against what the media are.
+
+Still open after this pass: the UI components section still opens with a 1,223 px component lab above its list; the
+chart and mockup studios already had tabs and were left as they are; template thumbnails still show older artwork;
+none of the 25 animation ideas is built; sign-in and cloud sync are down until the Supabase project is restored.
+
 ## Fourth pass: structure and content, not function
 
 The owner's point: checking that tools work is not a redesign, and the content had not been read. This pass read

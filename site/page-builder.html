@@ -21,17 +21,20 @@
    <button type="button" class="btn" id="helpBtn" aria-keyshortcuts="?"><span>Keyboard shortcuts</span><small>Press ? any time</small></button>
   </div></details>
   <details class="menu" id="exportMenu"><summary class="btn primary">Export ▾</summary><div class="mlist" role="group" aria-label="Export">
-   <button type="button" id="dlHtml"><span>This page as one HTML file</span><small>Styles, scripts and demos inlined</small></button>
-   <button type="button" id="dlZip"><span>Download the site (ZIP)</span><small>Every page, sitemap.xml, robots.txt, assets</small></button>
+   <p class="mgrp">Download</p>
+   <button type="button" id="dlZip"><span>Whole site (.zip)</span><small>Every page and its files, ready to upload</small></button>
+   <button type="button" id="dlHtml"><span>This page (.html)</span><small>One file with everything inside it</small></button>
    <div class="mfRowX" id="mineExport" hidden style="padding:8px 12px;border-top:1px solid var(--line,#ccc);font-size:13px"><label style="display:flex;gap:8px;align-items:flex-start"><input type="checkbox" id="exInclFonts"><span>Include my font files in the ZIP and HTML<br><small>Off by default. Only if your licence lets you pass the font on.</small></span></label></div>
-   <button type="button" id="copyHtml"><span>Copy HTML</span><small>The single-file version</small></button>
-   <button type="button" id="mkShare"><span>Make share image</span><small>Frame the page in the Mockup studio</small></button>
-   <button type="button" id="openTab"><span>Open in a new tab</span><small>Exactly what the download contains</small></button>
-   <button type="button" id="pubBtn"><span>Publish to a live address…</span><small>Shareable link on the atlas</small></button>
-   <button type="button" id="projBtn"><span>Save to My projects</span><small>Adds this site to your project list</small></button>
-   <button type="button" id="dlJson"><span>Download site file (.json)</span><small>Backup, or move to another browser</small></button>
-   <button type="button" id="openJson"><span>Open a site file…</span><small>Adds it as a new site</small></button>
-   <button type="button" id="copyPrompt"><span>Copy AI prompt</span><small>Style, sections and words, for any AI tool</small></button>
+   <button type="button" id="copyHtml"><span>Copy HTML</span><small>The same one-file page, on your clipboard</small></button>
+   <button type="button" id="openTab"><span>Preview in a new tab</span><small>Exactly what the download contains</small></button>
+   <p class="mgrp">Share</p>
+   <button type="button" id="pubBtn"><span>Publish to a link…</span><small>A live address you can send to anyone</small></button>
+   <button type="button" id="mkShare"><span>Make a share image</span><small>The page framed in a device, for posts</small></button>
+   <button type="button" id="projBtn"><span>Save to My projects</span><small>Keeps it with your other work</small></button>
+   <p class="mgrp">Back up and hand off</p>
+   <button type="button" id="dlJson"><span>Back up this site (.json)</span><small>To reopen later or in another browser</small></button>
+   <button type="button" id="openJson"><span>Open a backup…</span><small>Adds it as a new site</small></button>
+   <button type="button" id="copyPrompt"><span>Copy AI prompt</span><small>The style, sections and words, for any AI tool</small></button>
   </div></details>
  </div></header>
 <nav class="panes" aria-label="Builder panes"><div class="seg" id="panes" role="group" aria-label="Show"><button type="button" data-p="lib" aria-pressed="false">Library</button><button type="button" data-p="page" aria-pressed="true">Page</button><button type="button" data-p="preview" aria-pressed="false">Preview</button></div></nav>

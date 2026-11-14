@@ -139,3 +139,8 @@
 /* phones: keep Export on screen (the Saved label keeps its dot, the word is for screen readers only) */
 @media (max-width:560px){.tools{gap:5px}.tools .savedot span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}}
 @media (max-width:560px){#moreMenu>summary{font-size:0;gap:4px}#moreMenu>summary::before{content:"\22EF";font-size:18px;line-height:1}#moreMenu>summary .badge{font-size:11px}}
+
+/* export menu: three labelled groups instead of ten loose rows */
+.mlist .mgrp{margin:0;padding:10px 10px 4px;font:600 11px/1.2 Inter,system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+.mlist .mgrp:not(:first-child){margin-top:6px;border-top:1px solid var(--hair);padding-top:12px}
+#exportMenu .mlist{min-width:min(320px,calc(100vw - 24px))}

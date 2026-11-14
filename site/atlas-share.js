@@ -38,6 +38,7 @@ window.ATLAS_SIGNUP=window.ATLAS_SIGNUP||{endpoint:''};
  function addShareButton(){const body=document.getElementById('detailBody');const notes=body?.querySelector('.detailnotes');if(!notes||notes.querySelector('.shareDirBtn'))return;
   const b=document.createElement('button');b.type='button';b.className='secondary shareDirBtn';b.innerHTML='<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5v9M4.5 5 8 1.5 11.5 5M3 9v5h10V9" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>Share';
   b.onclick=()=>{if(typeof selected!=='undefined'&&selected)openShare(selected);};
+  const more=notes.querySelector('.detailMoreList');if(more){b.className='shareDirBtn';more.append(b);return;}
   const after=notes.querySelector('[data-project-add]');(after||notes.firstElementChild)?.insertAdjacentElement('afterend',b);}
  let dlg,canvas,current;
  function ensureDialog(){if(dlg)return;dlg=document.createElement('dialog');dlg.className='shareCard';dlg.setAttribute('aria-labelledby','shareTitle');
