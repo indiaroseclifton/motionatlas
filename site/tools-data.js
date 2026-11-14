@@ -12,6 +12,8 @@
    blurb:'Name and feel words in; palette, fonts, logo lockups, tokens and a theme kit out. Send it on to the Site builder.'},
   {id:'mockup-studio',group:'Make',name:'Mockup studio',href:'mockup-studio.html',film:'paper-bird',
    blurb:'Frame a screenshot in one of {devices} devices and export every social size.'},
+  {id:'infographic-studio',group:'Make',name:'Infographic studio',href:'infographic-studio.html',film:'pigment-bloom',
+   blurb:'Numbers, steps, a comparison or a timeline as one picture. Eight layouts, your words and colours, PNG or SVG.'},
   {id:'chart-studio',group:'Make',name:'Chart studio',href:'chart-studio.html',film:'pigment-bloom',
    blurb:'Paste your data and get a chart: {chartTypes} forms, any atlas style, checked for accessibility.'},
   {id:'diagram-studio',group:'Make',name:'Diagram studio',href:'diagram-studio.html',film:'swan-construction',

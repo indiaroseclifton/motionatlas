@@ -28,6 +28,7 @@ window.ATLAS_NAV_GROUPS=[
    ['page-builder.html','Site builder','Build a multi-page website from a template.','paper-bird'],
    ['brand-generator.html','Brand kit','Colours, fonts and a logo from a name and a feel.','game-of-life'],
    ['motion-graphics.html','Motion graphics','Titles and logo stings as video, GIF or HTML.','light-ribbons'],
+   ['infographic-studio.html','Infographics','Numbers, steps and comparisons as one picture to post.','pigment-bloom'],
    ['chart-studio.html','Charts & diagrams','Charts from your data, plus diagrams and flowcharts.','pigment-bloom'],
    ['mockup-studio.html','Mockups','Frame a screenshot and export every social size.','paper-bird']]},
   {name:'Your studio',items:[
@@ -47,6 +48,6 @@ window.ATLAS_NAV_MENUS=[
  {id:'ix',name:'Interactions',groups:[{name:'',items:['interactions.html','#effects','#motion']}]},
  {id:'lib',name:'Library',groups:[{name:'',items:['app-interfaces.html','#ux','#icons','#systems','#backgrounds']}]},
  {id:'styles',name:'Styles',groups:[{name:'',items:['#browse','#art','#cinema','#typography','#compare','#pairings']}]},
- {id:'make',name:'Make',groups:[{name:'',items:['page-builder.html','brand-generator.html','motion-graphics.html','chart-studio.html','mockup-studio.html']}]},
+ {id:'make',name:'Make',groups:[{name:'',items:['page-builder.html','brand-generator.html','motion-graphics.html','infographic-studio.html','chart-studio.html','mockup-studio.html']}]},
  {id:'studio',name:'Yours',groups:[{name:'',items:['#projects','moodboard.html','#inspiration','#creations','my-fonts.html','account.html']}]}
 ];

@@ -12,6 +12,38 @@ states, the serverless API, and the project's own Playwright gate.
 heading order, missing alt text, sideways scroll, text under 11 px, fonts, corner radii and page background. Console
 errors were attributed per page. Suspicious readings were checked by eye before being reported.
 
+## Sixth pass: lead with interactions, landing effects rebuilt, brand kit simplified, infographics added
+
+14 November 2026. Each change was checked at 1440 × 900 and 390 × 844. All 41 landing demos were looked at one by one.
+
+**What the site is for.** The motion work is the reason to visit, and two thirds of it was in no menu. The menus now
+open with Interactions: UI interactions, Landing effects and Animation studio. The home page headline, intro and first
+section are about them.
+
+**Charts and diagrams.** They are different jobs that looked like one tool three times over. A chart draws numbers.
+A diagram draws structure. A flowchart draws steps. The three studios share a shell and the same look presets, and
+two of them offered the same types (cycle and mind map). They are now one menu entry, Charts & diagrams, and the
+studios share a switch where their titles were. None of them made an infographic, which is a composed picture of
+numbers, icons and short text. That tool did not exist and now does.
+
+| Area | Before | After |
+|---|---|---|
+| Menus | Library, Styles, Make, Yours. Landing effects and Animation studio unlisted. Charts, Diagrams and Flowcharts as three entries. Guided tours, Theme kits and Chart style guides listed | Interactions first. One Charts & diagrams entry. Tours, Theme kits and Chart style guides out of the menus, addresses kept |
+| Landing effects, demos | 41 dark pages in a serif display face, built on 48 generated illustrations and 60 film frames | 41 light pages in Inter with one ink colour. Abstract colour studies replace every illustration. Captions and alt text rewritten |
+| Landing effects, page | A second title, a paragraph, twelve filter chips, cards with a label, a code line and a usage count, recordings of the old demos | One search box and one filter. Cards show a picture, a name and one line. Pointing at a card runs the real page. 17 MB of recordings deleted |
+| Brand kit generator | A form 832 px tall with 27 chips and every option open. Seven tabs, five action buttons, and a second set of nine tabs inside the seventh | A 580 px brief with twelve words and the rest behind two disclosures. Five tabs, one Download button and a More menu. No tabs inside tabs on the main path |
+| Infographics | None | Infographic studio: eight layouts, four shapes, twelve palettes, six type pairings, 300 icons, PNG and SVG export with fonts embedded |
+
+How the demos were converted: a script inverted the lightness of every colour and dropped its hue, so contrast
+relationships held, and swapped the serif for Inter at 74% of the size. Sixteen demos then needed hand work: those that
+were light to begin with, the two that are about colour, the video demos and the cross-page transition. The artwork is
+made by `tools/fx-art.py` and can be regenerated.
+
+Still open after this pass: the films in three video demos are the atlas's own abstract light studies, and four of the
+six in the hover-to-play grid are dark; the video scrub demo uses an ordinary encode, so fast scrubbing can lag; the
+UI components section still opens with a tall component lab; template thumbnails in the site builder and on the
+all-tools page still show older artwork; sign-in and cloud sync are down until the Supabase project is restored.
+
 ## Fifth pass: tool layouts, missing content, one save control, one toolbar
 
 14 November 2026. Each change was checked at 1440 × 900 and 390 × 844.
