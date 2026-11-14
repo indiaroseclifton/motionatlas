@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap">
 <link rel="stylesheet" href="kits/kits.css">
 <style>
-:root{--pbg:#F4F5F8;--ppanel:#FFFFFF;--pink:#1C1F2A;--pmute:#5A6072;--phair:#DCE0E8;--paccent:#5B2DFF;--ok:#17633A;--okbg:#EAF7EF;--bad:#A3221B;--badbg:#FDECEA;--warn:#8A5300;--warnbg:#FFF4E2;color-scheme:light}
+:root{--pbg:#F4F5F8;--ppanel:#FFFFFF;--pink:#1C1F2A;--pmute:#5A6072;--phair:#DCE0E8;--paccent:#111113;--ok:#17633A;--okbg:#EAF7EF;--bad:#A3221B;--badbg:#FDECEA;--warn:#8A5300;--warnbg:#FFF4E2;color-scheme:light}
 *{box-sizing:border-box}html,body{margin:0}
 body{background:var(--pbg);color:var(--pink);font:15px/1.55 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 a{color:inherit}button,input,select,textarea{font:inherit;color:inherit}[hidden]{display:none!important}
@@ -61,6 +61,24 @@ pre{margin:0;background:#12141C;color:#E8EBF3;border-radius:10px;padding:12px;fo
 #kitBox{border:1px solid var(--phair);border-radius:12px;overflow:hidden}
 @media (max-width:980px){.app{grid-template-columns:minmax(0,1fr)}.side{position:static;max-height:none}.modes,.specs{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){.toast{transition:none}}
+
+/* one part of the kit at a time, with the actions at the top (2026-11) */
+.side{top:calc(var(--sb-h,44px) + 12px);max-height:calc(100vh - var(--sb-h,44px) - 24px)}
+#out{position:relative}
+.bgBar{position:sticky;top:var(--sb-h,44px);z-index:6;margin:0 -4px 12px;padding:10px 4px;background:var(--pbg)}
+.bgTabs{display:flex;gap:6px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+.bgTabs::-webkit-scrollbar{display:none}
+.bgTabs button{flex:none;min-height:40px;padding:0 16px;border:1px solid var(--phair);border-radius:999px;background:#fff;color:var(--pink);font:inherit;font-size:13.5px;font-weight:600;cursor:pointer}
+.bgTabs button[aria-selected=true]{background:var(--pink);border-color:var(--pink);color:#fff}
+.sec.bgSave{padding:12px 14px;margin-bottom:14px;gap:8px}
+.sec.bgSave>header{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.sec.bgSave .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.sec.bgSave .note:empty{display:none}
+.sec.bgOff{position:absolute!important;left:0;right:0;top:0;height:0!important;min-height:0!important;margin:0!important;overflow:hidden!important;visibility:hidden!important;pointer-events:none}
+.bgMore{border:1px solid var(--phair);border-radius:12px;padding:0 14px}
+.bgMore>summary{min-height:48px;display:flex;align-items:center;gap:10px;cursor:pointer}
+.bgMoreIn{display:grid;gap:14px;padding:4px 0 16px}
+@media (max-width:900px){.bgBar{top:var(--sb-h,44px)}}
 </style><meta property="og:type" content="website"><meta property="og:site_name" content="Visual &amp; Motion Atlas"><meta property="og:title" content="Brand kit generator · Visual & Motion Atlas"><meta property="og:description" content="Name, a sentence and a few feel words in; a complete brand out: an OKLCH palette checked for WCAG contrast and colour blindness, a Google Fonts pairing with rationale, logo lockups, CSS, JSON and Tailwind tokens, applied previews and a downloadable theme kit."><meta property="og:url" content="https://motionatlas-ten.vercel.app/brand-generator"><meta property="og:image" content="https://motionatlas-ten.vercel.app/assets/og-atlas.jpg"><meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://motionatlas-ten.vercel.app/brand-generator">
 <style id="sbPre">html{--sb-h:calc(44px + env(safe-area-inset-top,0px))}body{padding-top:var(--sb-h)}html:not(.sbReady) body::before{content:"";position:fixed;top:0;left:0;right:0;height:var(--sb-h);background:#fff;border-bottom:1px solid #e8e8ea;z-index:2147483000}@media print{body{padding-top:0}}</style><script src="site-nav-data.js" defer></script><script src="site-bar.js" defer></script>
@@ -68,7 +86,7 @@ pre{margin:0;background:#12141C;color:#E8EBF3;border-radius:10px;padding:12px;fo
 <a class="skip" href="#out">Skip to the brand</a>
 <header class="top"><a class="back" href="atlas.html#systems">← Atlas / Design systems</a><nav aria-label="Related"><a href="theme-kits.html">Theme kits</a><a href="page-builder.html">Site builder</a><a href="chart-studio.html">Chart studio</a><a href="atlas.html#projects">My projects</a></nav></header>
 <div class="wrap">
-<section class="intro" aria-labelledby="ttl"><h1 id="ttl">Brand kit generator.</h1><p>Give it a name, a sentence and a few feel words. It builds a palette in OKLCH (every text pair pushed to WCAG AA, colour-blind checked, light and dark), a Google Fonts pairing with the reason for it, logo lockups, tokens for CSS, JSON and Tailwind, and a full theme kit you can download. Same inputs always give the same brand; shuffle for another.</p></section>
+<section class="intro" aria-labelledby="ttl"><h1 id="ttl">Brand kit generator.</h1><p>Type a name, say what it is and pick a few feel words. You get colours, fonts, a logo and a full kit to download. Not right? Press Shuffle.</p></section>
 <div class="app">
 <form class="panel side" id="form" aria-label="Brand inputs" onsubmit="return false">
  <div class="f"><label for="name">Brand name</label><input id="name" type="text" maxlength="60" autocomplete="off" value="Saffron &amp; Salt"></div>
@@ -82,7 +100,7 @@ pre{margin:0;background:#12141C;color:#E8EBF3;border-radius:10px;padding:12px;fo
  <div class="row"><button class="btn" type="button" id="shuffleAll">Shuffle everything</button><button class="btn ghost" type="button" id="undo" disabled>Undo</button><button class="btn ghost" type="button" id="share">Copy share link</button></div>
  <p class="note" id="draftNote">Drafts are kept in this browser.</p>
 </form>
-<main id="out" tabindex="-1" aria-label="Your brand">
+<main id="out" tabindex="-1" aria-label="Your brand"><div class="bgBar" id="bgBar"><div class="bgTabs" role="tablist" aria-label="Parts of your brand kit"><button role="tab" type="button" id="bgT-hPal" data-t="hPal" aria-selected="true" tabindex="0">Colours</button><button role="tab" type="button" id="bgT-hTyp" data-t="hTyp" aria-selected="false" tabindex="-1">Fonts</button><button role="tab" type="button" id="bgT-hLg" data-t="hLg" aria-selected="false" tabindex="-1">Logo</button><button role="tab" type="button" id="bgT-hApp" data-t="hApp" aria-selected="false" tabindex="-1">Examples</button><button role="tab" type="button" id="bgT-hGd" data-t="hGd" aria-selected="false" tabindex="-1">Guide</button><button role="tab" type="button" id="bgT-hTok" data-t="hTok" aria-selected="false" tabindex="-1">Code</button><button role="tab" type="button" id="bgT-hKit" data-t="hKit" aria-selected="false" tabindex="-1">Full kit</button></div></div>
  <section class="sec" aria-labelledby="hPal"><header><h2 id="hPal">Palette</h2><div class="row"><button class="btn ghost sm" type="button" id="shPal">Shuffle palette</button><button class="btn ghost sm" type="button" id="lkPal" aria-pressed="false">Lock palette</button></div></header><div id="palBox"></div></section>
  <section class="sec" aria-labelledby="hTyp"><header><h2 id="hTyp">Type</h2><div class="row"><button class="btn ghost sm" type="button" id="shTyp">Shuffle type</button><button class="btn ghost sm" type="button" id="lkTyp" aria-pressed="false">Lock type</button></div></header><div id="typBox"></div><div id="mineBox"></div></section>
  <section class="sec" aria-labelledby="hLg"><header><h2 id="hLg">Logo lockups</h2><div class="row"><button class="btn ghost sm" type="button" id="shLg">Shuffle logo</button><button class="btn ghost sm" type="button" id="lkLg" aria-pressed="false">Lock logo</button></div></header><div id="lgBox"></div></section>
@@ -93,7 +111,23 @@ pre{margin:0;background:#12141C;color:#E8EBF3;border-radius:10px;padding:12px;fo
  <section class="sec" aria-labelledby="hKit"><header><h2 id="hKit">Theme kit</h2><div class="row"><button class="btn sm" type="button" id="kitZip">Download theme kit (.zip)</button></div></header><p class="lede">Your brand rendered through the atlas theme-kit system: the same page, components, assets and guidelines as the forty-eight built-in kits, and the same ZIP.</p><div id="kitBox" class="tkwrap"></div></section>
 </main></div></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="fontlib.js"></script><script src="kits/themes.js"></script><script src="kits/kits-a.js"></script><script src="kits/kits-b.js"></script><script src="kits/brand.js"></script><script src="kits/render.js"></script>
+<script src="fontlib.js"></script><script src="kits/themes.js"></script><script src="kits/kits-a.js"></script><script src="kits/kits-b.js"></script><script src="kits/brand.js"></script><script src="kits/render.js"></script><script src="kits/tabs.js"></script>
 <script src="dataviz/styles.js"></script><script src="dataviz/chartmaker.js"></script>
 <script src="moodboard/pin.js" defer></script><script src="brandgen/engine.js"></script><script src="brandgen/page.js"></script>
+<script>
+/* Tabs for the brand kit: one section visible, the others parked off-screen at full width so their canvases still measure. */
+(()=>{const out=document.getElementById('out'),bar=document.getElementById('bgBar');if(!out||!bar)return;
+ const secs=[...out.querySelectorAll(':scope>section.sec')],by=id=>secs.find(s=>s.getAttribute('aria-labelledby')===id);
+ const sv=by('hSv');if(sv){sv.classList.add('bgSave');bar.after(sv);const z=document.getElementById('kitZip'),row=sv.querySelector('.row');
+  if(z&&row){z.textContent='Download kit (.zip)';z.classList.remove('sm');row.prepend(z);const save=document.getElementById('saveProj');if(save)save.classList.add('ghost')}}
+ const tabs=[...bar.querySelectorAll('[role=tab]')];
+ function show(id,user){if(!by(id))id='hPal';tabs.forEach(t=>{const on=t.dataset.t===id;t.setAttribute('aria-selected',String(on));t.tabIndex=on?0:-1});
+  secs.forEach(s=>{if(s===sv)return;const on=s.getAttribute('aria-labelledby')===id;s.classList.toggle('bgOff',!on);if(on){s.setAttribute('role','tabpanel');s.setAttribute('aria-labelledby',id)}});
+  try{sessionStorage.setItem('brandgen-tab',id)}catch(e){}
+  if(user){const top=out.getBoundingClientRect().top+scrollY-(parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--sb-h'))||44)-8;if(scrollY>top)scrollTo({top});dispatchEvent(new Event('resize'))}}
+ tabs.forEach((t,i)=>{t.onclick=()=>show(t.dataset.t,true);t.onkeydown=e=>{let j=null;if(e.key==='ArrowRight')j=(i+1)%tabs.length;if(e.key==='ArrowLeft')j=(i-1+tabs.length)%tabs.length;if(e.key==='Home')j=0;if(e.key==='End')j=tabs.length-1;if(j!=null){e.preventDefault();tabs[j].focus();show(tabs[j].dataset.t,true)}}});
+ let start='hPal';try{start=sessionStorage.getItem('brandgen-tab')||start}catch(e){}
+ const go=()=>show(start);if(document.readyState==='complete')setTimeout(go,60);else addEventListener('load',()=>setTimeout(go,60));
+})();
+</script>
 </body></html>
