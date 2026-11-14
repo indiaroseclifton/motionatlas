@@ -28,7 +28,7 @@
   document.body.classList.add('anNav');
   const menu=(name,cls,group)=>`<details class="navGroup anMenu ${cls}"><summary>${name}${icon.chev}</summary><div>${GROUPS.find(g=>g.name===group).items.filter(i=>i[0]!=='tools.html').map(i=>`<a href="${i[0]}"><b>${esc(i[1])}</b><span>${esc(i[2])}</span></a>`).join('')}</div></details>`;
   const bar=document.createElement('div');bar.className='anBar';
-  bar.innerHTML=`${menu('Library','anBrowse','Library')}${menu('Styles','anStyles','Styles')}${menu('Make','anMake','Make')}${menu('Yours','anStudio','Your studio')}<button type="button" class="anLibBtn" aria-haspopup="dialog" aria-controls="anDrawer">${icon.menu}<span>Everything</span></button>`;
+  bar.innerHTML=`${menu('Interactions','anIx','Interactions')}${menu('Library','anBrowse','Library')}${menu('Styles','anStyles','Styles')}${menu('Make','anMake','Make')}${menu('Yours','anStudio','Your studio')}<button type="button" class="anLibBtn" aria-haspopup="dialog" aria-controls="anDrawer">${icon.menu}<span>Everything</span></button>`;
   const brand=header.querySelector('.brand');(brand||header.firstElementChild).insertAdjacentElement('afterend',bar);
 
   const d=document.createElement('dialog');d.id='anDrawer';d.className='anDrawer';d.setAttribute('aria-label','Library');

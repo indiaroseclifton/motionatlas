@@ -11,7 +11,12 @@ a{color:inherit;text-decoration:none}:focus-visible{outline:2px solid var(--acce
 main{max-width:1120px;margin:0 auto;padding:0 max(20px,env(safe-area-inset-right)) 80px max(20px,env(safe-area-inset-left))}
 .hero{padding:clamp(40px,9vh,96px) 0 clamp(24px,5vh,48px);display:grid;gap:14px;max-width:760px}
 .hero h1{margin:0;font:500 clamp(44px,8vw,88px)/.95 'Cormorant Garamond',Georgia,serif;font-style:italic;letter-spacing:-.02em}
-.hero p{margin:0;font-size:clamp(16px,2vw,19px);color:var(--mute);max-width:52ch}
+.hero p{margin:0;font-size:clamp(16px,2vw,19px);color:var(--mute);max-width:56ch}
+.hero .kick{font:600 12px/1 Inter,system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+.heroActs{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+.hb{display:inline-flex;align-items:center;min-height:46px;padding:0 20px;border-radius:999px;border:1px solid var(--hair);background:var(--panel);font-weight:600;font-size:15px}
+.hb:hover{border-color:var(--ink)}
+.hb.pri{background:var(--ink);border-color:var(--ink);color:#fff}
 .feat{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:10px}
 .view{position:relative;aspect-ratio:16/10;border-radius:16px;overflow:hidden;border:1px solid var(--hair);background:var(--soft);display:block}
 .view iframe{position:absolute;left:0;top:0;width:1200px;height:750px;border:0;transform:scale(var(--k,.27));transform-origin:0 0;pointer-events:none}
@@ -34,15 +39,15 @@ footer{margin-top:60px;padding-top:18px;border-top:1px solid var(--hair);display
 <style id="sbPre">html{--sb-h:calc(44px + env(safe-area-inset-top,0px))}body{padding-top:var(--sb-h)}html:not(.sbReady) body::before{content:"";position:fixed;top:0;left:0;right:0;height:var(--sb-h);background:#fff;border-bottom:1px solid #e8e8ea;z-index:2147483000}@media print{body{padding-top:0}}</style><script src="site-nav-data.js" defer></script><script src="site-bar.js" defer></script>
 </head><body><noscript><nav id="sbNo" aria-label="Atlas" style="position:fixed;top:0;left:0;right:0;height:44px;box-sizing:border-box;z-index:2147483000;background:#fff;border-bottom:1px solid #e8e8ea;padding:12px 16px;font:500 14px/20px system-ui,sans-serif;white-space:nowrap;overflow:auto"><a style="color:#111;font-weight:700;margin-right:16px" href="atlas.html">Atlas</a><a style="color:#111;margin-right:16px" href="tools.html">Tools</a><a style="color:#111;margin-right:16px" href="atlas.html#browse">Catalogue</a><a style="color:#111" href="atlas.html#projects">My projects</a></nav></noscript>
 <main id="main">
-<div class="hero"><h1>Visual &amp; Motion Atlas.</h1><p>Ready-made interactions, screens and components for websites and apps, plus the tools to make your own. Pick one, tune it, copy it.</p></div>
+<div class="hero"><p class="kick">Visual &amp; Motion Atlas</p><h1>Interactions you can copy.</h1><p>114 animated pieces for websites and apps, 41 landing effects and a studio of live motion studies. Open one, tune it, copy it as one file. Around them: screens, components, styles and tools to make your own.</p><div class="heroActs"><a class="hb pri" href="interactions.html">Browse interactions</a><a class="hb" href="atlas.html#effects">Landing effects</a></div></div>
 <div class="feat" id="feat"></div>
 <div id="secs"></div>
-<footer><a href="atlas.html#home">Style atlas overview</a><a href="tools.html">All tools</a><a href="atlas.html#references">Sources &amp; credits</a></footer>
+<footer><a href="tools.html">All tools</a><a href="atlas.html#references">Sources &amp; credits</a></footer>
 </main>
 <script src="site-nav-data.js"></script>
 <script>
 (()=>{const G=window.ATLAS_NAV_GROUPS||[],by=n=>(G.find(g=>g.name===n)||{items:[]}).items,href=h=>h[0]==='#'?'atlas.html'+h:h;
-const SECS=[['Library','Use in your product','Finished pieces to copy into a website or an app.'],['Make','Make something','Tools that turn your words, data and colours into finished work.'],['Styles','Find a style','Looks to brief from, with references and live examples.']];
+const SECS=[['Interactions','Start with motion','The reason the atlas exists: interactions and effects that run live, ready to copy.'],['Library','Use in your product','Finished screens, components, icons and looks to copy into a website or an app.'],['Make','Make something','Tools that turn your words, data and colours into finished work.'],['Styles','Find a style','Looks to brief from, with references and live examples.']];
 document.getElementById('secs').innerHTML=SECS.map(([g,t,d],k)=>`<section aria-labelledby="s${k}"><h2 id="s${k}">${t}</h2><p>${d}</p><div class="tiles">${by(g).map((i,n)=>`<a class="t${k===0&&n===0?' big':''}" href="${href(i[0])}"><b>${i[1]}<i aria-hidden="true">→</i></b><span>${i[2]}</span></a>`).join('')}</div></section>`).join('');
 document.getElementById('feat').innerHTML=[['arc-carousel','Arc focus carousel'],['glow-border','Glowing border cards'],['elastic-slider','Elastic slider']].map(([id,t])=>`<a class="view" href="interactions.html#${id}" aria-label="${t}, open in UI interactions"><iframe src="interactions/demos/${id}.html" title="" tabindex="-1" aria-hidden="true" loading="lazy"></iframe><span>${t}</span></a>`).join('');
 const ro=new ResizeObserver(es=>es.forEach(e=>e.target.style.setProperty('--k',(e.contentRect.width/1200).toFixed(4))));document.querySelectorAll('.view').forEach(v=>ro.observe(v));

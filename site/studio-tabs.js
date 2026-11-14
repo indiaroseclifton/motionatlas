@@ -11,6 +11,15 @@
 .stTabs button[aria-selected=true]{color:var(--ink,#1C1F2A);border-bottom-color:var(--ink,#1C1F2A)}
 .stTabs button:focus-visible{outline:2px solid var(--ink,#1C1F2A);outline-offset:-2px}
 .stOff{display:none!important}
+/* one family, several modes: the studios for charts, diagrams and flowcharts share a switch where the title was */
+.famSwitch{display:inline-flex;gap:2px;padding:3px;border:1px solid var(--hair,#E1E4EC);border-radius:999px;background:var(--panel,#fff);flex:none;max-width:100%;overflow-x:auto;scrollbar-width:none}
+.famSwitch::-webkit-scrollbar{display:none}
+.famSwitch a{display:inline-flex;align-items:center;min-height:32px;padding:0 13px;border-radius:999px;font:600 13px/1 Inter,system-ui,sans-serif;color:var(--mute,#5E6476);text-decoration:none;white-space:nowrap;text-transform:none;letter-spacing:0}
+.famSwitch a:hover{color:var(--ink,#1C1F2A)}
+.famSwitch a[aria-current=page]{background:var(--ink,#1C1F2A);color:#fff}
+.famSwitch a:focus-visible{outline:2px solid var(--ink,#1C1F2A);outline-offset:2px}
+.famH1{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media(max-width:700px){.famSwitch a{min-height:36px;padding:0 12px}}
 /* motion graphics: the template gallery lives in the side panel */
 @media(min-width:861px){.side.stScroll{height:calc(100vh - 57px - var(--sb-h,0px));min-height:0;overflow:auto;align-self:start}}
 .side>.gal{padding:14px 16px 20px}.side>.gal #mgGrid{grid-template-columns:1fr 1fr;gap:10px}.side>.gal h2{margin-top:0}`;
@@ -31,8 +40,17 @@
  }
  window.StudioTabs=StudioTabs;
  const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+ const FAMILY=[['chart-studio','Charts'],['diagram-studio','Diagrams'],['flowchart-studio','Flowcharts']];
+ function family(page){
+  const me=page==='flowchart-canvas'?'flowchart-studio':page;if(!FAMILY.some(f=>f[0]===me))return;
+  const h1=document.querySelector('header h1');if(!h1||document.querySelector('.famSwitch'))return;
+  const nav=document.createElement('nav');nav.className='famSwitch';nav.setAttribute('aria-label','Charts and diagrams');
+  nav.innerHTML=FAMILY.map(([f,n])=>`<a href="${f}.html"${f===me?' aria-current="page"':''}>${n}</a>`).join('');
+  h1.classList.add('famH1');h1.after(nav);
+ }
  function start(){
   const page=location.pathname.split('/').pop().replace(/\.html$/,'');
+  family(page);
   if(page==='diagram-studio'){const a=document.querySelector('aside.side'),s=$$(':scope>.sec',a);
    if(s.length>=5)StudioTabs(a,[{label:'Type',els:[s[0]]},{label:'Content',els:[s[1],s[2]]},{label:'Style',els:[s[3]]},{label:'Checks',els:[s[4]]}],{key:'diagram'})}
   if(page==='flowchart-studio'||page==='flowchart-canvas'){const body=document.querySelector('#panel .pbody')||document.querySelector('#panel'),t=n=>$$(`:scope>section.ptab[data-tab="${n}"]`,body);

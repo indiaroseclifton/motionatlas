@@ -103,7 +103,7 @@ html.sbReady nav[aria-label="Other studios"],html.sbReady header nav[aria-label=
   if(!named)return `<ul class="sbSolo" style="list-style:none;margin:0;padding:0">${rows(gs[0].items)}</ul><p class="sbDesc" aria-live="polite"></p>`;
   return `${prime}<div class="sbMegaBody"><ul class="sbGl">${gs.map((g,i)=>`<li><button type="button" class="sbG${has(g.items.flatMap(x=>x.items||[x]))?' sbHere':''}" aria-expanded="${i===cur}" aria-controls="sbL-${m.id}-${i}">${esc(g.name)}${chev}</button></li>`).join('')}</ul><div class="sbGr">${gs.map((g,i)=>`<ul id="sbL-${m.id}-${i}"${i===cur?'':' hidden'}>${rows(g.items)}</ul>`).join('')}</div></div><p class="sbDesc" aria-live="polite"></p>`};
  /* phone sheet: an accordion, one group open at a time, the current page's group open */
- const SHEET=['Library','Styles','Make','Your studio'].map(grp).filter(g=>g.items&&g.items.length);
+ const SHEET=['Interactions','Library','Styles','Make','Your studio'].map(grp).filter(g=>g.items&&g.items.length);
  const sheet=()=>{const cur=Math.max(0,SHEET.findIndex(g=>g.items.some(i=>isCur(i[0]))));
   return `<button type="button" class="sbSheetSearch" data-m="search"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="m10.5 10.5 3.5 3.5" stroke="currentColor" stroke-width="1.5"/></svg>Search the atlas</button>
   
