@@ -1,5 +1,5 @@
 /* Page builder chrome */
-:root{--bg:#F2F3F7;--panel:#FFFFFF;--ink:#1C1F2A;--mute:#565C6E;--hair:#DFE2EA;--soft:#F7F8FB;--accent:#5B2DFF;--accent-ink:#FFFFFF;--sel:#EEE9FF;color-scheme:light}
+:root{--bg:#F7F7F8;--panel:#FFFFFF;--ink:#1C1F2A;--mute:#565C6E;--hair:#DFE2EA;--soft:#F5F5F6;--accent:#111113;--accent-ink:#FFFFFF;--sel:#F1F1F3;color-scheme:light}
 *{box-sizing:border-box}html,body{margin:0;height:100%}
 body{background:var(--bg);color:var(--ink);font:14px/1.5 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
 button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}
@@ -16,7 +16,7 @@ header{grid-column:1/-1;display:flex;align-items:center;gap:10px 14px;flex-wrap:
 .btn:hover:not(:disabled){background:var(--soft)}
 .btn:disabled{opacity:.45;cursor:default}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
-.btn.primary:hover:not(:disabled){background:#4A1FE6}
+.btn.primary:hover:not(:disabled){background:#000000}
 .btn.small{min-height:30px;padding:0 9px;font-size:12px;border-radius:8px}
 .seg{display:inline-flex;padding:3px;border:1px solid var(--hair);border-radius:10px;background:var(--panel)}
 .seg button{border:0;background:transparent;border-radius:7px;padding:4px 10px;font-size:12.5px;font-weight:500;min-height:28px}
@@ -78,7 +78,7 @@ details.menu .mlist{position:absolute;right:0;top:calc(100% + 6px);z-index:60;mi
 #ol{list-style:none;margin:0;padding:0;display:grid;gap:6px}
 #ol .empty{padding:22px 12px;border:1px dashed var(--hair);border-radius:12px;color:var(--mute);text-align:center;font-size:13px}
 .blk{border:1px solid var(--hair);border-radius:12px;background:var(--panel);position:relative}
-.blk.open{border-color:#B9AEFF;box-shadow:0 6px 20px -14px rgba(91,45,255,.5)}
+.blk.open{border-color:#BDBDC4;box-shadow:0 6px 20px -14px rgba(17,17,19,.5)}
 .blk.dragging{opacity:.45}
 .blk.mark::before{content:"";position:absolute;left:4px;right:4px;top:-5px;height:3px;border-radius:2px;background:var(--accent)}
 .blk.mark.after::before{top:auto;bottom:-5px}
@@ -170,7 +170,7 @@ details.menu .mlist{position:absolute;right:0;top:calc(100% + 6px);z-index:60;mi
 .picker{width:min(1000px,calc(100vw - 24px));height:min(88vh,780px);padding:0;border:0;border-radius:18px;background:var(--panel);color:var(--ink);box-shadow:0 40px 100px -30px rgba(20,20,40,.55)}.picker[open]{display:flex;flex-direction:column}.picker::backdrop{background:rgba(20,22,34,.5)}
 .pkhead{display:flex;gap:10px;align-items:center;padding:14px 16px 8px}.pkhead h2{margin:0;font:500 24px/1 'Cormorant Garamond',Georgia,serif;font-style:italic;white-space:nowrap}.pkhead .search{flex:1}
 .picker .gchips{padding:0 16px}.picker .lcount{padding:0 16px;margin:0 0 6px}.pkscroll{flex:1;min-height:0;overflow:auto;padding:4px 16px 16px}
-.pkgrid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}.pkcard{width:100%;text-align:left;border:1px solid var(--hair);border-radius:12px;background:var(--panel);padding:8px;display:grid;gap:4px}.pkcard:hover{border-color:var(--accent);box-shadow:0 8px 24px -16px rgba(91,45,255,.6)}.pkcard b{font-size:13px}.pkcard small{color:var(--mute);font-size:11.5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pkgrid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}.pkcard{width:100%;text-align:left;border:1px solid var(--hair);border-radius:12px;background:var(--panel);padding:8px;display:grid;gap:4px}.pkcard:hover{border-color:var(--accent);box-shadow:0 8px 24px -16px rgba(17,17,19,.6)}.pkcard b{font-size:13px}.pkcard small{color:var(--mute);font-size:11.5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 @media (max-width:560px){.pkhead h2{display:none}.picker{width:100vw;height:100dvh;max-width:100vw;max-height:100dvh;border-radius:0}}
 
 #tkBox details{border:1px solid var(--hair);border-radius:10px;background:var(--soft)}#tkBox summary{padding:9px 10px;font-size:12.5px;font-weight:600;cursor:pointer}.tkb{display:grid;gap:10px;padding:2px 10px 12px}.tkg{display:grid;grid-template-columns:1fr 1fr;gap:8px}.tkc{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12.5px;font-weight:500;border:1px solid var(--hair);border-radius:9px;padding:5px 8px;background:var(--panel)}.tkc input{width:34px;height:28px;border:0;padding:0;background:none}

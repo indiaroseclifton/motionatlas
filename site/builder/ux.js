@@ -23,8 +23,8 @@ function dialog(id,cls,label){let d=document.getElementById(id);if(d)return d;d=
 UX.dialog=dialog;UX.mk=mk;UX.tryJSON=tryJSON;UX.trySet=trySet;UX.ago=ago;
 
 /* ---------- site thumbnails drawn from the data (no frames) ---------- */
-function palette(s){const st=PB.styles.has(s.style)?PB.styles.get(s.style):null,sw=(st&&st.sw)||['#fff','#f4f4f4','#222','#5B2DFF'],tk=s.tokens||{};
- return {bg:tk.bg||sw[0],surface:tk.surface||sw[1]||sw[0],ink:tk.ink||sw[2]||'#222',accent:tk.accent||sw[3]||'#5B2DFF'}}
+function palette(s){const st=PB.styles.has(s.style)?PB.styles.get(s.style):null,sw=(st&&st.sw)||['#fff','#f4f4f4','#222','#1D4ED8'],tk=s.tokens||{};
+ return {bg:tk.bg||sw[0],surface:tk.surface||sw[1]||sw[0],ink:tk.ink||sw[2]||'#222',accent:tk.accent||sw[3]||'#1D4ED8'}}
 function heroText(s){const pg=s.pages.find(p=>p.id===s.home)||s.pages[0];if(!pg)return '';
  for(const b of pg.blocks){const d=A.def(b.id);if(!d)continue;const f=(d.fields||[]).find(x=>x.k==='heading');if(f){const v=b.vals&&b.vals.heading!=null?b.vals.heading:f.def;if(v)return String(v)}}return ''}
 function miniThumb(s){const c=palette(s),n=Math.min(8,(s.pages.find(p=>p.id===s.home)||s.pages[0]||{blocks:[]}).blocks.length),h=heroText(s);

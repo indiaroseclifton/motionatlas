@@ -164,7 +164,7 @@ function compose(mode,pg,acc,opt){ // mode: preview | html | zip  -> parts for o
   if(!css.has('pb-base'))css.set('pb-base',PB.sec.base);
   const sticky=S.isTop(d)&&d.id!=='announce';
   body.push(`<div class="b-${isX(blk.id)?'x':d.id}${sticky?' pb-sticky':''}${sb.cls?' '+sb.cls:''}" id="${blk.uid}"${mode==='preview'?' data-pb data-zone="'+zone+'" data-name="'+esc(d.name)+'"':''}>${mode==='preview'?lazyMedia(sb.inner):sb.inner}${sb.flip?`<div class="pb-in" style="${sb.flip}">${html}</div>`:html}</div>`);
-  const hh=blk.set&&blk.set.hide;if(mode==='preview'&&EDIT&&!(opt&&opt.solo)&&hh&&(hh.d||hh.t||hh.p)){const nm=[hh.d?'desktop':'',hh.t?'tablet':'',hh.p?'phone':''].filter(Boolean);css.set('pb-ghost','.pb-ghost{display:none;align-items:center;justify-content:center;gap:10px;margin:6px 12px;padding:8px 12px;border:1.5px dashed #8a8fa3;border-radius:10px;background:rgba(138,143,163,.12);color:#555b70;font:600 12px/1.2 system-ui,sans-serif}.pb-ghost button{all:unset;cursor:pointer;color:#5B2DFF;text-decoration:underline;font-weight:700}.pb-ghost button:focus-visible{outline:2px solid #5B2DFF;outline-offset:2px}@media (min-width:1025px){.pbg-d{display:flex}}@media (min-width:641px) and (max-width:1024px){.pbg-t{display:flex}}@media (max-width:640px){.pbg-p{display:flex}}');
+  const hh=blk.set&&blk.set.hide;if(mode==='preview'&&EDIT&&!(opt&&opt.solo)&&hh&&(hh.d||hh.t||hh.p)){const nm=[hh.d?'desktop':'',hh.t?'tablet':'',hh.p?'phone':''].filter(Boolean);css.set('pb-ghost','.pb-ghost{display:none;align-items:center;justify-content:center;gap:10px;margin:6px 12px;padding:8px 12px;border:1.5px dashed #8a8fa3;border-radius:10px;background:rgba(138,143,163,.12);color:#555b70;font:600 12px/1.2 system-ui,sans-serif}.pb-ghost button{all:unset;cursor:pointer;color:#1D4ED8;text-decoration:underline;font-weight:700}.pb-ghost button:focus-visible{outline:2px solid #1D4ED8;outline-offset:2px}@media (min-width:1025px){.pbg-d{display:flex}}@media (min-width:641px) and (max-width:1024px){.pbg-t{display:flex}}@media (max-width:640px){.pbg-p{display:flex}}');
    body.push(`<div class="pb-ghost${hh.d?' pbg-d':''}${hh.t?' pbg-t':''}${hh.p?' pbg-p':''}" data-pbg="${blk.uid}"><span>${esc(d.name)}: hidden on ${nm.join(' and ')}</span><button type="button" data-pbg-show="${blk.uid}">Show</button></div>`)}
   if(bjs)js.push(`(()=>{const root=document.getElementById(${JSON.stringify(blk.uid)});if(!root)return;try{${bjs}}catch(e){console.error(e)}})();`)});
  const rt=[];let cl=false;
@@ -201,7 +201,7 @@ function assemble(P,opt={}){ // opt: {cssHref, jsHref, clSrc, clInline, favHref,
  const code=(P.runtime?P.runtime+'\n':'')+P.js;
  if(code)scripts+=opt.jsHref?`<script src="${opt.jsHref}"><\/script>\n`:`<script>\n${code.replace(/<\/script/gi,'<\\/script')}\n<\/script>\n`;
  if(pre&&!opt.noagent)scripts+=`<script>window.__PB_EDIT=${opt.edit?'true':'false'};${PB.agentSrc}<\/script>\n`;
- const emptyMsg=pre&&!pg.blocks.length&&!site.header.length&&!site.footer.length?'<div id="pb-empty" style="padding:14vh 24px;text-align:center;font:500 16px/1.5 system-ui,sans-serif;color:#555"><p style="font:italic 500 30px/1.1 Georgia,serif;margin:0 0 10px;color:#1C1F2A">This page is empty.</p><p style="margin:0 0 18px">Add a section, or start from a template.</p><button type="button" style="font:600 14px system-ui;padding:11px 18px;border-radius:10px;border:0;background:#5B2DFF;color:#fff;cursor:pointer" onclick="parent.postMessage({pb:\'empty\'},\'*\')">Add a section</button> <button type="button" style="font:600 14px system-ui;padding:11px 18px;border-radius:10px;border:1px solid #ccc;background:#fff;color:#1C1F2A;cursor:pointer" onclick="parent.postMessage({pb:\'emptyTpl\'},\'*\')">Browse templates</button></div>':'';
+ const emptyMsg=pre&&!pg.blocks.length&&!site.header.length&&!site.footer.length?'<div id="pb-empty" style="padding:14vh 24px;text-align:center;font:500 16px/1.5 system-ui,sans-serif;color:#555"><p style="font:italic 500 30px/1.1 Georgia,serif;margin:0 0 10px;color:#1C1F2A">This page is empty.</p><p style="margin:0 0 18px">Add a section, or start from a template.</p><button type="button" style="font:600 14px system-ui;padding:11px 18px;border-radius:10px;border:0;background:#1D4ED8;color:#fff;cursor:pointer" onclick="parent.postMessage({pb:\'empty\'},\'*\')">Add a section</button> <button type="button" style="font:600 14px system-ui;padding:11px 18px;border-radius:10px;border:1px solid #ccc;background:#fff;color:#1C1F2A;cursor:pointer" onclick="parent.postMessage({pb:\'emptyTpl\'},\'*\')">Browse templates</button></div>':'';
  return head+P.body+emptyMsg+'\n'+scripts+'</body></html>\n';
 }
 const xe=t=>String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -575,7 +575,7 @@ $('#pairSel').onchange=e=>{if(e.target.value==='__upload_fonts'){e.target.value=
 if(window.MyFonts)MyFonts.on(()=>{try{styles();render();mineExportUI()}catch(e){}});
 
 /* ---------- pages of this site ---------- */
-const accentOf=()=>{const st=PB.styles.get(page.style);return (st&&st.sw&&st.sw[3])||'#5B2DFF'};
+const accentOf=()=>{const st=PB.styles.get(page.style);return (st&&st.sw&&st.sw[3])||'#1D4ED8'};
 function goPage(id){if(!site.pages.some(p=>p.id===id))return;curId=id;open=null;pageSelUI();outline();render();if(rtabCur==='page')pagesPanel()}
 function pageSelUI(){const sel=$('#pageSel'),cp=curPage();sel.innerHTML=site.pages.map(p=>`<option value="${esc(p.id)}"${p.id===cp.id?' selected':''}>${esc(p.name||'Untitled')}${p.id===site.home&&(p.name||'').trim().toLowerCase()!=='home'?' (home)':''}</option>`).join('')}
 $('#pageSel').onchange=e=>goPage(e.target.value);
@@ -643,7 +643,7 @@ $('#favName').onchange=e=>{site.settings.favicon.name=e.target.value;commit();fa
 $('#navAuto').onchange=e=>{site.navSeed=false;site.navAuto=e.target.checked;if(!site.navAuto&&!site.nav.length)site.nav=S.menu(site).map(i=>({label:i.label,link:i.link}));commit();navRows();render()};
 
 /* ---------- saved sites and templates ---------- */
-function switchTo(id){clearTimeout(typing);commit();site=store.pages[id];store.cur=id;curId=site.home;hist=[];fut=[];lastSnap=snap();open=null;persist();refresh();histUI();csel=null;if(PB.app&&PB.app.onSwitch)PB.app.onSwitch()}
+function switchTo(id){clearTimeout(typing);commit();site=store.pages[id];store.cur=id;curId=site.home;hist=[];fut=[];lastSnap=snap();open=null;persist();refresh();histUI();csel=null;if(typeof library==='function'&&ltab==='sections')library();if(PB.app&&PB.app.onSwitch)PB.app.onSwitch()}
 
 /* ---------- right panel tabs, panes ---------- */
 const RT=[['page','Outline'],['style','Design'],['site','Site'],['ai','AI']];let rtabCur=RT.some(t=>t[0]===ui.rtab)?ui.rtab:'page';

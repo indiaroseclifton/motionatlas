@@ -51,7 +51,7 @@ function build(){
  REG.length=0;byId={};
  const L=window.PB_LIB;
  // builder styles
- const SW={noir:'#E2A24A',paper:'#9A5B12',studio:'#5B2DFF',signal:'#7CF0FF'};
+ const SW={noir:'#E2A24A',paper:'#9A5B12',studio:'#1D4ED8',signal:'#7CF0FF'};
  if(L)Object.entries(L.styles).forEach(([id,s])=>{const v={};s.vars.split(';').forEach(d=>{const i=d.indexOf(':');if(i>0)v[d.slice(0,i).trim()]=d.slice(i+1).trim()});
   add({id,kind:'builder',name:s.name,note:'Builder style',vars:s.vars.replace(/color-scheme/,'--case:none;color-scheme')+(v['--accent-ink']?'':';--accent-ink:'+ensure(v['--accent'],[v['--bg'],v['--surface']],4.5)),fonts:s.fonts,face:false,
    sw:[v['--bg'],v['--surface'],v['--ink'],v['--accent']||SW[id]],head:famName(v['--head']),body:famName(v['--body']),dark:lum(v['--bg'])<.2,desc:s.name})});

@@ -55,7 +55,7 @@ function menuHTML(site,items,ctx,esc){return items.map(it=>{const cur=it.pageId&
 function linkPages(site,html,ctx,esc){const by=new Map(site.pages.map(p=>[p.name.trim().toLowerCase(),p]));
  return html.replace(/<a ([^>]*?)href="#"([^>]*)>([^<]{1,60})<\/a>/g,(m,a,b,t)=>{const p=by.get(t.replace(/\s*→\s*$/,'').trim().toLowerCase());return p?`<a ${a}href="${esc(ctx.pageHref(p))}"${b}>${t}</a>`:m})}
 /* favicon as an SVG string, drawn in the accent colour */
-function faviconSVG(site,accent,PBL){const f=(site.settings||{}).favicon||{};accent=accent||'#5B2DFF';
+function faviconSVG(site,accent,PBL){const f=(site.settings||{}).favicon||{};accent=accent||'#1D4ED8';
  if(f.set==='letter'||!f.name){const l=(site.brand||'A').trim().charAt(0).toUpperCase()||'A';return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="${accent}"/><text x="32" y="44" font-family="Georgia,serif" font-size="38" font-weight="700" text-anchor="middle" fill="#fff">${l.replace(/[<&]/g,'')}</text></svg>`}
  let inner='';
  if(f.set==='glyphs'){const d=((PBL||window.PB_LIB||{}).glyphs||{})[f.name]||((PBL||window.PB_LIB||{}).glyphs||{}).spark||'';inner=`<path d="${d}" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>`;}
