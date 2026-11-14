@@ -9,25 +9,25 @@ function fxLab(){
  const E=window.FX_TECHNIQUES||[];
  const SITE='https://motionatlas-ten.vercel.app/';
  const BASE_CSS=`*{box-sizing:border-box}
-body{margin:0;font-family:"Inter",system-ui,sans-serif;background:#0b0d12;color:#f2f4f8;-webkit-font-smoothing:antialiased}
-h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:300;letter-spacing:-.02em;line-height:.92;margin:0}
+body{margin:0;font-family:"Inter",system-ui,sans-serif;background:#fafafa;color:#111113;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:"Inter",system-ui,sans-serif;font-weight:600;letter-spacing:-.035em;line-height:1;margin:0}
 p{margin:0}
 img,video,canvas,svg{display:block;max-width:100%}
-.kicker{font:500 12px/1.3 "JetBrains Mono",ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase}
-.lede{font-size:clamp(17px,1.5vw,21px);line-height:1.55;max-width:38ch}
-.display{font-size:clamp(60px,10.5vw,168px)}
+.kicker{font:500 12px/1.3 "JetBrains Mono",ui-monospace,monospace;letter-spacing:.02em;color:#6b6f76}
+.lede{font-size:clamp(16px,1.3vw,19px);line-height:1.55;max-width:40ch;color:#3f4249}
+.display{font-size:clamp(44px,7.6vw,124px)}
 .cover{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.pill{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 20px;border-radius:999px;border:1px solid currentColor;background:none;color:inherit;font:600 14px "Inter",sans-serif;cursor:pointer}
-.pill.solid{background:#f2f4f8;color:#0b0d12;border-color:#f2f4f8}
-:focus-visible{outline:3px solid #7dd3fc;outline-offset:3px}
-.end{min-height:100vh;display:grid;place-content:center;gap:16px;text-align:center;padding:10vh 6vw;background:#0b0d12;color:#f2f4f8}
-.end h2{font-size:clamp(48px,7vw,104px)}.end .kicker{color:#8d98ab}
+.pill{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 20px;border-radius:999px;border:1px solid #d4d4d8;background:#fff;color:#111113;font:600 14px "Inter",sans-serif;cursor:pointer}
+.pill.solid{background:#111113;color:#fff;border-color:#111113}
+:focus-visible{outline:2px solid #111113;outline-offset:3px}
+.end{min-height:100vh;display:grid;place-content:center;gap:16px;text-align:center;padding:10vh 6vw;background:#fafafa;color:#111113}
+.end h2{font-size:clamp(34px,5vw,72px)}.end .kicker{color:#6b6f76}
 html.reduce *,html.reduce *::before,html.reduce *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}`;
  const BASE_JS=`if(matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('reduce');
 const FX=(()=>{const cs=getComputedStyle(document.documentElement);const n=(v,d)=>{const x=parseFloat(cs.getPropertyValue(v));return isNaN(x)?d:x;};return {i:n('--fx-intensity',1),d:n('--fx-duration',900),ease:cs.getPropertyValue('--fx-ease').trim()||'ease',R:document.documentElement.classList.contains('reduce'),clamp:(v,a,b)=>Math.min(b,Math.max(a,v)),progress(el){const r=el.getBoundingClientRect();return FX.clamp(-r.top/Math.max(1,el.offsetHeight-innerHeight),0,1);}};})();`;
  const EASES={expressive:['Expressive','cubic-bezier(.2,.7,.1,1)'],standard:['Standard','cubic-bezier(.4,0,.2,1)'],spring:['Spring','linear(0,.009,.035 2.1%,.141,.281 6.7%,.723 12.9%,.938 16.7%,1.017,1.077,1.121,1.149 24.3%,1.159,1.163,1.161,1.154 29.9%,1.129 32.8%,1.051 39.6%,1.017 43.1%,.991,.977 51%,.974 53.8%,.975 57.1%,.997 69.8%,1.003 76.9%,1.004 83.8%,1)'],linear:['Linear','linear'],snappy:['Snappy','cubic-bezier(.7,0,.2,1)']};
- const FONTS='<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@500&display=swap">';
+ const FONTS='<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap">';
  const abs=s=>s.replace(/(["'(])assets\//g,'$1'+SITE+'assets/');
  const vars=o=>`html{--fx-intensity:${o.intensity};--fx-duration:${o.duration}ms;--fx-ease:${EASES[o.ease][1]}}`;
  function doc(e,o,forExport){
@@ -36,7 +36,7 @@ const FX=(()=>{const cs=getComputedStyle(document.documentElement);const n=(v,d)
  }
 
  /* ---------- Lab UI ---------- */
- const S={filter:'All',device:'desktop',intensity:1,duration:900,ease:'expressive',reduce:matchMedia('(prefers-reduced-motion: reduce)').matches,codeTab:'full'};
+ const S={q:'',filter:'All',device:'desktop',intensity:1,duration:900,ease:'expressive',reduce:matchMedia('(prefers-reduced-motion: reduce)').matches,codeTab:'full'};
  const TAGS=['All','Scroll','Reveal','Transition','Pointer','Type','Media','Canvas','WebGL','Ambient','Accessibility','CSS-first'];
  const CLIPS='assets/fx/clips/';
  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -57,13 +57,13 @@ const FX=(()=>{const cs=getComputedStyle(document.documentElement);const n=(v,d)
   const page=document.getElementById('effects');if(!page||document.getElementById('effectsLab'))return;
   root=document.createElement('section');root.id='effectsLab';root.className='fxl';
   const n=E.length;
-  root.innerHTML=`<div class="fxl-head"><div><p class="fxl-kicker">Page effects · ${n} techniques</p><h2>The techniques.</h2></div><p>Each card is one reusable technique, running for real: CSS scroll-driven animation, View Transitions, @starting-style, shaders, variable fonts and more. Open one full screen, tune intensity, duration and easing, read when to use it and how it degrades, then copy the exact code. For finished pieces built from these, see the <a href="interactions.html">Interactions shelf</a>.</p></div>
-  <div class="fxl-filters" role="group" aria-label="Filter techniques">${TAGS.map(t=>{const c=t==='All'?n:E.filter(e=>e.tags.includes(t)).length;return c?`<button type="button" data-tag="${t}" aria-pressed="${t===S.filter}">${t}<span>${c}</span></button>`:'';}).join('')}</div>
+  root.innerHTML=`<div class="listBar fxl-bar"><label><span class="tbHide">Search techniques</span><input type="search" id="fxlSearch" placeholder="Search scroll, reveal, cursor, video…" autocomplete="off"></label><label><span class="tbHide">Kind of technique</span><select id="fxlTag">${TAGS.map(t=>{const c=t==='All'?n:E.filter(e=>e.tags.includes(t)).length;return c?`<option value="${t}">${t==='All'?'All kinds':t} (${c})</option>`:'';}).join('')}</select></label></div>
+  <p class="resultcount" id="fxlCount" role="status"></p>
   <div class="fxl-grid" id="fxlGrid"></div>`;
   const anchor=page.querySelector('h1')?.closest('.aeHasBand')?page.querySelector('.aeRelated')||page.querySelector('.intro'):page.querySelector('.intro');
   (anchor||page.firstElementChild).insertAdjacentElement('afterend',root);
   dropLegacy(page);
-  root.querySelectorAll('[data-tag]').forEach(b=>b.onclick=()=>{S.filter=b.dataset.tag;root.querySelectorAll('[data-tag]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));grid();});
+  root.querySelector('#fxlTag').onchange=e=>{S.filter=e.target.value;grid();};root.querySelector('#fxlSearch').oninput=e=>{S.q=e.target.value.trim().toLowerCase();grid();};
   if(!dlg)makeDialog();
   grid();
   loadUses(()=>{grid();if(cur&&dlg.open)guide();});
@@ -76,7 +76,7 @@ const FX=(()=>{const cs=getComputedStyle(document.documentElement);const n=(v,d)
   // expansion.js still renders catalogue cards into #effectGrid; keep an empty, hidden container for it.
   if(!document.getElementById('effectGrid')){const g=document.createElement('div');g.id='effectGrid';g.hidden=true;page.append(g);}
   const intro=page.querySelector('.intro');
-  if(intro)intro.textContent=`${cap(inWords(E.length))} modern techniques for landing pages, each running live with tunable settings and copyable code. The Interactions shelf holds the finished pieces built from them.`;
+  if(intro)intro.textContent=`${cap(inWords(E.length))} modern techniques for landing pages, each running live. Open one to tune it, read when to use it and copy the code. Finished pieces built from them are in UI interactions.`;
   const h1=page.querySelector('h1.pagetitle');if(h1&&/studio\.?$/i.test(h1.textContent))h1.textContent='Landing effects.';
  }
 
@@ -107,34 +107,34 @@ const FX=(()=>{const cs=getComputedStyle(document.documentElement);const n=(v,d)
   dlg.querySelector('#fxlCodeBtn').onclick=e=>{const side=dlg.querySelector('#fxlSide');side.hidden=!side.hidden;e.currentTarget.setAttribute('aria-expanded',String(!side.hidden));code();};
  }
 
+ const first=t=>{const m=String(t).match(/^.*?[.!?](?=\s|$)/);return m?m[0]:t;};
  function grid(){
   if(!root)return;
-  const list=E.filter(e=>S.filter==='All'||e.tags.includes(S.filter));
-  root.querySelector('#fxlGrid').innerHTML=list.map(e=>{const u=uses?.[e.id]?.length||0;return `<button type="button" class="fxl-card" data-fx="${e.id}" aria-label="${esc(e.name)}: open the technique"><span class="fxl-thumb"><img src="${CLIPS}${e.id}.webp" alt="" loading="lazy" width="1280" height="800"><video muted loop playsinline preload="none" aria-hidden="true" data-webm="${CLIPS}${e.id}.webm" data-mp4="${CLIPS}${e.id}.mp4"></video><span class="fxl-type">Technique</span></span><span class="fxl-meta"><span class="fxl-kicker">${e.id} · ${e.tags.join(' · ')}</span><b>${esc(e.name)}</b><code class="fxl-api">${esc(e.api)}</code>${u?`<span class="fxl-used">Used in ${u} shelf piece${u>1?'s':''}</span>`:''}</span></button>`;}).join('');
+  const terms=S.q.split(/\s+/).filter(Boolean);
+  const list=E.filter(e=>(S.filter==='All'||e.tags.includes(S.filter))&&terms.every(t=>(e.name+' '+e.tags.join(' ')+' '+e.api+' '+e.what).toLowerCase().includes(t)));
+  root.querySelector('#fxlCount').textContent=list.length+(list.length===1?' technique':' techniques');
+  root.querySelector('#fxlGrid').innerHTML=list.length?list.map(e=>`<button type="button" class="fxl-card" data-fx="${e.id}" aria-label="${esc(e.name)}: open the technique"><span class="fxl-thumb"><img src="${CLIPS}${e.id}.webp" alt="" loading="lazy" width="1280" height="800"></span><span class="fxl-meta"><span class="fxl-kicker">${e.tags.slice(0,2).join(' · ')}</span><b>${esc(e.name)}</b><span class="fxl-what">${esc(first(e.what))}</span></span></button>`).join(''):'<p class="fxl-none">No technique matches. Clear the search or choose All kinds.</p>';
   root.querySelectorAll('[data-fx]').forEach(b=>b.onclick=()=>open(b.dataset.fx));
-  clips();
+  live();
  }
 
- /* Card clips: the poster shows at once; the clip plays on hover or focus with a mouse, and while the card is
-    in view on touch screens. Reduced motion and Save-Data keep the poster. */
- let clipIO=null;
- function load(v){if(v.dataset.ready)return;v.dataset.ready='1';v.innerHTML=`<source src="${v.dataset.webm}" type="video/webm"><source src="${v.dataset.mp4}" type="video/mp4">`;v.load();}
- function play(v){load(v);v.classList.add('on');const p=v.play();if(p)p.catch(()=>{});}
- function stop(v){v.pause();v.classList.remove('on');}
- function clips(){
-  if(clipIO){clipIO.disconnect();clipIO=null;}
-  if(matchMedia('(prefers-reduced-motion: reduce)').matches||navigator.connection?.saveData)return;
-  const vids=[...root.querySelectorAll('.fxl-thumb video')];
-  if(matchMedia('(hover: hover) and (pointer: fine)').matches){
-   vids.forEach(v=>{const card=v.closest('.fxl-card');card.addEventListener('pointerenter',()=>play(v));card.addEventListener('pointerleave',()=>stop(v));card.addEventListener('focus',()=>play(v));card.addEventListener('blur',()=>stop(v));});
-  }else{
-   clipIO=new IntersectionObserver(es=>es.forEach(x=>x.isIntersecting?play(x.target):stop(x.target)),{threshold:.75});
-   vids.forEach(v=>clipIO.observe(v));
-  }
+ /* Card previews: the picture shows at once. With a mouse, pointing at a card (or focusing it) runs the real page in
+    a small frame and scrolls it gently, so the picture never drifts from the technique. Touch screens, reduced motion
+    and Save-Data keep the picture. */
+ function live(){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches||navigator.connection?.saveData||!matchMedia('(hover: hover) and (pointer: fine)').matches)return;
+  root.querySelectorAll('.fxl-card').forEach(card=>{let wait=0,raf=0,f=null;
+   const start=()=>{clearTimeout(wait);wait=setTimeout(()=>{const e=E.find(x=>x.id===card.dataset.fx),box=card.querySelector('.fxl-thumb');if(!e||f)return;
+     f=document.createElement('iframe');f.className='fxl-live';f.setAttribute('aria-hidden','true');f.tabIndex=-1;f.title='';f.style.setProperty('--k',(box.clientWidth/1280).toFixed(4));
+     if(e.src)f.src=e.src;else f.srcdoc=doc(e,S,false);
+     f.onload=()=>{f.classList.add('on');const t0=performance.now();const step=now=>{raf=requestAnimationFrame(step);try{const w=f.contentWindow,max=Math.min(w.document.documentElement.scrollHeight-w.innerHeight,w.innerHeight*4);if(max>60){const p=((now-t0)/(6000+max*3))%1,tri=p<.5?p*2:2-p*2;w.scrollTo(0,max*(.5-.5*Math.cos(tri*Math.PI)));}}catch{}};raf=requestAnimationFrame(step);};
+     box.append(f);},180);};
+   const stop=()=>{clearTimeout(wait);cancelAnimationFrame(raf);if(f){f.remove();f=null;}};
+   card.addEventListener('pointerenter',start);card.addEventListener('pointerleave',stop);card.addEventListener('focus',start);card.addEventListener('blur',stop);});
  }
 
  function open(id){cur=E.find(e=>e.id===id);if(!cur)return;
-  dlg.querySelector('#fxlCode').textContent=cur.id+' · Technique · '+cur.api;dlg.querySelector('#fxlName').textContent=cur.name;
+  dlg.querySelector('#fxlCode').textContent=cur.tags.join(' · ');dlg.querySelector('#fxlName').textContent=cur.name;
   dlg.querySelector('#fxlI').value=S.intensity;dlg.querySelector('#fxlD').value=S.duration;dlg.querySelector('#fxlDo').textContent=S.duration+' ms';dlg.querySelector('#fxlE').value=S.ease;dlg.querySelector('#fxlR').checked=S.reduce;
   const tabs=cur.src?cur.files.map(f=>[f,f]):[['full','Full file'],['html','HTML'],['css','CSS'],['js','JS']];
   if(!tabs.some(([k])=>k===S.codeTab))S.codeTab=tabs[0][0];
@@ -148,7 +148,7 @@ const FX=(()=>{const cs=getComputedStyle(document.documentElement);const n=(v,d)
  }
  function guide(){
   const used=uses?.[cur.id]||[];
-  const rows=[['What it is',cur.what],['When to use it',cur.when],['Performance',`<span class="fxl-cost c-${cur.cost.toLowerCase().replace(' ','')}">${esc(cur.cost)} cost</span> Animates ${esc(cur.animates)}. ${esc(cur.perf)}`,true],['Accessibility and reduced motion',cur.a11y],['Browser support',cur.support]];
+  const rows=[['What it is',cur.what],['Built on',`<code>${esc(cur.api)}</code>`,true],['When to use it',cur.when],['Performance',`<span class="fxl-cost c-${cur.cost.toLowerCase().replace(' ','')}">${esc(cur.cost)} cost</span> Animates ${esc(cur.animates)}. ${esc(cur.perf)}`,true],['Accessibility and reduced motion',cur.a11y],['Browser support',cur.support]];
   dlg.querySelector('#fxlGuide').innerHTML=rows.map(([h,t,raw])=>`<h3>${h}</h3><p>${raw?t:esc(t)}</p>`).join('')+
    (used.length?`<h3>Used in</h3><p class="fxl-links">${used.map(x=>`<a href="interactions.html#${x.id}">${esc(x.t)}</a>`).join('')}</p>`:'');
  }
