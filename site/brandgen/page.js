@@ -30,7 +30,7 @@ function undo(){const p=hist.pop();if(!p)return;S=BG.norm(p);sync();run();$('#un
 function drawChips(){const all=[...new Set([...CHIPS,...S.feels])];$('#chips').innerHTML=all.map(f=>`<button class="chip" type="button" aria-pressed="${S.feels.includes(f)}" data-f="${esc(f)}">${esc(f)}</button>`).join('')}
 function sync(){$('#name').value=S.name;$('#desc').value=S.desc;$('#aud').value=S.audience;$('#base').value=S.base||'#9a4a38';$('#baseTxt').value=S.base||'';
  document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mode===S.mode));drawChips();lockUI()}
-function lockUI(){[['pal','#lkPal','palette'],['type','#lkTyp','type'],['logo','#lkLg','logo']].forEach(([k,id,n])=>{const on=!!S.frozen[k],b=$(id);b.setAttribute('aria-pressed',on);b.textContent=(on?'Locked: ':'Lock ')+n;const sh=$(id.replace('lk','sh'));sh.disabled=on})}
+function lockUI(){[['pal','#lkPal','palette'],['type','#lkTyp','type'],['logo','#lkLg','logo']].forEach(([k,id,n])=>{const on=!!S.frozen[k],b=$(id);b.setAttribute('aria-pressed',on);b.textContent=on?'Locked':'Lock';b.setAttribute('aria-label',(on?'Unlock the ':'Lock the ')+n+(on?'':', so Shuffle everything leaves it alone'));const sh=$(id.replace('lk','sh'));sh.disabled=on})}
 let inTimer=0;
 function changed(record){if(record)push();clearTimeout(inTimer);inTimer=setTimeout(run,120)}
 $('#name').oninput=e=>{S.name=e.target.value;changed(false)};$('#desc').oninput=e=>{S.desc=e.target.value;changed(false)};$('#aud').oninput=e=>{S.audience=e.target.value;changed(false)};
