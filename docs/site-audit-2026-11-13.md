@@ -59,8 +59,28 @@ Also fixed in the second pass: one body font (Inter) on the atlas, icon library 
 cropped mock-up fragments removed from UI components, art styles and fonts; the tools page's duplicate nav removed;
 a hidden `h2` where cards sat directly under the page title; sliders 24 px tall.
 
-Still not done by hand: the chart, diagram, flowchart and mockup studios, motion graphics, moodboards and the site
-builder editor got a first-screen look only, not a full task walkthrough.
+## Third pass: every other tool, used by hand
+
+Each tool was opened at 1440 px and 390 px and given its main job. Nothing was broken; the problems were clutter.
+
+| Tool | The job tried | Result |
+| --- | --- | --- |
+| Chart studio | Paste my own table, change chart type, open Export | Works. Pasted 4 rows × 2 series, got a line chart, switched to stacked column; eight export options, clearly labelled |
+| Mockup studio | Put a picture in a frame, open Export | Works. "Capture a page of this site" took between 6 and 15 s and the atlas home came out with a block of unstyled text at the top |
+| Diagram studio | Switch between diagram types, open Export | Works. Kanban, SWOT, Sequence, Venn, Fishbone and Gantt all drew. *Fixed:* two header buttons that repeated the top bar's menu |
+| Flowchart studio | Add a step | Works. The step appeared in the list and the chart. Buttons say "Add stage" and "Step outside stages", which needs a plainer name |
+| Motion graphics | Change the words, open Export | Works. Five export formats |
+| Moodboards | Add a note and a colour | Works |
+| Site builder editor | Add a section, undo, open Export | Works. *Fixed:* on a phone the Export button was pushed off the right edge (it ended at 405 px on a 390 px screen); it now ends at 377 px |
+| UI interactions | Open a piece, find Copy HTML | Works well on both widths: live preview, sliders, Copy HTML and Download at the top |
+| App templates | Open a screen, find Copy HTML | Works. *Fixed:* a 620-character intro cut to two sentences (same on UI interactions) |
+| Icon library | Search "mail", open an icon, find Copy | Works. *Fixed:* three stacked header rows (dark banner, breadcrumb, "Plate 08" label) reduced to the breadcrumb; intro cut to two sentences |
+
+Not exercised: the final click of any download or export, uploading an image or font, dragging on canvases, the AI
+features, publishing a site, and anything that needs sign-in.
+
+Open from this pass: the mockup page capture quality, plainer words in the flowchart step editor, and the 10-item
+export menu in the site builder, which could be grouped.
 
 ## Summary (first pass)
 

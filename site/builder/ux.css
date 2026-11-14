@@ -136,3 +136,6 @@
 .pgrow{flex-wrap:nowrap}.pgrow .pgname{flex:1 1 0;min-width:0}.pgrow .pgname small,.pgrow .pgname b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
 .pgrow .pgact{display:flex;gap:2px;flex:none}.pgrow .pgact .ib{width:28px;height:28px;min-width:0;padding:0;font-size:13px}
 @media (max-width:560px){.startdlg .pkhead h2{display:block;font-size:22px}}
+/* phones: keep Export on screen (the Saved label keeps its dot, the word is for screen readers only) */
+@media (max-width:560px){.tools{gap:5px}.tools .savedot span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}}
+@media (max-width:560px){#moreMenu>summary{font-size:0;gap:4px}#moreMenu>summary::before{content:"\22EF";font-size:18px;line-height:1}#moreMenu>summary .badge{font-size:11px}}
