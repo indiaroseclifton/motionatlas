@@ -54,3 +54,23 @@
 }
 /* title buttons sit flush with the text below them */
 :is(body:not(.cinemaMode),body) main :is(.cataloguecard,.artcard,.assetCard) h3>button,:is(body:not(.cinemaMode),body) main .iconChoice h2>button{padding:0;text-align:left}
+
+/* entry view (2026-11): same type as the pages, one main action, shared advice folded away */
+#detail .detailhead h2{font:400 44px/1.05 var(--f-display,"Cormorant Garamond",Georgia,serif);letter-spacing:-.01em;margin:0 0 8px}
+#detail #detailDescription{font:400 16px/1.5 Inter,system-ui,sans-serif;color:var(--text-dim,#4a5466);max-width:60ch}
+#detail .detailnotes h3{font:600 12px/1.2 Inter,system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim,#4a5466);margin:22px 0 6px}
+#detail .detailnotes p{font:400 15px/1.55 Inter,system-ui,sans-serif;color:var(--text,#0d1220);max-width:56ch;margin:0}
+#detail .detailActs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+#detail .detailnotes>button.secondary,#detail .detailnotes>a.secondary{margin:8px 8px 0 0}
+#detail .detailShared{margin-top:24px;border-top:1px solid var(--hair,#d9dee6);padding-top:4px}
+#detail .detailShared>summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font:500 13px/1.2 Inter,system-ui,sans-serif;color:var(--text-dim,#4a5466)}
+#detail .detailShared h3:first-of-type{margin-top:8px}
+#detail .detailnavigation button{font:500 13px/1 Inter,system-ui,sans-serif}
+@media (max-width:760px){#detail .detailhead h2{font-size:32px}}
+
+/* catalogue (2026-11): one way to pick a collection, extra filters behind "More filters" */
+#browse .archivehead{display:block}
+#browse .archivehead .archivenote{max-width:60ch;margin-top:10px}
+@media (min-width:761px){#browse .filters label:has(#group){display:none}}
+#browse .collectionbody:not(:has(#advancedToggle[aria-expanded=true])) #exploreBar{display:none}
+#browse .archivehead h1{max-width:none;font-size:clamp(44px,5.4vw,76px);line-height:1}

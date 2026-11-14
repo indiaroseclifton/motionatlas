@@ -2,7 +2,7 @@
 /* Sharing, page titles and sign-up.
    1. Page titles and descriptions follow the section and the open entry.
    2. Entry links: #browse?entry=A53 opens that entry, and the address bar updates while an entry is open.
-   3. "Share this direction": a 1200x630 card image of any entry, shared natively or saved, plus a copyable link.
+   3. "Share": a 1200x630 card image of any entry, shared natively or saved, plus a copyable link.
    4. Home: an email sign-up for new plates.
       To connect it, set ATLAS_SIGNUP.endpoint to a form endpoint that accepts a POST with an `email`
       field, for example a Formspree form (https://formspree.io/f/yourid) or Buttondown
@@ -36,12 +36,12 @@ window.ATLAS_SIGNUP=window.ATLAS_SIGNUP||{endpoint:''};
 
  /* ---------- 3. share card ---------- */
  function addShareButton(){const body=document.getElementById('detailBody');const notes=body?.querySelector('.detailnotes');if(!notes||notes.querySelector('.shareDirBtn'))return;
-  const b=document.createElement('button');b.type='button';b.className='secondary shareDirBtn';b.innerHTML='<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5v9M4.5 5 8 1.5 11.5 5M3 9v5h10V9" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>Share this direction';
+  const b=document.createElement('button');b.type='button';b.className='secondary shareDirBtn';b.innerHTML='<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5v9M4.5 5 8 1.5 11.5 5M3 9v5h10V9" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>Share';
   b.onclick=()=>{if(typeof selected!=='undefined'&&selected)openShare(selected);};
   const after=notes.querySelector('[data-project-add]');(after||notes.firstElementChild)?.insertAdjacentElement('afterend',b);}
  let dlg,canvas,current;
  function ensureDialog(){if(dlg)return;dlg=document.createElement('dialog');dlg.className='shareCard';dlg.setAttribute('aria-labelledby','shareTitle');
-  dlg.innerHTML=`<div class="shareIn"><div class="shareTop"><p class="shareKicker">Share this direction</p><button type="button" class="shareX" aria-label="Close">×</button></div><h2 id="shareTitle"></h2><canvas width="1200" height="630" role="img" aria-label="Share card preview"></canvas>
+  dlg.innerHTML=`<div class="shareIn"><div class="shareTop"><p class="shareKicker">Share</p><button type="button" class="shareX" aria-label="Close">×</button></div><h2 id="shareTitle"></h2><canvas width="1200" height="630" role="img" aria-label="Share card preview"></canvas>
   <div class="shareActions"><button type="button" class="primary" data-share="native">Share…</button><button type="button" data-share="png">Save image</button><button type="button" data-share="link">Copy link</button></div><label class="shareLink"><span>Link</span><input type="text" readonly></label><p class="shareStatus" role="status" aria-live="polite"></p></div>`;
   document.body.append(dlg);canvas=dlg.querySelector('canvas');
   dlg.querySelector('.shareX').onclick=()=>dlg.close();dlg.addEventListener('click',e=>{if(e.target===dlg)dlg.close();});

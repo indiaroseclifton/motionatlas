@@ -42,7 +42,7 @@ footer{margin-top:60px;padding-top:18px;border-top:1px solid var(--hair);display
 <script src="site-nav-data.js"></script>
 <script>
 (()=>{const G=window.ATLAS_NAV_GROUPS||[],by=n=>(G.find(g=>g.name===n)||{items:[]}).items,href=h=>h[0]==='#'?'atlas.html'+h:h;
-const SECS=[['Browse','Use in your product','Finished pieces to copy into a website or an app.'],['Make','Make something','Tools that turn your words, data and colours into finished work.'],['Styles','Find a style','Visual directions to brief from, with references and live examples.']];
+const SECS=[['Library','Use in your product','Finished pieces to copy into a website or an app.'],['Make','Make something','Tools that turn your words, data and colours into finished work.'],['Styles','Find a style','Looks to brief from, with references and live examples.']];
 document.getElementById('secs').innerHTML=SECS.map(([g,t,d],k)=>`<section aria-labelledby="s${k}"><h2 id="s${k}">${t}</h2><p>${d}</p><div class="tiles">${by(g).map((i,n)=>`<a class="t${k===0&&n===0?' big':''}" href="${href(i[0])}"><b>${i[1]}<i aria-hidden="true">→</i></b><span>${i[2]}</span></a>`).join('')}</div></section>`).join('');
 document.getElementById('feat').innerHTML=[['arc-carousel','Arc focus carousel'],['glow-border','Glowing border cards'],['elastic-slider','Elastic slider']].map(([id,t])=>`<a class="view" href="interactions.html#${id}" aria-label="${t}, open in UI interactions"><iframe src="interactions/demos/${id}.html" title="" tabindex="-1" aria-hidden="true" loading="lazy"></iframe><span>${t}</span></a>`).join('');
 const ro=new ResizeObserver(es=>es.forEach(e=>e.target.style.setProperty('--k',(e.contentRect.width/1200).toFixed(4))));document.querySelectorAll('.view').forEach(v=>ro.observe(v));

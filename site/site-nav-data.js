@@ -1,51 +1,51 @@
 'use strict';
-/* The atlas navigation: groups, items, one-line purposes and the film that previews each. Single source for atlas-nav.js
-   (atlas.html) and site-bar.js (every other page). Item: [href, name, note, film]. */
+/* The atlas navigation: groups, items, one-line purposes and the film that previews each. Single source for the top bar
+   (site-bar.js), the library drawer (atlas-nav.js) and the home page. Item: [href, name, note, film].
+   Every page has one home. Library is what you copy, Styles is what you brief from, Make is the tools, Your studio is
+   what you saved. Pages that duplicated another (Atlas overview, Icon families beside Icons, Vase studies, Extracted
+   assets) are no longer listed; their addresses still work. */
 window.ATLAS_NAV_GROUPS=[
-  {name:'Browse',items:[
-   ['interactions.html','UI interactions','Modern interactions to embed in sites and apps, with live sliders.','golden-dove'],
-   ['app-interfaces.html','App templates','Dashboards, apps and pages: twenty-two finished screens to copy, light and dark.','light-mesh'],
-   ['#ux','UI components','Seventy components, every state, in every style.','light-mesh'],
-   ['#systems','Design systems','Forty-eight complete visual worlds and real open-source systems.','game-of-life'],
-   ['theme-kits.html','Theme kits','Forty-eight kits: tokens, components, backgrounds and assets.','game-of-life'],
-   ['icons.html','Icons','6,468 searchable icons in 22 families.','sketchbook-horse']]},
+  {name:'Library',items:[
+   ['interactions.html','UI interactions','Animated pieces to drop into a site or app. Tune them, then copy.','golden-dove'],
+   ['app-interfaces.html','App templates','Twenty-two finished screens to copy, light and dark.','light-mesh'],
+   ['#ux','UI components','Seventy components with every state, in any style.','light-mesh'],
+   ['#icons','Icons','6,468 icons in fifteen looks. Recolour, copy or download.','sketchbook-horse'],
+   ['#systems','Design systems','Forty-eight complete looks: colours, type and components.','game-of-life'],
+   ['theme-kits.html','Theme kits','Forty-eight ready kits to download and build on.','game-of-life'],
+   ['#backgrounds','Backgrounds','Gradients, light and grain. Export a picture or a loop.','petal-swirl']]},
   {name:'Styles',items:[
-   ['#browse','Style catalogue','Every visual style in one searchable sheet.','hydraulic-erosion'],
-   ['#art','Art styles','Sixty art styles, from museum references to specimen films.','suminagashi'],
-   ['#cinema','Film looks','Cinematic directions translated into original scenes.','pixel-sorting'],
-   ['#backgrounds','Backgrounds','Generate gradients, light and grain; export 4K or a loop.','petal-swirl'],
-   ['#typography','Fonts & type','Type pairings and scales, ready to use.','light-threads']]},
-  {name:'Make',items:[
-   ['page-builder.html','Site builder','Multi-page sites from templates, sections and photographs.','paper-bird'],
-   ['brand-generator.html','Brand kit','Palette, fonts, logo lockups and tokens from a name and a feel.','game-of-life'],
-   ['motion-graphics.html','Motion graphics','Titles, lower thirds and logo stings as video, GIF or HTML.','light-ribbons'],
-   ['chart-studio.html','Charts','Your data as a chart: 26 forms, any style.','pigment-bloom'],
-   ['diagram-studio.html','Diagrams','Eighteen diagram types: roadmaps to sequence and ER.','swan-construction'],
-   ['flowchart-studio.html','Flowcharts','Draw, animate and export flowcharts.','light-mesh'],
-   ['mockup-studio.html','Mockups','Frame a screenshot in a device and export every social size.','paper-bird']]},
-  {name:'Your studio',items:[
-   ['#projects','My projects','Save things into boards for a client or idea.','particle-tree'],
-   ['moodboard.html','Moodboards','Pin styles, kits, colours and pictures.','embroidery'],
-   ['my-fonts.html','My fonts','Fonts you own, kept in this browser.','embroidery'],
-   ['account.html','Account','Sign in, and keep your projects on every device.','particle-tree']]},
-  {name:'More',items:[
-   ['#home','Atlas overview','The style atlas at a glance.','jellyfish'],
-   ['tools.html','All tools','Every tool in one place.','paper-bird'],
-   ['#tours','Guided tours','Short routes through the atlas for a brief or a mood.','golden-dove'],
+   ['#browse','Style catalogue','Every visual style in one searchable list.','hydraulic-erosion'],
+   ['#art','Art styles','Sixty art styles, from gouache to risograph.','suminagashi'],
+   ['#cinema','Film looks','Film-inspired looks and colour grades.','pixel-sorting'],
+   ['#typography','Fonts & type','Font pairings to try with your own words.','light-threads'],
    ['#compare','Compare styles','Two styles side by side on the same subject.','ferrofluid'],
-   ['#pairings','Style pairings','Styles that work together, and why.','lion-phoenix'],
-   ['#vases','Vase studies','One vase, forty treatments.','sand-drawing'],
-   ['#icons','Icon families','Outline, solid, pixel, colour and 3D icon sets.','sketchbook-horse'],
-   ['#assets','Extracted assets','Fragments cut from our original mock-ups.','paper-bird'],
-   ['chart-styles.html','Chart style guides','Chart palettes and rules for every style.','game-of-life'],
-   ['#inspiration','Inspiration','Your own uploads and references.','embroidery'],
-   ['#creations','Your creations','Things you have made and exported here.','pigment-bloom'],
+   ['#pairings','Style pairings','Styles that work together, and why.','lion-phoenix']]},
+  {name:'Make',items:[
+   ['page-builder.html','Site builder','Build a multi-page website from a template.','paper-bird'],
+   ['brand-generator.html','Brand kit','Colours, fonts and a logo from a name and a feel.','game-of-life'],
+   ['motion-graphics.html','Motion graphics','Titles and logo stings as video, GIF or HTML.','light-ribbons'],
+   ['chart-studio.html','Charts','Paste your data, get a chart.','pigment-bloom'],
+   ['diagram-studio.html','Diagrams','Roadmaps, org charts, timelines and more.','swan-construction'],
+   ['flowchart-studio.html','Flowcharts','Draw, animate and export a flowchart.','light-mesh'],
+   ['mockup-studio.html','Mockups','Frame a screenshot and export every social size.','paper-bird']]},
+  {name:'Your studio',items:[
+   ['#projects','My projects','Everything you saved for a client or an idea.','particle-tree'],
+   ['moodboard.html','Moodboards','Pin styles, colours and pictures on a board.','embroidery'],
+   ['#inspiration','Inspiration','Your own uploads and saved links.','embroidery'],
+   ['#creations','Your creations','Things you made and exported here.','pigment-bloom'],
+   ['my-fonts.html','My fonts','Fonts you own, kept in this browser.','embroidery'],
+   ['account.html','Account','Sign in to keep your projects on every device.','particle-tree']]},
+  {name:'More',items:[
+   ['tools.html','All tools','Every tool on one page.','paper-bird'],
+   ['#tours','Guided tours','Short routes through the atlas for a brief or a mood.','golden-dove'],
+   ['chart-styles.html','Chart style guides','Chart colours and rules for every style.','game-of-life'],
    ['#references','Sources & credits','Original works, research, licences and credits.','smoke-plume']]}
 ];
 
-/* The three menus in the bar. Each is one short list; rarer pages sit in a {more} row that expands in place. */
+/* The four menus in the bar. Each is one short list. */
 window.ATLAS_NAV_MENUS=[
- {id:'lib',name:'Browse',groups:[{name:'',items:['interactions.html','app-interfaces.html','#ux','#systems','theme-kits.html','icons.html',{more:'Styles and inspiration',items:['#browse','#art','#cinema','#backgrounds','#typography']}]}]},
+ {id:'lib',name:'Library',groups:[{name:'',items:['interactions.html','app-interfaces.html','#ux','#icons','#systems','theme-kits.html','#backgrounds']}]},
+ {id:'styles',name:'Styles',groups:[{name:'',items:['#browse','#art','#cinema','#typography','#compare','#pairings']}]},
  {id:'make',name:'Make',groups:[{name:'',items:['page-builder.html','brand-generator.html','motion-graphics.html','chart-studio.html','diagram-studio.html','flowchart-studio.html','mockup-studio.html']}]},
- {id:'studio',name:'Yours',groups:[{name:'',items:['#projects','moodboard.html','my-fonts.html','account.html']}]}
+ {id:'studio',name:'Yours',groups:[{name:'',items:['#projects','moodboard.html','#inspiration','#creations','my-fonts.html','account.html']}]}
 ];

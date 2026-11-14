@@ -12,6 +12,58 @@ states, the serverless API, and the project's own Playwright gate.
 heading order, missing alt text, sideways scroll, text under 11 px, fonts, corner radii and page background. Console
 errors were attributed per page. Suspicious readings were checked by eye before being reported.
 
+## Fourth pass: structure and content, not function
+
+The owner's point: checking that tools work is not a redesign, and the content had not been read. This pass read
+the 409 catalogue entries and every section's copy, mapped the navigation, and changed the structure.
+
+**What the content actually is.** Each entry's one-line summary is specific and good (median 77 characters; almost
+no filler words). The problem is around it:
+
+```
+identical "checks" paragraph      72 entries, another on 60
+identical "build" paragraph       36 + 24 entries
+identical "use", "motion", "avoid" 36 entries each (every art style)
+```
+
+So opening Gouache, Stencil or Chalk pastel showed the same four paragraphs under headings that looked specific.
+"What to notice" often repeated the summary word for word. *Changed:* the entry view shows only what is true of that
+entry. A paragraph shared by eight or more entries folds into one "General advice for art styles" line. Gouache went
+from 250 words to 164, none of them repeated.
+
+**Four places to save one thing.** An entry offered "Add to direction collection", "Save to inspiration", "Add to
+project", "Share this direction" and "Pin to moodboard" in one row. *Changed:* "Add to project" is the main button;
+the rest are secondary and renamed in plain words. The four destinations still exist. Merging them is a product
+decision, and it is the next thing to decide.
+
+**201 cropped mock-up fragments were mixed into the style catalogue**, so "Everything" said 588. *Changed:* the
+catalogue lists the 387 styles. The fragments remain on their own page, which is no longer in any menu.
+
+**The catalogue had two collection pickers, a mood filter, eight "feel" chips and two "show" chips.** *Changed:*
+one collection list, search, mood, and everything else behind "More filters".
+
+**Navigation.** There were 34 destinations in five groups, with a 12-item "More" and several pages that duplicated
+another (two icon pages, two home pages, vase studies beside art styles). *Changed:* four groups that each mean one
+thing, used by the top bar, the phone menu, the drawer and the home page:
+
+| Group | Means | Pages |
+| --- | --- | --- |
+| Library | things to copy | 7 |
+| Styles | looks to brief from | 6 |
+| Make | tools | 7 |
+| Yours | what you saved | 6 |
+
+"More" is four links. Atlas overview, Vase studies, Extracted assets and the second icon entry left the menus; their
+addresses still work.
+
+**Words.** Fifteen section intros rewritten to say what is on the page and what you can do there. Card labels lost
+their codes ("A02 / Animation art · Generated reference" is now "Animation art"). "Specimen", "plate", "treatment",
+"contact sheet" and "direction collection" replaced where a visitor reads them.
+
+**Not done in this pass.** The layout inside each tool (charts, diagrams, flowcharts, mockups, motion graphics, the
+site builder editor) was not redesigned. The atlas sections still each have their own toolbar arrangement. The
+boilerplate paragraphs were hidden, not rewritten: 60 art styles still lack their own "how to make it" text.
+
 ## What the first pass missed, and the second pass
 
 The first pass measured markup. It did not try to use each tool the way a person would, so it reported the site as
