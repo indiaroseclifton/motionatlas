@@ -8,7 +8,7 @@ window.ATLAS_NAV_GROUPS=[
    ['#ux','UI components','Seventy components, every state, in every style.','light-mesh'],
    ['#systems','Design systems','Forty-eight complete visual worlds and real open-source systems.','game-of-life'],
    ['theme-kits.html','Theme kits','Forty-eight kits: tokens, components, backgrounds and assets.','game-of-life'],
-   ['icons.html','Icons','3,768 searchable icons in 13 families.','sketchbook-horse']]},
+   ['icons.html','Icons','6,468 searchable icons in 22 families.','sketchbook-horse']]},
   {name:'Styles',items:[
    ['#browse','Style catalogue','Every visual style in one searchable sheet.','hydraulic-erosion'],
    ['#art','Art styles','Sixty art styles, from museum references to specimen films.','suminagashi'],

@@ -43,6 +43,18 @@ PKG = {
     'pixel': ('pixelarticons', '2.4.2'),
     'openmoji': ('openmoji', '17.0.0'),
 }
+# Families added 2026-11 come from Iconify's JSON bundles (one pinned npm package per set).
+ICONIFY = {
+    'solar': ('solar', '1.2.15'),
+    'material-symbols': ('material-symbols', '1.2.99'),
+    'pepicons-pencil': ('pepicons-pencil', '1.2.4'),
+    'flat-color-icons': ('flat-color-icons', '1.2.3'),
+    'icon-park': ('icon-park', '1.2.4'),
+    'game-icons': ('game-icons', '1.2.4'),
+    'simple-icons': ('simple-icons', '1.2.102'),
+    'line-md': ('line-md', '1.2.16'),
+}
+SPDX_TEXT = 'https://cdn.jsdelivr.net/gh/spdx/license-list-data@v3.26/text/'
 TARGET = 300
 FLUENT_TARGET = 120
 FLUENT_PX = 192
@@ -63,7 +75,63 @@ FAMILIES = [
     ('pixel', 'Pixelarticons / Pixel', 'Stepped silhouettes and a deliberate pixel grid for retro interfaces.', 'pixel', 'MIT', 'https://pixelarticons.com'),
     ('openmoji', 'OpenMoji / Colour pictograms', 'Expressive coloured SVG pictograms by the OpenMoji contributors.', 'openmoji', 'CC BY-SA 4.0', 'https://openmoji.org'),
     ('fluent-3d', 'Fluent Emoji / 3D', 'Dimensional PNG emoji from Microsoft with material, colour and lighting.', 'fluent', 'MIT', 'https://github.com/microsoft/fluentui-emoji'),
+    ('broken', 'Solar / Broken line', 'Outlines drawn with deliberate gaps, for a lighter, sketched feel.', 'solar', 'CC BY 4.0', 'https://www.figma.com/community/file/1166831539721848736'),
+    ('bold-duotone', 'Solar / Bold duotone', 'Heavy forms with a translucent second tone for depth.', 'solar', 'CC BY 4.0', 'https://www.figma.com/community/file/1166831539721848736'),
+    ('rounded', 'Material Symbols / Rounded', 'Chunky filled shapes with soft corners, the Google look.', 'material-symbols', 'Apache 2.0', 'https://fonts.google.com/icons'),
+    ('pencil', 'Pepicons / Pencil', 'Hand-drawn pencil strokes with a wobble.', 'pepicons-pencil', 'CC BY 4.0', 'https://pepicons.com'),
+    ('flat-color', 'Flat Color Icons / Flat colour', 'Flat multicolour pictograms for dashboards and onboarding.', 'flat-color-icons', 'MIT', 'https://icons8.com/icons/color'),
+    ('two-tone', 'Icon Park / Two-tone colour', 'Outlines with a blue second colour, for lively product UI.', 'icon-park', 'Apache 2.0', 'https://iconpark.oceanengine.com'),
+    ('game', 'Game Icons / Illustrative', 'Silhouette illustrations with real detail, for games and storytelling.', 'game-icons', 'CC BY 3.0', 'https://game-icons.net'),
+    ('brand', 'Simple Icons / Brand logos', 'Monochrome marks of popular products and services.', 'simple-icons', 'CC0 1.0', 'https://simpleicons.org'),
+    ('animated', 'Line MD / Animated line', 'Line icons that draw themselves in when they appear.', 'line-md', 'MIT', 'https://github.com/cyberalien/line-md'),
 ]
+
+# The 13 specimen icons drawn on the atlas page and the project page, by concept name.
+SPECIMENS = ['house', 'magnifying-glass', 'heart', 'bookmark-simple', 'bell', 'gear', 'calendar-blank', 'folder',
+             'user', 'check-circle', 'plus', 'upload-simple', 'squares-four']
+# Extra names the Iconify sets use for those concepts (the CONCEPTS lines cover the rest).
+SPECIMEN_ALIASES = {
+    'house': ['home', 'home-2', 'home-smile', 'home-angle', 'house-chimney'],
+    'magnifying-glass': ['search', 'magnifier', 'magnifer', 'loop', 'find', 'zoom'],
+    'heart': ['favorite', 'like', 'heart-filled', 'hearts', 'love', 'heart-inside'],
+    'bookmark-simple': ['bookmark', 'bookmark-square', 'bookmarklet', 'collection'],
+    'bell': ['bell', 'notification', 'notifications', 'alarm', 'alarm-clock', 'remind', 'ring', 'bell-outline'],
+    'gear': ['gear', 'settings', 'setting', 'cog', 'cogs', 'gears', 'setting-two', 'settings-outline'],
+    'calendar-blank': ['calendar', 'calendar-date', 'calendar-minimalistic', 'calendar-month', 'calendar-today', 'calendar-mark'],
+    'folder': ['folder', 'folder-open', 'folder-2', 'folder-close', 'opened-folder'],
+    'user': ['user', 'person', 'account', 'account-circle', 'avatar', 'user-rounded', 'people', 'man', 'customer', 'manager'],
+    'check-circle': ['check-circle', 'checkmark-circle', 'confirm-circle', 'check-one', 'check-mark', 'checkmark', 'confirm', 'ok',
+                     'check-correct', 'checked', 'check'],
+    'plus': ['plus', 'add', 'add-one', 'plus-circle', 'add-circle'],
+    'upload-simple': ['upload', 'upload-minimalistic', 'cloud-upload', 'cloud-up', 'upload-one', 'file-upload', 'up-card'],
+    'squares-four': ['grid', 'grid-2x2', 'grid-3', 'grid-four', 'grid-view', 'apps', 'widget', 'all-application', 'dashboard',
+                     'category', 'view-grid'],
+}
+# Brands shown first in the Simple Icons family; the rest fill up alphabetically.
+POPULAR_BRANDS = '''apple google microsoft amazon meta facebook instagram x youtube tiktok linkedin github gitlab bitbucket slack discord
+figma notion spotify netflix adobe canva dribbble behance pinterest reddit whatsapp telegram signal zoom stripe paypal shopify
+vercel netlify cloudflare digitalocean heroku awsamplify googlecloud firebase supabase mongodb postgresql mysql redis docker kubernetes
+react vuedotjs angular svelte nextdotjs nuxt astro vite tailwindcss bootstrap sass javascript typescript python rust go swift kotlin
+php ruby html5 css3 nodedotjs deno bun npm yarn pnpm webpack eslint prettier jest playwright cypress storybook
+openai anthropic huggingface claude perplexity twitch steam playstation nintendo xbox epicgames unity unrealengine
+visa mastercard americanexpress applepay googlepay klarna coinbase bitcoin ethereum
+uber airbnb booking expedia tripadvisor lyft doordash deliveroo
+android ios linux ubuntu debian archlinux windows macos
+chrome firefox safari brave opera
+mailchimp hubspot salesforce zendesk intercom asana trello jira confluence linear clickup monday
+wordpress squarespace wix webflow ghost medium substack
+twilio sendgrid vimeo soundcloud bandcamp applemusic amazonmusic
+nvidia intel amd arm raspberrypi arduino
+tesla bmw mercedes toyota ford
+nike adidas puma
+starbucks mcdonalds cocacola
+duolingo coursera udemy khanacademy
+dropbox googledrive icloud onedrive box
+1password bitwarden lastpass
+zapier make ifttt n8n
+sentry datadog grafana prometheus newrelic
+'''.split()
+
 
 # Common UI concepts. Each line: the concept, then other names it goes by in the families.
 # A family takes the first name it actually has; the concept and every alternative become
@@ -818,6 +886,117 @@ def build_fluent(fx, outdir):
     return out
 
 
+# ---------- Iconify bundles ----------
+def iconify_url(key, name):
+    prefix, ver = ICONIFY[key]
+    return f'{JSD}@iconify-json/{prefix}@{ver}/{name}'
+
+
+def iconify_load(fx, key):
+    icons = json.loads(fx.get(iconify_url(key, 'icons.json')))
+    info = json.loads(fx.get(iconify_url(key, 'info.json')))
+    raw = fx.get(iconify_url(key, 'metadata.json'), missing_ok=True)
+    try:
+        meta = json.loads(raw) if raw else {}
+    except ValueError:
+        meta = {}
+    return icons, info, meta
+
+
+def iconify_svg(data, name, uid):
+    ic = data['icons'][name]
+    w = ic.get('width', data.get('width', 16))
+    h = ic.get('height', data.get('height', 16))
+    left = ic.get('left', data.get('left', 0))
+    top = ic.get('top', data.get('top', 0))
+    body = ic['body']
+    tf = []
+    if ic.get('hFlip'):
+        tf.append(f'translate({w} 0) scale(-1 1)')
+    if ic.get('vFlip'):
+        tf.append(f'translate(0 {h}) scale(1 -1)')
+    if ic.get('rotate'):
+        tf.append(f'rotate({90 * ic["rotate"]} {w / 2} {h / 2})')
+    if tf:
+        body = f'<g transform="{" ".join(tf)}">{body}</g>'
+    # ids inside a body are local to the icon; make them unique so many inline icons coexist on a page
+    ids = set(re.findall(r'\sid="([^"]+)"', body))
+    for i in sorted(ids, key=len, reverse=True):
+        body = re.sub(r'\sid="' + re.escape(i) + '"', f' id="{uid}-{i}"', body)
+        body = body.replace(f'url(#{i})', f'url(#{uid}-{i})').replace(f'href="#{i}"', f'href="#{uid}-{i}"')
+    return clean_svg(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{left} {top} {w} {h}">{body}</svg>', keep_ids=True)
+
+
+def build_iconify(fx, fid, key, select, target=TARGET, rank=None, first=()):
+    """select(name) -> base name to show, or None to skip. Returns [(name, keywords, svg)]."""
+    data, info, meta = iconify_load(fx, key)
+    native, back = [], {}
+    for n in data['icons']:
+        b = select(n)
+        if b and b not in back:
+            native.append(b)
+            back[b] = n
+    tags = {}
+    for cat, names in (meta.get('categories') or {}).items():
+        for n in names:
+            b = select(n)
+            if b:
+                tags.setdefault(b, []).append(cat)
+    cl = concepts()
+    # specimen concepts first, with every name the sets use for them, so each family can draw its card
+    spec_lines = [[sp] + list(next((w for w in cl if w[0] == sp), [])) + SPECIMEN_ALIASES.get(sp, []) for sp in SPECIMENS]
+    cl = spec_lines + [w for w in cl if w[0] not in SPECIMENS]
+    if first:
+        cl = [[f] for f in first if f in back] + cl
+    chosen = pick(native, tags, cl, rank or simple_rank, target)
+    return [(n, k, iconify_svg(data, back[n], f'{fid}-{n}')) for n, k in chosen]
+
+
+def sel_suffix(suffix, exclude=()):
+    def f(n):
+        if not n.endswith(suffix) or any(x in n for x in exclude):
+            return None
+        return n[:-len(suffix)]
+    return f
+
+
+def sel_all(exclude=()):
+    return lambda n: None if any(x in n for x in exclude) else n
+
+
+def build_iconify_families(fx):
+    out = {}
+    log('solar…')
+    out['broken'] = build_iconify(fx, 'broken', 'solar', sel_suffix('-broken'))
+    out['bold-duotone'] = build_iconify(fx, 'bold-duotone', 'solar', sel_suffix('-bold-duotone'))
+    log('material symbols…')
+    out['rounded'] = build_iconify(fx, 'rounded', 'material-symbols', sel_suffix('-rounded', exclude=('-outline-rounded',)))
+    log('pepicons…')
+    out['pencil'] = build_iconify(fx, 'pencil', 'pepicons-pencil', sel_all())
+    log('flat color icons…')
+    out['flat-color'] = build_iconify(fx, 'flat-color', 'flat-color-icons', sel_all())
+    log('icon park…')
+    out['two-tone'] = build_iconify(fx, 'two-tone', 'icon-park', sel_all())
+    log('game icons…')
+    out['game'] = build_iconify(fx, 'game', 'game-icons', sel_all())
+    log('simple icons…')
+    out['brand'] = build_iconify(fx, 'brand', 'simple-icons', sel_all(), first=POPULAR_BRANDS)
+    log('line md…')
+    out['animated'] = build_iconify(fx, 'animated', 'line-md', sel_all(exclude=('transition',)))
+    return out
+
+
+def specimen_names(chosen_names):
+    """Map each specimen concept to a name the family actually has, or None."""
+    have = set(chosen_names)
+    cl = {w[0]: w for w in concepts()}
+    out = {}
+    for sp in SPECIMENS:
+        cands = [sp] + list(cl.get(sp, [])) + SPECIMEN_ALIASES.get(sp, [])
+        out[sp] = next((c for c in cands if c in have), None)
+    return out
+
+
 # ---------- licences ----------
 def licence_texts(fx):
     return {
@@ -828,10 +1007,28 @@ def licence_texts(fx):
         'pixel': fx.get(npm('pixel', 'LICENSE')).decode(),
         'openmoji': fx.get(npm('openmoji', 'LICENSE.txt')).decode(),
         'fluent': fx.get(RAW_FLUENT + 'LICENSE').decode(),
-    }
+    } | iconify_licences(fx)
+
+
+def iconify_licences(fx):
+    out = {}
+    for key in ICONIFY:
+        _, info, _ = iconify_load(fx, key)
+        lic = info.get('license', {})
+        spdx = lic.get('spdx', '')
+        author = info.get('author', {})
+        head = (f"{info.get('name', key)} by {author.get('name', 'the project authors')} ({author.get('url', '')})\n"
+                f"Licence: {lic.get('title', spdx)} ({lic.get('url', '')})\n"
+                f"Packaged as @iconify-json/{ICONIFY[key][0]}@{ICONIFY[key][1]} by Iconify (https://iconify.design).\n\n")
+        text = fx.get(SPDX_TEXT + spdx + '.txt', missing_ok=True) if spdx else None
+        out[key] = head + (text.decode('utf-8', 'replace') if text else '')
+    return out
 
 
 def source_line(key):
+    if key in ICONIFY:
+        prefix, ver = ICONIFY[key]
+        return f'@iconify-json/{prefix}@{ver}', ver, f'https://www.npmjs.com/package/@iconify-json/{prefix}/v/{ver}'
     if key == 'fluent':
         return 'microsoft/fluentui-emoji (GitHub, main branch)', 'main', 'https://github.com/microsoft/fluentui-emoji'
     name, ver = PKG[key]
@@ -885,7 +1082,10 @@ def main():
     data['openmoji'] = [(n, k, s) for n, k, s, _ in om]
     log('fluent 3d…')
     fl = build_fluent(fx, os.path.join(sets, 'fluent-3d'))
+    data.update(build_iconify_families(fx))
     lic = licence_texts(fx)
+    new_ids = {f[0] for f in FAMILIES if f[3] in ICONIFY}
+    specimens_out = {}
 
     index = {'generated': time.strftime('%Y-%m-%d'), 'tool': 'tools/icons.py', 'families': []}
     lic_blocks = []
@@ -900,8 +1100,40 @@ def main():
             icons_ = [{'n': n, 'k': ' '.join(k), 's': s} for n, k, s in data[fid]]
             files = [(f'{fid}/svg/{n}.svg', s + '\n') for n, _, s in data[fid]]
             fmt = 'svg'
+        mono = fid not in ('openmoji', 'fluent-3d', 'flat-color', 'two-tone')
         manifest = {'id': fid, 'title': title, 'format': fmt, 'source': src, 'version': ver, 'licence': licname,
                     'count': len(icons_), 'icons': icons_}
+        # specimens: 13 concept icons per family, drawn inline on the atlas and project pages
+        if fid == 'fluent-3d':
+            spec = [{'n': n, 'f': f'icons/{fid}/{n}.png'} for n in SPECIMENS if os.path.exists(os.path.join(icons, fid, n + '.png'))]
+        elif fid in new_ids:
+            by_name = {n: sv for n, _, sv in data[fid]}
+            if fid == 'brand':
+                found = {n: n for n in [i['n'] for i in icons_][:len(SPECIMENS)]}
+            else:
+                found = {sp: n for sp, n in specimen_names(by_name).items() if n}
+            spec = [{'n': n, 'as': sp, 's': by_name[n]} for sp, n in found.items()]
+            sdir = os.path.join(icons, fid)
+            os.makedirs(sdir, exist_ok=True)
+            for f_ in os.listdir(sdir):
+                if f_.endswith('.svg'):
+                    os.remove(os.path.join(sdir, f_))
+            sfiles = []
+            for sp, n in found.items():
+                with open(os.path.join(sdir, sp + '.svg'), 'w') as f:
+                    f.write(by_name[n] + '\n')
+                sfiles.append((f'{fid}-specimens/{sp}.svg', by_name[n] + '\n'))
+            sreadme = f'{title}: {len(sfiles)} specimen icons.\nSource: {src}\nLicence: {licname} (see LICENSE.txt)\n'
+            with open(os.path.join(packs, fid + '-specimens.zip'), 'wb') as f:
+                f.write(zip_bytes(sfiles + [(f'{fid}-specimens/LICENSE.txt', lic[key]), (f'{fid}-specimens/README.txt', sreadme)]))
+        else:
+            spec = []
+            for n in SPECIMENS:
+                fp = os.path.join(icons, fid, n + '.svg')
+                if os.path.exists(fp):
+                    with open(fp) as f:
+                        spec.append({'n': n, 's': clean_svg(f.read())})
+        specimens_out[fid] = spec
         with open(os.path.join(sets, fid + '.json'), 'w') as f:
             json.dump(manifest, f, ensure_ascii=False, separators=(',', ':'))
         readme = (f'{title}\n{"=" * len(title)}\n\n{len(icons_)} {fmt.upper()} icons chosen for common interface use.\n'
@@ -909,7 +1141,7 @@ def main():
                   + (f'\n{note}\n' if note else '') +
                   '\nBuilt by tools/icons.py for the Visual & Motion Atlas. icons.json lists every name with its\n'
                   'search keywords.\n' + ('The SVGs use currentColor, so they take the text colour they sit in.\n'
-                                         if fid not in ('openmoji', 'fluent-3d') else ''))
+                                         if mono else ''))
         names_json = json.dumps([{'name': i['n'], 'keywords': i['k']} for i in icons_], ensure_ascii=False, indent=1)
         z = zip_bytes(files + [(f'{fid}/LICENSE.txt', lic[key]), (f'{fid}/README.txt', readme), (f'{fid}/icons.json', names_json)])
         with open(os.path.join(packs, fid + '.zip'), 'wb') as f:
@@ -918,12 +1150,15 @@ def main():
                                   'licence': licname, 'source': src, 'version': ver, 'package': pkg_url, 'home': home,
                                   'manifest': f'icons/sets/{fid}.json', 'pack': f'icons/packs/{fid}.zip',
                                   'packBytes': len(z), 'specimens': f'icons/{fid}/', 'specimenPack': f'icons/packs/{fid}-specimens.zip',
-                                  'monochrome': fid not in ('openmoji', 'fluent-3d')})
+                                  'card': f'icons/{fid}/' + (spec[0]['n'] if fid == 'brand' and spec else 'house') + ('.png' if fmt == 'png' else '.svg'),
+                                  'monochrome': mono})
         log(f'{fid}: {len(icons_)} icons, pack {len(z) // 1024} KB')
         lic_blocks.append((fid, title, src, licname, home, note, key))
 
     with open(os.path.join(icons, 'index.json'), 'w') as f:
         json.dump(index, f, ensure_ascii=False, indent=1)
+    with open(os.path.join(icons, 'specimens.json'), 'w') as f:
+        json.dump({'generated': index['generated'], 'names': SPECIMENS, 'families': specimens_out}, f, ensure_ascii=False, separators=(',', ':'))
 
     out = ['Icon credits and licences', '=========================', '',
            'Every icon in site/icons/ comes from one of the open-source projects below. The full sets',

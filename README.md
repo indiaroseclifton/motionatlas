@@ -14,6 +14,7 @@ site (`site/`) with a few serverless functions (`api/`), deployed by Vercel from
 - [Theme kits (site/theme-kits.html, site/kits/)](#theme-kits-sitetheme-kitshtml-sitekits)
 - [Brand kit generator (site/brand-generator.html, site/brandgen/)](#brand-kit-generator-sitebrand-generatorhtml-sitebrandgen)
 - [Design systems D01–D48](#design-systems-d01d48)
+- [Icon families (#icons) and project icons](#icon-families-icons-siteicon-libraryjs-and-project-icons)
 - [UI components (#ux, site/component-lab.js)](#ui-components-ux-sitecomponent-labjs)
 - [Interactions shelf (site/interactions.html, site/interactions/)](#interactions-shelf-siteinteractionshtml-siteinteractions)
 - [Site builder (site/page-builder.html, site/builder/)](#site-builder-sitepage-builderhtml-sitebuilder)
@@ -44,7 +45,7 @@ The library holds:
 | Landing effects (techniques) | 41 (L01–L49, with gaps where older effects were retired) | `site/effects-data.js` (the techniques), `site/effects-lab.js` (the lab UI), `site/expansion.json`, clips in `site/assets/fx/clips/` |
 | Atlas themes (component lab skins) | 22 | `site/atlas-themes.js` |
 | Site-builder templates / sections / photographs | 26 / 56 / 82 (CC0, `site/assets/photos/`) | `site/builder/` |
-| Icons | 3,768 in 13 families | `site/icons/`, `site/icon-library.js` |
+| Icons | 6,468 in 22 families, shown as 15 looks | `site/icons/`, `site/icon-library.js`, `site/specimens.js` |
 | Chart types / diagram types / flowchart templates | 26 / 18 / 24 | `site/dataviz/` |
 
 ### Landing effects and the Interactions shelf
@@ -267,6 +268,23 @@ Canvas, Mantine), and the newer originals up to D48.
 `system-previews.js`, add its kit row (background family, voice lines, do, don't) next to `D48`
 in `system-kits.js`, and a credit line if it interprets someone else's system. Update the counts.
 
+
+## Icon families (`#icons`, `site/icon-library.js`) and project icons
+
+`atlas.html#icons` shows the 22 families as 15 **looks**, one card each (`SpecimenAtlas.looks` in
+`specimens.js`): Outline (the four Phosphor weights plus Lucide, Tabler and Heroicons as draws of
+the same idea), Solid, Duotone, Broken line, Bold duotone, Rounded filled, Hand-drawn, Pixel,
+Two-tone colour, Flat colour, Colour pictograms, 3D emoji, Illustrative, Brand logos and Animated
+line. A **look bar** (colour presets or a custom colour, size S/M/L, tile tint/plain/round/circle)
+restyles every monochrome family live; the choice is kept per browser in `atlas-icon-look`.
+Specimens are drawn inline from `site/icons/specimens.json` (13 per family, written by
+`tools/icons.py`), so `currentColor` applies; OpenMoji, Fluent 3D, Flat Color Icons and Icon Park
+carry their own colours and ignore it. The inspect panel's "+" on each specimen, and the **Pick
+icons** dialog on a project page (any icon of any family, searched from `icons/sets/<family>.json`),
+add single icons to a project as `project.iconPicks = [{family, name, colour}]`; each pick has its own
+colour swatch on the project page and is listed in the exported brief. Whole families can still be
+saved (`project.icons`). The nine families added in November 2026 come from Iconify bundles
+(`ICONIFY` in `tools/icons.py`); run `python3 tools/icons.py` (Pillow needed for Fluent) to rebuild.
 
 ## UI components (`#ux`, `site/component-lab.js`)
 
@@ -631,7 +649,9 @@ The in-site page is `atlas.html#references` ("Sources & credits"); the Site buil
 source in its credits table and writes `assets/CREDITS.txt` into each export. In short: 82 CC0 /
 public-domain photographs from Wikimedia Commons (`site/assets/photos/photos.json`, audit in
 `docs/image-licences.md`); icon families Phosphor (MIT), Heroicons (MIT), Lucide (ISC), Tabler (MIT),
-Pixelarticons (MIT), OpenMoji (CC BY-SA 4.0) and Fluent 3D emoji (MIT), with licences in
+Pixelarticons (MIT), OpenMoji (CC BY-SA 4.0), Fluent 3D emoji (MIT), Solar (CC BY 4.0), Material Symbols (Apache 2.0),
+Pepicons (CC BY 4.0), Flat Color Icons (MIT), Icon Park (Apache 2.0), Game Icons (CC BY 3.0), Simple Icons (CC0) and
+Line MD (MIT), the last nine through their Iconify bundles (`@iconify-json/*`), with licences in
 `site/icons/LICENSES.txt`; Google Fonts under the SIL Open Font Licence or Apache 2.0.
 
 ## Motion graphics studio

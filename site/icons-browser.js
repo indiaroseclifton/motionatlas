@@ -59,7 +59,7 @@
   $('#famSel').innerHTML=S.index.families.map(f=>`<option value="${f.id}">${esc(f.title)} (${f.count})</option>`).join('');
   $('#famSel').value=S.fam;
   // one sample per card, loaded lazily so the first paint stays light
-  S.index.families.forEach(f=>{const el=$(`[data-sample="${f.id}"]`);if(f.format==='png'){el.innerHTML=`<img src="icons/fluent-3d/house.png" alt="" width="26" height="26">`;}else el.innerHTML=`<img src="icons/${f.id}/house.svg" alt="" width="26" height="26">`;});
+  S.index.families.forEach(f=>{const el=$(`[data-sample="${f.id}"]`);if(f.format==='png'){el.innerHTML=`<img src="icons/fluent-3d/house.png" alt="" width="26" height="26">`;}else el.innerHTML=`<img src="${f.card||`icons/${f.id}/house.svg`}" alt="" width="26" height="26">`;});
  }
  function strip(){
   const f=fam();

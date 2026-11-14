@@ -53,3 +53,61 @@ header .navGroup:has(a.active)>summary{color:var(--accent)}
 @media(max-width:760px){.iconFamilyCards{grid-template-columns:1fr 1fr;gap:25px 14px}.iconChoiceart{aspect-ratio:1.2;padding:18px;gap:12px}.iconChoiceart .libraryIcon{width:40px;height:40px}.iconChoiceart[data-iconlook=fluent-3d] .libraryIcon{width:48px;height:48px}.iconChoice h2{font-size:25px}.iconChoice p{font-size:13px}.iconFamily .secondary{display:inline-block}}
 .cardmedia>.glassDesk .glassTop{font-size:2.5cqw;margin-bottom:4cqw}.cardmedia>.glassDesk .glassWorkspace{grid-template-columns:22% 1fr;gap:4cqw}.cardmedia>.glassDesk .glassRail{padding:4cqw 2cqw;font-size:2.5cqw;gap:4cqw;flex-direction:column}.cardmedia>.glassDesk .glassRail>b,.cardmedia>.glassDesk .glassRailfoot{display:none}.cardmedia>.glassDesk .glassMain h2{font-size:7cqw!important;margin:0 0 3cqw!important}.cardmedia>.glassDesk .glassMain>p{font-size:3cqw;margin-bottom:4cqw}.cardmedia>.glassDesk .glassProject{padding:4cqw}.cardmedia>.glassDesk .glassProject h3{font-size:5cqw!important;margin:3cqw 0 2cqw}.cardmedia>.glassDesk .glassProject p{font-size:3cqw}.cardmedia>.glassDesk .glassToolbar{gap:1cqw;padding:1cqw;margin-bottom:3cqw}.cardmedia>.glassDesk .glassButton{font-size:2.6cqw;padding:2cqw;min-height:0}.cardmedia>.glassDesk .glassProjectfoot{padding-top:3cqw;margin-top:3cqw;gap:2cqw;flex-wrap:nowrap}.cardmedia>.glassDesk .glassProjectfoot>span,.cardmedia>.glassDesk .glassBottom>span{font-size:2.5cqw}.cardmedia>.glassDesk .glassProjectlabel{font-size:2.6cqw;gap:1cqw}.cardmedia>.glassDesk .glassProjectlabel small{display:none}.cardmedia>.glassDesk .glassBottom{margin-top:3cqw;gap:2cqw}.cardmedia>.glassDesk .glassInspector{display:none}.cardmedia>.glassDesk .libraryIcon{width:5cqw!important;height:5cqw!important}.glassCredit{font-size:11px;color:var(--muted);margin:12px 0 20px}.glassCredit a{text-decoration:underline}
 .officialCover>.officialVisual{min-height:0;padding:clamp(14px,6%,24px);gap:10px}.officialCover>.appleOfficial{padding:0}.officialCover .officialVisual>b{font-size:clamp(20px,8.5cqw,36px)}
+/* icon families: look bar, looks, per-icon project picks (2026-11) */
+#icons .intro a{text-decoration:underline;text-underline-offset:4px}
+.iconLookBar{display:flex;flex-wrap:wrap;gap:12px 28px;align-items:center;margin:18px 0 6px;padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.iconLookGroup{display:flex;align-items:center;gap:6px}
+.iconLookGroup>span{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-right:6px}
+.iconLookGroup button{min-height:36px;min-width:36px;padding:0 12px;border:1px solid var(--line);background:#fff;color:var(--ink);font:inherit;font-size:12px;cursor:pointer}
+.iconLookGroup button[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.iconSwatch{position:relative;display:inline-grid;place-items:center;width:36px;height:36px;padding:0!important;margin:0;border:1px solid var(--line);background:#fff;cursor:pointer}
+.iconSwatch i{display:block;width:18px;height:18px;border-radius:50%}
+.iconSwatch[aria-pressed=true],.iconSwatchCustom[data-on=true]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.iconLookGroup .iconSwatch[aria-pressed=true]{background:#fff;color:var(--ink)}
+.iconSwatchCustom input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.iconSwatchCustom i{background-image:conic-gradient(#f06,#fc0,#0c6,#06f,#f06)}
+.iconSwatchCustom[data-on=true] i{background-image:none}
+.visuallyHidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.iconGlyph{display:inline-grid;place-items:center;width:var(--icon-size,32px);height:var(--icon-size,32px);flex-shrink:0}
+.iconGlyph svg{width:100%;height:100%;display:block}
+.iconChoiceart .iconGlyph,.iconChoiceart .libraryIcon{width:var(--icon-size,52px);height:var(--icon-size,52px)}
+.iconChoiceart[data-iconlook=fluent-3d] .iconGlyph,.iconChoiceart[data-iconlook=fluent-3d] .libraryIcon{width:calc(var(--icon-size,52px) * 1.25);height:calc(var(--icon-size,52px) * 1.25)}
+.iconChoiceart[data-iconlook=broken],.iconChoiceart[data-iconlook=animated]{background:#e8ecf0}.iconChoiceart[data-iconlook=bold-duotone]{background:#e3e6f2}.iconChoiceart[data-iconlook=rounded]{background:#e6ece6}.iconChoiceart[data-iconlook=pencil]{background:#f3ead9}.iconChoiceart[data-iconlook=flat-color]{background:#eef0f3}.iconChoiceart[data-iconlook=two-tone]{background:#e9eef7}.iconChoiceart[data-iconlook=game]{background:#ebe6df}.iconChoiceart[data-iconlook=brand]{background:#f0f0f0}
+.iconFamilyCards[data-tile=plain] .iconChoiceart{background:#fff;border:1px solid var(--line)}
+.iconFamilyCards[data-tile=round] .iconChoiceart{border-radius:18px}
+.iconFamilyCards[data-tile=circle] .iconChoiceart{background:#fff;border:1px solid var(--line);gap:16px}
+.iconFamilyCards[data-tile=circle] .iconChoiceart>*{box-sizing:border-box;width:calc(var(--icon-size,52px) + 28px);height:calc(var(--icon-size,52px) + 28px);padding:14px;border-radius:50%;background:#eef0f3}
+.iconChoice h2{font-size:26px}
+.iconChoiceMeta{font-size:12px!important;color:var(--muted);margin:0 0 6px}
+.iconVariants{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px}
+.iconVariants button{min-height:30px;padding:0 10px;border:1px solid var(--line);background:#fff;color:var(--ink);font:inherit;font-size:11px;cursor:pointer}
+.iconVariants button[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.iconDot{margin:0 8px;opacity:.5}
+.iconSpecimen{position:relative;display:inline-grid;place-items:center}
+.iconPick{position:absolute;top:-10px;right:-14px;width:26px;height:26px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--ink);font:inherit;font-size:15px;line-height:1;cursor:pointer;opacity:0;transition:opacity .15s}
+.iconSpecimens>span:hover .iconPick,.iconSpecimens>span:focus-within .iconPick{opacity:1}
+@media(hover:none){.iconPick{opacity:1}}
+.iconPick:hover,.iconPick:focus-visible{background:var(--ink);color:#fff;border-color:var(--ink)}
+.projectPicksHead{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;margin-bottom:16px}
+.projectPicksHead p{font-size:14px;color:var(--muted);margin:0;max-width:60ch}
+.projectPicks{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;margin-bottom:20px}
+.projectPick{display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 10px 12px;border:1px solid var(--line);background:#fff;text-align:center}
+.projectPickArt{--icon-size:44px;width:44px;height:44px}
+.projectPick b{font-size:13px;font-weight:600}
+.projectPick small{font-size:11px;color:var(--muted)}
+.projectPickColour{display:flex;flex-direction:row;align-items:center;gap:8px;margin:6px 0 0;font-size:11px;color:var(--muted)}
+.projectPickColour input{width:32px;height:32px;padding:0;border:1px solid var(--line);background:#fff;cursor:pointer}
+.projectPick .quiet{padding:4px 0}
+#iconPicker{width:min(920px,calc(100vw - 32px));max-height:min(86vh,900px);padding:28px;border:0;background:#fff;box-shadow:0 20px 50px #0002}
+#iconPicker .filters{margin:14px 0 10px}
+#iconPicker .filters label:last-child{flex:0 0 auto;min-width:0}
+#iconPicker input[type=color]{width:42px;height:42px;padding:0;border:1px solid var(--line);background:#fff;cursor:pointer}
+.iconPickerGrid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;max-height:52vh;overflow:auto;--icon-size:32px}
+.iconPickerGrid button{width:100%;min-height:92px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:10px 6px;border:1px solid var(--line);background:#fff;color:inherit;font:inherit;cursor:pointer}
+.iconPickerGrid button small{font-size:10px;color:var(--muted);line-height:1.2;overflow-wrap:anywhere}
+.iconPickerGrid button:hover,.iconPickerGrid button:focus-visible{border-color:var(--ink)}
+.iconPickerGrid button.picked{background:#eef0f3;border-color:var(--ink)}
+.iconPickerMore{grid-column:1/-1}
+#iconPickerStatus{font-size:12px;color:var(--muted);margin:10px 0 0}
+@media(max-width:760px){.iconChoiceart .iconGlyph,.iconChoiceart .libraryIcon{width:min(var(--icon-size,52px),40px);height:min(var(--icon-size,52px),40px)}.iconChoiceart[data-iconlook=fluent-3d] .iconGlyph,.iconChoiceart[data-iconlook=fluent-3d] .libraryIcon{width:min(calc(var(--icon-size,52px) * 1.25),50px);height:min(calc(var(--icon-size,52px) * 1.25),50px)}.iconFamilyCards[data-tile=circle] .iconChoiceart>*{width:min(calc(var(--icon-size,52px) + 28px),60px);height:min(calc(var(--icon-size,52px) + 28px),60px);padding:10px}.iconLookBar{gap:10px 18px}.iconLookGroup>span{display:none}.projectPicks{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}#iconPicker{padding:18px}.iconPickerGrid{grid-template-columns:repeat(auto-fill,minmax(80px,1fr))}}
+@media(prefers-reduced-motion:reduce){.iconChoice[data-family=animated] svg *,.iconFamily[data-family=animated] svg *{animation:none!important}}

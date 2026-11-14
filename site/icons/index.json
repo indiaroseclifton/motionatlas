@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-19",
+ "generated": "2026-11-13",
  "tool": "tools/icons.py",
  "families": [
   {
@@ -18,7 +18,8 @@
    "packBytes": 127727,
    "specimens": "icons/thin/",
    "specimenPack": "icons/packs/thin-specimens.zip",
-   "monochrome": true
+   "monochrome": true,
+   "card": "icons/thin/house.svg"
   },
   {
    "id": "light",
@@ -36,7 +37,8 @@
    "packBytes": 128960,
    "specimens": "icons/light/",
    "specimenPack": "icons/packs/light-specimens.zip",
-   "monochrome": true
+   "monochrome": true,
+   "card": "icons/light/house.svg"
   },
   {
    "id": "regular",
@@ -54,7 +56,8 @@
    "packBytes": 126910,
    "specimens": "icons/regular/",
    "specimenPack": "icons/packs/regular-specimens.zip",
-   "monochrome": true
+   "monochrome": true,
+   "card": "icons/regular/house.svg"
   },
   {
    "id": "bold",
@@ -72,7 +75,8 @@
    "packBytes": 124367,
    "specimens": "icons/bold/",
    "specimenPack": "icons/packs/bold-specimens.zip",
-   "monochrome": true
+   "monochrome": true,
+   "card": "icons/bold/house.svg"
   },
   {
    "id": "fill",
@@ -90,7 +94,8 @@
    "packBytes": 117073,
    "specimens": "icons/fill/",
    "specimenPack": "icons/packs/fill-specimens.zip",
-   "monochrome": true
+   "monochrome": true,
+   "card": "icons/fill/house.svg"
   },
   {
    "id": "duotone",
@@ -108,7 +113,8 @@
    "packBytes": 141735,
    "specimens": "icons/duotone/",
    "specimenPack": "icons/packs/duotone-specimens.zip",
-   "monochrome": true
+   "monochrome": true,
+   "card": "icons/duotone/house.svg"
   },
   {
    "id": "hero-outline",
@@ -126,7 +132,8 @@
    "packBytes": 133608,
    "specimens": "icons/hero-outline/",
    "specimenPack": "icons/packs/hero-outline-specimens.zip",
-   "monochrome": true
+   "monochrome": true,
+   "card": "icons/hero-outline/house.svg"
   },
   {
    "id": "hero-solid",
@@ -144,7 +151,8 @@
    "packBytes": 143911,
    "specimens": "icons/hero-solid/",
    "specimenPack": "icons/packs/hero-solid-specimens.zip",
-   "monochrome": true
+   "monochrome": true,
+   "card": "icons/hero-solid/house.svg"
   },
   {
    "id": "lucide",
@@ -162,7 +170,8 @@
    "packBytes": 106400,
    "specimens": "icons/lucide/",
    "specimenPack": "icons/packs/lucide-specimens.zip",
-   "monochrome": true
+   "monochrome": true,
+   "card": "icons/lucide/house.svg"
   },
   {
    "id": "tabler",
@@ -180,7 +189,8 @@
    "packBytes": 105698,
    "specimens": "icons/tabler/",
    "specimenPack": "icons/packs/tabler-specimens.zip",
-   "monochrome": true
+   "monochrome": true,
+   "card": "icons/tabler/house.svg"
   },
   {
    "id": "pixel",
@@ -198,7 +208,8 @@
    "packBytes": 91671,
    "specimens": "icons/pixel/",
    "specimenPack": "icons/packs/pixel-specimens.zip",
-   "monochrome": true
+   "monochrome": true,
+   "card": "icons/pixel/house.svg"
   },
   {
    "id": "openmoji",
@@ -216,7 +227,8 @@
    "packBytes": 282269,
    "specimens": "icons/openmoji/",
    "specimenPack": "icons/packs/openmoji-specimens.zip",
-   "monochrome": false
+   "monochrome": false,
+   "card": "icons/openmoji/house.svg"
   },
   {
    "id": "fluent-3d",
@@ -234,7 +246,179 @@
    "packBytes": 2655933,
    "specimens": "icons/fluent-3d/",
    "specimenPack": "icons/packs/fluent-3d-specimens.zip",
-   "monochrome": false
+   "monochrome": false,
+   "card": "icons/fluent-3d/house.png"
+  },
+  {
+   "id": "broken",
+   "title": "Solar / Broken line",
+   "description": "Outlines drawn with deliberate gaps, for a lighter, sketched feel.",
+   "format": "svg",
+   "count": 300,
+   "licence": "CC BY 4.0",
+   "source": "@iconify-json/solar@1.2.15",
+   "version": "1.2.15",
+   "package": "https://www.npmjs.com/package/@iconify-json/solar/v/1.2.15",
+   "home": "https://www.figma.com/community/file/1166831539721848736",
+   "manifest": "icons/sets/broken.json",
+   "pack": "icons/packs/broken.zip",
+   "packBytes": 168988,
+   "specimens": "icons/broken/",
+   "specimenPack": "icons/packs/broken-specimens.zip",
+   "monochrome": true,
+   "card": "icons/broken/house.svg"
+  },
+  {
+   "id": "bold-duotone",
+   "title": "Solar / Bold duotone",
+   "description": "Heavy forms with a translucent second tone for depth.",
+   "format": "svg",
+   "count": 300,
+   "licence": "CC BY 4.0",
+   "source": "@iconify-json/solar@1.2.15",
+   "version": "1.2.15",
+   "package": "https://www.npmjs.com/package/@iconify-json/solar/v/1.2.15",
+   "home": "https://www.figma.com/community/file/1166831539721848736",
+   "manifest": "icons/sets/bold-duotone.json",
+   "pack": "icons/packs/bold-duotone.zip",
+   "packBytes": 237873,
+   "specimens": "icons/bold-duotone/",
+   "specimenPack": "icons/packs/bold-duotone-specimens.zip",
+   "monochrome": true,
+   "card": "icons/bold-duotone/house.svg"
+  },
+  {
+   "id": "rounded",
+   "title": "Material Symbols / Rounded",
+   "description": "Chunky filled shapes with soft corners, the Google look.",
+   "format": "svg",
+   "count": 300,
+   "licence": "Apache 2.0",
+   "source": "@iconify-json/material-symbols@1.2.99",
+   "version": "1.2.99",
+   "package": "https://www.npmjs.com/package/@iconify-json/material-symbols/v/1.2.99",
+   "home": "https://fonts.google.com/icons",
+   "manifest": "icons/sets/rounded.json",
+   "pack": "icons/packs/rounded.zip",
+   "packBytes": 134034,
+   "specimens": "icons/rounded/",
+   "specimenPack": "icons/packs/rounded-specimens.zip",
+   "monochrome": true,
+   "card": "icons/rounded/house.svg"
+  },
+  {
+   "id": "pencil",
+   "title": "Pepicons / Pencil",
+   "description": "Hand-drawn pencil strokes with a wobble.",
+   "format": "svg",
+   "count": 300,
+   "licence": "CC BY 4.0",
+   "source": "@iconify-json/pepicons-pencil@1.2.4",
+   "version": "1.2.4",
+   "package": "https://www.npmjs.com/package/@iconify-json/pepicons-pencil/v/1.2.4",
+   "home": "https://pepicons.com",
+   "manifest": "icons/sets/pencil.json",
+   "pack": "icons/packs/pencil.zip",
+   "packBytes": 156017,
+   "specimens": "icons/pencil/",
+   "specimenPack": "icons/packs/pencil-specimens.zip",
+   "monochrome": true,
+   "card": "icons/pencil/house.svg"
+  },
+  {
+   "id": "flat-color",
+   "title": "Flat Color Icons / Flat colour",
+   "description": "Flat multicolour pictograms for dashboards and onboarding.",
+   "format": "svg",
+   "count": 300,
+   "licence": "MIT",
+   "source": "@iconify-json/flat-color-icons@1.2.3",
+   "version": "1.2.3",
+   "package": "https://www.npmjs.com/package/@iconify-json/flat-color-icons/v/1.2.3",
+   "home": "https://icons8.com/icons/color",
+   "manifest": "icons/sets/flat-color.json",
+   "pack": "icons/packs/flat-color.zip",
+   "packBytes": 128501,
+   "specimens": "icons/flat-color/",
+   "specimenPack": "icons/packs/flat-color-specimens.zip",
+   "monochrome": false,
+   "card": "icons/flat-color/house.svg"
+  },
+  {
+   "id": "two-tone",
+   "title": "Icon Park / Two-tone colour",
+   "description": "Outlines with a blue second colour, for lively product UI.",
+   "format": "svg",
+   "count": 300,
+   "licence": "Apache 2.0",
+   "source": "@iconify-json/icon-park@1.2.4",
+   "version": "1.2.4",
+   "package": "https://www.npmjs.com/package/@iconify-json/icon-park/v/1.2.4",
+   "home": "https://iconpark.oceanengine.com",
+   "manifest": "icons/sets/two-tone.json",
+   "pack": "icons/packs/two-tone.zip",
+   "packBytes": 131613,
+   "specimens": "icons/two-tone/",
+   "specimenPack": "icons/packs/two-tone-specimens.zip",
+   "monochrome": false,
+   "card": "icons/two-tone/house.svg"
+  },
+  {
+   "id": "game",
+   "title": "Game Icons / Illustrative",
+   "description": "Silhouette illustrations with real detail, for games and storytelling.",
+   "format": "svg",
+   "count": 300,
+   "licence": "CC BY 3.0",
+   "source": "@iconify-json/game-icons@1.2.4",
+   "version": "1.2.4",
+   "package": "https://www.npmjs.com/package/@iconify-json/game-icons/v/1.2.4",
+   "home": "https://game-icons.net",
+   "manifest": "icons/sets/game.json",
+   "pack": "icons/packs/game.zip",
+   "packBytes": 259471,
+   "specimens": "icons/game/",
+   "specimenPack": "icons/packs/game-specimens.zip",
+   "monochrome": true,
+   "card": "icons/game/house.svg"
+  },
+  {
+   "id": "brand",
+   "title": "Simple Icons / Brand logos",
+   "description": "Monochrome marks of popular products and services.",
+   "format": "svg",
+   "count": 300,
+   "licence": "CC0 1.0",
+   "source": "@iconify-json/simple-icons@1.2.102",
+   "version": "1.2.102",
+   "package": "https://www.npmjs.com/package/@iconify-json/simple-icons/v/1.2.102",
+   "home": "https://simpleicons.org",
+   "manifest": "icons/sets/brand.json",
+   "pack": "icons/packs/brand.zip",
+   "packBytes": 214552,
+   "specimens": "icons/brand/",
+   "specimenPack": "icons/packs/brand-specimens.zip",
+   "monochrome": true,
+   "card": "icons/brand/apple.svg"
+  },
+  {
+   "id": "animated",
+   "title": "Line MD / Animated line",
+   "description": "Line icons that draw themselves in when they appear.",
+   "format": "svg",
+   "count": 300,
+   "licence": "MIT",
+   "source": "@iconify-json/line-md@1.2.16",
+   "version": "1.2.16",
+   "package": "https://www.npmjs.com/package/@iconify-json/line-md/v/1.2.16",
+   "home": "https://github.com/cyberalien/line-md",
+   "manifest": "icons/sets/animated.json",
+   "pack": "icons/packs/animated.zip",
+   "packBytes": 155632,
+   "specimens": "icons/animated/",
+   "specimenPack": "icons/packs/animated-specimens.zip",
+   "monochrome": true,
+   "card": "icons/animated/house.svg"
   }
  ]
 }
