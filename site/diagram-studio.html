@@ -4,7 +4,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap">
 <style>
-:root{--bg:#F4F5F8;--panel:#FFFFFF;--ink:#1C1F2A;--mute:#5F6577;--hair:#E4E7EE;--soft:#F7F8FB;--accent:#5B2DFF;--accent-ink:#FFFFFF;--ok:#1E9E6A;--warn:#C9771C;--shadow:0 1px 2px rgba(20,24,40,.04),0 8px 24px -12px rgba(20,24,40,.12);color-scheme:light}
+:root{--bg:#F4F5F8;--panel:#FFFFFF;--ink:#1C1F2A;--mute:#5F6577;--hair:#E4E7EE;--soft:#F7F8FB;--accent:#111113;--accent-ink:#FFFFFF;--ok:#1E9E6A;--warn:#C9771C;--shadow:0 1px 2px rgba(20,24,40,.04),0 8px 24px -12px rgba(20,24,40,.12);color-scheme:light}
 *{box-sizing:border-box}html,body{margin:0;height:100%}
 body{background:var(--bg);color:var(--ink);font:14px/1.5 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 a{color:inherit}button,select,input,textarea{font:inherit;color:inherit}
@@ -12,7 +12,7 @@ button{cursor:pointer}
 .app{display:grid;grid-template-columns:minmax(320px,380px) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);height:100vh;height:100dvh}
 header{grid-column:1/-1;position:relative;z-index:20;display:flex;align-items:center;gap:16px;padding:12px max(18px,env(safe-area-inset-right)) 12px max(18px,env(safe-area-inset-left));background:var(--panel);border-bottom:1px solid var(--hair)}
 .brand{display:flex;align-items:baseline;gap:12px;min-width:0}
-.brand a{font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);text-decoration:none;white-space:nowrap}
+.brand a{font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);text-decoration:none;white-space:nowrap;padding-block:7px}
 .brand a:hover{color:var(--ink)}
 .brand h1{margin:0;font:500 26px/1 'Cormorant Garamond',Georgia,serif;font-style:italic;letter-spacing:-.01em;white-space:nowrap}
 .exports{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
@@ -38,7 +38,7 @@ textarea{font-variant-ligatures:none;font-feature-settings:"calt" 0,"liga" 0;wid
 .notes li::before{content:'';width:14px;height:14px;margin-top:2px;border-radius:50%;background:var(--ok) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M4 7.2l2 2L10.2 5' fill='none' stroke='white' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E")}
 .notes li.warn::before{background:var(--warn) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M7 3.6v4M7 10v.2' fill='none' stroke='white' stroke-width='1.7' stroke-linecap='round'/%3E%3C/svg%3E")}
 .cheat{margin:0;display:grid;grid-template-columns:auto 1fr;gap:5px 12px;font-size:12px}
-.cheat code{font:12px 'JetBrains Mono',monospace;color:#3B2A9A;background:#F3F0FF;border-radius:5px;padding:1px 6px;white-space:nowrap}
+.cheat code{font:12px 'JetBrains Mono',monospace;color:#111113;background:#F1F1F3;border-radius:5px;padding:1px 6px;white-space:nowrap}
 .cheat dd{margin:0;color:var(--mute)}
 details.help summary{cursor:pointer;font-size:12.5px;color:var(--mute);list-style:none}
 details.help summary::before{content:'+ ';}details.help[open] summary::before{content:'– '}
@@ -74,7 +74,7 @@ details.help summary::before{content:'+ ';}details.help[open] summary::before{co
 .fe-num{font:700 10.5px/1 'JetBrains Mono',ui-monospace,monospace;color:var(--mute);letter-spacing:.06em;padding:0 4px}
 .fe-title{flex:1;min-width:0;border:1px solid transparent;background:none;border-radius:8px;padding:6px 8px;font-weight:650;font-size:13px}
 .fe-title:hover,.fe-label:hover{border-color:var(--hair)}
-.fe-title:focus,.fe-label:focus{border-color:var(--accent);background:var(--panel);outline:none;box-shadow:0 0 0 3px rgba(91,45,255,.12)}
+.fe-title:focus,.fe-label:focus{border-color:var(--accent);background:var(--panel);outline:none;box-shadow:0 0 0 3px rgba(17,17,19,.12)}
 .fe-steps{list-style:none;margin:0;padding:0;display:grid;gap:5px}
 .fe-step{background:var(--panel);border:1px solid var(--hair);border-radius:10px;padding:4px 4px 6px;transition:box-shadow .3s}
 .fe-step.dec{border-style:dashed}

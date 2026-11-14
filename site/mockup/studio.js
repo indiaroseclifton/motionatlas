@@ -24,7 +24,7 @@ const DEF={preset:'og',custom:[1500,1000],frame:'browser',color:'black',chrome:'
  bg:{type:'atlas',atlas:'velvet-0',solid:'#EEF0F6',g:['#5B2DFF','#FF7AC6','#FFD27A'],gType:'linear',angle:135,kit:'',kitStyle:'glow',dim:.25,blur:0,grain:.03},
  lay:{scale:1,rotate:0,tiltX:0,tiltY:0,pad:.08,shadow:.55,offX:0,offY:0},
  text:{head:'Your product, framed',cap:'Made with the Visual & Motion Atlas',font:'Inter',capFont:'Inter',size:1,color:'auto',pos:'auto',align:'auto'},
- badge:{text:'',pos:'above',color:'#5B2DFF'},logo:{pos:'br',size:.1},
+ badge:{text:'',pos:'above',color:'#111113'},logo:{pos:'br',size:.1},
  out:{fmt:'png',q:.92,pick:PRESETS.map(p=>p[0])}};
 const clone=o=>JSON.parse(JSON.stringify(o));
 let S=clone(DEF);
@@ -52,7 +52,7 @@ const presetName=id=>id==='custom'?'Custom':(PRESETS.find(p=>p[0]===id)||PRESETS
 
 /* ---------- sample screenshots (so the studio is never empty) ---------- */
 function sample(mobile){const W=mobile?390:1440,H=mobile?844:900,c=canvas(W*2,H*2),x=c.getContext('2d');x.scale(2,2);
- x.fillStyle='#F6F7FB';x.fillRect(0,0,W,H);const acc='#5B2DFF';x.font='600 15px Inter, system-ui, sans-serif';
+ x.fillStyle='#F6F7FB';x.fillRect(0,0,W,H);const acc='#111318';x.font='600 15px Inter, system-ui, sans-serif';
  const card=(X,Y,w,h)=>{rr(x,X,Y,w,h,14);x.fillStyle='#fff';x.fill();x.strokeStyle='#E4E7EE';x.lineWidth=1;x.stroke()};
  const line=(X,Y,w,col,h=10)=>{rr(x,X,Y,w,h,h/2);x.fillStyle=col||'#E4E7EE';x.fill()};
  const chart=(X,Y,w,h)=>{x.beginPath();for(let i=0;i<=24;i++){const px=X+i*w/24,py=Y+h*(.75-.45*Math.sin(i/3.2)*.6-.25*i/24-.05*Math.cos(i*1.7));i?x.lineTo(px,py):x.moveTo(px,py)}x.strokeStyle=acc;x.lineWidth=3;x.stroke();x.lineTo(X+w,Y+h);x.lineTo(X,Y+h);x.closePath();const g=x.createLinearGradient(0,Y,0,Y+h);g.addColorStop(0,'rgba(91,45,255,.22)');g.addColorStop(1,'rgba(91,45,255,0)');x.fillStyle=g;x.fill()};

@@ -41,3 +41,6 @@ body.cinemaMode>header nav[aria-label=Main] a[href="#browse"]:hover{color:var(--
  header .aeSearchBtn{padding:8px 10px}
 }
 .vmaFoot{grid-template-columns:minmax(0,1fr)}
+
+/* tap targets: 24px minimum (WCAG 2.5.8) on the small text links */
+#routeTrail a,#routeTrail .anTrailGroup,body.anNav>footer a,.vmaLinks a,#exploreBar .exTours,#references td a,#references a[target=_blank],#art a[target=_blank],#cinema a[target=_blank],#typography a[target=_blank],#inspiration a[target=_blank],.componentThemeTools a,.vmaHome footer a,#vmaBackToFilm{padding-block:5px}

@@ -4,7 +4,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@500;800&family=Space+Grotesk:wght@700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Fraunces:opsz,wght@9..144,700&family=DM+Serif+Display&family=Playfair+Display:wght@700&family=Archivo+Black&display=swap">
 <style>
-:root{--bg:#F4F5F8;--panel:#FFFFFF;--ink:#1C1F2A;--mute:#5F6577;--hair:#E4E7EE;--soft:#F7F8FB;--accent:#5B2DFF;--shadow:0 1px 2px rgba(20,24,40,.06),0 8px 24px -12px rgba(20,24,40,.18)}
+:root{--bg:#F4F5F8;--panel:#FFFFFF;--ink:#1C1F2A;--mute:#5F6577;--hair:#E4E7EE;--soft:#F7F8FB;--accent:#111113;--shadow:0 1px 2px rgba(20,24,40,.06),0 8px 24px -12px rgba(20,24,40,.18)}
 *{box-sizing:border-box}html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font:14px/1.5 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 a{color:inherit}button,select,input,textarea{font:inherit;color:inherit}button{cursor:pointer}
@@ -13,7 +13,7 @@ a{color:inherit}button,select,input,textarea{font:inherit;color:inherit}button{c
 .skip{position:absolute;left:12px;top:-60px;z-index:50;background:var(--ink);color:#fff;padding:8px 12px;border-radius:8px}.skip:focus{top:10px}
 header.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px max(16px,env(safe-area-inset-right)) 10px max(16px,env(safe-area-inset-left));background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--hair)}
 .brand{display:flex;align-items:baseline;gap:12px;min-width:0;flex-wrap:wrap}
-.brand a{font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);text-decoration:none;white-space:nowrap}
+.brand a{font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);text-decoration:none;white-space:nowrap;padding-block:7px}
 .brand h1{margin:0;font:500 26px/1.05 'Cormorant Garamond',Georgia,serif;font-style:italic}
 .links{display:flex;gap:4px;flex-wrap:wrap}.links a{font-size:12.5px;color:var(--mute);text-decoration:none;padding:6px 8px;border-radius:8px}.links a:hover{background:var(--soft);color:var(--ink)}
 .acts{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;align-items:center}

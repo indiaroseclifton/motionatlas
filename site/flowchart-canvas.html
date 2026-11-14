@@ -4,7 +4,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap">
 <style>
-:root{--bg:#F4F5F8;--panel:#FFFFFF;--ink:#1C1F2A;--mute:#6B7183;--hair:#E4E7EE;--soft:#F7F8FB;--accent:#5B2DFF;--accent-ink:#FFFFFF;--ok:#1E9E6A;--warn:#C9771C;--shadow:0 1px 2px rgba(20,24,40,.04),0 8px 24px -12px rgba(20,24,40,.12);color-scheme:light}
+:root{--bg:#F4F5F8;--panel:#FFFFFF;--ink:#1C1F2A;--mute:#6B7183;--hair:#E4E7EE;--soft:#F7F8FB;--accent:#111113;--accent-ink:#FFFFFF;--ok:#1E9E6A;--warn:#C9771C;--shadow:0 1px 2px rgba(20,24,40,.04),0 8px 24px -12px rgba(20,24,40,.12);color-scheme:light}
 *{box-sizing:border-box}html,body{margin:0;height:100%}
 body{background:var(--bg);color:var(--ink);font:14px/1.5 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 a{color:inherit}button,select,input,textarea{font:inherit;color:inherit}
@@ -31,7 +31,7 @@ textarea{font-variant-ligatures:none;font-feature-settings:"calt" 0,"liga" 0;wid
 .notes li::before{content:'';width:14px;height:14px;margin-top:2px;border-radius:50%;background:var(--ok) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M4 7.2l2 2L10.2 5' fill='none' stroke='white' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E")}
 .notes li.warn::before{background:var(--warn) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M7 3.6v4M7 10v.2' fill='none' stroke='white' stroke-width='1.7' stroke-linecap='round'/%3E%3C/svg%3E")}
 .cheat{margin:0;display:grid;grid-template-columns:auto 1fr;gap:5px 12px;font-size:12px}
-.cheat code{font:12px 'JetBrains Mono',monospace;color:#3B2A9A;background:#F3F0FF;border-radius:5px;padding:1px 6px;white-space:nowrap}
+.cheat code{font:12px 'JetBrains Mono',monospace;color:#111113;background:#F1F1F3;border-radius:5px;padding:1px 6px;white-space:nowrap}
 .cheat dd{margin:0;color:var(--mute)}
 details.help summary{cursor:pointer;font-size:12.5px;color:var(--mute);list-style:none}
 details.help summary::before{content:'+ ';}details.help[open] summary::before{content:'– '}
@@ -62,7 +62,7 @@ details.help summary::before{content:'+ ';}details.help[open] summary::before{co
 .fe-num{font:700 10.5px/1 'JetBrains Mono',ui-monospace,monospace;color:var(--mute);letter-spacing:.06em;padding:0 4px}
 .fe-title{flex:1;min-width:0;border:1px solid transparent;background:none;border-radius:8px;padding:6px 8px;font-weight:650;font-size:13px}
 .fe-title:hover,.fe-label:hover{border-color:var(--hair)}
-.fe-title:focus,.fe-label:focus{border-color:var(--accent);background:var(--panel);outline:none;box-shadow:0 0 0 3px rgba(91,45,255,.12)}
+.fe-title:focus,.fe-label:focus{border-color:var(--accent);background:var(--panel);outline:none;box-shadow:0 0 0 3px rgba(17,17,19,.12)}
 .fe-steps{list-style:none;margin:0;padding:0;display:grid;gap:5px}
 .fe-step{background:var(--panel);border:1px solid var(--hair);border-radius:10px;padding:4px 4px 6px;transition:box-shadow .3s}
 .fe-step.dec{border-style:dashed}
@@ -187,7 +187,7 @@ body{overflow:hidden}
 .back:hover{color:var(--ink)}
 .wm{margin:0;font:500 26px/1 'Cormorant Garamond',Georgia,serif;font-style:italic;letter-spacing:-.01em;white-space:nowrap}
 .doc-title{flex:1 1 180px;max-width:360px;min-width:0;min-height:44px;border:1px solid transparent;border-radius:10px;padding:0 12px;background:none;font:600 15px Inter,sans-serif;color:var(--ink)}
-.doc-title:hover{border-color:var(--hair)}.doc-title:focus{border-color:var(--accent);background:#fff;outline:none;box-shadow:0 0 0 3px rgba(91,45,255,.12)}
+.doc-title:hover{border-color:var(--hair)}.doc-title:focus{border-color:var(--accent);background:#fff;outline:none;box-shadow:0 0 0 3px rgba(17,17,19,.12)}
 .top-r{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .btn{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 16px;border-radius:11px;border:1px solid var(--hair);background:var(--panel);font-weight:600;font-size:13px;transition:border-color .15s,background .15s}
 .btn:hover{border-color:#CBD0DB;background:var(--soft)}
@@ -204,7 +204,7 @@ body{overflow:hidden}
 .stage:focus{outline:none}.stage:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}.stage.drag{cursor:grabbing}
 .paper{position:absolute;left:0;top:0;transform-origin:0 0;box-shadow:0 30px 60px -30px rgba(20,24,40,.35),0 0 0 1px rgba(20,24,40,.06);border-radius:10px;overflow:hidden;line-height:0}
 .paper svg{display:block}
-.mq{position:absolute;z-index:4;border:1.5px solid var(--accent);background:rgba(91,45,255,.08);border-radius:4px;pointer-events:none}
+.mq{position:absolute;z-index:4;border:1.5px solid var(--accent);background:rgba(17,17,19,.08);border-radius:4px;pointer-events:none}
 /* tool rail */
 .rail{position:absolute;left:12px;top:12px;z-index:7;display:flex;flex-direction:column;gap:2px;padding:6px;background:var(--panel);border:1px solid var(--hair);border-radius:16px;box-shadow:var(--shadow)}
 .rail button{position:relative;width:44px;height:44px;border:0;background:none;border-radius:11px;display:grid;place-items:center;color:#4A5063}
@@ -779,8 +779,8 @@ function drawMap(){const mm=$('minimap');if(mm.hidden||S.view!=='canvas'||!S.las
  const st=DVStyle(S.style),ink=st.t.dark?'#9AA3B8':'#8A90A2';let o='';
  for(const grp of r.g.groups)if(!grp.empty&&grp.w!=null)o+=`<rect x="${grp.x}" y="${grp.y}" width="${grp.w}" height="${grp.h}" rx="12" fill="none" stroke="${ink}" stroke-opacity=".5" stroke-dasharray="8 6" stroke-width="${(X1-X0)/200}"/>`;
  for(const e of r.g.edges)if(e.xy)o+=`<path d="M${e.xy.map(p=>p[0].toFixed(0)+' '+p[1].toFixed(0)).join('L')}" fill="none" stroke="${ink}" stroke-opacity=".55" stroke-width="${(X1-X0)/260}"/>`;
- const sel=new Set(cv.selection);for(const n of r.g.nodes.values())o+=`<rect x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" rx="8" fill="${sel.has(n.id)?'#5B2DFF':ink}" fill-opacity="${sel.has(n.id)?.9:.55}"/>`;
- o+=`<rect x="${vx}" y="${vy}" width="${vw}" height="${vh}" fill="rgba(91,45,255,.08)" stroke="#5B2DFF" stroke-width="${(X1-X0)/110}" rx="${(X1-X0)/60}"/>`;
+ const sel=new Set(cv.selection);for(const n of r.g.nodes.values())o+=`<rect x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" rx="8" fill="${sel.has(n.id)?'#111113':ink}" fill-opacity="${sel.has(n.id)?.9:.55}"/>`;
+ o+=`<rect x="${vx}" y="${vy}" width="${vw}" height="${vh}" fill="rgba(17,17,19,.08)" stroke="#111113" stroke-width="${(X1-X0)/110}" rx="${(X1-X0)/60}"/>`;
  const svg=$('mmSvg');svg.setAttribute('viewBox',`${X0} ${Y0} ${X1-X0} ${Y1-Y0}`);svg.setAttribute('preserveAspectRatio','xMidYMid meet');svg.innerHTML=`<rect x="${X0}" y="${Y0}" width="${X1-X0}" height="${Y1-Y0}" fill="${st.t.dark?'#0F1320':'#F7F8FB'}"/>`+o;}
 function syncMap(){$('minimap').hidden=!(S.map&&S.view==='canvas'&&!presenting);$('mapTgl').setAttribute('aria-pressed',String(S.map));drawMap();}
 $('mapTgl').onclick=()=>{S.map=!S.map;store.set('map',S.map?'1':'0');syncMap();};
