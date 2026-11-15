@@ -244,18 +244,28 @@ function outline(){const ol=$('#ol');ol.innerHTML='';
  selPanel();status()}
 /* the Selected item panel: components and interactions get their full settings form pinned at the top of the sidebar */
 let selWas=null;
-function selPanel(){const host=$('#selItem');if(!host)return;const f=open&&findBlk(open),blk=f&&f.blk;
- if(!blk||!(PB.cfg&&PB.cfg.has(blk)&&PB.cfg.schema(blk))){host.hidden=true;host.innerHTML='';selWas=null;return}
- if(host.contains(document.activeElement)&&selWas===blk.uid&&document.activeElement.matches('input,textarea,select'))return;
- host.hidden=false;host.innerHTML='';const top=document.createElement('div');top.className='selhead';top.innerHTML='<h3>Selected item</h3>';const done=document.createElement('button');done.type='button';done.className='btn small';done.textContent='Done';done.title='Close the settings';done.onclick=()=>{open=null;csel=null;outline();hideTb&&hideTb()};top.append(done);host.append(top,PB.cfg.panel(blk));
- if(selWas!==blk.uid){selWas=blk.uid;const sc=host.closest('.scroll');if(sc)sc.scrollTop=0;}}
+function selPanel(){const old=$('#selItem');if(old){old.hidden=true;old.innerHTML=''}
+ const host=$('#insp');if(!host)return;const f=open&&findBlk(open),blk=f&&f.blk;
+ if(!blk){if(!host.hidden||host.innerHTML){host.hidden=true;host.innerHTML=''}selWas=null;delete document.body.dataset.insp;delete document.body.dataset.inspsheet;return}
+ const ae=document.activeElement,inside=host.contains(ae),same=selWas===blk.uid,isCfg=!!(PB.cfg&&PB.cfg.has(blk)&&PB.cfg.schema(blk));
+ /* while someone is typing in the form, leave it alone */
+ if(inside&&same&&ae.matches(isCfg?'input,textarea,select':'input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]),textarea'))return;
+ const FOC='input,select,textarea,button,summary';let idx=-1,st=0,openSet=false;
+ if(same){if(inside)idx=[...host.querySelectorAll(FOC)].indexOf(ae);const sc0=host.querySelector('.scroll');if(sc0)st=sc0.scrollTop;const d0=host.querySelector('details.setd');openSet=!!(d0&&d0.open)}
+ const d=def(blk.id);host.hidden=false;host.innerHTML='';
+ const head=document.createElement('div');head.className='phead ihead';head.innerHTML=`<div class="ptitle"><div class="iname"><h2>${esc(d.name)}</h2><small>${esc(f.kind==='page'?(isX(blk.id)?xLabel(blk):d.group):'Shown on every page')}</small></div><button class="btn small" type="button" id="inspDone">Done</button></div>`;
+ head.querySelector('#inspDone').onclick=()=>{open=null;csel=null;outline();hideTb&&hideTb();toAgent({pb:'clear'})};
+ const sc=document.createElement('div');sc.className='scroll';sc.append(editor(blk));host.append(head,sc);document.body.dataset.insp='1';
+ if(same){sc.scrollTop=st;const d1=host.querySelector('details.setd');if(d1&&openSet)d1.open=true;if(idx>=0){const el=host.querySelectorAll(FOC)[idx];el&&el.focus({preventScroll:true})}}
+ selWas=blk.uid}
+/* open the edit panel for a section (the gear on the page, the section menu) */
+function editSel(uid){if(!findBlk(uid))return;open=uid;document.body.dataset.inspsheet='1';outline();const el=$(`#ol [data-uid="${uid}"]`);el&&el.scrollIntoView({block:'nearest'})}
 function outRow(blk,list,i){const d=def(blk.id);const li=document.createElement('li');li.className='blk'+(open===blk.uid?' open':'');li.dataset.uid=blk.uid;li.draggable=true;
   const sub=isX(blk.id)?xLabel(blk):d.group;
   li.innerHTML=`<div class="bh"><span class="grip" aria-hidden="true">⋮⋮</span><button class="bname" aria-expanded="${open===blk.uid}" aria-keyshortcuts="Alt+ArrowUp Alt+ArrowDown" title="Alt + ↑/↓ moves this section"><b>${esc(d.name)}</b><small>${esc(sub)}</small></button>
    <button class="ib" data-a="up" aria-label="Move ${esc(d.name)} up"${i?'':' disabled'}>↑</button><button class="ib" data-a="down" aria-label="Move ${esc(d.name)} down"${i<list.length-1?'':' disabled'}>↓</button><button class="ib" data-a="dup" aria-label="Duplicate ${esc(d.name)}">⧉</button><button class="ib" data-a="rm" aria-label="Remove ${esc(d.name)}">✕</button></div>`;
-  if(open===blk.uid&&!(PB.cfg&&PB.cfg.has(blk)&&PB.cfg.schema(blk)))li.append(editor(blk));
   const nb=li.querySelector('.bname');
-  nb.onclick=()=>{open=open===blk.uid?null:blk.uid;outline();if(open)scrollPreviewTo(blk.uid);const again=$(`#ol [data-uid="${blk.uid}"] .bname`);again&&again.focus()};
+  nb.onclick=()=>{open=open===blk.uid?null:blk.uid;if(open)document.body.dataset.inspsheet='1';outline();if(open)scrollPreviewTo(blk.uid);const again=$(`#ol [data-uid="${blk.uid}"] .bname`);again&&again.focus()};
   nb.onkeydown=e=>{if(e.altKey&&(e.key==='ArrowUp'||e.key==='ArrowDown')){e.preventDefault();const j=e.key==='ArrowUp'?i-1:i+1;if(j<0||j>=list.length)return;move(list,i,j);say(d.name+' moved to position '+(j+1));const el=$(`#ol [data-uid="${blk.uid}"] .bname`);el&&el.focus()}};
   li.querySelectorAll('.ib').forEach(b=>b.onclick=()=>{const a=b.dataset.a;
    if(a==='rm'){list.splice(i,1);if(open===blk.uid)open=null;commit();outline();render();say('Removed '+d.name+'. Undo brings it back.');const n=$$('#ol .blk')[Math.min(i,$$('#ol .blk').length-1)];(n?n.querySelector('.bname'):$('#libSearch')).focus();return}
@@ -322,7 +332,7 @@ function buildTb(){const f=csel&&findBlk(csel.uid);if(!f||!EDIT){hideTb();return
  const d=def(f.blk.id);tb.innerHTML='';const name=document.createElement('span');name.className='tbn';name.textContent=d.name+(f.kind==='page'?'':' · shared');tb.append(name);
  const L=f.list,i=f.i;
  elGroup(f).forEach(b=>tb.append(b));
- tb.append(tbBtn('↑','Move section up',()=>move(L,i,i-1),i===0),tbBtn('↓','Move section down',()=>move(L,i,i+1),i===L.length-1),tbBtn('⧉','Duplicate section',()=>dupBlk(csel.uid)),tbBtn('✕','Delete section',()=>rmBlk(csel.uid)),tbBtn('⚙','Section settings and words',()=>{open=csel.uid;showPane('page');rtab('page');outline();const el=$(`#ol [data-uid="${csel.uid}"]`);el&&el.scrollIntoView({block:'nearest'})}),tbBtn('＋','Add a section after this one',()=>askAdd(csel.uid,'after')));
+ tb.append(tbBtn('↑','Move section up',()=>move(L,i,i-1),i===0),tbBtn('↓','Move section down',()=>move(L,i,i+1),i===L.length-1),tbBtn('⧉','Duplicate section',()=>dupBlk(csel.uid)),tbBtn('✕','Delete section',()=>rmBlk(csel.uid)),tbBtn('⚙','Section settings and words',()=>editSel(csel.uid)),tbBtn('＋','Add a section after this one',()=>askAdd(csel.uid,'after')));
  return f}
 function placeTb(m){if(!EDIT||!csel||!m){hideTb();return}const f=buildTb();if(!f)return;tb.hidden=false;
  const ir=pv.getBoundingClientRect(),sr=stage.getBoundingClientRect(),r0=m.el||m.sec;if(!r0){hideTb();return}const z=ZOOM,r={left:r0.left*z,top:r0.top*z,width:r0.width*z,height:r0.height*z};if(r.top+r.height<0||r.top>ir.height){hideTb();return}
@@ -647,19 +657,31 @@ function switchTo(id){clearTimeout(typing);commit();site=store.pages[id];store.c
 
 /* ---------- right panel tabs, panes ---------- */
 const RT=[['page','Outline'],['style','Design'],['site','Site'],['ai','AI']];let rtabCur=RT.some(t=>t[0]===ui.rtab)?ui.rtab:'page';
-function rtab(k){if(k==='pages'){k='page';const d=$('#pgSettings');if(d)d.open=true}rtabCur=k;if(k!=='check'){ui.rtab=k;saveUI()}$$('#rtabs [role=tab]').forEach(b=>{const on=b.dataset.t===k;b.setAttribute('aria-selected',on);b.tabIndex=on||(k==='check'&&b.dataset.t==='page')?0:-1});$$('.rpanel').forEach(p=>p.hidden=p.id!=='rp-'+k);if(k==='style')styles();if(k==='page')pagesPanel();if(k==='site')sitePanel();if(k==='check')runCheck();if(k==='ai')aiStatus()}
+function rtab(k){if(k==='pages'){k='page';const d=$('#pgSettings');if(d)d.open=true}rtabCur=k;if(k!=='check'){ui.rtab=k;saveUI()}$$('#rtabs [role=tab]').forEach(b=>{const on=b.dataset.t===k;b.setAttribute('aria-selected',on);b.tabIndex=on||(k==='check'&&b.dataset.t==='page')?0:-1});$$('.rpanel').forEach(p=>p.hidden=p.id!=='rp-'+k);if(k==='style')styles();if(k==='page')pagesPanel();if(k==='site')sitePanel();if(k==='check')runCheck();if(k==='ai')aiStatus();if(document.body.dataset.pane)railSync()}
 $('#rtabs').innerHTML=RT.map(([k,l])=>`<button role="tab" type="button" id="rt-${k}" data-t="${k}" aria-controls="rp-${k}">${l}</button>`).join('');
 $$('#rtabs [role=tab]').forEach((b,i,all)=>{b.onclick=()=>rtab(b.dataset.t);b.onkeydown=e=>{const n=all.length;let j=null;if(e.key==='ArrowRight')j=(i+1)%n;if(e.key==='ArrowLeft')j=(i-1+n)%n;if(j!=null){e.preventDefault();rtab(all[j].dataset.t);all[j].focus()}}});
-function showPane(k){document.body.dataset.pane=k;$$('#panes button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.p===k))}
+function showPane(k){document.body.dataset.pane=k;if(k==='preview')delete document.body.dataset.inspsheet;if(!NARROW.matches){ui.pane=k;saveUI()}$$('#panes button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.p===k));railSync()}
+/* the rail: one panel at a time beside the page; pressing the open one closes it */
+const NARROW=matchMedia('(max-width:980px)'),RAIL={outline:'page',style:'style',site:'site',ai:'ai'},RTITLE={page:'Outline',style:'Design',site:'Site settings',ai:'Write with AI',check:'Checks'};
+function railSync(){const p=document.body.dataset.pane,cur=p==='lib'?'lib':p==='page'?(rtabCur==='page'||rtabCur==='check'?'outline':rtabCur):'';$$('#rail [data-k]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===cur));const t=$('#rTitle');if(t)t.textContent=RTITLE[rtabCur]||'Outline'}
+$$('#rail [data-k]').forEach(b=>b.onclick=()=>{const k=b.dataset.k;if(b.getAttribute('aria-pressed')==='true'){showPane('preview');return}if(k==='lib'){showPane('lib');return}rtab(RAIL[k]);showPane('page')});
+{const ra=$('#railAdd');if(ra)ra.onclick=()=>openPicker(csel&&findBlk(csel.uid)?{uid:csel.uid,where:'after'}:null)}
+['#lClose','#rClose'].forEach(q=>{const b=$(q);if(b)b.onclick=()=>{const k=document.body.dataset.pane==='lib'?'lib':rtabCur==='page'||rtabCur==='check'?'outline':rtabCur;showPane('preview');const r=$(`#rail [data-k="${k}"]`);r&&r.focus()}});
 $$('#panes button').forEach(b=>b.onclick=()=>showPane(b.dataset.p));
 const W=[['desk','Desktop','100%'],['tab','Tablet','820px'],['phone','Phone','390px']];
 $('#widths').innerHTML=W.map(([k,l])=>`<button type="button" data-w="${k}" aria-pressed="${k===(ui.w||'desk')}">${l}</button>`).join('');
 function setW(k){ui.w=k;saveUI();const w=W.find(x=>x[0]===k)||W[0];frameWrap.dataset.w=k;pv.style.width=w[2];applyZoom();$$('#widths button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.w===k))}
-function applyZoom(){const z=ZOOM,w=(W.find(x=>x[0]===(ui.w||'desk'))||W[0])[2];frameWrap.classList.toggle('zoomed',z!==1);
+/* Fit (the default): a desktop page is laid out 1280 wide and scaled down to the space there is, so "Desktop" always shows the
+   desktop layout however many panels are open; tablet and phone shrink only when they do not fit. − and + set a fixed zoom. */
+const FITW={desk:1280,tab:820,phone:390};
+function fitZ(){const cs=getComputedStyle(frameWrap),av=frameWrap.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);const need=FITW[ui.w||'desk']||1280;if(!(av>0)||av>=need||NARROW.matches)return 1;return Math.max(.3,Math.floor(av/need*1000)/1000)}
+function applyZoom(){if(ui.fit!==false)ZOOM=fitZ();const z=ZOOM,w=(W.find(x=>x[0]===(ui.w||'desk'))||W[0])[2];frameWrap.classList.toggle('zoomed',z!==1);
  pv.style.maxWidth=z===1?'':'none';pv.style.flex=z===1?'':'none';if(z===1){pv.style.transform='';pv.style.width=w;pv.style.height='';pv.style.transformOrigin='';frameWrap.style.removeProperty('--zh')}
  else{const px=/px$/.test(w)?parseFloat(w):null;pv.style.width=px?px+'px':(100/z)+'%';pv.style.height=(100/z)+'%';pv.style.transformOrigin='top '+(px?'center':'left');pv.style.transform='scale('+z+')'}
- const o=$('#zoomVal');if(o)o.textContent=Math.round(z*100)+'%';placeTb(lastRects)}
-function setZoom(z){ZOOM=Math.max(.4,Math.min(1.5,Math.round(z*20)/20));ui.zoom=ZOOM;saveUI();applyZoom()}
+ const o=$('#zoomVal');if(o){o.textContent=Math.round(z*100)+'%';o.title=ui.fit!==false?'Fitted to the space. − and + set a fixed zoom':'Back to fit'}placeTb(lastRects)}
+function setZoom(z){ZOOM=Math.max(.4,Math.min(1.5,Math.round(z*20)/20));ui.zoom=ZOOM;ui.fit=false;saveUI();applyZoom()}
+function fitZoom(){ui.fit=true;saveUI();applyZoom()}
+if(window.ResizeObserver)new ResizeObserver(()=>{if(ui.fit!==false)applyZoom();else placeTb(lastRects)}).observe(frameWrap);
 $$('#widths button').forEach(b=>b.onclick=()=>setW(b.dataset.w));ZOOM=ui.zoom>=.4&&ui.zoom<=1.5?ui.zoom:1;setW(ui.w||'desk');
 
 /* ---------- export ---------- */
@@ -863,7 +885,7 @@ fetch('backgrounds.js').then(r=>r.text()).then(t=>{const m=t.match(/const FRAG=`
 
 PB.dbg=()=>({hist:hist.map(h=>JSON.parse(h).blocks.length),fut:fut.length,last:JSON.parse(lastSnap).blocks.length,now:page.blocks.length});
 /* ---------- hooks for builder/ux.js ---------- */
-PB.app={saveToProjects,hasProject,setZoom,get zoom(){return ZOOM},addBlockAfter:(id,v,uid,where,extra)=>{addTarget={uid,where:where||'after'};return addBlock(id,v,null,extra)},get site(){return site},get store(){return store},get curId(){return curId},get csel(){return csel},get open(){return open},set open(v){open=v},get first(){return !persistedOnce&&!hasSaved},
+PB.app={saveToProjects,hasProject,setZoom,fitZoom,editSel,get zoom(){return ZOOM},addBlockAfter:(id,v,uid,where,extra)=>{addTarget={uid,where:where||'after'};return addBlock(id,v,null,extra)},get site(){return site},get store(){return store},get curId(){return curId},get csel(){return csel},get open(){return open},set open(v){open=v},get first(){return !persistedOnce&&!hasSaved},
  def,B,isX,uidGen,clone,addBlock,render,commit,commitSoon,outline,refresh,say,switchTo,findBlk,goPage,openPicker,siteChanged,showPane,rtab,persist,saved,curPage,blank,S,TEMPLATES,siteFromTemplate,aiSiteGo,get aiOn(){return aiOn},aiStatus,dupBlk,rmBlk,move,toAgent,compose,assemble,swapA,thumbHTML,thumbW,mountThumbs,fieldsOf,val,vals,undo,redo,xLabel,setW,setMode,get EDIT(){return EDIT},status,histSnapshot:()=>lastSnap,restoreSnap:s=>{clearTimeout(typing);commit();hist.push(lastSnap);fut=[];restore(s);histUI()},UI:ui,saveUI,pv,runCheck,libraryRedraw:()=>library(),copy,dl,setS,pickDraw:()=>pickDraw(),selectBlock:uid=>{const f=findBlk(uid);if(!f)return;csel={uid,kind:'section'};open=uid;outline();toAgent({pb:'reselect',uid,kind:'section'});scrollPreviewTo(uid)},clearSel:()=>{csel=null;hideTb();toAgent({pb:'clear'})}};
 /* ---------- boot ---------- */
 try{const CLX=PB.src.CL();if(CLX){const st=document.createElement('style');st.textContent=CLX.css();document.head.append(st)}}catch(e){}

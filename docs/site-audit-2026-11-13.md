@@ -12,6 +12,23 @@ states, the serverless API, and the project's own Playwright gate.
 heading order, missing alt text, sideways scroll, text under 11 px, fonts, corner radii and page background. Console
 errors were attributed per page. Suspicious readings were checked by eye before being reported.
 
+## Tenth pass: site builder editor rebuilt (15 November)
+
+Asked for: "the site builder needs a complete overhaul". Used first at 1440 by 900 and at 390 by 844. The phone layout was already page-first (page, bottom bar, sheets); the desktop editor was three fixed columns under three stacked bars. The desktop editor now follows the phone's model. No function was removed.
+
+| | Before | After |
+|---|---|---|
+| Bars above the page | Site bar, builder header, toolbar, status line: the page began 175px down | Site bar and one top bar: the page begins 117px down. The status line sits under the page |
+| "Desktop" preview at 1440 wide | 750px wide, so it showed the tablet layout | Always laid out 1280 wide and scaled to the space (78% with a panel open, 100% with none). − and + set a fixed zoom; clicking the figure returns to fit |
+| Side panels | Library (330px) and outline (360px) always open | A rail (Add, Outline, Library, Design, Site, AI) opens one 328px panel at a time; pressing it again closes it |
+| Editing a section | The form unfolded inside the outline list | Its own edit panel: the same place as the outline under 1600 wide (Done goes back), a right-hand column from 1600; on a phone, a sheet |
+| Section and page rows | Four or five icon buttons on every row | Shown for the row you are on (hover or keyboard focus); always shown on touch |
+| Top bar | "Sites & templates", Saved, Undo, Redo, More as text buttons; page picker and Edit/Preview in a second bar | Sites, site name, page picker, device widths and zoom, Saved, undo, redo, more, Edit/Preview, Export in one row |
+
+Checked with a script in Chrome at 1024, 1100, 1440 and 1680 wide and at 390 and 820: clicking the page opens the edit panel; typing keeps the field and updates the page; a dropdown change keeps focus; section settings stay open; delete, undo, Done, Checks, Preview mode, the three widths and zoom; a UI component and an interaction open their settings; the phone edit sheet opens and closes. No script errors; smoke test clear at both sizes.
+
+Not done: `tools/site-builder-test.mjs` (the long Playwright suite) was not run, as Playwright is not installed; it clicks `#rt-page`, which is now hidden on wide screens, so that step needs updating. The start screen, the section picker and the templates themselves are unchanged. Not looked at in Safari.
+
 ## Ninth pass: Safari (15 November)
 
 Everything before this was checked in Chrome only. This pass ran the same checks in Safari 27.2 on the Mac: all 38 pages as real page loads, the same pages at phone width, and all 141 demos, with Chrome run alongside for comparison. There is no iPhone simulator on this Mac (Xcode is not installed), so iPhone Safari itself is still untested.

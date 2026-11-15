@@ -4,23 +4,24 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="builder/builder.css"><link rel="stylesheet" href="builder/ux.css">
+<link rel="stylesheet" href="builder/builder.css"><link rel="stylesheet" href="builder/ux.css"><link rel="stylesheet" href="builder/workbench.css">
 <meta property="og:type" content="website"><meta property="og:site_name" content="Visual &amp; Motion Atlas"><meta property="og:title" content="Site builder · Visual & Motion Atlas"><meta property="og:description" content="Build a whole multi-page website from 56 sections, 70 UI components, the interactions shelf, live backgrounds, icon families and theme-kit assets. Start from any of 26 templates or 48 design-system styles, with 82 photographs, then export one HTML file or a ZIP."><meta property="og:url" content="https://motionatlas-ten.vercel.app/page-builder"><meta property="og:image" content="https://motionatlas-ten.vercel.app/assets/og-atlas.jpg"><meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://motionatlas-ten.vercel.app/page-builder">
 <style id="sbPre">html{--sb-h:calc(44px + env(safe-area-inset-top,0px))}body{padding-top:var(--sb-h)}html:not(.sbReady) body::before{content:"";position:fixed;top:0;left:0;right:0;height:var(--sb-h);background:#fff;border-bottom:1px solid #e8e8ea;z-index:2147483000}@media print{body{padding-top:0}}</style><script src="site-nav-data.js" defer></script><script src="site-bar.js" defer></script>
 </head><body data-pane="page"><noscript><nav id="sbNo" aria-label="Atlas" style="position:fixed;top:0;left:0;right:0;height:44px;box-sizing:border-box;z-index:2147483000;background:#fff;border-bottom:1px solid #e8e8ea;padding:12px 16px;font:500 14px/20px system-ui,sans-serif;white-space:nowrap;overflow:auto"><a style="color:#111;font-weight:700;margin-right:16px" href="atlas.html">Atlas</a><a style="color:#111;margin-right:16px" href="tools.html">Tools</a><a style="color:#111;margin-right:16px" href="atlas.html#browse">Catalogue</a><a style="color:#111" href="atlas.html#projects">My projects</a></nav></noscript>
 <div class="app">
-<header><div class="brandline"><a href="atlas.html" id="backLink">← Atlas</a><h1>Site builder</h1><span class="siteTitle" id="siteTitle" title="Current site"></span></div>
+<header class="wbTop"><div class="wbLeft"><button class="btn wbBack" id="tplBtn" type="button" aria-haspopup="dialog" aria-label="Sites and templates"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg><span>Sites</span></button><a href="atlas.html" id="backLink" class="btn wbProj" hidden>← Atlas</a><h1 class="vh">Site builder</h1><span class="siteTitle" id="siteTitle" title="Current site"></span><span class="wbSep" aria-hidden="true">/</span><label class="vh" for="pageSel">Page being edited</label><select id="pageSel" class="pagesel"></select></div>
+ <div class="wbMid"><div class="seg" id="widths" role="group" aria-label="Preview width"></div></div>
  <div class="tools">
-  <button class="btn" id="tplBtn" type="button" aria-haspopup="dialog">Sites &amp; templates</button>
   <span class="savedot" id="saveInd" role="status" aria-live="polite"><i aria-hidden="true"></i><span>Saved</span></span>
-  <button class="btn" id="undoBtn" type="button" aria-keyshortcuts="Control+Z" disabled>↶ Undo</button><button class="btn" id="redoBtn" type="button" aria-keyshortcuts="Control+Shift+Z" disabled>↷ Redo</button>
-  <details class="menu" id="moreMenu"><summary class="btn" aria-label="More: checks, history, shortcuts">⋯ More <b class="badge moreBadge" id="moreBadge" hidden></b></summary><div class="mlist" role="group" aria-label="More">
+  <button class="btn wbIcon" id="undoBtn" type="button" aria-label="Undo" title="Undo" aria-keyshortcuts="Control+Z" disabled><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button><button class="btn wbIcon" id="redoBtn" type="button" aria-label="Redo" title="Redo" aria-keyshortcuts="Control+Shift+Z" disabled><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 14 5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg></button>
+  <details class="menu" id="moreMenu"><summary class="btn wbIcon" aria-label="More: checks, history, shortcuts" title="More"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg><b class="badge moreBadge" id="moreBadge" hidden></b></summary><div class="mlist" role="group" aria-label="More">
    <button type="button" class="btn" id="chkBtn" aria-label="Page checks"><span>Checks <b class="badge" id="chkBadge">–</b></span><small>Accessibility, SEO and link checks for this page</small></button>
    <button type="button" class="btn" id="histBtn" aria-haspopup="dialog"><span>History</span><small>Earlier versions of this site</small></button>
    <button type="button" class="btn" id="helpBtn" aria-keyshortcuts="?"><span>Keyboard shortcuts</span><small>Press ? any time</small></button>
   </div></details>
-  <details class="menu" id="exportMenu"><summary class="btn primary">Export ▾</summary><div class="mlist" role="group" aria-label="Export">
+  <div class="seg" id="modeSeg" role="group" aria-label="Mode"><button type="button" data-m="edit" aria-pressed="true">Edit</button><button type="button" data-m="view" aria-pressed="false">Preview</button></div>
+  <details class="menu" id="exportMenu"><summary class="btn primary">Export</summary><div class="mlist" role="group" aria-label="Export">
    <p class="mgrp">Download</p>
    <button type="button" id="dlZip"><span>Whole site (.zip)</span><small>Every page and its files, ready to upload</small></button>
    <button type="button" id="dlHtml"><span>This page (.html)</span><small>One file with everything inside it</small></button>
@@ -38,16 +39,24 @@
   </div></details>
  </div></header>
 <nav class="panes" aria-label="Builder panes"><div class="seg" id="panes" role="group" aria-label="Show"><button type="button" data-p="lib" aria-pressed="false">Library</button><button type="button" data-p="page" aria-pressed="true">Page</button><button type="button" data-p="preview" aria-pressed="false">Preview</button></div></nav>
+<nav class="rail" id="rail" aria-label="Editor panels">
+ <button type="button" class="railAdd" id="railAdd" aria-haspopup="dialog" aria-label="Add a section" title="Add a section"><i><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></i><span>Add</span></button>
+ <button type="button" data-k="outline" aria-pressed="false"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>Outline</span></button>
+ <button type="button" data-k="lib" aria-pressed="false"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></svg><span>Library</span></button>
+ <button type="button" data-k="style" aria-pressed="false"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.5 0 2-1 1.5-2s.2-2.5 2-2.5H18a3 3 0 0 0 3-3A9 9 0 0 0 12 3z"/></svg><span>Design</span></button>
+ <button type="button" data-k="site" aria-pressed="false"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg><span>Site</span></button>
+ <button type="button" data-k="ai" aria-pressed="false"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4l1.8 4.7 4.7 1.8-4.7 1.8L12 17l-1.8-4.700L5.500 10.500l4.700-1.800z"/><path d="M19 15v4M17 17h4"/></svg><span>AI</span></button>
+</nav>
 <aside class="lib" aria-label="Library">
- <div class="phead"><h2>Library</h2><label class="vh" for="libSearch">Search the library</label><input class="search" id="libSearch" type="search" placeholder="Search the library" autocomplete="off">
+ <div class="phead"><div class="ptitle"><h2>Library</h2><button class="btn small wbClose" id="lClose" type="button" aria-label="Close the panel">Close</button></div><label class="vh" for="libSearch">Search the library</label><input class="search" id="libSearch" type="search" placeholder="Search the library" autocomplete="off">
   <div id="ltabs"></div></div>
  <div class="scroll" id="libScroll"><div id="libList" role="tabpanel"></div><p class="hint" style="margin-top:12px">Press Add, or drag a card onto the page outline or the preview.</p></div>
 </aside>
-<main class="stage" aria-label="Preview"><div class="bar"><button class="btn small" id="addSecBtn" type="button">＋ Add section</button><label class="vh" for="pageSel">Page being edited</label><select id="pageSel" class="pagesel"></select><div class="seg" id="modeSeg" role="group" aria-label="Mode"><button type="button" data-m="edit" aria-pressed="true">Edit</button><button type="button" data-m="view" aria-pressed="false">Preview</button></div><div class="seg" id="widths" role="group" aria-label="Preview width"></div><span class="status" id="status" role="status"></span></div>
+<main class="stage" aria-label="Preview"><div class="bar"><span class="status" id="status" role="status"></span></div>
  <div id="cvTb" class="cvtb" role="toolbar" aria-label="Section tools" hidden></div>
  <div class="frameWrap" id="wrap"><iframe id="pv" title="Live preview of your page"></iframe></div></main>
 <aside class="right" aria-label="Page settings">
- <div class="phead"><div role="tablist" id="rtabs" aria-label="Page settings"></div></div>
+ <div class="phead"><div class="ptitle"><h2 id="rTitle">Outline</h2><button class="btn small wbClose" id="rClose" type="button" aria-label="Close the panel">Close</button></div><div role="tablist" id="rtabs" aria-label="Page settings"></div></div>
  <div class="scroll">
   <section class="rpanel" id="rp-page" role="tabpanel" aria-labelledby="rt-page">
    <section class="selitem" id="selItem" aria-label="Selected item" hidden></section>
@@ -55,6 +64,7 @@
 <div class="sec"><ul id="pgList" class="pgl"></ul><div class="btools"><button class="btn" id="addPage" type="button">Add a page</button><button class="btn" id="addPost" type="button">Add a blog post</button></div></div>
    </details>
    <h3 class="vh">Sections, top to bottom</h3><ol id="ol" aria-label="Sections, top to bottom"></ol>
+   <button class="btn wbAdd" id="addSecBtn" type="button"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add a section</button>
    <details class="pgbox" id="pgSettings"><summary>This page’s name, address and search settings</summary><div class="pgsb"><div class="sec"><h3>This page</h3>
     <div class="f"><label for="pgName">Page name</label><input id="pgName" maxlength="60"></div>
     <div class="f"><label for="pgSlug">File name</label><input id="pgSlug" maxlength="48" autocapitalize="off" spellcheck="false"><p class="hint">Becomes the address: yoursite.com/<em>file-name</em>. The home page is always index.</p></div>
@@ -66,7 +76,7 @@
     <div class="f"><label for="pgOg">Social image</label><input id="pgOg" list="pbImages" placeholder="Library image or https://… (falls back to the site image)"></div>
     <div class="serp" id="serp" role="group" aria-label="Search result preview"></div></div>
   </div></details>
-   <p class="hint" style="margin-top:10px">Select a section to edit its words; the preview jumps to it, and clicking the preview selects a section. Drag rows to reorder, or focus a name and press Alt + ↑ / ↓. The header and footer are shared by every page.</p>
+   <p class="hint" style="margin-top:10px">Click a section, here or on the page, to edit it. Drag rows to reorder, or press Alt + ↑ / ↓ on a name. The header and footer are shared by every page.</p>
   </section>
   <section class="rpanel" id="rp-style" role="tabpanel" aria-labelledby="rt-style" hidden>
    <div class="sec" id="tkBox"></div>
@@ -109,6 +119,7 @@
   </section>
  </div>
 </aside>
+<aside class="insp" id="insp" aria-label="Selected section" hidden></aside>
 </div>
 <dialog id="picker" class="picker" aria-labelledby="pickTitle"><div class="pkhead"><h2 id="pickTitle">Add a section</h2><label class="vh" for="pickQ">Search sections</label><input class="search" id="pickQ" type="search" placeholder="Search sections: pricing, FAQ, gallery…" autocomplete="off"><button class="btn small" id="pickClose" type="button">Close</button></div><div class="gchips" id="pickChips" role="group" aria-label="Filter sections"></div><p class="lcount" id="pickCount" role="status"></p><div class="pkscroll" id="pickScroll"><ul class="pkgrid" id="pickGrid"></ul></div></dialog>
 <dialog id="pubDlg" class="picker pubdlg" aria-labelledby="pubTitle"><div class="pkhead"><h2 id="pubTitle">Publish</h2><span style="flex:1"></span><button class="btn small" id="pubClose" type="button">Close</button></div><div class="pubb"><p id="pubState" role="status"></p><p id="pubLink"></p><div class="btools"><button class="btn primary" id="pubGo" type="button">Publish</button><button class="btn" id="pubCopy" type="button" hidden>Copy link</button><a class="btn" id="pubOpen" target="_blank" rel="noopener" hidden>Open the site</a><button class="btn" id="pubOff" type="button" hidden>Unpublish</button></div><div id="pubMine" hidden class="hint"><p style="margin:0 0 6px"><strong>Your own font.</strong> The font files are not uploaded. Visitors who do not have it installed will see a fallback font instead.</p><label style="display:flex;gap:8px;align-items:flex-start"><input type="checkbox" id="pubInclFonts"><span>Also publish my font files. A published site is public, so anyone can download them. Only turn this on if your font licence allows web publishing.</span></label></div><p class="hint">Want your own domain? Download the ZIP and deploy it on Vercel, Netlify or GitHub Pages, then add your domain in that host. The README explains it.</p></div></dialog>

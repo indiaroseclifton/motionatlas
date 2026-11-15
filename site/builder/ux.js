@@ -13,7 +13,7 @@ function mk(tag,cls,html){const e=document.createElement(tag);if(cls)e.className
 
 /* ---------- header: back link, site title ---------- */
 function header(){const a=$('#backLink'),fromProj=/[?&]site=/.test(location.search)||/projects/.test(document.referrer);
- if(a&&fromProj){a.textContent='← My projects';a.href='atlas.html#projects'}
+ if(a&&fromProj){a.textContent='← My projects';a.href='atlas.html#projects';a.hidden=false}
  const t=$('#siteTitle');if(t)t.textContent=A.site.name||A.site.brand||''}
 const prevSwitch=A.onSwitch;A.onSwitch=()=>{header();if(prevSwitch)prevSwitch()};
 
@@ -43,7 +43,7 @@ $('#stClose').onclick=()=>dlg.close();
 $('#stBack').onclick=()=>{view='home';draw()};
 function openStart(v){view=v||'home';draw();if(!dlg.open)dlg.showModal();const f=$('#stBody button,#stBody textarea');f&&f.focus()}
 UX.openStart=openStart;
-{const tb=$('#tplBtn');if(tb&&matchMedia('(max-width:700px)').matches)tb.textContent='Templates'}$('#tplBtn').onclick=()=>openStart('home');$('#openStart')&&($('#openStart').onclick=()=>openStart('home'));
+$('#tplBtn').onclick=()=>openStart('home');$('#openStart')&&($('#openStart').onclick=()=>openStart('home'));
 function sitesSorted(){return Object.values(A.store.pages).sort((a,b)=>(b.updated||0)-(a.updated||0))}
 function draw(){const body=$('#stBody'),back=$('#stBack');back.hidden=view==='home';
  $('#stTitle').textContent={home:'Site builder',templates:'Templates',detail:'Template preview',ai:'Describe your site',brand:'Use a brand kit'}[view];
@@ -205,7 +205,7 @@ function menuFor(uid,x,y){const f=A.findBlk(uid);if(!f)return;const d=A.def(f.bl
  menuEl.onkeydown=e=>{const j=bs.indexOf(document.activeElement);if(e.key==='ArrowDown'){e.preventDefault();bs[(j+1)%bs.length].focus()}else if(e.key==='ArrowUp'){e.preventDefault();bs[(j-1+bs.length)%bs.length].focus()}else if(e.key==='Escape'||e.key==='Tab'){e.preventDefault();closeMenu()}};
  menuEl.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{const k=b.dataset.k;closeMenu();act(k,uid)})}
 function act(k,uid){const f=A.findBlk(uid);if(!f)return;
- if(k==='edit'){A.open=uid;A.showPane('page');A.rtab('page');A.outline();const el=$(`#ol [data-uid="${uid}"]`);el&&el.scrollIntoView({block:'nearest'})}
+ if(k==='edit')A.editSel(uid);
  else if(k==='add')A.openPicker({uid,where:'after'});
  else if(k==='dup')A.dupBlk(uid);else if(k==='copy')copyBlk(uid);else if(k==='paste')pasteBlk(uid);
  else if(k==='up')A.move(f.list,f.i,f.i-1);else if(k==='down')A.move(f.list,f.i,f.i+1);
@@ -250,7 +250,7 @@ document.addEventListener('keydown',e=>{const t=document.activeElement,inField=/
 addEventListener('message',e=>{if(e.source!==A.pv.contentWindow||!e.data)return;if(e.data.pb==='empty')A.openPicker(null);else if(e.data.pb==='emptyTpl')openStart('templates')});
 /* ---------- zoom control ---------- */
 {const z=mk('div','seg',`<button type="button" id="zoomOut" aria-label="Zoom out">−</button><output id="zoomVal" aria-live="polite">100%</output><button type="button" id="zoomIn" aria-label="Zoom in">+</button>`);z.id='zoomSeg';z.setAttribute('role','group');z.setAttribute('aria-label','Zoom');$('#widths').after(z);
- $('#zoomOut').onclick=()=>A.setZoom(A.zoom-.1);$('#zoomIn').onclick=()=>A.setZoom(A.zoom+.1);$('#zoomVal').onclick=()=>A.setZoom(1);$('#zoomVal').title='Reset zoom';$('#zoomVal').textContent=Math.round(A.zoom*100)+'%';
+ $('#zoomOut').onclick=()=>A.setZoom(A.zoom-.1);$('#zoomIn').onclick=()=>A.setZoom(A.zoom+.1);$('#zoomVal').onclick=()=>A.fitZoom();$('#zoomVal').textContent=Math.round(A.zoom*100)+'%';
  $('#wrap').addEventListener('wheel',e=>{if(e.ctrlKey){e.preventDefault();A.setZoom(A.zoom+(e.deltaY<0?.1:-.1))}},{passive:false})}
 
 /* ---------- drag a library card onto the canvas, with a drop line ---------- */

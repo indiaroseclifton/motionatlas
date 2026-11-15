@@ -1,0 +1,113 @@
+/* Site builder workbench (loaded after builder.css and ux.css).
+   One top bar. On a wide screen: a rail, one panel at a time beside it, the page, and an edit panel that appears for the
+   selected section. On a phone the page fills the screen and the same panels are sheets (see ux.css).
+   body[data-pane] = lib | page | preview picks the panel; body[data-insp] is set while a section is being edited. */
+
+/* ---------- top bar ---------- */
+header.wbTop{display:flex;align-items:center;gap:8px 12px;flex-wrap:nowrap;padding:8px 12px;min-height:52px}
+.wbLeft{display:flex;align-items:center;gap:8px;min-width:0;flex:1 1 0;overflow:hidden}
+.wbLeft>*{flex:none}
+.wbLeft .siteTitle{flex:0 1 auto}
+.wbMid{display:flex;align-items:center;gap:8px;flex:0 0 auto}
+.wbTop .tools{flex:1 0 auto;justify-content:flex-end;flex-wrap:nowrap}
+.wbBack{padding:0 12px 0 6px;gap:2px;flex:none}
+.wbBack svg{width:18px;height:18px}
+.wbTop .siteTitle{font-weight:600;font-size:14px;color:var(--ink);max-width:240px;min-width:0}
+.wbSep{color:#B9BECB}
+.wbTop .pagesel{min-height:36px;max-width:200px;min-width:0}
+.wbIcon{width:36px;padding:0;position:relative;flex:none}
+.wbIcon svg{width:18px;height:18px}
+.wbIcon:disabled{opacity:.4}
+.wbIcon .moreBadge{position:absolute;top:-6px;right:-6px}
+.wbTop .seg button{min-height:28px}
+.wbTop #modeSeg{flex:none}
+.wbTop .savedot{flex:none}
+
+/* ---------- panel titles ---------- */
+.ptitle{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:32px}
+.ptitle h2{margin:0;font:600 15px/1.2 Inter,system-ui,sans-serif;letter-spacing:0;text-transform:none;color:var(--ink)}
+.iname{display:grid;gap:2px;min-width:0}
+.iname small{color:var(--mute);font-size:12px}
+.wbAdd{width:100%;margin-top:10px;min-height:44px;border-style:dashed;color:var(--mute)}
+.wbAdd:hover{color:var(--ink);border-color:var(--ink)}
+.wbAdd svg{width:16px;height:16px}
+
+/* ---------- the edit panel ---------- */
+.rail,.insp{display:none}
+.insp .ihead{padding:12px}
+.insp .scroll{padding:12px}
+.insp .bb{padding:0}
+
+/* ---------- wide screens ---------- */
+@media (min-width:981px){
+ .app{grid-template-columns:68px auto minmax(0,1fr) auto;grid-template-rows:auto minmax(0,1fr)}
+ header.wbTop{grid-column:1/-1}
+ .rail{grid-column:1;grid-row:2;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 0;background:var(--panel);border-right:1px solid var(--hair);overflow-y:auto;scrollbar-width:none}
+ .rail button{width:56px;min-height:54px;display:grid;justify-items:center;align-content:center;gap:4px;padding:6px 0;border:0;border-radius:12px;background:none;color:var(--mute);font:500 11px/1 Inter,system-ui,sans-serif;cursor:pointer}
+ .rail button:hover{background:var(--soft);color:var(--ink)}
+ .rail button[aria-pressed=true]{background:var(--sel);color:var(--ink);font-weight:600}
+ .rail button:focus-visible{outline:2px solid var(--ink);outline-offset:-2px}
+ .rail .railAdd{margin-bottom:6px;color:var(--ink)}
+ .rail .railAdd i{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--accent);color:var(--accent-ink)}
+ .rail .railAdd:hover{background:none}
+ .rail .railAdd:hover i{transform:scale(1.05)}
+ .lib,.right{grid-column:2;grid-row:2;width:328px;display:none;border:0;border-right:1px solid var(--hair)}
+ body[data-pane=lib] .lib,body[data-pane=page] .right{display:flex}
+ .stage{grid-column:3;grid-row:2}
+ .insp{grid-column:4;grid-row:2;width:340px;display:flex;flex-direction:column;min-height:0;background:var(--panel);border-left:1px solid var(--hair)}
+ .insp[hidden]{display:none}
+ /* the rail replaces the tab row */
+ #rtabs{display:none}
+ .right .phead,.lib .phead{padding:12px 12px 10px}
+ /* the page sits on a plain surface */
+ .frameWrap{background:#ECEDF1;padding:20px}
+ .frameWrap iframe{border-radius:10px;box-shadow:0 1px 2px rgba(16,24,40,.06),0 14px 34px -14px rgba(16,24,40,.22)}
+ /* the line under the page says where you are */
+ .stage .bar{order:3;border-top:1px solid var(--hair);border-bottom:0;background:var(--panel);padding:4px 14px;min-height:28px}
+ .stage .bar .status{margin:0;text-align:left;flex:1 1 auto;font-size:12px}
+}
+/* under 1600 wide there is room for one panel beside the page: editing a section drills into the same place as the outline,
+   and Done goes back. From 1600 the edit panel has its own column on the right. */
+@media (min-width:981px) and (max-width:1599px){
+ body[data-insp] .lib,body[data-insp] .right{display:none!important}
+ .insp{grid-column:2;width:328px;border-left:0;border-right:1px solid var(--hair)}
+}
+/* the scaled page always fits its frame, so the frame itself never scrolls */
+.frameWrap.zoomed{overflow:hidden;overflow:clip}
+/* section rows: the move, copy and delete buttons show for the row you are on */
+@media (min-width:981px) and (hover:hover){
+ #ol .blk .ib{opacity:0;transition:opacity .12s}
+ #ol .blk:hover .ib,#ol .blk:focus-within .ib,#ol .blk.open .ib{opacity:1}
+ #ol .blk .ib:disabled{opacity:0}
+ #ol .blk:hover .ib:disabled,#ol .blk:focus-within .ib:disabled,#ol .blk.open .ib:disabled{opacity:.35}
+}
+@media (min-width:981px) and (hover:hover){
+ .pgrow .pgact{display:none}
+ .pgrow:hover .pgact,.pgrow:focus-within .pgact{display:flex}
+}
+#ol .blk.open{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+/* library cards */
+.lc:hover{border-color:var(--ink)}
+.lgrid.tiles .lc b,.lgrid.comp .lc b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* small laptops: the saved mark is a dot, the site name gives way first */
+@media (min-width:981px) and (max-width:1240px){
+ .wbTop .savedot span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+ .wbTop .siteTitle{max-width:130px}
+ .wbTop .tools{flex:0 0 auto}
+}
+/* ---------- phones and narrow screens ---------- */
+@media (max-width:980px){
+ header.wbTop{flex-wrap:wrap;padding:8px 12px}
+ .wbLeft{flex:1 1 100%}
+ .wbTop .siteTitle{flex:1 1 auto}
+ .wbMid #widths{display:none}
+ .wbTop .tools{flex:1 1 0;min-width:0;overflow-x:auto;scrollbar-width:none;justify-content:flex-end}
+ .wbLeft{overflow:visible}
+ .wbTop .tools::-webkit-scrollbar{display:none}
+ .stage .bar{display:none}
+ .lib .ptitle,.right .ptitle{display:none}
+ .insp{position:fixed;left:0;right:0;bottom:calc(56px + env(safe-area-inset-bottom));height:min(74dvh,640px);z-index:72;flex-direction:column;min-height:0;background:var(--panel);border-radius:18px 18px 0 0;box-shadow:0 -18px 50px -18px rgba(20,22,34,.45)}
+ body[data-inspsheet] .insp:not([hidden]){display:flex}
+}
+@media (prefers-reduced-motion:reduce){.rail .railAdd:hover i{transform:none}#ol .blk .ib{transition:none}}
