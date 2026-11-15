@@ -1,0 +1,81 @@
+<!--META {"o": 0.25, "t": "Liquid glass", "cat": "Navigation", "tone": "light", "added": "2026-11-14", "uses": [], "d": "A pill-shaped glass bar floats over a colourful page and blurs and brightens whatever scrolls behind it, with a bright rim that bends the picture at its edge. A round glass lens can be dragged anywhere on the page.", "how": "The frosting is backdrop-filter: blur, more saturation and a little brightness, plus a tint and a thin gradient rim. In Chromium browsers an SVG displacement filter is added in front of the blur. Its map is painted on a canvas: each pixel says how far to shift the picture behind it, strongest at the rim and nothing in the middle. Safari and Firefox keep the frosted version.", "use": "Floating navigation, tab bars and toolbars over photos or video, media player controls, map overlays.", "p": "Build a liquid glass navigation bar in one HTML file with no libraries and no images. The page is a scrolling layout of flat pictures drawn with CSS gradients: a three-tile cover, a heading, then a grid of captioned tiles. Fixed at the top centre is a pill-shaped bar with four links and a dark button. Its base look, which must work in every browser, is backdrop-filter (and -webkit-backdrop-filter) blur + saturate(1.7) + a little brightness, a background of the panel colour mixed with transparent by a tint setting, inset white highlights, a soft drop shadow and a 1.5px gradient rim made with a masked pseudo-element. Then add refraction only in Chromium, the one engine that runs SVG filters inside backdrop-filter: for each glass element build a filter with feImage and feDisplacementMap (userSpaceOnUse, sRGB), paint the map on a canvas where red is the sideways shift and green the vertical shift, pointing inward from the nearest edge of the rounded rectangle and fading from full at the rim to nothing a bezel width inside, and put url(#filter) in front of the blur. A second glass element, a round lens that is a real button, can be dragged with the pointer or moved with the arrow keys; it has a wider bezel, a stronger shift and almost no blur, so the middle stays clear and the outer ring bends. Settings: blur, tint, edge highlight, refraction strength, corner radius, accent, light or dark. In dark mode the glass darkens what is behind it so light text stays readable."}-->
+<style>/*BASE*/
+/*UI*/
+html,body{height:auto;min-height:100%;overflow:visible}body{display:block;overflow:visible;place-items:normal}
+.page{width:100%;max-width:1100px;margin:0 auto;padding:12px 12px 60px;display:grid;gap:clamp(28px,6vh,56px)}
+.pic{border-radius:clamp(16px,2.4vw,28px)}
+.cover{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px;height:clamp(230px,56vh,480px)}
+.intro{display:grid;gap:12px;padding:0 max(4px,3vw);max-width:820px}
+.intro h1{font-size:clamp(30px,5.6vw,64px);line-height:1.02;letter-spacing:-.04em}
+.intro .sub{color:var(--mute);font-size:clamp(15px,1.6vw,18px);max-width:46ch}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:22px 10px}
+.tiles .pic{aspect-ratio:4/3}
+.tiles b{display:block;margin:10px 6px 0;font-size:15px}.tiles span{display:block;margin:0 6px;font-size:13px;color:var(--mute)}
+.end{text-align:center;color:var(--mute);padding:20px}
+/* The glass that works everywhere: blur and brighten what is behind, add a tint, a soft shadow and inner highlights. */
+.glass{position:fixed;z-index:3;background:color-mix(in srgb,var(--panel) calc(var(--tint,38)*1%),transparent);-webkit-backdrop-filter:var(--bf);backdrop-filter:var(--bf);
+ box-shadow:0 1px 2px rgba(17,17,19,.1),0 16px 36px -18px rgba(17,17,19,.45),inset 0 1.5px 1px rgba(255,255,255,calc(var(--hl,.8)*.8)),inset 0 -1px 1px rgba(255,255,255,calc(var(--hl,.8)*.3)),inset 0 0 14px rgba(255,255,255,calc(var(--hl,.8)*.22))}
+/* The rim: a thin gradient ring, bright at two opposite corners like light catching a bevel. */
+.glass::after{content:"";position:absolute;inset:0;border-radius:inherit;padding:1.5px;pointer-events:none;opacity:var(--hl,.8);background:linear-gradient(135deg,rgba(255,255,255,.95),rgba(255,255,255,.2) 32%,rgba(255,255,255,.06) 62%,rgba(255,255,255,.75));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.bar{left:50%;top:14px;transform:translateX(-50%);display:flex;align-items:center;gap:2px;padding:6px;border-radius:var(--rad,28px);max-width:calc(100vw - 20px)}
+.bar a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:40px;padding:0 15px;border-radius:calc(var(--rad,28px) - 6px);color:var(--ink);font-size:14px;font-weight:600;text-decoration:none;white-space:nowrap}
+.bar a:hover{background:color-mix(in srgb,var(--panel) 45%,transparent)}
+.bar a.cta{margin-left:6px;padding:0 18px;background:var(--ink);color:var(--bg)}
+.lens{left:0;top:0;background:rgba(255,255,255,calc(var(--tint,38)*.003));width:var(--ls,136px);height:var(--ls,136px);padding:0;border:0;border-radius:50%;cursor:grab;touch-action:none;will-change:transform}
+.lens:active{cursor:grabbing}
+.defs{position:absolute;width:0;height:0}
+@media(max-width:600px){.cover{grid-template-columns:1.4fr 1fr}.cover .pic:last-child{display:none}.tiles{grid-template-columns:repeat(2,1fr)}.bar a{padding:0 9px;font-size:13.5px}.bar a.cta{padding:0 14px;margin-left:2px}.cta span{display:none}.lens{--ls:104px}}
+</style>
+<body>
+<nav class="glass bar" id="bar" aria-label="Main"><a href="#">Work</a><a href="#">Studio</a><a href="#">Journal</a><a href="#">Contact</a><a class="cta" href="#">Start<span>&nbsp;a project</span></a></nav>
+<button class="glass lens" id="lens" aria-label="Glass lens. Drag it, or move it with the arrow keys."></button>
+<main class="page"><div class="cover" id="cover" aria-hidden="true"></div>
+<header class="intro"><p class="k">Material study</p><h1>Glass that bends the page behind it.</h1><p class="sub">Scroll, and the bar frosts whatever passes under it. Drag the round lens across an edge to watch it bend.</p></header>
+<ul class="tiles" id="tiles"></ul><p class="end">That is the whole page.</p></main>
+<svg class="defs" aria-hidden="true"><filter id="fBar" filterUnits="userSpaceOnUse" x="0" y="0" color-interpolation-filters="sRGB"><feImage x="0" y="0" preserveAspectRatio="none" result="map"/><feDisplacementMap in="SourceGraphic" in2="map" xChannelSelector="R" yChannelSelector="G"/></filter><filter id="fLens" filterUnits="userSpaceOnUse" x="0" y="0" color-interpolation-filters="sRGB"><feImage x="0" y="0" preserveAspectRatio="none" result="map"/><feDisplacementMap in="SourceGraphic" in2="map" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
+<script type="application/json" id="settings">{"blur":10,"tint":38,"edge":0.8,"refract":36,"radius":28,"mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Glass',k:'blur',label:'Blur',min:0,max:30,step:1,unit:'px'},{k:'tint',label:'Tint',min:0,max:80,step:1,unit:'%'},{k:'edge',label:'Edge highlight',min:0,max:1,step:.05},{k:'refract',label:'Refraction',min:0,max:80,step:1,unit:'px'},{g:'Bar',k:'radius',label:'Corner radius',min:8,max:28,step:1,unit:'px'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/*TUNER*/
+const framed=parent!==window;
+/*FLATART*/
+const $=id=>document.getElementById(id),bar=$('bar'),lens=$('lens');
+$('cover').innerHTML=[0,3,2].map(i=>`<div class="pic" style="background-image:${art(i)}"></div>`).join('');
+const TILES=[['Tide table','Identity'],['Salt and slate','Packaging'],['Blue hour','Film'],['Paper weight','Editorial'],['Soft machines','Product'],['Field recorder','App']];
+$('tiles').innerHTML=TILES.map(([t,c],i)=>`<li><div class="pic" style="background-image:${art([1,4,5,6,8,10][i])}"></div><b>${t}</b><span>${c}</span></li>`).join('');
+/* Only Chromium runs an SVG filter inside backdrop-filter. Other browsers accept the rule and then draw no glass at all,
+   so there is nothing to test for except the engine itself. Everyone else keeps the frosted look. */
+const refracts=CSS.supports('backdrop-filter','url(#a)')&&/Chrome\//.test(navigator.userAgent);
+/* The displacement map. Every pixel says how far to shift the picture behind it: red is sideways, green is up and down,
+   mid grey is "leave it alone". The shift points inward from the nearest edge, full at the rim and fading to nothing a bezel width inside. */
+function map(w,h,r,bezel){const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d'),im=g.createImageData(w,h),d=im.data;
+ for(let y=0;y<h;y++)for(let x=0;x<w;x++){const dx=x+.5-w/2,dy=y+.5-h/2,qx=Math.abs(dx)-(w/2-r),qy=Math.abs(dy)-(h/2-r);let nx=0,ny=0,out;
+  if(qx>0&&qy>0){const l=Math.hypot(qx,qy);out=l-r;nx=qx/l;ny=qy/l}else if(qx>qy){out=qx-r;nx=1}else{out=qy-r;ny=1}
+  const m=out>0?0:Math.pow(1-Math.min(1,-out/bezel),2),i=(y*w+x)*4;
+  d[i]=128-127*m*nx*Math.sign(dx);d[i+1]=128-127*m*ny*Math.sign(dy);d[i+2]=128;d[i+3]=255}
+ g.putImageData(im,0,0);return c.toDataURL()}
+const made={};
+function fit(el,id,r,bezel,scale){const w=el.offsetWidth,h=el.offsetHeight,f=$(id),im=f.firstChild,key=[w,h,r,bezel].join();
+ if(made[id]!==key){made[id]=key;[f,im].forEach(n=>{n.setAttribute('width',w);n.setAttribute('height',h)});const u=map(w,h,Math.min(r,w/2,h/2),bezel);im.setAttribute('href',u);im.setAttributeNS('http://www.w3.org/1999/xlink','href',u)}
+ f.lastChild.setAttribute('scale',scale)}
+/* The lens: drag it with the pointer, or move it with the arrow keys. Its place is kept as a share of the screen. */
+let fx=.66,fy=.5,grab=null;
+function place(){const s=lens.offsetWidth;lens.style.transform=`translate(${(fx*(innerWidth-s)).toFixed(1)}px,${(fy*(innerHeight-s)).toFixed(1)}px)`}
+const lim=v=>Math.min(1,Math.max(0,v));
+lens.addEventListener('pointerdown',e=>{lens.setPointerCapture(e.pointerId);const r=lens.getBoundingClientRect();grab=[e.clientX-r.left,e.clientY-r.top]});
+lens.addEventListener('pointermove',e=>{if(!grab)return;const s=lens.offsetWidth;fx=lim((e.clientX-grab[0])/(innerWidth-s));fy=lim((e.clientY-grab[1])/(innerHeight-s));place()});
+const drop=()=>grab=null;lens.addEventListener('pointerup',drop);lens.addEventListener('pointercancel',drop);
+lens.addEventListener('keydown',e=>{const k={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key];if(!k)return;e.preventDefault();const s=lens.offsetWidth,st=e.shiftKey?48:16;fx=lim(fx+k[0]*st/(innerWidth-s));fy=lim(fy+k[1]*st/(innerHeight-s));place()});
+function apply(){theme();const r=document.documentElement.style,dark=S.mode==='dark',tone=(s,b)=>` saturate(${s}) brightness(${b})`,bend=refracts&&S.refract>0;
+ r.setProperty('--tint',S.tint);r.setProperty('--hl',S.edge);r.setProperty('--rad',S.radius+'px');
+ if(bend){fit(bar,'fBar',S.radius,Math.min(20,bar.offsetHeight/2),S.refract);fit(lens,'fLens',lens.offsetWidth/2,lens.offsetWidth*.32,S.refract*1.3)}
+ /* In dark mode the glass darkens what is behind it, so light text on it stays readable. */
+ bar.style.setProperty('--bf',(bend?'url(#fBar) ':'')+`blur(${S.blur}px)`+tone(1.7,dark?.6:1.12));
+ lens.style.setProperty('--bf',(bend?`url(#fLens) blur(${(S.blur*.08).toFixed(1)}px)`:`blur(${Math.max(3,S.blur*.4).toFixed(1)}px)`)+tone(1.25,dark?.9:1.04));place()}
+addEventListener('resize',apply);
+apply();
+/* In a preview frame the page scrolls and the lens drifts by themselves until you touch it. Delete this block in your own page. */
+if(framed&&!calm){let on=true,t0=0;const root=document.documentElement;root.style.scrollbarWidth='none';['wheel','touchstart','pointerdown','keydown'].forEach(e=>addEventListener(e,()=>{on=false;root.style.scrollbarWidth=''},{passive:true,once:true}));
+ (function auto(t){if(!on)return;t0=t0||t;const s=(t-t0)/1000,max=root.scrollHeight-innerHeight,k=s/9%2,u=k<1?k:2-k;scrollTo(0,max*u*u*(3-2*u));fx=.5+.34*Math.sin(s*.7+.9);fy=.4+.22*Math.sin(s*.45-.6);place();requestAnimationFrame(auto)})(0)}
+</script>
+</body>

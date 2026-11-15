@@ -1,0 +1,85 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Liquid metal shader</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0F1012;--panel:#1A1B1E;--ink:#F4F4F5;--mute:#A1A1AA;--line:#2C2D31;--ac:#111111}
+:root[data-mode=light]{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#111113;--mute:#6B6F76;--line:#E6E6E8}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+
+.art{position:absolute;inset:0;display:block;pointer-events:none}
+.art::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.16;mix-blend-mode:overlay}
+.heroc{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:24px;max-width:760px;color:#fff;text-shadow:0 1px 24px rgba(0,0,0,.35)}.heroc h1{font-size:clamp(34px,7vw,76px);line-height:1;letter-spacing:-.03em}.heroc p{font-size:clamp(15px,2vw,18px);opacity:.9;max-width:46ch}.heroc a{display:inline-flex;align-items:center;min-height:46px;padding:0 22px;border-radius:99px;background:#fff;color:#111;font-weight:700;text-decoration:none;text-shadow:none}
+/* Small shared pieces: kicker line, pill buttons, list reset. */
+input{font:inherit;color:inherit}ul,ol{margin:0;padding:0;list-style:none}[hidden]{display:none!important}
+.k{font-size:13px;font-weight:600;color:var(--mute)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:999px;border:1px solid var(--line);background:var(--panel);font-weight:600;font-size:14px;text-decoration:none;color:var(--ink)}
+.btn:hover{border-color:var(--ink)}.btn.pri{background:var(--ink);color:var(--bg);border-color:var(--ink)}.btn[disabled]{opacity:.45;cursor:not-allowed}
+/* The gradient on the body is what shows if WebGL is missing or the context is lost. */
+body{background:linear-gradient(155deg,#0E1014,#3A3F49 38%,#15171C 55%,#2B2F37)}
+:root[data-mode=light] body{background:linear-gradient(155deg,#F5F7FA,#C6CCD8 38%,#F8F9FB 55%,#B4BBC8)}
+.hero{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:24px;max-width:760px}
+.hero h1{font-size:clamp(34px,7vw,76px);line-height:1;letter-spacing:-.03em;font-weight:700}
+.hero p{font-size:clamp(15px,2vw,18px);max-width:44ch}
+.hero .btn{margin-top:6px;background:var(--ac);border-color:var(--ac);color:var(--on,#fff)}
+</style>
+<body>
+<main class="hero"><h1>Liquid metal</h1><p>A slow chrome surface, drawn by a shader.</p><a class="btn" href="#">Get started</a></main>
+<script type="application/json" id="settings">{"speed":1,"scale":1,"sheen":0.6,"tint":"#DCE4F4","mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Flow',k:'speed',label:'Speed',min:0,max:3,step:.05},{k:'scale',label:'Scale',min:.4,max:3,step:.05},{g:'Metal',k:'sheen',label:'Sheen',min:0,max:1,step:.01},{k:'tint',label:'Tint',type:'color'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'light';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+/* Tiny WebGL runner: one full-screen triangle, uniforms R (size), T (time), M (pointer 0-1) plus whatever set() is given.
+   Pauses off screen and in background tabs; reduced motion shows one still frame. */
+const NOISE='float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1.,0.)),f.x),mix(h(i+vec2(0.,1.)),h(i+vec2(1.,1.)),f.x),f.y);}float fbm(vec2 p){float a=.5,s=0.;for(int i=0;i<5;i++){s+=a*n(p);p=p*2.02+vec2(1.7,9.2);a*=.5;}return s;}';
+const rgb=x=>[1,3,5].map(i=>parseInt(x.slice(i,i+2),16)/255);
+function shader(frag){const c=document.createElement('canvas');c.style.cssText='position:fixed;inset:0;width:100%;height:100%;display:block;z-index:-1';c.setAttribute('aria-hidden','true');document.body.prepend(c);
+ const gl=c.getContext('webgl',{antialias:false,alpha:false,powerPreference:'low-power'}),vals={};if(!gl){document.body.style.background='linear-gradient(160deg,#1b1f3a,#0b0d14)';return{set(o){Object.assign(vals,o)}}}
+ const sh=(t,s)=>{const o=gl.createShader(t);gl.shaderSource(o,s);gl.compileShader(o);if(!gl.getShaderParameter(o,gl.COMPILE_STATUS))console.error(gl.getShaderInfoLog(o));return o};
+ const p=gl.createProgram();gl.attachShader(p,sh(gl.VERTEX_SHADER,'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}'));gl.attachShader(p,sh(gl.FRAGMENT_SHADER,'precision highp float;uniform vec2 R;uniform float T;uniform vec2 M;'+NOISE+frag));gl.linkProgram(p);gl.useProgram(p);
+ gl.bindBuffer(gl.ARRAY_BUFFER,gl.createBuffer());gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);const a=gl.getAttribLocation(p,'p');gl.enableVertexAttribArray(a);gl.vertexAttribPointer(a,2,gl.FLOAT,false,0,0);
+ const loc={},U=k=>loc[k]||(loc[k]=gl.getUniformLocation(p,k));let mx=.5,my=.5,t=12,last=0,vis=true;
+ addEventListener('pointermove',e=>{mx=e.clientX/innerWidth;my=1-e.clientY/innerHeight});new IntersectionObserver(e=>vis=e[0].isIntersecting).observe(c);
+ const fit=()=>{const d=Math.min(devicePixelRatio||1,1.5);c.width=Math.round(innerWidth*d);c.height=Math.round(innerHeight*d);gl.viewport(0,0,c.width,c.height)};addEventListener('resize',fit);fit();
+ function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;if(vis&&!document.hidden){t+=calm?0:dt*(vals._speed==null?1:vals._speed);gl.uniform2f(U('R'),c.width,c.height);gl.uniform1f(U('T'),t);gl.uniform2f(U('M'),mx,my);
+  for(const k in vals){if(k[0]==='_')continue;const v=vals[k];Array.isArray(v)?gl.uniform3f(U(k),v[0],v[1],v[2]):gl.uniform1f(U(k),v)}gl.drawArrays(gl.TRIANGLES,0,3)}requestAnimationFrame(frame)}
+ requestAnimationFrame(frame);return{set(o){Object.assign(vals,o)}}}
+/* Picks black or white text for whatever accent you choose. */
+const on=h=>{const n=parseInt(h.slice(1),16);return(.299*(n>>16)+.587*(n>>8&255)+.114*(n&255))/255>.62?'#111113':'#fff'};
+/* hgt() is the surface: the coordinates are bent by sine waves a few times, so it folds like something poured.
+   Each pixel's slope acts as a small mirror that looks up studio(): bright ceiling, dark horizon, grey floor. */
+const FRAG=`uniform vec3 tint,box;uniform float scale,sheen,dark;
+float hgt(vec2 p){for(int i=1;i<5;i++){float f=float(i);p.x+=.7/f*sin(f*1.35*p.y+T*.33+f*1.9);p.y+=.58/f*cos(f*1.15*p.x-T*.27+f*.7);}return sin(p.x*1.3+p.y*.9)+.35*sin(p.x*.7-p.y*2.1+T*.2);}
+float band(float y,float c,float w){y=(y-c)/w;return exp(-y*y);}
+float studio(vec3 r){float y=r.y*.9+r.x*.3+.28;float v=.45+.4*smoothstep(-.25,.5,y);v-=.42*band(y,.02,.15);v-=.16*band(y,.78,.1);v+=.2*band(y,-.5,.22);return v;}
+void main(){vec2 p=(gl_FragCoord.xy-.5*R)/R.y*2.2*scale+(M-.5)*.25;
+float e=.012*scale,a=hgt(p),bx=hgt(p+vec2(e,0.)),by=hgt(p+vec2(0.,e));
+vec3 nr=normalize(vec3((a-bx)/e,(a-by)/e,mix(4.,.9,sheen)));vec3 r=reflect(vec3(0.,0.,-1.),nr);
+float v=clamp(studio(r),0.,1.);float spec=pow(max(dot(nr,normalize(vec3(.3,.5,.8))),0.),mix(14.,50.,sheen));
+float veil=smoothstep(2.,1.15,length((gl_FragCoord.xy-.5*R)/box.xy));
+v=mix(1.-(1.-v)*(1.-veil*.22),v*(1.-veil*.45),dark);
+vec3 lo=mix(vec3(.47,.49,.54),vec3(.03,.035,.045),dark),hi=mix(vec3(1.),vec3(.5,.52,.56),dark);
+vec3 col=mix(lo,hi,v)*mix(vec3(1.),tint/max(max(tint.r,tint.g),max(tint.b,.001)),mix(.9,.6,v));
+col+=spec*mix(.22,.45,dark)*(1.-veil*.8*dark);
+col+=(h(gl_FragCoord.xy+fract(T))-.5)*.014;gl_FragColor=vec4(col,1.);}`;
+let sh;
+function start(){sh=shader(FRAG);const c=document.querySelector('canvas');
+ /* If the graphics context is lost, hide the canvas so the CSS gradient shows, and start a fresh one when it comes back. */
+ c.addEventListener('webglcontextlost',e=>{e.preventDefault();c.style.visibility='hidden'});
+ c.addEventListener('webglcontextrestored',()=>{c.remove();start();apply()})}
+/* The shader eases its contrast inside an oval behind the text, so the words stay readable. This measures the text block for it. */
+const hero=document.querySelector('.hero'),veil=()=>{const b=hero.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,1.5);sh.set({box:[b.width/2*d,b.height/2*d,0]})};
+function apply(){theme();document.body.style.background='';document.documentElement.style.setProperty('--on',on(S.accent||'#2563EB'));
+ sh.set({tint:rgb(S.tint),scale:S.scale,sheen:S.sheen,dark:S.mode==='dark'?1:0,_speed:S.speed});veil()}
+start();apply();addEventListener('resize',veil);
+</script>
+</body>
+</html>

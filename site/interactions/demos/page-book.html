@@ -1,0 +1,135 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Page-turn book</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0F1012;--panel:#1A1B1E;--ink:#F4F4F5;--mute:#A1A1AA;--line:#2C2D31;--ac:#111111}
+:root[data-mode=light]{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#111113;--mute:#6B6F76;--line:#E6E6E8}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+
+.art{position:absolute;inset:0;display:block;pointer-events:none}
+.art::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.16;mix-blend-mode:overlay}
+.heroc{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:24px;max-width:760px;color:#fff;text-shadow:0 1px 24px rgba(0,0,0,.35)}.heroc h1{font-size:clamp(34px,7vw,76px);line-height:1;letter-spacing:-.03em}.heroc p{font-size:clamp(15px,2vw,18px);opacity:.9;max-width:46ch}.heroc a{display:inline-flex;align-items:center;min-height:46px;padding:0 22px;border-radius:99px;background:#fff;color:#111;font-weight:700;text-decoration:none;text-shadow:none}
+/* Small shared pieces: kicker line, pill buttons, list reset. */
+input{font:inherit;color:inherit}ul,ol{margin:0;padding:0;list-style:none}[hidden]{display:none!important}
+.k{font-size:13px;font-weight:600;color:var(--mute)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:999px;border:1px solid var(--line);background:var(--panel);font-weight:600;font-size:14px;text-decoration:none;color:var(--ink)}
+.btn:hover{border-color:var(--ink)}.btn.pri{background:var(--ink);color:var(--bg);border-color:var(--ink)}.btn[disabled]{opacity:.45;cursor:not-allowed}
+.wrap{display:grid;justify-items:center;gap:clamp(14px,3vh,24px);padding:16px;width:100%}
+.hd{display:grid;gap:2px;text-align:center}
+.hd h1{font-size:clamp(20px,3vw,30px);letter-spacing:-.025em;line-height:1.1}
+/* --pw is the width of one page. Everything inside the book is sized from it, so the book scales as one object. */
+.book{--pw:min(44vw,430px,calc((100vh - 230px)/1.3));--cover:#18191C;position:relative;width:calc(var(--pw)*2);height:calc(var(--pw)*1.3);font-size:max(11px,calc(var(--pw)/23));perspective:calc(var(--pw)*8);perspective-origin:50% 40%;user-select:none;-webkit-user-select:none}
+:root:not([data-mode=light]) .book{--cover:#3A3C42}
+.book::before{content:"";position:absolute;inset:-9px -11px;z-index:-1;border-radius:calc(var(--pr,10px) + 7px);background:var(--cover);box-shadow:0 34px 50px -34px rgba(17,17,19,.7)}
+.book::after{content:"";position:absolute;left:61%;bottom:-24px;z-index:-1;width:12px;height:38px;background:var(--ac);clip-path:polygon(0 0,100% 0,100% 100%,50% 80%,0 100%)}
+.base,.face{position:absolute;inset:0;overflow:hidden;background:var(--paper,#FFFDF7);color:var(--pi,#1C1C20)}
+.base.l{right:50%;border-radius:var(--pr,10px) 0 0 var(--pr,10px);box-shadow:-2px 0 0 rgba(0,0,0,.14),-4px 0 0 var(--paper,#FFFDF7),-5px 0 0 rgba(0,0,0,.14)}
+.base.r{left:50%;border-radius:0 var(--pr,10px) var(--pr,10px) 0;box-shadow:2px 0 0 rgba(0,0,0,.14),4px 0 0 var(--paper,#FFFDF7),5px 0 0 rgba(0,0,0,.14)}
+/* A leaf is hinged on the spine. --a is its angle: 0 lies on the right, -180deg lies on the left. --s rises to 1 in mid turn. */
+.leaf{position:absolute;left:50%;top:0;width:50%;height:100%;transform-origin:0 50%;transform-style:preserve-3d;transform:rotateY(var(--a,0deg)) skewY(calc(var(--s,0)*-2.5deg));will-change:transform}
+.face{backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.front{border-radius:0 var(--pr,10px) var(--pr,10px) 0}
+.back{transform:rotateY(180deg);border-radius:var(--pr,10px) 0 0 var(--pr,10px)}
+/* The shadow in the gutter, and a sheen that only shows while the page is in the air. */
+.front::before,.base.r::before,.back::before,.base.l::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.16),rgba(0,0,0,.04) 7%,transparent 16%)}
+.back::before,.base.l::before{transform:scaleX(-1)}
+.face::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;opacity:var(--s,0);background:linear-gradient(90deg,rgba(0,0,0,.2),transparent 24%,rgba(255,255,255,.4) 52%,rgba(0,0,0,.2))}
+.back::after{transform:scaleX(-1)}
+.cast{position:absolute;top:0;bottom:0;width:50%;z-index:20;pointer-events:none;opacity:0}
+.cast.r{left:50%;border-radius:0 var(--pr,10px) var(--pr,10px) 0;background:linear-gradient(90deg,rgba(0,0,0,.4),transparent 90%)}
+.cast.l{left:0;border-radius:var(--pr,10px) 0 0 var(--pr,10px);background:linear-gradient(270deg,rgba(0,0,0,.4),transparent 90%)}
+/* What is printed on a page. */
+.pg{position:absolute;inset:0;display:flex;flex-direction:column;gap:.5em;padding:8% 9% 12%}
+.pg .pic{flex:1;min-height:0;border-radius:.5em}
+.pg .no{font-size:.8em;font-weight:600;color:var(--pm,#66666C);margin-top:.5em}
+.pg h2{font-size:1.5em;line-height:1.08;letter-spacing:-.025em}
+.pg .tx{font-size:.88em;line-height:1.45;color:var(--pm,#66666C)}
+.pg .fo{position:absolute;bottom:4.5%;right:9%;font-size:.76em;color:var(--pm,#66666C);font-variant-numeric:tabular-nums}
+.back .pg .pic{order:5;margin-top:.6em}.back .pg .no{margin-top:0}.back .fo{right:auto;left:9%}
+.pg.mid{justify-content:center;align-items:center;text-align:center;gap:.3em}.pg.mid h2{font-size:2.3em}.pg.mid i{width:1.6em;height:3px;border-radius:3px;background:var(--ac);margin:.5em 0}
+/* Invisible strips along the outer edges. They take the presses and drags. */
+.zone{position:absolute;top:0;bottom:0;width:30%;z-index:60;cursor:grab;touch-action:pan-y}.zone:active{cursor:grabbing}
+.zone.zr{right:0}.zone.zl{left:0}.zone.off{display:none}
+.ctl{display:flex;align-items:center;gap:14px}
+.st{min-width:140px;text-align:center;font-size:13.5px;color:var(--mute)}
+.nb[disabled]{opacity:.4;cursor:default}.nb[disabled]:hover{border-color:var(--line)}
+/* Narrow screens get one page at a time: a stack of single sheets. */
+.book.one{--pw:min(82vw,360px,calc((100vh - 230px)/1.36));width:var(--pw);height:calc(var(--pw)*1.36);font-size:max(13px,calc(var(--pw)/21))}
+.book.one .leaf{left:0;width:100%}.book.one .front{border-radius:3px var(--pr,10px) var(--pr,10px) 3px}
+.book.one .base.l,.book.one .cast.l{display:none}.book.one .base.r,.book.one .cast.r{left:0;width:100%}.book.one .zone{width:50%}
+.book.one::after{left:74%}
+@media(max-height:700px){.hint{display:none}}
+@media(max-height:560px){.hd{display:none}.book{--pw:min(44vw,430px,calc((100vh - 122px)/1.3))}.book.one{--pw:min(82vw,360px,calc((100vh - 122px)/1.36))}}
+</style>
+<body>
+<main class="wrap"><header class="hd"><p class="k">Coast journal</p><h1>Nine days by the sea.</h1></header>
+<div class="book" id="book" role="group" aria-label="Journal with eight pages. Turn pages with the buttons below or the left and right arrow keys."></div>
+<div class="ctl"><button class="nb" id="prev" aria-label="Previous page">‹</button><p class="st" id="st" aria-live="polite"></p><button class="nb" id="next" aria-label="Next page">›</button></div></main>
+<p class="hint">Drag the edge of a page, or use the arrow keys.</p>
+<script type="application/json" id="settings">{"duration":900,"curl":1,"radius":10,"paper":"#FFFDF7","mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Turn',k:'duration',label:'Duration',min:300,max:2000,step:20,unit:'ms'},{k:'curl',label:'Curl and shadow',min:0,max:1.6,step:.05},{g:'Paper',k:'radius',label:'Page radius',min:0,max:24,step:1,unit:'px'},{k:'paper',label:'Paper colour',type:'color'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'light';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+const framed=parent!==window;
+/* Flat abstract artwork made from CSS gradients, so the file needs no images. Swap in your own pictures. */
+const PAL=[['#DCE6FF','#2563EB','#F7C948'],['#FFE3D3','#F0683C','#1F3A5F'],['#DDF3E4','#1F9D6B','#F29FB5'],['#F0E4FF','#7C4DDB','#FFB44A'],['#FFF0C2','#E0A100','#3257D6'],['#DDF1F5','#1C8CA8','#F0683C'],['#FBDDE6','#D6457A','#2C6E63'],['#E7E9EE','#111113','#F0683C']];
+const art=i=>{const[a,b,c]=PAL[i%PAL.length];return `radial-gradient(circle at ${28+i*17%44}% ${36+i*23%30}%,${b} 0 20%,transparent 20.4%),radial-gradient(circle at ${72-i*13%36}% ${66-i*11%28}%,${c} 0 10%,transparent 10.4%),linear-gradient(${115+i*40}deg,${a} 58%,color-mix(in srgb,${a} 72%,${b}) 58%)`};
+const PAGES=[['Day one','Low tide at six','The harbour empties and the boats sit on the sand like parked cars.'],['Day two','A wall of fog','By nine the lighthouse had gone. We walked by the sound of its bell.'],['Day three','Salt on everything','Glasses, lenses, the bread. Nothing here stays clean past noon.'],['Day four','The long beach','Four miles of sand and one man with a kite. He did not look up.'],['Day five','Rain, then gold','It rained until five. Then the whole bay turned the colour of tea.'],['Day six','Market morning','Crabs in blue crates, lemons in a wheelbarrow, coffee from a hatch.'],['Day seven','The ferry','Forty minutes across. Everybody stands outside, whatever the weather.'],['Day nine','Last light','We lost a day somewhere. Nobody could say which one it was.']];
+const book=document.getElementById('book'),prev=document.getElementById('prev'),next=document.getElementById('next'),st=document.getElementById('st'),mq=matchMedia('(max-width:559px)');
+const page=(p,i)=>`<div class="pg"><div class="pic" style="background-image:${art(i)}"></div><p class="no">${p[0]}</p><h2>${p[1]}</h2><p class="tx">${p[2]}</p><span class="fo">${i+1}</span></div>`;
+/* n is how many leaves have been turned. On a wide screen a leaf carries two pages, on a narrow one a single page. */
+let leaves=[],n=0,N=0,one=false,castL,castR,zl,zr,drag=null,peek=null;
+function build(){const was=N?n/N:0;one=mq.matches;book.classList.toggle('one',one);const P=PAGES.map(page);
+ book.innerHTML=`<div class="base l"><div class="pg mid"><p class="no">Notebook no. 4</p><h2>Coast</h2><i></i><p class="tx">Nine days in spring</p></div></div><div class="base r"><div class="pg mid"><p class="tx">End of the notebook</p></div></div><div class="cast l"></div><div class="cast r"></div>`
+  +(one?P.map(p=>`<div class="leaf"><div class="face front">${p}</div></div>`):[0,1,2,3].map(i=>`<div class="leaf"><div class="face front">${P[i*2]}</div><div class="face back">${P[i*2+1]}</div></div>`)).join('')
+  +`<span class="zone zl" data-d="-1"></span><span class="zone zr" data-d="1"></span>`;
+ leaves=[...book.querySelectorAll('.leaf')];N=leaves.length;n=Math.round(was*N);castL=book.querySelector('.cast.l');castR=book.querySelector('.cast.r');zl=book.querySelector('.zl');zr=book.querySelector('.zr');
+ leaves.forEach((l,i)=>{l.i=i;l.moving=false;set(l,i<n?-180:0)});[zl,zr].forEach(grip);rest();say()}
+/* One angle drives everything about a leaf: its rotation, a little skew, the sheen, and how high it sits in the pile. */
+function set(l,a){l.a=a;const s=Math.sin(-a*Math.PI/180);l.style.setProperty('--a',a.toFixed(2)+'deg');l.style.setProperty('--s',(s*S.curl).toFixed(3));
+ if(one)l.style.opacity=a>-70?1:Math.max(0,1+(a+70)/50); /* a single sheet has no back, so it fades as it swings away */
+ if(l.moving)l.style.zIndex=30+(a>-90?N-l.i:l.i+1)}
+/* Pages at rest: turned ones pile up on the left, the others on the right, each pile with its top page highest. */
+function rest(){leaves.forEach((l,i)=>{if(!l.moving)l.style.zIndex=i<n?i+1:N-i});shade()}
+/* The moving page throws a shadow on the side it is over, strongest when it is half way up. */
+function shade(){let r=0,l=0;leaves.forEach(x=>{if(x.a<0&&x.a>-180){const v=Math.abs(Math.sin(2*x.a*Math.PI/180));if(x.a>-90)r=Math.max(r,v);else l=Math.max(l,v)}});castR.style.opacity=Math.min(1,r*S.curl*.8);castL.style.opacity=Math.min(1,l*S.curl*.8)}
+function tween(l,to){cancelAnimationFrame(l.raf);const from=l.a,dur=calm?0:Math.max(140,S.duration*Math.abs(to-from)/180),t0=performance.now();l.moving=true;
+ (function step(now){const k=dur?Math.min(1,(now-t0)/dur):1,e=k<.5?2*k*k:1-Math.pow(2-2*k,2)/2;set(l,from+(to-from)*e);shade();if(k<1)l.raf=requestAnimationFrame(step);else{l.moving=false;rest()}})(t0)}
+function go(d){if(d>0&&n<N)tween(leaves[n++],-180);else if(d<0&&n>0)tween(leaves[--n],0);say()}
+function say(){prev.disabled=n===0;next.disabled=n===N;zl.classList.toggle('off',n===0);zr.classList.toggle('off',n===N);
+ st.textContent=one?(n<N?`Page ${n+1} of ${N}`:'The end'):n===0?'Page 1 of 8':n===N?'Page 8 of 8':`Pages ${n*2} and ${n*2+1} of 8`}
+/* The edge strips. A press turns the page. A drag turns the pointer's distance from the spine into an angle, and letting go finishes the turn to the nearer side. */
+function grip(z){const d=+z.dataset.d,mine=()=>d>0?leaves[n]:leaves[n-1];
+ z.addEventListener('pointerdown',e=>{const l=mine();if(!l)return;z.setPointerCapture(e.pointerId);peek=null;drag={l,x0:e.clientX,goal:l.a,moved:false}});
+ z.addEventListener('pointermove',e=>{if(!drag)return;if(Math.abs(e.clientX-drag.x0)>6&&!drag.moved){drag.moved=true;if(!calm&&!one){cancelAnimationFrame(drag.l.raf);drag.l.moving=true;follow()}}
+  const r=book.getBoundingClientRect(),u=Math.min(1,Math.max(-1,(e.clientX-r.left-r.width/2)/(r.width/2)));drag.goal=-Math.acos(u)*180/Math.PI;drag.dx=e.clientX-drag.x0});
+ const up=()=>{if(!drag)return;const g=drag,l=g.l;drag=null;
+  if(!g.moved)return go(d);if(one||calm)return go(g.dx<0?1:-1); /* on one page, or with reduced motion, a drag is a swipe */
+  const over=l.a<-90;if(d>0&&over)n++;if(d<0&&!over)n--;tween(l,over?-180:0);say()};
+ z.addEventListener('pointerup',up);z.addEventListener('pointercancel',up);
+ /* Hovering lifts the page a little, to show it can be turned. */
+ z.addEventListener('pointerenter',e=>{const l=mine();if(e.pointerType!=='mouse'||calm||one||drag||!l||l.moving)return;peek=l;tween(l,d>0?-16:-164)});
+ z.addEventListener('pointerleave',()=>{if(!peek||drag)return;const l=peek;peek=null;tween(l,l.i<n?-180:0)})}
+function follow(){if(!drag)return;const l=drag.l;set(l,l.a+(drag.goal-l.a)*.3);shade();requestAnimationFrame(follow)}
+prev.onclick=()=>go(-1);next.onclick=()=>go(1);
+addEventListener('keydown',e=>{if(e.altKey||e.ctrlKey||e.metaKey)return;if(e.key==='ArrowRight'){e.preventDefault();go(1)}if(e.key==='ArrowLeft'){e.preventDefault();go(-1)}});
+mq.addEventListener('change',build);
+/* Dark ink on light paper, light ink on dark paper. */
+const lum=h=>{const v=parseInt(h.slice(1),16);return(.299*(v>>16)+.587*(v>>8&255)+.114*(v&255))/255};
+function apply(){theme();const s=book.style,light=lum(S.paper||'#FFFDF7')>.55;s.setProperty('--pr',S.radius+'px');s.setProperty('--paper',S.paper);s.setProperty('--pi',light?'#1C1C20':'#F4F4F5');s.setProperty('--pm',light?'#66666C':'#B4B4BC');
+ if(!N)build();else{leaves.forEach(l=>set(l,l.a));shade()}}
+apply();
+/* In a preview frame the pages turn by themselves until you touch it. Delete this block in your own page. */
+if(framed&&!calm){let dir=1;const stop=()=>clearInterval(iv),iv=setInterval(()=>{if(n===N)dir=-1;if(n===0)dir=1;go(dir)},2300);['pointerdown','keydown','wheel'].forEach(e=>addEventListener(e,stop,{once:true,passive:true}))}
+</script>
+</body>
+</html>

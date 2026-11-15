@@ -1,0 +1,140 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>World map with arcs</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0F1012;--panel:#1A1B1E;--ink:#F4F4F5;--mute:#A1A1AA;--line:#2C2D31;--ac:#111111}
+:root[data-mode=light]{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#111113;--mute:#6B6F76;--line:#E6E6E8}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+
+.art{position:absolute;inset:0;display:block;pointer-events:none}
+.art::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.16;mix-blend-mode:overlay}
+.heroc{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:24px;max-width:760px;color:#fff;text-shadow:0 1px 24px rgba(0,0,0,.35)}.heroc h1{font-size:clamp(34px,7vw,76px);line-height:1;letter-spacing:-.03em}.heroc p{font-size:clamp(15px,2vw,18px);opacity:.9;max-width:46ch}.heroc a{display:inline-flex;align-items:center;min-height:46px;padding:0 22px;border-radius:99px;background:#fff;color:#111;font-weight:700;text-decoration:none;text-shadow:none}
+/* Small shared pieces: kicker line, pill buttons, list reset. */
+input{font:inherit;color:inherit}ul,ol{margin:0;padding:0;list-style:none}[hidden]{display:none!important}
+.k{font-size:13px;font-weight:600;color:var(--mute)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:999px;border:1px solid var(--line);background:var(--panel);font-weight:600;font-size:14px;text-decoration:none;color:var(--ink)}
+.btn:hover{border-color:var(--ink)}.btn.pri{background:var(--ink);color:var(--bg);border-color:var(--ink)}.btn[disabled]{opacity:.45;cursor:not-allowed}
+canvas{position:fixed;inset:0;width:100%;height:100%}
+.top{position:fixed;left:0;right:0;top:0;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:clamp(14px,3.6vh,34px) clamp(16px,4vw,44px) 0}
+.top h1{font-size:clamp(20px,3.2vw,34px);line-height:1.12;letter-spacing:-.025em;margin:2px 0 8px}
+.cap{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums}
+.cap i{width:8px;height:8px;border-radius:50%;background:var(--ac);flex:none}
+.cap .km{font-weight:400;color:var(--mute)}
+.log{position:fixed;left:16px;right:16px;font-size:13.5px;font-variant-numeric:tabular-nums}
+.log li{display:flex;align-items:center;justify-content:space-between;height:34px;border-top:1px solid var(--line)}.log span{color:var(--mute)}
+</style>
+<body>
+<canvas id="c" role="img" aria-label="A dotted world map. Lines fly between twelve cities, one route after another."></canvas>
+<header class="top" id="top"><div><p class="k">Live routes</p><h1>Twelve cities, one network.</h1><p class="cap"><i></i><span id="route">Lisbon to Tokyo</span><span class="km" id="km"></span></p></div><button class="btn" id="pp">Pause</button></header>
+<ol class="log" id="log" aria-label="Earlier routes" hidden></ol>
+<script type="application/json" id="settings">{"dot":46,"speed":1,"count":3,"height":24,"labels":true,"mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Map',k:'dot',label:'Dot size',min:20,max:95,step:1,unit:'%'},{k:'labels',label:'City labels',type:'toggle'},{g:'Arcs',k:'speed',label:'Speed',min:.3,max:3,step:.1},{k:'count',label:'Arcs at once',min:1,max:8,step:1},{k:'height',label:'Arc height',min:0,max:60,step:1,unit:'%'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'light';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+/* The land, one character for every 4 degrees: 90 columns from 180 west to 180 east, 35 rows from 84 north down to 56 south. # is land. */
+const LAND=[
+".........................####.#########...................................................",
+"......................#######.##########........###.......................................",
+"..............#.....#####.....##########...................#......########................",
+"....##########..###.....####...########...........###.....##..###########################.",
+"##.#####################..###...####...##.......##########################################",
+"....##################....###...###...........###########################################.",
+".....##....###########...####...............#..##..#############################....##....",
+"............###################...........#.#..#################################....#.....",
+"..............##################............#####################################.........",
+"..............###############...............####################################..........",
+"..............#############................###..####.####.####################..##........",
+"..............############.................##...#.#.#######################.#..#..........",
+"...............###########.................#####......#####################..##...........",
+"................#########.................##################################..............",
+".................####...#................############.####.################...............",
+"..................###....#...............#############.#####..############.#..............",
+"...................####....#.............#############.####....###..####...#..............",
+"......................##.................##############.#......##....###...#..............",
+"........................#.####...........#################......#......#...##.............",
+".........................######...........###############.............#...#...............",
+".........................#######...............#########.............##.###...............",
+".........................#########.............########...............#.##.#..##..........",
+".........................###########............#######................###.....###........",
+".........................###########............#######...................................",
+"..........................#########.............#######..#...................##.#.........",
+"...........................########.............######..##.................#######........",
+"...........................########.............######..#................##########.......",
+"...........................######................####....................##########.......",
+"...........................######................####.....................#########.......",
+"...........................#####..................##......................##..#####.......",
+"...........................####.................................................##......#.",
+"..........................###....................................................#......#.",
+"..........................###..........................................................#..",
+"..........................##..............................................................",
+"...........................#.............................................................."
+];
+const TOP=84,BOT=-56,COLS=LAND[0].length,ROWS=LAND.length;
+/* Name, latitude, longitude. Add your own places here. */
+const CITY=[['Lisbon',38.72,-9.14],['London',51.51,-.13],['New York',40.71,-74.01],['San Francisco',37.77,-122.42],['São Paulo',-23.55,-46.63],['Lagos',6.52,3.38],['Nairobi',-1.29,36.82],['Dubai',25.2,55.27],['Mumbai',19.08,72.88],['Singapore',1.35,103.82],['Tokyo',35.68,139.69],['Sydney',-33.87,151.21]];
+const cv=document.getElementById('c'),x=cv.getContext('2d'),dots=document.createElement('canvas'),head=document.getElementById('top'),routeEl=document.getElementById('route'),kmEl=document.getElementById('km'),pp=document.getElementById('pp'),log=document.getElementById('log');
+let d=1,W=0,H=0,mx=0,my=0,mw=0,mh=0,ac='#2563EB',line='#2563EB',ink='#111',mute='#777',bg='#fff',arcs=[],rings=[],clock=0,last=0,playing=!calm,first=true,past=[[2,1],[4,5],[7,9],[8,11],[5,6],[0,10]],logRows=0;
+/* Equirectangular map: longitude runs straight across, latitude straight down. */
+const xy=i=>[mx+(CITY[i][2]+180)/360*mw,my+(TOP-CITY[i][1])/(TOP-BOT)*mh];
+/* Great-circle distance in km, for the caption and for how long a flight takes. */
+const km=(a,b)=>{const R=Math.PI/180,[,la,lo]=CITY[a],[,lb,lob]=CITY[b],h=Math.sin((lb-la)*R/2)**2+Math.cos(la*R)*Math.cos(lb*R)*Math.sin((lob-lo)*R/2)**2;return 12742*Math.asin(Math.sqrt(h))};
+/* Blend two hex colours. In dark mode the arcs are lightened a little so they stand out. */
+const mix=(a,b,t)=>{const p=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)),A=p(a),B=p(b);return'rgb('+A.map((v,i)=>Math.round(v+(B[i]-v)*t))+')'};
+const far=(a,b)=>(Math.round(km(a,b)/10)*10).toLocaleString('en')+' km',name=(a,b)=>CITY[a][0]+' to '+CITY[b][0];
+/* On a phone there is room under the map, so the routes before the current one are listed there. */
+const list=()=>{log.innerHTML=past.slice(1,1+logRows).map(([a,b])=>`<li>${name(a,b)}<span>${far(a,b)}</span></li>`).join('')};
+const ease=t=>t<.5?2*t*t:1-(2-2*t)**2/2;
+function build(){d=Math.min(2,devicePixelRatio||1);W=innerWidth;H=innerHeight;cv.width=dots.width=W*d;cv.height=dots.height=H*d;
+ const cs=getComputedStyle(document.documentElement),v=n=>cs.getPropertyValue(n).trim();ac=v('--ac');ink=v('--ink');mute=v('--mute');bg=v('--bg');line=S.mode==='dark'&&/^#\w{6}$/.test(ac)?mix(ac,'#ffffff',.4):ac;
+ /* Fit the map under the heading. */
+ const pad=W<560?12:Math.min(44,W*.04),y0=head.getBoundingClientRect().bottom+12,aw=W-pad*2,ah=Math.max(60,H-y0-14),ratio=360/(TOP-BOT);
+ mw=Math.min(aw,ah*ratio);mh=mw/ratio;mx=(W-mw)/2;logRows=W<560?Math.min(5,Math.floor((ah-mh-30)/34)):0;if(logRows<2)logRows=0;
+ my=y0+(ah-mh-(logRows?20+logRows*34:0))*(logRows?.3:.4);log.hidden=!logRows;log.style.top=my+mh+20+'px';list();
+ /* The dots never change, so paint them once on a spare canvas and reuse that picture every frame. */
+ const g=dots.getContext('2d'),cell=mw/COLS,r=Math.max(.55,cell*S.dot/200);g.setTransform(d,0,0,d,0,0);g.clearRect(0,0,W,H);g.fillStyle=mute;g.globalAlpha=.42;g.beginPath();
+ for(let j=0;j<ROWS;j++)for(let i=0;i<COLS;i++)if(LAND[j][i]==='#'){const px=mx+(i+.5)*cell,py=my+(j+.5)*cell;g.moveTo(px+r,py);g.arc(px,py,r,0,7)}g.fill()}
+/* Two cities that are a fair way apart, do not cross the date line and were not linked a moment ago. */
+function pick(){if(first){first=false;return[0,10]}for(let n=0;n<60;n++){const a=Math.random()*CITY.length|0,b=Math.random()*CITY.length|0;
+ if(a!==b&&Math.abs(CITY[a][2]-CITY[b][2])<150&&km(a,b)>2500&&!past.slice(0,4).some(q=>(q[0]===a&&q[1]===b)||(q[0]===b&&q[1]===a)))return[a,b]}return[1,7]}
+const launch=at=>{const[a,b]=pick();return{a,b,t0:at,dur:1000+km(a,b)/7,said:false,hit:false}};
+/* The curve between two cities. The control point is pushed off the middle of the straight line, at right angles, on the upper side. */
+function curve(a,b){const A=xy(a),B=xy(b),dx=B[0]-A[0],dy=B[1]-A[1],len=Math.hypot(dx,dy)||1;let nx=-dy/len,ny=dx/len;if(ny>0){nx=-nx;ny=-ny}
+ const lift=len*S.height/50,C=[(A[0]+B[0])/2+nx*lift,(A[1]+B[1])/2+ny*lift];return t=>{const u=1-t;return[u*u*A[0]+2*u*t*C[0]+t*t*B[0],u*u*A[1]+2*u*t*C[1]+t*t*B[1]]}}
+/* Draw the part of a curve between tail and head, fainter toward the tail. */
+function stroke(at,tail,head,alpha){const n=Math.max(2,Math.ceil((head-tail)*40));x.lineWidth=2;x.lineCap='round';x.strokeStyle=line;let p=at(tail);
+ for(let i=1;i<=n;i++){const q=at(tail+(head-tail)*i/n);x.globalAlpha=alpha*(.15+.85*(i/n)**1.3);x.beginPath();x.moveTo(p[0],p[1]);x.lineTo(q[0],q[1]);x.stroke();p=q}x.globalAlpha=1}
+function draw(){x.setTransform(d,0,0,d,0,0);x.clearRect(0,0,W,H);x.drawImage(dots,0,0,W,H);const busy=new Set();
+ if(calm){/* Reduced motion: a few whole arcs, standing still. */for(const[a,b]of[[0,10],[2,1],[4,5],[7,9],[8,11]]){stroke(curve(a,b),0,1,.75);busy.add(a).add(b)}}
+ else{arcs.length=Math.min(arcs.length,S.count);for(let i=0;i<S.count;i++){let q=arcs[i];
+   /* A finished arc is replaced by a new one after a short gap. The first ones leave one after another. */
+   if(!q)q=arcs[i]=launch(clock+i*900);else if(clock>q.t0+q.dur*1.5)q=arcs[i]=launch(clock+Math.random()*500);
+   const u=(clock-q.t0)/q.dur;if(u<0)continue;
+   if(!q.said){q.said=true;routeEl.textContent=name(q.a,q.b);kmEl.textContent=far(q.a,q.b);past.unshift([q.a,q.b]);past.length=6;list()}
+   const at=curve(q.a,q.b),head=ease(Math.min(1,u)),tail=ease(Math.max(0,Math.min(1,(u-.45)/1.05*1)));busy.add(q.a).add(q.b);
+   if(head>tail)stroke(at,tail,head,1);
+   if(u<1){const p=at(head);x.fillStyle=line;x.globalAlpha=.22;x.beginPath();x.arc(p[0],p[1],7,0,7);x.fill();x.globalAlpha=1;x.beginPath();x.arc(p[0],p[1],3,0,7);x.fill()}
+   else if(!q.hit){q.hit=true;rings.push({i:q.b,t:clock})}}
+  /* A ring where each arc lands: it grows and fades. */
+  rings=rings.filter(r=>clock-r.t<1100);for(const r of rings){const k=(clock-r.t)/1100,p=xy(r.i);busy.add(r.i);x.strokeStyle=line;x.lineWidth=1.5;x.globalAlpha=(1-k)*.8;x.beginPath();x.arc(p[0],p[1],4+k*16,0,7);x.stroke();x.globalAlpha=(1-k)*.16;x.fillStyle=line;x.beginPath();x.arc(p[0],p[1],4+k*16,0,7);x.fill();x.globalAlpha=1}}
+ /* City markers, then their names. On a narrow map only the busy cities are named. */
+ CITY.forEach((c,i)=>{const p=xy(i);x.fillStyle=bg;x.beginPath();x.arc(p[0],p[1],5,0,7);x.fill();x.fillStyle=line;x.beginPath();x.arc(p[0],p[1],3,0,7);x.fill()});
+ if(S.labels){const wide=mw>860;x.font='600 '+(wide?12:11)+'px Inter,ui-sans-serif,system-ui,sans-serif';x.textBaseline='middle';x.lineJoin='round';x.lineWidth=4;x.strokeStyle=bg;
+  CITY.forEach((c,i)=>{if(!wide&&!busy.has(i))return;const p=xy(i),left=p[0]+10+x.measureText(c[0]).width>W-6;x.textAlign=left?'right':'left';const tx=p[0]+(left?-9:9);x.strokeText(c[0],tx,p[1]);x.fillStyle=busy.has(i)?ink:mute;x.fillText(c[0],tx,p[1])})}}
+function frame(now){const dt=Math.min(50,now-last);last=now;if(playing)clock+=dt*S.speed;draw();requestAnimationFrame(frame)}
+pp.onclick=()=>{playing=!playing;pp.textContent=playing?'Pause':'Play'};
+addEventListener('resize',()=>{build();if(calm)draw()});
+function apply(){theme();build();if(calm)draw()}
+kmEl.textContent=far(0,10);pp.hidden=calm;
+apply();if(!calm)requestAnimationFrame(t=>{last=t;frame(t)});
+</script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Page preloader</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0F1012;--panel:#1A1B1E;--ink:#F4F4F5;--mute:#A1A1AA;--line:#2C2D31;--ac:#111111}
+:root[data-mode=light]{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#111113;--mute:#6B6F76;--line:#E6E6E8}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+
+.art{position:absolute;inset:0;display:block;pointer-events:none}
+.art::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.16;mix-blend-mode:overlay}
+.heroc{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:24px;max-width:760px;color:#fff;text-shadow:0 1px 24px rgba(0,0,0,.35)}.heroc h1{font-size:clamp(34px,7vw,76px);line-height:1;letter-spacing:-.03em}.heroc p{font-size:clamp(15px,2vw,18px);opacity:.9;max-width:46ch}.heroc a{display:inline-flex;align-items:center;min-height:46px;padding:0 22px;border-radius:99px;background:#fff;color:#111;font-weight:700;text-decoration:none;text-shadow:none}
+/* Small shared pieces: kicker line, pill buttons, list reset. */
+input{font:inherit;color:inherit}ul,ol{margin:0;padding:0;list-style:none}[hidden]{display:none!important}
+.k{font-size:13px;font-weight:600;color:var(--mute)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:999px;border:1px solid var(--line);background:var(--panel);font-weight:600;font-size:14px;text-decoration:none;color:var(--ink)}
+.btn:hover{border-color:var(--ink)}.btn.pri{background:var(--ink);color:var(--bg);border-color:var(--ink)}.btn[disabled]{opacity:.45;cursor:not-allowed}
+.hero{position:fixed;inset:0;overflow:auto;display:grid;grid-template-rows:auto 1fr;padding:clamp(12px,2.4vw,24px) clamp(20px,5vw,64px) clamp(20px,4vw,40px)}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:12px}.nav,.mid{max-width:1080px;width:100%;margin:0 auto}
+.brand{font-size:16px;letter-spacing:-.01em}
+.links{display:flex}.links a{display:inline-flex;align-items:center;min-height:40px;padding:0 10px;color:var(--mute);font-size:14px;font-weight:500;text-decoration:none}.links a:hover{color:var(--ink)}
+.mid{display:grid;grid-template-columns:1.15fr .85fr;align-items:center;gap:5vw}
+.txt{display:grid;gap:14px;justify-items:start}
+.txt h1{font-size:clamp(30px,5.4vw,68px);line-height:1;letter-spacing:-.04em}
+.txt .sub{color:var(--mute);font-size:clamp(15px,1.5vw,17px);max-width:40ch}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.note{font-size:13px;color:var(--mute)}
+.pic{justify-self:end;width:100%;max-width:400px;aspect-ratio:4/5;max-height:66vh;border-radius:24px;border:1px solid var(--line)}
+/* The parts of the hero wait a little lower and rise in, one after another, once the curtain starts to open. */
+.rise{transition:opacity .7s,transform .9s cubic-bezier(.2,.8,.2,1);transition-delay:calc(var(--n)*70ms)}
+.hero.wait .rise{opacity:0;transform:translateY(22px);transition:none}
+/* The curtain. It is never moved: its clip-path is rewritten every frame, which cuts it away. */
+.veil{position:fixed;inset:0;z-index:5;display:grid;grid-template-rows:auto 1fr auto;padding:clamp(18px,3.4vw,40px) clamp(20px,5vw,64px);background:var(--ink);color:var(--bg)}
+.vtop{display:flex;justify-content:space-between;font-size:14px;font-weight:600}.vtop span:last-child{opacity:.72;font-weight:500}
+.vin{grid-row:3;display:grid;gap:clamp(10px,2vw,22px)}
+.num{font-size:clamp(64px,calc(var(--cs,22)*1vw),min(340px,52vh));font-weight:600;line-height:.8;letter-spacing:-.06em;font-variant-numeric:tabular-nums;margin-left:-.04em}
+.track{display:block;height:2px;background:color-mix(in srgb,var(--bg) 22%,transparent)}
+.track i{display:block;height:100%;background:var(--ac);transform-origin:0 50%;transform:scaleX(0)}
+@media(max-width:700px){.mid{grid-template-columns:1fr;gap:22px;align-content:center}.pic{justify-self:stretch;max-width:none;aspect-ratio:auto;height:24vh;order:-1}}
+@media(prefers-reduced-motion:reduce){.veil{display:none}.rise{transition:none}}
+</style>
+<body>
+<main class="hero" id="hero"><nav class="nav rise" style="--n:0" aria-label="Main"><b class="brand">Northlight</b><span class="links"><a href="#">Work</a><a href="#">Studio</a><a href="#">Contact</a></span></nav>
+<div class="mid"><div class="txt"><p class="k rise" style="--n:1">Design studio, Lisbon</p><h1 class="rise" style="--n:2">Quiet pages for loud ideas.</h1><p class="sub rise" style="--n:3">Identity, websites and motion for people who would rather be clear than clever.</p><div class="row rise" style="--n:4"><a class="btn pri" href="#">See the work</a><button class="btn" id="again">Play again</button></div><p class="note" id="note" hidden>Reduced motion is on, so the preloader is skipped.</p></div>
+<div class="pic rise" id="pic" style="--n:3" aria-hidden="true"></div></div></main>
+<div class="veil" id="veil" aria-hidden="true"><div class="vtop"><span>Northlight</span><span>Loading</span></div><div class="vin" id="vin"><span class="num" id="num">0</span><span class="track"><i id="fill"></i></span></div></div>
+<p class="sr" role="status" id="say"></p>
+<script type="application/json" id="settings">{"duration":2200,"lift":900,"style":"lift","ease":"smooth","size":22,"mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Counter',k:'duration',label:'Count duration',min:800,max:3200,step:50,unit:'ms'},{k:'size',label:'Counter size',min:10,max:34,step:1,unit:'vw'},{g:'Curtain',k:'style',label:'Style',type:'select',options:['lift','split','circle']},{k:'lift',label:'Curtain duration',min:400,max:1400,step:50,unit:'ms'},{k:'ease',label:'Easing',type:'select',options:['smooth','in-out','linear']},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'light';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+const framed=parent!==window;
+/* Flat abstract artwork made from CSS gradients, so the file needs no images. Swap in your own pictures. */
+const PAL=[['#DCE6FF','#2563EB','#F7C948'],['#FFE3D3','#F0683C','#1F3A5F'],['#DDF3E4','#1F9D6B','#F29FB5'],['#F0E4FF','#7C4DDB','#FFB44A'],['#FFF0C2','#E0A100','#3257D6'],['#DDF1F5','#1C8CA8','#F0683C'],['#FBDDE6','#D6457A','#2C6E63'],['#E7E9EE','#111113','#F0683C']];
+const art=i=>{const[a,b,c]=PAL[i%PAL.length];return `radial-gradient(circle at ${28+i*17%44}% ${36+i*23%30}%,${b} 0 20%,transparent 20.4%),radial-gradient(circle at ${72-i*13%36}% ${66-i*11%28}%,${c} 0 10%,transparent 10.4%),linear-gradient(${115+i*40}deg,${a} 58%,color-mix(in srgb,${a} 72%,${b}) 58%)`};
+const $=id=>document.getElementById(id),hero=$('hero'),veil=$('veil'),vin=$('vin'),num=$('num'),fill=$('fill'),again=$('again'),say=$('say');
+$('pic').style.backgroundImage=art(3);
+const clamp=v=>Math.min(1,Math.max(0,v)),HOLD=180;
+const EASE={smooth:t=>1-Math.pow(1-t,3),'in-out':t=>t<.5?16*t**5:1-Math.pow(2-2*t,5)/2,linear:t=>t};
+/* What is left of the curtain when it is r (0 to 1) of the way open. */
+function cut(r){
+ if(S.style==='split'){const a=50-50*r,b=50+50*r;return `polygon(0 0,${a}% 0,${a}% 100%,0 100%,0 0,100% 0,100% 100%,${b}% 100%,${b}% 0,100% 0)`}
+ /* A very large rectangle with a round hole in the middle. "evenodd" is what makes the circle a hole. */
+ if(S.style==='circle'){const w=veil.offsetWidth,h=veil.offsetHeight,R=r*Math.hypot(w,h)/2+.01;return `path(evenodd,"M-9999 -9999H99999V99999H-9999ZM${w/2-R} ${h/2}a${R} ${R} 0 1 0 ${2*R} 0a${R} ${R} 0 1 0 ${-2*R} 0Z")`}
+ return `inset(0 0 ${r*100}% 0)`}
+const clip=v=>veil.style.clipPath=veil.style.webkitClipPath=v;
+let run=0,busy=false;
+/* One clock runs the whole thing: first the count, then a short pause, then the curtain. */
+function play(byUser){if(calm)return;const id=++run,t0=performance.now();busy=true;veil.hidden=false;hero.inert=true;hero.classList.add('wait');clip('none');vin.style.opacity=1;vin.style.transform='';say.textContent='Loading';
+ (function frame(now){if(id!==run)return;const t=now-t0,a=clamp(t/S.duration),p=a-Math.sin(a*6*Math.PI)/(6*Math.PI)*.9; /* p climbs in three surges, like real loading */
+  num.textContent=Math.round(p*100);fill.style.transform=`scaleX(${p})`;
+  const b=clamp((t-S.duration-HOLD)/S.lift);
+  if(b>0){const out=clamp(b*3.5);clip(cut((EASE[S.ease]||EASE.smooth)(b)));vin.style.opacity=1-out;vin.style.transform=`translateY(${-28*out}px)`;hero.classList.remove('wait')}
+  if(b<1)requestAnimationFrame(frame);else{veil.hidden=true;hero.inert=false;busy=false;say.textContent='Page ready';if(byUser)again.focus({preventScroll:true})}})(t0)}
+again.onclick=()=>play(true);
+/* Changing a setting replays the preloader a moment later, so you can see what it did. */
+let sig='',timer=0;
+function apply(){theme();veil.style.setProperty('--cs',S.size);const now=[S.duration,S.lift,S.style,S.ease,S.size].join();
+ if(sig&&sig!==now){clearTimeout(timer);timer=setTimeout(()=>play(),350)}sig=now}
+apply();
+/* With reduced motion there is no curtain at all: the page is simply there. */
+if(calm){veil.hidden=true;again.hidden=true;$('note').hidden=false}else play();
+/* In a preview frame it replays by itself until you touch it. Delete this block in your own page. */
+if(framed&&!calm){let stop=false;['pointerdown','keydown','wheel'].forEach(e=>addEventListener(e,()=>stop=true,{once:true,passive:true}));const iv=setInterval(()=>{if(stop)clearInterval(iv);else if(!busy)play()},2600)}
+</script>
+</body>
+</html>

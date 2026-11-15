@@ -1,0 +1,82 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Metaball loader</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0F1012;--panel:#1A1B1E;--ink:#F4F4F5;--mute:#A1A1AA;--line:#2C2D31;--ac:#111111}
+:root[data-mode=light]{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#111113;--mute:#6B6F76;--line:#E6E6E8}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+
+.art{position:absolute;inset:0;display:block;pointer-events:none}
+.art::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.16;mix-blend-mode:overlay}
+.heroc{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:24px;max-width:760px;color:#fff;text-shadow:0 1px 24px rgba(0,0,0,.35)}.heroc h1{font-size:clamp(34px,7vw,76px);line-height:1;letter-spacing:-.03em}.heroc p{font-size:clamp(15px,2vw,18px);opacity:.9;max-width:46ch}.heroc a{display:inline-flex;align-items:center;min-height:46px;padding:0 22px;border-radius:99px;background:#fff;color:#111;font-weight:700;text-decoration:none;text-shadow:none}
+/* Small shared pieces: kicker line, pill buttons, list reset. */
+input{font:inherit;color:inherit}ul,ol{margin:0;padding:0;list-style:none}[hidden]{display:none!important}
+.k{font-size:13px;font-weight:600;color:var(--mute)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:999px;border:1px solid var(--line);background:var(--panel);font-weight:600;font-size:14px;text-decoration:none;color:var(--ink)}
+.btn:hover{border-color:var(--ink)}.btn.pri{background:var(--ink);color:var(--bg);border-color:var(--ink)}.btn[disabled]{opacity:.45;cursor:not-allowed}
+.wrap{width:min(900px,100%);display:grid;gap:clamp(16px,4vh,30px);padding:20px}
+.hd{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.hd h1{font-size:clamp(22px,3.4vw,34px);letter-spacing:-.03em;line-height:1.08}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.grid li{display:grid;justify-items:center;gap:12px;padding:26px 10px 20px;border:1px solid var(--line);border-radius:20px;background:var(--panel);text-align:center}
+.grid b{font-size:14.5px;font-weight:600}
+/* The stage. The filter blurs everything inside it, then makes the half-transparent edges solid again, so close blobs join up. */
+.goo{position:relative;width:calc(var(--b,22px)*5);height:calc(var(--b,22px)*5);filter:url(#goo)}
+/* A blob: --x and --y place it, measured in blob widths from the middle of the stage. */
+.goo i{position:absolute;left:50%;top:50%;width:var(--b,22px);height:var(--b,22px);margin:calc(var(--b,22px)*(var(--y,0) - .5)) 0 0 calc(var(--b,22px)*(var(--x,0) - .5));border-radius:50%;background:var(--c,var(--ink))}
+.goo .spin{position:absolute;inset:0;animation:turn 3.4s linear infinite}
+/* 1. Orbiting pair: both slide out from the middle and back while the pair turns. */
+.orbit i{animation:out 1.3s ease-in-out infinite alternate}.orbit i+i{--dir:-1;transform-origin:50% 50%;scale:.82}
+/* 2. Dripping dots: a bar of three, and three drops that swell, fall and shrink. */
+.drip i{--y:-1.6}.drip .drop{animation:drip 1.9s cubic-bezier(.5,0,.85,.55) infinite}
+/* 3. Bouncing trio: each hops in turn and squashes a little when it lands. */
+.hop i{--y:1.1;animation:hop 1.4s infinite}
+/* 4. Splitting cell: two halves part and rejoin while the whole thing slowly turns. */
+.cell .spin{animation-duration:9s}.cell i{width:calc(var(--b,22px)*1.5);height:calc(var(--b,22px)*1.5);margin:calc(var(--b,22px)*-.75) 0 0 calc(var(--b,22px)*-.75);animation:split 2.4s ease-in-out -1.1s infinite}.cell i+i{--dir:-1}
+@keyframes turn{to{transform:rotate(360deg)}}
+@keyframes out{from{transform:translateX(calc(var(--b,22px)*.1*var(--dir,1)))}to{transform:translateX(calc(var(--b,22px)*1.65*var(--dir,1)))}}
+@keyframes drip{0%{transform:translateY(0) scale(.5)}22%{transform:translateY(calc(var(--b,22px)*.55)) scale(.9)}82%{transform:translateY(calc(var(--b,22px)*3.3)) scale(.62)}100%{transform:translateY(calc(var(--b,22px)*3.7)) scale(0)}}
+@keyframes hop{0%,58%,100%{transform:translateY(0) scale(1.1,.9);animation-timing-function:cubic-bezier(.2,.7,.4,1)}29%{transform:translateY(calc(var(--b,22px)*-2.3)) scale(.94,1.06);animation-timing-function:cubic-bezier(.6,0,.8,.3)}}
+@keyframes split{0%,10%,100%{transform:translateX(0) scale(1)}50%,62%{transform:translateX(calc(var(--b,22px)*1.3*var(--dir,1))) scale(.76)}}
+.grid.paused *{animation-play-state:paused}
+.defs{position:absolute;width:0;height:0}
+@media(max-width:640px){.grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+<body>
+<main class="wrap"><header class="hd"><div><p class="k">Loading states</p><h1>Four ways to wait.</h1></div><button class="btn" id="pp">Pause</button></header>
+<ul class="grid" id="grid">
+<li><div class="goo orbit" aria-hidden="true"><div class="spin"><i></i><i></i></div></div><b>Orbiting pair</b></li>
+<li><div class="goo drip" aria-hidden="true"><i style="--x:-.9"></i><i></i><i style="--x:.9"></i><i class="drop" style="--x:-.9"></i><i class="drop" style="--x:0;animation-delay:-.63s"></i><i class="drop" style="--x:.9;animation-delay:-1.27s"></i></div><b>Dripping dots</b></li>
+<li><div class="goo hop" aria-hidden="true"><i style="--x:-1.05"></i><i style="animation-delay:.2s"></i><i style="--x:1.05;animation-delay:.4s"></i></div><b>Bouncing trio</b></li>
+<li><div class="goo cell" aria-hidden="true"><div class="spin"><i></i><i></i></div></div><b>Splitting cell</b></li>
+</ul>
+<p class="sr" role="status">Loading</p></main>
+<svg class="defs" aria-hidden="true"><filter id="goo" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB"><feGaussianBlur id="blur" in="SourceGraphic" stdDeviation="4" result="soft"/><feColorMatrix in="soft" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -8"/></filter></svg>
+<script type="application/json" id="settings">{"speed":1,"size":22,"goo":6,"colour":"ink","mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Motion',k:'speed',label:'Speed',min:.3,max:2.5,step:.05},{g:'Blobs',k:'size',label:'Blob size',min:10,max:24,step:1,unit:'px'},{k:'goo',label:'Gooeyness',min:1,max:10,step:.5},{k:'colour',label:'Colour',type:'select',options:['ink','accent']},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'light';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+const framed=parent!==window;
+const grid=document.getElementById('grid'),pp=document.getElementById('pp'),blur=document.getElementById('blur');
+/* With reduced motion the loaders start still. Play is there for anyone who wants to see them move. */
+let paused=calm;
+function show(){grid.classList.toggle('paused',paused);pp.textContent=paused?'Play':'Pause'}
+pp.onclick=()=>{paused=!paused;show()};
+function apply(){theme();const s=grid.style;s.setProperty('--b',S.size+'px');s.setProperty('--c',S.colour==='accent'?'var(--ac)':'var(--ink)');
+ /* More blur makes longer bridges. It is tied to the blob size, because too much blur would melt a small blob away. */
+ blur.setAttribute('stdDeviation',(S.size*(.08+.026*S.goo)).toFixed(2));
+ /* Speed changes the playback rate, so nothing jumps when you move the slider. */
+ grid.getAnimations({subtree:true}).forEach(a=>a.playbackRate=S.speed);show()}
+apply();
+</script>
+</body>
+</html>

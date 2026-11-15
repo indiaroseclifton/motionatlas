@@ -1,0 +1,59 @@
+<!--META {"o": 0.27, "t": "Metaball loader", "cat": "Feedback", "tone": "light", "added": "2026-11-14", "uses": [], "d": "Four small loaders made of soft blobs that melt into each other and pull apart again: a pair in orbit, dots that drip, three that bounce, and a cell that splits in two.", "how": "The blobs are plain round elements moved with CSS keyframes. Each loader sits inside an SVG filter that blurs it and then turns every pixel that is more than about a third opaque fully solid. Where two blurred blobs overlap, the blur adds up and a bridge appears between them.", "use": "Loading and waiting states, upload and sync indicators, empty screens while content arrives, playful buttons that are busy.", "p": "Build a set of four metaball loaders in one HTML file with no libraries. A header with a kicker, a short headline and a Pause button, then a row of four cards (two by two under 640px), each with a square stage and a short label. Every stage has filter: url(#goo), an inline SVG filter made of feGaussianBlur followed by feColorMatrix with the alpha row 0 0 0 22 -8, so blurred shapes snap back to hard edges and nearby shapes merge. Inside each stage are absolutely placed round blobs in one flat colour, animated only with CSS keyframes that use a blob size variable: 1) orbiting pair, two blobs sliding out from the centre and back while their wrapper rotates; 2) dripping dots, a bar of three touching blobs at the top and three drops that swell, fall and shrink, one after another; 3) bouncing trio, three touching blobs that hop in turn with a little squash; 4) splitting cell, two larger blobs that move apart and rejoin while slowly turning. Set speed with the Web Animations playbackRate, blur from blob size times a gooeyness setting, and colour from ink or the accent. Include a visually hidden role=status element that says Loading. The Pause button sets animation-play-state. Settings: speed, blob size, gooeyness, colour, accent, light or dark. Reduced motion: start paused, with the button reading Play."}-->
+<style>/*BASE*/
+/*UI*/
+.wrap{width:min(900px,100%);display:grid;gap:clamp(16px,4vh,30px);padding:20px}
+.hd{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.hd h1{font-size:clamp(22px,3.4vw,34px);letter-spacing:-.03em;line-height:1.08}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.grid li{display:grid;justify-items:center;gap:12px;padding:26px 10px 20px;border:1px solid var(--line);border-radius:20px;background:var(--panel);text-align:center}
+.grid b{font-size:14.5px;font-weight:600}
+/* The stage. The filter blurs everything inside it, then makes the half-transparent edges solid again, so close blobs join up. */
+.goo{position:relative;width:calc(var(--b,22px)*5);height:calc(var(--b,22px)*5);filter:url(#goo)}
+/* A blob: --x and --y place it, measured in blob widths from the middle of the stage. */
+.goo i{position:absolute;left:50%;top:50%;width:var(--b,22px);height:var(--b,22px);margin:calc(var(--b,22px)*(var(--y,0) - .5)) 0 0 calc(var(--b,22px)*(var(--x,0) - .5));border-radius:50%;background:var(--c,var(--ink))}
+.goo .spin{position:absolute;inset:0;animation:turn 3.4s linear infinite}
+/* 1. Orbiting pair: both slide out from the middle and back while the pair turns. */
+.orbit i{animation:out 1.3s ease-in-out infinite alternate}.orbit i+i{--dir:-1;transform-origin:50% 50%;scale:.82}
+/* 2. Dripping dots: a bar of three, and three drops that swell, fall and shrink. */
+.drip i{--y:-1.6}.drip .drop{animation:drip 1.9s cubic-bezier(.5,0,.85,.55) infinite}
+/* 3. Bouncing trio: each hops in turn and squashes a little when it lands. */
+.hop i{--y:1.1;animation:hop 1.4s infinite}
+/* 4. Splitting cell: two halves part and rejoin while the whole thing slowly turns. */
+.cell .spin{animation-duration:9s}.cell i{width:calc(var(--b,22px)*1.5);height:calc(var(--b,22px)*1.5);margin:calc(var(--b,22px)*-.75) 0 0 calc(var(--b,22px)*-.75);animation:split 2.4s ease-in-out -1.1s infinite}.cell i+i{--dir:-1}
+@keyframes turn{to{transform:rotate(360deg)}}
+@keyframes out{from{transform:translateX(calc(var(--b,22px)*.1*var(--dir,1)))}to{transform:translateX(calc(var(--b,22px)*1.65*var(--dir,1)))}}
+@keyframes drip{0%{transform:translateY(0) scale(.5)}22%{transform:translateY(calc(var(--b,22px)*.55)) scale(.9)}82%{transform:translateY(calc(var(--b,22px)*3.3)) scale(.62)}100%{transform:translateY(calc(var(--b,22px)*3.7)) scale(0)}}
+@keyframes hop{0%,58%,100%{transform:translateY(0) scale(1.1,.9);animation-timing-function:cubic-bezier(.2,.7,.4,1)}29%{transform:translateY(calc(var(--b,22px)*-2.3)) scale(.94,1.06);animation-timing-function:cubic-bezier(.6,0,.8,.3)}}
+@keyframes split{0%,10%,100%{transform:translateX(0) scale(1)}50%,62%{transform:translateX(calc(var(--b,22px)*1.3*var(--dir,1))) scale(.76)}}
+.grid.paused *{animation-play-state:paused}
+.defs{position:absolute;width:0;height:0}
+@media(max-width:640px){.grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+<body>
+<main class="wrap"><header class="hd"><div><p class="k">Loading states</p><h1>Four ways to wait.</h1></div><button class="btn" id="pp">Pause</button></header>
+<ul class="grid" id="grid">
+<li><div class="goo orbit" aria-hidden="true"><div class="spin"><i></i><i></i></div></div><b>Orbiting pair</b></li>
+<li><div class="goo drip" aria-hidden="true"><i style="--x:-.9"></i><i></i><i style="--x:.9"></i><i class="drop" style="--x:-.9"></i><i class="drop" style="--x:0;animation-delay:-.63s"></i><i class="drop" style="--x:.9;animation-delay:-1.27s"></i></div><b>Dripping dots</b></li>
+<li><div class="goo hop" aria-hidden="true"><i style="--x:-1.05"></i><i style="animation-delay:.2s"></i><i style="--x:1.05;animation-delay:.4s"></i></div><b>Bouncing trio</b></li>
+<li><div class="goo cell" aria-hidden="true"><div class="spin"><i></i><i></i></div></div><b>Splitting cell</b></li>
+</ul>
+<p class="sr" role="status">Loading</p></main>
+<svg class="defs" aria-hidden="true"><filter id="goo" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB"><feGaussianBlur id="blur" in="SourceGraphic" stdDeviation="4" result="soft"/><feColorMatrix in="soft" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -8"/></filter></svg>
+<script type="application/json" id="settings">{"speed":1,"size":22,"goo":6,"colour":"ink","mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Motion',k:'speed',label:'Speed',min:.3,max:2.5,step:.05},{g:'Blobs',k:'size',label:'Blob size',min:10,max:24,step:1,unit:'px'},{k:'goo',label:'Gooeyness',min:1,max:10,step:.5},{k:'colour',label:'Colour',type:'select',options:['ink','accent']},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/*TUNER*/
+const framed=parent!==window;
+const grid=document.getElementById('grid'),pp=document.getElementById('pp'),blur=document.getElementById('blur');
+/* With reduced motion the loaders start still. Play is there for anyone who wants to see them move. */
+let paused=calm;
+function show(){grid.classList.toggle('paused',paused);pp.textContent=paused?'Play':'Pause'}
+pp.onclick=()=>{paused=!paused;show()};
+function apply(){theme();const s=grid.style;s.setProperty('--b',S.size+'px');s.setProperty('--c',S.colour==='accent'?'var(--ac)':'var(--ink)');
+ /* More blur makes longer bridges. It is tied to the blob size, because too much blur would melt a small blob away. */
+ blur.setAttribute('stdDeviation',(S.size*(.08+.026*S.goo)).toFixed(2));
+ /* Speed changes the playback rate, so nothing jumps when you move the slider. */
+ grid.getAnimations({subtree:true}).forEach(a=>a.playbackRate=S.speed);show()}
+apply();
+</script>
+</body>

@@ -1,0 +1,55 @@
+<!--META {"o": 0.21, "t": "Layered waves", "cat": "Backgrounds", "tone": "light", "added": "2026-11-14", "uses": [], "d": "Stacked wave bands fill the lower part of a hero and drift sideways at different speeds, pale at the back and full colour at the front. One button draws a new set, another copies them as an SVG.", "how": "Each band is an SVG path whose top edge is a few sine waves added together, chosen by a seeded random number so the same seed always gives the same waves. The path is drawn twice as wide as the page and slides by exactly one width, so the loop has no seam.", "use": "Hero and footer backgrounds, section dividers, sign-up and landing pages, anything that wants a soft edge instead of a straight line.", "p": "Build a layered wave background in one HTML file with no libraries. An inline SVG (viewBox 0 0 1440 400, preserveAspectRatio none) is fixed to the bottom of the page at a height setting, behind a centred hero with a heading, one line of text and two buttons: New waves and Copy SVG. Draw three to six bands from back to front. Each band's top edge is y(x) = base + amplitude times the sum of a few sine waves with whole-number frequencies over the 1440 width, random phases and weights of about one over the frequency, using a small seeded random generator (mulberry32) so a seed always gives the same shape; the number of sine waves is a complexity setting. Sample the edge every 30 units, join the points with smooth cubic curves, and close the shape down to the bottom. On narrow screens narrow the viewBox (down to 480 wide) so the waves are not squeezed. Draw each path two widths long and animate it with a CSS keyframe from translateX(0) to translateX(-1440px), linear and infinite, slower at the back, faster at the front, every other band reversed. Colour the bands from the accent: tints (page colour toward accent), shades (accent toward a deep version) or duo (a neighbouring hue toward the accent), computed as hex in JavaScript. New waves picks a new seed. Copy SVG writes a static one-width SVG of the current bands to the clipboard and confirms on the button and in a polite live region. Settings: layers, height, complexity, speed, colours, seed, accent, light or dark. Reduced motion: no drift."}-->
+<style>/*BASE*/
+/*UI*/
+.sea{position:fixed;left:0;right:0;bottom:0;width:100%;height:var(--h,40vh);display:block}
+/* Each band is two page-widths long and slides one width, so the loop never shows a seam. */
+.sea path{animation:drift var(--t,60s) linear infinite}.sea path.back{animation-direction:reverse}
+@keyframes drift{to{transform:translateX(-1440px)}}
+@media(prefers-reduced-motion:reduce){.sea path{animation:none}}
+.hero{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:20px 20px var(--h,40vh);max-width:680px}
+.hero h1{font-size:clamp(30px,6vw,60px);line-height:1.04;letter-spacing:-.035em}
+.hero .lead{font-size:clamp(15px,1.9vw,18px);max-width:42ch;color:var(--mute)}
+.row{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:4px}
+</style>
+<body>
+<svg class="sea" id="sea" viewBox="0 0 1440 400" preserveAspectRatio="none" aria-hidden="true"></svg>
+<main class="hero"><h1>Make some waves.</h1><p class="lead">Soft bands drift under the page. Draw a new set until you like it, then take the SVG.</p>
+<div class="row"><button class="btn pri" id="new">New waves</button><button class="btn" id="copy">Copy SVG</button></div><p class="sr" role="status" id="live"></p></main>
+<script type="application/json" id="settings">{"layers":4,"height":40,"complexity":3,"speed":1,"colours":"tints","seed":7,"mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Waves',k:'layers',label:'Layers',min:3,max:6,step:1},{k:'height',label:'Height',min:20,max:60,step:1,unit:'%'},{k:'complexity',label:'Complexity',min:1,max:6,step:1},{k:'seed',label:'Seed',min:1,max:999,step:1},{g:'Motion',k:'speed',label:'Speed',min:0,max:3,step:.1},{g:'Look',k:'colours',label:'Colours',type:'select',options:['tints','shades','duo']},{k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/*TUNER*/
+const sea=document.getElementById('sea'),newB=document.getElementById('new'),copyB=document.getElementById('copy'),live=document.getElementById('live'),VW=1440,VH=400;
+/* A small random generator that always gives the same numbers for the same seed. */
+const rng=s=>()=>{s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+/* Colour helpers: hex to red, green, blue and back, a blend of two colours, and a turn of the colour wheel. */
+const rgb=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)),hex=c=>'#'+c.map(v=>Math.round(Math.max(0,Math.min(255,v))).toString(16).padStart(2,'0')).join('');
+const mix=(a,b,t)=>{const A=rgb(a),B=rgb(b);return hex(A.map((v,i)=>v+(B[i]-v)*t))};
+function turn(h,deg,lift){let[r,g,b]=rgb(h).map(v=>v/255);const mx=Math.max(r,g,b),mn=Math.min(r,g,b),l=(mx+mn)/2,dl=mx-mn;let hu=0,s=0;
+ if(dl){s=dl/(1-Math.abs(2*l-1));hu=mx===r?((g-b)/dl)%6:mx===g?(b-r)/dl+2:(r-g)/dl+4}hu=(hu*60+deg+360)%360;const L=Math.min(.9,l+lift),c=(1-Math.abs(2*L-1))*s,x=c*(1-Math.abs(hu/60%2-1)),m=L-c/2;
+ const o=hu<60?[c,x,0]:hu<120?[x,c,0]:hu<180?[0,c,x]:hu<240?[0,x,c]:hu<300?[x,0,c]:[c,0,x];return hex(o.map(v=>(v+m)*255))}
+let bands=[];
+/* Work out every band from the seed: where it sits, its colour, and a function giving the height of its top edge at any x. */
+function make(){const rand=rng(S.seed*7919),n=S.layers,ac=/^#\w{6}$/.test(S.accent)?S.accent:'#2563EB',page=S.mode==='dark'?'#0F1012':'#FAFAFA';bands=[];
+ for(let i=0;i<n;i++){const k=n>1?i/(n-1):1,parts=[];let sum=0;
+  for(let j=0;j<S.complexity;j++){const f=j+1+(rand()<.5?0:1),a=(.6+rand()*.8)/f;parts.push([f,a,rand()*6.283]);sum+=a}
+  const base=VH*(.2+.62*i/n),amp=VH*.115*(1-.3*k),y=x=>base+amp*parts.reduce((t,[f,a,p])=>t+a/sum*Math.sin(x/VW*6.283*f+p),0);
+  const fill=S.colours==='shades'?mix(ac,mix(ac,'#05070F',.62),k):S.colours==='duo'?mix(turn(ac,-48,.18),ac,k):mix(page,ac,.14+.86*k**1.4);bands.push({y,fill})}}
+/* Turn an edge function into a closed SVG path, as smooth curves through points 30 units apart. */
+function path(y,widths){const st=30,r=v=>Math.round(v*10)/10;let dstr='M0,'+r(y(0));
+ for(let x=0;x<VW*widths;x+=st)dstr+=`C${r(x+st/3)},${r(y(x)+(y(x+st)-y(x-st))/6)} ${r(x+st*2/3)},${r(y(x+st)-(y(x+st*2)-y(x))/6)} ${x+st},${r(y(x+st))}`;return dstr+`L${VW*widths},${VH}L0,${VH}Z`}
+function show(){sea.innerHTML=bands.map((b,i)=>`<path class="${i%2?'back':''}" fill="${b.fill}" d="${path(b.y,2)}" style="--t:${S.speed>0?Math.round((95-55*i/Math.max(1,bands.length-1))/S.speed):0}s${S.speed>0?'':';animation:none'}"/>`).join('')}
+/* The copy is a still picture, one page-width long. */
+const still=()=>`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${VW} ${VH}" preserveAspectRatio="none">${bands.map(b=>`<path fill="${b.fill}" d="${path(b.y,1)}"/>`).join('')}</svg>`;
+const say=t=>{live.textContent=t};
+newB.onclick=()=>{S.seed=1+Math.floor(Math.random()*999);apply();say('New waves drawn.')};
+copyB.onclick=async()=>{const t=still();let ok=true;
+ try{await navigator.clipboard.writeText(t)}catch(e){/* Older browsers and some embedded frames: copy through a hidden text box instead. */const ta=document.createElement('textarea');ta.value=t;ta.style.cssText='position:fixed;left:0;top:0;opacity:0';document.body.append(ta);ta.select();try{ok=document.execCommand('copy')}catch(e2){ok=false}ta.remove();copyB.focus()}
+ copyB.textContent=ok?'Copied':'Copy failed';say(ok?'SVG copied to the clipboard.':'The SVG could not be copied.');setTimeout(()=>copyB.textContent='Copy SVG',1600)};
+/* A narrow screen shows a narrower slice of the same waves, so they keep their gentle slope instead of being squeezed. */
+const fit=()=>sea.setAttribute('viewBox',`0 0 ${Math.round(Math.max(480,Math.min(VW,innerWidth*1.125)))} ${VH}`);
+addEventListener('resize',fit);
+function apply(){theme();document.documentElement.style.setProperty('--h',S.height+'vh');fit();make();show()}
+apply();
+</script>
+</body>

@@ -1,0 +1,63 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Meteors</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0F1012;--panel:#1A1B1E;--ink:#F4F4F5;--mute:#A1A1AA;--line:#2C2D31;--ac:#111111}
+:root[data-mode=light]{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#111113;--mute:#6B6F76;--line:#E6E6E8}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+
+.art{position:absolute;inset:0;display:block;pointer-events:none}
+.art::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.16;mix-blend-mode:overlay}
+.heroc{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:24px;max-width:760px;color:#fff;text-shadow:0 1px 24px rgba(0,0,0,.35)}.heroc h1{font-size:clamp(34px,7vw,76px);line-height:1;letter-spacing:-.03em}.heroc p{font-size:clamp(15px,2vw,18px);opacity:.9;max-width:46ch}.heroc a{display:inline-flex;align-items:center;min-height:46px;padding:0 22px;border-radius:99px;background:#fff;color:#111;font-weight:700;text-decoration:none;text-shadow:none}
+/* Small shared pieces: kicker line, pill buttons, list reset. */
+input{font:inherit;color:inherit}ul,ol{margin:0;padding:0;list-style:none}[hidden]{display:none!important}
+.k{font-size:13px;font-weight:600;color:var(--mute)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:999px;border:1px solid var(--line);background:var(--panel);font-weight:600;font-size:14px;text-decoration:none;color:var(--ink)}
+.btn:hover{border-color:var(--ink)}.btn.pri{background:var(--ink);color:var(--bg);border-color:var(--ink)}.btn[disabled]{opacity:.45;cursor:not-allowed}
+body{background:radial-gradient(ellipse 90% 60% at 50% -12%,color-mix(in srgb,var(--ac) 9%,transparent),transparent),var(--bg)}
+.sky{position:fixed;inset:0;overflow:hidden;pointer-events:none;-webkit-mask-image:radial-gradient(ellipse 52% 44% at 50% 50%,rgba(0,0,0,.3),#000 85%);mask-image:radial-gradient(ellipse 52% 44% at 50% 50%,rgba(0,0,0,.3),#000 85%)}
+/* One meteor: a thin bar that is see-through at the tail and solid at the head. It turns around its head. */
+.m{position:absolute;left:0;top:0;width:var(--len);height:var(--w);border-radius:99px;background:linear-gradient(90deg,transparent,var(--mc));transform-origin:100% 50%;opacity:0;animation:fall var(--dur) linear var(--delay) infinite;will-change:transform,opacity}
+.m::after{content:"";position:absolute;right:-1px;top:50%;width:3px;height:3px;margin-top:-1.5px;border-radius:50%;background:var(--mc);box-shadow:0 0 7px 1px color-mix(in srgb,var(--mc) 45%,transparent)}
+/* It travels for the first part of the loop, then waits out of sight, so meteors come and go unevenly. */
+@keyframes fall{0%{transform:translate(var(--x0),var(--y0)) rotate(var(--rot));opacity:0}7%{opacity:var(--o)}42%{opacity:var(--o)}60%,100%{transform:translate(var(--x1),var(--y1)) rotate(var(--rot));opacity:0}}
+.sky.still .m{animation:none;opacity:var(--o);transform:translate(var(--xm),var(--ym)) rotate(var(--rot))}
+.hero{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:24px 20px;max-width:680px}
+.hero h1{font-size:clamp(30px,6.2vw,62px);line-height:1.04;letter-spacing:-.035em}
+.hero .lead{font-size:clamp(15px,1.9vw,18px);max-width:42ch;color:color-mix(in srgb,var(--ink) 76%,var(--bg))}
+.row{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:4px}
+</style>
+<body>
+<div class="sky" id="sky" aria-hidden="true"></div>
+<main class="hero"><h1>Look up now and then.</h1><p class="lead">Fine streaks cross the page behind the words, each with a short fading tail.</p>
+<div class="row"><a class="btn pri" href="#">Get started</a><a class="btn" href="#">See how it works</a></div></main>
+<script type="application/json" id="settings">{"count":22,"speed":1,"angle":32,"length":150,"colour":"ink","mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Meteors',k:'count',label:'Count',min:4,max:60,step:1},{k:'speed',label:'Speed',min:.3,max:3,step:.1},{k:'angle',label:'Angle',min:-70,max:70,step:1,unit:'°'},{k:'length',label:'Tail length',min:40,max:360,step:5,unit:'px'},{g:'Look',k:'colour',label:'Colour',type:'select',options:['ink','accent']},{k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'light';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+const sky=document.getElementById('sky'),R=Math.random;
+/* Choose a path: a random point on the page is the middle, and the meteor runs through it along the set angle. */
+function path(el){const a=S.angle*Math.PI/180,dx=-Math.sin(a),dy=Math.cos(a),W=innerWidth,H=innerHeight,run=Math.hypot(W,H)*(.45+R()*.45),len=S.length*(.6+R()*.8),mx=W*(R()*1.2-.1),my=H*(R()*1.1-.15),s=el.style;
+ const at=(k,n)=>{s.setProperty('--x'+n,mx+dx*run*k-len+'px');s.setProperty('--y'+n,my+dy*run*k+'px')};at(-.5,0);at(.5,1);at(0,'m');
+ s.setProperty('--len',len+'px');s.setProperty('--w',(1+R()).toFixed(2)+'px');s.setProperty('--o',(.3+R()*.55).toFixed(2));s.setProperty('--rot',90+S.angle+'deg');return run}
+function build(){sky.textContent='';sky.classList.toggle('still',calm);sky.style.setProperty('--mc',S.colour==='accent'?'var(--ac)':'var(--ink)');
+ for(let i=0;i<S.count;i++){const el=document.createElement('i');el.className='m';const run=path(el),dur=run/(300*S.speed*(.7+R()*.6))/.6;
+  /* A negative delay starts each one part-way through its loop, so the sky is busy from the first frame. */
+  el.style.setProperty('--dur',dur.toFixed(2)+'s');el.style.setProperty('--delay',(-R()*dur).toFixed(2)+'s');sky.append(el)}}
+/* When a meteor finishes a loop it is given a new path, so the pattern never repeats. */
+sky.addEventListener('animationiteration',e=>path(e.target));
+let wait;addEventListener('resize',()=>{clearTimeout(wait);wait=setTimeout(build,150)});
+function apply(){theme();build()}
+apply();
+</script>
+</body>
+</html>

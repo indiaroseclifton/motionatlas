@@ -1,0 +1,91 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ASCII picture</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0F1012;--panel:#1A1B1E;--ink:#F4F4F5;--mute:#A1A1AA;--line:#2C2D31;--ac:#111111}
+:root[data-mode=light]{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#111113;--mute:#6B6F76;--line:#E6E6E8}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+
+.art{position:absolute;inset:0;display:block;pointer-events:none}
+.art::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.16;mix-blend-mode:overlay}
+.heroc{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:24px;max-width:760px;color:#fff;text-shadow:0 1px 24px rgba(0,0,0,.35)}.heroc h1{font-size:clamp(34px,7vw,76px);line-height:1;letter-spacing:-.03em}.heroc p{font-size:clamp(15px,2vw,18px);opacity:.9;max-width:46ch}.heroc a{display:inline-flex;align-items:center;min-height:46px;padding:0 22px;border-radius:99px;background:#fff;color:#111;font-weight:700;text-decoration:none;text-shadow:none}
+/* Small shared pieces: kicker line, pill buttons, list reset. */
+input{font:inherit;color:inherit}ul,ol{margin:0;padding:0;list-style:none}[hidden]{display:none!important}
+.k{font-size:13px;font-weight:600;color:var(--mute)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:999px;border:1px solid var(--line);background:var(--panel);font-weight:600;font-size:14px;text-decoration:none;color:var(--ink)}
+.btn:hover{border-color:var(--ink)}.btn.pri{background:var(--ink);color:var(--bg);border-color:var(--ink)}.btn[disabled]{opacity:.45;cursor:not-allowed}
+.wrap{position:fixed;inset:0;display:grid;grid-template-rows:auto 1fr;gap:14px;padding:clamp(14px,3.6vh,30px) clamp(16px,4vw,44px) clamp(14px,3.6vh,30px)}
+.bar{display:flex;align-items:flex-end;justify-content:space-between;gap:10px 16px;flex-wrap:wrap}
+.bar h1{font-size:clamp(20px,3vw,32px);line-height:1.12;letter-spacing:-.025em;margin-top:2px}
+.row{display:flex;flex-wrap:wrap;gap:8px}
+.frame{position:relative;min-height:0;border:1px solid var(--line);border-radius:18px;background:var(--panel);overflow:hidden}
+.frame.over{border-color:var(--ac)}
+canvas{position:absolute;inset:0;width:100%;height:100%}
+</style>
+<body>
+<main class="wrap"><header class="bar"><div><p class="k">ASCII picture</p><h1>Any picture, set in type.</h1></div>
+<div class="row"><button class="btn" id="pp">Pause</button><button class="btn pri" id="pick">Use your own picture</button><button class="btn" id="back" hidden>Back to the demo</button><input type="file" id="file" accept="image/*" hidden></div></header>
+<div class="frame" id="frame"><canvas id="c" role="img" aria-label="A picture drawn with text characters: a large disc over three bands of hills."></canvas></div>
+<p class="sr" role="status" id="live"></p></main>
+<script type="application/json" id="settings">{"cell":12,"chars":"standard","contrast":1.2,"invert":false,"colour":"ink","mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Grid',k:'cell',label:'Cell size',min:7,max:28,step:1,unit:'px'},{k:'chars',label:'Characters',type:'select',options:['standard','blocks','dots']},{g:'Tone',k:'contrast',label:'Contrast',min:.5,max:2.5,step:.05},{k:'invert',label:'Invert',type:'toggle'},{k:'colour',label:'Colour',type:'select',options:['ink','accent','picture']},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'light';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+/* Each list runs from empty to dense. A cell's brightness picks one character from it. */
+const SETS={standard:' .:-=+*#%@',blocks:' ░▒▓█',dots:' .·•●'};
+const cv=document.getElementById('c'),x=cv.getContext('2d'),frame=document.getElementById('frame'),small=document.createElement('canvas'),sx=small.getContext('2d',{willReadFrequently:true});
+const pp=document.getElementById('pp'),pickB=document.getElementById('pick'),back=document.getElementById('back'),file=document.getElementById('file'),live=document.getElementById('live');
+let d=1,W=0,H=0,cols=0,rows=0,cw=7,mono=true,img=null,playing=!calm,time=8,last=0,due=0,ac='#2563EB',ink='#111';
+function build(){d=Math.min(2,devicePixelRatio||1);const r=frame.getBoundingClientRect();W=r.width;H=r.height;cv.width=W*d;cv.height=H*d;
+ const cs=getComputedStyle(document.documentElement);ac=cs.getPropertyValue('--ac').trim();ink=cs.getPropertyValue('--ink').trim();
+ /* One cell is as wide as a character of the monospace font at this size. If every character in the set is equally wide, whole runs can be drawn at once. */
+ x.font=S.cell+'px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace';const set=SETS[S.chars]||SETS.standard,ws=[...set].map(c=>x.measureText(c).width);
+ cw=x.measureText('M').width||S.cell*.6;mono=ws.every(w=>Math.abs(w-cw)<.02);cols=Math.max(4,Math.floor(W/cw));rows=Math.max(3,Math.floor(H/S.cell));small.width=cols;small.height=rows;render()}
+/* The demo picture: flat shapes painted in code, in a day palette for the light page and a night palette for the dark one.
+   Everything is drawn at full size and squeezed into the tiny canvas, one pixel per cell. */
+const DAY={sky:'#FBFCFE',halo:'174,189,230',far:'#101A3A',moon:'#F7C948',hills:['#8EA3D8','#3A4C82','#12172B']},NIGHT={sky:'#0B0D14',halo:'70,90,150',far:'#FFFFFF',moon:'#F7C948',hills:['#27345E','#5069B4','#D5DDF7']};
+function scene(t){const P=S.mode==='dark'?NIGHT:DAY,m=Math.min(W,H),cx=W*(.5+.17*Math.sin(t*.21)),cy=H*(.4+.07*Math.cos(t*.33)),R=m*.3;sx.fillStyle=P.sky;sx.fillRect(0,0,W,H);
+ const halo=sx.createRadialGradient(cx,cy,R*.9,cx,cy,R*2.3);halo.addColorStop(0,`rgb(${P.halo})`);halo.addColorStop(1,`rgba(${P.halo},0)`);sx.fillStyle=halo;sx.fillRect(0,0,W,H);
+ const sun=sx.createLinearGradient(cx-R,cy-R,cx+R,cy+R);sun.addColorStop(0,ac);sun.addColorStop(1,P.far);sx.fillStyle=sun;sx.beginPath();sx.arc(cx,cy,R,0,7);sx.fill();
+ sx.fillStyle=P.moon;sx.beginPath();sx.arc(cx+Math.cos(t*.5)*R*1.55,cy+Math.sin(t*.5)*R*.7,m*.07,0,7);sx.fill();
+ [[.7,.085,1],[.82,.065,-1.3],[.93,.045,1.7]].forEach(([y,a,v],i)=>{sx.fillStyle=P.hills[i];sx.beginPath();sx.moveTo(0,H);
+  for(let px=0;px<=W+8;px+=8)sx.lineTo(px,H*(y+a*Math.sin(px/W*(6+i*2)+t*.4*v+i*2)+a*.35*Math.sin(px/W*9+t*.25*v+i)));sx.lineTo(W,H);sx.fill()})}
+function render(){if(!cols)return;sx.setTransform(cols/W,0,0,rows/H,0,0);
+ if(img){/* Your picture, scaled to cover the frame. */const k=Math.max(W/img.naturalWidth,H/img.naturalHeight),iw=img.naturalWidth*k,ih=img.naturalHeight*k;sx.fillStyle='#fff';sx.fillRect(0,0,W,H);sx.drawImage(img,(W-iw)/2,(H-ih)/2,iw,ih)}else scene(time);
+ const px=sx.getImageData(0,0,cols,rows).data,set=[...(SETS[S.chars]||SETS.standard)],n=set.length-1,dark=S.mode==='dark',flip=dark!==!!S.invert,own=S.colour==='picture';
+ x.setTransform(d,0,0,d,0,0);x.clearRect(0,0,W,H);x.font=S.cell+'px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace';x.textBaseline='middle';x.textAlign=mono?'left':'center';
+ const base=S.colour==='accent'?ac:ink,ox=(W-cols*cw)/2,oy=(H-rows*S.cell)/2;x.fillStyle=base;
+ for(let r=0;r<rows;r++){const y=oy+(r+.5)*S.cell;let run='',runX=0,runC=base;
+  for(let c=0;c<cols;c++){const i=(r*cols+c)*4,R=px[i],G=px[i+1],B=px[i+2];
+   /* Brightness from 0 to 1, pushed away from the middle by the contrast setting. On a light page dark means dense. */
+   let v=(.299*R+.587*G+.114*B)/255;v=Math.max(0,Math.min(1,(v-.5)*S.contrast+.5));const ch=set[Math.round((flip?v:1-v)*n)],col=own?`rgb(${R&240},${G&240},${B&240})`:base;
+   if(!mono){if(ch!==' '){x.fillStyle=col;x.fillText(ch,ox+(c+.5)*cw,y)}continue}
+   if(col!==runC){if(run.trim()){x.fillStyle=runC;x.fillText(run,ox+runX*cw,y)}run='';runX=c;runC=col}run+=ch}
+  if(mono&&run.trim()){x.fillStyle=runC;x.fillText(run,ox+runX*cw,y)}}}
+/* About twenty pictures a second is plenty for text, and keeps the work light. */
+function tick(now){const dt=Math.min(100,now-last);last=now;if(playing&&!img){time+=dt/1000;if(now>=due){due=now+50;render()}}requestAnimationFrame(tick)}
+function load(f){if(!f||!/^image\//.test(f.type)){say('That file is not a picture.');return}const im=new Image(),u=URL.createObjectURL(f);
+ im.onload=()=>{URL.revokeObjectURL(u);img=im;back.hidden=false;pp.hidden=true;cv.setAttribute('aria-label','Your picture drawn with text characters.');say('Showing your picture. It stays on this device.');render()};
+ im.onerror=()=>{URL.revokeObjectURL(u);say('That picture could not be read.')};im.src=u}
+const say=t=>{live.textContent=t};
+pickB.onclick=()=>file.click();file.onchange=()=>{load(file.files[0]);file.value=''};
+back.onclick=()=>{img=null;back.hidden=true;pp.hidden=calm;cv.setAttribute('aria-label','A picture drawn with text characters: a large disc over three bands of hills.');say('Showing the demo picture.');render();pickB.focus()};
+pp.onclick=()=>{playing=!playing;pp.textContent=playing?'Pause':'Play'};
+/* Dropping a picture on the frame works too. */
+frame.addEventListener('dragover',e=>{e.preventDefault();frame.classList.add('over')});frame.addEventListener('dragleave',()=>frame.classList.remove('over'));
+frame.addEventListener('drop',e=>{e.preventDefault();frame.classList.remove('over');load(e.dataTransfer.files[0])});
+addEventListener('resize',build);
+function apply(){theme();build()}
+pp.hidden=calm;apply();if(!calm)requestAnimationFrame(t=>{last=t;tick(t)});
+</script>
+</body>
+</html>

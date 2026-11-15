@@ -1,0 +1,148 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Fluid ink</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0F1012;--panel:#1A1B1E;--ink:#F4F4F5;--mute:#A1A1AA;--line:#2C2D31;--ac:#111111}
+:root[data-mode=light]{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#111113;--mute:#6B6F76;--line:#E6E6E8}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+
+.art{position:absolute;inset:0;display:block;pointer-events:none}
+.art::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.16;mix-blend-mode:overlay}
+.heroc{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:24px;max-width:760px;color:#fff;text-shadow:0 1px 24px rgba(0,0,0,.35)}.heroc h1{font-size:clamp(34px,7vw,76px);line-height:1;letter-spacing:-.03em}.heroc p{font-size:clamp(15px,2vw,18px);opacity:.9;max-width:46ch}.heroc a{display:inline-flex;align-items:center;min-height:46px;padding:0 22px;border-radius:99px;background:#fff;color:#111;font-weight:700;text-decoration:none;text-shadow:none}
+/* Small shared pieces: kicker line, pill buttons, list reset. */
+input{font:inherit;color:inherit}ul,ol{margin:0;padding:0;list-style:none}[hidden]{display:none!important}
+.k{font-size:13px;font-weight:600;color:var(--mute)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:999px;border:1px solid var(--line);background:var(--panel);font-weight:600;font-size:14px;text-decoration:none;color:var(--ink)}
+.btn:hover{border-color:var(--ink)}.btn.pri{background:var(--ink);color:var(--bg);border-color:var(--ink)}.btn[disabled]{opacity:.45;cursor:not-allowed}
+#c{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+/* Shown instead of the canvas if the graphics card cannot run the simulation. */
+.still #c{visibility:hidden}
+.still body{background:radial-gradient(60% 50% at 20% 30%,color-mix(in srgb,var(--ac) 30%,transparent),transparent 70%),radial-gradient(50% 45% at 80% 66%,color-mix(in srgb,#D6457A 26%,transparent),transparent 70%),radial-gradient(45% 40% at 58% 14%,color-mix(in srgb,#E0A100 24%,transparent),transparent 70%),var(--bg)}
+.hero{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:24px;max-width:760px;pointer-events:none}
+.hero h1{font-size:clamp(34px,7vw,76px);line-height:1;letter-spacing:-.03em;font-weight:700}
+.hero p{font-size:clamp(15px,2vw,18px);max-width:44ch}
+.row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:6px;pointer-events:auto}
+.btn.go{background:var(--ac);border-color:var(--ac);color:var(--on,#fff)}
+</style>
+<body>
+<canvas id="c" aria-hidden="true"></canvas>
+<main class="hero"><h1>Ink that follows you</h1><p>Move the pointer, or drag a finger, to stir it.</p>
+<div class="row"><button class="btn go" id="drop">Drop ink</button><button class="btn" id="pause">Pause</button></div></main>
+<script type="application/json" id="settings">{"swirl":16,"fade":0.5,"size":7,"colour":"spectrum","wander":true,"mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Ink',k:'swirl',label:'Swirl',min:0,max:40,step:1},{k:'fade',label:'Fade',min:.05,max:2,step:.05},{k:'size',label:'Splat size',min:2,max:16,step:.5,unit:'%'},{k:'colour',label:'Colour',type:'select',options:['spectrum','accent','ink']},{k:'wander',label:'Stir itself when idle',type:'toggle'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'light';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+/* Picks black or white text for whatever accent you choose. */
+const on=h=>{const n=parseInt(h.slice(1),16);return(.299*(n>>16)+.587*(n>>8&255)+.114*(n&255))/255>.62?'#111113':'#fff'};
+const hex3=x=>[1,3,5].map(i=>parseInt(x.slice(i,i+2),16)/255);
+
+/* The shaders. Every pass draws one big triangle into a texture; uv is the position 0..1 and px is the size of one grid cell.
+   Velocity is stored in cells per second in the red and green channels. */
+const VERT='attribute vec2 p;varying vec2 uv;void main(){uv=p*.5+.5;gl_Position=vec4(p,0.,1.);}';
+const HEAD='precision highp float;varying vec2 uv;uniform vec2 px;\n#define L(t) texture2D(t,uv-vec2(px.x,0.))\n#define Rt(t) texture2D(t,uv+vec2(px.x,0.))\n#define B(t) texture2D(t,uv-vec2(0.,px.y))\n#define U(t) texture2D(t,uv+vec2(0.,px.y))\n';
+const FS={
+ /* Add a soft round blob of something (speed or ink) at one point. */
+ splat:'uniform sampler2D X;uniform vec2 at,sc;uniform vec4 add;uniform float rad;void main(){vec2 d=(uv-at)*sc;gl_FragColor=texture2D(X,uv)+exp(-dot(d,d)/rad)*add;}',
+ /* Carry a field along the flow: look back to where this bit of liquid came from and copy what was there. */
+ advect:'uniform sampler2D V,X;uniform float dt,keep;void main(){vec2 from=uv-dt*texture2D(V,uv).xy*px;gl_FragColor=keep*texture2D(X,from);}',
+ /* How much the liquid is spinning at each cell. */
+ curl:'uniform sampler2D V;void main(){gl_FragColor=vec4(.5*(Rt(V).y-L(V).y-U(V).x+B(V).x),0.,0.,1.);}',
+ /* Push sideways around places that spin hard, which keeps small whirls alive instead of smearing out. */
+ swirl:'uniform sampler2D V,C;uniform float amt,dt;void main(){float c=texture2D(C,uv).x;vec2 g=.5*vec2(abs(Rt(C).x)-abs(L(C).x),abs(U(C).x)-abs(B(C).x));g/=length(g)+.0001;vec2 v=texture2D(V,uv).xy+vec2(g.y,-g.x)*c*amt*dt;gl_FragColor=vec4(clamp(v,-900.,900.),0.,1.);}',
+ /* How much liquid is being squeezed into (or pulled out of) each cell. The edges act as walls. */
+ diverge:'uniform sampler2D V;void main(){vec2 c=texture2D(V,uv).xy;float l=L(V).x,r=Rt(V).x,b=B(V).y,t=U(V).y;if(uv.x<px.x)l=-c.x;if(uv.x>1.-px.x)r=-c.x;if(uv.y<px.y)b=-c.y;if(uv.y>1.-px.y)t=-c.y;gl_FragColor=vec4(.5*(r-l+t-b),0.,0.,1.);}',
+ /* One relaxation pass towards the pressure that would cancel that squeezing. Run many times. */
+ pressure:'uniform sampler2D Q,D;void main(){gl_FragColor=vec4((L(Q).x+Rt(Q).x+B(Q).x+U(Q).x-texture2D(D,uv).x)*.25,0.,0.,1.);}',
+ /* Let the pressure push back: after this the flow neither piles up nor thins out, so it swirls. */
+ project:'uniform sampler2D Q,V;void main(){gl_FragColor=vec4(texture2D(V,uv).xy-.5*vec2(Rt(Q).x-L(Q).x,U(Q).x-B(Q).x),0.,1.);}',
+ /* The picture. Ink is stored as colour times amount (rgb) and amount (alpha).
+    Light: the ink takes its opposite colour away from the paper, like watercolour. Dark: the ink is added as light. */
+ show:'uniform sampler2D X;uniform vec3 paper;uniform vec2 R,box;uniform float dark;const vec3 W=vec3(.2126,.7152,.0722);float hh(vec2 q){return fract(sin(dot(q,vec2(127.1,311.7)))*43758.5453);}'
+ +'void main(){vec4 c=texture2D(X,uv);float a=max(c.a,0.);vec3 ink=clamp(c.rgb/max(a,.0001),0.,1.);float cover=1.-exp(-a*2.2);'
+ +'float pool=clamp(length(vec2(Rt(X).a-L(X).a,U(X).a-B(X).a))*3.,0.,1.)*cover;float tooth=.95+.1*hh(floor(gl_FragCoord.xy*.5));'
+ +'vec3 wash=paper*(1.-min(cover*tooth+pool*.22,1.)*.72*(1.-ink));vec3 lit=paper+mix(ink,vec3(1.),pow(cover,5.)*.18)*cover;'
+ /* Behind the words the ink is held back just enough for the text to stay readable: never too dark on paper, never too bright on black. */
+ +'float veil=smoothstep(2.,1.15,length((gl_FragCoord.xy-.5*R)/box));float y=dot(wash,W);wash=mix(wash,paper,veil*clamp((.52-y)/(.98-y),0.,1.));'
+ +'float q=dot(lit*lit,W);lit*=mix(1.,min(1.,sqrt(.17/max(q,.0001))),veil);'
+ +'gl_FragColor=vec4(mix(wash,lit,dark)+(hh(gl_FragCoord.xy)-.5)*.008,1.);}'
+};
+const cv=document.getElementById('c'),root=document.documentElement,pauseB=document.getElementById('pause');
+let gl=null,P={},vel,dye,prs,dvg,crl,sw=0,sh=0,ready=false,paused=false,seen=true,last=0,idle=9,settle=0,hue=Math.random()*7,paper=[1,1,1],queue=[],ptr=null,old=[];
+function init(){ready=false;while(old.length)old.pop()();const o={alpha:false,depth:false,stencil:false,antialias:false,powerPreference:'low-power'};
+ gl=cv.getContext('webgl2',o);const two=!!gl;if(!gl)gl=cv.getContext('webgl',o);if(!gl)return false;
+ /* The simulation needs textures that hold fractions and negative numbers (half floats) and that can be drawn into. */
+ let type,fmt;if(two){if(!gl.getExtension('EXT_color_buffer_float')&&!gl.getExtension('EXT_color_buffer_half_float'))return false;type=gl.HALF_FLOAT;fmt=gl.RGBA16F}
+ else{const e=gl.getExtension('OES_texture_half_float');if(!e||!gl.getExtension('OES_texture_half_float_linear'))return false;gl.getExtension('EXT_color_buffer_half_float');type=e.HALF_FLOAT_OES;fmt=gl.RGBA}
+ const target=(w,h,f)=>{const t=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,t);for(const[k,v]of[[gl.TEXTURE_MIN_FILTER,f],[gl.TEXTURE_MAG_FILTER,f],[gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE],[gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE]])gl.texParameteri(gl.TEXTURE_2D,k,v);
+  gl.texImage2D(gl.TEXTURE_2D,0,fmt,w,h,0,gl.RGBA,type,null);const fb=gl.createFramebuffer();gl.bindFramebuffer(gl.FRAMEBUFFER,fb);gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,t,0);
+  if(gl.checkFramebufferStatus(gl.FRAMEBUFFER)!==gl.FRAMEBUFFER_COMPLETE)throw 0;gl.viewport(0,0,w,h);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);old.push(()=>{gl.deleteTexture(t);gl.deleteFramebuffer(fb)});return{t,fb,w,h}};
+ /* (old remembers how to free these again, for when the window is resized and everything is rebuilt.) */
+ /* Two copies of anything that is read and written in the same pass; swap() flips which is which. */
+ const pair=(w,h,f)=>{let a=target(w,h,f),b=target(w,h,f);return{get read(){return a},get write(){return b},swap(){[a,b]=[b,a]}}};
+ const d=Math.min(devicePixelRatio||1,1.5);cv.width=Math.max(2,Math.round(innerWidth*d));cv.height=Math.max(2,Math.round(innerHeight*d));
+ const asp=cv.width/cv.height,grid=n=>asp>1?[Math.round(n*Math.min(asp,2.5)),n]:[n,Math.round(n/Math.max(asp,.4))];
+ [sw,sh]=grid(128);const[dw,dh]=grid(Math.min(512,Math.max(192,Math.min(cv.width,cv.height))));
+ try{vel=pair(sw,sh,gl.LINEAR);prs=pair(sw,sh,gl.NEAREST);dvg=target(sw,sh,gl.NEAREST);crl=target(sw,sh,gl.NEAREST);dye=pair(dw,dh,gl.LINEAR)}catch(e){return false}
+ const shd=(t,s)=>{const x=gl.createShader(t);gl.shaderSource(x,s);gl.compileShader(x);if(!gl.getShaderParameter(x,gl.COMPILE_STATUS))console.error(gl.getShaderInfoLog(x));return x},vs=shd(gl.VERTEX_SHADER,VERT);
+ for(const k in FS){const p=gl.createProgram();gl.attachShader(p,vs);gl.attachShader(p,shd(gl.FRAGMENT_SHADER,HEAD+FS[k]));gl.bindAttribLocation(p,0,'p');gl.linkProgram(p);
+  const u={};for(let i=gl.getProgramParameter(p,gl.ACTIVE_UNIFORMS)-1;i>=0;i--){const n=gl.getActiveUniform(p,i).name;u[n]=gl.getUniformLocation(p,n)}P[k]={p,u};old.push(()=>gl.deleteProgram(p))}
+ gl.bindBuffer(gl.ARRAY_BUFFER,gl.createBuffer());gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);gl.enableVertexAttribArray(0);gl.vertexAttribPointer(0,2,gl.FLOAT,false,0,0);
+ return ready=true}
+/* Run one shader into one target (or the screen when dst is null). tex() plugs a texture into a numbered slot. */
+const tex=(u,i,t)=>{gl.activeTexture(gl.TEXTURE0+i);gl.bindTexture(gl.TEXTURE_2D,t.t);gl.uniform1i(u,i)};
+function run(k,dst,set){const{p,u}=P[k];gl.useProgram(p);gl.uniform2f(u.px,1/sw,1/sh);set(u);gl.bindFramebuffer(gl.FRAMEBUFFER,dst?dst.fb:null);gl.viewport(0,0,dst?dst.w:cv.width,dst?dst.h:cv.height);gl.drawArrays(gl.TRIANGLES,0,3)}
+function splat(x,y,vx,vy,col,amt){const asp=cv.width/cv.height,r=S.size/100,blob=(u,src,a)=>{tex(u.X,0,src);gl.uniform2f(u.at,x,y);gl.uniform2f(u.sc,Math.max(asp,1),Math.max(1/asp,1));gl.uniform1f(u.rad,r*r);gl.uniform4f(u.add,...a)};
+ run('splat',vel.write,u=>blob(u,vel.read,[vx,vy,0,0]));vel.swap();run('splat',dye.write,u=>blob(u,dye.read,[col[0]*amt,col[1]*amt,col[2]*amt,amt]));dye.swap()}
+/* A stroke from one point to another: a few blobs along the way, each pushing the liquid in the direction of travel. */
+const INKS=['#2563EB','#7C4DDB','#D6457A','#F0683C','#E0A100','#1F9D6B','#1C8CA8'].map(hex3);
+function ink(){const dk=S.mode==='dark';if(S.colour==='ink')return hex3(dk?'#B9C6E8':'#3D4C7C');
+ if(S.colour==='accent'){const a=hex3(S.accent||'#2563EB'),k=.5+.5*Math.sin(hue*2.2);return a.map(v=>v+(1-v)*k*.35)}
+ const i=Math.floor(hue)%7,f=hue-Math.floor(hue),a=INKS[i],b=INKS[(i+1)%7],t=f*f*(3-2*f);return a.map((v,k)=>v+(b[k]-v)*t)}
+function stroke(x0,y0,x1,y1,push=26){const asp=cv.width/cv.height,dist=Math.hypot((x1-x0)*Math.max(asp,1),(y1-y0)*Math.max(1/asp,1)),n=Math.max(1,Math.min(6,Math.ceil(dist/(S.size/100*.6))));
+ hue+=dist*.45;const col=ink(),amt=Math.min(.4,dist*11/n+.004);
+ for(let i=1;i<=n;i++){const t=i/n;splat(x0+(x1-x0)*t,y0+(y1-y0)*t,(x1-x0)*sw*push,(y1-y0)*sh*push,col,amt)}}
+function burst(x,y,power=1){const a=Math.random()*6.283,r=.05*power;hue+=.3+Math.random()*.4;stroke(x-Math.cos(a)*r,y-Math.sin(a)*r,x+Math.cos(a)*r,y+Math.sin(a)*r,34)}
+function step(dt){
+ run('curl',crl,u=>tex(u.V,0,vel.read));
+ if(S.swirl>0){run('swirl',vel.write,u=>{tex(u.V,0,vel.read);tex(u.C,1,crl);gl.uniform1f(u.amt,S.swirl);gl.uniform1f(u.dt,dt)});vel.swap()}
+ run('diverge',dvg,u=>tex(u.V,0,vel.read));
+ for(let i=0;i<18;i++){run('pressure',prs.write,u=>{tex(u.Q,0,prs.read);tex(u.D,1,dvg)});prs.swap()}
+ run('project',vel.write,u=>{tex(u.Q,0,prs.read);tex(u.V,1,vel.read)});vel.swap();
+ const carry=(f,fade)=>{run('advect',f.write,u=>{tex(u.V,0,vel.read);tex(u.X,1,f.read);gl.uniform1f(u.dt,dt);gl.uniform1f(u.keep,1/(1+fade*dt))});f.swap()};
+ carry(vel,.6);carry(dye,S.fade)}
+const hero=document.querySelector('.hero');
+const show=()=>run('show',null,u=>{const b=hero.getBoundingClientRect(),d=cv.width/innerWidth;tex(u.X,0,dye.read);gl.uniform2f(u.px,1/dye.read.w,1/dye.read.h);gl.uniform2f(u.R,cv.width,cv.height);gl.uniform2f(u.box,b.width/2*d,b.height/2*d);gl.uniform3f(u.paper,...paper);gl.uniform1f(u.dark,S.mode==='dark'?1:0)});
+function frame(now){requestAnimationFrame(frame);const dt=Math.min(.033,(now-last)/1000||.016);last=now;if(!ready||paused||!seen||document.hidden)return;
+ idle+=dt;settle-=dt;
+ while(queue.length){const q=queue.shift();stroke(...q)}
+ /* When nobody is stirring, a virtual pointer wanders on a slow loop and drops ink now and then. Delete this block if you only want real input. */
+ if(S.wander&&!calm&&idle>2.5){const t=now/1000,at=s=>[.5+.34*Math.sin(s*.43+1.3)+.1*Math.sin(s*1.31),.5+.28*Math.sin(s*.57)+.1*Math.cos(s*1.13)],a=at(t-dt),b=at(t);stroke(...a,...b,34);
+  if(Math.random()<dt/2.4)burst(.15+.7*Math.random(),.15+.7*Math.random())}
+ /* With reduced motion the picture only moves for a moment after you stir it. */
+ if(calm&&settle<=0)return;
+ step(dt);show()}
+/* A few drops to start with, so the first frame is not blank paper. */
+function seed(){for(const[x,y]of[[.24,.66],[.72,.7],[.6,.28],[.3,.3]])burst(x,y,1.6);for(let i=0;i<(calm?50:8);i++)step(.016);show()}
+function start(){const ok=init();root.classList.toggle('still',!ok);if(ok)seed()}
+addEventListener('pointermove',e=>{const x=e.clientX/innerWidth,y=1-e.clientY/innerHeight,t=e.timeStamp;if(ptr&&t-ptr.t<250)queue.push([ptr.x,ptr.y,x,y]);ptr={x,y,t};idle=0;settle=1.5});
+addEventListener('pointerdown',e=>{if(e.target!==cv)return;ptr={x:e.clientX/innerWidth,y:1-e.clientY/innerHeight,t:e.timeStamp};if(ready&&!paused)burst(ptr.x,ptr.y,.6);idle=0;settle=1.5});
+document.getElementById('drop').onclick=()=>{if(!ready)return;if(paused)pauseB.click();burst(.2+.6*Math.random(),.2+.6*Math.random(),1.8);settle=2.5};
+pauseB.onclick=()=>{paused=!paused;pauseB.textContent=paused?'Play':'Pause'};
+new IntersectionObserver(e=>seen=e[0].isIntersecting).observe(cv);
+let rz=0;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(()=>{if(gl&&!gl.isContextLost())start()},200)});
+cv.addEventListener('webglcontextlost',e=>{e.preventDefault();ready=false;root.classList.add('still')});
+cv.addEventListener('webglcontextrestored',start);
+function apply(){theme();root.style.setProperty('--on',on(S.accent||'#2563EB'));paper=S.mode==='dark'?[.059,.063,.071]:[.98,.98,.98];if(ready&&(paused||calm))show()}
+apply();start();requestAnimationFrame(frame);
+</script>
+</body>
+</html>

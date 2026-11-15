@@ -1,0 +1,52 @@
+<!--META {"o": 0.14, "t": "Silk shader", "cat": "Backgrounds", "tone": "light", "added": "2026-11-14", "uses": [], "d": "Soft folds of cloth drift slowly behind the page, shading from one pastel colour into another. Choose the speed, the size of the folds, how soft they are and the two colours.", "how": "The cloth is a height map made of a few sine waves running diagonally, bent by slower waves so the folds wander. The slope at each pixel is lit from the upper left: slopes facing the light go towards white, slopes facing away take a deeper shade of the cloth colour, never grey.", "use": "Beauty, fashion and wellness pages, wedding and invitation sites, calm sign-in screens, soft section backgrounds.", "p": "Build a full-screen animated WebGL background in one HTML file with no libraries: a canvas fixed behind the content, one full-screen triangle, a fragment shader with uniforms for resolution, time and pointer, device pixel ratio capped at 1.5, paused when off screen or in a background tab, one still frame under prefers-reduced-motion, a still CSS gradient of the two colours underneath as the fallback if WebGL is missing, and a fresh canvas if the context is lost and restored. Put a headline, a line of copy and an accent-coloured button over it. Shader: a cloth height function made of four waves along a diagonal axis, each shaped as sin(x + 0.55 sin x) so one side of a fold is steeper than the other, with the phase bent by slower sine waves that drift with time. Sample it three times to get the slope, build a normal (the softness setting flattens it), and light it from the upper left. Base colour mixes two colour uniforms along a slow wandering band. Lit slopes blend towards white with a broad satin highlight; shaded slopes blend towards a deeper, more saturated version of the base (the base raised to the power 2.5), so shadows stay coloured. In dark mode strip most of the white out of each colour to get a vivid version, use it at about a third of full brightness, and add coloured highlights. Ease the shading inside an oval behind the headline (measured from the text block) so the text stays readable, and add faint grain against banding. Settings: speed, fold size, softness, two colours, light or dark, accent."}-->
+<style>/*BASE*/
+/*UI*/
+/* The gradient on the body is what shows if WebGL is missing or the context is lost. */
+body{background:linear-gradient(140deg,var(--c1),var(--c2))}
+.hero{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:24px;max-width:760px}
+.hero h1{font-size:clamp(34px,7vw,76px);line-height:1;letter-spacing:-.03em;font-weight:700}
+.hero p{font-size:clamp(15px,2vw,18px);max-width:44ch}
+.hero .btn{margin-top:6px;background:var(--ac);border-color:var(--ac);color:var(--on,#fff)}
+</style>
+<body>
+<main class="hero"><h1>Soft as silk</h1><p>Folds of cloth that drift, drawn by a shader.</p><a class="btn" href="#">Get started</a></main>
+<script type="application/json" id="settings">{"speed":1,"fold":1,"soft":0.5,"c1":"#F7C6D9","c2":"#C9D4FF","mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Cloth',k:'speed',label:'Speed',min:0,max:3,step:.05},{k:'fold',label:'Fold size',min:.4,max:2.5,step:.05},{k:'soft',label:'Softness',min:0,max:1,step:.01},{g:'Colour',k:'c1',label:'Colour one',type:'color'},{k:'c2',label:'Colour two',type:'color'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/*TUNER*/
+/*SHADER*/
+/* Picks black or white text for whatever accent you choose. */
+const on=h=>{const n=parseInt(h.slice(1),16);return(.299*(n>>16)+.587*(n>>8&255)+.114*(n&255))/255>.62?'#111113':'#fff'};
+/* cloth() is the height of the fabric: sine folds along a diagonal, bent by slower waves so they wander.
+   The slope is lit from the upper left. Lit sides go towards white, shaded sides towards a deeper shade of the same colour. */
+const FRAG=`uniform vec3 c1,c2,box;uniform float fold,soft,dark;
+float bend(vec2 p){float t=T*.11;return sin(p.x*.8+t)+sin(p.y*1.05-t*.8+1.5*sin(p.x*.55+t*.6))+.6*sin((p.x+p.y)*1.5+t*1.2);}
+float wave(float x){return sin(x+.55*sin(x));}
+float cloth(vec2 p){float w=bend(p),a=p.x*.85-p.y*1.1+w*.55;return .42*wave(a*3.1)+.2*wave(a*6.3+w*1.4+1.7)+.3*wave(a*1.5-w*.8+.6)+.07*wave(a*11.+w*2.);}
+void main(){vec2 p=(gl_FragCoord.xy-.5*R)/R.y*2.4/fold+(M-.5)*.2;
+float e=.006,a=cloth(p),bx=cloth(p+vec2(e,0.)),by=cloth(p+vec2(0.,e));
+vec3 nr=normalize(vec3((a-bx)/e,(a-by)/e,mix(1.5,5.,soft)));
+float lit=dot(nr,normalize(vec3(-.5,.62,.6)));
+float veil=smoothstep(2.,1.15,length((gl_FragCoord.xy-.5*R)/box.xy));
+vec3 base=mix(c1,c2,smoothstep(-.85,.85,sin(p.x*.55+p.y*.4+.45*bend(p*.6)+T*.05)+.2*a));
+float sh=smoothstep(.75,.05,lit)*mix(.8,.55,soft),hl=smoothstep(.62,.97,lit);
+vec3 deep=base*base*sqrt(base)*.94;
+vec3 lightc=mix(base,deep,sh*(1.-veil*.4));lightc=mix(lightc,vec3(1.),hl*mix(.75,.55,soft));
+float mn=min(base.r,min(base.g,base.b))*.72;vec3 viv=(base-mn)/(1.-mn),b2=viv*.36;
+vec3 darkc=mix(b2,b2*.3,sh);darkc+=mix(viv,base,.5)*(hl*.42+pow(hl,5.)*.25)*(1.-veil*.8);
+vec3 col=mix(lightc,darkc,dark);
+col+=(h(gl_FragCoord.xy+fract(T))-.5)*.014;gl_FragColor=vec4(col,1.);}`;
+let sh;
+function start(){sh=shader(FRAG);const c=document.querySelector('canvas');
+ /* If the graphics context is lost, hide the canvas so the CSS gradient shows, and start a fresh one when it comes back. */
+ c.addEventListener('webglcontextlost',e=>{e.preventDefault();c.style.visibility='hidden'});
+ c.addEventListener('webglcontextrestored',()=>{c.remove();start();apply()})}
+/* The shader eases its shading inside an oval behind the text, so the words stay readable. This measures the text block for it. */
+const hero=document.querySelector('.hero'),veil=()=>{const b=hero.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,1.5);sh.set({box:[b.width/2*d,b.height/2*d,0]})};
+const hex=v=>'#'+v.map(x=>Math.round(x*255).toString(16).padStart(2,'0')).join('');
+function apply(){theme();const dk=S.mode==='dark',r=document.documentElement,deep=c=>{const m=Math.min(...c)*.72;return c.map(x=>dk?(x-m)/(1-m)*.36:x)};document.body.style.background='';
+ r.style.setProperty('--on',on(S.accent||'#2563EB'));r.style.setProperty('--c1',hex(deep(rgb(S.c1))));r.style.setProperty('--c2',hex(deep(rgb(S.c2))));
+ sh.set({c1:rgb(S.c1),c2:rgb(S.c2),fold:S.fold,soft:S.soft,dark:dk?1:0,_speed:S.speed});veil()}
+start();apply();addEventListener('resize',veil);
+</script>
+</body>

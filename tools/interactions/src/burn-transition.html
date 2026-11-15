@@ -1,0 +1,91 @@
+<!--META {"o": 0.16, "t": "Burn-away transition", "cat": "Carousels", "tone": "light", "added": "2026-11-14", "uses": [], "d": "Each picture burns away along a ragged, glowing edge and the next one is already there underneath. Step through with the arrows, the dots or the arrow keys.", "how": "Both pictures are textures on the graphics card. A noise pattern gives every pixel a moment at which it catches fire; as a single number runs from 0 to 1, pixels past their moment show the next picture, pixels near it are scorched dark, and a thin band right on the line glows.", "use": "Galleries and portfolios, before and after reveals, chapter changes in a story, product colour switches, hero slideshows.", "p": "Build a burn-away picture transition in one HTML file with no libraries. Paint four flat abstract studies (a pastel ground, a second tone, one large disc, one small disc, flat colour only) on offscreen 2D canvases and upload each as a WebGL texture. Show them in a rounded 4:3 frame with a WebGL canvas, a caption, Previous and Next round buttons, and a row of dot buttons. Fragment shader: uniforms for the two textures, progress P, noise scale, edge width, edge colour, sweep and direction. Build fbm value noise, stretch it to 0..1, and mix it with a diagonal ramp by the sweep setting to get v, the moment each pixel catches. Move a front from just below 0 to just above 1 with P and take d = v minus front. Where d is well above 0 show the current picture; as d approaches 0 scorch it brown then black; within one edge width of 0 blend to the edge colour with a paler hot core and a slight flicker; below 0 show the next picture with a little of the edge colour spilling onto it. Animate P over the duration setting with requestAnimationFrame only while a change is running, and reverse the ramp when going back. Arrow keys change picture, the current dot is marked with aria-current, a polite live region announces the picture, and inside an iframe it advances by itself every few seconds until the first pointerdown, keydown or wheel. Under prefers-reduced-motion swap instantly. If WebGL is missing or its context is lost, show the painted picture as a plain image instead, and rebuild when the context returns. Settings: duration, noise scale, sweep, edge width, edge colour, light or dark, accent."}-->
+<style>/*BASE*/
+/*UI*/
+.wrap{display:grid;gap:14px;justify-items:center;width:min(720px,calc(100vw - 32px),(100vh - 170px)*4/3)}
+.frame{position:relative;width:100%;aspect-ratio:4/3;border-radius:22px;border:1px solid var(--line);overflow:hidden;background:var(--panel) center/cover no-repeat;box-shadow:0 18px 50px -32px rgba(17,17,19,.4)}
+.frame canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.cap{display:flex;gap:10px;align-items:baseline;font-size:15px}.cap b{font-weight:600}
+.bar{display:flex;align-items:center;gap:6px}
+.dots{display:flex}
+.dots button{width:40px;height:40px;border:0;background:none;padding:0;display:grid;place-items:center;border-radius:50%}
+.dots i{width:9px;height:9px;border-radius:50%;background:color-mix(in srgb,var(--mute) 80%,var(--bg));transition:transform .2s,background .2s}
+.dots button:hover i{background:var(--mute)}
+.dots [aria-current=true] i{background:var(--ac);transform:scale(1.35)}
+@media(prefers-reduced-motion:reduce){.dots i{transition:none}}
+</style>
+<body>
+<main class="wrap">
+<figure class="frame" id="frame"><canvas id="c" role="img" aria-label="Low sun"></canvas></figure>
+<p class="cap"><b id="name">Low sun</b><span class="k" id="count">1 of 4</span></p>
+<div class="bar"><button class="nb" id="prev" aria-label="Previous picture">‹</button><div class="dots" id="dots"></div><button class="nb" id="next" aria-label="Next picture">›</button></div>
+<p class="sr" role="status" id="live"></p>
+</main>
+<script type="application/json" id="settings">{"duration":1600,"noise":3,"sweep":0.45,"edge":4,"glow":"#FF7A1A","mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Burn',k:'duration',label:'Duration',min:400,max:4000,step:50,unit:'ms'},{k:'noise',label:'Noise scale',min:1,max:10,step:.1},{k:'sweep',label:'Sweep across',min:0,max:1,step:.01},{g:'Edge',k:'edge',label:'Edge width',min:1,max:12,step:.5,unit:'%'},{k:'glow',label:'Edge colour',type:'color'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/*TUNER*/
+const framed=parent!==window;
+/* The four pictures are flat studies painted here on offscreen canvases, so the file needs no images. Swap in your own with drawImage. */
+const STUDIES=[['Low sun','#DCE6FF','#2563EB','#F7C948'],['Harbour','#FFE3D3','#F0683C','#1F3A5F'],['Orchard','#DDF3E4','#1F9D6B','#F29FB5'],['Night swim','#F0E4FF','#7C4DDB','#FFB44A']];
+const blend=(a,b,t)=>'#'+[1,3,5].map(i=>Math.round(parseInt(a.slice(i,i+2),16)*(1-t)+parseInt(b.slice(i,i+2),16)*t).toString(16).padStart(2,'0')).join('');
+function paintStudy(i){const c=document.createElement('canvas'),W=c.width=960,H=c.height=720,g=c.getContext('2d'),[,a,b,d]=STUDIES[i],tone=blend(a,b,.26);
+ const disc=(x,y,r,col,from=0,to=7)=>{g.fillStyle=col;g.beginPath();g.arc(x*W,y*H,r*H,from,to);g.fill()},poly=(col,...p)=>{g.fillStyle=col;g.beginPath();p.forEach((v,k)=>k%2||g.lineTo(v*W,p[k+1]*H));g.fill()};
+ g.fillStyle=a;g.fillRect(0,0,W,H);
+ if(i===0){poly(tone,0,.64,1,.64,1,1,0,1);disc(.38,.46,.25,b);disc(.72,.27,.1,d)}
+ if(i===1){poly(tone,.56,0,1,0,1,1,.3,1);disc(.6,.5,.27,b);disc(.27,.3,.095,d);poly(d,.08,.8,.42,.8,.42,.86,.08,.86)}
+ if(i===2){poly(tone,.7,0,1,0,1,1,.7,1);disc(.42,1,.5,b,Math.PI,7);disc(.74,.3,.11,d);disc(.2,.26,.05,b)}
+ if(i===3){disc(0,1,.62,tone);disc(.5,.5,.26,b);disc(.67,.33,.1,d);poly(b,.74,.78,.92,.78,.92,.82,.74,.82)}
+ return c}
+const pics=STUDIES.map((s,i)=>paintStudy(i));
+/* Every pixel gets a moment v at which it catches fire: noise mixed with a ramp across the picture.
+   P runs 0 to 1. Pixels past their moment show the next picture, pixels near it scorch, and a thin band on the line glows. */
+const FRAG=`precision highp float;uniform sampler2D A,B;uniform vec2 R;uniform float P,NS,EW,SW,DIR,SEED,T;uniform vec3 EC;
+float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1.,0.)),f.x),mix(h(i+vec2(0.,1.)),h(i+vec2(1.,1.)),f.x),f.y);}
+float fbm(vec2 p){float a=.5,s=0.;for(int i=0;i<5;i++){s+=a*n(p);p=p*2.03+vec2(1.7,9.2);a*=.5;}return s;}
+void main(){vec2 uv=gl_FragCoord.xy/R,q=vec2(uv.x*R.x/R.y,uv.y)*NS+SEED;
+float nz=smoothstep(.2,.8,fbm(q)),x=mix(1.-uv.x,uv.x,DIR),ramp=(x+(1.-uv.y)*.45)/1.45;
+float v=mix(nz,ramp,SW),w=EW,d=v-mix(-3.*w-.002,1.+3.2*w,P);
+vec3 a=texture2D(A,uv).rgb,b=texture2D(B,uv).rgb;
+float ch=smoothstep(3.*w,0.,d);vec3 burnt=mix(a,a*vec3(.5,.33,.22),smoothstep(0.,.55,ch));burnt=mix(burnt,vec3(.07,.04,.03),smoothstep(.6,1.,ch));
+float g=(1.-smoothstep(0.,w,abs(d)))*(.82+.18*n(q*9.+T*5.));vec3 ember=mix(EC,vec3(1.,.95,.8),g*g*g*.5);
+vec3 under=b+EC*exp(d/(w*1.2))*.16*(1.-smoothstep(.8,1.,P));
+vec3 col=mix(mix(under,burnt,smoothstep(-.0015,.0015,d)),ember,g);
+gl_FragColor=vec4(col,1.);}`;
+const cv=document.getElementById('c'),frame=document.getElementById('frame'),dots=document.getElementById('dots'),nameEl=document.getElementById('name'),countEl=document.getElementById('count'),live=document.getElementById('live');
+let gl=null,U={},tex=[],cur=0,from=0,dir=1,seed=0,t0=0,anim=0,touched=false;
+function initGL(){gl=cv.getContext('webgl',{antialias:false,alpha:false});if(!gl)return false;
+ const sh=(t,s)=>{const o=gl.createShader(t);gl.shaderSource(o,s);gl.compileShader(o);if(!gl.getShaderParameter(o,gl.COMPILE_STATUS))console.error(gl.getShaderInfoLog(o));return o};
+ const p=gl.createProgram();gl.attachShader(p,sh(gl.VERTEX_SHADER,'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}'));gl.attachShader(p,sh(gl.FRAGMENT_SHADER,FRAG));gl.linkProgram(p);gl.useProgram(p);
+ gl.bindBuffer(gl.ARRAY_BUFFER,gl.createBuffer());gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);const a=gl.getAttribLocation(p,'p');gl.enableVertexAttribArray(a);gl.vertexAttribPointer(a,2,gl.FLOAT,false,0,0);
+ U={};for(const k of['A','B','R','P','NS','EW','SW','DIR','SEED','T','EC'])U[k]=gl.getUniformLocation(p,k);
+ gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);
+ tex=pics.map(c=>{const t=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,t);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,c);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);return t});
+ return true}
+const hex3=x=>[1,3,5].map(i=>parseInt(x.slice(i,i+2),16)/255);
+function draw(P,now){if(!gl)return;gl.viewport(0,0,cv.width,cv.height);
+ gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,tex[from]);gl.uniform1i(U.A,0);gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,tex[cur]);gl.uniform1i(U.B,1);
+ gl.uniform2f(U.R,cv.width,cv.height);gl.uniform1f(U.P,P);gl.uniform1f(U.NS,S.noise);gl.uniform1f(U.EW,S.edge/100);gl.uniform1f(U.SW,S.sweep);gl.uniform1f(U.DIR,dir>0?1:0);gl.uniform1f(U.SEED,seed);gl.uniform1f(U.T,(now||0)/1000%60);
+ const e=hex3(S.glow);gl.uniform3f(U.EC,e[0],e[1],e[2]);gl.drawArrays(gl.TRIANGLES,0,3)}
+function tick(now){t0=t0||now;const u=Math.min(1,(now-t0)/S.duration);draw(u*u*(3-2*u)*.5+u*.5,now);if(u<1)anim=requestAnimationFrame(tick);else{anim=0;from=cur;draw(1,now)}}
+/* Without WebGL (or while its context is lost) the painted picture is shown as a plain image instead. */
+const still=()=>{frame.style.backgroundImage=gl?'':`url(${pics[cur].toDataURL()})`;cv.style.visibility=gl?'':'hidden'};
+function label(say){const s=STUDIES[cur][0];nameEl.textContent=s;countEl.textContent=(cur+1)+' of '+STUDIES.length;cv.setAttribute('aria-label',s);
+ [...dots.children].forEach((b,k)=>b.setAttribute('aria-current',k===cur));if(say)live.textContent=s+', picture '+(cur+1)+' of '+STUDIES.length+'.'}
+function go(i,way,say=true){const N=STUDIES.length;i=(i%N+N)%N;if(i===cur)return;if(anim){cancelAnimationFrame(anim);anim=0}from=cur;
+ dir=way;cur=i;seed=Math.random()*40;label(say);still();if(!gl)return;if(calm){from=cur;draw(1);return}t0=0;anim=requestAnimationFrame(tick)}
+STUDIES.forEach((s,i)=>{const b=document.createElement('button');b.setAttribute('aria-label','Picture '+(i+1)+': '+s[0]);b.innerHTML='<i></i>';b.onclick=()=>go(i,i>cur?1:-1);dots.append(b)});
+document.getElementById('prev').onclick=()=>go(cur-1,-1);document.getElementById('next').onclick=()=>go(cur+1,1);
+addEventListener('keydown',e=>{touched=true;if(e.key==='ArrowRight'){e.preventDefault();go(cur+1,1)}if(e.key==='ArrowLeft'){e.preventDefault();go(cur-1,-1)}});
+addEventListener('pointerdown',()=>touched=true);addEventListener('wheel',()=>touched=true,{passive:true});
+function fit(){const d=Math.min(2,devicePixelRatio||1),r=frame.getBoundingClientRect();cv.width=Math.max(2,Math.round(r.width*d));cv.height=Math.max(2,Math.round(r.height*d));if(!anim)draw(1)}
+addEventListener('resize',fit);
+cv.addEventListener('webglcontextlost',e=>{e.preventDefault();cancelAnimationFrame(anim);anim=0;from=cur;gl=null;still()});
+cv.addEventListener('webglcontextrestored',()=>{initGL();still();fit()});
+function apply(){theme();if(!anim)draw(1)}
+initGL();label(false);still();apply();fit();
+/* In a preview frame the pictures change by themselves until you touch anything. Delete this block in your own page. */
+if(framed&&!calm)(function demo(){setTimeout(()=>{if(touched)return;go(cur+1,1,false);demo()},S.duration+1700)})();
+</script>
+</body>

@@ -12,6 +12,58 @@ states, the serverless API, and the project's own Playwright gate.
 heading order, missing alt text, sideways scroll, text under 11 px, fonts, corner radii and page background. Console
 errors were attributed per page. Suspicious readings were checked by eye before being reported.
 
+## Eighth pass: every open finding worked through
+
+14 November 2026. Each change was checked at 1280 × 800 and 390 × 844. `tools/smoke.mjs` now opens 38 pages at both
+sizes and reports no script errors and no sideways scroll.
+
+**All 25 animation ideas are built.** Fifteen more pieces joined the twelve from the seventh pass: liquid metal, silk
+and caustics shaders, burn-away transition, fluid ink, world map with arcs, ASCII picture, grid backgrounds, layered
+waves, meteors, hero parallax wall, page preloader, liquid glass, page-turn book and metaball loader. The interactions
+page lists 135 pieces, 64 with sliders. Each new piece was run in the gallery with every slider pushed to both ends:
+no script errors, no focus taken from the page, no sideways scroll at 390 px, no control under 36 px.
+
+| Finding | Before | After |
+|---|---|---|
+| G · long pages on phones | UI components 46 screens, animation studio 33, backgrounds 29, references 27, art styles 17 | 8, 13, 7, 11 and 4. Long lists show twelve cards and a "Show more" row (`atlas-pager.js`) |
+| UI components lab | A 1,404 px lab above the list of 70 | The list comes first; the lab is one folded row that a card opens. 15,545 px down to 2,859 px on desktop |
+| H · animation studio dark | Two black bands, 13,375 px of the page, serif titles in cream | Light page. Each live study, film and simulation keeps a dark frame |
+| Site bar inside embedded pages | The top bar drew inside every live study in the animation studio | It does not draw inside a frame |
+| 2 · generated art in templates | Twenty illustrations (crane, owl, dove, lion…) across 26 templates; thumbnails were screenshots of them | Abstract studies, words rewritten to match, a real photograph for the photographer template. 94 template thumbnails and 20 tool thumbnails regenerated |
+| Hover-to-play demo | Four of six films dark | Six light films |
+| 1 · purple accent | Still on theme kits, brand kit generator, My fonts, moodboard and the mockup sample | Ink |
+| 8 · type under 11 px | Brand kit generator 132 elements (down to 9 px), theme kits 66, animation studio 7 | Shade ramps, colour scales and film labels are 11 px. What is left is type specimens showing their own small sizes |
+| 10 · heading order | h1 to h3 on references, film looks and style guides | In order on every atlas section |
+| Interactions page filters | Seventeen chips over two rows | One search box and one filter, as on the atlas sections |
+| A · sign-in down | A button that failed after a wait | The form says sign-in is not available and that work is still saved in this browser. The service itself still needs restoring |
+| Mockup page capture | A block of unstyled text at the top of the picture | Clean. No-script fallbacks are left out of the capture |
+| Near-duplicate pieces | Two hold-to-confirm pieces | One, with an optional confetti finish |
+| Infographic studio | No way on to the mockup studio | Make share image, like the chart, diagram and flowchart studios |
+| My fonts | system-ui | Inter |
+
+Found and fixed along the way:
+
+- A script error on every load of the atlas page (a button removed in the fourth pass was still being wired up),
+  which stopped the rest of start-up.
+- The diagram studio scrolled sideways by 75 px on a phone, caused by the Charts and diagrams switch added in the
+  sixth pass.
+
+How it was done without installing anything: `tools/cdp.mjs` drives the Chrome already on the machine over its
+debugging port. `builder-thumbs.mjs` and `tool-thumbs.mjs` use it in place of Playwright, and `smoke.mjs` is new.
+The fifteen pieces were written by three helper agents from a brief and the existing sources, then checked here.
+
+Still open, honestly:
+
+- **Sign-in and cloud sync** need the Supabase project restored. Nothing in the code can do that.
+- **Video scrub demo** still uses an ordinary encode, so fast scrubbing can lag. Re-encoding needs a video tool that
+  is not on this machine.
+- **Browsers.** Everything was checked in Chrome only. The 27 new pieces have not been tried in Safari or Firefox, on
+  a real phone, or with a screen reader. Liquid glass refracts only in Chromium and falls back to a frosted bar.
+- **World map** is a hand-made dot map: recognisable, but Europe is coarse and there are no Pacific crossings.
+- **Native checkboxes** of 13 to 18 px remain on about ten views (finding 12).
+- **Atlas overview** (`atlas.html#home`, not in any menu) is still 13 screens on a phone.
+- `tools/site-counts.mjs` still needs Playwright; `counts.json` was corrected by hand.
+
 ## Seventh pass: twelve new interactions
 
 Twelve of the 25 ideas in "Animation and interaction opportunities" are built and live on the interactions page
@@ -355,7 +407,7 @@ halftone and aurora shaders. The manifest also has near-duplicates worth merging
 
 **Gaps, ranked.** S is under about 80 lines, M medium, L needs WebGL.
 
-Built so far (seventh pass): 1, 2, 5, 6, 7, 8, 11, 12, 15, 18, 21, 22.
+Built: all 25 (twelve in the seventh pass, the rest in the eighth).
 
 | # | Piece | What you see | Seen at | Shelf category | Build | Size |
 |---|---|---|---|---|---|---|

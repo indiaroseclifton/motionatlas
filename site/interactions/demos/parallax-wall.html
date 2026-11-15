@@ -1,0 +1,79 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Hero parallax wall</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0F1012;--panel:#1A1B1E;--ink:#F4F4F5;--mute:#A1A1AA;--line:#2C2D31;--ac:#111111}
+:root[data-mode=light]{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#111113;--mute:#6B6F76;--line:#E6E6E8}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+
+.art{position:absolute;inset:0;display:block;pointer-events:none}
+.art::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.16;mix-blend-mode:overlay}
+.heroc{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:24px;max-width:760px;color:#fff;text-shadow:0 1px 24px rgba(0,0,0,.35)}.heroc h1{font-size:clamp(34px,7vw,76px);line-height:1;letter-spacing:-.03em}.heroc p{font-size:clamp(15px,2vw,18px);opacity:.9;max-width:46ch}.heroc a{display:inline-flex;align-items:center;min-height:46px;padding:0 22px;border-radius:99px;background:#fff;color:#111;font-weight:700;text-decoration:none;text-shadow:none}
+/* Small shared pieces: kicker line, pill buttons, list reset. */
+input{font:inherit;color:inherit}ul,ol{margin:0;padding:0;list-style:none}[hidden]{display:none!important}
+.k{font-size:13px;font-weight:600;color:var(--mute)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:999px;border:1px solid var(--line);background:var(--panel);font-weight:600;font-size:14px;text-decoration:none;color:var(--ink)}
+.btn:hover{border-color:var(--ink)}.btn.pri{background:var(--ink);color:var(--bg);border-color:var(--ink)}.btn[disabled]{opacity:.45;cursor:not-allowed}
+html,body{height:auto;min-height:100%;overflow:visible}body{display:block;overflow:visible;place-items:normal}
+.top{max-width:920px;margin:0 auto;min-height:56vh;display:grid;align-content:center;justify-items:center;gap:14px;text-align:center;padding:clamp(44px,11vh,120px) 20px 24px}
+.top h1{font-size:clamp(32px,6.2vw,76px);line-height:1;letter-spacing:-.04em;max-width:13em}
+.top .sub{color:var(--mute);font-size:clamp(15px,1.6vw,18px);max-width:44ch}
+.row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:6px}
+/* The wall clips its own overflow, so the wide rows never make the page scroll sideways. */
+.wall{overflow:hidden;perspective:1200px;padding:clamp(28px,7vh,80px) 0 clamp(40px,9vh,100px)}
+.plane{display:flex;flex-direction:column;align-items:flex-start;gap:var(--gap,18px);transform-origin:50% 35%;will-change:transform}
+/* Each row is wider than the page and centred on it: left:50% then back by half its own width. */
+.line{position:relative;left:50%;display:flex;gap:var(--gap,18px);width:max-content;transform:translateX(-50%);will-change:transform}
+.scr{width:clamp(190px,26vw,400px);border-radius:var(--rad,14px);border:1px solid var(--line);background:var(--panel);overflow:hidden;box-shadow:0 22px 40px -30px rgba(17,17,19,.55)}
+.bar{display:flex;align-items:center;gap:5px;height:26px;padding:0 11px;border-bottom:1px solid var(--line)}
+.bar i{width:6px;height:6px;border-radius:50%;background:var(--line)}
+.bar b{width:38%;height:8px;margin-left:8px;border-radius:9px;background:var(--line);opacity:.7}
+.pic{aspect-ratio:16/10}
+.end{min-height:72vh;display:grid;place-content:center;justify-items:center;gap:16px;text-align:center;padding:40px 20px}
+.end h2{margin:0;font-size:clamp(26px,4vw,44px);letter-spacing:-.025em;line-height:1.1}
+.end p{color:var(--mute)}
+</style>
+<body>
+<header class="top"><p class="k">Template library</p><h1>Two hundred starting points, one wall.</h1><p class="sub">Every screen is a real page you can open, copy and make your own.</p><div class="row"><a class="btn pri" href="#">Browse templates</a><a class="btn" href="#">How it works</a></div></header>
+<section class="wall" id="wall" role="img" aria-label="A wall of website screens in three rows"><div class="plane" id="plane"></div></section>
+<section class="end"><h2>Pick one and start.</h2><p>New templates land every Friday.</p><a class="btn pri" href="#">Open the library</a></section>
+<script type="application/json" id="settings">{"travel":280,"tilt":32,"gap":18,"radius":14,"smooth":0.86,"mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Wall',k:'travel',label:'Travel distance',min:0,max:600,step:10,unit:'px'},{k:'tilt',label:'Tilt',min:0,max:55,step:1,unit:'°'},{k:'smooth',label:'Smoothing',min:0,max:.95,step:.01},{g:'Screens',k:'gap',label:'Gap',min:6,max:40,step:1,unit:'px'},{k:'radius',label:'Corner radius',min:0,max:28,step:1,unit:'px'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'light';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+const framed=parent!==window;
+/* Flat abstract artwork made from CSS gradients, so the file needs no images. Swap in your own pictures. */
+const PAL=[['#DCE6FF','#2563EB','#F7C948'],['#FFE3D3','#F0683C','#1F3A5F'],['#DDF3E4','#1F9D6B','#F29FB5'],['#F0E4FF','#7C4DDB','#FFB44A'],['#FFF0C2','#E0A100','#3257D6'],['#DDF1F5','#1C8CA8','#F0683C'],['#FBDDE6','#D6457A','#2C6E63'],['#E7E9EE','#111113','#F0683C']];
+const art=i=>{const[a,b,c]=PAL[i%PAL.length];return `radial-gradient(circle at ${28+i*17%44}% ${36+i*23%30}%,${b} 0 20%,transparent 20.4%),radial-gradient(circle at ${72-i*13%36}% ${66-i*11%28}%,${c} 0 10%,transparent 10.4%),linear-gradient(${115+i*40}deg,${a} 58%,color-mix(in srgb,${a} 72%,${b}) 58%)`};
+const ROWS=3,PER=8,wall=document.getElementById('wall'),plane=document.getElementById('plane');
+/* Three rows of screens: a tiny browser bar on top and a flat picture underneath. Swap the pictures for your own. */
+plane.innerHTML=Array.from({length:ROWS},(_,r)=>`<div class="line">${Array.from({length:PER},(_,i)=>`<div class="scr"><div class="bar"><i></i><i></i><i></i><b></b></div><div class="pic" style="background-image:${art(r*PER+i+r*3)}"></div></div>`).join('')}</div>`).join('');
+const lines=[...plane.children],clamp=v=>Math.min(1,Math.max(0,v));
+/* up: 0 while the wall leans back, 1 once it reaches the middle of the screen. along: 0 to 1 while the wall crosses the screen. */
+let up=0,along=0,upGoal=0,alongGoal=0,raf=0;
+function measure(){const r=wall.getBoundingClientRect(),centred=r.top+scrollY+r.height/2-innerHeight/2;
+ upGoal=clamp(scrollY/Math.max(1,centred));alongGoal=clamp((innerHeight-r.top)/(innerHeight+r.height));if(!raf)raf=requestAnimationFrame(tick)}
+/* Each frame both numbers move part of the way to their targets, which is what makes the wall feel heavy. */
+function tick(){raf=0;const k=calm?1:1-S.smooth;up+=(upGoal-up)*k;along+=(alongGoal-along)*k;
+ const done=Math.abs(upGoal-up)<.0005&&Math.abs(alongGoal-along)<.0005;if(done){up=upGoal;along=alongGoal}draw();if(!done)raf=requestAnimationFrame(tick)}
+function draw(){const lean=calm?0:1-up,t=S.tilt*lean,x=calm?0:S.travel*(along-.5);
+ plane.style.transform=`rotateX(${t.toFixed(2)}deg) rotateZ(${(-t*.2).toFixed(2)}deg) scale(${(1+lean*.08).toFixed(4)})`;
+ lines.forEach((l,i)=>l.style.transform=`translateX(calc(-50% + ${(i%2?-x:x).toFixed(1)}px))`)}
+addEventListener('scroll',measure,{passive:true});addEventListener('resize',measure);
+function apply(){theme();plane.style.setProperty('--gap',S.gap+'px');plane.style.setProperty('--rad',S.radius+'px');measure();up=upGoal;along=alongGoal;draw()}
+apply();
+/* In a preview frame the page scrolls itself until you touch it. Delete this block in your own page. */
+if(framed&&!calm){let on=true,t0=0;const root=document.documentElement;root.style.scrollbarWidth='none';['wheel','touchstart','pointerdown','keydown'].forEach(e=>addEventListener(e,()=>{on=false;root.style.scrollbarWidth=''},{passive:true,once:true}));
+ (function auto(t){if(!on)return;t0=t0||t;const max=root.scrollHeight-innerHeight,k=(t-t0)/8/1000%2,u=k<1?k:2-k;scrollTo(0,max*u*u*(3-2*u));requestAnimationFrame(auto)})(0)}
+</script>
+</body>
+</html>

@@ -8,7 +8,7 @@
    and the separate Diagrams and Flowcharts entries (modes of Charts & diagrams, switched in the studio header). */
 window.ATLAS_NAV_GROUPS=[
   {name:'Interactions',items:[
-   ['interactions.html','UI interactions','120 animated pieces for a site or app. Tune one, then copy it.','golden-dove'],
+   ['interactions.html','UI interactions','135 animated pieces for a site or app. Tune one, then copy it.','golden-dove'],
    ['#effects','Landing effects','Forty-one scroll, reveal and pointer techniques, running live.','light-ribbons'],
    ['#motion','Animation studio','Live particle studies, steerable simulations and an easing lab.','petal-swirl']]},
   {name:'Library',items:[

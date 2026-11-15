@@ -1,0 +1,62 @@
+<!--META {"o": 0.20, "t": "Grid backgrounds", "cat": "Backgrounds", "tone": "light", "added": "2026-11-14", "uses": [], "d": "Three quiet grids for the space behind a headline. Flicker: small squares softly switch on and off. Floor: a grid lies flat and rolls toward you from a horizon. Hover: squares light up under the pointer and fade.", "how": "All three are drawn on one canvas. Flicker and Hover keep a brightness for every square and ease it toward a target; Floor divides by distance, so lines bunch up toward the horizon the way a real floor does.", "use": "Hero sections for developer tools and data products, sign-in and pricing pages, section breaks, empty states.", "p": "Build three grid backgrounds in one HTML file with no libraries, drawn on one full-page canvas behind a centred headline, one line of text and a button, with a three-button segmented control (Flicker, Floor, Hover, using aria-pressed) fixed at the bottom. Flicker: divide the page into square cells with a small gap; keep a current and a target brightness per cell; each frame give a few random cells a new target (often zero) and ease every cell toward its target; draw all cells very faintly in the ink colour and the lit ones in the accent. Floor: a perspective grid below a horizon at about 54 percent of the height. Lines of constant depth sit at horizon + (height below horizon) / z, with z stepping by a fixed amount and an offset that scrolls so the lines roll toward the viewer; lines running away from the viewer fan out from the vanishing point; stroke everything with a vertical gradient that fades to nothing at the horizon, plus a soft accent glow there. Hover: draw faint grid lines; the cell under the pointer gets full brightness and its four neighbours a third, every cell decays each frame, and cells between two pointer positions are filled in so a fast move leaves a whole trail; when the pointer has been still for a few seconds a virtual pointer wanders on a slow loop. Fade the canvas behind the text with a radial mask for Flicker and Hover. Cap device pixel ratio at 2 and rebuild on resize. Settings: style, cell size, speed, strength, accent, light or dark. Reduced motion: draw one still frame; Hover still lights the single cell under the pointer."}-->
+<style>/*BASE*/
+/*UI*/
+canvas{position:fixed;inset:0;width:100%;height:100%;-webkit-mask-image:radial-gradient(ellipse 58% 50% at 50% 47%,rgba(0,0,0,.28),#000 80%);mask-image:radial-gradient(ellipse 58% 50% at 50% 47%,rgba(0,0,0,.28),#000 80%)}
+canvas.floor{-webkit-mask-image:none;mask-image:none}
+.hero{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:24px 20px 84px;max-width:700px}
+.hero h1{font-size:clamp(30px,6.2vw,62px);line-height:1.04;letter-spacing:-.035em}
+.hero .lead{font-size:clamp(15px,1.9vw,18px);max-width:44ch;color:color-mix(in srgb,var(--ink) 76%,var(--bg))}
+.seg{position:fixed;left:50%;bottom:clamp(14px,4vh,28px);transform:translateX(-50%);display:inline-flex;padding:3px;gap:2px;border:1px solid var(--line);border-radius:999px;background:var(--panel);box-shadow:0 10px 30px -18px rgba(17,17,19,.5)}
+.seg button{min-height:40px;padding:0 16px;border:0;border-radius:999px;background:none;font-weight:600;font-size:13.5px;color:var(--mute)}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+</style>
+<body>
+<canvas id="c" aria-hidden="true"></canvas>
+<main class="hero"><h1>A grid that stays out of the way.</h1><p class="lead">Three ambient grids for the space behind a headline.</p><a class="btn pri" href="#">Get started</a></main>
+<div class="seg" role="group" aria-label="Grid style"><button data-v="flicker" aria-pressed="true">Flicker</button><button data-v="floor" aria-pressed="false">Floor</button><button data-v="hover" aria-pressed="false">Hover</button></div>
+<script type="application/json" id="settings">{"style":"flicker","cell":26,"speed":1,"strength":0.32,"mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Grid',k:'style',label:'Style',type:'select',options:['flicker','floor','hover']},{k:'cell',label:'Cell size',min:12,max:64,step:1,unit:'px'},{g:'Motion',k:'speed',label:'Speed',min:.2,max:3,step:.1},{k:'strength',label:'Strength',min:.1,max:1,step:.05},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/*TUNER*/
+const framed=parent!==window;
+const cv=document.getElementById('c'),x=cv.getContext('2d'),btns=[...document.querySelectorAll('.seg button')];
+/* A is how bright each square is now, T is where it is heading. */
+let d=1,W=0,H=0,cols=0,rows=0,ox=0,oy=0,A=new Float32Array(0),T=new Float32Array(0),ac='#2563EB',ink='#111',px=-1e4,py=-1e4,moved=-1e9,roll=0,last=0,touched=false;
+function build(){d=Math.min(2,devicePixelRatio||1);W=innerWidth;H=innerHeight;cv.width=W*d;cv.height=H*d;const c=S.cell;cols=Math.ceil(W/c);rows=Math.ceil(H/c);ox=(W-cols*c)/2;oy=(H-rows*c)/2;
+ A=new Float32Array(cols*rows);T=new Float32Array(cols*rows);if(S.style==='flicker')for(let i=0;i<A.length;i++)A[i]=T[i]=Math.random()<.09?Math.random():0;
+ const cs=getComputedStyle(document.documentElement);ac=cs.getPropertyValue('--ac').trim();ink=cs.getPropertyValue('--ink').trim()}
+/* Flicker: now and then a square is given a new target, and every square eases toward its own. */
+function flicker(k){const c=S.cell,gap=Math.max(2,c*.16),s=c-gap;
+ if(k){for(let n=Math.ceil(A.length*.012*k);n--;){const i=Math.random()*A.length|0;T[i]=Math.random()<.9?0:Math.random()}const e=Math.min(1,.07*k);for(let i=0;i<A.length;i++)A[i]+=(T[i]-A[i])*e}
+ x.fillStyle=ink;x.globalAlpha=.035;x.beginPath();for(let r=0;r<rows;r++)for(let q=0;q<cols;q++)x.rect(ox+q*c+gap/2,oy+r*c+gap/2,s,s);x.fill();
+ x.fillStyle=ac;for(let r=0;r<rows;r++)for(let q=0;q<cols;q++){const a=A[r*cols+q];if(a>.02){x.globalAlpha=a*S.strength;x.fillRect(ox+q*c+gap/2,oy+r*c+gap/2,s,s)}}x.globalAlpha=1}
+/* Floor: a flat grid seen from above the ground. Dividing by the distance z squeezes far lines toward the horizon. */
+function floor(k){const hy=H*.54,D=H-hy,cx=W/2,s=S.cell*2.6,dz=s/D*1.15;roll=(roll+k*.006)%1;
+ const glow=x.createRadialGradient(cx,hy,0,cx,hy,W*.5);glow.addColorStop(0,ac);glow.addColorStop(1,'transparent');x.save();x.translate(0,hy);x.scale(1,.16);x.translate(0,-hy);x.globalAlpha=S.strength*.5;x.fillStyle=glow;x.fillRect(0,hy-W,W,W*2);x.restore();
+ const fade=x.createLinearGradient(0,hy,0,H);fade.addColorStop(0,'transparent');fade.addColorStop(1,ink);x.strokeStyle=fade;x.globalAlpha=Math.min(1,S.strength*.8);x.lineWidth=1;x.beginPath();
+ for(let i=0;i<70;i++){const z=1+(i-roll)*dz;if(z<=.05)continue;const y=hy+D/z;if(y>H+2)continue;if(y-hy<1.5)break;x.moveTo(0,y);x.lineTo(W,y)}
+ for(let i=-Math.ceil(W*3/s);i<=W*3/s;i++){x.moveTo(cx,hy);x.lineTo(cx+i*s,H)}x.stroke();x.globalAlpha=1}
+/* Hover: the square under the pointer is switched on, and every square fades a little each frame. */
+const light=(X,Y)=>{const c=S.cell,q=Math.floor((X-ox)/c),r=Math.floor((Y-oy)/c);if(q<0||r<0||q>=cols||r>=rows)return;const i=r*cols+q;A[i]=1;
+ if(calm)return;const soft=j=>{A[j]=Math.max(A[j],.33)};if(q)soft(i-1);if(q<cols-1)soft(i+1);if(r)soft(i-cols);if(r<rows-1)soft(i+cols)};
+function hover(k,now){const c=S.cell;
+ /* When the pointer has been still for a while, a made-up pointer wanders so the grid is never dead. */
+ if(k&&now-moved>2600)light(W*(.5+.4*Math.sin(now/1900)),H*(.5+.38*Math.sin(now/1300+1)));
+ x.strokeStyle=ink;x.globalAlpha=.09;x.lineWidth=1;x.beginPath();for(let q=0;q<=cols;q++){x.moveTo(ox+q*c+.5,0);x.lineTo(ox+q*c+.5,H)}for(let r=0;r<=rows;r++){x.moveTo(0,oy+r*c+.5);x.lineTo(W,oy+r*c+.5)}x.stroke();
+ const keep=Math.pow(.95,k*1.2);x.fillStyle=ac;for(let r=0;r<rows;r++)for(let q=0;q<cols;q++){const i=r*cols+q,a=A[i];if(a>.01){x.globalAlpha=a*Math.min(1,S.strength*1.5);x.fillRect(ox+q*c+1,oy+r*c+1,c-1,c-1);if(k)A[i]=a*keep}}x.globalAlpha=1}
+function draw(k,now){x.setTransform(d,0,0,d,0,0);x.clearRect(0,0,W,H);(S.style==='floor'?floor:S.style==='hover'?hover:flicker)(k,now)}
+function frame(now){const dt=Math.min(50,now-last);last=now;draw(dt/16.7*S.speed,now);requestAnimationFrame(frame)}
+addEventListener('pointermove',e=>{if(S.style!=='hover')return;const X=e.clientX,Y=e.clientY;
+ if(calm){A.fill(0);light(X,Y);draw(0,0)}
+ /* Fill in the squares between the last position and this one, so a fast move still leaves a whole trail. */
+ else if(performance.now()-moved<200){const n=Math.ceil(Math.hypot(X-px,Y-py)/(S.cell*.5))||1;for(let i=1;i<=n;i++)light(px+(X-px)*i/n,py+(Y-py)*i/n)}else light(X,Y);
+ px=X;py=Y;moved=performance.now()});
+addEventListener('resize',()=>{build();if(calm)draw(0,0)});
+btns.forEach(b=>b.onclick=()=>{touched=true;S.style=b.dataset.v;apply()});
+function apply(){theme();btns.forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===S.style));cv.classList.toggle('floor',S.style==='floor');build();if(calm)draw(0,0)}
+apply();if(!calm)requestAnimationFrame(t=>{last=t;frame(t)});
+/* In a preview frame it steps through the three styles until you touch it. Delete this block in your own page. */
+if(framed&&!calm){const V=['floor','hover','flicker'];let n=0;const stop=()=>touched=true;['pointerdown','keydown','wheel'].forEach(e=>addEventListener(e,stop,{once:true}));
+ const iv=setInterval(()=>{if(touched){clearInterval(iv);return}S.style=V[n++%3];apply()},5200)}
+</script>
+</body>

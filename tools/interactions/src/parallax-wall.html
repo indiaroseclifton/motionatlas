@@ -1,0 +1,54 @@
+<!--META {"o": 0.23, "t": "Hero parallax wall", "cat": "Scroll", "tone": "light", "added": "2026-11-14", "uses": [], "d": "Under the headline, three rows of website screens lean back like a wall seen from below. As you scroll, the rows slide past each other in opposite directions and the wall stands up straight.", "how": "Two numbers are read from the scroll position: how close the wall is to the middle of the screen, and how far it has travelled through it. The first one sets the tilt of the whole wall, the second one slides each row left or right. Both ease toward their targets every frame.", "use": "Template and showcase pages, agency home pages, product galleries, any hero that has many screens to show at once.", "p": "Build a hero parallax wall in one HTML file with no libraries and no images. A centred hero (kicker, large headline, one line of text, two pill buttons) takes a little over half the screen. Below it a wall section with perspective 1200px and overflow hidden holds one plane with three rows of eight screens each. A screen is a rounded card with a hairline border, a 26px fake browser bar (three small dots and a short address pill) and a 16:10 picture drawn with CSS gradients. Rows are wider than the page and centred. On scroll, with JavaScript rather than animation-timeline, compute a = clamp(scrollY / the scroll position at which the wall is centred, 0, 1) and b = clamp((viewport height - wall top) / (viewport height + wall height), 0, 1). Ease both toward their targets each frame with a smoothing setting. Set the plane to rotateX(tilt * (1 - a)) with a small rotateZ and scale that also fall to nothing, and translate rows 1 and 3 by +travel * (b - 0.5) and row 2 by the opposite. Finish with a short closing section. Settings: travel distance, tilt, gap, corner radius, smoothing, accent, light or dark. Reduced motion: the wall is flat and the rows do not slide."}-->
+<style>/*BASE*/
+/*UI*/
+html,body{height:auto;min-height:100%;overflow:visible}body{display:block;overflow:visible;place-items:normal}
+.top{max-width:920px;margin:0 auto;min-height:56vh;display:grid;align-content:center;justify-items:center;gap:14px;text-align:center;padding:clamp(44px,11vh,120px) 20px 24px}
+.top h1{font-size:clamp(32px,6.2vw,76px);line-height:1;letter-spacing:-.04em;max-width:13em}
+.top .sub{color:var(--mute);font-size:clamp(15px,1.6vw,18px);max-width:44ch}
+.row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:6px}
+/* The wall clips its own overflow, so the wide rows never make the page scroll sideways. */
+.wall{overflow:hidden;perspective:1200px;padding:clamp(28px,7vh,80px) 0 clamp(40px,9vh,100px)}
+.plane{display:flex;flex-direction:column;align-items:flex-start;gap:var(--gap,18px);transform-origin:50% 35%;will-change:transform}
+/* Each row is wider than the page and centred on it: left:50% then back by half its own width. */
+.line{position:relative;left:50%;display:flex;gap:var(--gap,18px);width:max-content;transform:translateX(-50%);will-change:transform}
+.scr{width:clamp(190px,26vw,400px);border-radius:var(--rad,14px);border:1px solid var(--line);background:var(--panel);overflow:hidden;box-shadow:0 22px 40px -30px rgba(17,17,19,.55)}
+.bar{display:flex;align-items:center;gap:5px;height:26px;padding:0 11px;border-bottom:1px solid var(--line)}
+.bar i{width:6px;height:6px;border-radius:50%;background:var(--line)}
+.bar b{width:38%;height:8px;margin-left:8px;border-radius:9px;background:var(--line);opacity:.7}
+.pic{aspect-ratio:16/10}
+.end{min-height:72vh;display:grid;place-content:center;justify-items:center;gap:16px;text-align:center;padding:40px 20px}
+.end h2{margin:0;font-size:clamp(26px,4vw,44px);letter-spacing:-.025em;line-height:1.1}
+.end p{color:var(--mute)}
+</style>
+<body>
+<header class="top"><p class="k">Template library</p><h1>Two hundred starting points, one wall.</h1><p class="sub">Every screen is a real page you can open, copy and make your own.</p><div class="row"><a class="btn pri" href="#">Browse templates</a><a class="btn" href="#">How it works</a></div></header>
+<section class="wall" id="wall" role="img" aria-label="A wall of website screens in three rows"><div class="plane" id="plane"></div></section>
+<section class="end"><h2>Pick one and start.</h2><p>New templates land every Friday.</p><a class="btn pri" href="#">Open the library</a></section>
+<script type="application/json" id="settings">{"travel":280,"tilt":32,"gap":18,"radius":14,"smooth":0.86,"mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Wall',k:'travel',label:'Travel distance',min:0,max:600,step:10,unit:'px'},{k:'tilt',label:'Tilt',min:0,max:55,step:1,unit:'°'},{k:'smooth',label:'Smoothing',min:0,max:.95,step:.01},{g:'Screens',k:'gap',label:'Gap',min:6,max:40,step:1,unit:'px'},{k:'radius',label:'Corner radius',min:0,max:28,step:1,unit:'px'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/*TUNER*/
+const framed=parent!==window;
+/*FLATART*/
+const ROWS=3,PER=8,wall=document.getElementById('wall'),plane=document.getElementById('plane');
+/* Three rows of screens: a tiny browser bar on top and a flat picture underneath. Swap the pictures for your own. */
+plane.innerHTML=Array.from({length:ROWS},(_,r)=>`<div class="line">${Array.from({length:PER},(_,i)=>`<div class="scr"><div class="bar"><i></i><i></i><i></i><b></b></div><div class="pic" style="background-image:${art(r*PER+i+r*3)}"></div></div>`).join('')}</div>`).join('');
+const lines=[...plane.children],clamp=v=>Math.min(1,Math.max(0,v));
+/* up: 0 while the wall leans back, 1 once it reaches the middle of the screen. along: 0 to 1 while the wall crosses the screen. */
+let up=0,along=0,upGoal=0,alongGoal=0,raf=0;
+function measure(){const r=wall.getBoundingClientRect(),centred=r.top+scrollY+r.height/2-innerHeight/2;
+ upGoal=clamp(scrollY/Math.max(1,centred));alongGoal=clamp((innerHeight-r.top)/(innerHeight+r.height));if(!raf)raf=requestAnimationFrame(tick)}
+/* Each frame both numbers move part of the way to their targets, which is what makes the wall feel heavy. */
+function tick(){raf=0;const k=calm?1:1-S.smooth;up+=(upGoal-up)*k;along+=(alongGoal-along)*k;
+ const done=Math.abs(upGoal-up)<.0005&&Math.abs(alongGoal-along)<.0005;if(done){up=upGoal;along=alongGoal}draw();if(!done)raf=requestAnimationFrame(tick)}
+function draw(){const lean=calm?0:1-up,t=S.tilt*lean,x=calm?0:S.travel*(along-.5);
+ plane.style.transform=`rotateX(${t.toFixed(2)}deg) rotateZ(${(-t*.2).toFixed(2)}deg) scale(${(1+lean*.08).toFixed(4)})`;
+ lines.forEach((l,i)=>l.style.transform=`translateX(calc(-50% + ${(i%2?-x:x).toFixed(1)}px))`)}
+addEventListener('scroll',measure,{passive:true});addEventListener('resize',measure);
+function apply(){theme();plane.style.setProperty('--gap',S.gap+'px');plane.style.setProperty('--rad',S.radius+'px');measure();up=upGoal;along=alongGoal;draw()}
+apply();
+/* In a preview frame the page scrolls itself until you touch it. Delete this block in your own page. */
+if(framed&&!calm){let on=true,t0=0;const root=document.documentElement;root.style.scrollbarWidth='none';['wheel','touchstart','pointerdown','keydown'].forEach(e=>addEventListener(e,()=>{on=false;root.style.scrollbarWidth=''},{passive:true,once:true}));
+ (function auto(t){if(!on)return;t0=t0||t;const max=root.scrollHeight-innerHeight,k=(t-t0)/8/1000%2,u=k<1?k:2-k;scrollTo(0,max*u*u*(3-2*u));requestAnimationFrame(auto)})(0)}
+</script>
+</body>

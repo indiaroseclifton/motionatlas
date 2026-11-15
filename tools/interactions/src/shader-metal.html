@@ -1,0 +1,48 @@
+<!--META {"o": 0.13, "t": "Liquid metal shader", "cat": "Backgrounds", "tone": "light", "added": "2026-11-14", "uses": [], "d": "A slow pool of polished metal that folds and flows behind the page, with soft highlights sliding over it. Choose the speed, the size of the folds, how shiny it is and its tint.", "how": "A wavy height map is made by bending the coordinates with a few sine waves. The slope at each pixel is treated as a tiny mirror, and the mirror looks up a simple studio made of a bright ceiling, a dark horizon and a floor. Those three bands sliding over the bumps are what read as chrome.", "use": "Hero sections for hardware, cars, watches and audio products, launch pages, sign-in screens, premium pricing headers.", "p": "Build a full-screen animated WebGL background in one HTML file with no libraries: a canvas fixed behind the content, one full-screen triangle, a fragment shader with uniforms for resolution, time and pointer, device pixel ratio capped at 1.5, paused when off screen or in a background tab, one still frame under prefers-reduced-motion, a still CSS gradient underneath as the fallback if WebGL is missing, and a fresh canvas if the context is lost and restored. Put a headline, a line of copy and an accent-coloured button over it. Shader: make a height field by warping the coordinates four times with sine waves that drift with time (each pass bends x by y and y by x at a higher frequency and lower strength), then add two sine waves of the warped position. Find the slope with two extra samples, build a normal from it (the sheen setting makes the bumps steeper), reflect the view direction, and shade with a tiny procedural studio read from the height of the reflected ray: a bright ceiling above, a dark band at the horizon, a thinner dark strip higher up, a soft bounce from the floor, plus one tight highlight from a light direction. Map that value to a silver ramp that stays pale in light mode and to a gunmetal ramp in dark mode, multiply by a tint colour while leaving the brightest parts closer to white, ease the contrast inside an oval behind the headline (measured from the text block) so the text stays readable, and add faint grain against banding. Settings: speed, scale, sheen, tint colour, light or dark, accent."}-->
+<style>/*BASE*/
+/*UI*/
+/* The gradient on the body is what shows if WebGL is missing or the context is lost. */
+body{background:linear-gradient(155deg,#0E1014,#3A3F49 38%,#15171C 55%,#2B2F37)}
+:root[data-mode=light] body{background:linear-gradient(155deg,#F5F7FA,#C6CCD8 38%,#F8F9FB 55%,#B4BBC8)}
+.hero{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:24px;max-width:760px}
+.hero h1{font-size:clamp(34px,7vw,76px);line-height:1;letter-spacing:-.03em;font-weight:700}
+.hero p{font-size:clamp(15px,2vw,18px);max-width:44ch}
+.hero .btn{margin-top:6px;background:var(--ac);border-color:var(--ac);color:var(--on,#fff)}
+</style>
+<body>
+<main class="hero"><h1>Liquid metal</h1><p>A slow chrome surface, drawn by a shader.</p><a class="btn" href="#">Get started</a></main>
+<script type="application/json" id="settings">{"speed":1,"scale":1,"sheen":0.6,"tint":"#DCE4F4","mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Flow',k:'speed',label:'Speed',min:0,max:3,step:.05},{k:'scale',label:'Scale',min:.4,max:3,step:.05},{g:'Metal',k:'sheen',label:'Sheen',min:0,max:1,step:.01},{k:'tint',label:'Tint',type:'color'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/*TUNER*/
+/*SHADER*/
+/* Picks black or white text for whatever accent you choose. */
+const on=h=>{const n=parseInt(h.slice(1),16);return(.299*(n>>16)+.587*(n>>8&255)+.114*(n&255))/255>.62?'#111113':'#fff'};
+/* hgt() is the surface: the coordinates are bent by sine waves a few times, so it folds like something poured.
+   Each pixel's slope acts as a small mirror that looks up studio(): bright ceiling, dark horizon, grey floor. */
+const FRAG=`uniform vec3 tint,box;uniform float scale,sheen,dark;
+float hgt(vec2 p){for(int i=1;i<5;i++){float f=float(i);p.x+=.7/f*sin(f*1.35*p.y+T*.33+f*1.9);p.y+=.58/f*cos(f*1.15*p.x-T*.27+f*.7);}return sin(p.x*1.3+p.y*.9)+.35*sin(p.x*.7-p.y*2.1+T*.2);}
+float band(float y,float c,float w){y=(y-c)/w;return exp(-y*y);}
+float studio(vec3 r){float y=r.y*.9+r.x*.3+.28;float v=.45+.4*smoothstep(-.25,.5,y);v-=.42*band(y,.02,.15);v-=.16*band(y,.78,.1);v+=.2*band(y,-.5,.22);return v;}
+void main(){vec2 p=(gl_FragCoord.xy-.5*R)/R.y*2.2*scale+(M-.5)*.25;
+float e=.012*scale,a=hgt(p),bx=hgt(p+vec2(e,0.)),by=hgt(p+vec2(0.,e));
+vec3 nr=normalize(vec3((a-bx)/e,(a-by)/e,mix(4.,.9,sheen)));vec3 r=reflect(vec3(0.,0.,-1.),nr);
+float v=clamp(studio(r),0.,1.);float spec=pow(max(dot(nr,normalize(vec3(.3,.5,.8))),0.),mix(14.,50.,sheen));
+float veil=smoothstep(2.,1.15,length((gl_FragCoord.xy-.5*R)/box.xy));
+v=mix(1.-(1.-v)*(1.-veil*.22),v*(1.-veil*.45),dark);
+vec3 lo=mix(vec3(.47,.49,.54),vec3(.03,.035,.045),dark),hi=mix(vec3(1.),vec3(.5,.52,.56),dark);
+vec3 col=mix(lo,hi,v)*mix(vec3(1.),tint/max(max(tint.r,tint.g),max(tint.b,.001)),mix(.9,.6,v));
+col+=spec*mix(.22,.45,dark)*(1.-veil*.8*dark);
+col+=(h(gl_FragCoord.xy+fract(T))-.5)*.014;gl_FragColor=vec4(col,1.);}`;
+let sh;
+function start(){sh=shader(FRAG);const c=document.querySelector('canvas');
+ /* If the graphics context is lost, hide the canvas so the CSS gradient shows, and start a fresh one when it comes back. */
+ c.addEventListener('webglcontextlost',e=>{e.preventDefault();c.style.visibility='hidden'});
+ c.addEventListener('webglcontextrestored',()=>{c.remove();start();apply()})}
+/* The shader eases its contrast inside an oval behind the text, so the words stay readable. This measures the text block for it. */
+const hero=document.querySelector('.hero'),veil=()=>{const b=hero.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,1.5);sh.set({box:[b.width/2*d,b.height/2*d,0]})};
+function apply(){theme();document.body.style.background='';document.documentElement.style.setProperty('--on',on(S.accent||'#2563EB'));
+ sh.set({tint:rgb(S.tint),scale:S.scale,sheen:S.sheen,dark:S.mode==='dark'?1:0,_speed:S.speed});veil()}
+start();apply();addEventListener('resize',veil);
+</script>
+</body>

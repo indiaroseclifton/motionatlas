@@ -1,0 +1,40 @@
+<!--META {"o": 0.22, "t": "Meteors", "cat": "Backgrounds", "tone": "light", "added": "2026-11-14", "uses": [], "d": "Thin streaks fall diagonally behind a hero block. Each has a bright head and a short tail that fades to nothing, and each one takes a different path.", "how": "Every meteor is one thin element with a gradient for a tail. A CSS keyframe slides it along a slanted line and fades it in and out, then rests for a moment. JavaScript only chooses where each one starts and ends, and picks a new path every time one finishes.", "use": "Hero sections, launch and waitlist pages, pricing headers, night-themed or space-themed sites, a quiet backdrop for a sign-in screen.", "p": "Build a meteor background in one HTML file with no libraries. Behind a centred hero (heading, one line of text, two buttons) place a fixed, clipped layer holding N absolutely positioned meteor elements. Each meteor is a thin rounded bar, 1 to 2px tall and a length setting wide, filled with a linear gradient from transparent at the tail to a colour at the head, with a 3px dot on the head; its transform origin is the head. One CSS keyframe animation moves it with transform: translate(start) rotate(angle) to translate(end) rotate(angle) over the first 60 percent of the cycle while opacity goes 0, up, hold, 0, and it stays hidden for the remaining 40 percent. JavaScript gives each meteor CSS variables: the rotation from an angle setting (degrees from straight down), a random point on the page as the middle of its path, a run of about half to nine tenths of the page diagonal along that direction, a random tail length, thickness, strength, a duration from the run divided by a speed, and a negative random delay so the sky is already busy on load. On every animationiteration event give that meteor a new path. Colour is the ink colour or the accent, so it works as fine dark lines on a pale page and as light streaks on a dark one. Soften the layer behind the text with a radial mask. Rebuild on resize. Settings: count, speed, angle, length, colour, accent, light or dark. Reduced motion: no animation; show the streaks standing still."}-->
+<style>/*BASE*/
+/*UI*/
+body{background:radial-gradient(ellipse 90% 60% at 50% -12%,color-mix(in srgb,var(--ac) 9%,transparent),transparent),var(--bg)}
+.sky{position:fixed;inset:0;overflow:hidden;pointer-events:none;-webkit-mask-image:radial-gradient(ellipse 52% 44% at 50% 50%,rgba(0,0,0,.3),#000 85%);mask-image:radial-gradient(ellipse 52% 44% at 50% 50%,rgba(0,0,0,.3),#000 85%)}
+/* One meteor: a thin bar that is see-through at the tail and solid at the head. It turns around its head. */
+.m{position:absolute;left:0;top:0;width:var(--len);height:var(--w);border-radius:99px;background:linear-gradient(90deg,transparent,var(--mc));transform-origin:100% 50%;opacity:0;animation:fall var(--dur) linear var(--delay) infinite;will-change:transform,opacity}
+.m::after{content:"";position:absolute;right:-1px;top:50%;width:3px;height:3px;margin-top:-1.5px;border-radius:50%;background:var(--mc);box-shadow:0 0 7px 1px color-mix(in srgb,var(--mc) 45%,transparent)}
+/* It travels for the first part of the loop, then waits out of sight, so meteors come and go unevenly. */
+@keyframes fall{0%{transform:translate(var(--x0),var(--y0)) rotate(var(--rot));opacity:0}7%{opacity:var(--o)}42%{opacity:var(--o)}60%,100%{transform:translate(var(--x1),var(--y1)) rotate(var(--rot));opacity:0}}
+.sky.still .m{animation:none;opacity:var(--o);transform:translate(var(--xm),var(--ym)) rotate(var(--rot))}
+.hero{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:24px 20px;max-width:680px}
+.hero h1{font-size:clamp(30px,6.2vw,62px);line-height:1.04;letter-spacing:-.035em}
+.hero .lead{font-size:clamp(15px,1.9vw,18px);max-width:42ch;color:color-mix(in srgb,var(--ink) 76%,var(--bg))}
+.row{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:4px}
+</style>
+<body>
+<div class="sky" id="sky" aria-hidden="true"></div>
+<main class="hero"><h1>Look up now and then.</h1><p class="lead">Fine streaks cross the page behind the words, each with a short fading tail.</p>
+<div class="row"><a class="btn pri" href="#">Get started</a><a class="btn" href="#">See how it works</a></div></main>
+<script type="application/json" id="settings">{"count":22,"speed":1,"angle":32,"length":150,"colour":"ink","mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Meteors',k:'count',label:'Count',min:4,max:60,step:1},{k:'speed',label:'Speed',min:.3,max:3,step:.1},{k:'angle',label:'Angle',min:-70,max:70,step:1,unit:'°'},{k:'length',label:'Tail length',min:40,max:360,step:5,unit:'px'},{g:'Look',k:'colour',label:'Colour',type:'select',options:['ink','accent']},{k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/*TUNER*/
+const sky=document.getElementById('sky'),R=Math.random;
+/* Choose a path: a random point on the page is the middle, and the meteor runs through it along the set angle. */
+function path(el){const a=S.angle*Math.PI/180,dx=-Math.sin(a),dy=Math.cos(a),W=innerWidth,H=innerHeight,run=Math.hypot(W,H)*(.45+R()*.45),len=S.length*(.6+R()*.8),mx=W*(R()*1.2-.1),my=H*(R()*1.1-.15),s=el.style;
+ const at=(k,n)=>{s.setProperty('--x'+n,mx+dx*run*k-len+'px');s.setProperty('--y'+n,my+dy*run*k+'px')};at(-.5,0);at(.5,1);at(0,'m');
+ s.setProperty('--len',len+'px');s.setProperty('--w',(1+R()).toFixed(2)+'px');s.setProperty('--o',(.3+R()*.55).toFixed(2));s.setProperty('--rot',90+S.angle+'deg');return run}
+function build(){sky.textContent='';sky.classList.toggle('still',calm);sky.style.setProperty('--mc',S.colour==='accent'?'var(--ac)':'var(--ink)');
+ for(let i=0;i<S.count;i++){const el=document.createElement('i');el.className='m';const run=path(el),dur=run/(300*S.speed*(.7+R()*.6))/.6;
+  /* A negative delay starts each one part-way through its loop, so the sky is busy from the first frame. */
+  el.style.setProperty('--dur',dur.toFixed(2)+'s');el.style.setProperty('--delay',(-R()*dur).toFixed(2)+'s');sky.append(el)}}
+/* When a meteor finishes a loop it is given a new path, so the pattern never repeats. */
+sky.addEventListener('animationiteration',e=>path(e.target));
+let wait;addEventListener('resize',()=>{clearTimeout(wait);wait=setTimeout(build,150)});
+function apply(){theme();build()}
+apply();
+</script>
+</body>
