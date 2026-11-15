@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Abstract artwork for the landing technique demos (site/assets/fx).
+"""Abstract artwork for the landing technique demos (site/assets/fx) and the site-builder templates (site/assets/shelf).
 
 Each picture is a soft colour field with a few flat geometric forms: enough edge and colour for a parallax, mask or
 distortion demo to read, and nothing figurative. File names and sizes are kept, so the demos need no changes.
@@ -90,5 +90,13 @@ def main():
     for i in range(60):
         picture('film', 960, 540, t=i / 60, seed='sequence').save(os.path.join(film, 'f%02d.webp' % (i + 1)), 'WEBP', quality=80, method=6)
     print('pictures', made, 'frames', 60)
+    # the site-builder templates use site/assets/shelf: the same treatment, so no template leads with an illustration
+    shelf = os.path.join(HERE, '..', 'site', 'assets', 'shelf'); n = 0
+    for f in sorted(os.listdir(shelf)):
+        p = os.path.join(shelf, f)
+        if not f.endswith('.webp'): continue
+        with Image.open(p) as im: w, h = im.size
+        picture('shelf-' + f[:-5], w, h, pal=order[(n + 3) % 8]).save(p, 'WEBP', quality=84, method=6); n += 1
+    print('shelf', n)
 
 if __name__ == '__main__': main()

@@ -1,5 +1,5 @@
 /* My fonts manager (fontlib.js). Neutral colours that read on light or dark pages. */
-.mf{--mf-ink:#1C1F2A;--mf-mute:#4F5568;--mf-line:#CBD0DC;--mf-bg:#fff;--mf-acc:#5B2DFF;--mf-warn:#7A4A00;--mf-warnbg:#FFF4E2;--mf-bad:#A3221B;display:grid;gap:14px;color:var(--mf-ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-width:0}
+.mf{--mf-ink:#1C1F2A;--mf-mute:#4F5568;--mf-line:#CBD0DC;--mf-bg:#fff;--mf-acc:#111113;--mf-warn:#7A4A00;--mf-warnbg:#FFF4E2;--mf-bad:#A3221B;display:grid;gap:14px;color:var(--mf-ink);font:15px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;min-width:0}
 .mf *{box-sizing:border-box}
 .mfNote{border:1px solid var(--mf-line);border-left:4px solid var(--mf-acc);border-radius:10px;padding:10px 14px;font-size:13.5px;background:#F6F4FF;color:var(--mf-ink)}
 .mfNote.seen{background:transparent}
@@ -9,7 +9,7 @@
 .mfDrop p{margin:0 0 12px}.mfDrop span{color:var(--mf-mute);font-size:13px}
 .mfRow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center}
 .mfSample{justify-content:flex-start}.mfSample label{font-size:13px;font-weight:600}.mfSample input{flex:1;min-width:180px;min-height:40px;padding:6px 12px;border:1px solid #8A91A5;border-radius:10px;background:#fff;color:var(--mf-ink);font:inherit}
-.mfBtn{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:0 14px;border-radius:10px;border:1px solid var(--mf-ink);background:var(--mf-ink);color:#fff;font:600 13.5px/1 system-ui,sans-serif;cursor:pointer;text-decoration:none}
+.mfBtn{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:0 14px;border-radius:10px;border:1px solid var(--mf-ink);background:var(--mf-ink);color:#fff;font:600 13.5px/1 Inter,system-ui,sans-serif;cursor:pointer;text-decoration:none}
 .mfBtn.ghost{background:#fff;color:var(--mf-ink);border-color:#8A91A5}.mfBtn.sm{min-height:36px;padding:0 12px}.mfBtn.danger{color:var(--mf-bad);border-color:var(--mf-bad)}
 .mfBtn:focus-visible,.mf input:focus-visible,.mf a:focus-visible,.mfVh:focus-visible+*{outline:3px solid var(--mf-acc);outline-offset:2px}
 .mfVh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);opacity:0}
@@ -18,14 +18,14 @@
 .mfList{list-style:none;margin:0;padding:0;display:grid;gap:12px}
 .mfFam,.mfEmpty{border:1px solid var(--mf-line);border-radius:12px;padding:14px;background:#fff;color:var(--mf-ink);min-width:0}
 .mfEmpty{color:var(--mf-mute);font-size:14px}
-.mfHead{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center}.mfName{margin:0;font:600 18px/1.2 system-ui,sans-serif;overflow-wrap:anywhere}.mfSub{font-size:12.5px;color:var(--mf-mute)}
+.mfHead{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center}.mfName{margin:0;font:600 18px/1.2 Inter,system-ui,sans-serif;overflow-wrap:anywhere}.mfSub{font-size:12.5px;color:var(--mf-mute)}
 .mfAct{margin-left:auto;display:flex;gap:6px}
-.mfRen{min-height:40px;padding:4px 10px;border:1px solid var(--mf-acc);border-radius:8px;font:600 16px system-ui,sans-serif;max-width:100%}
+.mfRen{min-height:40px;padding:4px 10px;border:1px solid var(--mf-acc);border-radius:8px;font:600 16px Inter,system-ui,sans-serif;max-width:100%}
 .mfChips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}.mfChip{padding:3px 10px;border-radius:999px;background:#ECEEF4;font-size:12.5px;color:var(--mf-ink)}
 .mfPrev{display:grid;gap:4px}.mfPrev div{font-size:24px;line-height:1.25;overflow-wrap:anywhere}
 .mfTest{margin:0;font-size:13.5px;color:var(--mf-mute)}.mfTest a{color:var(--mf-acc);font-weight:600}
 .mfDlg{width:min(720px,calc(100vw - 24px));max-height:calc(100vh - 24px);border:0;border-radius:16px;padding:0;background:#F4F5F8;color:var(--mf-ink,#1C1F2A);box-shadow:0 24px 80px rgba(0,0,0,.4)}
 .mfDlg::backdrop{background:rgba(10,12,20,.6)}
-.mfDlgHead{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #CBD0DC;background:#fff}.mfDlgHead h2{margin:0;font:600 20px system-ui,sans-serif}
+.mfDlgHead{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #CBD0DC;background:#fff}.mfDlgHead h2{margin:0;font:600 20px Inter,system-ui,sans-serif}
 .mfDlgBody{padding:16px 18px;overflow:auto;max-height:calc(100vh - 100px)}
 @media (max-width:480px){.mfAct{margin-left:0;width:100%}.mfPrev div{font-size:20px}}

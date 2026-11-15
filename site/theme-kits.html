@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap">
 <link rel="stylesheet" href="kits/kits.css">
 <style>
-:root{--pbg:#F4F5F8;--ppanel:#FFFFFF;--pink:#1C1F2A;--pmute:#5A6072;--phair:#DCE0E8;--paccent:#5B2DFF;color-scheme:light}
+:root{--pbg:#F4F5F8;--ppanel:#FFFFFF;--pink:#1C1F2A;--pmute:#5A6072;--phair:#DCE0E8;--paccent:#111113;color-scheme:light}
 *{box-sizing:border-box}html,body{margin:0}
 body{background:var(--pbg);color:var(--pink);font:15px/1.55 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 a{color:inherit}button,input,select{font:inherit;color:inherit}
@@ -33,12 +33,12 @@ a{color:inherit}button,input,select{font:inherit;color:inherit}
 .pbtn{min-height:40px;padding:0 16px;border-radius:10px;border:1px solid var(--pink);background:var(--pink);color:#fff;font-weight:600;font-size:14px;cursor:pointer}
 .pbtn.ghost{background:var(--ppanel);color:var(--pink);border-color:var(--phair)}
 .picker{max-width:1320px;margin:0 auto;padding:6px max(16px,4vw) 28px;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:10px}
-.pick{position:relative;aspect-ratio:4/3;border-radius:12px;overflow:hidden;border:2px solid transparent;padding:0;cursor:pointer;background:#111;text-align:left}
+.pick{position:relative;aspect-ratio:4/3;border-radius:14px;overflow:hidden;border:1px solid var(--phair);padding:0;cursor:pointer;background:#111;text-align:left}
 .pick canvas{position:absolute;inset:0;width:100%;height:100%}
 .pick span{position:absolute;left:0;right:0;bottom:0;padding:22px 9px 8px;display:grid;gap:2px;background:linear-gradient(transparent,rgba(0,0,0,.86) 45%);color:#fff}
 .pick b{font-size:15px;line-height:1.05;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pick small{font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.1em;opacity:.95}
-.pick[aria-pressed=true]{border-color:var(--paccent);box-shadow:0 0 0 3px rgba(91,45,255,.3)}
+.pick[aria-pressed=true]{border-color:var(--paccent);box-shadow:0 0 0 2px var(--paccent)}
 .empty{max-width:1320px;margin:0 auto;padding:0 max(16px,4vw) 24px;color:var(--pmute)}
 #compare{border-top:1px solid var(--phair);background:var(--ppanel)}
 #compare .in{max-width:1320px;margin:0 auto;padding:28px max(16px,4vw) 36px;display:grid;gap:18px}

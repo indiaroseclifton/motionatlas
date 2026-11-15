@@ -111,3 +111,7 @@ main .foldTool>.artLayout{padding:20px 18px;margin:0}
 #tours .tKicker,#backgrounds .bgHead>.cardcode{display:none}
 main .foldTool{scroll-margin-top:calc(var(--sb-h,44px) + 16px)}
 #backgrounds.page,#tours.page{padding-top:28px!important}#backgrounds .bgHead,#tours .tourIndex{padding-top:0!important}
+
+/* UI components: the lab is folded into one row; its own title block is the row's label now */
+main .foldTool>.clab{margin:0;padding:20px 18px}
+main .foldTool>.clab>.clab-head{display:none}

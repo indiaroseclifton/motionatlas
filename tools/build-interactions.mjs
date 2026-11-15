@@ -1,5 +1,6 @@
 // Builds the tunable interactions in site/interactions/demos/ and splices their entries into the shelf manifest.
 //   node tools/build-interactions.mjs
+//   node tools/build-interactions.mjs <id> [<id>...]   builds only those demos, checks their scripts parse, leaves the manifest alone
 // Each source in tools/interactions/src/<id>.html starts with <!--META {json}--> and may use the markers
 // /*BASE*/ (shared styles), /*TUNER*/ (settings bridge: defines S, calm, theme()) and /*CAROUSEL*/ (drag and key engine, includes the artwork) and /*ART*/ (gradient artwork only).
 // Newer light pieces also use /*UI*/ (kicker, pill buttons, list reset) and /*FLATART*/ (flat abstract artwork). META may carry "added":"YYYY-MM-DD"; the shelf's New filter shows the latest date.
@@ -9,16 +10,18 @@ import fs from 'fs';import path from 'path';import {fileURLToPath} from 'url';
 const here=path.dirname(fileURLToPath(import.meta.url)),src=path.join(here,'interactions'),out=path.join(here,'..','site','interactions');
 const rd=f=>fs.readFileSync(path.join(src,f),'utf8').trim();
 const BASE=rd('base.css'),TUNER=rd('tuner.js'),CAR=rd('carousel.js'),ART=rd('art.js'),SHADER=rd('shader.js'),UI=rd('ui.css'),FLAT=rd('flat-art.js');
-const man=[];
-for(const f of fs.readdirSync(path.join(src,'src')).filter(f=>f.endsWith('.html')).sort()){
+const man=[],only=process.argv.slice(2);
+for(const f of fs.readdirSync(path.join(src,'src')).filter(f=>f.endsWith('.html')&&(!only.length||only.includes(f.replace('.html','')))).sort()){
  let s=fs.readFileSync(path.join(src,'src',f),'utf8');const m=/^<!--META (.*?)-->\n/.exec(s);if(!m)throw new Error('No META in '+f);
  const meta=JSON.parse(m[1]),id=f.replace('.html','');s=s.slice(m[0].length);
  if(!/id="settings"/.test(s)||!/CONTROLS=/.test(s))throw new Error('No settings or CONTROLS in '+f);
  JSON.parse(/<script type="application\/json" id="settings">([\s\S]*?)<\/script>/.exec(s)[1]);
  s=s.replace('/*BASE*/',()=>BASE).replace('/*TUNER*/',()=>TUNER).replace('/*CAROUSEL*/',()=>CAR).replace('/*ART*/',()=>ART).replace('/*SHADER*/',()=>SHADER).replace('/*UI*/',()=>UI).replace('/*FLATART*/',()=>FLAT);
  fs.writeFileSync(path.join(out,'demos',id+'.html'),`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${meta.t}</title>\n${s.trim()}\n</html>\n`);
+ if(only.length){const vm=await import('vm');for(const m of s.matchAll(/<script>([\s\S]*?)<\/script>/g))new vm.Script(m[1],{filename:f});if(/\/\*(BASE|UI|TUNER|ART|FLATART|CAROUSEL|SHADER)\*\//.test(s))throw new Error('Unreplaced marker in '+f);console.log('built',id,s.length,'bytes')}
  const {o,...rest}=meta;man.push({o:o||99,e:{id,uses:rest.uses||[],t:rest.t,cat:rest.cat,tone:rest.tone||'dark',added:rest.added||'2026-11',tune:true,d:rest.d,how:rest.how,use:rest.use,p:rest.p}});
 }
+if(only.length)process.exit(0);
 man.sort((a,b)=>a.o-b.o);
 const mf=path.join(out,'manifest.js');let t=fs.readFileSync(mf,'utf8');const A='/*LAB-START*/',B='/*LAB-END*/';
 const block=A+'\n'+man.map(x=>JSON.stringify(x.e)).join(',\n')+'\n'+B;

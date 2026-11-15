@@ -46,7 +46,7 @@
   const h1=document.querySelector('header h1');if(!h1||document.querySelector('.famSwitch'))return;
   const nav=document.createElement('nav');nav.className='famSwitch';nav.setAttribute('aria-label','Charts and diagrams');
   nav.innerHTML=FAMILY.map(([f,n])=>`<a href="${f}.html"${f===me?' aria-current="page"':''}>${n}</a>`).join('');
-  h1.classList.add('famH1');h1.after(nav);nav.querySelector('[aria-current]')?.scrollIntoView({block:'nearest',inline:'center'});
+  h1.classList.add('famH1');h1.after(nav);/* let the header shrink to the screen so the switch scrolls inside it instead of widening the page */const hd=nav.closest('header');if(hd)hd.style.minWidth='0';nav.querySelector('[aria-current]')?.scrollIntoView({block:'nearest',inline:'center'});
  }
  function start(){
   const page=location.pathname.split('/').pop().replace(/\.html$/,'');

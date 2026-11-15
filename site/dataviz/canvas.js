@@ -112,7 +112,7 @@ function create(host){
  const edgeKey=e=>e.from+'>'+e.to;
  const findEdge=key=>last&&last.g.edges.find(e=>edgeKey(e)===key);
  function setSel(ids,edge){sel=new Set(ids);selEdge=edge||null;primary=[...sel][0]||null;paintOverlay();if(insp&&sel.size===1&&!selEdge)open('node',primary);host.selection&&host.selection(sel.size,!!selEdge,selEdge);}
- function paintOverlay(tmp){const ov=paper.querySelector('.fc-ov');if(!ov||!last)return;const z=Math.max(.25,host.view().zoom),acc='#5B2DFF';let h='';
+ function paintOverlay(tmp){const ov=paper.querySelector('.fc-ov');if(!ov||!last)return;const z=Math.max(.25,host.view().zoom),acc='#111113';let h='';
   const hr=Math.max(6,8/z);
   for(const id of sel){const n=last.g.nodes.get(id);if(!n)continue;h+=`<rect x="${n.x-5}" y="${n.y-5}" width="${n.w+10}" height="${n.h+10}" rx="${Math.max(8,(last.style.t.nodeRadius||8)+4)}" fill="none" stroke="${acc}" stroke-width="${2/Math.min(1,z)*.7+.6}" stroke-dasharray="5 4" pointer-events="none"/>`;}
   if(guides&&drag)for(const gd of guides)h+=gd.v?`<line x1="${gd.at}" x2="${gd.at}" y1="${gd.a-16}" y2="${gd.b+16}" stroke="#E5398F" stroke-width="${1.2/Math.min(1,z)}" stroke-dasharray="4 3" pointer-events="none"/>`:`<line y1="${gd.at}" y2="${gd.at}" x1="${gd.a-16}" x2="${gd.b+16}" stroke="#E5398F" stroke-width="${1.2/Math.min(1,z)}" stroke-dasharray="4 3" pointer-events="none"/>`;

@@ -42,7 +42,7 @@ body.ro .tools .grp:not(:last-child){display:none}
 .mbLink{display:flex;flex-direction:column;gap:3px;height:100%;padding:12px 14px;justify-content:center}.mbLink b{font-size:13px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}.mbLink small{color:#5F6577;font-size:11.5px}.mbLink svg{color:var(--accent)}
 .frame{position:absolute;border:1.5px dashed var(--accent);pointer-events:none;border-radius:4px;z-index:99999}
 .mbHandle{position:absolute;width:20px;height:20px;border-radius:50%;border:2px solid #fff;background:var(--accent);cursor:nwse-resize;z-index:100000;padding:0;box-shadow:0 1px 4px rgba(0,0,0,.4)}
-.marq{position:absolute;border:1px solid var(--accent);background:rgba(91,45,255,.1);pointer-events:none}
+.marq{position:absolute;border:1px solid var(--accent);background:rgba(17,17,19,.08);pointer-events:none}
 .zoom{position:absolute;right:12px;bottom:12px;display:flex;gap:4px;align-items:center;background:#fff;border:1px solid var(--hair);border-radius:12px;padding:4px;box-shadow:0 6px 20px -10px rgba(20,24,40,.4)}.zoom output{min-width:44px;text-align:center;font:500 12px 'JetBrains Mono',monospace}
 .empty{position:absolute;inset:0;display:grid;place-content:center;gap:12px;text-align:center;padding:24px;color:var(--mute)}
 .insp{position:absolute;left:12px;bottom:12px;width:min(260px,calc(100% - 24px));background:#fff;border:1px solid var(--hair);border-radius:12px;padding:10px 12px;display:grid;gap:8px;box-shadow:0 10px 30px -12px rgba(20,24,40,.4);z-index:5}.insp h2{margin:0;font:600 11px/1.2 Inter;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}

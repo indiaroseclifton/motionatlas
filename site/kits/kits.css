@@ -32,7 +32,7 @@
 .tk-chip b{font-weight:600}
 .tk-chip code{font:12px ui-monospace,monospace;color:var(--mute)}
 .tk-scale{display:grid;grid-template-columns:repeat(11,minmax(0,1fr));gap:4px;margin-bottom:10px}
-.tk-scale button{border:0;padding:8px 4px 6px;min-height:72px;display:grid;align-content:space-between;gap:2px;text-align:left;font:10.5px/1.2 ui-monospace,monospace;cursor:pointer;border-radius:calc(var(--radius) / 3)}
+.tk-scale button{border:0;padding:8px 4px 6px;min-height:72px;display:grid;align-content:space-between;gap:2px;text-align:left;font:11px/1.2 ui-monospace,monospace;cursor:pointer;border-radius:calc(var(--radius) / 3)}
 .tk-scale b{font-weight:700;font-size:11px}
 .tk-scalel{display:flex;justify-content:space-between;gap:8px;font-size:13px;margin:6px 0}
 .tk-modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:16px}

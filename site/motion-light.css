@@ -1,0 +1,49 @@
+/* Animation studio on the light page. The live studies and simulations are drawn for a dark ground, so each one
+   keeps a dark frame, like a film still; everything around them (titles, text, controls) is the page's own ink
+   on white. Loaded last, so it only overrides studio-river.css and ui-motion.css. */
+#motion .studyRiver,#motion .umBand{background:none;color:var(--text,#0d1220);padding-block:8px 0;margin-block:28px 40px}
+#motion .umBand{--um:#fff;--um-ink:#111113;--um-mute:#5e6476;--um-line:#e1e4ec;--um-gold:#111113}
+#motion .studyRiver .riverHead h2,#motion .umBand .umHead h2{font:600 clamp(26px,3vw,38px)/1.1 Inter,system-ui,sans-serif;font-style:normal;letter-spacing:-.025em;color:var(--text,#0d1220)}
+#motion .studyRiver .riverKicker,#motion .umBand .umKicker{font:600 13px/1.4 Inter,system-ui,sans-serif;letter-spacing:0;text-transform:none;color:var(--text-dim,#4a5466)}
+#motion .studyRiver .riverText h3{font:600 clamp(22px,2.2vw,30px)/1.15 Inter,system-ui,sans-serif;letter-spacing:-.02em;color:var(--text,#0d1220)}
+#motion .studyRiver .riverText p:not(.riverKicker),#motion .studyRiver .riverMake,#motion .studyRiver .riverLite,#motion .umBand .umLede{color:var(--text-dim,#4a5466)}
+#motion .studyRiver .riverOpen,#motion .studyRiver .kitPreview,#motion .studyRiver .riverMake a,#motion .studyRiver .riverLiteOn{color:var(--text,#0d1220);border-color:rgba(13,18,32,.35);text-decoration-color:rgba(13,18,32,.35)}
+#motion .studyRiver .riverOpen:hover,#motion .studyRiver .kitPreview:hover{color:#000;border-color:#000}
+#motion .studyRiver .riverHold{font:600 13px/1 Inter,system-ui,sans-serif;letter-spacing:0;text-transform:none;color:var(--text,#0d1220);text-decoration-color:rgba(13,18,32,.35)}
+#motion .studyRiver .riverHold:hover{color:#000}
+#motion .studyRiver :focus-visible,#motion .umBand button:focus-visible{outline-color:#111113}
+/* each study in a dark frame with the card radius */
+#motion .riverMedia{-webkit-mask-image:none;mask-image:none;background:#04050a;border-radius:16px;overflow:hidden}
+#motion .riverRow.isWide .riverMedia{-webkit-mask-image:none;mask-image:none}
+#motion .riverRow.isWide{max-width:1600px;margin-inline:auto;display:grid;grid-template-columns:minmax(0,1fr);gap:16px;padding-inline:max(24px,env(safe-area-inset-left,0px))}
+#motion .riverRow.isWide .riverText{position:static;padding:0;pointer-events:auto;order:2}
+/* "Use it on your site" */
+#motion .studyRiver .riverKit{border-top-color:var(--hair,#d9dee6)}
+#motion .studyRiver .riverKit summary{font:600 13px/1 Inter,system-ui,sans-serif;letter-spacing:0;text-transform:none;color:var(--text,#0d1220)}
+#motion .studyRiver .riverKit summary::before{color:var(--text-dim,#4a5466)}
+#motion .studyRiver .kitBody,#motion .studyRiver .riverRow.isWide .riverKit[open] .kitBody{background:none;backdrop-filter:none;padding:6px 0 14px}
+#motion .studyRiver .kitField,#motion .studyRiver .kitChecks{color:var(--text,#0d1220)}
+#motion .studyRiver .kitField output{color:var(--text-dim,#4a5466)}
+#motion .studyRiver .kitField input[type=range],#motion .studyRiver .kitChecks input{accent-color:#111113}
+#motion .studyRiver .kitField select{background:#fff!important;color:var(--text,#0d1220)!important;border-color:var(--hair,#d9dee6);color-scheme:light}
+#motion .studyRiver .kitCopy{border-color:var(--hair,#d9dee6);background:#fff;color:var(--text,#0d1220)}
+#motion .studyRiver .kitCopy:hover{background:#fff;border-color:#111113}
+#motion .studyRiver .kitStatus,#motion .studyRiver .kitPrompt{color:var(--text-dim,#4a5466)}
+/* simulations and the UI motion grid: light controls and text, dark stages */
+#motion .umBand .umSimRail button[aria-selected=true]{background:#111113;color:#fff}
+#motion .umBand .umTool{font:600 13px/1 Inter,system-ui,sans-serif;background:#fff}
+#motion .umBand .umTool:hover{background:#fff;border-color:#111113}
+#motion .umBand .umTool[aria-pressed=true]{background:#111113;color:#fff;border-color:#111113}
+#motion .umBand .umSimRail button{font:600 13px/1 Inter,system-ui,sans-serif}
+#motion .umBand .umSimPanel{background:#fff}
+#motion .umBand .umSimPanel select{background:#fff;color:var(--um-ink)}
+#motion .umSimSlot .motionstage,#motion .umStage{border-radius:16px}
+#motion .umStage{box-shadow:none}
+#motion .umBand .umNum{font:600 12px/1 Inter,system-ui,sans-serif;letter-spacing:0;color:var(--text-dim,#4a5466)}
+#motion .umBand .umText h3{font:600 clamp(18px,1.7vw,22px)/1.2 Inter,system-ui,sans-serif;letter-spacing:-.01em;color:var(--text,#0d1220)}
+#motion .umBand .umText p:not(.umNum){color:var(--text-dim,#4a5466)}
+#motion .umBand .umActs button{font:600 13px/1 Inter,system-ui,sans-serif;letter-spacing:0;text-transform:none;color:var(--text,#0d1220);min-height:44px;text-decoration-color:rgba(13,18,32,.35)}
+#motion .umBand .umActs button:hover{color:#000}
+#motion .riverRow.isWide .riverText{margin:0;max-width:none;left:auto;right:auto}
+#motion .studyRiver>.pgMore{padding-top:8px}
+#motion .umGrid>.pgMore{grid-column:1/-1;margin:0}

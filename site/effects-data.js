@@ -875,7 +875,7 @@ new IntersectionObserver(([e])=>{visible=e.isIntersecting;want();sync();},{thres
   perf:'No video is downloaded until it is wanted, and only one plays at a time. Use short 720p loops and a JPEG or WebP poster.',
   a11y:'Cards are buttons, so keyboard focus plays the film too. Under reduced motion films never auto-play on hover.',
   support:'Everywhere. (hover: hover) separates mouse from touch.',
-  html:`<section class="hf"><div class="grid">${[['light-mesh','Light mesh'],['pigment-bloom','Pigment bloom'],['light-threads','Light threads'],['soap-film','Soap film'],['light-ribbons','Light ribbons'],['suminagashi','Floating ink']].map(([s,t])=>`<button class="card" type="button" data-s="${s}"><img src="${FILM}${s}.jpg" alt=""><b>${t}</b></button>`).join('')}</div><p class="kicker hint">Hover or focus a card · tap on touch</p></section>`,
+  html:`<section class="hf"><div class="grid">${[['light-mesh','Light mesh'],['petal-swirl','Petal swirl'],['sand-drawing','Sand drawing'],['hydraulic-erosion','Erosion'],['suminagashi','Floating ink'],['pixel-sorting','Pixel sort']].map(([s,t])=>`<button class="card" type="button" data-s="${s}"><img src="${FILM}${s}.jpg" alt=""><b>${t}</b></button>`).join('')}</div><p class="kicker hint">Hover or focus a card · tap on touch</p></section>`,
   css:`.hf{height:100vh;display:grid;grid-template-rows:1fr auto;gap:10px;padding:12px;background:#fafafa}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:12px;min-height:0}
 .card{all:unset;position:relative;cursor:pointer;border-radius:20px;overflow:hidden;background:#e6e6e6;transition:transform var(--fx-duration) var(--fx-ease)}

@@ -76,12 +76,18 @@
   /expired|invalid.*token|otp/i.test(m)?'That code has expired or is not right. Request a new email.':
   /bucket not found/i.test(m)?'File storage is not set up yet. Run supabase/schema.sql in Supabase.':
   /payload too large|exceeded the maximum/i.test(m)?'That file is larger than the storage limit (50 MB).':m);err.code=e&&e.code;err.status=e&&e.status;err.missing=missing(e);return err}
+ /* Is the sign-in service answering? False when its address does not resolve or it takes more than six seconds. */
+ let upP=null;
+ C.reachable=()=>upP||(upP=Promise.race([fetch(URL_+'/auth/v1/health',{headers:{apikey:KEY}}).then(()=>true,()=>false),new Promise(r=>setTimeout(()=>r(false),6000))]));
  /* Sign-in form shared by account.html and the projects page.
     Email → magic link (and the 6-digit code when the email template includes it) → "check your email". */
  C.mountSignIn=function(el,{next='',idp='acc'}={}){
   const e=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const form=()=>{el.innerHTML=`<form class="accForm" novalidate><label for="${idp}Email">Email address</label><div class="accRow"><input id="${idp}Email" type="email" required autocomplete="email" inputmode="email" placeholder="you@example.com" aria-describedby="${idp}Status"><button class="accPrimary" type="submit">Email me a sign-in link</button></div><div class="accAlt" hidden></div><p class="accStatus" id="${idp}Status" role="status" aria-live="polite"></p><p class="accFine">No password needed. New here? The same link creates your account.</p></form>`;
    const f=el.querySelector('form'),input=f.querySelector('input'),st=f.querySelector('.accStatus');
+   /* say so plainly when the service is down, instead of a button that fails after a wait */
+   C.reachable().then(up=>{if(up||!el.contains(f))return;f.querySelectorAll('input,button').forEach(x=>x.disabled=true);f.querySelector('.accFine').hidden=true;
+    st.textContent='Sign-in is not available right now, so work cannot sync between devices. Everything you make is still saved in this browser.'});
    C.providers().then(p=>{if(p.google&&el.contains(f)){const a=f.querySelector('.accAlt');a.hidden=false;a.innerHTML='<button type="button" class="accSecondary" data-acc="google">Continue with Google</button>';a.querySelector('button').onclick=async()=>{try{await C.signInGoogle(next)}catch(err){st.textContent=err.message}}}});
    f.addEventListener('submit',async ev=>{ev.preventDefault();const email=input.value.trim();if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){st.textContent='Enter a valid email address.';input.setAttribute('aria-invalid','true');input.focus();return}
     input.removeAttribute('aria-invalid');const b=f.querySelector('button[type=submit]');b.disabled=true;st.textContent='Sending…';

@@ -6,6 +6,9 @@
    Keyboard: Tab through; Enter/Space opens a menu; Esc closes and returns focus; "/" or Ctrl/Cmd+K opens search. */
 (()=>{
  if(window.__siteBar||document.getElementById('sbar'))return;window.__siteBar=1;
+ /* Inside a frame (a study embedded in the animation studio, a page captured by the mockup studio) there is no bar. */
+ let framed=false;try{framed=window.self!==window.top}catch(e){framed=true}
+ if(framed){document.documentElement.style.setProperty('--sb-h','0px');return}
  const G=window.ATLAS_NAV_GROUPS||[];
  const cs=document.currentScript;const BASE=cs&&cs.src?new URL('.',cs.src).href:new URL('.',location.href).href;
  const url=h=>new URL(h.startsWith('#')?'atlas.html'+h:h,BASE);

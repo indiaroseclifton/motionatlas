@@ -205,6 +205,9 @@ async function exportAs(kind){const r=render(S),st={id:'ig-'+r.F.id,fonts:r.F.g}
  try{say('Preparing the file…');
   if(kind==='svg')DVExport.download(name+'.svg',await DVExport.svgWithFonts(r.svg,st),'image/svg+xml');
   else if(kind==='copy'){await navigator.clipboard.writeText(r.svg);return say('SVG code copied')}
+  /* same hand-off the chart, diagram and flowchart studios use: the picture opens in the Mockup studio, ready to frame */
+  else if(kind==='share'){if(!window.MockupHandoff)await new Promise((res,rej)=>{const t=document.createElement('script');t.src='mockup/handoff.js';t.onload=res;t.onerror=rej;document.head.append(t)});
+   return MockupHandoff.send({blob:await DVExport.png(r.svg,r.W,r.H,st,1),title:S.title||'',from:'infographic studio'})}
   else DVExport.download(name+(kind==='png2'?'@2x':'')+'.png',await DVExport.png(r.svg,r.W,r.H,st,kind==='png2'?2:1));
   say('Saved to your downloads')}catch(e){say('That export did not work. Try the SVG.')}}
 window.InfographicStudio={render,get state(){return S},TPL,SIZES};

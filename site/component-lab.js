@@ -986,10 +986,12 @@
    </div>
   </div>`;
   const grid=document.getElementById('componentGrid');
-  const anchor=page.querySelector('.filters')||grid;
-  anchor.parentNode.insertBefore(root,anchor);
-  // the old static grid becomes the index below the lab
-  if(grid){const h=document.createElement('h2');h.className='clab-indexhead';h.textContent=`All ${C.length} at a glance`;grid.parentNode.insertBefore(h,page.querySelector('.filters')||grid);}
+  // the lab sits folded in one row under the search bar, so the list of components comes first; a card opens it
+  const fold=document.createElement('details');fold.className='foldTool';fold.id='componentLabFold';
+  fold.innerHTML=`<summary><span>Component lab</span><small>Every state of one component, in ${AtlasThemes.list.length} styles, with the code to copy.</small></summary>`;fold.append(root);
+  (grid||page.lastElementChild).before(fold);
+  fold.addEventListener('toggle',()=>{if(fold.open)render();});
+  if(grid){const h=document.createElement('h2');h.className='clab-indexhead tbHide';h.textContent=`All ${C.length} components`;grid.before(h);}
   stage=root.querySelector('#clStage');
   root.querySelector('#clTheme').value=S.theme;root.querySelector('#clLabel').value=S.label;root.querySelector('#clIcon').checked=S.icon;
   root.querySelector('#clTheme').onchange=e=>{S.theme=e.target.value;render();};
@@ -1001,8 +1003,8 @@
   root.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{S.tab=b.dataset.tab;panel();save();});
   root.querySelector('.clab-tabs').addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight'].includes(e.key))return;const tabs=[...root.querySelectorAll('[data-tab]')];const i=tabs.findIndex(t=>t.dataset.tab===S.tab);const n=tabs[(i+(e.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length];S.tab=n.dataset.tab;panel();n.focus();});
   // grid cards open the component in the lab
-  grid?.addEventListener('click',e=>{const b=e.target.closest('[data-open^="C"]');if(!b)return;e.preventDefault();e.stopPropagation();select(b.dataset.open);root.scrollIntoView({behavior:'smooth',block:'start'});},true);
-  const linkId=(location.hash.match(/[?&]component=(C\d\d)/)||[])[1];if(linkId)S.comp=linkId;if(!C.some(c=>c.id===S.comp))S.comp='C01';const linkTheme=(location.hash.match(/[?&]theme=(S\d\d)/)||[])[1];if(linkTheme&&AtlasThemes.byId[linkTheme])S.theme=linkTheme;root.querySelector('#clTheme').value=S.theme;
+  grid?.addEventListener('click',e=>{const b=e.target.closest('[data-open^="C"]');if(!b)return;e.preventDefault();e.stopPropagation();fold.open=true;select(b.dataset.open);fold.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});},true);
+  const linkId=(location.hash.match(/[?&]component=(C\d\d)/)||[])[1];if(linkId)S.comp=linkId;if(linkId||/[?&]theme=/.test(location.hash))fold.open=true;if(!C.some(c=>c.id===S.comp))S.comp='C01';const linkTheme=(location.hash.match(/[?&]theme=(S\d\d)/)||[])[1];if(linkTheme&&AtlasThemes.byId[linkTheme])S.theme=linkTheme;root.querySelector('#clTheme').value=S.theme;
   list();render();
  }
  function list(){
