@@ -1,0 +1,70 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Orbiting icons</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0F1012;--panel:#1A1B1E;--ink:#F4F4F5;--mute:#A1A1AA;--line:#2C2D31;--ac:#111111}
+:root[data-mode=light]{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#111113;--mute:#6B6F76;--line:#E6E6E8}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+
+.art{position:absolute;inset:0;display:block;pointer-events:none}
+.art::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.16;mix-blend-mode:overlay}
+.heroc{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:24px;max-width:760px;color:#fff;text-shadow:0 1px 24px rgba(0,0,0,.35)}.heroc h1{font-size:clamp(34px,7vw,76px);line-height:1;letter-spacing:-.03em}.heroc p{font-size:clamp(15px,2vw,18px);opacity:.9;max-width:46ch}.heroc a{display:inline-flex;align-items:center;min-height:46px;padding:0 22px;border-radius:99px;background:#fff;color:#111;font-weight:700;text-decoration:none;text-shadow:none}
+/* Small shared pieces: kicker line, pill buttons, list reset. */
+input{font:inherit;color:inherit}ul,ol{margin:0;padding:0;list-style:none}[hidden]{display:none!important}
+.k{font-size:13px;font-weight:600;color:var(--mute)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:999px;border:1px solid var(--line);background:var(--panel);font-weight:600;font-size:14px;text-decoration:none;color:var(--ink)}
+.btn:hover{border-color:var(--ink)}.btn.pri{background:var(--ink);color:var(--bg);border-color:var(--ink)}.btn[disabled]{opacity:.45;cursor:not-allowed}
+.sec{width:min(1040px,100%);display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:4vw;padding:24px max(20px,5vw)}
+.txt{display:grid;gap:14px;justify-items:start}
+.txt h1{font-size:clamp(28px,4.6vw,56px);line-height:1.02;letter-spacing:-.035em}
+.txt .sub{color:var(--mute);font-size:clamp(15px,1.5vw,17px)}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.orbit{position:relative;width:min(100%,76vh);aspect-ratio:1;justify-self:center}
+.ring{position:absolute;left:50%;top:50%;width:calc(var(--d)*1%);height:calc(var(--d)*1%);border-radius:50%;border:1px solid var(--line);transform:translate(-50%,-50%);animation:spin var(--t) linear infinite}
+.arm{position:absolute;inset:0;transform:rotate(var(--a))}
+.spot{position:absolute;left:100%;top:50%;transform:translate(-50%,-50%) rotate(calc(var(--a)*-1))}
+.chip{display:grid;place-items:center;width:var(--s,48px);height:var(--s,48px);border-radius:50%;background:var(--panel);border:1px solid var(--line);box-shadow:0 8px 20px -14px rgba(17,17,19,.5);color:var(--ink);animation:unspin var(--t) linear infinite}
+.chip svg{width:46%;height:46%}
+.chip.hl{background:var(--ac);border-color:var(--ac);color:var(--on,#fff)}
+.ring.rev,.ring.rev .chip{animation-direction:reverse}
+.core{position:absolute;left:50%;top:50%;width:20%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:30%;background:var(--ink);color:var(--bg);display:grid;place-items:center}.core svg{width:46%;height:46%}
+.orbit.nolines .ring{border-color:transparent}
+.orbit.paused .ring,.orbit.paused .chip,.orbit.hp:hover .ring,.orbit.hp:hover .chip{animation-play-state:paused}
+@keyframes spin{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+@keyframes unspin{from{transform:rotate(0)}to{transform:rotate(-360deg)}}
+@media(max-width:700px){.sec{grid-template-columns:1fr;gap:20px;text-align:center}.txt{justify-items:center}.row{justify-content:center}.orbit{width:min(84vw,44vh);order:-1}}
+@media(prefers-reduced-motion:reduce){.ring,.chip{animation:none}}
+</style>
+<body>
+<main class="sec"><div class="txt"><p class="k">Integrations</p><h1>Plugs into the tools you already use.</h1><p class="sub">Forty connections, two clicks each.</p><div class="row"><a class="btn pri" href="#">Browse integrations</a><button class="btn" id="pp">Pause</button></div></div>
+<div class="orbit" id="orbit" role="img" aria-label="Icons for chat, calendar, files, mail, payments and other tools circling a centre mark"></div></main>
+<script type="application/json" id="settings">{"speed":1,"rings":3,"size":48,"lines":true,"hover":true,"mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Orbit',k:'speed',label:'Speed',min:.2,max:4,step:.1},{k:'rings',label:'Rings',min:1,max:3,step:1},{k:'lines',label:'Show ring lines',type:'toggle'},{k:'hover',label:'Pause on hover',type:'toggle'},{g:'Icons',k:'size',label:'Size',min:30,max:72,step:1,unit:'px'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'light';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+const framed=parent!==window;
+/* Picks black or white text for whatever accent you choose. */
+const on=h=>{const n=parseInt(h.slice(1),16);return(.299*(n>>16)+.587*(n>>8&255)+.114*(n&255))/255>.62?'#111113':'#fff'};
+const ICON={'chat-circle':'M128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,20.24,20.24l34.05-11.35A104,104,0,1,0,128,24Zm0,192a87.87,87.87,0,0,1-44.06-11.81,8,8,0,0,0-6.54-.67L40,216,52.47,178.6a8,8,0,0,0-.66-6.54A88,88,0,1,1,128,216Z','calendar-blank':'M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM72,48v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80H48V48ZM208,208H48V96H208V208Z','cloud':'M160,40A88.09,88.09,0,0,0,81.29,88.67,64,64,0,1,0,72,216h88a88,88,0,0,0,0-176Zm0,160H72a48,48,0,0,1,0-96c1.1,0,2.2,0,3.29.11A88,88,0,0,0,72,128a8,8,0,0,0,16,0,72,72,0,1,1,72,72Z','folder':'M216,72H131.31L104,44.69A15.86,15.86,0,0,0,92.69,40H40A16,16,0,0,0,24,56V200.62A15.4,15.4,0,0,0,39.38,216H216.89A15.13,15.13,0,0,0,232,200.89V88A16,16,0,0,0,216,72ZM40,56H92.69l16,16H40ZM216,200H40V88H216Z','envelope':'M224,48H32a8,8,0,0,0-8,8V192a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A8,8,0,0,0,224,48Zm-96,85.15L52.57,64H203.43ZM98.71,128,40,181.81V74.19Zm11.84,10.85,12,11.05a8,8,0,0,0,10.82,0l12-11.05,58,53.15H52.57ZM157.29,128,216,74.18V181.82Z','image':'M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,16V158.75l-26.07-26.06a16,16,0,0,0-22.63,0l-20,20-44-44a16,16,0,0,0-22.62,0L40,149.37V56ZM40,172l52-52,80,80H40Zm176,28H194.63l-36-36,20-20L216,181.38V200ZM144,100a12,12,0,1,1,12,12A12,12,0,0,1,144,100Z','lightning':'M215.79,118.17a8,8,0,0,0-5-5.66L153.18,90.9l14.66-73.33a8,8,0,0,0-13.69-7l-112,120a8,8,0,0,0,3,13l57.63,21.61L88.16,238.43a8,8,0,0,0,13.69,7l112-120A8,8,0,0,0,215.79,118.17ZM109.37,214l10.47-52.38a8,8,0,0,0-5-9.06L62,132.71l84.62-90.66L136.16,94.43a8,8,0,0,0,5,9.06l52.8,19.8Z','music-note':'M210.3,56.34l-80-24A8,8,0,0,0,120,40V148.26A48,48,0,1,0,136,184V98.75l69.7,20.91A8,8,0,0,0,216,112V64A8,8,0,0,0,210.3,56.34ZM88,216a32,32,0,1,1,32-32A32,32,0,0,1,88,216ZM200,101.25l-64-19.2V50.75L200,70Z','credit-card':'M224,48H32A16,16,0,0,0,16,64V192a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V64A16,16,0,0,0,224,48Zm0,16V88H32V64Zm0,128H32V104H224v88Zm-16-24a8,8,0,0,1-8,8H168a8,8,0,0,1,0-16h32A8,8,0,0,1,208,168Zm-64,0a8,8,0,0,1-8,8H120a8,8,0,0,1,0-16h16A8,8,0,0,1,144,168Z','chart-bar':'M224,200h-8V40a8,8,0,0,0-8-8H152a8,8,0,0,0-8,8V80H96a8,8,0,0,0-8,8v40H48a8,8,0,0,0-8,8v64H32a8,8,0,0,0,0,16H224a8,8,0,0,0,0-16ZM160,48h40V200H160ZM104,96h40V200H104ZM56,144H88v56H56Z','lock':'M208,80H176V56a48,48,0,0,0-96,0V80H48A16,16,0,0,0,32,96V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V96A16,16,0,0,0,208,80ZM96,56a32,32,0,0,1,64,0V80H96ZM208,208H48V96H208V208Zm-68-56a12,12,0,1,1-12-12A12,12,0,0,1,140,152Z','code':'M69.12,94.15,28.5,128l40.62,33.85a8,8,0,1,1-10.24,12.29l-48-40a8,8,0,0,1,0-12.29l48-40a8,8,0,0,1,10.24,12.3Zm176,27.7-48-40a8,8,0,1,0-10.24,12.3L227.5,128l-40.62,33.85a8,8,0,1,0,10.24,12.29l48-40a8,8,0,0,0,0-12.29ZM162.73,32.48a8,8,0,0,0-10.25,4.79l-64,176a8,8,0,0,0,4.79,10.26A8.14,8.14,0,0,0,96,224a8,8,0,0,0,7.52-5.27l64-176A8,8,0,0,0,162.73,32.48Z','user':'M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z','bell':'M221.8,175.94C216.25,166.38,208,139.33,208,104a80,80,0,1,0-160,0c0,35.34-8.26,62.38-13.81,71.94A16,16,0,0,0,48,200H88.81a40,40,0,0,0,78.38,0H208a16,16,0,0,0,13.8-24.06ZM128,216a24,24,0,0,1-22.62-16h45.24A24,24,0,0,1,128,216ZM48,184c7.7-13.24,16-43.92,16-80a64,64,0,1,1,128,0c0,36.05,8.28,66.73,16,80Z','camera':'M208,56H180.28L166.65,35.56A8,8,0,0,0,160,32H96a8,8,0,0,0-6.65,3.56L75.71,56H48A24,24,0,0,0,24,80V192a24,24,0,0,0,24,24H208a24,24,0,0,0,24-24V80A24,24,0,0,0,208,56Zm8,136a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V80a8,8,0,0,1,8-8H80a8,8,0,0,0,6.66-3.56L100.28,48h55.43l13.63,20.44A8,8,0,0,0,176,72h32a8,8,0,0,1,8,8ZM128,88a44,44,0,1,0,44,44A44.05,44.05,0,0,0,128,88Zm0,72a28,28,0,1,1,28-28A28,28,0,0,1,128,160Z'};
+const svg=n=>`<svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="${ICON[n]}"/></svg>`;
+/* Each ring: its width as a share of the stage, its icons, and seconds per lap. Odd rings turn the other way. */
+const RINGS=[[32,['chat-circle', 'calendar-blank', 'cloud'],24],[60,['folder', 'envelope', 'image', 'lightning', 'music-note'],38],[88,['credit-card', 'chart-bar', 'lock', 'code', 'user', 'bell', 'camera'],56]];
+const orbit=document.getElementById('orbit'),pp=document.getElementById('pp');let built=0,paused=false;
+/* The ring turns; every chip turns the opposite way at the same rate, so the icons stay upright. */
+function build(){built=S.rings;orbit.innerHTML=RINGS.slice(0,S.rings).map(([dia,ic,t],j)=>`<div class="ring${j%2?' rev':''}" style="--d:${dia};--t:${t}s">${ic.map((n,i)=>`<span class="arm" style="--a:${(360/ic.length*i+j*25).toFixed(1)}deg"><span class="spot"><span class="chip${i===0?' hl':''}">${svg(n)}</span></span></span>`).join('')}</div>`).join('')+`<div class="core">${svg('lightning')}</div>`}
+pp.onclick=()=>{paused=!paused;orbit.classList.toggle('paused',paused);pp.textContent=paused?'Play':'Pause'};
+function apply(){theme();if(built!==S.rings)build();const s=orbit.style;s.setProperty('--s',S.size+'px');s.setProperty('--on',on(S.accent||'#2563EB'));orbit.classList.toggle('nolines',!S.lines);orbit.classList.toggle('hp',!!S.hover);
+ orbit.getAnimations({subtree:true}).forEach(a=>a.playbackRate=S.speed)}
+apply();
+</script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Flashlight reveal</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0F1012;--panel:#1A1B1E;--ink:#F4F4F5;--mute:#A1A1AA;--line:#2C2D31;--ac:#111111}
+:root[data-mode=light]{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#111113;--mute:#6B6F76;--line:#E6E6E8}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+
+.art{position:absolute;inset:0;display:block;pointer-events:none}
+.art::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.16;mix-blend-mode:overlay}
+.heroc{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:24px;max-width:760px;color:#fff;text-shadow:0 1px 24px rgba(0,0,0,.35)}.heroc h1{font-size:clamp(34px,7vw,76px);line-height:1;letter-spacing:-.03em}.heroc p{font-size:clamp(15px,2vw,18px);opacity:.9;max-width:46ch}.heroc a{display:inline-flex;align-items:center;min-height:46px;padding:0 22px;border-radius:99px;background:#fff;color:#111;font-weight:700;text-decoration:none;text-shadow:none}
+/* Small shared pieces: kicker line, pill buttons, list reset. */
+input{font:inherit;color:inherit}ul,ol{margin:0;padding:0;list-style:none}[hidden]{display:none!important}
+.k{font-size:13px;font-weight:600;color:var(--mute)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:999px;border:1px solid var(--line);background:var(--panel);font-weight:600;font-size:14px;text-decoration:none;color:var(--ink)}
+.btn:hover{border-color:var(--ink)}.btn.pri{background:var(--ink);color:var(--bg);border-color:var(--ink)}.btn[disabled]{opacity:.45;cursor:not-allowed}
+.stage{position:fixed;inset:0;cursor:crosshair;touch-action:none}
+.layer{position:absolute;inset:0;display:grid;align-content:center;justify-items:start;gap:14px;padding:0 max(24px,9vw)}
+.layer h1{font-size:clamp(34px,7.4vw,104px);line-height:.98;letter-spacing:-.035em;font-weight:700}
+.layer .sub{font-size:clamp(15px,1.6vw,18px);color:var(--mute);max-width:40ch}
+.under{background-color:var(--ac);color:var(--on,#fff);-webkit-mask-image:radial-gradient(circle calc(var(--r,150)*1px) at var(--x,50%) var(--y,50%),#000 0,#000 calc(100% - var(--soft,18)*1%),transparent 100%);mask-image:radial-gradient(circle calc(var(--r,150)*1px) at var(--x,50%) var(--y,50%),#000 0,#000 calc(100% - var(--soft,18)*1%),transparent 100%)}
+.under .k,.under .sub{color:inherit;opacity:.82}
+.under.grid{background-image:linear-gradient(color-mix(in srgb,var(--on,#fff) 13%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--on,#fff) 13%,transparent) 1px,transparent 1px);background-size:36px 36px}
+.all{position:fixed;right:16px;bottom:16px;z-index:2}
+</style>
+<body>
+<main class="stage" id="stage">
+<div class="layer"><p class="k">What ships</p><h1>Looks effortless<br>on the surface.</h1><p class="sub">Move the light around. Press to widen it.</p></div>
+<div class="layer under" id="under" aria-hidden="true"><p class="k">What it took</p><h1>Forty-one drafts<br>underneath.</h1><p class="sub">Every margin was argued over.</p></div>
+</main>
+<p class="sr">Underneath: Forty-one drafts. Every margin was argued over.</p>
+<button class="btn all" id="all">Reveal all</button>
+<script type="application/json" id="settings">{"radius":150,"soft":18,"follow":0.16,"grid":true,"mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Light',k:'radius',label:'Size',min:60,max:340,step:5,unit:'px'},{k:'soft',label:'Soft edge',min:0,max:70,step:1,unit:'%'},{k:'follow',label:'Follow speed',min:.04,max:1,step:.01},{k:'grid',label:'Grid on the hidden layer',type:'toggle'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'light';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+const framed=parent!==window;
+/* Picks black or white text for whatever accent you choose. */
+const on=h=>{const n=parseInt(h.slice(1),16);return(.299*(n>>16)+.587*(n>>8&255)+.114*(n&255))/255>.62?'#111113':'#fff'};
+/* Two layers sit on top of each other. The top one is masked to a circle that follows the pointer. */
+const stage=document.getElementById('stage'),under=document.getElementById('under'),all=document.getElementById('all');
+let tx=innerWidth/2,ty=innerHeight/2,x=tx,y=ty,r=0,down=false,open=false,idle=999;
+stage.addEventListener('pointermove',e=>{tx=e.clientX;ty=e.clientY;idle=0});
+stage.addEventListener('pointerdown',e=>{down=true;tx=e.clientX;ty=e.clientY;idle=0});addEventListener('pointerup',()=>down=false);addEventListener('pointercancel',()=>down=false);
+all.onclick=()=>{open=!open;all.textContent=open?'Hide again':'Reveal all'};
+function tick(t){idle++;if(idle>120&&!calm){tx=innerWidth*(.5+.34*Math.sin(t/1700));ty=innerHeight*(.5+.26*Math.sin(t/1100+1))}
+ const f=calm?1:S.follow;x+=(tx-x)*f;y+=(ty-y)*f;const goal=open?Math.hypot(innerWidth,innerHeight)*1.1:S.radius*(down?1.7:1);r+=(goal-r)*(calm?1:.14);
+ under.style.setProperty('--x',x+'px');under.style.setProperty('--y',y+'px');under.style.setProperty('--r',r);requestAnimationFrame(tick)}
+function apply(){theme();under.style.setProperty('--soft',S.soft);under.classList.toggle('grid',!!S.grid);under.style.setProperty('--on',on(S.accent||'#2563EB'))}
+apply();requestAnimationFrame(tick);
+</script>
+</body>
+</html>

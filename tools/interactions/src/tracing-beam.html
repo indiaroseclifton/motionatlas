@@ -1,0 +1,50 @@
+<!--META {"o": 0.12, "t": "Tracing beam timeline", "cat": "Scroll", "tone": "light", "added": "2026-11-14", "uses": ["L07", "L19"], "d": "A bright line runs down the timeline rail and keeps pace with your scroll. Each entry wakes up as the beam reaches its dot.", "how": "The beam ends where a reading line, set as a share of the screen height, crosses the rail. Its length eases toward that point each frame, and entries above the end are switched on.", "use": "Changelogs, company history, roadmaps, step-by-step guides, long articles with sections.", "p": "Build a tracing beam timeline in one HTML file with no libraries. A heading, then a timeline: a thin vertical rail on the left and six entries (date, title, text, some with artwork), each with a dot centred on the rail. On scroll compute the target beam length as clamp(viewport height * reading line - rail top, 0, rail height) and ease the current length toward it each frame (catch-up speed setting). Draw the beam as an absolutely positioned fill inside the rail with a gradient that is strongest at its lower end, plus a round head with a soft glow. Entries whose dot is above the end of the beam get full opacity, slide up 10px and fill their dot with the accent; the rest are dimmed. Settings: beam width, glow, catch-up speed, reading line, accent, light or dark. Reduced motion: the beam snaps to position and entries do not slide."}-->
+<style>/*BASE*/
+/*UI*/
+html,body{height:auto;min-height:100%;overflow:visible}body{display:block;overflow:visible}
+.top{max-width:820px;margin:0 auto;padding:clamp(40px,12vh,120px) max(20px,6vw) 30px;display:grid;gap:10px}
+.top h1{font-size:clamp(30px,5.6vw,60px);letter-spacing:-.035em;line-height:1.02}
+.tl{position:relative;max-width:820px;margin:0 auto;padding:10px max(20px,6vw) 40px}
+.rail{position:absolute;left:calc(max(20px,6vw) + 7px);top:10px;bottom:40px;width:var(--w,2px);margin-left:calc(var(--w,2px)/-2);background:var(--line);border-radius:9px}
+.fill{position:absolute;left:0;top:0;width:100%;height:0;border-radius:9px;background:linear-gradient(0deg,var(--ac),color-mix(in srgb,var(--ac) 30%,var(--line)) 280px)}
+.head{position:absolute;left:50%;top:0;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:var(--ac);box-shadow:0 0 0 calc(var(--g,.6)*8px) color-mix(in srgb,var(--ac) 18%,transparent),0 0 calc(var(--g,.6)*28px) var(--ac)}
+.tl ol{display:grid;gap:clamp(40px,9vh,90px);padding-left:44px}
+.tl li{position:relative;display:grid;gap:8px;opacity:.38;transform:translateY(10px);transition:opacity .5s,transform .5s cubic-bezier(.2,.8,.2,1)}
+.tl li.on{opacity:1;transform:none}
+.tl li::before{content:"";position:absolute;left:-44px;top:4px;width:14px;height:14px;border-radius:50%;background:var(--bg);border:2px solid var(--line);transition:border-color .3s,background .3s}
+.tl li.on::before{border-color:var(--ac);background:var(--ac)}
+.tl time{font-size:13px;color:var(--mute);font-weight:600}
+.tl h2{font-size:clamp(20px,2.6vw,28px);letter-spacing:-.02em;line-height:1.15}
+.tl li p{color:var(--mute);max-width:54ch}
+.tl .pic{height:clamp(120px,22vh,200px);border-radius:14px;margin-top:6px;border:1px solid var(--line)}
+.end{padding:60px 20px 90px;text-align:center;color:var(--mute)}
+@media(prefers-reduced-motion:reduce){.tl li{transition:none;transform:none}}
+</style>
+<body>
+<header class="top"><p class="k">Changelog</p><h1>A year of small releases.</h1></header>
+<main class="tl" id="tl"><div class="rail" id="rail" aria-hidden="true"><span class="fill" id="fill"></span><span class="head" id="head"></span></div><ol id="list"></ol></main>
+<p class="end">More next month.</p>
+<script type="application/json" id="settings">{"width":2,"smooth":0.14,"glow":0.6,"line":55,"mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Beam',k:'width',label:'Width',min:1,max:6,step:.5,unit:'px'},{k:'glow',label:'Glow',min:0,max:1.5,step:.05},{k:'smooth',label:'Catch-up speed',min:.04,max:1,step:.01},{k:'line',label:'Reading line',min:25,max:80,step:1,unit:'%'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/*TUNER*/
+const framed=parent!==window;
+/*FLATART*/
+const LOG=[['January','Hover states, everywhere','Every button, link and row now answers the pointer within 120 milliseconds.',0],['March','A calmer dashboard','Fewer borders, one accent, and numbers that count up once.',1],['May','Drag to reorder','Lists pick up, make room and settle with a small spring.',0],['July','Dark mode, re-tuned by hand','Each surface got its own grey instead of an inverted white.',1],['September','Scroll that tells a story','Chapters pin, swap and release as you read.',0],['November','Motion settings','One switch turns all of it down for people who prefer less.',0]];
+const tl=document.getElementById('tl'),rail=document.getElementById('rail'),fill=document.getElementById('fill'),head=document.getElementById('head'),list=document.getElementById('list');
+list.innerHTML=LOG.map(([m,t,p,a],i)=>`<li><time>${m}</time><h2>${t}</h2><p>${p}</p>${a?`<div class="pic" style="background-image:${art(i+1)}"></div>`:''}</li>`).join('');
+const items=[...list.children];let cur=0,goal=0,raf=0;
+/* The beam ends where the reading line (a share of the screen height) crosses the rail. It eases toward that point, and entries wake up as it passes their dot. */
+/* Near the bottom of the page the reading line slides down to the foot of the screen, so the beam always reaches the last entry. */
+function measure(){const max=document.documentElement.scrollHeight-innerHeight,t=Math.min(1,Math.max(0,1-(max-scrollY)/innerHeight)),ln=S.line/100;
+ goal=Math.min(rail.offsetHeight,Math.max(0,innerHeight*(ln+(1-ln)*t)-rail.getBoundingClientRect().top));if(!raf)raf=requestAnimationFrame(tick)}
+function tick(){raf=0;cur+=(goal-cur)*(calm?1:S.smooth);if(Math.abs(goal-cur)<.5)cur=goal;fill.style.height=cur+'px';head.style.transform=`translateY(${cur}px)`;
+ items.forEach(li=>li.classList.toggle('on',li.offsetTop+1<=cur));if(cur!==goal)raf=requestAnimationFrame(tick)}
+addEventListener('scroll',measure,{passive:true});addEventListener('resize',measure);
+function apply(){theme();rail.style.setProperty('--w',S.width+'px');rail.style.setProperty('--g',S.glow);measure()}
+apply();
+/* In a preview frame the page scrolls itself until you touch it. Delete this block in your own page. */
+if(framed&&!calm){let on=true,t0=0;const root=document.documentElement;root.style.scrollbarWidth='none';['wheel','touchstart','pointerdown','keydown'].forEach(e=>addEventListener(e,()=>{on=false;root.style.scrollbarWidth=''},{passive:true,once:true}));
+ (function auto(t){if(!on)return;t0=t0||t;const max=document.documentElement.scrollHeight-innerHeight,k=(t-t0)/9/1000%2,u=k<1?k:2-k;scrollTo(0,max*u*u*(3-2*u));requestAnimationFrame(auto)})(0)}
+</script>
+</body>

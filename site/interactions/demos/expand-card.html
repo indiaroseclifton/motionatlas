@@ -1,0 +1,82 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Card to detail</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0F1012;--panel:#1A1B1E;--ink:#F4F4F5;--mute:#A1A1AA;--line:#2C2D31;--ac:#111111}
+:root[data-mode=light]{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#111113;--mute:#6B6F76;--line:#E6E6E8}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+
+.art{position:absolute;inset:0;display:block;pointer-events:none}
+.art::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.16;mix-blend-mode:overlay}
+.heroc{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:24px;max-width:760px;color:#fff;text-shadow:0 1px 24px rgba(0,0,0,.35)}.heroc h1{font-size:clamp(34px,7vw,76px);line-height:1;letter-spacing:-.03em}.heroc p{font-size:clamp(15px,2vw,18px);opacity:.9;max-width:46ch}.heroc a{display:inline-flex;align-items:center;min-height:46px;padding:0 22px;border-radius:99px;background:#fff;color:#111;font-weight:700;text-decoration:none;text-shadow:none}
+/* Small shared pieces: kicker line, pill buttons, list reset. */
+input{font:inherit;color:inherit}ul,ol{margin:0;padding:0;list-style:none}[hidden]{display:none!important}
+.k{font-size:13px;font-weight:600;color:var(--mute)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:999px;border:1px solid var(--line);background:var(--panel);font-weight:600;font-size:14px;text-decoration:none;color:var(--ink)}
+.btn:hover{border-color:var(--ink)}.btn.pri{background:var(--ink);color:var(--bg);border-color:var(--ink)}.btn[disabled]{opacity:.45;cursor:not-allowed}
+html,body{height:auto;min-height:100%;overflow:visible}body{display:block;overflow:visible}
+.wrap{max-width:860px;margin:0 auto;padding:clamp(20px,6vh,64px) 16px 40px;display:grid;gap:20px}
+.wrap h1{font-size:clamp(26px,4.4vw,42px);letter-spacing:-.03em;line-height:1.05}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:560px){.grid{grid-template-columns:repeat(2,1fr)}}
+.card{display:block;width:100%;padding:0;text-align:left;border:1px solid var(--line);border-radius:var(--rad,18px);background:var(--panel);overflow:hidden;transition:transform .25s,box-shadow .25s}
+.card:hover{transform:translateY(-3px);box-shadow:0 16px 34px -24px rgba(17,17,19,.5)}
+.pic{display:block;aspect-ratio:16/10}
+.cap{display:grid;gap:1px;padding:12px 14px 14px}.cap b{font-size:15px}.cap span{font-size:13px;color:var(--mute)}
+.shade{position:fixed;inset:0;z-index:2;background:rgba(17,17,19,var(--dim,.45));opacity:0;transition:opacity var(--dur,.42s)}
+.shade.on{opacity:1}
+.sheet{position:fixed;inset:0;z-index:3;margin:auto;width:min(540px,calc(100vw - 32px));height:fit-content;max-height:calc(100vh - 32px);overflow:hidden auto;border:1px solid var(--line);border-radius:var(--rad,18px);background:var(--panel);box-shadow:0 40px 80px -40px rgba(17,17,19,.6)}
+.sheet .pic{max-height:36vh;width:100%}
+.body{display:grid;gap:10px;padding:18px 22px 22px}
+.body h2{font-size:26px;letter-spacing:-.02em;line-height:1.1}
+.body>p:not(.k){color:var(--mute)}
+.facts{display:flex;gap:26px;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);font-size:13px;color:var(--mute)}.facts span{display:grid}.facts b{font-size:15px;color:var(--ink)}
+.body .btn{justify-self:start;margin-top:4px}
+.x{position:absolute;right:12px;top:12px;width:40px;height:40px;border-radius:50%;border:0;background:rgba(255,255,255,.92);color:#111113;font-size:18px;line-height:1}
+@media(prefers-reduced-motion:reduce){.card,.shade{transition:none}}
+</style>
+<body>
+<main class="wrap" id="wrap"><header><p class="k">Field notes</p><h1>Pick a study.</h1></header><ul class="grid" id="grid"></ul></main>
+<div class="shade" id="shade" hidden></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="dT" hidden><div class="pic" id="dArt"></div><div class="body" id="body"><p class="k" id="dK"></p><h2 id="dT"></h2><p id="dP"></p><div class="facts" id="dF"></div><button class="btn pri" id="close">Close</button></div><button class="x" id="x" aria-label="Close">✕</button></div>
+<script type="application/json" id="settings">{"duration":420,"ease":"smooth","dim":0.45,"radius":18,"mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Move',k:'duration',label:'Duration',min:150,max:1000,step:10,unit:'ms'},{k:'ease',label:'Easing',type:'select',options:['smooth','overshoot']},{g:'Sheet',k:'dim',label:'Page dimming',min:0,max:.8,step:.01},{k:'radius',label:'Corner radius',min:0,max:32,step:1,unit:'px'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'light';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+const framed=parent!==window;
+/* Flat abstract artwork made from CSS gradients, so the file needs no images. Swap in your own pictures. */
+const PAL=[['#DCE6FF','#2563EB','#F7C948'],['#FFE3D3','#F0683C','#1F3A5F'],['#DDF3E4','#1F9D6B','#F29FB5'],['#F0E4FF','#7C4DDB','#FFB44A'],['#FFF0C2','#E0A100','#3257D6'],['#DDF1F5','#1C8CA8','#F0683C'],['#FBDDE6','#D6457A','#2C6E63'],['#E7E9EE','#111113','#F0683C']];
+const art=i=>{const[a,b,c]=PAL[i%PAL.length];return `radial-gradient(circle at ${28+i*17%44}% ${36+i*23%30}%,${b} 0 20%,transparent 20.4%),radial-gradient(circle at ${72-i*13%36}% ${66-i*11%28}%,${c} 0 10%,transparent 10.4%),linear-gradient(${115+i*40}deg,${a} 58%,color-mix(in srgb,${a} 72%,${b}) 58%)`};
+const DATA=[['Tide table','Identity','A pocket calendar that follows the sea instead of the week.','2026','3 weeks'],['Salt and slate','Packaging','Labels printed in one blue, overprinted until it goes almost black.','2026','5 weeks'],['Blue hour','Film','Ninety seconds shot in the twenty minutes after sunset.','2025','2 weeks'],['Paper weight','Editorial','A quarterly that changes paper stock with every section.','2025','8 weeks'],['Soft machines','Product','Kitchen tools with no hard corners anywhere.','2025','6 weeks'],['Field recorder','App','One button, one waveform, nothing else on screen.','2024','4 weeks']];
+const $=id=>document.getElementById(id),grid=$('grid'),wrap=$('wrap'),shade=$('shade'),sheet=$('sheet'),body=$('body');let from=null,busy=false;
+grid.innerHTML=DATA.map((d,i)=>`<li><button class="card" data-i="${i}"><span class="pic" style="background-image:${art(i)}"></span><span class="cap"><b>${d[0]}</b><span>${d[1]}</span></span></button></li>`).join('');
+const EASE={smooth:'cubic-bezier(.2,.8,.2,1)',overshoot:'cubic-bezier(.3,1.35,.5,1)'};
+const box=r=>({left:r.left+'px',top:r.top+'px',width:r.width+'px',height:r.height+'px',margin:0,right:'auto',bottom:'auto'});
+/* The sheet starts exactly where the card is and animates to its own resting place (or the other way round to close). */
+function fly(a,b,w,back){sheet.style.overflow='hidden';body.style.width=w-2+'px';const dur=calm?0:S.duration;
+ const an=sheet.animate([box(a),box(b)],{duration:dur,easing:EASE[S.ease]||EASE.smooth,fill:'both'}),fd=body.animate([{opacity:back?1:0},{opacity:back?0:1}],{duration:dur,easing:'ease',fill:'both'});
+ return an.finished.then(()=>{an.cancel();fd.cancel();sheet.style.overflow='';body.style.width=''})}
+function open(card,quiet){if(busy||from)return;busy=true;from=card;const i=+card.dataset.i,d=DATA[i];$('dArt').style.backgroundImage=art(i);$('dK').textContent=d[1];$('dT').textContent=d[0];$('dP').textContent=d[2];$('dF').innerHTML=`<span>Year<b>${d[3]}</b></span><span>Length<b>${d[4]}</b></span><span>Role<b>Design, build</b></span>`;
+ sheet.hidden=shade.hidden=false;wrap.inert=true;shade.offsetWidth;shade.classList.add('on');const a=card.getBoundingClientRect(),b=sheet.getBoundingClientRect();card.style.visibility='hidden';if(!quiet)$('x').focus({preventScroll:true});fly(a,b,b.width).then(()=>busy=false)}
+function close(quiet){if(busy||!from)return;busy=true;shade.classList.remove('on');sheet.scrollTop=0;const a=sheet.getBoundingClientRect(),b=from.getBoundingClientRect();
+ fly(a,b,a.width,true).then(()=>{sheet.hidden=shade.hidden=true;wrap.inert=false;from.style.visibility='';if(!quiet)from.focus({preventScroll:true});from=null;busy=false})}
+grid.addEventListener('click',e=>{const c=e.target.closest('.card');if(c)open(c)});
+$('x').onclick=$('close').onclick=shade.onclick=()=>close();
+addEventListener('keydown',e=>{if(!from)return;if(e.key==='Escape')close();if(e.key==='Tab'){const f=[$('close'),$('x')],n=f.indexOf(document.activeElement);e.preventDefault();f[(n+(e.shiftKey?-1:1)+2)%2].focus()}});
+function apply(){theme();const r=document.documentElement.style;r.setProperty('--rad',S.radius+'px');r.setProperty('--dim',S.dim);r.setProperty('--dur',(calm?0:S.duration)+'ms')}
+apply();
+/* In a preview frame it opens and closes cards by itself until you touch it. Delete this block in your own page. */
+if(framed&&!calm){let n=0,stop=false;['pointerdown','keydown'].forEach(e=>addEventListener(e,()=>stop=true,{once:true}));const cards=[...grid.querySelectorAll('.card')];
+ (function demo(){setTimeout(()=>{if(stop)return;open(cards[n++*2%cards.length],true);setTimeout(()=>{if(stop)return;close(true);demo()},2300)},1400)})()}
+</script>
+</body>
+</html>

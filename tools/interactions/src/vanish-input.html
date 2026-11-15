@@ -1,0 +1,55 @@
+<!--META {"o": 0.02, "t": "Vanishing input", "cat": "Controls", "tone": "light", "added": "2026-11-14", "uses": ["L47"], "d": "Type a question and send it. The words break into dust and blow off the field from left to right.", "how": "On send, the text is drawn on a canvas laid over the field and read back as pixels. Each inked pixel becomes a small square. A front sweeps across; squares behind it drift away and shrink until none are left.", "use": "Chat and search boxes, waitlist and newsletter fields, prompt bars, any one-line form where sending should feel finished.", "p": "Build a vanishing input in one HTML file with no libraries. A pill-shaped text field with a round send button and a placeholder that rotates through four suggestions every 2.8 seconds while the field is empty. On submit, size a canvas over the field (with 50px spare above and below), draw the typed text on it in the same font, colour and position, read it with getImageData and create one square particle for every sampled pixel whose alpha is above about 110 (sample step is a grain setting). Hide the real text. A front x position then moves right each frame; particles behind it get a small random velocity scaled by a scatter setting, drift, float up slightly and shrink. When all are gone, clear the field and announce the sent text in a polite status line under it. Settings: grain size, sweep speed, scatter, accent, light or dark. Reduced motion: clear the field and show the status with no particles."}-->
+<style>/*BASE*/
+/*UI*/
+.box{width:min(560px,calc(100vw - 32px));display:grid;gap:12px;justify-items:center;text-align:center}
+.box h1{font-size:clamp(28px,5.4vw,48px);letter-spacing:-.03em;line-height:1.05}
+.field{position:relative;width:100%;margin-top:10px}
+.field input{width:100%;height:58px;padding:0 64px 0 22px;border-radius:999px;border:1px solid var(--line);background:var(--panel);font-size:17px;box-shadow:0 14px 34px -26px rgba(17,17,19,.5)}
+.field input.gone{color:transparent;caret-color:transparent}
+.ph{position:absolute;left:23px;right:64px;top:0;height:58px;display:flex;align-items:center;color:var(--mute);font-size:17px;pointer-events:none;overflow:hidden;white-space:nowrap;transition:opacity .25s,transform .25s}
+.ph.swap{opacity:0;transform:translateY(8px)}
+.field input:not(:placeholder-shown)~.ph{opacity:0;transition:none}
+#cv{position:absolute;left:0;top:-50px;width:100%;height:calc(100% + 100px);pointer-events:none}
+.go{position:absolute;right:8px;top:8px;width:42px;height:42px;border-radius:50%;border:0;background:var(--ac);color:var(--on,#fff);display:grid;place-items:center;transition:opacity .2s}
+.go[disabled]{opacity:.3;cursor:default;background:var(--ink);color:var(--bg)}
+.go svg{width:18px;height:18px}
+.said{min-height:22px;font-size:14px;color:var(--mute)}
+</style>
+<body>
+<main class="box"><p class="k">Early access</p><h1>Ask it anything.</h1>
+<form id="f" class="field" autocomplete="off"><label class="sr" for="q">Your question</label><input id="q" name="q" type="text" placeholder=" " enterkeyhint="send"><span class="ph" id="ph" aria-hidden="true"></span><canvas id="cv" aria-hidden="true"></canvas><button class="go" id="go" aria-label="Send" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></form>
+<p class="said" id="said" role="status"></p></main>
+<script type="application/json" id="settings">{"grain":2,"speed":1,"scatter":1.4,"mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Dust',k:'grain',label:'Grain size',min:1,max:5,step:.5,unit:'px'},{k:'speed',label:'Sweep speed',min:.3,max:3,step:.1},{k:'scatter',label:'Scatter',min:0,max:4,step:.1},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/*TUNER*/
+const framed=parent!==window;
+/* Picks black or white text for whatever accent you choose. */
+const on=h=>{const n=parseInt(h.slice(1),16);return(.299*(n>>16)+.587*(n>>8&255)+.114*(n&255))/255>.62?'#111113':'#fff'};
+const f=document.getElementById('f'),q=document.getElementById('q'),ph=document.getElementById('ph'),cv=document.getElementById('cv'),x=cv.getContext('2d',{willReadFrequently:true}),go=document.getElementById('go'),said=document.getElementById('said');
+const TIPS=['What should we animate first?','How long should a hover take?','Is this too much motion?','Make the hero feel calmer'];
+let tip=0,busy=false,touched=false;
+ph.textContent=TIPS[0];setInterval(()=>{if(q.value||calm)return;ph.classList.add('swap');setTimeout(()=>{ph.textContent=TIPS[++tip%TIPS.length];ph.classList.remove('swap')},260)},2800);
+q.addEventListener('input',()=>go.disabled=busy||!q.value.trim());
+f.addEventListener('submit',e=>{e.preventDefault();vanish()});
+function finish(v){q.value='';q.classList.remove('gone');x.clearRect(0,0,cv.width,cv.height);said.textContent='Sent: “'+v+'”';busy=false;go.disabled=true}
+/* Draw the typed words on a canvas, read back which pixels are ink, then sweep them away from left to right. */
+function vanish(){const v=q.value.trim();if(!v||busy)return;busy=true;go.disabled=true;if(calm){finish(v);return}
+ const d=Math.min(2,devicePixelRatio||1),r=f.getBoundingClientRect(),cs=getComputedStyle(q),col=cs.color,W=cv.width=Math.round(r.width*d),H=cv.height=Math.round((r.height+100)*d);
+ x.fillStyle=col;x.font=`${cs.fontWeight} ${parseFloat(cs.fontSize)*d}px ${cs.fontFamily}`;x.textBaseline='middle';
+ x.save();x.beginPath();x.rect(0,0,(r.width-62)*d,H);x.clip();x.fillText(v,(parseFloat(cs.paddingLeft)+1-q.scrollLeft)*d,(50+r.height/2+1)*d);x.restore();
+ const im=x.getImageData(0,0,W,H).data,st=Math.max(1,Math.round(S.grain*d)),parts=[];
+ for(let py=0;py<H;py+=st)for(let px=0;px<W;px+=st)if(im[(py*W+px)*4+3]>110)parts.push({x:px,y:py,r:st,vx:0,vy:0,go:false});
+ q.classList.add('gone');let front=0;
+ (function run(){front+=S.speed*9*d;x.clearRect(0,0,W,H);x.fillStyle=col;let alive=0;
+  for(const p of parts){if(p.r<=0)continue;if(!p.go&&p.x<front){p.go=true;p.vx=(Math.random()*1.6+.2)*S.scatter*d;p.vy=(Math.random()-.5)*1.8*S.scatter*d}
+   if(p.go){p.x+=p.vx;p.y+=p.vy;p.vy-=.02*d;p.r-=st*(.025+Math.random()*.05)}if(p.r>0){alive++;x.fillRect(p.x,p.y,p.r,p.r)}}
+  alive?requestAnimationFrame(run):finish(v)})()}
+function apply(){theme();go.style.setProperty('--on',on(S.accent||'#2563EB'))}
+apply();
+/* In a preview frame it types and sends by itself until you touch it. Delete this block in your own page. */
+if(framed&&!calm){const stop=()=>{if(touched)return;touched=true;if(!busy){q.value='';go.disabled=true}};['pointerdown','keydown','focusin'].forEach(e=>addEventListener(e,stop));
+ let n=0;(function demo(){if(touched)return;const s=TIPS[n++%TIPS.length];let i=0;const ty=setInterval(()=>{if(touched){clearInterval(ty);return}q.value=s.slice(0,++i);go.disabled=false;
+  if(i>=s.length){clearInterval(ty);setTimeout(()=>{if(!touched)vanish();setTimeout(demo,2800)},800)}},55)})()}
+</script>
+</body>

@@ -1,0 +1,65 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Direction-aware hover</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0F1012;--panel:#1A1B1E;--ink:#F4F4F5;--mute:#A1A1AA;--line:#2C2D31;--ac:#111111}
+:root[data-mode=light]{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#111113;--mute:#6B6F76;--line:#E6E6E8}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+
+.art{position:absolute;inset:0;display:block;pointer-events:none}
+.art::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.16;mix-blend-mode:overlay}
+.heroc{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:24px;max-width:760px;color:#fff;text-shadow:0 1px 24px rgba(0,0,0,.35)}.heroc h1{font-size:clamp(34px,7vw,76px);line-height:1;letter-spacing:-.03em}.heroc p{font-size:clamp(15px,2vw,18px);opacity:.9;max-width:46ch}.heroc a{display:inline-flex;align-items:center;min-height:46px;padding:0 22px;border-radius:99px;background:#fff;color:#111;font-weight:700;text-decoration:none;text-shadow:none}
+/* Small shared pieces: kicker line, pill buttons, list reset. */
+input{font:inherit;color:inherit}ul,ol{margin:0;padding:0;list-style:none}[hidden]{display:none!important}
+.k{font-size:13px;font-weight:600;color:var(--mute)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:999px;border:1px solid var(--line);background:var(--panel);font-weight:600;font-size:14px;text-decoration:none;color:var(--ink)}
+.btn:hover{border-color:var(--ink)}.btn.pri{background:var(--ink);color:var(--bg);border-color:var(--ink)}.btn[disabled]{opacity:.45;cursor:not-allowed}
+.wrap{width:min(900px,92vw,calc((100vh - 96px)*2))}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap,12px)}
+.tile{position:relative;display:block;aspect-ratio:4/3;border-radius:var(--rad,14px);overflow:hidden;text-decoration:none;isolation:isolate}
+.tile .pic{position:absolute;inset:0}
+.ov{position:absolute;inset:0;display:grid;align-content:end;gap:2px;padding:clamp(10px,2vw,18px);background:color-mix(in srgb,var(--tint,#111113) calc(var(--o,.9)*100%),transparent);color:var(--on,#fff);transform:translate(0,101%);transition:transform var(--t,.32s) cubic-bezier(.2,.8,.2,1)}
+.ov b{font-size:clamp(15px,2vw,20px);letter-spacing:-.01em}.ov span{font-size:13px;opacity:.82}.ov i{font-style:normal;font-size:13px;font-weight:600;margin-top:8px}
+@media(max-width:560px){.wrap{width:min(92vw,calc((100vh - 96px)*.88))}.grid{grid-template-columns:repeat(2,1fr)}}
+@media(prefers-reduced-motion:reduce){.ov{transform:none;opacity:0;transition:opacity .2s}}
+</style>
+<body>
+<main class="wrap"><ul class="grid" id="grid"></ul></main>
+<p class="hint">Come at a tile from any side.</p>
+<script type="application/json" id="settings">{"speed":320,"opacity":0.9,"tint":"ink","radius":14,"gap":12,"mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Overlay',k:'speed',label:'Slide time',min:120,max:800,step:10,unit:'ms'},{k:'opacity',label:'Opacity',min:.5,max:1,step:.01},{k:'tint',label:'Colour',type:'select',options:['ink','accent']},{g:'Grid',k:'radius',label:'Corner radius',min:0,max:28,step:1,unit:'px'},{k:'gap',label:'Gap',min:4,max:28,step:1,unit:'px'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'light';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+const framed=parent!==window;
+/* Picks black or white text for whatever accent you choose. */
+const on=h=>{const n=parseInt(h.slice(1),16);return(.299*(n>>16)+.587*(n>>8&255)+.114*(n&255))/255>.62?'#111113':'#fff'};
+/* Flat abstract artwork made from CSS gradients, so the file needs no images. Swap in your own pictures. */
+const PAL=[['#DCE6FF','#2563EB','#F7C948'],['#FFE3D3','#F0683C','#1F3A5F'],['#DDF3E4','#1F9D6B','#F29FB5'],['#F0E4FF','#7C4DDB','#FFB44A'],['#FFF0C2','#E0A100','#3257D6'],['#DDF1F5','#1C8CA8','#F0683C'],['#FBDDE6','#D6457A','#2C6E63'],['#E7E9EE','#111113','#F0683C']];
+const art=i=>{const[a,b,c]=PAL[i%PAL.length];return `radial-gradient(circle at ${28+i*17%44}% ${36+i*23%30}%,${b} 0 20%,transparent 20.4%),radial-gradient(circle at ${72-i*13%36}% ${66-i*11%28}%,${c} 0 10%,transparent 10.4%),linear-gradient(${115+i*40}deg,${a} 58%,color-mix(in srgb,${a} 72%,${b}) 58%)`};
+const T=[['Tide table','Identity'],['Salt and slate','Packaging'],['Blue hour','Film'],['Paper weight','Editorial'],['Soft machines','Product'],['Field recorder','App']];
+const grid=document.getElementById('grid');let touched=false;
+grid.innerHTML=T.map(([t,c],i)=>`<li><a class="tile" href="#"><span class="pic" style="background-image:${art(i)}"></span><span class="ov"><b>${t}</b><span>${c} · 2026</span><i>View project →</i></span></a></li>`).join('');
+const OFF={top:'0,-101%',right:'101%,0',bottom:'0,101%',left:'-101%,0'};
+/* Which edge is the pointer nearest? Measure from the tile's centre, in tile widths and heights, and take the larger axis. */
+const side=(e,el)=>{const r=el.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;return Math.abs(x)>Math.abs(y)?(x>0?'right':'left'):(y>0?'bottom':'top')};
+function enter(el,s){const o=el.querySelector('.ov');if(calm){o.style.opacity=1;return}o.style.transition='none';o.style.transform=`translate(${OFF[s]})`;o.offsetWidth;o.style.transition='';o.style.transform='translate(0,0)'}
+function leave(el,s){const o=el.querySelector('.ov');if(calm){o.style.opacity=0;return}o.style.transform=`translate(${OFF[s]})`}
+const tiles=[...grid.querySelectorAll('.tile')];
+tiles.forEach(el=>{el.addEventListener('pointerenter',e=>{touched=true;enter(el,side(e,el))});el.addEventListener('pointerleave',e=>leave(el,side(e,el)));
+ el.addEventListener('focus',()=>{if(el.matches(':focus-visible'))enter(el,'bottom')});el.addEventListener('blur',()=>leave(el,'bottom'));el.addEventListener('click',e=>e.preventDefault())});
+function apply(){theme();const s=grid.style,tint=S.tint==='accent'?(S.accent||'#2563EB'):'#111113';s.setProperty('--gap',S.gap+'px');s.setProperty('--rad',S.radius+'px');s.setProperty('--t',S.speed+'ms');s.setProperty('--o',S.opacity);s.setProperty('--tint',tint);s.setProperty('--on',on(tint))}
+apply();
+/* In a preview frame it plays through the tiles by itself until the pointer arrives. Delete this block in your own page. */
+if(framed&&!calm){const SD=['left','top','right','bottom'];let n=0,prev=null;const iv=setInterval(()=>{if(prev)leave(prev,SD[(n+1)%4]);if(touched){clearInterval(iv);return}prev=tiles[n*5%tiles.length];enter(prev,SD[n%4]);n++},1150)}
+</script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!--META {"o": 0.1, "t": "Direction-aware hover", "cat": "Galleries", "tone": "light", "added": "2026-11-14", "uses": ["L04"], "d": "The caption slides over each tile from the side your pointer came in, and leaves by the side it goes out.", "how": "On enter and leave, the pointer position is measured from the centre of the tile, in tile widths and heights. The larger of the two says which edge is nearest, and the overlay starts or ends just outside that edge.", "use": "Portfolio and project grids, team pages, product tiles, photo galleries.", "p": "Build a direction-aware hover grid in one HTML file with no libraries. Six 4:3 tiles in three columns (two under 560px), each a link with artwork and an overlay holding a title, a meta line and View project. On pointerenter and pointerleave compute x = (pointer x - left) / width - 0.5 and y likewise; if |x| > |y| the side is right or left, otherwise bottom or top. On enter, place the overlay just outside that side with transitions off, force a reflow, then transition it to translate(0,0); on leave, transition it out toward the exit side. Keyboard focus slides the overlay up from the bottom. Settings: slide time, overlay opacity, overlay colour (ink or accent, with black or white text chosen automatically), corner radius, gap, accent, light or dark. Reduced motion: the overlay fades instead of sliding."}-->
+<style>/*BASE*/
+/*UI*/
+.wrap{width:min(900px,92vw,calc((100vh - 96px)*2))}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap,12px)}
+.tile{position:relative;display:block;aspect-ratio:4/3;border-radius:var(--rad,14px);overflow:hidden;text-decoration:none;isolation:isolate}
+.tile .pic{position:absolute;inset:0}
+.ov{position:absolute;inset:0;display:grid;align-content:end;gap:2px;padding:clamp(10px,2vw,18px);background:color-mix(in srgb,var(--tint,#111113) calc(var(--o,.9)*100%),transparent);color:var(--on,#fff);transform:translate(0,101%);transition:transform var(--t,.32s) cubic-bezier(.2,.8,.2,1)}
+.ov b{font-size:clamp(15px,2vw,20px);letter-spacing:-.01em}.ov span{font-size:13px;opacity:.82}.ov i{font-style:normal;font-size:13px;font-weight:600;margin-top:8px}
+@media(max-width:560px){.wrap{width:min(92vw,calc((100vh - 96px)*.88))}.grid{grid-template-columns:repeat(2,1fr)}}
+@media(prefers-reduced-motion:reduce){.ov{transform:none;opacity:0;transition:opacity .2s}}
+</style>
+<body>
+<main class="wrap"><ul class="grid" id="grid"></ul></main>
+<p class="hint">Come at a tile from any side.</p>
+<script type="application/json" id="settings">{"speed":320,"opacity":0.9,"tint":"ink","radius":14,"gap":12,"mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Overlay',k:'speed',label:'Slide time',min:120,max:800,step:10,unit:'ms'},{k:'opacity',label:'Opacity',min:.5,max:1,step:.01},{k:'tint',label:'Colour',type:'select',options:['ink','accent']},{g:'Grid',k:'radius',label:'Corner radius',min:0,max:28,step:1,unit:'px'},{k:'gap',label:'Gap',min:4,max:28,step:1,unit:'px'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/*TUNER*/
+const framed=parent!==window;
+/* Picks black or white text for whatever accent you choose. */
+const on=h=>{const n=parseInt(h.slice(1),16);return(.299*(n>>16)+.587*(n>>8&255)+.114*(n&255))/255>.62?'#111113':'#fff'};
+/*FLATART*/
+const T=[['Tide table','Identity'],['Salt and slate','Packaging'],['Blue hour','Film'],['Paper weight','Editorial'],['Soft machines','Product'],['Field recorder','App']];
+const grid=document.getElementById('grid');let touched=false;
+grid.innerHTML=T.map(([t,c],i)=>`<li><a class="tile" href="#"><span class="pic" style="background-image:${art(i)}"></span><span class="ov"><b>${t}</b><span>${c} · 2026</span><i>View project →</i></span></a></li>`).join('');
+const OFF={top:'0,-101%',right:'101%,0',bottom:'0,101%',left:'-101%,0'};
+/* Which edge is the pointer nearest? Measure from the tile's centre, in tile widths and heights, and take the larger axis. */
+const side=(e,el)=>{const r=el.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;return Math.abs(x)>Math.abs(y)?(x>0?'right':'left'):(y>0?'bottom':'top')};
+function enter(el,s){const o=el.querySelector('.ov');if(calm){o.style.opacity=1;return}o.style.transition='none';o.style.transform=`translate(${OFF[s]})`;o.offsetWidth;o.style.transition='';o.style.transform='translate(0,0)'}
+function leave(el,s){const o=el.querySelector('.ov');if(calm){o.style.opacity=0;return}o.style.transform=`translate(${OFF[s]})`}
+const tiles=[...grid.querySelectorAll('.tile')];
+tiles.forEach(el=>{el.addEventListener('pointerenter',e=>{touched=true;enter(el,side(e,el))});el.addEventListener('pointerleave',e=>leave(el,side(e,el)));
+ el.addEventListener('focus',()=>{if(el.matches(':focus-visible'))enter(el,'bottom')});el.addEventListener('blur',()=>leave(el,'bottom'));el.addEventListener('click',e=>e.preventDefault())});
+function apply(){theme();const s=grid.style,tint=S.tint==='accent'?(S.accent||'#2563EB'):'#111113';s.setProperty('--gap',S.gap+'px');s.setProperty('--rad',S.radius+'px');s.setProperty('--t',S.speed+'ms');s.setProperty('--o',S.opacity);s.setProperty('--tint',tint);s.setProperty('--on',on(tint))}
+apply();
+/* In a preview frame it plays through the tiles by itself until the pointer arrives. Delete this block in your own page. */
+if(framed&&!calm){const SD=['left','top','right','bottom'];let n=0,prev=null;const iv=setInterval(()=>{if(prev)leave(prev,SD[(n+1)%4]);if(touched){clearInterval(iv);return}prev=tiles[n*5%tiles.length];enter(prev,SD[n%4]);n++},1150)}
+</script>
+</body>

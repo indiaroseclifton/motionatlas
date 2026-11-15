@@ -1,0 +1,57 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Morphing text</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0F1012;--panel:#1A1B1E;--ink:#F4F4F5;--mute:#A1A1AA;--line:#2C2D31;--ac:#111111}
+:root[data-mode=light]{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#111113;--mute:#6B6F76;--line:#E6E6E8}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+
+.art{position:absolute;inset:0;display:block;pointer-events:none}
+.art::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.16;mix-blend-mode:overlay}
+.heroc{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:24px;max-width:760px;color:#fff;text-shadow:0 1px 24px rgba(0,0,0,.35)}.heroc h1{font-size:clamp(34px,7vw,76px);line-height:1;letter-spacing:-.03em}.heroc p{font-size:clamp(15px,2vw,18px);opacity:.9;max-width:46ch}.heroc a{display:inline-flex;align-items:center;min-height:46px;padding:0 22px;border-radius:99px;background:#fff;color:#111;font-weight:700;text-decoration:none;text-shadow:none}
+/* Small shared pieces: kicker line, pill buttons, list reset. */
+input{font:inherit;color:inherit}ul,ol{margin:0;padding:0;list-style:none}[hidden]{display:none!important}
+.k{font-size:13px;font-weight:600;color:var(--mute)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:999px;border:1px solid var(--line);background:var(--panel);font-weight:600;font-size:14px;text-decoration:none;color:var(--ink)}
+.btn:hover{border-color:var(--ink)}.btn.pri{background:var(--ink);color:var(--bg);border-color:var(--ink)}.btn[disabled]{opacity:.45;cursor:not-allowed}
+main{display:grid;justify-items:center;gap:4px;text-align:center;padding:24px;width:100%}
+.lead{font-size:clamp(16px,2.2vw,24px);color:var(--mute);font-weight:500}
+.morph{position:relative;width:100%;height:1.2em;font-size:clamp(40px,calc(var(--fs,11)*1vw),190px);font-weight:700;letter-spacing:-.04em;line-height:1.2;filter:url(#melt)}
+.morph span{position:absolute;inset:0;text-align:center;white-space:nowrap}
+.morph.tint{color:var(--ac)}
+.pp{margin-top:28px}
+</style>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="melt"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 255 -140"/></filter></svg>
+<main><p class="lead">We make websites for</p><div class="morph" id="morph" aria-hidden="true"><span id="a"></span><span id="b"></span></div><p class="sr" id="all"></p><button class="btn pp" id="pp">Pause</button></main>
+<script type="application/json" id="settings">{"morph":1.1,"hold":1.2,"size":11,"blur":8,"tint":false,"mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Timing',k:'morph',label:'Melt time',min:.3,max:3,step:.05,unit:'s'},{k:'hold',label:'Hold time',min:.2,max:4,step:.1,unit:'s'},{g:'Type',k:'size',label:'Size',min:6,max:18,step:.5,unit:'vw'},{k:'blur',label:'Melt strength',min:2,max:16,step:.5},{k:'tint',label:'Word in accent colour',type:'toggle'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'light';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+const framed=parent!==window;
+const WORDS=['bakeries','architects','museums','founders','florists','you'];
+const A=document.getElementById('a'),B=document.getElementById('b'),box=document.getElementById('morph'),pp=document.getElementById('pp');
+document.getElementById('all').textContent=WORDS.join(', ')+'.';
+let i=0,m=0,cool=0,last=performance.now(),run=true;
+/* Both words are blurred while they cross. The SVG filter on the parent turns soft edges hard again, so the shapes look like they melt. */
+const blur=f=>f>=1?'none':`blur(${Math.min(S.blur/Math.max(f,.001)-S.blur,100)}px)`;
+function mix(f){B.style.filter=blur(f);B.style.opacity=Math.pow(f,.4);A.style.filter=blur(1-f);A.style.opacity=Math.pow(1-f,.4)}
+function words(){A.textContent=WORDS[i%WORDS.length];B.textContent=WORDS[(i+1)%WORDS.length]}
+function tick(t){const dt=Math.min(.1,(t-last)/1000);last=t;
+ if(run){if(cool>0)cool-=dt;else{m+=dt;let f=m/S.morph;if(calm)f=f<1?0:1;if(f>=1){i++;words();mix(0);m=0;cool=S.hold}else mix(f)}}
+ requestAnimationFrame(tick)}
+pp.onclick=()=>{run=!run;pp.textContent=run?'Pause':'Play'};
+function apply(){theme();box.style.setProperty('--fs',S.size);box.classList.toggle('tint',!!S.tint)}
+words();mix(0);cool=S.hold;apply();requestAnimationFrame(tick);
+</script>
+</body>
+</html>

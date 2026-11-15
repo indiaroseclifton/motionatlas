@@ -1,0 +1,72 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lanyard badge</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0F1012;--panel:#1A1B1E;--ink:#F4F4F5;--mute:#A1A1AA;--line:#2C2D31;--ac:#111111}
+:root[data-mode=light]{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#111113;--mute:#6B6F76;--line:#E6E6E8}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+
+.art{position:absolute;inset:0;display:block;pointer-events:none}
+.art::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.16;mix-blend-mode:overlay}
+.heroc{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:24px;max-width:760px;color:#fff;text-shadow:0 1px 24px rgba(0,0,0,.35)}.heroc h1{font-size:clamp(34px,7vw,76px);line-height:1;letter-spacing:-.03em}.heroc p{font-size:clamp(15px,2vw,18px);opacity:.9;max-width:46ch}.heroc a{display:inline-flex;align-items:center;min-height:46px;padding:0 22px;border-radius:99px;background:#fff;color:#111;font-weight:700;text-decoration:none;text-shadow:none}
+/* Small shared pieces: kicker line, pill buttons, list reset. */
+input{font:inherit;color:inherit}ul,ol{margin:0;padding:0;list-style:none}[hidden]{display:none!important}
+.k{font-size:13px;font-weight:600;color:var(--mute)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:999px;border:1px solid var(--line);background:var(--panel);font-weight:600;font-size:14px;text-decoration:none;color:var(--ink)}
+.btn:hover{border-color:var(--ink)}.btn.pri{background:var(--ink);color:var(--bg);border-color:var(--ink)}.btn[disabled]{opacity:.45;cursor:not-allowed}
+canvas{position:fixed;inset:0;width:100%;height:100%}
+.badge{position:fixed;left:0;top:0;width:190px;padding:36px 18px 16px;display:grid;justify-items:center;gap:3px;text-align:center;border:1px solid var(--line);border-radius:18px;background:var(--panel);box-shadow:0 24px 46px -28px rgba(17,17,19,.6);transform-origin:50% 20px;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none;will-change:transform}
+.badge:active{cursor:grabbing}
+.badge::before{content:"";position:absolute;left:-1px;right:-1px;top:-1px;height:9px;border-radius:18px 18px 0 0;background:var(--ac)}
+.hole{position:absolute;top:16px;left:50%;width:34px;height:9px;margin-left:-17px;border-radius:9px;background:var(--bg);border:1px solid var(--line)}
+.av{width:72px;height:72px;margin:8px 0 8px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:24px;color:var(--ac);background:color-mix(in srgb,var(--ac) 14%,var(--panel))}
+.badge b{font-size:18px;letter-spacing:-.01em}.role{font-size:13.5px;color:var(--mute)}
+.ev{margin-top:12px;padding-top:10px;border-top:1px solid var(--line);width:100%;font-size:12px;color:var(--mute)}
+.bars{width:100%;height:24px;margin-top:8px;opacity:.85;background:repeating-linear-gradient(90deg,var(--ink) 0 2px,transparent 2px 5px,var(--ink) 5px 6px,transparent 6px 11px)}
+</style>
+<body>
+<canvas id="c" aria-hidden="true"></canvas>
+<button class="badge" id="badge" aria-label="Conference badge for Mara Kessler. Drag it, or press Enter to give it a push."><span class="hole"></span><span class="av">MK</span><b>Mara Kessler</b><span class="role">Motion designer</span><span class="ev">Atlas Conf · Lisbon</span><span class="bars"></span></button>
+<p class="hint">Drag the badge and let go.</p>
+<script type="application/json" id="settings">{"length":250,"gravity":0.7,"damping":0.985,"strap":12,"sway":true,"mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Strap',k:'length',label:'Length',min:120,max:420,step:5,unit:'px'},{k:'strap',label:'Width',min:4,max:22,step:1,unit:'px'},{g:'Swing',k:'gravity',label:'Gravity',min:.2,max:1.6,step:.05},{k:'damping',label:'Keeps swinging',min:.9,max:.999,step:.001},{k:'sway',label:'Sway when idle',type:'toggle'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'light';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+const framed=parent!==window;
+/* The strap is a rope of points. Each frame every point keeps its speed, falls a little, then the links are pulled back to length. */
+const cv=document.getElementById('c'),x=cv.getContext('2d'),badge=document.getElementById('badge'),N=12;
+let P=[],d=1,drag=null,grab=[0,0],quiet=0,k=1,seg=18,ang=0,ac='#2563EB',clip='#888';
+function build(){d=Math.min(2,devicePixelRatio||1);cv.width=innerWidth*d;cv.height=innerHeight*d;k=Math.min(1,innerHeight/620);seg=Math.min(S.length,innerHeight*.42)/N;P=[];
+ for(let i=0;i<=N;i++){const y=-8+i*seg;P.push({x:innerWidth/2,y,px:innerWidth/2,py:y})}if(!calm)P[N].px-=16;
+ const cs=getComputedStyle(document.documentElement);ac=cs.getPropertyValue('--ac').trim();clip=cs.getPropertyValue('--mute').trim()}
+function step(){const damp=calm?.8:S.damping;
+ for(let i=1;i<=N;i++){const p=P[i];if(drag&&i===N){p.px=p.x;p.py=p.y;p.x=drag[0];p.y=drag[1];continue}
+  const vx=(p.x-p.px)*damp,vy=(p.y-p.py)*damp;p.px=p.x;p.py=p.y;p.x+=vx;p.y+=vy+S.gravity*(i===N?1.8:1)}
+ for(let n=0;n<14;n++)for(let i=0;i<N;i++){const a=P[i],b=P[i+1],dx=b.x-a.x,dy=b.y-a.y,di=Math.hypot(dx,dy)||1,e=(di-seg)/di,pin=drag&&i+1===N,wa=i===0?0:pin?1:.5,wb=pin?0:i===0?1:.5;
+  a.x+=dx*e*wa;a.y+=dy*e*wa;b.x-=dx*e*wb;b.y-=dy*e*wb}}
+function draw(){x.setTransform(d,0,0,d,0,0);x.clearRect(0,0,innerWidth,innerHeight);x.lineCap=x.lineJoin='round';x.strokeStyle=ac;x.lineWidth=S.strap*k;x.beginPath();x.moveTo(P[0].x,P[0].y);
+ for(let i=1;i<N;i++)x.quadraticCurveTo(P[i].x,P[i].y,(P[i].x+P[i+1].x)/2,(P[i].y+P[i+1].y)/2);x.lineTo(P[N].x,P[N].y);x.stroke();
+ x.fillStyle=clip;x.beginPath();x.arc(P[N].x,P[N].y,(S.strap*.5+3)*k,0,7);x.fill();
+ const t=Math.atan2(P[N].y-P[N-2].y,P[N].x-P[N-2].x)-Math.PI/2;ang+=(t-ang)*.4;
+ badge.style.transform=`translate(${P[N].x-95}px,${P[N].y-20}px) rotate(${ang}rad) scale(${k})`}
+function tick(){quiet++;if(S.sway&&!calm&&!drag&&quiet>200&&quiet%260===0)P[N].px+=(Math.random()<.5?-7:7);step();draw();requestAnimationFrame(tick)}
+const reach=(cx,cy)=>{const ax=innerWidth/2,ay=-8,L=seg*N*1.02;let dx=cx-ax,dy=cy-ay;const m=Math.hypot(dx,dy);if(m>L){dx*=L/m;dy*=L/m}return[ax+dx,ay+dy]};
+badge.addEventListener('pointerdown',e=>{badge.setPointerCapture(e.pointerId);grab=[e.clientX-P[N].x,e.clientY-P[N].y];drag=[P[N].x,P[N].y];quiet=0});
+badge.addEventListener('pointermove',e=>{if(drag)drag=reach(e.clientX-grab[0],e.clientY-grab[1])});
+const drop=()=>{drag=null;quiet=0};badge.addEventListener('pointerup',drop);badge.addEventListener('pointercancel',drop);
+badge.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();P[N].px+=(Math.random()<.5?-18:18);quiet=0}});
+addEventListener('resize',build);
+function apply(){theme();build()}
+apply();requestAnimationFrame(tick);
+</script>
+</body>
+</html>

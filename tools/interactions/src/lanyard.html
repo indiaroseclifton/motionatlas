@@ -1,0 +1,49 @@
+<!--META {"o": 0.01, "t": "Lanyard badge", "cat": "Cards", "tone": "light", "added": "2026-11-14", "uses": [], "d": "An ID badge hangs from a strap at the top of the page. Drag it, let go, and it swings back and settles.", "how": "The strap is a chain of points. Every frame each point keeps its speed, falls a little, and then the links are pulled back to their length. The badge is ordinary HTML, placed at the last point and turned to follow the strap.", "use": "Event and conference pages, team and speaker cards, sign-up confirmations, membership or ticket screens.", "p": "Build a lanyard badge in one HTML file with no libraries. A strap hangs from the top centre of the page as a rope of 13 points simulated with Verlet integration: each frame every point keeps its velocity times a damping setting, gains gravity, then 14 passes pull each link back to its rest length with the top point fixed. Draw the strap on a full-page canvas as one thick rounded stroke in the accent colour with a small clip at the end. The badge is a real HTML button (initials in a tinted disc, name, role, event line, a barcode strip) positioned at the last point and rotated to the angle of the last two links, turning around its slot. Dragging the badge pins the last point to the pointer, limited to the strap length; letting go throws it with the pointer speed. Enter or Space gives it a push. When nobody has touched it for a few seconds give it a small nudge now and then. Settings: strap length, strap width, gravity, damping, idle sway on or off, accent, light or dark. Reduced motion: heavy damping and no idle sway."}-->
+<style>/*BASE*/
+/*UI*/
+canvas{position:fixed;inset:0;width:100%;height:100%}
+.badge{position:fixed;left:0;top:0;width:190px;padding:36px 18px 16px;display:grid;justify-items:center;gap:3px;text-align:center;border:1px solid var(--line);border-radius:18px;background:var(--panel);box-shadow:0 24px 46px -28px rgba(17,17,19,.6);transform-origin:50% 20px;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none;will-change:transform}
+.badge:active{cursor:grabbing}
+.badge::before{content:"";position:absolute;left:-1px;right:-1px;top:-1px;height:9px;border-radius:18px 18px 0 0;background:var(--ac)}
+.hole{position:absolute;top:16px;left:50%;width:34px;height:9px;margin-left:-17px;border-radius:9px;background:var(--bg);border:1px solid var(--line)}
+.av{width:72px;height:72px;margin:8px 0 8px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:24px;color:var(--ac);background:color-mix(in srgb,var(--ac) 14%,var(--panel))}
+.badge b{font-size:18px;letter-spacing:-.01em}.role{font-size:13.5px;color:var(--mute)}
+.ev{margin-top:12px;padding-top:10px;border-top:1px solid var(--line);width:100%;font-size:12px;color:var(--mute)}
+.bars{width:100%;height:24px;margin-top:8px;opacity:.85;background:repeating-linear-gradient(90deg,var(--ink) 0 2px,transparent 2px 5px,var(--ink) 5px 6px,transparent 6px 11px)}
+</style>
+<body>
+<canvas id="c" aria-hidden="true"></canvas>
+<button class="badge" id="badge" aria-label="Conference badge for Mara Kessler. Drag it, or press Enter to give it a push."><span class="hole"></span><span class="av">MK</span><b>Mara Kessler</b><span class="role">Motion designer</span><span class="ev">Atlas Conf · Lisbon</span><span class="bars"></span></button>
+<p class="hint">Drag the badge and let go.</p>
+<script type="application/json" id="settings">{"length":250,"gravity":0.7,"damping":0.985,"strap":12,"sway":true,"mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Strap',k:'length',label:'Length',min:120,max:420,step:5,unit:'px'},{k:'strap',label:'Width',min:4,max:22,step:1,unit:'px'},{g:'Swing',k:'gravity',label:'Gravity',min:.2,max:1.6,step:.05},{k:'damping',label:'Keeps swinging',min:.9,max:.999,step:.001},{k:'sway',label:'Sway when idle',type:'toggle'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/*TUNER*/
+const framed=parent!==window;
+/* The strap is a rope of points. Each frame every point keeps its speed, falls a little, then the links are pulled back to length. */
+const cv=document.getElementById('c'),x=cv.getContext('2d'),badge=document.getElementById('badge'),N=12;
+let P=[],d=1,drag=null,grab=[0,0],quiet=0,k=1,seg=18,ang=0,ac='#2563EB',clip='#888';
+function build(){d=Math.min(2,devicePixelRatio||1);cv.width=innerWidth*d;cv.height=innerHeight*d;k=Math.min(1,innerHeight/620);seg=Math.min(S.length,innerHeight*.42)/N;P=[];
+ for(let i=0;i<=N;i++){const y=-8+i*seg;P.push({x:innerWidth/2,y,px:innerWidth/2,py:y})}if(!calm)P[N].px-=16;
+ const cs=getComputedStyle(document.documentElement);ac=cs.getPropertyValue('--ac').trim();clip=cs.getPropertyValue('--mute').trim()}
+function step(){const damp=calm?.8:S.damping;
+ for(let i=1;i<=N;i++){const p=P[i];if(drag&&i===N){p.px=p.x;p.py=p.y;p.x=drag[0];p.y=drag[1];continue}
+  const vx=(p.x-p.px)*damp,vy=(p.y-p.py)*damp;p.px=p.x;p.py=p.y;p.x+=vx;p.y+=vy+S.gravity*(i===N?1.8:1)}
+ for(let n=0;n<14;n++)for(let i=0;i<N;i++){const a=P[i],b=P[i+1],dx=b.x-a.x,dy=b.y-a.y,di=Math.hypot(dx,dy)||1,e=(di-seg)/di,pin=drag&&i+1===N,wa=i===0?0:pin?1:.5,wb=pin?0:i===0?1:.5;
+  a.x+=dx*e*wa;a.y+=dy*e*wa;b.x-=dx*e*wb;b.y-=dy*e*wb}}
+function draw(){x.setTransform(d,0,0,d,0,0);x.clearRect(0,0,innerWidth,innerHeight);x.lineCap=x.lineJoin='round';x.strokeStyle=ac;x.lineWidth=S.strap*k;x.beginPath();x.moveTo(P[0].x,P[0].y);
+ for(let i=1;i<N;i++)x.quadraticCurveTo(P[i].x,P[i].y,(P[i].x+P[i+1].x)/2,(P[i].y+P[i+1].y)/2);x.lineTo(P[N].x,P[N].y);x.stroke();
+ x.fillStyle=clip;x.beginPath();x.arc(P[N].x,P[N].y,(S.strap*.5+3)*k,0,7);x.fill();
+ const t=Math.atan2(P[N].y-P[N-2].y,P[N].x-P[N-2].x)-Math.PI/2;ang+=(t-ang)*.4;
+ badge.style.transform=`translate(${P[N].x-95}px,${P[N].y-20}px) rotate(${ang}rad) scale(${k})`}
+function tick(){quiet++;if(S.sway&&!calm&&!drag&&quiet>200&&quiet%260===0)P[N].px+=(Math.random()<.5?-7:7);step();draw();requestAnimationFrame(tick)}
+const reach=(cx,cy)=>{const ax=innerWidth/2,ay=-8,L=seg*N*1.02;let dx=cx-ax,dy=cy-ay;const m=Math.hypot(dx,dy);if(m>L){dx*=L/m;dy*=L/m}return[ax+dx,ay+dy]};
+badge.addEventListener('pointerdown',e=>{badge.setPointerCapture(e.pointerId);grab=[e.clientX-P[N].x,e.clientY-P[N].y];drag=[P[N].x,P[N].y];quiet=0});
+badge.addEventListener('pointermove',e=>{if(drag)drag=reach(e.clientX-grab[0],e.clientY-grab[1])});
+const drop=()=>{drag=null;quiet=0};badge.addEventListener('pointerup',drop);badge.addEventListener('pointercancel',drop);
+badge.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();P[N].px+=(Math.random()<.5?-18:18);quiet=0}});
+addEventListener('resize',build);
+function apply(){theme();build()}
+apply();requestAnimationFrame(tick);
+</script>
+</body>

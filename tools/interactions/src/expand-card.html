@@ -1,0 +1,57 @@
+<!--META {"o": 0.08, "t": "Card to detail", "cat": "Cards", "tone": "light", "added": "2026-11-14", "uses": ["L13"], "d": "Press a card and it grows from where it sits into a detail sheet, while the page dims behind. Close it and it shrinks back into its place.", "how": "The sheet is measured at its resting place, then animated from the exact box of the card you pressed to that place. Closing runs the same movement backwards.", "use": "Project grids, product cards, article previews, app-style galleries where a new page would lose your place.", "p": "Build a card-to-detail transition in one HTML file with no libraries. A grid of six cards (artwork above, title and category below, each a button). Pressing one fills a fixed detail sheet (role dialog, aria-modal) with larger artwork, a category, title, paragraph, three facts and a Close button, plus a round close button on the artwork. Measure the card and the centred sheet with getBoundingClientRect and use the Web Animations API to animate the sheet left, top, width and height from the card box to its own box, while the body text fades in and a backdrop fades to a dimming setting. Hide the source card during the move, make the page behind inert, move focus into the sheet, keep Tab inside it and close on Escape, on the backdrop and on either button, running the animation in reverse and returning focus to the card. Settings: duration, easing (smooth or overshoot), dimming, corner radius, accent, light or dark. Reduced motion: no travel, the sheet appears in place."}-->
+<style>/*BASE*/
+/*UI*/
+html,body{height:auto;min-height:100%;overflow:visible}body{display:block;overflow:visible}
+.wrap{max-width:860px;margin:0 auto;padding:clamp(20px,6vh,64px) 16px 40px;display:grid;gap:20px}
+.wrap h1{font-size:clamp(26px,4.4vw,42px);letter-spacing:-.03em;line-height:1.05}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:560px){.grid{grid-template-columns:repeat(2,1fr)}}
+.card{display:block;width:100%;padding:0;text-align:left;border:1px solid var(--line);border-radius:var(--rad,18px);background:var(--panel);overflow:hidden;transition:transform .25s,box-shadow .25s}
+.card:hover{transform:translateY(-3px);box-shadow:0 16px 34px -24px rgba(17,17,19,.5)}
+.pic{display:block;aspect-ratio:16/10}
+.cap{display:grid;gap:1px;padding:12px 14px 14px}.cap b{font-size:15px}.cap span{font-size:13px;color:var(--mute)}
+.shade{position:fixed;inset:0;z-index:2;background:rgba(17,17,19,var(--dim,.45));opacity:0;transition:opacity var(--dur,.42s)}
+.shade.on{opacity:1}
+.sheet{position:fixed;inset:0;z-index:3;margin:auto;width:min(540px,calc(100vw - 32px));height:fit-content;max-height:calc(100vh - 32px);overflow:hidden auto;border:1px solid var(--line);border-radius:var(--rad,18px);background:var(--panel);box-shadow:0 40px 80px -40px rgba(17,17,19,.6)}
+.sheet .pic{max-height:36vh;width:100%}
+.body{display:grid;gap:10px;padding:18px 22px 22px}
+.body h2{font-size:26px;letter-spacing:-.02em;line-height:1.1}
+.body>p:not(.k){color:var(--mute)}
+.facts{display:flex;gap:26px;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);font-size:13px;color:var(--mute)}.facts span{display:grid}.facts b{font-size:15px;color:var(--ink)}
+.body .btn{justify-self:start;margin-top:4px}
+.x{position:absolute;right:12px;top:12px;width:40px;height:40px;border-radius:50%;border:0;background:rgba(255,255,255,.92);color:#111113;font-size:18px;line-height:1}
+@media(prefers-reduced-motion:reduce){.card,.shade{transition:none}}
+</style>
+<body>
+<main class="wrap" id="wrap"><header><p class="k">Field notes</p><h1>Pick a study.</h1></header><ul class="grid" id="grid"></ul></main>
+<div class="shade" id="shade" hidden></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="dT" hidden><div class="pic" id="dArt"></div><div class="body" id="body"><p class="k" id="dK"></p><h2 id="dT"></h2><p id="dP"></p><div class="facts" id="dF"></div><button class="btn pri" id="close">Close</button></div><button class="x" id="x" aria-label="Close">✕</button></div>
+<script type="application/json" id="settings">{"duration":420,"ease":"smooth","dim":0.45,"radius":18,"mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Move',k:'duration',label:'Duration',min:150,max:1000,step:10,unit:'ms'},{k:'ease',label:'Easing',type:'select',options:['smooth','overshoot']},{g:'Sheet',k:'dim',label:'Page dimming',min:0,max:.8,step:.01},{k:'radius',label:'Corner radius',min:0,max:32,step:1,unit:'px'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/*TUNER*/
+const framed=parent!==window;
+/*FLATART*/
+const DATA=[['Tide table','Identity','A pocket calendar that follows the sea instead of the week.','2026','3 weeks'],['Salt and slate','Packaging','Labels printed in one blue, overprinted until it goes almost black.','2026','5 weeks'],['Blue hour','Film','Ninety seconds shot in the twenty minutes after sunset.','2025','2 weeks'],['Paper weight','Editorial','A quarterly that changes paper stock with every section.','2025','8 weeks'],['Soft machines','Product','Kitchen tools with no hard corners anywhere.','2025','6 weeks'],['Field recorder','App','One button, one waveform, nothing else on screen.','2024','4 weeks']];
+const $=id=>document.getElementById(id),grid=$('grid'),wrap=$('wrap'),shade=$('shade'),sheet=$('sheet'),body=$('body');let from=null,busy=false;
+grid.innerHTML=DATA.map((d,i)=>`<li><button class="card" data-i="${i}"><span class="pic" style="background-image:${art(i)}"></span><span class="cap"><b>${d[0]}</b><span>${d[1]}</span></span></button></li>`).join('');
+const EASE={smooth:'cubic-bezier(.2,.8,.2,1)',overshoot:'cubic-bezier(.3,1.35,.5,1)'};
+const box=r=>({left:r.left+'px',top:r.top+'px',width:r.width+'px',height:r.height+'px',margin:0,right:'auto',bottom:'auto'});
+/* The sheet starts exactly where the card is and animates to its own resting place (or the other way round to close). */
+function fly(a,b,w,back){sheet.style.overflow='hidden';body.style.width=w-2+'px';const dur=calm?0:S.duration;
+ const an=sheet.animate([box(a),box(b)],{duration:dur,easing:EASE[S.ease]||EASE.smooth,fill:'both'}),fd=body.animate([{opacity:back?1:0},{opacity:back?0:1}],{duration:dur,easing:'ease',fill:'both'});
+ return an.finished.then(()=>{an.cancel();fd.cancel();sheet.style.overflow='';body.style.width=''})}
+function open(card,quiet){if(busy||from)return;busy=true;from=card;const i=+card.dataset.i,d=DATA[i];$('dArt').style.backgroundImage=art(i);$('dK').textContent=d[1];$('dT').textContent=d[0];$('dP').textContent=d[2];$('dF').innerHTML=`<span>Year<b>${d[3]}</b></span><span>Length<b>${d[4]}</b></span><span>Role<b>Design, build</b></span>`;
+ sheet.hidden=shade.hidden=false;wrap.inert=true;shade.offsetWidth;shade.classList.add('on');const a=card.getBoundingClientRect(),b=sheet.getBoundingClientRect();card.style.visibility='hidden';if(!quiet)$('x').focus({preventScroll:true});fly(a,b,b.width).then(()=>busy=false)}
+function close(quiet){if(busy||!from)return;busy=true;shade.classList.remove('on');sheet.scrollTop=0;const a=sheet.getBoundingClientRect(),b=from.getBoundingClientRect();
+ fly(a,b,a.width,true).then(()=>{sheet.hidden=shade.hidden=true;wrap.inert=false;from.style.visibility='';if(!quiet)from.focus({preventScroll:true});from=null;busy=false})}
+grid.addEventListener('click',e=>{const c=e.target.closest('.card');if(c)open(c)});
+$('x').onclick=$('close').onclick=shade.onclick=()=>close();
+addEventListener('keydown',e=>{if(!from)return;if(e.key==='Escape')close();if(e.key==='Tab'){const f=[$('close'),$('x')],n=f.indexOf(document.activeElement);e.preventDefault();f[(n+(e.shiftKey?-1:1)+2)%2].focus()}});
+function apply(){theme();const r=document.documentElement.style;r.setProperty('--rad',S.radius+'px');r.setProperty('--dim',S.dim);r.setProperty('--dur',(calm?0:S.duration)+'ms')}
+apply();
+/* In a preview frame it opens and closes cards by itself until you touch it. Delete this block in your own page. */
+if(framed&&!calm){let n=0,stop=false;['pointerdown','keydown'].forEach(e=>addEventListener(e,()=>stop=true,{once:true}));const cards=[...grid.querySelectorAll('.card')];
+ (function demo(){setTimeout(()=>{if(stop)return;open(cards[n++*2%cards.length],true);setTimeout(()=>{if(stop)return;close(true);demo()},2300)},1400)})()}
+</script>
+</body>

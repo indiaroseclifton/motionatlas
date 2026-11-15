@@ -41,7 +41,7 @@ The library holds:
 | Theme kits | 48 | `site/kits/` |
 | Atlas design systems | 48 (D01–D48) | `site/expansion.json`, `systems.js`, `system-previews.js`, `system-kits.js` |
 | UI components | 70 (C01–C70) | `site/component-lab.js` |
-| Interactions | 114 | `site/interactions/` |
+| Interactions | 121 | `site/interactions/` |
 | Landing effects (techniques) | 41 (L01–L49, with gaps where older effects were retired) | `site/effects-data.js` (the techniques), `site/effects-lab.js` (the lab UI), `site/expansion.json`, clips in `site/assets/fx/clips/` |
 | Atlas themes (component lab skins) | 22 | `site/atlas-themes.js` |
 | Site-builder templates / sections / photographs | 26 / 56 / 82 (CC0, `site/assets/photos/`) | `site/builder/` |
@@ -305,7 +305,7 @@ has a catalogue entry (`C..`) in `expansion.json`. The page builder lists them a
 
 ## Interactions shelf (`site/interactions.html`, `site/interactions/`)
 
-82 original pieces, each one self-contained HTML file in `interactions/demos/` with no
+121 original pieces, each one self-contained HTML file in `interactions/demos/` with no
 libraries (the circuit-city hero uses three.js from cdnjs). The shelf mounts live previews only
 while they're on screen. Each piece has Copy HTML, Download, full screen, notes and an AI build
 prompt, and `interactions.html#<id>` opens it. Copied code rewrites `../../assets/` to the live
@@ -319,6 +319,16 @@ site.
 {id:'my-piece', t:'Title', cat:'Cards', tone:'dark', d:'One-line description.',
  how:'How it works.', use:'What it suits.', p:'AI build prompt…', added:'2026-10'}
 ```
+
+`added` is a date string. The "New" filter shows the pieces carrying the latest one, so give a new batch today's
+date (`'2026-11-14'`). A piece with sliders sets `tune:true`, keeps its values in a
+`<script type="application/json" id="settings">` block, lists its controls in `CONTROLS`, and talks to the page with
+`postMessage` (`atlasControls`, `atlasValues`, `atlasSet`). Tunable pieces are built, not hand-edited: the source is
+`tools/interactions/src/<id>.html` (first line `<!--META {json}-->`, shared parts pulled in by markers such as
+`/*BASE*/`, `/*UI*/`, `/*TUNER*/` and `/*FLATART*/`) and `node tools/build-interactions.mjs` writes the demo and its
+manifest entry; copy `tools/interactions/src/lanyard.html` as a model. Demos
+may play themselves when framed (`parent!==window`) so gallery cards are alive, and must stop at the first touch
+and never call `focus()` while doing it.
 
 `cat` is one of the existing categories (Cards, Carousels, Scroll, Canvas, Galleries, Navigation,
 Lists, Controls, Buttons, Type, Feedback, Scroll stories, Sections, Signal & data). `added` marks

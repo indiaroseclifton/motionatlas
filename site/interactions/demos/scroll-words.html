@@ -1,0 +1,63 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Scroll text reveal</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0F1012;--panel:#1A1B1E;--ink:#F4F4F5;--mute:#A1A1AA;--line:#2C2D31;--ac:#111111}
+:root[data-mode=light]{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#111113;--mute:#6B6F76;--line:#E6E6E8}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+
+.art{position:absolute;inset:0;display:block;pointer-events:none}
+.art::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.16;mix-blend-mode:overlay}
+.heroc{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:24px;max-width:760px;color:#fff;text-shadow:0 1px 24px rgba(0,0,0,.35)}.heroc h1{font-size:clamp(34px,7vw,76px);line-height:1;letter-spacing:-.03em}.heroc p{font-size:clamp(15px,2vw,18px);opacity:.9;max-width:46ch}.heroc a{display:inline-flex;align-items:center;min-height:46px;padding:0 22px;border-radius:99px;background:#fff;color:#111;font-weight:700;text-decoration:none;text-shadow:none}
+/* Small shared pieces: kicker line, pill buttons, list reset. */
+input{font:inherit;color:inherit}ul,ol{margin:0;padding:0;list-style:none}[hidden]{display:none!important}
+.k{font-size:13px;font-weight:600;color:var(--mute)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:999px;border:1px solid var(--line);background:var(--panel);font-weight:600;font-size:14px;text-decoration:none;color:var(--ink)}
+.btn:hover{border-color:var(--ink)}.btn.pri{background:var(--ink);color:var(--bg);border-color:var(--ink)}.btn[disabled]{opacity:.45;cursor:not-allowed}
+html,body{height:auto;min-height:100%;overflow:visible}body{display:block;overflow:visible}
+.pin{position:sticky;top:0;height:100vh;display:grid;align-content:center;gap:18px;padding:0 max(20px,7vw)}
+.copy{font-size:clamp(22px,calc(var(--fs,4.2)*1vw),76px);font-weight:600;line-height:1.16;letter-spacing:-.025em;max-width:21em}
+.copy span{opacity:.16;transition:color .3s}
+.copy .key.lit{color:var(--ac)}
+.meter{position:fixed;left:0;top:0;z-index:2;height:3px;width:100%;background:var(--ac);transform-origin:0 50%;transform:scaleX(var(--p,0))}
+.end{min-height:70vh;display:grid;place-content:center;justify-items:center;gap:16px;text-align:center;padding:40px 20px;border-top:1px solid var(--line)}
+.end h2{margin:0;font-size:clamp(26px,4vw,44px);letter-spacing:-.02em;line-height:1.1}
+.hint{transition:opacity .3s}
+</style>
+<body>
+<div class="meter" id="meter" aria-hidden="true"></div>
+<section id="read"><div class="pin"><p class="k">Why it moves</p><p class="copy" id="copy"></p></div></section>
+<section class="end"><h2>That is the whole idea.</h2><a class="btn pri" href="#">See the work</a></section>
+<p class="hint" id="hint">Scroll to read</p>
+<script type="application/json" id="settings">{"size":4.2,"dim":0.16,"spread":5,"length":300,"mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Text',k:'size',label:'Size',min:2.4,max:6.5,step:.1,unit:'vw'},{k:'dim',label:'Unread opacity',min:.05,max:.5,step:.01},{g:'Scroll',k:'spread',label:'Words lighting at once',min:1,max:14,step:1},{k:'length',label:'Scroll distance',min:150,max:600,step:10,unit:'vh'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'light';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+const framed=parent!==window;
+/* Wrap a word in *stars* to give it the accent colour once it has been read. */
+const TEXT='Motion is not decoration. It shows people where they are, what just *changed* and what to do *next.* Done well, nobody notices it. They only notice that the page feels *easy.*';
+const copy=document.getElementById('copy'),read=document.getElementById('read'),meter=document.getElementById('meter'),hint=document.getElementById('hint');
+copy.innerHTML=TEXT.split(' ').map(w=>`<span${w[0]==='*'?' class="key"':''}>${w.replace(/\*/g,'')}</span>`).join(' ');
+const W=[...copy.children];
+/* The section is taller than the screen and its content is pinned. How far you are through it decides how many words are lit. */
+function draw(){const r=read.getBoundingClientRect(),p=Math.min(1,Math.max(0,-r.top/Math.max(1,r.height-innerHeight))),head=1+p*(W.length+S.spread);
+ W.forEach((w,i)=>{const k=Math.min(1,Math.max(0,(head-i)/S.spread));w.style.opacity=S.dim+(1-S.dim)*k;w.classList.toggle('lit',k>.6)});
+ meter.style.setProperty('--p',p);hint.style.opacity=p>.03?0:1}
+addEventListener('scroll',draw,{passive:true});addEventListener('resize',draw);
+function apply(){theme();copy.style.setProperty('--fs',S.size);read.style.height=S.length+'vh';draw()}
+apply();
+/* In a preview frame the page scrolls itself until you touch it. Delete this block in your own page. */
+if(framed&&!calm){let on=true,t0=0;const root=document.documentElement;root.style.scrollbarWidth='none';['wheel','touchstart','pointerdown','keydown'].forEach(e=>addEventListener(e,()=>{on=false;root.style.scrollbarWidth=''},{passive:true,once:true}));
+ (function auto(t){if(!on)return;t0=t0||t;const max=document.documentElement.scrollHeight-innerHeight,k=(t-t0)/7/1000%2,u=k<1?k:2-k;scrollTo(0,max*u*u*(3-2*u));requestAnimationFrame(auto)})(0)}
+</script>
+</body>
+</html>

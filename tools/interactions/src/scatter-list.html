@@ -1,0 +1,52 @@
+<!--META {"o": 0.04, "t": "Scatter to list", "cat": "Lists", "tone": "light", "added": "2026-11-14", "uses": ["L13", "L12"], "d": "Eight pictures lie scattered like prints on a table. One press files them into a grid, or into a tidy list with titles.", "how": "Every item is absolutely positioned, so each layout is only a new position, tilt and thumbnail size. CSS transitions carry them across, a few milliseconds apart.", "use": "Portfolio indexes, case study lists, search results with a visual mode, shop category pages.", "p": "Build a scatter-to-list layout switch in one HTML file with no libraries. A heading and a three-button segmented control (Scatter, Grid, List, using aria-pressed) sit above a stage that fills the rest of the viewport. Eight items are absolutely positioned list items, each a thumbnail plus a title and a meta line. Scatter places them at fixed fractional positions with tilts of a few degrees; Grid places them in four columns (two under 560px) with no tilt; List stacks them in rows with a small thumbnail on the left, and the title, meta and a hairline fade in after the move. Compute positions from the stage size in JavaScript, set transform on each item and thumbnail width and height as CSS variables, and let CSS transitions animate, with transition-delay = index times a stagger setting. Recalculate without animation on resize. Settings: duration, stagger, easing (smooth or overshoot), scatter tilt, accent, light or dark. Reduced motion: change layout instantly."}-->
+<style>/*BASE*/
+/*UI*/
+.wrap{position:fixed;inset:0;display:grid;grid-template-rows:auto 1fr;gap:16px;padding:clamp(16px,4vh,36px) clamp(16px,5vw,56px)}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.bar h1{font-size:clamp(20px,3vw,30px);letter-spacing:-.025em}
+.seg{display:inline-flex;padding:3px;gap:2px;border:1px solid var(--line);border-radius:999px;background:var(--panel)}
+.seg button{min-height:38px;padding:0 15px;border:0;border-radius:999px;background:none;font-weight:600;font-size:13.5px;color:var(--mute)}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.stage{position:relative;min-height:0}
+.stage li{position:absolute;left:0;top:0;transition:transform var(--t,.65s) var(--e,ease);transition-delay:calc(var(--i)*var(--st,35ms));will-change:transform}
+.th{display:block;width:var(--tw);height:var(--thh);border-radius:var(--tr,12px);border:1px solid var(--line);box-shadow:0 14px 30px -22px rgba(17,17,19,.6);transition:width var(--t,.65s) var(--e,ease),height var(--t,.65s) var(--e,ease),border-radius var(--t,.65s);transition-delay:inherit}
+.tx{position:absolute;left:calc(var(--tw) + 16px);top:0;height:var(--thh);width:calc(var(--W) - var(--tw) - 16px);display:flex;align-items:center;justify-content:space-between;gap:12px;opacity:var(--txo,0);transition:opacity .25s;pointer-events:none;white-space:nowrap}
+.tx b{font-size:clamp(15px,2vw,19px);letter-spacing:-.01em}.tx span{font-size:13px;color:var(--mute)}
+.stage li::after{content:"";position:absolute;left:0;top:calc(var(--thh) + var(--rg)/2);width:var(--W);height:1px;background:var(--line);opacity:var(--txo,0);transition:opacity .25s}
+.stage.list .tx,.stage.list li::after{transition-delay:calc(var(--t,.65s)*.55 + var(--i)*var(--st,35ms))}
+.stage.still li,.stage.still .th{transition:none}
+@media(prefers-reduced-motion:reduce){.stage li,.th{transition:none}}
+</style>
+<body>
+<main class="wrap"><header class="bar"><h1>Selected work</h1><div class="seg" role="group" aria-label="Layout"><button data-v="scatter" aria-pressed="true">Scatter</button><button data-v="grid" aria-pressed="false">Grid</button><button data-v="list" aria-pressed="false">List</button></div></header><ul class="stage" id="stage"></ul></main>
+<script type="application/json" id="settings">{"duration":650,"stagger":35,"tilt":10,"ease":"smooth","mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Move',k:'duration',label:'Duration',min:200,max:1400,step:10,unit:'ms'},{k:'stagger',label:'Delay between items',min:0,max:120,step:1,unit:'ms'},{k:'ease',label:'Easing',type:'select',options:['smooth','overshoot']},{g:'Scatter',k:'tilt',label:'Tilt',min:0,max:20,step:1},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/*TUNER*/
+const framed=parent!==window;
+/*FLATART*/
+const WORK=[['Tide table','Identity','2026'],['Salt and slate','Packaging','2026'],['Blue hour','Film','2025'],['Paper weight','Editorial','2025'],['Soft machines','Product','2025'],['Field recorder','App','2024'],['Night bus','Campaign','2024'],['Low sun','Photography','2023']];
+/* Where each picture sits when scattered: centre x, centre y (as a share of the stage) and a tilt. */
+const SC=[[.13,.26,-9],[.37,.2,6],[.62,.28,-4],[.87,.2,10],[.2,.74,7],[.45,.68,-11],[.7,.76,5],[.9,.68,-7]];
+/* The same for a stage that is taller than it is wide, such as a phone. */
+const SCP=[[.27,.12,-8],[.72,.1,6],[.3,.37,5],[.74,.35,-9],[.25,.61,-5],[.71,.6,8],[.3,.86,7],[.74,.85,-6]];
+const EASE={smooth:'cubic-bezier(.2,.8,.2,1)',overshoot:'cubic-bezier(.3,1.35,.5,1)'};
+const stage=document.getElementById('stage'),btns=[...document.querySelectorAll('.seg button')];let view='scatter',touched=false;
+stage.innerHTML=WORK.map(([t,c,y],i)=>`<li style="--i:${i}"><span class="th" style="background-image:${art(i)}"></span><span class="tx"><b>${t}</b><span>${c} · ${y}</span></span></li>`).join('');
+const items=[...stage.children];
+/* Every item is absolutely placed, so changing layout is only a new transform and thumbnail size. CSS transitions do the travel. */
+function layout(still){const W=stage.clientWidth,H=stage.clientHeight,n=items.length,st=stage.style;let tw,th,pos,txo=0,rg=0,tr=12;if(still)stage.classList.add('still');
+ if(view==='scatter'){const tall=H>W;tw=tall?Math.min(W*.38,H*.17):Math.min(W*.22,H*.36);th=tw*1.2;pos=(tall?SCP:SC).map(([x,y,r])=>[Math.max(0,Math.min(W-tw,x*W-tw/2)),Math.max(0,Math.min(H-th,y*H-th/2)),r*S.tilt/10])}
+ else if(view==='grid'){const cols=W<560?2:4,rows=Math.ceil(n/cols),g=14;tw=(W-g*(cols-1))/cols;th=Math.min(tw*.78,(H-g*(rows-1))/rows);const oy=Math.max(0,(H-rows*th-(rows-1)*g)/2);pos=items.map((_,i)=>[(i%cols)*(tw+g),oy+Math.floor(i/cols)*(th+g),0])}
+ else{const row=Math.min(72,H/n);rg=Math.min(14,row*.24);th=row-rg;tw=th*1.3;tr=8;txo=1;pos=items.map((_,i)=>[0,i*row,0])}
+ st.setProperty('--tw',tw+'px');st.setProperty('--thh',th+'px');st.setProperty('--W',W+'px');st.setProperty('--txo',txo);st.setProperty('--rg',rg+'px');st.setProperty('--tr',tr+'px');stage.classList.toggle('list',view==='list');
+ items.forEach((li,i)=>li.style.transform=`translate(${pos[i][0]}px,${pos[i][1]}px) rotate(${pos[i][2]}deg)`);
+ if(still){stage.offsetWidth;stage.classList.remove('still')}}
+function go(v){view=v;btns.forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===v));layout()}
+btns.forEach(b=>b.onclick=()=>{touched=true;go(b.dataset.v)});addEventListener('resize',()=>layout(true));
+function apply(){theme();const st=stage.style;st.setProperty('--t',S.duration+'ms');st.setProperty('--st',S.stagger+'ms');st.setProperty('--e',EASE[S.ease]||EASE.smooth);layout(true)}
+apply();
+/* In a preview frame it changes layout by itself until you press a button. Delete this block in your own page. */
+if(framed&&!calm){const V=['grid','list','scatter'];let n=0;const iv=setInterval(()=>{if(touched){clearInterval(iv);return}go(V[n++%3])},2600)}
+</script>
+</body>

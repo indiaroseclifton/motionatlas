@@ -1,0 +1,34 @@
+<!--META {"o": 0.07, "t": "Morphing text", "cat": "Type", "tone": "light", "added": "2026-11-14", "uses": [], "d": "One word melts into the next, as if the letters were liquid, at the end of a sentence that stays put.", "how": "Two words are stacked. One blurs out while the other blurs in, and an SVG filter on their parent pushes soft edges back to hard ones, so the overlapping blurs read as one shape changing.", "use": "Hero headlines with a rotating audience or benefit, loading states, section openers.", "p": "Build a morphing text headline in one HTML file with no libraries. A small static line sits above a very large word. The word area holds two absolutely positioned spans and has filter: url(#melt), where #melt is an SVG feColorMatrix with alpha values 255 and -140 (a threshold). To morph from word A to word B over a melt time, each frame set B to blur(min(8/f - 8, 100)px) and opacity f^0.4, and A to the same with 1-f; then swap, hold for a hold time, and move to the next word in the list. Hide the animated words from screen readers and provide the full list as visually hidden text. Include a Pause and Play button. Settings: melt time, hold time, size, melt strength, word in accent colour, accent, light or dark. Reduced motion: swap words with no blur."}-->
+<style>/*BASE*/
+/*UI*/
+main{display:grid;justify-items:center;gap:4px;text-align:center;padding:24px;width:100%}
+.lead{font-size:clamp(16px,2.2vw,24px);color:var(--mute);font-weight:500}
+.morph{position:relative;width:100%;height:1.2em;font-size:clamp(40px,calc(var(--fs,11)*1vw),190px);font-weight:700;letter-spacing:-.04em;line-height:1.2;filter:url(#melt)}
+.morph span{position:absolute;inset:0;text-align:center;white-space:nowrap}
+.morph.tint{color:var(--ac)}
+.pp{margin-top:28px}
+</style>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="melt"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 255 -140"/></filter></svg>
+<main><p class="lead">We make websites for</p><div class="morph" id="morph" aria-hidden="true"><span id="a"></span><span id="b"></span></div><p class="sr" id="all"></p><button class="btn pp" id="pp">Pause</button></main>
+<script type="application/json" id="settings">{"morph":1.1,"hold":1.2,"size":11,"blur":8,"tint":false,"mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Timing',k:'morph',label:'Melt time',min:.3,max:3,step:.05,unit:'s'},{k:'hold',label:'Hold time',min:.2,max:4,step:.1,unit:'s'},{g:'Type',k:'size',label:'Size',min:6,max:18,step:.5,unit:'vw'},{k:'blur',label:'Melt strength',min:2,max:16,step:.5},{k:'tint',label:'Word in accent colour',type:'toggle'},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/*TUNER*/
+const framed=parent!==window;
+const WORDS=['bakeries','architects','museums','founders','florists','you'];
+const A=document.getElementById('a'),B=document.getElementById('b'),box=document.getElementById('morph'),pp=document.getElementById('pp');
+document.getElementById('all').textContent=WORDS.join(', ')+'.';
+let i=0,m=0,cool=0,last=performance.now(),run=true;
+/* Both words are blurred while they cross. The SVG filter on the parent turns soft edges hard again, so the shapes look like they melt. */
+const blur=f=>f>=1?'none':`blur(${Math.min(S.blur/Math.max(f,.001)-S.blur,100)}px)`;
+function mix(f){B.style.filter=blur(f);B.style.opacity=Math.pow(f,.4);A.style.filter=blur(1-f);A.style.opacity=Math.pow(1-f,.4)}
+function words(){A.textContent=WORDS[i%WORDS.length];B.textContent=WORDS[(i+1)%WORDS.length]}
+function tick(t){const dt=Math.min(.1,(t-last)/1000);last=t;
+ if(run){if(cool>0)cool-=dt;else{m+=dt;let f=m/S.morph;if(calm)f=f<1?0:1;if(f>=1){i++;words();mix(0);m=0;cool=S.hold}else mix(f)}}
+ requestAnimationFrame(tick)}
+pp.onclick=()=>{run=!run;pp.textContent=run?'Pause':'Play'};
+function apply(){theme();box.style.setProperty('--fs',S.size);box.classList.toggle('tint',!!S.tint)}
+words();mix(0);cool=S.hold;apply();requestAnimationFrame(tick);
+</script>
+</body>

@@ -81,7 +81,7 @@ dialog::backdrop{background:rgba(14,16,24,.6);backdrop-filter:blur(4px)}
 <a class="skip" href="#grid">Skip to the interactions</a>
 <header><a class="back" href="atlas.html#ux">← Atlas / Interface</a><nav aria-label="Related"><a href="page-builder.html"><b style="color:var(--ink);font-weight:600">Site builder →</b></a><a href="atlas.html#effects">Page effects</a><a href="atlas.html#ux">UI components</a><a href="atlas.html#backgrounds">Backgrounds</a></nav></header>
 <main>
-<section class="hero"><h1>UI interactions.</h1><p><b id="nAll">114</b> interactions to drop into a website or an app. Open one, tune it with the sliders where it has them, then copy it as <b>one HTML file</b>. No libraries needed.</p></section>
+<section class="hero"><h1>UI interactions.</h1><p><b id="nAll">121</b> interactions to drop into a website or an app. Open one, tune it with the sliders where it has them, then copy it as <b>one HTML file</b>. No libraries needed.</p></section>
 <div class="tools"><div class="searchrow"><label class="search"><span class="vh">Search the shelf</span><input id="q" type="search" placeholder="Search: tabs, scroll, physics, pricing, type…" autocomplete="off"></label><span class="kbd" aria-hidden="true">/ to search</span></div><div class="filters" id="filters" role="group" aria-label="Filter by type"></div></div><p class="count" id="count" role="status"></p>
 <div class="grid" id="grid"></div>
 <p class="note"><b>How to use these.</b> Every piece works with a keyboard, has a phone layout and calms down when the visitor has asked for reduced motion. Copied code points its images at this site, so it runs as soon as you paste it; swap in your own images before you ship. The ideas here follow familiar patterns from interaction galleries; the designs, names and code are our own.</p>
@@ -108,7 +108,7 @@ const TECH={};(window.FX_TECHNIQUES||[]).forEach(t=>TECH[t.id]=t.name);const tec
 const SITE='https://motionatlas-ten.vercel.app/';
 const ORDER=['Type','Navigation','Cards','Galleries','Carousels','Scroll','Buttons','Controls','Feedback','Lists','Canvas','Signal & data','Sections','Scroll stories'];
 const present=[...new Set(L.map(x=>x.cat))];const cats=['All','Tunable','New',...ORDER.filter(c=>present.includes(c)),...present.filter(c=>!ORDER.includes(c))];
-const isNew=x=>!!x.added;const cnt=c=>c==='All'?L.length:c==='Tunable'?L.filter(x=>x.tune).length:c==='New'?L.filter(isNew).length:L.filter(x=>x.cat===c).length;
+const NEWEST=L.reduce((m,x)=>x.added&&x.added>m?x.added:m,'');const isNew=x=>!!x.added&&x.added===NEWEST;const cnt=c=>c==='All'?L.length:c==='Tunable'?L.filter(x=>x.tune).length:c==='New'?L.filter(isNew).length:L.filter(x=>x.cat===c).length;
 const W=['Zero','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten'];const words=n=>n%10===0&&n<=100?['','Ten','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety','A hundred'][n/10]:String(n);document.getElementById('nAll').textContent=words(L.length);
 const params=new URLSearchParams(location.search);let cat=cats.includes(params.get('cat'))?params.get('cat'):'All';if(params.get('q'))document.getElementById('q').value=params.get('q');
 cats.forEach(c=>{if(!cnt(c))return;const b=document.createElement('button');b.className='chip'+(c==='New'||c==='Tunable'?' new':'');b.dataset.c=c;b.innerHTML=`${c}<span class="n">${cnt(c)}</span>`;b.setAttribute('aria-label',`${c}, ${cnt(c)} pieces`);b.setAttribute('aria-pressed',c===cat);b.onclick=()=>{cat=c;[...filters.children].forEach(x=>x.setAttribute('aria-pressed',x===b));b.scrollIntoView({block:'nearest',inline:'nearest'});render();sync()};filters.append(b)});
@@ -122,7 +122,7 @@ render();
 const dlg=document.getElementById('dlg'),stage=document.getElementById('stage'),toast=document.getElementById('toast');let cur=null;
 function say(m){toast.textContent=m;toast.classList.add('on');clearTimeout(say.t);say.t=setTimeout(()=>toast.classList.remove('on'),1800)}
 function open(x){cur=x;document.getElementById('dCat').textContent=x.cat;document.getElementById('dTitle').textContent=x.t;document.getElementById('dDesc').textContent=x.d;document.getElementById('dHow').textContent=x.how;document.getElementById('dUse').textContent=x.use;const du=document.getElementById('dUses');du.innerHTML=techs(x).map(id=>`<span>${TECH[id]}</span>`).join('')||'Original code';document.getElementById('dPrompt').textContent=x.p;const hs=x.hash?'#'+x.hash:'';document.getElementById('openFull').href=`interactions/demos/${x.id}.html${hs}`;
-TV=null;TD=null;tuneBox.hidden=true;own=null;ownClear.hidden=true;ownStatus.textContent='';const ownBox=document.getElementById('own');ownBox.hidden=true;showPreview();dlg.showModal();code().then(t=>{if(cur===x)ownBox.hidden=!(t.includes(SITE+'assets/shelf/')||t.includes(SITE+'assets/art/'))});history.replaceState(null,'',location.pathname+location.search+'#'+x.id)}
+TV=null;TD=null;tuneBox.hidden=true;own=null;ownClear.hidden=true;ownStatus.textContent='';const ownBox=document.getElementById('own');ownBox.hidden=true;showPreview();if(!dlg.open)dlg.showModal();code().then(t=>{if(cur===x)ownBox.hidden=!(t.includes(SITE+'assets/shelf/')||t.includes(SITE+'assets/art/'))});history.replaceState(null,'',location.pathname+location.search+'#'+x.id)}
 let own=null;
 /* Settings panel: a tunable demo posts its controls and values; we draw sliders and post changes back. */
 let TV=null,TD=null,TC=null;const tuneBox=document.getElementById('tune'),tuneBody=document.getElementById('tuneBody');
@@ -153,6 +153,6 @@ async function copy(t,m){try{await navigator.clipboard.writeText(t);say(m)}catch
 document.getElementById('copyCode').onclick=async()=>{const c=cache[cur.id];copy(personalise(typeof c==='string'?c:await code()),'HTML copied')};
 document.getElementById('copyPrompt').onclick=()=>copy(cur.p,'Prompt copied');
 document.getElementById('dlCode').onclick=async()=>{const u=URL.createObjectURL(new Blob([personalise(await code())],{type:'text/html'}));const a=document.createElement('a');a.href=u;a.download=cur.id+'.html';a.click();setTimeout(()=>URL.revokeObjectURL(u),2000);say('Downloading '+cur.id+'.html')};
-function fromHash(){const h=location.hash.slice(1);const hit=L.find(x=>x.id===h);if(hit&&!(dlg.open&&cur===hit)){if(dlg.open)dlg.close();open(hit)}}addEventListener('hashchange',fromHash);fromHash();
+function fromHash(){const h=location.hash.slice(1);const hit=L.find(x=>x.id===h);if(hit&&!(dlg.open&&cur===hit))open(hit)}addEventListener('hashchange',fromHash);fromHash();
 })();
 </script></body></html>

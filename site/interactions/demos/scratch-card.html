@@ -1,0 +1,75 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Scratch to reveal</title>
+<style>/* Colours: --ac is the accent. The Settings block further down switches dark and light. */
+:root{--bg:#0F1012;--panel:#1A1B1E;--ink:#F4F4F5;--mute:#A1A1AA;--line:#2C2D31;--ac:#111111}
+:root[data-mode=light]{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#111113;--mute:#6B6F76;--line:#E6E6E8}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;font-size:12.5px;color:var(--mute);padding:0 16px;pointer-events:none}
+.nb{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;font-size:17px;line-height:1}
+.nb:hover{border-color:var(--ac)}
+
+.art{position:absolute;inset:0;display:block;pointer-events:none}
+.art::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.16;mix-blend-mode:overlay}
+.heroc{position:relative;display:grid;gap:14px;justify-items:center;text-align:center;padding:24px;max-width:760px;color:#fff;text-shadow:0 1px 24px rgba(0,0,0,.35)}.heroc h1{font-size:clamp(34px,7vw,76px);line-height:1;letter-spacing:-.03em}.heroc p{font-size:clamp(15px,2vw,18px);opacity:.9;max-width:46ch}.heroc a{display:inline-flex;align-items:center;min-height:46px;padding:0 22px;border-radius:99px;background:#fff;color:#111;font-weight:700;text-decoration:none;text-shadow:none}
+/* Small shared pieces: kicker line, pill buttons, list reset. */
+input{font:inherit;color:inherit}ul,ol{margin:0;padding:0;list-style:none}[hidden]{display:none!important}
+.k{font-size:13px;font-weight:600;color:var(--mute)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:999px;border:1px solid var(--line);background:var(--panel);font-weight:600;font-size:14px;text-decoration:none;color:var(--ink)}
+.btn:hover{border-color:var(--ink)}.btn.pri{background:var(--ink);color:var(--bg);border-color:var(--ink)}.btn[disabled]{opacity:.45;cursor:not-allowed}
+.card{width:min(440px,calc(100vw - 32px));display:grid;gap:14px;padding:26px;border:1px solid var(--line);border-radius:22px;background:var(--panel);box-shadow:0 18px 50px -32px rgba(17,17,19,.4)}
+.card h1{font-size:clamp(24px,5vw,32px);line-height:1.1;letter-spacing:-.025em}
+.prize{position:relative;height:132px;border-radius:14px;border:1px dashed var(--line);overflow:hidden;background:color-mix(in srgb,var(--ac) 8%,var(--panel))}
+.code{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:2px}
+.code .lbl,.code .off{font-size:12.5px;color:var(--mute)}
+.code b{font:700 clamp(28px,7vw,38px)/1.15 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.04em;color:var(--ac)}
+#foil{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab;transition:opacity .5s}
+#foil.done{opacity:0;pointer-events:none}
+.row{display:flex;flex-wrap:wrap;gap:8px}
+</style>
+<body>
+<main class="card"><p class="k">Thanks for your order</p><h1>Something off your next one.</h1>
+<div class="prize" id="prize"><div class="code" id="under" aria-hidden="true"><span class="lbl">Your code</span><b id="code">ATLAS-20</b><span class="off">20% off, valid for 30 days</span></div><canvas id="foil" aria-hidden="true"></canvas></div>
+<div class="row"><button class="btn pri" id="copy" disabled>Copy code</button><button class="btn" id="show">Reveal without scratching</button><button class="btn" id="again" hidden>Scratch again</button></div>
+<p class="sr" role="status" id="live"></p></main>
+<script type="application/json" id="settings">{"brush":34,"reveal":55,"foil":"silver","mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Scratch',k:'brush',label:'Brush size',min:12,max:80,step:1,unit:'px'},{k:'reveal',label:'Finish when cleared',min:20,max:90,step:1,unit:'%'},{k:'foil',label:'Foil',type:'select',options:['silver','ink','accent']},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/* Settings come from the JSON block above. Change a value there, or call apply() after changing S. */
+const S=JSON.parse(document.getElementById('settings').textContent),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const theme=()=>{const r=document.documentElement;r.dataset.mode=S.mode||'light';if(S.accent)r.style.setProperty('--ac',S.accent)};
+addEventListener('message',e=>{const d=e.data;if(d&&d.atlasSet){Object.assign(S,d.atlasSet);apply()}});
+if(parent!==window)parent.postMessage({atlasControls:CONTROLS,atlasValues:S},'*');
+const framed=parent!==window;
+const cv=document.getElementById('foil'),x=cv.getContext('2d',{willReadFrequently:true}),box=document.getElementById('prize'),under=document.getElementById('under'),codeEl=document.getElementById('code'),copyB=document.getElementById('copy'),showB=document.getElementById('show'),againB=document.getElementById('again'),live=document.getElementById('live');
+let d=1,last=null,done=false,touched=false,lastCheck=0;
+const FOIL={silver:['#C9CDD4','#F1F2F4','#B9BEC7','#5E6269'],ink:['#26272B','#3A3B40','#1B1C1F','#C9CDD4']};
+/* The foil is a canvas over the code. Scratching draws with destination-out, which erases instead of painting. */
+function paint(){d=Math.min(2,devicePixelRatio||1);const r=box.getBoundingClientRect();cv.width=r.width*d;cv.height=r.height*d;x.globalCompositeOperation='source-over';
+ const ac=getComputedStyle(document.documentElement).getPropertyValue('--ac').trim(),c=FOIL[S.foil]||[ac,ac,ac,'#fff'],g=x.createLinearGradient(0,0,cv.width,cv.height);
+ g.addColorStop(0,c[0]);g.addColorStop(.5,c[1]);g.addColorStop(1,c[2]);x.fillStyle=g;x.fillRect(0,0,cv.width,cv.height);
+ x.globalAlpha=.14;x.strokeStyle=c[3];x.lineWidth=d;for(let i=-cv.height;i<cv.width;i+=9*d){x.beginPath();x.moveTo(i,0);x.lineTo(i+cv.height,cv.height);x.stroke()}x.globalAlpha=1;
+ x.fillStyle=c[3];x.font=`600 ${14*d}px Inter,system-ui,sans-serif`;x.textAlign='center';x.textBaseline='middle';x.fillText('Scratch here',cv.width/2,cv.height/2);
+ done=false;cv.classList.remove('done');copyB.disabled=true;againB.hidden=true;showB.hidden=false;under.setAttribute('aria-hidden','true')}
+function rub(ax,ay,bx,by){x.globalCompositeOperation='destination-out';x.lineCap=x.lineJoin='round';x.lineWidth=S.brush*d;x.beginPath();x.moveTo(ax*d,ay*d);x.lineTo(bx*d+.01,by*d);x.stroke()}
+function cleared(){const im=x.getImageData(0,0,cv.width,cv.height).data;let n=0,t=0;for(let i=3;i<im.length;i+=4*17){t++;if(im[i]<40)n++}return n/t}
+function check(){if(!done&&cleared()*100>=S.reveal)finish(touched)}
+function finish(say){done=true;cv.classList.add('done');copyB.disabled=false;againB.hidden=false;showB.hidden=true;under.removeAttribute('aria-hidden');if(say)live.textContent='Code revealed: '+codeEl.textContent+'.'}
+const pos=e=>{const r=cv.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]};
+cv.addEventListener('pointerdown',e=>{touched=true;cv.setPointerCapture(e.pointerId);last=pos(e);rub(...last,...last)});
+cv.addEventListener('pointermove',e=>{if(!last)return;const p=pos(e);rub(...last,...p);last=p;if(e.timeStamp-lastCheck>160){lastCheck=e.timeStamp;check()}});
+const up=()=>{if(last){last=null;check()}};cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+showB.onclick=()=>{touched=true;finish(true)};againB.onclick=()=>{touched=true;paint();live.textContent='Card reset.'};
+copyB.onclick=()=>{const t=codeEl.textContent,back=()=>setTimeout(()=>copyB.textContent='Copy code',1600);(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>{copyB.textContent='Copied';live.textContent='Code copied.';back()},()=>{copyB.textContent='Press Ctrl or Cmd + C';back()})};
+addEventListener('resize',paint);
+function apply(){theme();paint()}
+apply();
+/* In a preview frame the card scratches itself until you touch it. Delete this block in your own page. */
+if(framed&&!calm){let t0=0,p=null;(function demo(t){if(touched)return;t0=t0||t;const u=(t-t0)/1000,r=cv.getBoundingClientRect();
+ if(u>.8&&u<4){const k=(u-.8)/3.2,nx=r.width*(.06+.88*k),ny=r.height*(.5+.36*Math.sin(k*30));if(p)rub(...p,nx,ny);p=[nx,ny];if(k>.3&&t-lastCheck>200){lastCheck=t;check()}}
+ if(u>7.5){p=null;t0=t;paint()}requestAnimationFrame(demo)})(0)}
+</script>
+</body>
+</html>

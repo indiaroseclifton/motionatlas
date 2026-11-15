@@ -12,6 +12,44 @@ states, the serverless API, and the project's own Playwright gate.
 heading order, missing alt text, sideways scroll, text under 11 px, fonts, corner radii and page background. Console
 errors were attributed per page. Suspicious readings were checked by eye before being reported.
 
+## Seventh pass: twelve new interactions
+
+Twelve of the 25 ideas in "Animation and interaction opportunities" are built and live on the interactions page
+(ideas 1, 2, 5, 6, 7, 8, 11, 12, 15, 18, 21 and 22). Each is one HTML file with no libraries and no image files, has
+a settings panel, light and dark, a reduced-motion path and keyboard access, and plays itself on its gallery card
+until touched.
+
+| Piece | Category | What was checked by hand |
+|---|---|---|
+| Lanyard badge | Cards | Drag and throw, settles, Enter gives a push, dark mode |
+| Vanishing input | Controls | Type and send, field clears, status line announces the text |
+| Flashlight reveal | Type | Light follows, Reveal all covers the page, text colour follows the accent |
+| Scatter to list | Lists | Scatter, grid and list all fit at 1280 and 375 wide |
+| Icon cloud sphere | Canvas | 40 icons, idle spin, drag, scales down on a phone |
+| Scratch to reveal | Cards | Scratching past 55% clears the foil, Copy enables, Scratch again resets |
+| Morphing text | Type | Words cycle, Pause works, word list is read to screen readers |
+| Card to detail | Cards | Opens from the card, focus moves in and back, Escape closes |
+| Orbiting icons | Sections | Three rings, speed slider does not make rings jump, Pause |
+| Direction-aware hover | Galleries | Enters from left, leaves by top, as measured |
+| Scroll text reveal | Type | 15 of 31 words lit at half way, key words take the accent |
+| Tracing beam timeline | Scroll | Beam reaches the last entry at the bottom of the page |
+
+All twelve: no sideways scroll at 375 px, no control under 38 px tall, no console errors.
+
+They are sources in `tools/interactions/src/` and are built by `node tools/build-interactions.mjs`, like the other 37
+tunable pieces, so a rebuild keeps them. Artwork is flat CSS shapes (`tools/interactions/flat-art.js`), not images.
+
+Also fixed on the interactions page:
+
+- Five pieces were listed twice (arc carousel, image ring, expanding panels, toasts, radial menu). Both cards opened
+  the same demo, one with an out-of-date description. The stale cards are gone: 121 pieces, all different.
+- "New" meant 79 of 114 pieces. It now means the latest batch only (12).
+- Opening a piece by its address while another was open left an empty preview. It now switches.
+
+Still open: 13 of the 25 ideas (the WebGL ones, world map, liquid glass, page-turn book, ASCII image, hero parallax
+wall, preloader, grid backgrounds, layered waves, metaball loader, meteors); the UI components lab; older template
+thumbnails; sign-in and cloud sync until the Supabase project is restored.
+
 ## Sixth pass: lead with interactions, landing effects rebuilt, brand kit simplified, infographics added
 
 14 November 2026. Each change was checked at 1440 × 900 and 390 × 844. All 41 landing demos were looked at one by one.
@@ -316,6 +354,8 @@ halftone and aurora shaders. The manifest also has near-duplicates worth merging
 ×2, hold-to-confirm ×2, radial menu ×2.
 
 **Gaps, ranked.** S is under about 80 lines, M medium, L needs WebGL.
+
+Built so far (seventh pass): 1, 2, 5, 6, 7, 8, 11, 12, 15, 18, 21, 22.
 
 | # | Piece | What you see | Seen at | Shelf category | Build | Size |
 |---|---|---|---|---|---|---|

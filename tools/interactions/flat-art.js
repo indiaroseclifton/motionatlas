@@ -1,0 +1,3 @@
+/* Flat abstract artwork made from CSS gradients, so the file needs no images. Swap in your own pictures. */
+const PAL=[['#DCE6FF','#2563EB','#F7C948'],['#FFE3D3','#F0683C','#1F3A5F'],['#DDF3E4','#1F9D6B','#F29FB5'],['#F0E4FF','#7C4DDB','#FFB44A'],['#FFF0C2','#E0A100','#3257D6'],['#DDF1F5','#1C8CA8','#F0683C'],['#FBDDE6','#D6457A','#2C6E63'],['#E7E9EE','#111113','#F0683C']];
+const art=i=>{const[a,b,c]=PAL[i%PAL.length];return `radial-gradient(circle at ${28+i*17%44}% ${36+i*23%30}%,${b} 0 20%,transparent 20.4%),radial-gradient(circle at ${72-i*13%36}% ${66-i*11%28}%,${c} 0 10%,transparent 10.4%),linear-gradient(${115+i*40}deg,${a} 58%,color-mix(in srgb,${a} 72%,${b}) 58%)`};

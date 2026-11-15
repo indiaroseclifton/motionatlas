@@ -1,0 +1,52 @@
+<!--META {"o": 0.06, "t": "Scratch to reveal", "cat": "Cards", "tone": "light", "added": "2026-11-14", "uses": ["L04"], "d": "A discount code sits under a strip of foil. Rub it off with the pointer or a finger; past halfway the rest clears and the code can be copied.", "how": "The foil is a canvas over the code. Scratching draws thick strokes in destination-out mode, which erases. A quick count of transparent pixels decides when enough is gone.", "use": "Order confirmations, loyalty rewards, competition entries, onboarding surprises, gift cards.", "p": "Build a scratch-to-reveal card in one HTML file with no libraries. A card with a short heading holds a panel showing a discount code in large monospace type, covered by a canvas painted as brushed foil with the words Scratch here. Pointer drags on the canvas draw round-capped lines with globalCompositeOperation destination-out (brush size setting), using pointer capture and touch-action none. While scratching, sample the canvas alpha every 160ms; when the cleared share passes a threshold setting, fade the foil away, enable a Copy code button and announce the code in a polite live region. Also include a Reveal without scratching button for keyboard users and a Scratch again button that repaints the foil. Settings: brush size, threshold, foil colour (silver, ink or accent), accent, light or dark."}-->
+<style>/*BASE*/
+/*UI*/
+.card{width:min(440px,calc(100vw - 32px));display:grid;gap:14px;padding:26px;border:1px solid var(--line);border-radius:22px;background:var(--panel);box-shadow:0 18px 50px -32px rgba(17,17,19,.4)}
+.card h1{font-size:clamp(24px,5vw,32px);line-height:1.1;letter-spacing:-.025em}
+.prize{position:relative;height:132px;border-radius:14px;border:1px dashed var(--line);overflow:hidden;background:color-mix(in srgb,var(--ac) 8%,var(--panel))}
+.code{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:2px}
+.code .lbl,.code .off{font-size:12.5px;color:var(--mute)}
+.code b{font:700 clamp(28px,7vw,38px)/1.15 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.04em;color:var(--ac)}
+#foil{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab;transition:opacity .5s}
+#foil.done{opacity:0;pointer-events:none}
+.row{display:flex;flex-wrap:wrap;gap:8px}
+</style>
+<body>
+<main class="card"><p class="k">Thanks for your order</p><h1>Something off your next one.</h1>
+<div class="prize" id="prize"><div class="code" id="under" aria-hidden="true"><span class="lbl">Your code</span><b id="code">ATLAS-20</b><span class="off">20% off, valid for 30 days</span></div><canvas id="foil" aria-hidden="true"></canvas></div>
+<div class="row"><button class="btn pri" id="copy" disabled>Copy code</button><button class="btn" id="show">Reveal without scratching</button><button class="btn" id="again" hidden>Scratch again</button></div>
+<p class="sr" role="status" id="live"></p></main>
+<script type="application/json" id="settings">{"brush":34,"reveal":55,"foil":"silver","mode":"light","accent":"#2563EB"}</script>
+<script>
+const CONTROLS=[{g:'Scratch',k:'brush',label:'Brush size',min:12,max:80,step:1,unit:'px'},{k:'reveal',label:'Finish when cleared',min:20,max:90,step:1,unit:'%'},{k:'foil',label:'Foil',type:'select',options:['silver','ink','accent']},{g:'Look',k:'mode',label:'Mode',type:'select',options:['light','dark']},{k:'accent',label:'Accent',type:'color'}];
+/*TUNER*/
+const framed=parent!==window;
+const cv=document.getElementById('foil'),x=cv.getContext('2d',{willReadFrequently:true}),box=document.getElementById('prize'),under=document.getElementById('under'),codeEl=document.getElementById('code'),copyB=document.getElementById('copy'),showB=document.getElementById('show'),againB=document.getElementById('again'),live=document.getElementById('live');
+let d=1,last=null,done=false,touched=false,lastCheck=0;
+const FOIL={silver:['#C9CDD4','#F1F2F4','#B9BEC7','#5E6269'],ink:['#26272B','#3A3B40','#1B1C1F','#C9CDD4']};
+/* The foil is a canvas over the code. Scratching draws with destination-out, which erases instead of painting. */
+function paint(){d=Math.min(2,devicePixelRatio||1);const r=box.getBoundingClientRect();cv.width=r.width*d;cv.height=r.height*d;x.globalCompositeOperation='source-over';
+ const ac=getComputedStyle(document.documentElement).getPropertyValue('--ac').trim(),c=FOIL[S.foil]||[ac,ac,ac,'#fff'],g=x.createLinearGradient(0,0,cv.width,cv.height);
+ g.addColorStop(0,c[0]);g.addColorStop(.5,c[1]);g.addColorStop(1,c[2]);x.fillStyle=g;x.fillRect(0,0,cv.width,cv.height);
+ x.globalAlpha=.14;x.strokeStyle=c[3];x.lineWidth=d;for(let i=-cv.height;i<cv.width;i+=9*d){x.beginPath();x.moveTo(i,0);x.lineTo(i+cv.height,cv.height);x.stroke()}x.globalAlpha=1;
+ x.fillStyle=c[3];x.font=`600 ${14*d}px Inter,system-ui,sans-serif`;x.textAlign='center';x.textBaseline='middle';x.fillText('Scratch here',cv.width/2,cv.height/2);
+ done=false;cv.classList.remove('done');copyB.disabled=true;againB.hidden=true;showB.hidden=false;under.setAttribute('aria-hidden','true')}
+function rub(ax,ay,bx,by){x.globalCompositeOperation='destination-out';x.lineCap=x.lineJoin='round';x.lineWidth=S.brush*d;x.beginPath();x.moveTo(ax*d,ay*d);x.lineTo(bx*d+.01,by*d);x.stroke()}
+function cleared(){const im=x.getImageData(0,0,cv.width,cv.height).data;let n=0,t=0;for(let i=3;i<im.length;i+=4*17){t++;if(im[i]<40)n++}return n/t}
+function check(){if(!done&&cleared()*100>=S.reveal)finish(touched)}
+function finish(say){done=true;cv.classList.add('done');copyB.disabled=false;againB.hidden=false;showB.hidden=true;under.removeAttribute('aria-hidden');if(say)live.textContent='Code revealed: '+codeEl.textContent+'.'}
+const pos=e=>{const r=cv.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]};
+cv.addEventListener('pointerdown',e=>{touched=true;cv.setPointerCapture(e.pointerId);last=pos(e);rub(...last,...last)});
+cv.addEventListener('pointermove',e=>{if(!last)return;const p=pos(e);rub(...last,...p);last=p;if(e.timeStamp-lastCheck>160){lastCheck=e.timeStamp;check()}});
+const up=()=>{if(last){last=null;check()}};cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+showB.onclick=()=>{touched=true;finish(true)};againB.onclick=()=>{touched=true;paint();live.textContent='Card reset.'};
+copyB.onclick=()=>{const t=codeEl.textContent,back=()=>setTimeout(()=>copyB.textContent='Copy code',1600);(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>{copyB.textContent='Copied';live.textContent='Code copied.';back()},()=>{copyB.textContent='Press Ctrl or Cmd + C';back()})};
+addEventListener('resize',paint);
+function apply(){theme();paint()}
+apply();
+/* In a preview frame the card scratches itself until you touch it. Delete this block in your own page. */
+if(framed&&!calm){let t0=0,p=null;(function demo(t){if(touched)return;t0=t0||t;const u=(t-t0)/1000,r=cv.getBoundingClientRect();
+ if(u>.8&&u<4){const k=(u-.8)/3.2,nx=r.width*(.06+.88*k),ny=r.height*(.5+.36*Math.sin(k*30));if(p)rub(...p,nx,ny);p=[nx,ny];if(k>.3&&t-lastCheck>200){lastCheck=t;check()}}
+ if(u>7.5){p=null;t0=t;paint()}requestAnimationFrame(demo)})(0)}
+</script>
+</body>
