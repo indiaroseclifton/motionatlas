@@ -96,7 +96,7 @@ NOHASH = "root.querySelectorAll('a[href=\"#\"]').forEach(a=>a.onclick=e=>e.preve
 NEW = [
  ('nav', 'Navigation bar', 'Top', 'A sticky bar with the brand, your site menu and a call to action; a menu button opens it on phones.', '''
 .bar{background:color-mix(in srgb,var(--bg) 84%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-.in{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:24px;padding:10px max(16px,4vw)}
+.in{max-width:1280px;margin:0 auto;display:flex;align-items:center;gap:24px;padding:10px max(16px,4vw)}
 .logo{font-family:var(--head);font-weight:var(--hw);font-style:var(--hs);font-size:26px;letter-spacing:var(--track);text-decoration:none}
 .links{display:flex;gap:22px;margin-left:auto;font-size:15px;flex-wrap:wrap}.links a{text-decoration:none;color:var(--mute)}.links a:hover,.links a[aria-current=page]{color:var(--ink)}
 .btn{min-height:42px}
@@ -110,7 +110,7 @@ NEW = [
 .hero{position:relative;min-height:min(92vh,880px);display:grid;align-items:end;overflow:hidden;isolation:isolate}
 .hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}
 .hero::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(to top,var(--bg) 6%,color-mix(in srgb,var(--bg) 62%,transparent) 48%,color-mix(in srgb,var(--bg) 18%,transparent))}
-.c{max-width:1180px;width:100%;margin:0 auto;padding:0 max(16px,4vw) clamp(48px,10vh,110px);display:grid;gap:18px}
+.c{max-width:1280px;width:100%;margin:0 auto;padding:0 max(16px,4vw) clamp(48px,10vh,110px);display:grid;gap:18px}
 .c h1{font-size:clamp(46px,8vw,112px);margin:0;max-width:14ch}
 .c p.l{margin:0;max-width:46ch;font-size:clamp(16px,1.6vw,19px)}
 .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
@@ -119,7 +119,7 @@ NEW = [
   NOHASH + PAUSE_JS, [('film', 'Film', 'film', 'smoke-plume'), ('kicker', 'Kicker', 'text', 'New every Sunday'), ('heading', 'Headline', 'text', 'Recipes filmed like still lifes.'), ('intro', 'Intro', 'long', 'One chef, one dish, ninety quiet seconds. Hands, steam and the final plate, every week.'), ('b1', 'Main button', 'text', 'Watch the latest'), ('b2', 'Second button', 'text', 'See all episodes')],
   'A full-height hero with a muted looping background video that fades into the page colour towards the bottom (a gradient built with color-mix from the background), a kicker, a very large headline, an intro line and two buttons, plus a pause/play button for the film.'),
  ('hero-split', 'Split hero', 'Top', 'Headline and buttons on the left, a framed portrait film on the right with a small caption chip.', '''
-.split{display:grid;grid-template-columns:1.1fr 1fr;gap:clamp(28px,5vw,64px);align-items:center;max-width:1180px;margin:0 auto;padding:clamp(48px,10vh,110px) max(16px,4vw)}
+.split{display:grid;grid-template-columns:1.1fr 1fr;gap:clamp(28px,5vw,64px);align-items:center;max-width:1280px;margin:0 auto;padding:clamp(48px,10vh,110px) max(16px,4vw)}
 .split h1{font-size:clamp(44px,6.4vw,92px);margin:10px 0 18px}
 .split p.l{color:var(--mute);font-size:18px;max-width:42ch;margin:0 0 26px}
 .row{display:flex;gap:10px;flex-wrap:wrap}
@@ -133,7 +133,7 @@ NEW = [
   NOHASH + PAUSE_JS, [('film', 'Film', 'film', 'paper-bird'), ('kicker', 'Kicker', 'text', 'Paper, light and patience'), ('heading', 'Headline', 'text', 'Objects made slowly, filmed carefully.'), ('intro', 'Intro', 'long', 'A small studio making paper sculpture for shop windows, book covers and film.'), ('b1', 'Main button', 'text', 'See the work'), ('b2', 'Second button', 'text', 'Commission a piece'), ('note', 'Caption chip', 'text', 'Now showing: a bird cut from one sheet')],
   'A two-column hero: on the left a kicker, large headline, muted intro and two buttons; on the right a rounded 4:5 frame holding a looping film, with a pause button and a small translucent caption chip with an accent dot. Stacks on phones.'),
  ('statement', 'Statement', 'Story', 'A large paragraph whose words brighten as you read down the page.', '''
-.st{max-width:1180px;margin:0 auto;padding:clamp(80px,16vh,180px) max(16px,4vw)}
+.st{max-width:1280px;margin:0 auto;padding:clamp(80px,16vh,180px) max(16px,4vw)}
 .st p{font-family:var(--head);font-weight:var(--hw);font-style:var(--hs);letter-spacing:var(--track);font-size:clamp(28px,4.4vw,58px);line-height:1.15;margin:0;max-width:24ch;color:var(--mute)}
 .st span{transition:color .35s}.st span.lit{color:var(--ink)}''',
   '<section class="st"><p class="k" style="margin-bottom:22px">{{kicker}}</p><p data-words>{{text}}</p></section>',

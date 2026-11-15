@@ -6,17 +6,18 @@ HEAD='''<!doctype html><html lang="en" data-style="noir"><head><meta charset="ut
 /* Four interchangeable styles. Pick one with data-style on <html>, or delete the ones you don't need. */
 :root,[data-style=noir]{{--bg:#16120F;--surface:#211B16;--ink:#F3EADB;--mute:#B3A592;--line:#3B3129;--accent:#E2A24A;--on-accent:#1A120A;--head:Fraunces,Georgia,serif;--body:'DM Sans',system-ui,sans-serif;--hw:400;--hs:normal;--radius:14px;--track:-.02em;color-scheme:dark}}
 [data-style=paper]{{--bg:#F6F0E6;--surface:#FFFBF4;--ink:#231C15;--mute:#6A5D4E;--line:#E3D7C4;--accent:#9A5B12;--on-accent:#FFFFFF;--accent-ink:#8A520C;--head:Fraunces,Georgia,serif;--body:'DM Sans',system-ui,sans-serif;--hw:400;--hs:normal;--radius:14px;--track:-.02em;color-scheme:light}}
-[data-style=studio]{{--bg:#F4F5F8;--surface:#FFFFFF;--ink:#1C1F2A;--mute:#5E6476;--line:#E1E4EC;--accent:#5B2DFF;--on-accent:#FFFFFF;--head:'Cormorant Garamond',Georgia,serif;--body:Inter,system-ui,sans-serif;--hw:500;--hs:italic;--radius:16px;--track:-.01em;color-scheme:light}}
+[data-style=studio]{{--bg:#F5F5F3;--surface:#FFFFFF;--ink:#16171B;--mute:#5E6270;--line:#E2E2DE;--accent:#16171B;--on-accent:#FFFFFF;--head:'Cormorant Garamond',Georgia,serif;--body:Inter,system-ui,sans-serif;--hw:500;--hs:italic;--radius:16px;--track:-.01em;color-scheme:light}}
 [data-style=signal]{{--bg:#05070B;--surface:#0C1119;--ink:#EAF0F8;--mute:#93A0B4;--line:#1C2533;--accent:#7CF0FF;--on-accent:#04121A;--head:'Space Grotesk',Inter,sans-serif;--body:Inter,system-ui,sans-serif;--hw:500;--hs:normal;--radius:18px;--track:-.03em;color-scheme:dark}}
 *{{box-sizing:border-box}}html,body{{margin:0}}
-body{{background:var(--bg);color:var(--ink);font:16px/1.6 var(--body);-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}}
+body{{background:var(--bg);color:var(--ink);font:17px/1.6 var(--body);-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}}
 a{{color:inherit}}button,input,textarea,select{{font:inherit;color:inherit}}
 :focus-visible{{outline:2px solid var(--accent);outline-offset:3px}}
-.h{{font-family:var(--head);font-weight:var(--hw);font-style:var(--hs);letter-spacing:var(--track);line-height:1.02;text-wrap:balance}}
+.h{{font-family:var(--head);font-weight:var(--hw);font-style:var(--hs);letter-spacing:var(--track);line-height:1;text-wrap:balance}}
 .k{{font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--accent-ink,var(--accent))}}
-.btn{{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 20px;border-radius:calc(var(--radius) * .7);border:1px solid var(--line);background:var(--surface);font-weight:600;font-size:15px;text-decoration:none;cursor:pointer}}
+.btn{{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:0 26px;border-radius:calc(var(--radius) * 3);border:1px solid var(--line);background:var(--surface);font-weight:600;font-size:16px;text-decoration:none;cursor:pointer;transition:transform .25s cubic-bezier(.2,.8,.2,1),background .2s,border-color .2s}}
+.btn:hover{{transform:translateY(-2px);border-color:var(--ink)}}.btn:active{{transform:none}}
 .btn.p{{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}}
-.wrap{{max-width:1180px;margin:0 auto;padding:clamp(56px,10vh,110px) max(16px,4vw)}}
+.wrap{{max-width:1280px;margin:0 auto;padding:clamp(64px,12vh,140px) max(16px,4vw)}}
 .styles{{position:fixed;right:max(12px,env(safe-area-inset-right));bottom:12px;z-index:50;display:flex;gap:2px;padding:4px;border-radius:999px;background:rgba(128,128,128,.18);backdrop-filter:blur(10px);font:500 12px/1 system-ui,sans-serif}}
 .styles button{{border:0;background:transparent;color:var(--ink);padding:9px 11px;border-radius:999px;cursor:pointer;min-height:32px}}
 .styles button[aria-pressed=true]{{background:var(--ink);color:var(--bg)}}
@@ -188,7 +189,7 @@ S['sec-footer']=('Big wordmark footer','''
 body{display:flex;flex-direction:column;min-height:100vh}
 .spacer{flex:1;display:grid;place-items:center;color:var(--mute);padding:40px 16px;text-align:center}
 footer{border-top:1px solid var(--line);background:var(--surface);overflow:hidden}
-.in{max-width:1180px;margin:0 auto;padding:clamp(48px,8vh,80px) max(16px,4vw) 0}
+.in{max-width:1280px;margin:0 auto;padding:clamp(48px,8vh,80px) max(16px,4vw) 0}
 .cols{display:grid;grid-template-columns:minmax(0,1.6fr) repeat(3,minmax(0,1fr));gap:32px}
 .news h3{font-family:var(--head);font-weight:var(--hw);font-style:var(--hs);letter-spacing:var(--track);font-size:30px;line-height:1.1;margin:0 0 14px}
 .news form{display:flex;gap:8px;max-width:380px}
@@ -288,7 +289,7 @@ MORE = [
 
  ('nav-center', 'Centred navigation', 'Navigation', 'Brand in the middle, links either side, and a menu button that opens a panel on phones.', '''
 .bar{background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-.in{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:20px;padding:12px max(16px,4vw)}
+.in{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:20px;padding:12px max(16px,4vw)}
 .l,.r{display:flex;gap:22px;font-size:15px}.r{justify-content:flex-end;align-items:center}
 .l a,.r a:not(.btn){text-decoration:none;color:var(--mute)}.l a:hover,.r a:not(.btn):hover{color:var(--ink)}
 .logo{font-family:var(--head);font-weight:var(--hw);font-style:var(--hs);font-size:28px;letter-spacing:var(--track);text-decoration:none;text-align:center}
@@ -318,7 +319,7 @@ MORE = [
   'A centred hero: a pill link with a small accent badge, a very large balanced headline, a muted intro, two buttons and a proof line beside three overlapping round avatars.'),
 
  ('hero-kinetic', 'Kinetic type hero', 'Heroes', 'A huge headline whose last word cycles through a list, rolling up like a split-flap.', '''
-.kh{max-width:1180px;margin:0 auto;padding:clamp(80px,16vh,170px) max(16px,4vw) clamp(56px,10vh,110px);display:grid;gap:26px}
+.kh{max-width:1280px;margin:0 auto;padding:clamp(80px,16vh,170px) max(16px,4vw) clamp(56px,10vh,110px);display:grid;gap:26px}
 .kh h1{font-size:clamp(46px,9vw,140px);margin:0;line-height:.98}
 .roll{display:inline-grid;vertical-align:bottom;overflow:hidden;height:1.06em;color:var(--accent-ink,var(--accent))}
 .roll span{grid-area:1/1;white-space:nowrap;transform:translateY(105%);transition:transform .7s cubic-bezier(.7,0,.2,1)}
@@ -334,7 +335,7 @@ setInterval(()=>{const a=W[i];i=(i+1)%W.length;const b=W[i];a.classList.remove('
   'A left-aligned hero with an enormous headline whose final word rolls vertically through a list every two seconds (slot-machine style, overflow hidden, accent colour); static first word under reduced motion; the full word list is available to screen readers.'),
 
  ('hero-3d', '3D card stack hero', 'Heroes', 'Copy on the left, three image cards fanned in 3D on the right that tilt towards the pointer.', '''
-.h3{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,5vw,64px);align-items:center;max-width:1180px;margin:0 auto;padding:clamp(56px,12vh,130px) max(16px,4vw)}
+.h3{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,5vw,64px);align-items:center;max-width:1280px;margin:0 auto;padding:clamp(56px,12vh,130px) max(16px,4vw)}
 .h3 h1{font-size:clamp(42px,6.4vw,90px);margin:12px 0 18px}
 .h3 p.l{color:var(--mute);font-size:18px;max-width:42ch;margin:0 0 26px}
 .row{display:flex;gap:10px;flex-wrap:wrap}
@@ -354,7 +355,7 @@ s.parentNode.addEventListener('pointerleave',()=>{r.style.transform=''});''',
   'A two-column hero: copy and buttons on the left; on the right three 4:5 image cards layered in CSS 3D (preserve-3d, translateZ offsets, slight rotations) inside a perspective stage that tilts towards the pointer and rests when it leaves; still under reduced motion.'),
 
  ('hero-video', 'Video showcase hero', 'Heroes', 'A centred headline above a large rounded film frame, like a product reveal.', '''
-.hv{max-width:1180px;margin:0 auto;padding:clamp(64px,12vh,130px) max(16px,4vw) clamp(40px,8vh,80px);display:grid;gap:22px;justify-items:center;text-align:center}
+.hv{max-width:1280px;margin:0 auto;padding:clamp(64px,12vh,130px) max(16px,4vw) clamp(40px,8vh,80px);display:grid;gap:22px;justify-items:center;text-align:center}
 .hv h1{font-size:clamp(40px,6.6vw,92px);margin:0;max-width:16ch}
 .hv p.l{margin:0;max-width:54ch;color:var(--mute);font-size:18px}
 .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
@@ -415,7 +416,7 @@ s.parentNode.addEventListener('pointerleave',()=>{r.style.transform=''});''',
 
  ('stats', 'Stats band', 'Proof', 'Four big numbers that count up when they come into view.', '''
 .sb{border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.sb ul{list-style:none;margin:0 auto;padding:clamp(40px,8vh,80px) max(16px,4vw);max-width:1180px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}
+.sb ul{list-style:none;margin:0 auto;padding:clamp(40px,8vh,80px) max(16px,4vw);max-width:1280px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}
 .sb li{min-width:0}.sb b{display:block;font-family:var(--head);font-weight:var(--hw);font-style:var(--hs);letter-spacing:var(--track);font-size:clamp(32px,4.4vw,64px);line-height:1.05;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 .sb span{color:var(--mute);font-size:15px}
 @media (max-width:760px){.sb ul{grid-template-columns:1fr 1fr}}''',
@@ -564,7 +565,7 @@ a.card:hover img{transform:scale(1.04)}
 
  ('cta-band', 'Call-to-action band', 'Endings', 'A full-width accent band with a headline and one button.', '''
 .cb{background:var(--accent);color:var(--on-accent)}
-.cb .in{max-width:1180px;margin:0 auto;padding:clamp(48px,9vh,90px) max(16px,4vw);display:flex;gap:24px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.cb .in{max-width:1280px;margin:0 auto;padding:clamp(48px,9vh,90px) max(16px,4vw);display:flex;gap:24px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .cb h2{margin:0;font-size:clamp(30px,4.4vw,56px);max-width:20ch}
 .cb .btn{background:var(--on-accent);color:var(--accent);border-color:var(--on-accent);min-height:52px;padding:0 26px}''',
   '<section class="cb"><div class="in"><h2 class="h">{{heading}}</h2><a class="btn" href="#">{{button}}</a></div></section>', NOHASH_M,
@@ -698,7 +699,7 @@ T.forEach((t,i)=>{t.onclick=()=>pick(i);t.onkeydown=e=>{const n=T.length;let j=n
 
  ('spacer', 'Spacer and divider', 'Content', 'Breathing room between sections, with an optional line or ornament.', '''
 .sp{display:grid;place-items:center;padding:clamp(24px,6vh,64px) max(16px,4vw)}
-.sp hr{width:min(1180px,100%);border:0;height:1px;background:var(--line);margin:0}
+.sp hr{width:min(1280px,100%);border:0;height:1px;background:var(--line);margin:0}
 .sp p{margin:0;color:var(--accent);letter-spacing:.6em;font-size:14px}''',
   '<div class="sp" aria-hidden="true">{{ornament}}<hr></div>', r'''const p=root.querySelector('.sp');const t=p.firstChild;if(t&&t.nodeType===3&&t.textContent.trim()){const e=document.createElement('p');e.textContent=t.textContent;t.replaceWith(e);root.querySelector('hr').remove()}''',
   [('ornament', 'Ornament (leave empty for a line)', 'text', '')],
@@ -706,12 +707,12 @@ T.forEach((t,i)=>{t.onclick=()=>pick(i);t.onkeydown=e=>{const n=T.length;let j=n
 
  ('footer-columns', 'Column footer', 'Endings', 'Brand and a line, four link columns, social links and a legal row.', '''
 .ft{border-top:1px solid var(--line);margin-top:clamp(40px,8vh,80px)}
-.ft .in{max-width:1180px;margin:0 auto;padding:clamp(48px,8vh,80px) max(16px,4vw) 28px;display:grid;grid-template-columns:1.4fr repeat(3,1fr);gap:32px}
+.ft .in{max-width:1280px;margin:0 auto;padding:clamp(48px,8vh,80px) max(16px,4vw) 28px;display:grid;grid-template-columns:1.4fr repeat(3,1fr);gap:32px}
 .ft .logo{font-family:var(--head);font-weight:var(--hw);font-style:var(--hs);font-size:30px;letter-spacing:var(--track);margin:0 0 10px}
 .ft p{margin:0;color:var(--mute);max-width:32ch;font-size:15px}
 .ft h3{margin:0 0 12px;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);font-weight:600}
 .ft ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}.ft ul a{text-decoration:none;font-size:15px}.ft ul a:hover{text-decoration:underline}
-.legal{max-width:1180px;margin:0 auto;padding:18px max(16px,4vw) 32px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;color:var(--mute);font-size:13px;border-top:1px solid var(--line)}
+.legal{max-width:1280px;margin:0 auto;padding:18px max(16px,4vw) 32px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;color:var(--mute);font-size:13px;border-top:1px solid var(--line)}
 .soc{display:flex;gap:10px}.soc a{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center}.soc svg{width:18px;height:18px}
 @media (max-width:760px){.ft .in{grid-template-columns:1fr 1fr}.ft .in>div:first-child{grid-column:1/-1}}''',
   '<footer class="ft"><div class="in"><div><p class="logo">{{brand}}</p><p>{{line}}</p></div><div><h3>{{c1}}</h3><ul>{{each:links1}}<li><a href="#">{{0}}</a></li>{{/each}}</ul></div><div><h3>{{c2}}</h3><ul>{{each:links2}}<li><a href="#">{{0}}</a></li>{{/each}}</ul></div><div><h3>{{c3}}</h3><ul>{{each:links3}}<li><a href="#">{{0}}</a></li>{{/each}}</ul></div></div><div class="legal"><span>© 2026 {{brand}}. {{legal}}</span><span class="soc"><a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r=".8" fill="currentColor"/></svg></a><a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="2.5" y="5.5" width="19" height="13" rx="4"/><path d="M10 9.5v5l4.5-2.5z" fill="currentColor"/></svg></a><a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 9h3v10H5zM6.5 4.5a1.8 1.8 0 1 1 0 3.6 1.8 1.8 0 0 1 0-3.6zM10 9h2.9v1.4c.4-.8 1.5-1.6 3-1.6 3.1 0 3.6 2 3.6 4.6V19h-3v-4.9c0-1.2 0-2.6-1.6-2.6s-1.9 1.2-1.9 2.5v5H10z"/></svg></a></span></div></footer>', NOHASH_M,
@@ -730,7 +731,7 @@ MORE += [
   'A page header: small uppercase kicker, a very large balanced headline in the heading font and a muted one-line intro, generous space above.'),
 
  ('hero-image', 'Image hero', 'Heroes', 'Headline and buttons beside a tall framed image from the atlas or your own upload.', '''
-.hi{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(28px,5vw,72px);align-items:center;max-width:1180px;margin:0 auto;padding:clamp(48px,9vh,100px) max(16px,4vw)}
+.hi{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(28px,5vw,72px);align-items:center;max-width:1280px;margin:0 auto;padding:clamp(48px,9vh,100px) max(16px,4vw)}
 .hi h1{font-size:clamp(42px,6vw,88px);margin:10px 0 18px}.hi p.l{color:var(--mute);font-size:18px;max-width:44ch;margin:0 0 26px}
 .row{display:flex;gap:10px;flex-wrap:wrap}.hi figure{margin:0;aspect-ratio:4/5;border-radius:calc(var(--radius) * 1.6);overflow:hidden;background:var(--surface);box-shadow:0 40px 80px -44px rgba(0,0,0,.5)}.hi img{width:100%;height:100%;object-fit:cover;display:block}
 @media (max-width:820px){.hi{grid-template-columns:1fr}.hi figure{aspect-ratio:4/3}}''',
@@ -831,4 +832,89 @@ function tick(){if(isNaN(T))return;let s=Math.max(0,Math.floor((T-Date.now())/10
 tick();if(!R)setInterval(tick,1000);else setInterval(tick,60000);root.querySelectorAll('a[href="#"]').forEach(a=>a.onclick=e=>e.preventDefault());''',
   [('kicker', 'Kicker', 'text', 'Save the date'), ('heading', 'Headline', 'text', 'The doors open soon.'), ('intro', 'Intro', 'long', 'Two days of talks, workshops and good food in the old mill.'), ('date', 'Date (YYYY-MM-DD)', 'text', '2027-06-14'), ('button', 'Button', 'text', 'Get tickets')],
   'A centred countdown: kicker, headline, intro, a row of four bordered tiles (days, hours, minutes, seconds in large tabular figures with small caps labels) and a primary button. Seconds stop ticking under reduced motion.'),
+]
+
+
+# ---- Larger, quieter layouts (added 2026-11-15): big type, wide pictures, hairlines instead of boxed cards ----
+_NOHASH = 'root.querySelectorAll(\'a[href="#"]\').forEach(a=>a.onclick=e=>e.preventDefault());'
+_RV_CSS = '[data-rv]{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .8s cubic-bezier(.2,.8,.2,1)}[data-rv].in{opacity:1;transform:none}'
+_RV_JS = "const R=matchMedia('(prefers-reduced-motion: reduce)').matches;const items=root.querySelectorAll('[data-rv]');\nif(R||!('IntersectionObserver' in window)){items.forEach(x=>x.classList.add('in'))}else{const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});items.forEach(x=>io.observe(x))}"
+MORE += [
+ ('hero-big', 'Big type hero', 'Heroes', 'A headline as wide as the page, a short intro with two buttons, then one wide picture.', '''
+.hb{max-width:1440px;margin:0 auto;padding:clamp(24px,4vh,48px) max(16px,4vw) clamp(40px,8vh,96px)}
+.top{display:flex;justify-content:space-between;gap:16px;align-items:baseline;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:clamp(22px,4vh,48px);font-size:14px;color:var(--mute)}
+.top .k{margin:0}
+.hb h1{font-size:clamp(50px,11.2vw,180px);line-height:.92;margin:0 0 clamp(24px,4vh,48px);max-width:13ch}
+.mid{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px 48px;align-items:end;margin-bottom:clamp(28px,5vh,60px)}
+.mid p{margin:0;font-size:clamp(18px,1.6vw,22px);line-height:1.45;color:var(--mute);max-width:46ch}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.hb figure{margin:0;aspect-ratio:16/8;border-radius:calc(var(--radius) * 1.4);overflow:hidden;background:var(--surface)}
+.hb img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.05);transition:transform 1.4s cubic-bezier(.2,.8,.2,1)}
+.hb figure.in img{transform:none}
+@media (max-width:760px){.mid{grid-template-columns:1fr}.hb figure{aspect-ratio:4/3}.top span:last-child{display:none}}''',
+  '<section class="hb"><div class="top"><p class="k">{{kicker}}</p><span>{{note}}</span></div><h1 class="h">{{heading}}</h1><div class="mid"><p>{{intro}}</p><div class="row"><a class="btn p" href="#">{{b1}}</a><a class="btn" href="#">{{b2}}</a></div></div><figure><img src="{{A}}{{img}}" alt="{{alt}}"></figure></section>',
+  _NOHASH + "const f=root.querySelector('figure');if(matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window))f.classList.add('in');else{const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){f.classList.add('in');io.disconnect()}}),{threshold:.1});io.observe(f)}",
+  [('kicker', 'Kicker', 'text', 'Design studio'), ('note', 'Small note, top right', 'text', 'Leeds · Since 2016'), ('heading', 'Headline', 'text', 'We build products people keep.'), ('intro', 'Intro', 'long', 'Strategy, design and engineering in one small team, from the first sketch to the thousandth release.'), ('b1', 'Main button', 'text', 'See the work'), ('b2', 'Second button', 'text', 'Get in touch'), ('img', 'Image', 'image', 'photos/workspace-laptop-on-desk-book-stacks.webp'), ('alt', 'Image description', 'text', 'A laptop on a desk between stacks of books')],
+  'A hero led by type: a thin top row with a kicker on the left and a small note on the right over a hairline, then a headline set very large (up to 180px) across the full width, a row with a muted intro on the left and two buttons on the right, and one wide rounded 16:8 picture that settles into place as it appears.'),
+ ('hero-type', 'Statement hero', 'Heroes', 'Words only: a very large headline, an intro with two buttons and three facts on a hairline.', '''
+.ht{max-width:1440px;margin:0 auto;padding:clamp(56px,12vh,150px) max(16px,4vw) clamp(40px,7vh,80px)}
+.ht h1{font-size:clamp(46px,9.2vw,150px);line-height:.95;margin:16px 0 clamp(24px,4vh,48px);max-width:15ch}
+.lead{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px 48px;align-items:end}
+.lead p{margin:0;font-size:clamp(18px,1.6vw,22px);line-height:1.45;color:var(--mute);max-width:48ch}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.facts{list-style:none;margin:clamp(44px,9vh,104px) 0 0;padding:22px 0 0;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+.facts b{display:block;font-family:var(--head);font-weight:var(--hw);font-style:var(--hs);font-size:clamp(28px,3.4vw,50px);letter-spacing:var(--track);line-height:1.05;margin-bottom:6px}
+.facts span{color:var(--mute);font-size:15px}
+@media (max-width:760px){.lead{grid-template-columns:1fr}.facts{grid-template-columns:1fr;gap:18px}}''',
+  '<section class="ht"><p class="k">{{kicker}}</p><h1 class="h">{{heading}}</h1><div class="lead"><p>{{intro}}</p><div class="row"><a class="btn p" href="#">{{b1}}</a><a class="btn" href="#">{{b2}}</a></div></div><ul class="facts">{{each:facts}}<li><b>{{0}}</b><span>{{1}}</span></li>{{/each}}</ul></section>',
+  _NOHASH,
+  [('kicker', 'Kicker', 'text', 'Customer research, sorted'), ('heading', 'Headline', 'text', 'Find the signal in every call.'), ('intro', 'Intro', 'long', 'Signal listens to customer calls, pulls out what people asked for and threads it into your roadmap.'), ('b1', 'Main button', 'text', 'Start free'), ('b2', 'Second button', 'text', 'See how it works'), ('facts', 'Facts (figure | label)', 'list', '4,200 | teams use it every week\n38 min | saved on each call write-up\n4.8 / 5 | average rating')],
+  'A hero with no picture: a kicker, a very large left-aligned headline (up to 150px), a row with a muted intro on the left and two buttons on the right, then three facts in a row over a hairline, each a large figure in the heading font with a small muted label.'),
+ ('work-grid', 'Work grid', 'Content', 'Large pictures in two staggered columns, each with a title and a tag underneath.', '''
+.hd{display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap;margin-bottom:clamp(28px,5vh,60px)}
+.wg h2{font-size:clamp(34px,5.4vw,84px);margin:10px 0 0;max-width:14ch}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(32px,4.4vw,64px) clamp(16px,2.4vw,36px);list-style:none;margin:0;padding:0}
+.grid li:nth-child(even){margin-top:clamp(0px,8vw,120px)}
+.grid a{display:block;text-decoration:none}
+.grid figure{margin:0 0 14px;aspect-ratio:4/5;border-radius:var(--radius);overflow:hidden;background:var(--surface)}
+.grid img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .9s cubic-bezier(.2,.8,.2,1)}
+.grid a:hover img,.grid a:focus-visible img{transform:scale(1.045)}
+.cap{display:flex;justify-content:space-between;gap:12px;align-items:baseline;border-top:1px solid var(--line);padding-top:12px}
+.cap b{font-family:var(--head);font-weight:var(--hw);font-style:var(--hs);font-size:clamp(20px,2vw,30px);letter-spacing:var(--track);line-height:1.1}
+.cap span{color:var(--mute);font-size:14px;white-space:nowrap}
+@media (max-width:700px){.grid{grid-template-columns:1fr}.grid li:nth-child(even){margin-top:0}.grid figure{aspect-ratio:4/3}}
+''' + _RV_CSS,
+  '<section class="wrap wg"><div class="hd"><div><p class="k">{{kicker}}</p><h2 class="h">{{heading}}</h2></div><a class="btn" href="#">{{button}}</a></div><ul class="grid">{{each:items}}<li data-rv><a href="#"><figure><img src="{{A}}{{0}}" alt="{{1}}" loading="lazy"></figure><div class="cap"><b>{{1}}</b><span>{{2}}</span></div></a></li>{{/each}}</ul></section>',
+  _NOHASH + _RV_JS,
+  [('kicker', 'Kicker', 'text', 'Selected work'), ('heading', 'Headline', 'text', 'Recent projects.'), ('button', 'Button', 'text', 'All work'), ('items', 'Projects (image | title | tag)', 'list', 'photos/workspace-laptop-and-books.webp | Larder | Brand and website\nphotos/tech-statistics-on-a-laptop.webp | Ember | Product design\nphotos/office-on-the-shelf.webp | Olive Row | Identity\nphotos/workspace-desktop-after-work.webp | Kettle & Co | App')],
+  'A work section: a kicker and large heading on the left with an outline button on the right, then projects in two columns where the right column starts lower than the left. Each project is a tall rounded 4:5 picture that zooms slightly on hover, with the title in the heading font and a small muted tag on a hairline underneath. One column on phones.'),
+ ('list-rows', 'Numbered list', 'Features', 'Services or steps as large numbered rows divided by hairlines, with no boxes.', '''
+.lr h2{font-size:clamp(34px,5vw,72px);margin:10px 0 clamp(24px,5vh,56px);max-width:16ch}
+.rows{list-style:none;margin:0;padding:0;counter-reset:r;border-top:1px solid var(--line)}
+.rows li{counter-increment:r;display:grid;grid-template-columns:clamp(44px,8vw,120px) minmax(0,1fr) minmax(0,1.1fr);gap:8px 24px;align-items:baseline;padding:clamp(20px,3.4vh,38px) 0;border-bottom:1px solid var(--line);transition:padding .35s cubic-bezier(.2,.8,.2,1)}
+.rows li::before{content:counter(r,decimal-leading-zero);font-size:14px;color:var(--mute);font-variant-numeric:tabular-nums}
+.rows h3{margin:0;font-family:var(--head);font-weight:var(--hw);font-style:var(--hs);letter-spacing:var(--track);font-size:clamp(26px,3.4vw,52px);line-height:1.05}
+.rows p{margin:0;color:var(--mute);font-size:17px;max-width:52ch}
+@media (hover:hover){.rows li:hover{padding-left:14px}}
+@media (max-width:760px){.rows li{grid-template-columns:40px minmax(0,1fr)}.rows p{grid-column:2}}''',
+  '<section class="wrap lr"><p class="k">{{kicker}}</p><h2 class="h">{{heading}}</h2><ol class="rows">{{each:items}}<li><h3>{{0}}</h3><p>{{1}}</p></li>{{/each}}</ol></section>',
+  '',
+  [('kicker', 'Kicker', 'text', 'What we do'), ('heading', 'Headline', 'text', 'One team, the whole journey.'), ('items', 'Rows (title | text)', 'list', 'Research | Interviews, audits and prototypes that settle arguments early.\nDesign | Brand, interface and motion that feel like one thing.\nEngineering | Fast, accessible web and mobile apps that last.\nGrowth | Measured launches and the improvements that follow.')],
+  'A list section with no cards: a kicker and large heading, then numbered rows separated by hairlines. Each row has a small two-digit number, a large title in the heading font and a muted sentence to the right; rows nudge right on hover. On phones the sentence sits under the title.'),
+ ('split-sticky', 'Sticky split', 'Features', 'A heading that stays in view on the left while a list of points scrolls on the right.', '''
+.ss{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(28px,6vw,96px);align-items:start}
+.l{position:sticky;top:96px}
+.ss h2{font-size:clamp(34px,4.8vw,68px);margin:10px 0 16px}
+.l p{color:var(--mute);font-size:18px;max-width:40ch;margin:0 0 26px}
+.its{list-style:none;margin:0;padding:0;display:grid}
+.its li{padding:clamp(22px,4vh,42px) 0;border-top:1px solid var(--line)}
+.its li:last-child{border-bottom:1px solid var(--line)}
+.its h3{margin:0 0 8px;font-size:clamp(20px,2vw,26px);line-height:1.2}
+.its p{margin:0;color:var(--mute);font-size:17px;max-width:54ch}
+@media (max-width:820px){.ss{grid-template-columns:1fr}.l{position:static}}
+''' + _RV_CSS,
+  '<section class="wrap ss"><div class="l"><p class="k">{{kicker}}</p><h2 class="h">{{heading}}</h2><p>{{intro}}</p><a class="btn p" href="#">{{button}}</a></div><ul class="its">{{each:items}}<li data-rv><h3>{{0}}</h3><p>{{1}}</p></li>{{/each}}</ul></section>',
+  _NOHASH + _RV_JS,
+  [('kicker', 'Kicker', 'text', 'How we work'), ('heading', 'Headline', 'text', 'Fewer projects, done properly.'), ('intro', 'Intro', 'long', 'We take on a handful of projects a year so each one gets a senior team from start to finish.'), ('button', 'Button', 'text', 'Start a project'), ('items', 'Points (title | text)', 'list', 'You talk to the people who build it | No account managers in between; the designer and engineer are in every call.\nWeekly releases you can click | Something real to try every Friday, not a slide deck.\nFixed price, agreed up front | We scope in two weeks and hold the number.\nWe stay after launch | Measure, learn and improve together for as long as it helps.')],
+  'A two-column section: on the left a kicker, large heading, muted intro and a primary button that stay pinned while you scroll; on the right a list of points divided by hairlines, each a bold title and a muted sentence, fading up as they appear. Stacks on phones.'),
 ]

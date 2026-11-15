@@ -12,6 +12,28 @@ states, the serverless API, and the project's own Playwright gate.
 heading order, missing alt text, sideways scroll, text under 11 px, fonts, corner radii and page background. Console
 errors were attributed per page. Suspicious readings were checked by eye before being reported.
 
+## Eleventh pass: site builder look, start screen, picker and templates (15 November)
+
+Asked for: "not just the navigation but the whole look, layout, templates etc of the tool itself", with awwwards.com as the reference. Taken from the awwwards gallery and its winners: large borderless picture tiles, one bar of pill filters with search, bold plain headings, black pill buttons, very large type, hairlines instead of boxed cards. Nothing of theirs was copied.
+
+**What was wrong, measured.** All 26 templates were looked at together. Most home pages followed one run (hero, proof, cards, quote, call to action); seven had a stats band followed by boxed feature cards. Eight opened on a generated film. Several pictures did not fit the subject (a budgeting app shown with a desk of design books; a food charity with a latte). On the start screen "Start another way" was 2,274px down, under all 26 templates.
+
+| Area | Before | After |
+|---|---|---|
+| Start screen | Capped at 88% of the window; four-column boxed cards; ways to start at the bottom | Full page; a large heading; the ways to start in one row under it; "Your sites" as large tiles; templates in three columns of borderless thumbnails with category pills and a new search |
+| Template detail | Small preview | Large preview, "Use this template" as the main button, every page as a thumbnail |
+| Section picker | A 620px-high box, four columns of small boxed cards, category chips in a row | Near full height, categories with counts down the left, three columns of large live previews, an Add pill on hover and focus |
+| Section designs | 16px body, 46px buttons, 1180px column | 17px body, 52px buttons that follow each style's corner radius, 1280px column, more space between sections |
+| New sections | | Big type hero, Statement hero, Work grid, Numbered list, Sticky split (61 sections in the library) |
+| Template home pages | Seven on stats then feature cards; eight film heroes | 14 given a new layout and 2 more a new picture (`builder/templates3.js`): type-led and photo-led heroes, numbered lists for boxed cards, work grids. One still has stats then cards; none opens on a generated film |
+| Pictures | Mismatched in five templates | Chosen to match: charts for the budgeting app, a shared table for the charity, a potter's hands for the course, a microphone for the podcast, a starting line for the gym |
+| Default site in the editor | Dark, on a smoke film | Light, on a photograph |
+| Thumbnails | 560 by 350 | 1,000 by 625, all 94 regenerated |
+
+Checked by script in Chrome at 1440, 1024 and 390 wide: all 26 templates render with no script errors and no sideways scroll at 1280 and 390; the start screen, a template's detail, "Use this template", blank site, describe-your-site and brand kit; search and category filters; the picker (focus, search, adding a section, adding after a chosen section, Escape); rename, duplicate and delete of a saved site.
+
+Still open: the inner pages of the templates (services, pricing, contact and so on) keep their earlier compositions; only home pages were re-composed. The four built-in styles and the 144 style choices were not redrawn. The start screen and picker were built by a helper agent and checked afterwards. Not looked at in Safari or on a real phone; `tools/site-builder-test.mjs` was not run (Playwright is not installed).
+
 ## Tenth pass: site builder editor rebuilt (15 November)
 
 Asked for: "the site builder needs a complete overhaul". Used first at 1440 by 900 and at 390 by 844. The phone layout was already page-first (page, bottom bar, sheets); the desktop editor was three fixed columns under three stacked bars. The desktop editor now follows the phone's model. No function was removed.
