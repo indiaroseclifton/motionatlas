@@ -115,3 +115,6 @@ main .foldTool{scroll-margin-top:calc(var(--sb-h,44px) + 16px)}
 /* UI components: the lab is folded into one row; its own title block is the row's label now */
 main .foldTool>.clab{margin:0;padding:20px 18px}
 main .foldTool>.clab>.clab-head{display:none}
+.viewertransport input[type=checkbox]{width:20px;height:20px;flex:none;margin:0;accent-color:#fff}.viewertransport label{display:inline-flex;align-items:center;gap:8px;min-height:44px}
+/* overview on phones: the eight tool cards sit in one swipeable row instead of a 3,000px stack */
+@media(max-width:640px){#home .vmaBuild{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-left:var(--gutter);margin-inline:calc(var(--gutter)*-1);padding:0 var(--gutter) 6px;scrollbar-width:none;overscroll-behavior-x:contain}#home .vmaBuild::-webkit-scrollbar{display:none}#home .vmaBuild>.vmaBuildCard{flex:0 0 78%;scroll-snap-align:start}}

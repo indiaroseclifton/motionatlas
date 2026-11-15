@@ -95,7 +95,7 @@ css = f"""/* ===================================================================
 {P} main .page>[role=status]:not(:empty){{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim)}}
 
 /* ---------- Controls ---------- */
-{P} main :is(input:not([type=range]):not([type=checkbox]):not([type=radio]):not([type=color]):not([type=file]),select,textarea){X}{{background:var(--field)!important;color:var(--text)!important;border:1px solid var(--hair)!important;border-radius:10px!important;font-family:var(--f-body);min-height:42px;box-shadow:0 1px 0 rgba(13,18,32,.03);transition:border-color .2s,box-shadow .2s}}
+{P} main :is(input:not([type=range]):not([type=checkbox]):not([type=radio]):not([type=color]):not([type=file]),select,textarea){X}{{background-color:var(--field)!important;color:var(--text)!important;border:1px solid var(--hair)!important;border-radius:10px!important;font-family:var(--f-body);min-height:42px;box-shadow:0 1px 0 rgba(13,18,32,.03);transition:border-color .2s,box-shadow .2s}}
 {P} main :is(input,select,textarea){X}:hover{{border-color:var(--hair-hi)!important}}
 {P} main :is(input,select,textarea){X}:focus{{outline:none;border-color:var(--plate-d)!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--plate-d) 18%,transparent)}}
 {P} main input[type=range]{X}{{accent-color:var(--plate-d)}}

@@ -25,7 +25,7 @@
 #motion .studyRiver .kitField,#motion .studyRiver .kitChecks{color:var(--text,#0d1220)}
 #motion .studyRiver .kitField output{color:var(--text-dim,#4a5466)}
 #motion .studyRiver .kitField input[type=range],#motion .studyRiver .kitChecks input{accent-color:#111113}
-#motion .studyRiver .kitField select{background:#fff!important;color:var(--text,#0d1220)!important;border-color:var(--hair,#d9dee6);color-scheme:light}
+#motion .studyRiver .kitField select{background-color:#fff!important;color:var(--text,#0d1220)!important;border-color:var(--hair,#d9dee6);color-scheme:light}
 #motion .studyRiver .kitCopy{border-color:var(--hair,#d9dee6);background:#fff;color:var(--text,#0d1220)}
 #motion .studyRiver .kitCopy:hover{background:#fff;border-color:#111113}
 #motion .studyRiver .kitStatus,#motion .studyRiver .kitPrompt{color:var(--text-dim,#4a5466)}
@@ -47,3 +47,4 @@
 #motion .riverRow.isWide .riverText{margin:0;max-width:none;left:auto;right:auto}
 #motion .studyRiver>.pgMore{padding-top:8px}
 #motion .umGrid>.pgMore{grid-column:1/-1;margin:0}
+#motion .studyRiver .kitChecks label{min-height:44px}#motion .studyRiver .kitChecks input{width:20px;height:20px;flex:none;margin:0}

@@ -78,3 +78,4 @@
 
 /* live demos: wrappers that carry an inline max-width take it, instead of shrinking to their content */
 .clab-livebox>[style*="max-width"],.clDemoStage>[style*="max-width"]{width:min(380px,100%)}
+.clab-check{min-height:44px}.clab-check input{width:20px;height:20px;flex:none;margin:0;accent-color:#111113}

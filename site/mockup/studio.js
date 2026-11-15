@@ -4,6 +4,13 @@
    Every size is laid out from relative units, so the preview, the size strip and each export preset all come
    from the same function. Images stay in this browser (IndexedDB); nothing is uploaded. */
 (()=>{
+/* Safari has no canvas filter, so there the blur is made by shrinking the picture in halves and drawing it back up */
+function blurDraw(x,i,dx,dy,dw,dh,r,force){if(!(r>0)||('filter' in x&&!force)){x.save();if(r>0)x.filter=`blur(${r}px)`;x.drawImage(i,dx,dy,dw,dh);x.restore();return}
+ const mk=(w,h,from)=>{const t=document.createElement('canvas');t.width=w;t.height=h;const c=t.getContext('2d');c.imageSmoothingQuality='high';c.drawImage(from,0,0,w,h);return t};
+ let w=Math.max(2,Math.round(dw)),h=Math.max(2,Math.round(dh)),src=i,k=r*1.2,n=0;
+ while(k>1&&w>8&&h>8){w=Math.max(2,Math.round(w/2));h=Math.max(2,Math.round(h/2));src=mk(w,h,src);k/=2;n++}
+ for(;n>1;n--){w*=2;h*=2;src=mk(w,h,src)}
+ x.save();x.imageSmoothingEnabled=true;x.imageSmoothingQuality='high';x.drawImage(src,dx,dy,dw,dh);x.restore()}
 const $=id=>document.getElementById(id);
 const DV=window.MockupDevices;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -84,7 +91,7 @@ function drawBg(x,W,H){const b=S.bg,m=Math.min(W,H);x.save();
  if(b.type==='solid'){x.fillStyle=b.solid;x.fillRect(0,0,W,H)}
  else if(b.type==='gradient'){let g;if(b.gType==='radial'){g=x.createRadialGradient(W*.3,H*.25,0,W*.5,H*.5,Math.hypot(W,H)*.65)}else{const a=b.angle*Math.PI/180,r=Math.hypot(W,H)/2,dx=Math.cos(a)*r,dy=Math.sin(a)*r;g=x.createLinearGradient(W/2-dx,H/2-dy,W/2+dx,H/2+dy)}
   b.g.forEach((c,i)=>g.addColorStop(i/(b.g.length-1),c));x.fillStyle=g;x.fillRect(0,0,W,H)}
- else if(b.type==='image'&&IMG.bg){const i=IMG.bg,iw=i.width,ih=i.height,s=Math.max(W/iw,H/ih);if(b.blur>0)x.filter=`blur(${b.blur*m*.04}px)`;const o=b.blur>0?b.blur*m*.08:0;x.drawImage(i,(W-iw*s)/2-o,(H-ih*s)/2-o,iw*s+2*o,ih*s+2*o);x.filter='none';if(b.dim>0){x.fillStyle=`rgba(0,0,0,${b.dim})`;x.fillRect(0,0,W,H)}}
+ else if(b.type==='image'&&IMG.bg){const i=IMG.bg,iw=i.width,ih=i.height,s=Math.max(W/iw,H/ih);const o=b.blur>0?b.blur*m*.08:0;blurDraw(x,i,(W-iw*s)/2-o,(H-ih*s)/2-o,iw*s+2*o,ih*s+2*o,b.blur>0?b.blur*m*.04:0);if(b.dim>0){x.fillStyle=`rgba(0,0,0,${b.dim})`;x.fillRect(0,0,W,H)}}
  else if(b.type==='kit'&&kit()){const k=kit(),t=k.t;let done=false;
   if(b.kitStyle==='signature'&&ThemeKits.BG&&ThemeKits.BG[k.bg]){const c=kitStill(k,W,H);if(c){x.drawImage(c,0,0);done=true;if(b.dim>0){x.fillStyle=`rgba(0,0,0,${b.dim*.8})`;x.fillRect(0,0,W,H)}}}
   if(!done){const g=x.createLinearGradient(0,0,W,H);g.addColorStop(0,t.bg);g.addColorStop(1,t.surface||t.bg);x.fillStyle=g;x.fillRect(0,0,W,H);

@@ -5,6 +5,11 @@
    (body padding-top: var(--sb-h)); full-height editors are fitted below the bar by fit().
    Keyboard: Tab through; Enter/Space opens a menu; Esc closes and returns focus; "/" or Ctrl/Cmd+K opens search. */
 (()=>{
+ /* Fields, for every page and for pages shown inside a frame.
+    Dropdowns: Safari on a Mac ignores height, border and background on a native select and draws its own small control,
+    so each select drops the native look and gets one shared arrow. iPhone: Safari zooms the page when a field with text
+    under 16px takes focus, so fields are 16px there (the @supports test is true only on iOS). */
+ if(!document.getElementById('sbFields')){const f=document.createElement('style');f.id='sbFields';f.textContent=`select:not([multiple]):not([size]){-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none' stroke='%23808797' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1.5 1.5 6 6l4.5-4.5'/%3E%3C/svg%3E")!important;background-repeat:no-repeat!important;background-position:right 11px center!important;background-size:12px 8px!important;padding-right:30px!important;text-overflow:ellipsis}@supports (-webkit-touch-callout:none){input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=file]),select,textarea{font-size:16px!important}}`;document.head.append(f)}
  if(window.__siteBar||document.getElementById('sbar'))return;window.__siteBar=1;
  /* Inside a frame (a study embedded in the animation studio, a page captured by the mockup studio) there is no bar. */
  let framed=false;try{framed=window.self!==window.top}catch(e){framed=true}

@@ -43,7 +43,8 @@ input[type=color]{width:100%;height:36px;border:1px solid var(--hair);border-rad
 input[type=range]{width:100%;accent-color:var(--accent)}
 .row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.check{display:flex;gap:8px;align-items:center;font-size:12.5px}
+.check{display:flex;gap:8px;align-items:center;font-size:12.5px;min-height:44px}
+.check input{width:20px;height:20px;flex:none;margin:0;accent-color:var(--accent)}
 .drop{display:grid;place-items:center;gap:6px;text-align:center;border:1.5px dashed #CBD0DB;border-radius:12px;padding:16px;background:var(--soft);font-size:13px}
 .drop b{font-weight:600}.fileBtn{position:relative;overflow:hidden}.fileBtn input{position:absolute;inset:0;opacity:0;cursor:pointer}
 .fileBtn:focus-within{outline:2px solid var(--accent);outline-offset:2px}
@@ -65,8 +66,8 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 #msStrip button[aria-pressed=true]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
 #msStrip canvas{display:block;max-width:150px;max-height:110px;width:auto;height:auto;border-radius:4px;background:var(--soft)}
 #msStrip b{display:block;font-size:12px;font-weight:600}#msStrip small{font:11px 'JetBrains Mono',monospace;color:var(--mute)}
-.picks{display:grid;gap:4px}.pk{display:flex;gap:10px;align-items:flex-start;padding:6px 4px;border-radius:8px;font-size:13px}.pk:hover{background:var(--soft)}
-.pk input{margin-top:3px;accent-color:var(--accent)}.pk b{display:block;font-weight:600;font-size:12.5px}.pk small{color:var(--mute);font-size:11.5px}
+.picks{display:grid;gap:4px}.pk{display:flex;gap:10px;align-items:flex-start;min-height:32px;padding:6px 4px;border-radius:8px;font-size:13px}.pk:hover{background:var(--soft)}
+.pk input{width:20px;height:20px;flex:none;margin:0;accent-color:var(--accent)}.pk b{display:block;font-weight:600;font-size:12.5px}.pk small{color:var(--mute);font-size:11.5px}
 #msStatus{margin:0;font-size:12.5px;color:var(--mute);min-height:1.4em}
 .toast{position:fixed;left:50%;bottom:20px;transform:translate(-50%,20px);background:var(--ink);color:#fff;padding:10px 14px;border-radius:10px;font-size:13px;opacity:0;pointer-events:none;transition:.2s;z-index:60;max-width:calc(100vw - 32px)}
 .toast.on{opacity:1;transform:translate(-50%,0)}

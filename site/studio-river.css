@@ -53,7 +53,7 @@
 #motion .studyRiver .kitCode code{color:inherit;background:none;padding:0;font:inherit}
 #motion .studyRiver .kitCode:focus-visible{outline:2px solid #e9cf8f;outline-offset:2px}
 #motion .studyRiver .kitActions{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px}
-#motion .studyRiver .kitCopy{justify-self:start;min-height:40px;padding:0 16px;border-radius:999px;border:1px solid rgba(233,221,190,.45);background:transparent;color:#f4ead2;font:600 13px/1 inherit;cursor:pointer}
+#motion .studyRiver .kitCopy{justify-self:start;min-height:40px;padding:0 16px;border-radius:999px;border:1px solid rgba(233,221,190,.45);background:transparent;color:#f4ead2;font-family:inherit;font-size:13px;font-weight:600;line-height:1;cursor:pointer}
 #motion .studyRiver .kitCopy:hover{background:rgba(233,221,190,.1)}
 #motion .studyRiver .kitCopy:focus-visible,#motion .studyRiver .kitPreview:focus-visible{outline:2px solid #e9cf8f;outline-offset:3px}
 #motion .studyRiver .kitPreview{color:#efe2c2;font-size:14px;border-bottom:1px solid rgba(239,226,194,.4);text-decoration:none}
@@ -64,7 +64,7 @@
 /* with its kit open, the whale's text leaves the stage and sits under it, so the panel never runs into the next row */
 #motion .studyRiver .riverRow.isWide:has(.riverKit[open]) .riverText{position:static;margin-top:8px}
 #motion .studyRiver .riverRow.isWide:has(.riverKit[open]) .riverKit[open] .kitBody{background:transparent;padding:6px 0 14px}
-#motion .studyRiver .kitField select{background:#0b0c12!important;color:#f1e6cc!important;-webkit-appearance:menulist;appearance:auto;color-scheme:dark}
+#motion .studyRiver .kitField select{background-color:#0b0c12!important;color:#f1e6cc!important;color-scheme:dark}
 #motion .studyRiver .riverMake{order:2;margin:0;color:#c9c3b6;font-size:15px}
 #motion .studyRiver .riverMake a{color:#f1e1b8;text-decoration:underline;text-decoration-color:rgba(241,225,184,.4);text-underline-offset:4px}
 #motion .studyRiver .riverMake a:focus-visible{outline:2px solid #e9cf8f;outline-offset:3px}

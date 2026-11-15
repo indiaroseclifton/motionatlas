@@ -8,12 +8,12 @@
 .scStageWrap{min-width:0;display:grid;gap:.8rem}
 .scStage{position:relative;justify-self:center;max-width:100%;border-radius:10px;overflow:hidden;background:#dfe2e6;box-shadow:0 18px 50px rgba(15,20,30,.16)}
 .scStage canvas{display:block;max-width:100%}.scStage.drag{outline:3px dashed var(--accent);outline-offset:-6px}
-.scBar{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:.7rem .9rem;background:linear-gradient(transparent,rgba(0,0,0,.45));color:#fff;font:500 13px/1.2 inherit}
+.scBar{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:.7rem .9rem;background:linear-gradient(transparent,rgba(0,0,0,.45));color:#fff;font-family:inherit;font-size:13px;font-weight:500;line-height:1.2}
 .scMedia{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem}
 .scThumbs{display:flex;flex-wrap:wrap;gap:.35rem;flex:1 1 100%}
 .scThumbs span{width:58px;height:40px;border-radius:5px;background:#ddd center/cover;box-shadow:0 0 0 1px rgba(0,0,0,.08)}
 .scUpload{cursor:pointer}
-.scPanel .scLabel{font:600 12px/1.2 inherit;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.scPanel .scLabel{font-family:inherit;font-size:12px;font-weight:600;line-height:1.2;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
 .scChips{display:grid;grid-template-columns:repeat(4,1fr);gap:.35rem}
 .scChips button{display:grid;gap:.1rem;min-height:44px;padding:.3rem;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);cursor:pointer;font:inherit}
 .scChips b{font-size:12.5px}.scChips small{font-size:11px;color:var(--muted)}

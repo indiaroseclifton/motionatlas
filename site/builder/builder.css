@@ -102,7 +102,8 @@ details.menu .mlist{position:absolute;right:0;top:calc(100% + 6px);z-index:60;mi
 /* AI */
 .aistate{padding:10px 12px;border-radius:10px;font-size:13px;background:var(--soft);border:1px solid var(--hair)}
 .aistate.on{background:#EAF7EE;border-color:#B7E1C3}.aistate.off{background:#FFF6E6;border-color:#F1D59B}
-.check{display:flex;gap:8px;align-items:center;font-size:13px}
+.check{display:flex;gap:8px;align-items:center;font-size:13px;min-height:40px}
+.check input,#mineExport input[type=checkbox],#pubMine input[type=checkbox]{width:20px;height:20px;flex:none;margin:0;accent-color:#111113}
 #aiOut{min-height:1.5em;font-size:13px;margin:0}
 /* pages */
 #pageList,#tplList{list-style:none;margin:0;padding:0;display:grid;gap:6px}

@@ -3,6 +3,13 @@
    Present a set of images in motion: pick a template, a format and a background, then export a video.
    Every template is a pure function of time, so the preview and the export draw identical frames. */
 (()=>{
+/* Safari has no canvas filter, so there the blur is made by shrinking the picture in halves and drawing it back up */
+function blurDraw(x,i,dx,dy,dw,dh,r,force){if(!(r>0)||('filter' in x&&!force)){x.save();if(r>0)x.filter=`blur(${r}px)`;x.drawImage(i,dx,dy,dw,dh);x.restore();return}
+ const mk=(w,h,from)=>{const t=document.createElement('canvas');t.width=w;t.height=h;const c=t.getContext('2d');c.imageSmoothingQuality='high';c.drawImage(from,0,0,w,h);return t};
+ let w=Math.max(2,Math.round(dw)),h=Math.max(2,Math.round(dh)),src=i,k=r*1.2,n=0;
+ while(k>1&&w>8&&h>8){w=Math.max(2,Math.round(w/2));h=Math.max(2,Math.round(h/2));src=mk(w,h,src);k/=2;n++}
+ for(;n>1;n--){w*=2;h*=2;src=mk(w,h,src)}
+ x.save();x.imageSmoothingEnabled=true;x.imageSmoothingQuality='high';x.drawImage(src,dx,dy,dw,dh);x.restore()}
  const reduce=matchMedia('(prefers-reduced-motion: reduce)');
  const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
@@ -57,7 +64,7 @@
 
  function background(c,W,H){const b=BGS.find(x=>x[0]===st.bg)[2];if(b.solid){c.fillStyle=b.solid;c.fillRect(0,0,W,H);return;}
   if(!st.bgImg||st.bgImg.key!==st.bg){const s=window.BackgroundAtlas?.still(b.preset,1600,Math.round(1600/Math.max(ratio(),.5)));st.bgImg=s?Object.assign(s,{key:st.bg}):null;}
-  if(!st.bgImg){c.fillStyle='#eceef1';c.fillRect(0,0,W,H);return;}const im=st.bgImg,s=Math.max(W/im.width,H/im.height);c.save();if(st.blur)c.filter=`blur(${st.blur*W/100}px)`;c.drawImage(im,(W-im.width*s)/2,(H-im.height*s)/2,im.width*s,im.height*s);c.restore();}
+  if(!st.bgImg){c.fillStyle='#eceef1';c.fillRect(0,0,W,H);return;}const im=st.bgImg,s=Math.max(W/im.width,H/im.height);blurDraw(c,im,(W-im.width*s)/2,(H-im.height*s)/2,im.width*s,im.height*s,st.blur?st.blur*W/100:0);}
  function frame(c,W,H,t){c.save();c.clearRect(0,0,W,H);background(c,W,H);if(st.items.length)T[st.tpl].draw(c,t,st.items,W,H,{...opts(),radius:st.radius});
   else{c.fillStyle='rgba(0,0,0,.45)';c.font=`500 ${W*.022}px system-ui,sans-serif`;c.textAlign='center';c.fillText('Loading images…',W/2,H/2);}c.restore();}
  const loopLen=()=>st.items.length*st.per+(st.tpl==='folio'?1.2:0);

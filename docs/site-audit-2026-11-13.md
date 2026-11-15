@@ -12,6 +12,23 @@ states, the serverless API, and the project's own Playwright gate.
 heading order, missing alt text, sideways scroll, text under 11 px, fonts, corner radii and page background. Console
 errors were attributed per page. Suspicious readings were checked by eye before being reported.
 
+## Ninth pass: Safari (15 November)
+
+Everything before this was checked in Chrome only. This pass ran the same checks in Safari 27.2 on the Mac: all 38 pages as real page loads, the same pages at phone width, and all 141 demos, with Chrome run alongside for comparison. There is no iPhone simulator on this Mac (Xcode is not installed), so iPhone Safari itself is still untested.
+
+| Finding | Evidence | Fix |
+|---|---|---|
+| Every dropdown ignored its design in Safari | A native select kept Safari's own small control: 20 to 25px high where the page sets 44px (for example `#catSel` 22px against 44px in Chrome); 165 selects across 15 pages | One shared rule in `site-bar.js` drops the native look and draws one arrow; measured again in Safari at 44px. The app templates and two demos carry the same rule |
+| Background blur did nothing in Safari | Safari has no canvas `filter`; used by the mockup studio background and the showcase | `blurDraw()` falls back to shrinking the picture in halves and scaling it back up |
+| Account page button and field used the wrong font | `font:16px inherit` is not valid CSS, so the rule was dropped: Arial 13px in Chrome, system 11px in Safari | Twelve such declarations rewritten in five stylesheets |
+| iPhone zooms the page when a small field takes focus | 78 fields under 16px on the tool pages | Fields are 16px on iOS only (`@supports (-webkit-touch-callout:none)`); simulated in Chrome with no sideways scroll. Not seen on a real phone |
+| Small checkboxes | 13 to 18px in the icon library, component lab, site builder, mockup studio, chart studio, film viewer | 20px, labels 40 to 44px high |
+| Atlas overview long on a phone | 10 screens; the eight tool cards stacked to 3,041px | One swipeable row, 379px; the page is 6.9 screens |
+
+Clean in Safari: no script errors, no sideways scroll, no failed shader or canvas on any page or demo. Not a difference: Safari leaves dropdown options out of `innerText`, which made five pages look shorter in the first comparison.
+
+Still open: nobody has looked at the pages in Safari by eye (the checks compare measurements, not pictures); a real iPhone; Firefox; screen readers.
+
 ## Eighth pass: every open finding worked through
 
 14 November 2026. Each change was checked at 1280 × 800 and 390 × 844. `tools/smoke.mjs` now opens 38 pages at both

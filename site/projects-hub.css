@@ -172,8 +172,8 @@
 .accForm,.accSent{display:grid;gap:10px;max-width:560px}
 .accForm label,.accCode label{font-weight:600;font-size:14px}
 .accRow{display:flex;flex-wrap:wrap;gap:8px}
-.accRow input{flex:1 1 220px;min-width:0;min-height:46px;padding:0 14px;border-radius:12px;border:1px solid #8D93A3;background:#fff;color:#14161C;font:16px inherit}
-.accPrimary,.accSecondary{min-height:46px;padding:0 20px;border-radius:999px;font:600 15px inherit;cursor:pointer}
+.accRow input{flex:1 1 220px;min-width:0;min-height:46px;padding:0 14px;border-radius:12px;border:1px solid #8D93A3;background:#fff;color:#14161C;font-family:inherit;font-size:16px}
+.accPrimary,.accSecondary{min-height:46px;padding:0 20px;border-radius:999px;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer}
 .accPrimary{border:1px solid #14161C;background:#14161C;color:#fff}
 .accSecondary{border:1px solid #8D93A3;background:#fff;color:#14161C}
 .accPrimary[disabled]{opacity:.6;cursor:progress}
@@ -183,7 +183,7 @@
 .accSent p{margin:0}
 .accSent:focus{outline:none}
 .accCode{display:grid;gap:8px;margin-top:6px}
-.accLink{justify-self:start;padding:6px 0;border:0;background:none;font:600 14px inherit;text-decoration:underline;color:#14161C;cursor:pointer}
+.accLink{justify-self:start;padding:6px 0;border:0;background:none;font-family:inherit;font-size:14px;font-weight:600;text-decoration:underline;color:#14161C;cursor:pointer}
 /* keep the atlas page's heading styles out of the hub */
 .ph :is(h1,h2,h3,h4,h5,h6){font-style:normal!important;text-transform:none;margin:0}
 .ph .phTitle{font:700 clamp(40px,6.2vw,100px)/.95 var(--ph-sans)!important;letter-spacing:-.045em!important;color:var(--ph-fg)!important}
@@ -191,7 +191,7 @@
 .ph .phFeat:hover .phFeatTitle{color:var(--ph-accent)!important}
 .ph .phKick{font:500 12px var(--ph-mono)!important;letter-spacing:.14em!important;text-transform:uppercase!important;color:var(--ph-fg2)!important}
 .ph label{color:var(--ph-fg)!important;font-size:13px!important;font-weight:600!important;text-transform:none!important;letter-spacing:0!important}
-.ph input:not([type=checkbox]):not([type=file]),.ph textarea,.ph select{color:var(--ph-fg)!important;background:var(--ph-surface)!important;border-color:#3A4554!important}
+.ph input:not([type=checkbox]):not([type=file]),.ph textarea,.ph select{color:var(--ph-fg)!important;background-color:var(--ph-surface)!important;border-color:#3A4554!important}
 .ph p{color:inherit}
 .ph .phLede,.ph .phHint,.ph .phNone,.ph .phDirText>span,.ph .phRows span,.ph .phSys span span,.ph .phNotes,.ph .phDraft,.ph .phFeat p{color:var(--ph-fg2)!important}
 .ph .phKitCard p{color:var(--k-ink)!important}
