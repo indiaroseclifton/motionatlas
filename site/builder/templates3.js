@@ -1,7 +1,7 @@
 'use strict';
 /* Page builder, home-page compositions (15 November 2026).
    The templates in templates.js and templates2.js were all built on one run: hero, stats, feature cards, quote, call to action.
-   This file re-composes each home page so the templates differ: heroes led by type or by one wide photograph, numbered
+   This file re-composes the home page of most templates, and some inner pages, so the templates differ: heroes led by type or by one wide photograph, numbered
    hairline lists in place of boxed cards, staggered work grids, and pictures that match the subject (no generated films in
    a hero). It only rearranges and re-dresses what a template already says; the words stay as they were written.
    Each entry gets the home page's blocks ([{id, vals, links}]) and edits the array in place. */
@@ -42,5 +42,31 @@ const R={
  conference(B){typeHero(B)},
  'lp-launch'(B){const i=at(B,'hero-film');if(i>=0){const h=B[i],v=h.vals;B[i]={id:'hero-type',vals:clean({kicker:v.kicker,heading:v.heading,intro:v.intro,b1:v.b1,b2:v.b2,facts:'3 | new themes in this release\n38 min | saved on each call write-up\n4.8 / 5 | average rating'}),links:h.links}}}
 };
-PB.templates.forEach(t=>{const fn=R[t.id];if(!fn)return;const make=t.make;t.make=()=>{const s=make();const p=s.pages.find(x=>x.id===s.home)||s.pages[0];try{fn(p.blocks,s)}catch(e){console.warn('template remix failed for',t.id,e)}return s}});
+/* ---- inner pages ('template/page'): the same idea, one page at a time ---- */
+const stepsToList=B=>{const i=at(B,'steps');if(i>=0&&B[i].vals.steps){const v=B[i].vals;B[i]={id:'list-rows',vals:clean({kicker:v.kicker,heading:v.heading,items:v.steps})}}};
+const galleryToWork=(B,button,to)=>{const i=at(B,'gallery');if(i>=0&&B[i].vals.images){const v=B[i].vals,items=rowsOf(v.images).map(c=>[c[0],c[1]||'',c[2]||''].join(' | ')).join('\n'),links={0:to};rowsOf(v.images).forEach((c,k)=>links[k+1]=to);B[i]={id:'work-grid',vals:clean({kicker:v.kicker,heading:v.heading,button,items}),links}}};
+const picture=(B,img,alt,caption)=>{B.splice(1,0,{id:'image-full',vals:{img:P+img,alt,caption:caption||''}})};
+const I={
+ 'portfolio/work'(B){galleryToWork(B,'Start a project','page:contact')},
+ 'portfolio/about'(B){picture(B,'workspace-laptop-on-a-desk.webp','A laptop on a plain desk')},
+ 'agency/services'(B){stepsToList(B)},
+ 'restaurant/story'(B){picture(B,'food-handmade-pasta-noodles.webp','Handmade pasta on a floured board')},
+ 'photographer/about'(B){picture(B,'nature-alpine-landscape.webp','An alpine valley under cloud')},
+ 'blog/about'(B){picture(B,'drink-coffee-flowers-and-books.webp','Coffee, flowers and books on a table')},
+ 'nonprofit/involved'(B){stepsToList(B)},
+ 'course/curriculum'(B){cardsToList(B)},
+ 'course/instructor'(B){picture(B,'hands-making-pottery.webp','Hands shaping a pot')},
+ 'app/features'(B){cardsToSplit(B,'Get the app','page:download')},
+ 'studio/work'(B){galleryToWork(B,'Commission a piece','page:contact')},
+ 'coffee/bakers'(B){picture(B,'bakery-the-bakery.webp','Inside the bakery')},
+ 'fitness/coaches'(B){picture(B,'fitness-pair-of-8kg-dumbbells.webp','A pair of dumbbells on the gym floor')},
+ 'law/practice'(B){stepsToList(B)},
+ 'realestate/selling'(B){cardsToList(B)},
+ 'podcast/about'(B){picture(B,'podcast-elegant-steel-microphone.webp','A steel studio microphone')}
+};
+PB.templates.forEach(t=>{const fn=R[t.id],inner=Object.keys(I).some(k=>k.indexOf(t.id+'/')===0);if(!fn&&!inner)return;const make=t.make;
+ t.make=()=>{const s=make();
+  if(fn){const p=s.pages.find(x=>x.id===s.home)||s.pages[0];try{fn(p.blocks,s)}catch(e){console.warn('template remix failed for',t.id,e)}}
+  s.pages.forEach(p=>{const g=I[t.id+'/'+p.id];if(g){try{g(p.blocks,s)}catch(e){console.warn('template remix failed for',t.id,p.id,e)}}});
+  return s}});
 })();

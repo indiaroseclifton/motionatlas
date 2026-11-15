@@ -486,13 +486,13 @@ td.us{background:color-mix(in srgb,var(--accent) 8%,transparent)}
    ('plans', 'Plans (name | price | period | note | features; split; by; semicolons | button)', 'list', 'Solo | £0 | free forever | For one cook trying it out. | 3 recipes a week; Shopping list; Cook timeline | Start free\nHousehold | £6 | a month | For a home of up to six people. | Unlimited recipes; Shared lists; Seasonal swaps; Offline mode | Choose Household\nKitchen | £18 | a month | For cafés and cookery schools. | Everything in Household; 10 cooks; Costing per portion; Priority help | Talk to us')],
   'A centred heading over a row of plan cards (any number, wrapping), each with a name, a big price in the heading font with a small period, a note, a ticked feature list and a full-width button; the second plan has an accent border, glow and filled button.'),
 
- ('timeline', 'Timeline', 'Story', 'Milestones down a vertical line, revealed as you scroll. Good for a company story or a roadmap.', '''
+ ('timeline', 'Timeline', 'Story', 'Milestones as dated rows on hairlines, revealed as you scroll. Good for a company story or a roadmap.', '''
 .tl h2{font-size:clamp(34px,4.6vw,60px);margin:10px 0 40px;max-width:18ch}
-.tl ol{list-style:none;margin:0;padding:0 0 0 28px;position:relative;display:grid;gap:34px;max-width:760px}
-.tl ol::before{content:"";position:absolute;left:6px;top:6px;bottom:6px;width:2px;background:var(--line)}
-.tl li{position:relative}.tl li::before{content:"";position:absolute;left:-28px;top:6px;width:14px;height:14px;border-radius:50%;background:var(--bg);border:3px solid var(--accent)}
-.tl time{font-size:13px;font-weight:600;letter-spacing:.1em;color:var(--accent-ink,var(--accent))}
-.tl h3{margin:4px 0 6px;font-size:20px}.tl p{margin:0;color:var(--mute)}
+.tl ol{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.tl li{display:grid;grid-template-columns:clamp(96px,16vw,240px) minmax(0,1fr) minmax(0,1.2fr);gap:6px 24px;align-items:baseline;padding:clamp(20px,3.2vh,34px) 0;border-bottom:1px solid var(--line)}
+.tl time{font-family:var(--head);font-weight:var(--hw);font-style:var(--hs);font-size:clamp(26px,3.2vw,48px);letter-spacing:var(--track);line-height:1}
+.tl h3{margin:0;font-size:clamp(19px,1.8vw,24px);line-height:1.2}.tl p{margin:0;color:var(--mute);font-size:17px;max-width:50ch}
+@media (max-width:760px){.tl li{grid-template-columns:1fr}.tl time{font-size:26px}}
 ''' + REVEAL_CSS,
   '<section class="wrap tl"><p class="k">{{kicker}}</p><h2 class="h">{{heading}}</h2><ol>{{each:events}}<li data-rv><time>{{0}}</time><h3>{{1}}</h3><p>{{2}}</p></li>{{/each}}</ol></section>', REVEAL_JS,
   [('kicker', 'Kicker', 'text', 'Our story'), ('heading', 'Headline', 'text', 'Eight years, one kitchen table.'),
@@ -502,11 +502,11 @@ td.us{background:color-mix(in srgb,var(--accent) 8%,transparent)}
  ('team', 'Team', 'Story', 'People in a grid with an initial avatar, name, role and one line about them.', '''
 .tm h2{font-size:clamp(34px,4.6vw,60px);margin:10px 0 14px;max-width:18ch}
 .tm .intro{color:var(--mute);max-width:56ch;margin:0 0 40px}
-.tm ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
-.tm li{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px;display:grid;gap:6px}
-.tm .av{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font-family:var(--head);font-size:24px;margin-bottom:8px;color:var(--on-accent);background:linear-gradient(140deg,var(--accent),color-mix(in srgb,var(--accent) 45%,var(--ink)))}
-.tm li:nth-child(3n+2) .av{background:linear-gradient(140deg,color-mix(in srgb,var(--accent) 55%,var(--ink)),var(--accent))}
-.tm b{font-size:17px}.tm span{color:var(--accent-ink,var(--accent));font-size:14px;font-weight:500}.tm p{margin:4px 0 0;color:var(--mute);font-size:15px}''',
+.tm ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:clamp(24px,4vw,64px);border-top:1px solid var(--line)}
+.tm li{display:grid;grid-template-columns:64px minmax(0,1fr);column-gap:18px;row-gap:3px;align-content:start;padding:clamp(20px,3vh,30px) 0;border-bottom:1px solid var(--line)}
+.tm .av{grid-row:1/span 3;width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font-family:var(--head);font-size:22px;color:var(--ink);background:color-mix(in srgb,var(--ink) 9%,var(--bg))}
+.tm b{font-family:var(--head);font-weight:var(--hw);font-style:var(--hs);letter-spacing:var(--track);font-size:clamp(22px,2.2vw,30px);line-height:1.1}.tm li>span:not(.av){color:var(--accent-ink,var(--accent));font-size:14px;font-weight:500}.tm p{margin:6px 0 0;color:var(--mute);font-size:16px;max-width:44ch}
+@media (max-width:760px){.tm ul{grid-template-columns:1fr}}''',
   '<section class="wrap tm"><p class="k">{{kicker}}</p><h2 class="h">{{heading}}</h2><p class="intro">{{intro}}</p><ul>{{each:people}}<li><span class="av" aria-hidden="true">{{i0}}</span><b>{{0}}</b><span>{{1}}</span><p>{{2}}</p></li>{{/each}}</ul></section>', '',
   [('kicker', 'Kicker', 'text', 'The team'), ('heading', 'Headline', 'text', 'Eleven people, mostly in aprons.'), ('intro', 'Intro', 'long', 'Cooks, engineers and one very patient food stylist, split between London and Lisbon.'),
    ('people', 'People (name | role | line)', 'list', 'Maya Okafor | Head of food | Ran a supper club for six years; tests every recipe twice.\nTom Becker | Engineering | Built the first version on a train to Glasgow.\nInês Duarte | Film and photography | Lights every dish like a Dutch still life.\nSam Whitlock | Community | Reads every message in the forum, usually before breakfast.')],
@@ -565,9 +565,9 @@ a.card:hover img{transform:scale(1.04)}
 
  ('cta-band', 'Call-to-action band', 'Endings', 'A full-width accent band with a headline and one button.', '''
 .cb{background:var(--accent);color:var(--on-accent)}
-.cb .in{max-width:1280px;margin:0 auto;padding:clamp(48px,9vh,90px) max(16px,4vw);display:flex;gap:24px;align-items:center;justify-content:space-between;flex-wrap:wrap}
-.cb h2{margin:0;font-size:clamp(30px,4.4vw,56px);max-width:20ch}
-.cb .btn{background:var(--on-accent);color:var(--accent);border-color:var(--on-accent);min-height:52px;padding:0 26px}''',
+.cb .in{max-width:1280px;margin:0 auto;padding:clamp(64px,13vh,150px) max(16px,4vw);display:grid;gap:clamp(24px,4vh,44px);justify-items:start}
+.cb h2{margin:0;font-size:clamp(40px,7.4vw,112px);line-height:.96;max-width:14ch}
+.cb .btn{background:var(--on-accent);color:var(--accent);border-color:var(--on-accent);min-height:60px;padding:0 34px;font-size:17px}''',
   '<section class="cb"><div class="in"><h2 class="h">{{heading}}</h2><a class="btn" href="#">{{button}}</a></div></section>', NOHASH_M,
   [('heading', 'Headline', 'text', 'Next Sunday, let the list write itself.'), ('button', 'Button', 'text', 'Start free')],
   'A full-width band in the accent colour with a large headline on the left and a reversed button (accent text on the on-accent colour) on the right, wrapping on phones.'),
@@ -725,7 +725,7 @@ T.forEach((t,i)=>{t.onclick=()=>pick(i);t.onkeydown=e=>{const n=T.length;let j=n
 # ---- website-builder additions: inner-page heads, article, map, menu, schedule, shop, course, form, donate, countdown ----
 MORE += [
  ('page-head', 'Page heading', 'Heroes', 'The top of an inner page: a kicker, the page headline and one line under it.', '''
-.ph{padding-top:clamp(56px,11vh,120px);padding-bottom:clamp(24px,4vh,48px)}.ph h1{font-size:clamp(42px,6.4vw,92px);margin:10px 0 16px;max-width:16ch}.ph p.l{color:var(--mute);font-size:clamp(17px,1.6vw,20px);max-width:56ch;margin:0}''',
+.ph{padding-top:clamp(40px,8vh,96px);padding-bottom:clamp(24px,4vh,48px)}.ph .k{margin:0 0 clamp(16px,3vh,30px)}.ph h1{font-size:clamp(44px,8.6vw,136px);line-height:.95;margin:0;max-width:15ch}.ph p.l{color:var(--mute);font-size:clamp(18px,1.6vw,22px);line-height:1.45;margin:clamp(24px,4.4vh,48px) 0 0;padding:clamp(16px,2.4vh,24px) 0 0 50%;border-top:1px solid var(--line)}@media (max-width:760px){.ph p.l{padding-left:0}}''',
   '<section class="wrap ph"><p class="k">{{kicker}}</p><h1 class="h">{{heading}}</h1><p class="l">{{intro}}</p></section>', '',
   [('kicker', 'Kicker', 'text', 'About us'), ('heading', 'Headline', 'text', 'A small team with a long memory.'), ('intro', 'Intro', 'long', 'We started in a spare room and still answer every message ourselves.')],
   'A page header: small uppercase kicker, a very large balanced headline in the heading font and a muted one-line intro, generous space above.'),
@@ -797,8 +797,8 @@ MORE += [
   'A course outline: kicker and headline above numbered native details cards; each summary shows a big serif accent number, bold title and a muted lessons and length; the panel shows a summary indented under the title.'),
 
  ('contact-form', 'Simple contact form', 'Endings', 'Name, email and message, sent to the form address in Site settings (Formspree, or a mailto: address).', '''
-.cf{max-width:760px}.cf h2{font-size:clamp(34px,4.6vw,60px);margin:10px 0 12px}.cf .l{color:var(--mute);margin:0 0 26px}.cf form{display:grid;gap:16px;padding:clamp(20px,3vw,32px);border:1px solid var(--line);border-radius:var(--radius);background:var(--surface)}
-.cf .f{display:grid;gap:6px}.cf label{font-size:14px;font-weight:500}.cf input,.cf textarea{min-height:46px;padding:10px 14px;border-radius:calc(var(--radius) * .6);border:1px solid var(--line);background:var(--bg);width:100%}.cf textarea{min-height:140px;resize:vertical}.cf .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}.cf .err{color:color-mix(in srgb,#D92D20 70%,var(--ink));font-size:13px;min-height:1em}.cf .ok.bad{color:color-mix(in srgb,#D92D20 70%,var(--ink))}.cf .send{display:flex;gap:14px;align-items:center;flex-wrap:wrap}.cf .ok{color:var(--mute);font-size:14px}''',
+.cf{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);grid-template-rows:auto auto auto 1fr;column-gap:clamp(28px,6vw,96px);align-items:start}.cf>.k,.cf>h2,.cf>.l{grid-column:1}.cf h2{font-size:clamp(34px,4.8vw,68px);margin:10px 0 14px}.cf .l{color:var(--mute);font-size:18px;max-width:40ch;margin:0}.cf form{grid-column:2;grid-row:1/span 4;display:grid;gap:22px}@media (max-width:820px){.cf{grid-template-columns:1fr}.cf form{grid-column:1;grid-row:auto;margin-top:28px}}
+.cf .f{display:grid;gap:4px}.cf label{font-size:14px;font-weight:500;color:var(--mute)}.cf input,.cf textarea{min-height:54px;padding:12px 0;border:0;border-bottom:1px solid color-mix(in srgb,var(--ink) 45%,transparent);border-radius:0;background:transparent;width:100%;font-size:18px;transition:border-color .2s}.cf input:hover,.cf textarea:hover,.cf input:focus,.cf textarea:focus{border-bottom-color:var(--ink)}.cf textarea{min-height:150px;resize:vertical}.cf .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}.cf .err{color:color-mix(in srgb,#D92D20 70%,var(--ink));font-size:13px;min-height:1em}.cf .ok.bad{color:color-mix(in srgb,#D92D20 70%,var(--ink))}.cf .send{display:flex;gap:14px;align-items:center;flex-wrap:wrap}.cf .ok{color:var(--mute);font-size:14px}''',
   '<section class="wrap cf"><p class="k">{{kicker}}</p><h2 class="h">{{heading}}</h2><p class="l">{{intro}}</p><form action="{{formAction}}" method="post" name="contact" data-netlify="true" netlify-honeypot="_gotcha" novalidate><input type="hidden" name="form-name" value="contact"><p class="hp" aria-hidden="true"><label>Leave this empty <input name="_gotcha" tabindex="-1" autocomplete="off"></label></p><div class="f"><label for="cfn">Your name</label><input id="cfn" name="name" autocomplete="name" required aria-describedby="cfne"><span class="err" id="cfne"></span></div><div class="f"><label for="cfe">Email</label><input id="cfe" name="email" type="email" autocomplete="email" required aria-describedby="cfee"><span class="err" id="cfee"></span></div><div class="f"><label for="cfm">Message</label><textarea id="cfm" name="message" required aria-describedby="cfme"></textarea><span class="err" id="cfme"></span></div><div class="send"><button class="btn p" type="submit">{{button}}</button><span class="ok" role="status" data-thanks="{{thanks}}"></span></div></form></section>',
   '''const f=root.querySelector('form'),ok=root.querySelector('.ok');const els=[...f.querySelectorAll('input:not([name=_gotcha]):not([type=hidden]),textarea')];
 const hp=f.querySelector('[name=_gotcha]'),btn=f.querySelector('button[type=submit]');

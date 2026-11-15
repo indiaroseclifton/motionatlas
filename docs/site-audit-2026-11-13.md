@@ -12,6 +12,24 @@ states, the serverless API, and the project's own Playwright gate.
 heading order, missing alt text, sideways scroll, text under 11 px, fonts, corner radii and page background. Console
 errors were attributed per page. Suspicious readings were checked by eye before being reported.
 
+## Twelfth pass: the templates' inner pages (15 November)
+
+The 68 inner pages (services, pricing, contact, about and so on) were listed and eight were rendered top to bottom. 65 of the 68 open with the page heading section and 40 close with the call-to-action band, so those two and the sections between them were redesigned once, in `tools/sections_src.py`; every page that uses them changes with them.
+
+| Section | Before | After |
+|---|---|---|
+| Page heading (65 pages) | Headline up to 92px in a narrow measure, intro directly under it | Headline up to 136px; the intro sits in the right half under a full-width hairline |
+| Call-to-action band (40 pages) | Headline up to 56px with a button on the right | One line up to 112px with a larger button under it |
+| Contact form (15 pages) | A 760px boxed card in the middle of the page | Words on the left, an open form on the right with underlined fields; one column on phones |
+| Team (10 pages) | Small boxed cards with gradient initials | Rows on hairlines in two columns, names in the heading face |
+| Timeline (6 pages) | A narrow column on a dotted line | Dated rows on hairlines with the date large |
+
+Sixteen inner pages were also re-composed in `builder/templates3.js`: the two Work pages use the staggered work grid in place of the masonry gallery; process steps and feature cards on five pages became numbered rows or the sticky split; eight About pages gained one wide photograph that fits the subject.
+
+Checked by script at 1280 and 390 wide: all 94 template pages for script errors, sideways scroll and anything running off the edge.
+
+Still open: pricing tables, the menu, the schedule, the map and the FAQ sections were looked at and left as they are; `rich-text` keeps its narrow reading column. Not looked at in Safari or on a real phone.
+
 ## Eleventh pass: site builder look, start screen, picker and templates (15 November)
 
 Asked for: "not just the navigation but the whole look, layout, templates etc of the tool itself", with awwwards.com as the reference. Taken from the awwwards gallery and its winners: large borderless picture tiles, one bar of pill filters with search, bold plain headings, black pill buttons, very large type, hairlines instead of boxed cards. Nothing of theirs was copied.
