@@ -122,7 +122,6 @@ void main(){vec2 uv=gl_FragCoord.xy/R;float asp=R.x/R.y;vec2 p=(uv-.5)*vec2(asp,
 
  function shell(){const sec=document.getElementById('backgrounds');if(!sec||built)return;built=true;
   sec.innerHTML=`<header class="bgHead"><p class="cardcode">Generator · ${ALL.length} presets · unlimited variations</p><h1 class="pagetitle" id="bgTitle">Backgrounds.</h1><p class="intro">Gradients, light, liquid, grain and type, computed in your browser. Start from a preset, change the seed or the colours, then download a 4K image, a looping video or the code. Everything you make here is yours to use in personal and client work.</p></header>
-  <div class="bgCollections" role="group" aria-label="Collections"></div>
   <div class="bgWork"><div class="bgStageWrap"><div class="bgStage"><canvas id="bgCanvas" aria-label="Generated background preview" role="img"></canvas><div class="bgStageBar"><span id="bgName"></span><button type="button" id="bgPlay" class="bgIcon" aria-pressed="false">Pause</button></div></div>
    <div class="bgRatios" role="group" aria-label="Aspect ratio">${RATIOS.map(r=>`<button type="button" data-ratio="${r[0]}"><b>${r[0]}</b><small>${r[2]}</small></button>`).join('')}</div></div>
    <aside class="bgPanel" aria-label="Background settings">
@@ -132,10 +131,11 @@ void main(){vec2 uv=gl_FragCoord.xy/R;float asp=R.x/R.y;vec2 p=(uv-.5)*vec2(asp,
     <div class="bgRow bgSeed"><label for="bg_seed">Seed</label><input type="number" id="bg_seed" min="0" max="999" step="1"><button type="button" id="bgDice" class="secondary">Randomise</button></div>
     <div class="bgExport"><p class="cardcode">Download</p><button type="button" class="primary" data-png="3840">PNG · 4K</button><button type="button" class="secondary" data-png="1920">PNG · HD</button><button type="button" class="secondary" id="bgVideo">Loop video · 6 s</button><button type="button" class="secondary" id="bgCSS">Copy CSS</button><button type="button" class="secondary" id="bgEmbed">Copy live code</button><button type="button" class="secondary" id="bgLink">Copy link</button><p class="bgStatus" id="bgStatus" role="status"></p></div>
    </aside></div>
-  <section class="bgLibrary" aria-labelledby="bgLibTitle"><div class="bgLibHead"><h2 id="bgLibTitle">Presets</h2><p id="bgLibCount"></p></div><div class="bgGrid" id="bgGrid"></div></section>
+  <section class="bgLibrary" aria-labelledby="bgLibTitle"><h2 id="bgLibTitle">Presets</h2><div class="listBar bgLibBar"><label><span class="tbHide">Collection</span><select id="bgColl" aria-label="Collection"></select></label></div><p class="resultcount" id="bgLibCount" role="status"></p><div class="bgGrid" id="bgGrid"></div></section>
   <p class="bgNote">Licence: backgrounds made here are free for personal and commercial use, with no attribution required. The CSS option is an approximation built from your palette; the live code reproduces the exact image.</p>`;
-  const tabs=sec.querySelector('.bgCollections');tabs.innerHTML=[['all','All',ALL.length],...COLLECTIONS.map(c=>[c.id,c.name,c.presets.length])].map(([id,n,k])=>`<button type="button" data-coll="${id}" aria-pressed="false">${esc(n)} <small>${k}</small></button>`).join('');
-  tabs.onclick=e=>{const b=e.target.closest('[data-coll]');if(b){state.collection=b.dataset.coll;library();}};
+  /* one dropdown above the presets it filters, each collection with its count: the same toolbar as the other sections */
+  const tabs=sec.querySelector('#bgColl');tabs.innerHTML=[['all','All presets',ALL.length],...COLLECTIONS.map(c=>[c.id,c.name,c.presets.length])].map(([id,n,k])=>`<option value="${id}">${esc(n)} (${k})</option>`).join('');
+  tabs.onchange=()=>{state.collection=tabs.value;library();};
   sec.querySelector('.bgRatios').onclick=e=>{const b=e.target.closest('[data-ratio]');if(b){state.ratio=b.dataset.ratio;layout();}};
   sec.querySelector('#bgGrid').onclick=e=>{const b=e.target.closest('[data-preset]');if(b){apply(ALL.find(p=>p.key===b.dataset.preset));document.getElementById('bgCanvas').scrollIntoView({behavior:reduce.matches?'auto':'smooth',block:'center'});}};
   sec.querySelector('#bgFamily').onchange=e=>{state.s.mode=+e.target.value;changed();};
@@ -174,8 +174,8 @@ void main(){vec2 uv=gl_FragCoord.xy/R;float asp=R.x/R.y;vec2 p=(uv-.5)*vec2(asp,
  function thumb(p){if(thumbCache.has(p.key))return thumbCache.get(p.key);if(!thumbR){thumbCanvas=document.createElement('canvas');thumbCanvas.width=480;thumbCanvas.height=300;try{thumbR=Renderer(thumbCanvas,{keep:true});}catch{thumbR=null;}}
   if(!thumbR)return '';thumbR.draw(p,0);const url=thumbCanvas.toDataURL('image/jpeg',.82);thumbCache.set(p.key,url);return url;}
  function library(){const grid=document.getElementById('bgGrid');if(!grid)return;const list=state.collection==='all'?ALL:ALL.filter(p=>p.collection===state.collection);
-  document.querySelectorAll('[data-coll]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.coll===state.collection)));
-  const coll=COLLECTIONS.find(c=>c.id===state.collection);document.getElementById('bgLibCount').textContent=coll?coll.note:`${COLLECTIONS.length} collections. Pick one to start, then make it yours.`;
+  const pickColl=document.getElementById('bgColl');if(pickColl)pickColl.value=state.collection;
+  const coll=COLLECTIONS.find(c=>c.id===state.collection);document.getElementById('bgLibCount').textContent=coll?`${list.length} presets. ${coll.note}`:`${list.length} presets in ${COLLECTIONS.length} collections. Pick one to start, then make it yours.`;
   grid.innerHTML=list.map(p=>`<button type="button" class="bgCard" data-preset="${p.key}" aria-pressed="false"><span class="bgThumb"><img alt="" width="480" height="300" data-thumb="${p.key}"></span><b>${esc(p.name)}</b><small>${esc(COLLECTIONS.find(c=>c.id===p.collection).name)} · ${FAMILIES[p.mode]}</small></button>`).join('');
   markActive();const imgs=[...grid.querySelectorAll('img[data-thumb]')];let i=0;const step=()=>{const end=performance.now()+12;while(i<imgs.length&&performance.now()<end){const im=imgs[i++];im.src=thumb(ALL.find(p=>p.key===im.dataset.thumb));}if(i<imgs.length)(window.requestIdleCallback||setTimeout)(step);};step();}
 

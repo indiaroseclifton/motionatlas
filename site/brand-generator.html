@@ -5,162 +5,251 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap">
 <link rel="stylesheet" href="kits/kits.css">
 <style>
-:root{--pbg:#F4F5F8;--ppanel:#FFFFFF;--pink:#1C1F2A;--pmute:#5A6072;--phair:#DCE0E8;--paccent:#111113;--ok:#17633A;--okbg:#EAF7EF;--bad:#A3221B;--badbg:#FDECEA;--warn:#8A5300;--warnbg:#FFF4E2;color-scheme:light}
+/* Brand kit: one column in the same language as the Interactions shelf (same variables, fonts, 44px fields, 12px field
+   corners, 16px card corners, the same quiet shadow). The brand's own colours only appear inside the kit itself. */
+:root{--bg:#F4F5F8;--panel:#FFFFFF;--ink:#1C1F2A;--mute:#5E6476;--hair:#E1E4EC;--soft:#F7F8FB;--accent:#111113;--accent-ink:#FFFFFF;--shadow:0 1px 2px rgba(20,24,40,.04),0 10px 30px -14px rgba(20,24,40,.18);--ok:#17633A;--okbg:#EAF7EF;--bad:#A3221B;--badbg:#FDECEA;--warn:#8A5300;--warnbg:#FFF4E2;color-scheme:light}
 *{box-sizing:border-box}html,body{margin:0}
-body{background:var(--pbg);color:var(--pink);font:15px/1.55 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
-a{color:inherit}button,input,select,textarea{font:inherit;color:inherit}[hidden]{display:none!important}
-.skip{position:absolute;left:-999px}.skip:focus{left:12px;top:12px;z-index:50;background:#fff;padding:8px 12px;border-radius:8px}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit}button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}[hidden]{display:none!important}
+.skip{position:absolute;left:-999px}.skip:focus{left:12px;top:12px;z-index:50;background:var(--panel);padding:8px 12px;border-radius:8px}
 .vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.top{display:flex;align-items:center;gap:8px 16px;flex-wrap:wrap;padding:12px max(16px,4vw);background:var(--ppanel);border-bottom:1px solid var(--phair)}
-.top a.back{font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--pmute);text-decoration:none;padding:8px 0}
-.top nav{margin-left:auto;display:flex;gap:14px;font-size:13px;flex-wrap:wrap}.top nav a{color:var(--pmute);text-decoration:none;padding:6px 0}.top nav a:hover{color:var(--pink)}
-.wrap{max-width:1360px;margin:0 auto;padding:0 max(16px,4vw)}
-.intro{padding:clamp(24px,5vh,44px) 0 12px}.intro h1{margin:0;font:italic 500 clamp(40px,6vw,72px)/.95 'Cormorant Garamond',Georgia,serif;letter-spacing:-.02em}.intro p{margin:10px 0 0;color:var(--pmute);max-width:70ch}
-.app{display:grid;grid-template-columns:minmax(300px,380px) minmax(0,1fr);gap:24px;align-items:start;padding-bottom:48px}
-.panel{background:var(--ppanel);border:1px solid var(--phair);border-radius:14px;padding:16px;display:grid;gap:14px}
-.side{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow:auto}
-.f{display:grid;gap:5px}.f>label,.f>span.l,legend{font-size:13px;font-weight:600}.f small{color:var(--pmute);font-size:12px}
-fieldset{border:0;padding:0;margin:0;display:grid;gap:6px}
-input[type=text],input[type=search],textarea,select{width:100%;min-height:40px;padding:8px 12px;border:1px solid #B8BECB;border-radius:10px;background:#fff}
-textarea{min-height:64px;resize:vertical}
-:focus-visible{outline:3px solid var(--paccent);outline-offset:2px}
+.k{font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+header.top{display:flex;align-items:center;gap:16px;padding:12px max(18px,env(safe-area-inset-right)) 12px max(18px,env(safe-area-inset-left));background:var(--panel);border-bottom:1px solid var(--hair)}
+header.top a.back{font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);text-decoration:none;white-space:nowrap;padding-block:7px}
+header.top a.back:hover{color:var(--ink)}
+header.top nav{margin-left:auto;display:flex;gap:14px;font-size:13px}
+header.top nav a{color:var(--mute);text-decoration:none}header.top nav a:hover{color:var(--ink)}
+main{padding:0 max(18px,4vw) 96px;max-width:1240px;margin:0 auto}
+.hero{padding:clamp(36px,7vh,72px) 0 24px;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:32px;align-items:end}
+.hero h1{margin:0;font:500 clamp(44px,7vw,92px)/.92 'Cormorant Garamond',Georgia,serif;font-style:italic;letter-spacing:-.02em}
+.hero p{margin:0;color:var(--mute);max-width:52ch}
+
+/* the one input row */
+.tools{padding:14px 0 12px;border-bottom:1px solid var(--hair);background:var(--bg)}
+.row{display:flex;gap:10px;align-items:flex-end}
+.fld{display:grid;gap:7px;min-width:0}
+.fld.name{flex:1 1 220px}.fld.desc{flex:2.2 1 320px}.fld.feel{flex:0 0 220px}
+.fld input,.fld select,.in{width:100%;min-height:44px;padding:0 16px;border:1px solid var(--hair);border-radius:12px;background:var(--panel);font-size:15px}
+.fld select{padding:0 14px;font-size:14px}
+input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+button:focus-visible,a:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:0 14px;border-radius:10px;border:1px solid var(--hair);background:var(--panel);font-weight:500;font-size:13px;text-decoration:none;white-space:nowrap}
+.btn:hover{background:var(--soft)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}.btn.primary:hover{background:#2A2D38}
+.btn.tall{min-height:44px;border-radius:12px;padding:0 20px;font-size:14px}
+.btn:disabled{opacity:.45;cursor:default}.btn:disabled:hover{background:var(--panel)}
+.btn[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+.note{margin:0;color:var(--mute);font-size:13.5px}.note b{color:var(--ink);font-weight:600}
+.status{margin:14px 0 0;color:var(--mute);font-size:13px;min-height:20px}.status a{color:var(--ink)}
+
+/* disclosures: one pattern everywhere */
+details.more{border:1px solid var(--hair);border-radius:12px;background:var(--panel)}
+details.more>summary{list-style:none;display:flex;align-items:center;gap:10px;min-height:44px;padding:0 16px;cursor:pointer;font-weight:500;font-size:14px;border-radius:12px}
+details.more>summary::-webkit-details-marker{display:none}
+details.more>summary::after{content:"";margin-left:auto;flex:none;width:7px;height:7px;border-right:1.5px solid var(--mute);border-bottom:1.5px solid var(--mute);transform:translateY(-2px) rotate(45deg)}
+details.more[open]>summary::after{transform:translateY(2px) rotate(225deg)}
+details.more>summary small{font-weight:400;font-size:13px;color:var(--mute)}
+.morein{display:grid;gap:18px;padding:6px 16px 18px;min-width:0}.morein>*{min-width:0}
+details.opts{margin-top:10px;border-color:transparent;background:none}
+details.opts>summary{display:inline-flex;padding:0 2px;min-height:36px;font-size:13px;color:var(--mute);gap:8px}
+details.opts>summary:hover{color:var(--ink)}
+details.opts[open]{border-color:var(--hair);background:var(--panel);margin-top:12px}details.opts[open]>summary{padding:0 16px;color:var(--ink)}
+.optgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 24px}
+.f{display:grid;gap:7px;min-width:0;align-content:start}.f>label,.f>.l{font-size:13px;font-weight:600}.f small{color:var(--mute);font-size:12.5px}.f.wide{grid-column:1/-1}
+.inl{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.in.sm{min-height:40px;border-radius:10px;padding:0 12px;font-size:14px}
+select.in{padding:0 14px;font-size:14px}
+input[type=color].in{width:52px;flex:none;padding:3px;cursor:pointer}
+input[type=file]{font-size:13px;max-width:100%;min-height:40px;color:var(--mute)}
+input[type=file]::file-selector-button{min-height:40px;margin-right:10px;padding:0 14px;border-radius:10px;border:1px solid var(--hair);background:var(--panel);color:var(--ink);font:500 13px Inter,system-ui,sans-serif;cursor:pointer}
+input[type=file]::file-selector-button:hover{background:var(--soft)}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
-.chip{min-height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--phair);background:#fff;font-size:13px;cursor:pointer}
-.chip[aria-pressed=true]{background:var(--pink);color:#fff;border-color:var(--pink)}
-.seg{display:inline-flex;border:1px solid var(--phair);border-radius:10px;overflow:hidden}.seg button{border:0;background:#fff;padding:0 14px;min-height:38px;font-size:13.5px;cursor:pointer;color:var(--pmute)}.seg button+button{border-left:1px solid var(--phair)}.seg button[aria-pressed=true]{background:var(--pink);color:#fff}
-.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.btn{min-height:38px;padding:0 14px;border-radius:10px;border:1px solid var(--pink);background:var(--pink);color:#fff;font-weight:600;font-size:13.5px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px}
-.btn.ghost{background:#fff;color:var(--pink);border-color:#B8BECB}.btn.sm{min-height:32px;padding:0 10px;font-size:12.5px}.btn:disabled{opacity:.5;cursor:default}
-.btn[aria-pressed=true]{background:#111113;border-color:#111113;color:#fff}
-.swatch{width:36px;height:36px;border-radius:8px;border:1px solid var(--phair);flex:none}
-.sec{background:var(--ppanel);border:1px solid var(--phair);border-radius:14px;padding:18px;margin-bottom:18px;display:grid;gap:14px;min-width:0}
-.sec{grid-template-columns:minmax(0,1fr)}.sec>*{min-width:0}.sec>header{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:space-between}
-.sec h2{margin:0;font:italic 500 clamp(26px,3vw,36px)/1 'Cormorant Garamond',Georgia,serif}
-.lede{margin:0;color:var(--pmute);font-size:14px;max-width:75ch}
-.ro{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
-.sw{display:grid;border:1px solid var(--phair);border-radius:10px;overflow:hidden;text-align:left;cursor:pointer;background:#fff;padding:0}
-.sw i{display:block;height:54px}.sw span{padding:6px 8px;display:grid;font-size:12px}.sw b{font-size:13px}.sw code{font:500 11.5px 'JetBrains Mono',monospace;color:var(--pmute)}
-.ramp{display:flex;border-radius:8px;overflow:hidden;border:1px solid var(--phair)}.ramp button{flex:1;min-width:0;height:34px;border:0;cursor:pointer;font:500 11px 'JetBrains Mono',monospace;letter-spacing:-.03em;padding:0}
-table.ct{width:100%;border-collapse:collapse;font-size:13px}.ct th,.ct td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--phair)}.ct td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
-.tbl{overflow-x:auto}
-.mineSet{border:1px dashed var(--phair);border-radius:12px;padding:12px;margin-top:6px;display:grid;gap:10px}.mineSet legend{padding:0 6px;font-weight:600}.mineSet .specs{gap:10px}
+.chip{min-height:38px;padding:0 15px;border-radius:999px;border:1px solid var(--hair);background:var(--panel);font-size:13px;font-weight:500}
+.chip[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.seg{display:inline-flex;justify-self:start;border:1px solid var(--hair);border-radius:10px;background:var(--panel);padding:3px;gap:2px}
+.seg button{border:0;background:none;border-radius:7px;min-height:32px;padding:0 14px;font-size:13px;font-weight:500;color:var(--mute)}
+.seg button[aria-pressed=true]{background:var(--ink);color:#fff}
+.dot{display:inline-block;width:22px;height:22px;border-radius:6px;border:1px solid var(--hair);flex:none}
+
+/* the sheet */
+.sec{padding-top:clamp(40px,7vh,72px)}
+.sech{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;min-height:40px}
+.sech h2{margin:0;font:600 21px/1.2 Inter,system-ui,sans-serif;letter-spacing:-.01em}
+.acts{display:flex;gap:8px;align-items:center}
+.card{background:var(--panel);border:1px solid var(--hair);border-radius:16px;box-shadow:var(--shadow)}
+.sec>.note,.sec>details.more{margin-top:14px}
+
+/* logo */
+.lg2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.lg3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:16px}
+.tile{position:relative;margin:0;border:1px solid var(--hair);border-radius:16px;overflow:hidden;display:grid;place-items:center;box-shadow:var(--shadow);min-width:0}
+.tile.big{min-height:clamp(190px,25vw,320px);padding:36px 28px}
+.tile.sm{min-height:clamp(120px,15vw,170px);padding:30px 16px 34px}
+.tile svg,.tile img{display:block;max-width:100%;height:auto}
+.tile.big svg{max-height:132px;width:auto;max-width:min(100%,460px)}
+.tile.sm svg{max-height:72px;width:auto;max-width:86%}
+.tile figcaption{position:absolute;left:14px;bottom:12px}
+.svgb{position:absolute;right:10px;top:10px;min-height:32px;padding:0 10px;border-radius:8px;border:1px solid var(--hair);background:var(--panel);color:var(--ink);font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.1em;opacity:0;transition:opacity .15s}
+.tile:hover .svgb,.tile:focus-within .svgb,.svgb:focus-visible{opacity:1}
+@media (hover:none){.svgb{opacity:1}}
+.files{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr));gap:8px}
+.files .btn{justify-content:space-between}
+
+/* colours */
+.sws{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));overflow:hidden}
+.sw{display:grid;grid-template-rows:auto 1fr;padding:0;border:0;background:var(--panel);text-align:left;min-width:0;border-right:1px solid var(--hair)}
+.sw:last-child{border-right:0}
+.sw i{display:block;height:clamp(104px,13vw,168px);border-bottom:1px solid var(--hair)}
+.sw>span{display:grid;gap:5px;padding:14px 16px 16px;align-content:start}
+.sw b{font:600 14px/1.25 Inter,system-ui,sans-serif}
+.sw code{font:500 12px/1 'JetBrains Mono',monospace;color:var(--mute)}
+.sw:hover>span{background:var(--soft)}
+.sw:focus-visible{outline-offset:-3px}
 .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:600}.pass{background:var(--okbg);color:var(--ok)}.fail{background:var(--badbg);color:var(--bad)}.warn{background:var(--warnbg);color:var(--warn)}
+.minis{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.mini{display:flex;align-items:center;gap:10px;min-height:44px;padding:6px 10px;border:1px solid var(--hair);border-radius:10px;background:var(--panel);text-align:left;font-size:13px;min-width:0}
+.mini i{width:28px;height:28px;border-radius:7px;border:1px solid var(--hair);flex:none}.mini span{display:grid;min-width:0}.mini code{font:500 11.5px 'JetBrains Mono',monospace;color:var(--mute)}
+.h3{margin:0;font:600 15px/1.3 Inter,system-ui,sans-serif}
+.ramps{display:grid;gap:8px}.ramps b{font-size:13px;font-weight:600}
+.ramp{display:flex;border-radius:8px;overflow:hidden;border:1px solid var(--hair)}.ramp button{flex:1;min-width:0;height:36px;border:0;font:500 11px 'JetBrains Mono',monospace;letter-spacing:-.03em;padding:0}.ramp button:focus-visible{outline-offset:-3px}
 .modes{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.mode{border-radius:12px;padding:16px;border:1px solid var(--phair);display:grid;gap:8px;min-width:0}
-.mode h3{margin:0;font-size:22px}.mode p{margin:0}
-.btnx{display:inline-flex;align-items:center;min-height:38px;padding:0 14px;font-weight:600;border:0}
-.fixes{margin:0;padding-left:18px;font-size:13px;color:var(--pmute)}
-.specs{display:grid;grid-template-columns:1fr 1fr;gap:12px}.specbox{border:1px solid var(--phair);border-radius:12px;padding:16px;min-width:0;overflow-wrap:anywhere}
-.lockups{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
-.lk{border:1px solid var(--phair);border-radius:12px;padding:14px;display:grid;gap:8px;min-width:0}.lk .v{display:grid;place-items:center;min-height:130px;border-radius:10px;overflow:hidden}.lk .v svg,.lk .v img{max-width:100%;height:auto;max-height:120px}
-pre{margin:0;background:#12141C;color:#E8EBF3;border-radius:10px;padding:12px;font:12px/1.5 'JetBrains Mono',monospace;max-height:340px;overflow:auto;white-space:pre}
-.tabs{display:flex;gap:6px;flex-wrap:wrap}.tabs button{border:1px solid var(--phair);background:#fff;border-radius:8px;min-height:34px;padding:0 12px;cursor:pointer;font-size:13px}.tabs button[aria-selected=true]{background:var(--pink);color:#fff;border-color:var(--pink)}
-.note{font-size:13px;color:var(--pmute);margin:0}
-.drop{border:2px dashed #B8BECB;border-radius:12px;padding:12px;text-align:center;font-size:13px;color:var(--pmute)}
-.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1C1F2A;color:#fff;padding:10px 16px;border-radius:999px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:100;max-width:calc(100vw - 32px)}.toast.on{opacity:1}
-#kitBox{border:1px solid var(--phair);border-radius:12px;overflow:hidden}
-@media (max-width:980px){.app{grid-template-columns:minmax(0,1fr)}.side{position:static;max-height:none}.modes,.specs{grid-template-columns:1fr}}
-@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+.mode{border-radius:12px;padding:16px;border:1px solid var(--hair);display:grid;gap:10px;min-width:0}.mode p{margin:0}
+.btnx{display:inline-flex;align-items:center;min-height:36px;padding:0 14px;font-weight:600;font-size:13.5px}
+table.ct{width:100%;border-collapse:collapse;font-size:13px}.ct th,.ct td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--hair);font-weight:400}.ct thead th{font-weight:600}.ct td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
+.tbl{overflow-x:auto}
+.fixes{margin:0;padding-left:18px;font-size:13px;color:var(--mute)}.fixes.plain{list-style:none;padding:0}.fixes li{margin:3px 0}
+details.in2>summary{cursor:pointer;font-size:14px;min-height:36px;display:flex;align-items:center}
 
-/* one part of the kit at a time, with the actions at the top (2026-11) */
-.side{top:calc(var(--sb-h,44px) + 12px);max-height:calc(100vh - var(--sb-h,44px) - 24px)}
-#out{position:relative}
-.bgBar{position:sticky;top:var(--sb-h,44px);z-index:6;margin:0 -4px 12px;padding:10px 4px;background:var(--pbg)}
-.bgTabs{display:flex;gap:6px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
-.bgTabs::-webkit-scrollbar{display:none}
-.bgTabs button{flex:none;min-height:40px;padding:0 16px;border:1px solid var(--phair);border-radius:999px;background:#fff;color:var(--pink);font:inherit;font-size:13.5px;font-weight:600;cursor:pointer}
-.bgTabs button[aria-selected=true]{background:var(--pink);border-color:var(--pink);color:#fff}
-.sec.bgSave{padding:12px 14px;margin-bottom:14px;gap:8px}
-.sec.bgSave>header{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
-.sec.bgSave .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.sec.bgSave .note:empty{display:none}
-.sec.bgOff{position:absolute!important;left:0;right:0;top:0;height:0!important;min-height:0!important;margin:0!important;overflow:hidden!important;visibility:hidden!important;pointer-events:none}
-.bgMore{border:1px solid var(--phair);border-radius:12px;padding:0 14px}
-.bgMore>summary{min-height:48px;display:flex;align-items:center;gap:10px;cursor:pointer}
-.bgMoreIn{display:grid;gap:14px;padding:4px 0 16px}
-@media (max-width:900px){.bgBar{top:var(--sb-h,44px)}}
+/* fonts */
+.spec{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)}
+.spec>div{padding:clamp(20px,3vw,32px);min-width:0;display:grid;gap:14px;align-content:start}
+.spec>div+div{border-left:1px solid var(--hair)}
+.spec p{margin:0}
+.spec .big{font-size:clamp(40px,6.2vw,80px);line-height:1.02;overflow-wrap:anywhere;text-wrap:balance}
+.spec .mid{font-size:clamp(19px,2vw,24px);line-height:1.3;color:var(--mute);text-wrap:balance}
+.spec .para{font-size:17px;line-height:1.6}
+.spec .glyphs{font-size:15px;line-height:1.7;color:var(--mute);overflow-wrap:anywhere}
+.fname{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px}.fname a{font-size:13px;color:var(--mute)}.fname a:hover{color:var(--ink)}
+.scale{display:grid;gap:2px;overflow:hidden}.scale>div{display:grid;grid-template-columns:44px 56px minmax(0,1fr);gap:8px;align-items:baseline}.scale code{font:500 12px 'JetBrains Mono',monospace}.scale code+code{color:var(--mute)}.scale span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mineSet{border:1px dashed var(--hair);border-radius:12px;padding:14px;margin:0;display:grid;gap:12px;min-width:0}.mineSet legend{padding:0 6px;font-weight:600;font-size:13px}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:14px}.check input{width:18px;height:18px;margin:2px 0 0;accent-color:var(--accent);flex:none}
 
-/* brief: twelve feel words first, options folded */
-.bgFew .chip:nth-child(n+13):not([aria-pressed=true]){display:none}
-.bgLink{align-self:start;border:0;background:none;padding:6px 0;min-height:32px;font:500 13px Inter,system-ui,sans-serif;color:var(--pmute,#5e6476);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
-.bgOpt>summary{flex-wrap:wrap;gap:2px 10px;font-weight:600;font-size:14px;list-style:none}.bgOpt>summary::-webkit-details-marker{display:none}
-.bgOpt>summary small{font-weight:400;font-size:12.5px;color:var(--pmute,#5e6476);flex-basis:100%}
-.bgOpt>summary::after{content:"";margin-left:auto;width:7px;height:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg);position:absolute;right:16px}
-.bgOpt{position:relative}.bgOpt[open]>summary::after{transform:rotate(225deg)}
-/* one bar: the parts on the left, one download and a short menu on the right */
-.bgBar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;justify-content:space-between}
-.bgActs{display:flex;gap:8px;align-items:center}
-.bgMenu{position:relative}.bgMenu>summary{list-style:none;cursor:pointer}.bgMenu>summary::-webkit-details-marker{display:none}
-.bgMenu>summary::after{content:"";width:6px;height:6px;margin-left:8px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:translateY(-2px) rotate(45deg)}
-.bgMenuList{position:absolute;right:0;top:calc(100% + 6px);z-index:8;min-width:220px;display:grid;padding:6px;background:#fff;border:1px solid var(--phair,#e1e4ec);border-radius:12px;box-shadow:0 18px 40px -18px rgba(13,18,32,.35)}
-.bgMenuList button{min-height:44px;padding:0 12px;border:0;border-radius:8px;background:none;text-align:left;font:500 14px Inter,system-ui,sans-serif;color:inherit;cursor:pointer}
-.bgMenuList button:hover,.bgMenuList button:focus-visible{background:#f2f4f7}
-.bgStatus{margin:0 0 10px}.bgStatus:empty{display:none}
-#projLink{margin:0 0 12px}
-.bgOpenKit{gap:6px}
-/* the four examples sit two by two, so the preview is one look, not a long scroll */
-@media(min-width:1180px){#appBox .ap{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start}#appBox .ap>div{min-width:0}}
+/* in use: the only place the brand's own colours and fonts lead */
+.use{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.frame{border:1px solid var(--hair);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);background:var(--b-bg);color:var(--b-ink);font-family:var(--b-fb);min-width:0}
+.hd{font-family:var(--b-fh);font-weight:var(--b-hw);text-transform:var(--b-cs)}
+.web{grid-column:1/-1}
+.wnav{display:flex;flex-wrap:wrap;align-items:center;gap:10px 24px;padding:16px clamp(18px,3.4vw,40px);border-bottom:1px solid var(--b-ln)}
+.wlogo{display:flex;align-items:center;gap:10px;font-size:19px;line-height:1.1;min-width:0}.wlogo svg{width:30px;height:30px;flex:none}
+.wlinks{margin-left:auto;display:flex;gap:clamp(14px,2.4vw,30px);font-size:14px;color:var(--b-mute)}
+.whero{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);gap:clamp(20px,4vw,56px);align-items:center;padding:clamp(28px,5.4vw,72px) clamp(18px,3.4vw,40px)}
+.whero p{margin:0}
+.whero .eyebrow{font-size:13px;font-weight:600;color:var(--b-pt);margin-bottom:12px}
+.whero .hd{font-size:clamp(28px,4.3vw,56px);line-height:1.06;text-wrap:balance;overflow-wrap:anywhere}
+.whero .sub{margin-top:14px;color:var(--b-mute);font-size:clamp(15px,1.5vw,18px);line-height:1.5;max-width:48ch}
+.bt{display:inline-flex;align-items:center;min-height:44px;padding:0 22px;margin-top:24px;border-radius:var(--b-r);background:var(--b-p);color:var(--b-onp);font-weight:600;font-size:15px}
+.wart{aspect-ratio:4/3;border-radius:calc(var(--b-r) + 6px);background:var(--b-p);display:grid;place-items:center;overflow:hidden}
+.wart.own{background:var(--b-sf);border:1px solid var(--b-ln)}
+.wart svg{width:34%;height:auto}
+.post{aspect-ratio:1;display:grid;place-items:center;text-align:center;background:var(--b-p);color:var(--b-onp);padding:8%}
+.post>div{display:grid;gap:clamp(14px,2.2vw,24px);justify-items:center;min-width:0;max-width:100%}
+.post svg{width:clamp(64px,9vw,104px);height:auto}
+.post .hd{margin:0;font-size:clamp(24px,3.6vw,44px);line-height:1.08;overflow-wrap:anywhere;text-wrap:balance}
+.cards{display:grid;gap:16px;align-content:start;min-width:0}
+.bcard{aspect-ratio:7/4;display:grid;place-items:center;padding:7%}
+.bcard svg{max-width:78%;max-height:56%;width:auto;height:auto}
+.bcard.back{background:var(--b-p);color:var(--b-onp);place-items:end start;text-align:left}
+.bcard.back p{margin:0}.bcard.back .hd{font-size:clamp(18px,2.3vw,28px);line-height:1.1;overflow-wrap:anywhere}.bcard.back .ad{margin-top:6px;font-size:clamp(12px,1.25vw,15px);opacity:.92;overflow-wrap:anywhere}
+
+/* download */
+.dl{padding:clamp(18px,2.6vw,28px);display:grid;gap:14px}
+.dlrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.dlrow .btn.tall{margin-right:6px}
+.coderow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding-top:18px;margin-top:4px;border-top:1px solid var(--hair)}
+.coderow label{font-weight:600;font-size:14px;margin-right:2px}
+.coderow select{min-height:40px;padding:0 14px;border:1px solid var(--hair);border-radius:10px;background:var(--panel);font-size:14px;min-width:190px}
+pre.code{margin:0;background:var(--soft);border:1px solid var(--hair);border-radius:10px;padding:12px;font:12.5px/1.55 'JetBrains Mono',monospace;max-height:340px;overflow:auto;white-space:pre;color:var(--ink)}
+#gdFrame{width:100%;height:640px;border:1px solid var(--hair);border-radius:12px;background:#fff}
+.linkbtn{justify-self:start;border:0;background:none;padding:6px 0;min-height:40px;font-weight:500;font-size:14px;text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--hair)}
+.linkbtn:hover{text-decoration-color:var(--ink)}
+
+/* every component, in place */
+.kvbar{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;padding:28px 0 18px}
+.kvbar h2{margin:0;font:600 21px/1.2 Inter,system-ui,sans-serif;letter-spacing:-.01em}
+#kitView .ktBar{position:static;max-width:none;padding:0 0 12px;background:none}
+main.kv .tools{position:static}
+#kitBox{border:1px solid var(--hair);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:999px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:100;max-width:calc(100vw - 32px)}
+.toast.on{opacity:1}
+@media (min-width:861px) and (min-height:760px){.tools{position:sticky;top:var(--sb-h,44px);z-index:5;margin-inline:-14px;padding-inline:14px}}
+@media (max-width:980px){.sws{grid-template-columns:repeat(3,minmax(0,1fr))}.sw:nth-child(3){border-right:0}.sw:nth-child(-n+3){border-bottom:1px solid var(--hair)}}
+@media (max-width:860px){.hero{grid-template-columns:1fr}header.top nav{display:none}.row{flex-wrap:wrap}.fld.name,.fld.desc{flex:1 1 100%}.fld.feel{flex:1 1 200px}}
+@media (max-width:640px){details.opts>summary small{display:none}.row{gap:12px 10px}.fld.feel{flex:1 1 100%}.row>.btn{flex:1 1 0}.optgrid,.two,.modes,.spec,.use,.lg2{grid-template-columns:minmax(0,1fr)}.spec>div+div{border-left:0;border-top:1px solid var(--hair)}.lg3{gap:10px}.tile.sm{padding:22px 10px 30px}.tile figcaption{left:10px;bottom:9px;font-size:10px;letter-spacing:.1em}
+ .sws{grid-template-columns:repeat(2,minmax(0,1fr))}.sw{border-right:0;border-bottom:1px solid var(--hair)}.sw:nth-child(odd){border-right:1px solid var(--hair)}.sw:nth-last-child(-n+2){border-bottom:0}.sw>span{padding:12px}
+ .whero{grid-template-columns:minmax(0,1fr)}.wart{aspect-ratio:16/9}.wart svg{width:22%}.wlinks{margin-left:0}.dlrow .btn{flex:1 1 150px}.dlrow .btn.tall{flex-basis:100%;margin-right:0}.coderow select{flex:1 1 100%}.coderow .btn{flex:1 1 0}}
+@media (pointer:coarse){.btn,.seg button,.chip{min-height:44px}.seg button{min-height:38px}.svgb{min-height:36px}}
+@media (prefers-reduced-motion:reduce){.toast,.svgb{transition:none}}
 </style><meta property="og:type" content="website"><meta property="og:site_name" content="Visual &amp; Motion Atlas"><meta property="og:title" content="Brand kit generator · Visual & Motion Atlas"><meta property="og:description" content="Name, a sentence and a few feel words in; a complete brand out: an OKLCH palette checked for WCAG contrast and colour blindness, a Google Fonts pairing with rationale, logo lockups, CSS, JSON and Tailwind tokens, applied previews and a downloadable theme kit."><meta property="og:url" content="https://motionatlas-ten.vercel.app/brand-generator"><meta property="og:image" content="https://motionatlas-ten.vercel.app/assets/og-atlas.jpg"><meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://motionatlas-ten.vercel.app/brand-generator">
 <style id="sbPre">html{--sb-h:calc(44px + env(safe-area-inset-top,0px))}body{padding-top:var(--sb-h)}html:not(.sbReady) body::before{content:"";position:fixed;top:0;left:0;right:0;height:var(--sb-h);background:#fff;border-bottom:1px solid #e8e8ea;z-index:2147483000}@media print{body{padding-top:0}}</style><script src="site-nav-data.js" defer></script><script src="site-bar.js" defer></script>
 </head><body><noscript><nav id="sbNo" aria-label="Atlas" style="position:fixed;top:0;left:0;right:0;height:44px;box-sizing:border-box;z-index:2147483000;background:#fff;border-bottom:1px solid #e8e8ea;padding:12px 16px;font:500 14px/20px system-ui,sans-serif;white-space:nowrap;overflow:auto"><a style="color:#111;font-weight:700;margin-right:16px" href="atlas.html">Atlas</a><a style="color:#111;margin-right:16px" href="tools.html">Tools</a><a style="color:#111;margin-right:16px" href="atlas.html#browse">Catalogue</a><a style="color:#111" href="atlas.html#projects">My projects</a></nav></noscript>
-<a class="skip" href="#out">Skip to the brand</a>
-<header class="top"><a class="back" href="atlas.html#systems">← Atlas / Design systems</a><nav aria-label="Related"><a href="theme-kits.html">Theme kits</a><a href="page-builder.html">Site builder</a><a href="chart-studio.html">Chart studio</a><a href="atlas.html#projects">My projects</a></nav></header>
-<div class="wrap">
-<section class="intro" aria-labelledby="ttl"><h1 id="ttl">Brand kit generator.</h1><p>Name it, describe it, pick a few feel words. The kit updates as you type.</p></section>
-<div class="app">
-<form class="panel side" id="form" aria-label="Brand inputs" onsubmit="return false">
- <div class="f"><label for="name">Brand name</label><input id="name" type="text" maxlength="60" autocomplete="off" value="Saffron &amp; Salt"></div>
- <div class="f"><label for="desc">What is it, in a sentence</label><textarea id="desc" maxlength="400">A neighbourhood bakery and coffee bar with slow-fermented bread.</textarea></div>
- <fieldset><legend>Feel words (pick 3 to 5)</legend><div class="chips bgFew" id="chips" role="group" aria-label="Feel words"></div><button class="bgLink" type="button" id="moreWords" aria-expanded="false" aria-controls="chips">More words</button>
-  <div class="f bgOwn" hidden><label for="own">Or add your own</label><div class="row"><input id="own" type="text" maxlength="24" placeholder="e.g. cheeky" style="flex:1;min-width:0"><button class="btn ghost sm" type="button" id="addOwn">Add</button></div><small id="ownNote" role="status"></small></div></fieldset>
- <details class="bgMore bgOpt"><summary>More options<small>Audience, base colour, your logo, light or dark</small></summary><div class="bgMoreIn">
- <div class="f"><label for="aud">Audience</label><input id="aud" type="text" maxlength="80" placeholder="e.g. local families, developers" autocomplete="off"></div>
- <div class="f"><span class="l" id="lblBase">Base colour (optional)</span><div class="row"><input id="base" type="color" value="#9a4a38" aria-labelledby="lblBase" style="width:48px;height:38px;padding:2px;border-radius:8px"><input id="baseTxt" type="text" maxlength="7" placeholder="#RRGGBB" aria-label="Base colour hex" style="flex:1;min-width:0"><button class="btn ghost sm" type="button" id="baseClear">Clear</button></div></div>
- <div class="f"><label for="logoIn">Logo (SVG or PNG, optional)</label><input id="logoIn" type="file" accept="image/svg+xml,image/png,.svg,.png"><div class="row" id="logoInfo" hidden><span id="logoSw" class="row"></span><button class="btn ghost sm" type="button" id="logoClear">Remove logo</button></div><small id="logoNote" role="status">Dominant colours are read in your browser and become the primary, secondary and accent.</small></div>
- <div class="f"><span class="l">Light or dark</span><div class="seg" role="group" aria-label="Preferred mode"><button type="button" data-mode="auto" aria-pressed="true">Auto</button><button type="button" data-mode="light" aria-pressed="false">Light</button><button type="button" data-mode="dark" aria-pressed="false">Dark</button></div></div>
- </div></details>
- <div class="row"><button class="btn" type="button" id="shuffleAll">Shuffle everything</button><button class="btn ghost" type="button" id="undo" disabled>Undo</button></div>
- <p class="note" id="draftNote">Drafts are kept in this browser.</p>
-</form>
-<main id="out" tabindex="-1" aria-label="Your brand"><div class="bgBar" id="bgBar"><div class="bgTabs" role="tablist" aria-label="Parts of your brand kit"><button role="tab" type="button" id="bgT-hApp" data-t="hApp" aria-selected="true" tabindex="0">Preview</button><button role="tab" type="button" id="bgT-hPal" data-t="hPal" aria-selected="false" tabindex="-1">Colours</button><button role="tab" type="button" id="bgT-hTyp" data-t="hTyp" aria-selected="false" tabindex="-1">Fonts</button><button role="tab" type="button" id="bgT-hLg" data-t="hLg" aria-selected="false" tabindex="-1">Logo</button><button role="tab" type="button" id="bgT-hEx" data-t="hEx" aria-selected="false" tabindex="-1">Export</button></div><div class="bgActs"><button class="btn" type="button" id="kitZip">Download kit (.zip)</button><details class="bgMenu" id="bgMenu"><summary class="btn ghost">More</summary><div class="bgMenuList" role="group" aria-label="More actions"><button type="button" id="saveProj">Save to My projects</button><button type="button" id="toSite">Use in Site builder</button><button type="button" id="toBoard">Pin to moodboard</button><button type="button" id="aiBtn">Refine with AI</button><button type="button" id="share">Copy share link</button></div></details></div></div><p class="note bgStatus" id="svNote" role="status"></p><a class="btn ghost sm" id="projLink" href="atlas.html#projects" hidden>Open in My projects</a>
- <section class="sec" aria-labelledby="hPal"><header><h2 id="hPal">Colours</h2><div class="row"><button class="btn ghost sm" type="button" id="shPal">Shuffle</button><button class="btn ghost sm" type="button" id="lkPal" aria-pressed="false">Lock</button></div></header><div id="palBox"></div></section>
- <section class="sec" aria-labelledby="hTyp"><header><h2 id="hTyp">Fonts</h2><div class="row"><button class="btn ghost sm" type="button" id="shTyp">Shuffle</button><button class="btn ghost sm" type="button" id="lkTyp" aria-pressed="false">Lock</button></div></header><div id="typBox"></div><div id="mineBox"></div></section>
- <section class="sec" aria-labelledby="hLg"><header><h2 id="hLg">Logo</h2><div class="row"><button class="btn ghost sm" type="button" id="shLg">Shuffle</button><button class="btn ghost sm" type="button" id="lkLg" aria-pressed="false">Lock</button></div></header><div id="lgBox"></div></section>
- <section class="sec" aria-labelledby="hTok"><header><h2 id="hTok">Code</h2><div class="row"><button class="btn sm" type="button" id="copyTok">Copy</button><button class="btn ghost sm" type="button" id="dlTok">Download</button></div></header><div class="tabs" role="tablist" aria-label="Token format" id="tokTabs"><button role="tab" type="button" data-t="css" aria-selected="true">CSS variables</button><button role="tab" type="button" data-t="json" aria-selected="false">JSON (W3C)</button><button role="tab" type="button" data-t="tw" aria-selected="false">Tailwind</button></div><pre id="tokPre" tabindex="0" aria-label="Token code"></pre></section>
- <section class="sec" aria-labelledby="hApp"><header><h2 id="hApp">Your brand in use</h2><div class="row"><div class="seg" role="group" aria-label="Preview mode"><button type="button" data-pm="light" aria-pressed="true">Light</button><button type="button" data-pm="dark" aria-pressed="false">Dark</button></div></div></header><div id="appBox"></div></section>
- <section class="sec" aria-labelledby="hGd"><header><h2 id="hGd">One-page brand guide</h2><div class="row"><button class="btn sm" type="button" id="gdHtml">Download guide (HTML)</button><button class="btn ghost sm" type="button" id="gdPng">Download PNG</button><button class="btn ghost sm" type="button" id="gdPrint">Print / save PDF</button></div></header><p class="lede">A one-page guide with logo, colour, type, voice and contrast results. It is a single HTML file and prints to A4.</p><iframe id="gdFrame" title="Brand guide preview" style="width:100%;height:640px;border:1px solid var(--phair);border-radius:12px;background:#fff" sandbox="allow-same-origin"></iframe></section>
- <section class="sec bgOpenKit" id="exKit" aria-labelledby="hExK"><header><h2 id="hExK">Full preview</h2><div class="row"><button class="btn ghost sm" type="button" id="kitOpen">Open the full preview</button></div></header><p class="lede">See every button, input, table and card in your colours and fonts before you download.</p></section>
- <section class="sec" aria-labelledby="hKit"><header><h2 id="hKit">Every component in your brand</h2><div class="row"><button class="btn ghost sm" type="button" id="kitBack">← Back to Export</button></div></header><p class="lede">The whole kit as it downloads: page, components, assets and guidelines.</p><div id="kitBox" class="tkwrap"></div></section>
-</main></div></div>
+<a class="skip" href="#sheet">Skip to the brand kit</a>
+<header class="top"><a class="back" href="atlas.html#systems">← Atlas / Design systems</a><nav aria-label="Related"><a href="page-builder.html"><b style="color:var(--ink);font-weight:600">Site builder →</b></a><a href="theme-kits.html">Theme kits</a><a href="chart-studio.html">Chart studio</a><a href="atlas.html#projects">My projects</a></nav></header>
+<main id="main">
+<section class="hero"><h1>Brand kit.</h1><p>Give it a name and a feel. You get a logo, colours and fonts that belong together, ready to download.</p></section>
+
+<form class="tools" id="form" aria-label="Your brand" onsubmit="return false"><div class="row">
+  <label class="fld name"><span class="k">Brand name</span><input id="name" type="text" maxlength="60" autocomplete="off" placeholder="Brand name"></label>
+  <label class="fld desc"><span class="k">What it is, in a few words</span><input id="desc" type="text" maxlength="400" autocomplete="off" placeholder="A neighbourhood bakery and coffee bar"></label>
+  <label class="fld feel"><span class="k">Feel</span><select id="feel"></select></label>
+  <button class="btn tall primary" type="button" id="shuffleAll">Shuffle</button>
+  <button class="btn tall" type="button" id="undo" disabled>Undo</button>
+ </div></form>
+ <details class="more opts" id="opts"><summary>More options <small>audience, base colour, your logo, light or dark, your own feel words</small></summary><div class="morein"><div class="optgrid">
+  <div class="f"><label for="aud">Audience</label><input class="in" id="aud" type="text" maxlength="80" placeholder="local families, developers…" autocomplete="off"></div>
+  <div class="f"><span class="l" id="lblMode">Prefer light or dark</span><div class="seg" role="group" aria-labelledby="lblMode"><button type="button" data-mode="auto" aria-pressed="true">Auto</button><button type="button" data-mode="light" aria-pressed="false">Light</button><button type="button" data-mode="dark" aria-pressed="false">Dark</button></div><small>Sets which version the downloads treat as the main one.</small></div>
+  <div class="f"><span class="l" id="lblBase">Base colour</span><div class="inl"><input class="in" id="base" type="color" value="#9a4a38" aria-labelledby="lblBase"><input class="in" id="baseTxt" type="text" maxlength="7" placeholder="#RRGGBB" aria-label="Base colour as hex" style="flex:1 1 90px;width:auto;min-width:0"><button class="btn" type="button" id="baseClear">Clear</button></div><small>Optional. The primary starts from this colour instead of the feel.</small></div>
+  <div class="f"><label for="logoIn">Your logo (SVG or PNG)</label><input id="logoIn" type="file" accept="image/svg+xml,image/png,.svg,.png"><div class="inl" id="logoInfo" hidden><span id="logoSw" class="inl"></span><button class="btn" type="button" id="logoClear">Remove logo</button></div><small id="logoNote" role="status">Optional. Its main colours are read in your browser and become the palette.</small></div>
+  <fieldset class="f wide" style="border:0;padding:0;margin:0"><legend class="l" style="padding:0;font-size:13px;font-weight:600;margin-bottom:7px">Feel words <span style="font-weight:400;color:var(--mute)">· pick up to five instead of a ready-made feel</span></legend><div class="chips" id="chips" role="group" aria-label="Feel words"></div>
+   <div class="inl" style="margin-top:6px"><label class="vh" for="own">Add your own word</label><input class="in" id="own" type="text" maxlength="24" placeholder="Add your own, e.g. cheeky" style="flex:1 1 160px;min-width:0;max-width:320px"><button class="btn" type="button" id="addOwn">Add</button></div><small id="ownNote" role="status"></small></fieldset>
+  <div class="f wide"><span class="l">Wording</span><div class="inl"><button class="btn" type="button" id="aiBtn">Refine with AI</button><small>The kit only ever uses your name and description. This asks the AI to suggest wording for the guide, when it is switched on.</small></div></div>
+ </div><p class="note" id="draftNote">Your draft is kept in this browser.</p></div></details>
+<p class="status" id="svNote" role="status" aria-live="polite"></p>
+
+<div id="sheet" tabindex="-1" role="region" aria-label="Your brand kit">
+ <section class="sec" aria-labelledby="hLg"><div class="sech"><h2 id="hLg">Logo</h2><div class="acts"><button class="btn" type="button" id="shLg">Shuffle</button><button class="btn" type="button" id="lkLg" aria-pressed="false">Lock</button></div></div>
+  <div id="lgBox"></div><p class="note" id="lgNote"></p>
+  <details class="more" id="lgMore"><summary>All logo files</summary><div class="morein" id="lgFiles"></div></details></section>
+
+ <section class="sec" aria-labelledby="hPal"><div class="sech"><h2 id="hPal">Colours</h2><div class="acts"><button class="btn" type="button" id="shPal">Shuffle</button><button class="btn" type="button" id="lkPal" aria-pressed="false">Lock</button></div></div>
+  <div id="palBox"></div><p class="note" id="palNote"></p>
+  <details class="more" id="palMore"><summary>Shades and contrast</summary><div class="morein" id="palDeep"></div></details></section>
+
+ <section class="sec" aria-labelledby="hTyp"><div class="sech"><h2 id="hTyp">Fonts</h2><div class="acts"><button class="btn" type="button" id="shTyp">Shuffle</button><button class="btn" type="button" id="lkTyp" aria-pressed="false">Lock</button></div></div>
+  <div id="typBox"></div><p class="note" id="typNote"></p>
+  <details class="more" id="typMore"><summary>Type scale and your own fonts</summary><div class="morein"><div id="typDeep"></div><div id="mineBox"></div></div></details></section>
+
+ <section class="sec" aria-labelledby="hApp"><div class="sech"><h2 id="hApp">In use</h2><div class="seg" role="group" aria-label="Show in light or dark"><button type="button" data-pm="light" aria-pressed="true">Light</button><button type="button" data-pm="dark" aria-pressed="false">Dark</button></div></div>
+  <div id="appBox"></div></section>
+
+ <section class="sec" aria-labelledby="hDl"><div class="sech"><h2 id="hDl">Download</h2></div>
+  <div class="card dl">
+   <div class="dlrow"><button class="btn tall primary" type="button" id="kitZip">Download kit (.zip)</button><button class="btn" type="button" id="gdHtml">Brand guide (HTML)</button><button class="btn" type="button" id="gdPrint">Print or save as PDF</button></div>
+   <div class="dlrow"><button class="btn" type="button" id="toSite">Use in the site builder</button><button class="btn" type="button" id="saveProj">Save to My projects</button><button class="btn" type="button" id="toBoard">Pin to moodboard</button><button class="btn" type="button" id="share">Copy share link</button></div>
+   <a class="btn" id="projLink" href="atlas.html#projects" hidden style="justify-self:start">Open in My projects →</a>
+   <div class="coderow"><label for="tokSel">Code:</label><select id="tokSel"><option value="css">CSS variables</option><option value="json">JSON (W3C)</option><option value="tw">Tailwind</option></select><button class="btn" type="button" id="copyTok">Copy</button><button class="btn" type="button" id="dlTok">Download</button></div>
+   <details class="more" id="tokMore"><summary>Show the code</summary><div class="morein"><pre class="code" id="tokPre" tabindex="0" aria-label="Token code"></pre></div></details>
+   <details class="more" id="gdMore"><summary>Preview the brand guide</summary><div class="morein"><p class="note">One page with the logo, colours, type and contrast results. It is a single HTML file and prints to A4.</p><iframe id="gdFrame" title="Brand guide preview" sandbox="allow-same-origin allow-modals"></iframe><div class="inl"><button class="btn" type="button" id="gdPng">Download as PNG</button></div></div></details>
+   <button class="linkbtn" type="button" id="kitOpen">See every component in this brand →</button>
+  </div></section>
+</div>
+
+<section id="kitView" hidden aria-labelledby="hKit"><div class="kvbar"><button class="btn tall" type="button" id="kitBack">← Back to the brand kit</button><div><h2 id="hKit">Every component in this brand</h2><p class="note">The whole kit as it downloads: page, components, assets and guidelines.</p></div></div><div id="kitBox" class="tkwrap"></div><p style="margin:18px 0 0"><button class="btn tall" type="button" id="kitBack2">← Back to the brand kit</button></p></section>
+</main>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="fontlib.js"></script><script src="kits/themes.js"></script><script src="kits/kits-a.js"></script><script src="kits/kits-b.js"></script><script src="kits/brand.js"></script><script src="kits/render.js"></script><script src="kits/tabs.js"></script>
 <script src="dataviz/styles.js"></script><script src="dataviz/chartmaker.js"></script>
 <script src="moodboard/pin.js" defer></script><script src="brandgen/engine.js"></script><script src="brandgen/page.js"></script>
-<script>
-/* One part of the kit at a time. A tab can show more than one section (Export is the guide, the code and a way into
-   the full preview). Hidden sections are parked off-screen at full width so their canvases still measure. */
-(()=>{const out=document.getElementById('out'),bar=document.getElementById('bgBar');if(!out||!bar)return;
- const secs=[...out.querySelectorAll(':scope>section.sec')],of=s=>s.getAttribute('aria-labelledby');
- const PANES={hApp:['hApp'],hPal:['hPal'],hTyp:['hTyp'],hLg:['hLg'],hEx:['hGd','hTok','hExK'],hKit:['hKit']};
- const gd=secs.find(s=>of(s)==='hGd'),tok=secs.find(s=>of(s)==='hTok');if(gd&&tok)tok.before(gd);
- const tabs=[...bar.querySelectorAll('[role=tab]')];
- function show(id,user){if(id==='hGd'||id==='hTok')id='hEx';if(!PANES[id])id='hApp';const tab=id==='hKit'?'hEx':id;
-  tabs.forEach(t=>{const on=t.dataset.t===tab;t.setAttribute('aria-selected',String(on));t.tabIndex=on?0:-1});
-  secs.forEach(s=>s.classList.toggle('bgOff',!PANES[id].includes(of(s))));
-  try{sessionStorage.setItem('brandgen-tab',id)}catch(e){}
-  if(user){const top=out.getBoundingClientRect().top+scrollY-(parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--sb-h'))||44)-8;if(scrollY>top)scrollTo({top});dispatchEvent(new Event('resize'))}}
- tabs.forEach((t,i)=>{t.onclick=()=>show(t.dataset.t,true);t.onkeydown=e=>{let j=null;if(e.key==='ArrowRight')j=(i+1)%tabs.length;if(e.key==='ArrowLeft')j=(i-1+tabs.length)%tabs.length;if(e.key==='Home')j=0;if(e.key==='End')j=tabs.length-1;if(j!=null){e.preventDefault();tabs[j].focus();show(tabs[j].dataset.t,true)}}});
- document.getElementById('kitOpen').onclick=()=>show('hKit',true);document.getElementById('kitBack').onclick=()=>show('hEx',true);
- /* feel words: twelve to start with, the rest on request; a chosen word always shows */
- const chips=document.getElementById('chips'),more=document.getElementById('moreWords'),own=document.querySelector('.bgOwn');
- more.onclick=()=>{const open=chips.classList.toggle('bgFew')===false;more.setAttribute('aria-expanded',String(open));more.textContent=open?'Fewer words':'More words';own.hidden=!open};
- /* the More menu closes after a choice, on a click outside it and on Escape */
- const menu=document.getElementById('bgMenu');
- document.addEventListener('click',e=>{if(menu.open&&(!menu.contains(e.target)||e.target.closest('.bgMenuList button')))menu.open=false});
- document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menu.open){menu.open=false;menu.querySelector('summary').focus()}});
- let start='hApp';try{start=sessionStorage.getItem('brandgen-tab')||start}catch(e){}
- const go=()=>show(start);if(document.readyState==='complete')setTimeout(go,60);else addEventListener('load',()=>setTimeout(go,60));
-})();
-</script>
 </body></html>

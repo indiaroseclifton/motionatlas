@@ -55,11 +55,11 @@
  function art(i,f){return f.format==='png'?`<img src="${esc(i.f)}" alt="" loading="lazy" decoding="async" width="64" height="64">`:i.s.replace('<svg','<svg aria-hidden="true" focusable="false"');}
 
  function famCards(){
-  $('#fams').innerHTML=S.index.families.map(f=>`<li><button type="button" class="fam" data-fam="${f.id}" aria-pressed="${f.id===S.fam}"><span class="fi" data-sample="${f.id}"></span><b>${esc(f.title)}</b><small>${f.count} · ${esc(f.licence)}</small></button></li>`).join('');
-  $('#famSel').innerHTML=S.index.families.map(f=>`<option value="${f.id}">${esc(f.title)} (${f.count})</option>`).join('');
+  // one dropdown for every family: makers with several weights get a group of their own, the rest share one
+  const maker=f=>f.title.split(' / ')[0],by=new Map();S.index.families.forEach(f=>{const m=maker(f);by.set(m,[...(by.get(m)||[]),f]);});
+  const opt=f=>`<option value="${f.id}">${esc(f.title)} (${f.count.toLocaleString('en-GB')})</option>`,solo=[...by.values()].filter(a=>a.length<2).flat();
+  $('#famSel').innerHTML=[...by].filter(([,a])=>a.length>1).map(([m,a])=>`<optgroup label="${esc(m)}">${a.map(opt).join('')}</optgroup>`).join('')+(solo.length?`<optgroup label="More families">${solo.map(opt).join('')}</optgroup>`:'');
   $('#famSel').value=S.fam;
-  // one sample per card, loaded lazily so the first paint stays light
-  S.index.families.forEach(f=>{const el=$(`[data-sample="${f.id}"]`);if(f.format==='png'){el.innerHTML=`<img src="icons/fluent-3d/house.png" alt="" width="26" height="26">`;}else el.innerHTML=`<img src="${f.card||`icons/${f.id}/house.svg`}" alt="" width="26" height="26">`;});
  }
  function strip(){
   const f=fam();
@@ -68,7 +68,6 @@
    <p class="lic">${esc(f.licence)} · source <a href="${esc(f.package)}" target="_blank" rel="noopener">${esc(f.source)}</a> · <a href="${esc(f.home)}" target="_blank" rel="noopener">project site ↗</a> · <a href="icons/LICENSES.txt">licence text</a> · <a href="${esc(f.specimenPack)}" download>13-icon specimen pack</a>${f.id==='openmoji'?' · Attribution required: “OpenMoji, CC BY-SA 4.0”':''}</p>`;
   const mono=f.monochrome;
   ['#colourField','#bakeField'].forEach(s=>{const el=$(s);el.setAttribute('aria-disabled',String(!mono));el.querySelector('input').disabled=!mono;el.title=mono?'':'Colour is part of this family’s artwork';});
-  document.querySelectorAll('[data-fam]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.fam===S.fam)));
   $('#famSel').value=S.fam;
  }
 
@@ -141,7 +140,6 @@
   $('#colour').addEventListener('input',e=>{S.colour=e.target.value;g.style.color=S.colour;if(!$('#detail').hidden)openDetail(S.sel,false);});
   $('#bake').addEventListener('change',e=>{S.bake=e.target.checked;if(!$('#detail').hidden)openDetail(S.sel,false);});
   const setFam=id=>{if(id===S.fam)return;S.fam=id;hideDetail();apply();};
-  $('#fams').addEventListener('click',e=>{const b=e.target.closest('[data-fam]');if(b)setFam(b.dataset.fam);});
   $('#famSel').addEventListener('change',e=>setFam(e.target.value));
   g.addEventListener('click',e=>{const m=e.target.closest('[data-more]');if(m){const k=S.shown;renderGrid(false);focusK(k);return;}const b=e.target.closest('.ic');if(!b)return;g.querySelectorAll('.ic[tabindex="0"]').forEach(x=>x.tabIndex=-1);b.tabIndex=0;openDetail(+b.dataset.k);});
   g.addEventListener('keydown',e=>{const b=e.target.closest('.ic');if(!b)return;const k=+b.dataset.k,c=cols();

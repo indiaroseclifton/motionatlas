@@ -1,0 +1,126 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Trip and boarding pass app</title>
+<style>/* Tokens: change these to restyle the whole screen. --ac is the brand colour. */
+:root{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#141824;--mute:#5F677B;--line:#E3E6EE;--soft:#EEF0F6;--ac:#18181B;--ac-ink:#FFFFFF;--ac-soft:#F1F1F3;--ok:#12805C;--warn:#96560A;--bad:#C2362B;--ok-soft:#E3F5EC;--warn-soft:#FCF0D9;--bad-soft:#FBE6E3;--r:12px;--rb:9px;--sh:0 1px 2px rgba(16,24,40,.05),0 8px 24px -16px rgba(16,24,40,.22);--font:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:light}
+html[data-theme=dark]{--bg:#0E1117;--panel:#161A23;--ink:#ECEEF4;--mute:#9AA3B5;--line:#272D3A;--soft:#1D2230;--ac:#FAFAFA;--ac-ink:#0E1117;--ac-soft:#272A33;--ok:#4ADE9B;--warn:#F0B454;--bad:#FF8B80;--ok-soft:#12301F;--warn-soft:#33260C;--bad-soft:#3A1714;--sh:0 1px 2px rgba(0,0,0,.45);color-scheme:dark}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:14px/1.5 var(--font);-webkit-font-smoothing:antialiased}
+h1,h2,h3,p{margin:0}h1{font-size:20px;line-height:1.2;letter-spacing:-.01em}h2{font-size:15px}h3{font-size:13px}
+a{color:inherit}button,input,select,textarea{font:inherit;color:inherit}
+/* Safari on a Mac draws its own small control for a native select, so selects drop the native look and share one arrow */
+select:not([multiple]):not([size]){-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none' stroke='%23808797' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1.5 1.5 6 6l4.5-4.5'/%3E%3C/svg%3E")!important;background-repeat:no-repeat!important;background-position:right 11px center!important;background-size:12px 8px!important;padding-right:30px!important;text-overflow:ellipsis}button{cursor:pointer}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px;border-radius:6px}
+[hidden]{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.mute{color:var(--mute)}.num{font-variant-numeric:tabular-nums}
+.ic{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:36px;padding:0 13px;border-radius:var(--rb);border:1px solid var(--line);background:var(--panel);font-weight:600;font-size:13px;white-space:nowrap;text-decoration:none}
+.btn:hover{background:var(--soft)}.btn.pri{background:var(--ac);border-color:var(--ac);color:var(--ac-ink)}.btn.pri:hover{filter:brightness(1.08)}
+.btn.ghost{border-color:transparent;background:none}.btn.ghost:hover{background:var(--soft)}.btn.sq{width:36px;padding:0}.btn:disabled{opacity:.5;cursor:default}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh)}
+.pad{padding:16px}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:99px;font-size:12px;font-weight:600;background:var(--soft);color:var(--mute);white-space:nowrap}
+.badge.ok{background:var(--ok-soft);color:var(--ok)}.badge.warn{background:var(--warn-soft);color:var(--warn)}.badge.bad{background:var(--bad-soft);color:var(--bad)}.badge.ac{background:var(--ac-soft);color:var(--ac)}
+.badge i{width:6px;height:6px;border-radius:50%;background:currentColor}
+.av{display:grid;place-items:center;flex:none;width:30px;height:30px;border-radius:50%;background:var(--ac-soft);color:var(--ac);font-size:11.5px;font-weight:700}
+.in{min-height:36px;padding:0 11px;border:1px solid var(--line);border-radius:var(--rb);background:var(--panel);min-width:0}
+.in::placeholder{color:var(--mute)}
+.seg{display:inline-flex;padding:3px;border-radius:10px;background:var(--soft);gap:2px}
+.seg button{min-height:30px;padding:0 11px;border:0;border-radius:8px;background:none;font-size:13px;font-weight:600;color:var(--mute)}
+.seg button[aria-pressed=true],.seg button[aria-selected=true]{background:var(--panel);color:var(--ink);box-shadow:0 1px 2px rgba(16,24,40,.12)}
+.row{display:flex;align-items:center;gap:10px}.sp{margin-left:auto}
+table{border-collapse:collapse;width:100%}th{font-size:12px;font-weight:600;color:var(--mute);text-align:left}th,td{padding:10px 14px;border-bottom:1px solid var(--line);white-space:nowrap}tbody tr:last-child td{border-bottom:0}
+.scroll{overflow:auto;position:relative}
+/* Skins and looks: add data-skin="ocean" (or forest, sunset, rose, sand) and data-look="soft" (or sharp, serif, compact) to the html element. */
+html[data-skin=ocean]{--bg:#F4F8FB;--panel:#FFFFFF;--ink:#0F2230;--mute:#566A7A;--line:#DAE5EC;--soft:#EAF1F6;--ac:#0369A1;--ac-ink:#FFFFFF;--ac-soft:#E0F1FA}
+html[data-skin=ocean][data-theme=dark]{--bg:#0A141C;--panel:#101E29;--ink:#E6F0F7;--mute:#8FA6B8;--line:#213442;--soft:#172A38;--ac:#4FB3E8;--ac-ink:#06202F;--ac-soft:#12344A}
+html[data-skin=forest]{--bg:#F4F7F3;--panel:#FFFFFF;--ink:#15241B;--mute:#586B5E;--line:#DCE6DE;--soft:#EBF1EC;--ac:#166534;--ac-ink:#FFFFFF;--ac-soft:#E2F3E7}
+html[data-skin=forest][data-theme=dark]{--bg:#0B140E;--panel:#122019;--ink:#E5F1E8;--mute:#8FA898;--line:#223529;--soft:#192B20;--ac:#5FD08A;--ac-ink:#08210F;--ac-soft:#173824}
+html[data-skin=sunset]{--bg:#FBF6F1;--panel:#FFFFFF;--ink:#2A1B12;--mute:#7A6455;--line:#EBDDD1;--soft:#F5EBE2;--ac:#C2410C;--ac-ink:#FFFFFF;--ac-soft:#FDE9DC}
+html[data-skin=sunset][data-theme=dark]{--bg:#150E0A;--panel:#1F1510;--ink:#F6E9DF;--mute:#B39C8B;--line:#3A2A20;--soft:#2A1D15;--ac:#FB923C;--ac-ink:#2A1203;--ac-soft:#40240F}
+html[data-skin=rose]{--bg:#FCF5F6;--panel:#FFFFFF;--ink:#2B1419;--mute:#7C5F66;--line:#EFDADE;--soft:#F8E9EC;--ac:#BE123C;--ac-ink:#FFFFFF;--ac-soft:#FDE4EA}
+html[data-skin=rose][data-theme=dark]{--bg:#160B0E;--panel:#211217;--ink:#F8E6EA;--mute:#B89AA2;--line:#3A2229;--soft:#2B1920;--ac:#FB7185;--ac-ink:#2B0610;--ac-soft:#47131F}
+html[data-skin=sand]{--bg:#F6F2EA;--panel:#FFFDF8;--ink:#26221B;--mute:#6F6757;--line:#E4DCCB;--soft:#EFE8D9;--ac:#3F3A2E;--ac-ink:#FFFDF8;--ac-soft:#ECE5D3}
+html[data-skin=sand][data-theme=dark]{--bg:#14120E;--panel:#1D1A14;--ink:#EFE9DB;--mute:#A49B86;--line:#332E24;--soft:#26221A;--ac:#E8DDBF;--ac-ink:#1A1710;--ac-soft:#38321F}
+html[data-look=soft]{--r:20px;--rb:14px;--sh:0 2px 4px rgba(16,24,40,.04),0 18px 36px -20px rgba(16,24,40,.28)}
+html[data-look=sharp]{--r:3px;--rb:2px;--sh:none}html[data-look=sharp] .seg,html[data-look=sharp] .seg button,html[data-look=sharp] .badge,html[data-look=sharp] .logo span{border-radius:3px}
+html[data-look=serif] h1,html[data-look=serif] h2,html[data-look=serif] h3,html[data-look=serif] .big,html[data-look=serif] .bal{font-family:Georgia,"Iowan Old Style","Times New Roman",serif;font-weight:600;letter-spacing:-.01em}
+html[data-look=compact]{--r:9px;--rb:7px}html[data-look=compact] body{font-size:13px}html[data-look=compact] .pad{padding:12px}html[data-look=compact] .main{padding:14px}html[data-look=compact] th,html[data-look=compact] td{padding:7px 12px}html[data-look=compact] .btn,html[data-look=compact] .in{min-height:32px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+/* Inverted surface: dark on a light theme, a raised panel on a dark one. */
+.inv{background:var(--ink);color:var(--bg)}html[data-theme=dark] .inv{background:var(--soft);color:var(--ink)}.inv .mute{color:inherit;opacity:.72}
+body{display:grid;place-items:center;padding:16px;background:var(--soft)}
+.ph{position:relative;width:min(400px,100%);height:min(840px,calc(100vh - 32px));border-radius:40px;background:var(--bg);box-shadow:0 0 0 9px var(--panel),0 0 0 10px var(--line),0 30px 60px -30px rgba(16,24,40,.5);display:flex;flex-direction:column;overflow:hidden}
+.scr{flex:1;overflow:auto;scrollbar-width:none}.pd{padding:22px 18px}
+.tb{display:flex;padding:6px 8px 12px;border-top:1px solid var(--line);flex:none;background:var(--panel)}.tb button{flex:1;display:grid;justify-items:center;gap:3px;padding:7px 0;border:0;background:none;color:var(--mute);font-size:11px;font-weight:600;border-radius:12px}.tb button[aria-selected=true]{color:var(--ink)}
+.hero{position:relative;height:230px;color:#fff;background:#222}.hero img{width:100%;height:100%;object-fit:cover;display:block}.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 35%,rgba(0,0,0,.7))}
+.hero div{position:absolute;left:18px;right:18px;bottom:40px;z-index:1}.hero h1{font-size:30px;letter-spacing:-.02em;line-height:1.1}.hero p{opacity:.9;font-size:13.5px}
+.next{position:relative;z-index:2;margin:-28px 14px 0;padding:14px 16px;display:flex;align-items:center;gap:14px}.next b{font-size:24px;letter-spacing:-.02em;font-variant-numeric:tabular-nums;display:block;line-height:1.15}.next small{color:var(--mute);font-size:12.5px}
+.tl{list-style:none;margin:0;padding:18px 18px 22px}.tl li{display:grid;grid-template-columns:44px 34px 1fr;gap:10px;position:relative;padding-bottom:18px}.tl li:last-child{padding-bottom:0}
+.tl time{font-variant-numeric:tabular-nums;font-weight:700;font-size:13px;padding-top:7px}.tl .ico{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--panel);border:1px solid var(--line);z-index:1}.tl .ico .ic{width:16px;height:16px}
+.tl li:not(:last-child)::before{content:"";position:absolute;left:70px;top:34px;bottom:0;width:2px;background:var(--line)}
+.tl b{display:flex;align-items:center;gap:7px;padding-top:6px}.tl small{color:var(--mute);font-size:12.5px;display:block}.tl li.past{opacity:.55}.tl li.past .ico{background:var(--ok-soft);border-color:transparent;color:var(--ok)}.tl li.now .ico{background:var(--ac);border-color:var(--ac);color:var(--ac-ink)}
+.tk{border-radius:22px;background:var(--panel);box-shadow:var(--sh);border:1px solid var(--line);overflow:hidden}
+.tk .hd{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;font-weight:700}.tk .hd span{display:inline-flex;align-items:center;gap:8px}
+.rt{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;padding:20px 18px 6px}.rt b{font-size:44px;letter-spacing:-.03em;line-height:1}.rt small{display:block;color:var(--mute);font-size:12.5px;margin-top:4px}
+.fl{position:relative;height:2px;background:repeating-linear-gradient(90deg,var(--line) 0 6px,transparent 6px 11px)}.fl .ic{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:24px;height:24px;background:var(--panel);padding:2px;color:var(--mute)}
+.gd{display:grid;grid-template-columns:repeat(3,1fr);gap:14px 10px;padding:16px 18px 18px}.gd small{display:block;color:var(--mute);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}.gd b{font-size:16px;font-variant-numeric:tabular-nums}.gd .w{grid-column:span 2}
+.perf{position:relative;height:0;border-top:2px dashed var(--line);margin:0 18px}.perf::before,.perf::after{content:"";position:absolute;top:-13px;width:24px;height:24px;border-radius:50%;background:var(--bg);border:1px solid var(--line)}.perf::before{left:-31px}.perf::after{right:-31px}
+.bc{padding:18px 18px 14px;text-align:center}.bc svg{display:block;width:100%;height:64px}.bc small{display:block;margin-top:8px;font:600 12.5px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.3em;color:var(--mute)}
+.ph.bright .tk{background:#fff;color:#141824;border-color:#fff}.ph.bright .tk .gd small,.ph.bright .tk .rt small,.ph.bright .bc small{color:#5F677B}.ph.bright .fl .ic{background:#fff}.ph.bright .bc svg{color:#000}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.acts .btn{min-height:46px}
+.prog{height:8px;border-radius:4px;background:var(--soft);overflow:hidden;margin:10px 0 4px}.prog i{display:block;height:100%;border-radius:4px;background:var(--ok);transition:width .3s}
+.grp{font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin:18px 0 2px}
+.pk{list-style:none;margin:0;padding:0}.pk label{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.pk input{appearance:none;-webkit-appearance:none;width:22px;height:22px;margin:0;border-radius:7px;border:2px solid var(--line);display:grid;place-items:center;flex:none}.pk input:checked{background:var(--ok);border-color:var(--ok)}.pk input:checked::after{content:"";width:9px;height:5px;border:solid #fff;border-width:0 0 2px 2px;transform:rotate(-45deg) translateY(-1px)}.pk input:checked+span{color:var(--mute);text-decoration:line-through}
+.addf{display:flex;gap:8px;margin-top:16px}.addf .in{flex:1;min-height:42px}.addf .btn{min-height:42px}
+@media(max-width:440px){body{padding:0}.ph{width:100%;height:100vh;border-radius:0;box-shadow:none}}
+</style>
+<body>
+<div class="ph" id="ph"><main class="scr" id="scr" role="tabpanel" tabindex="-1"></main><nav class="tb" role="tablist" aria-label="Sections" id="tb"></nav></div>
+<script>/* Shared helpers: element lookup, theme switch (add #dark to the address to start dark), mobile menu. */
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const root=document.documentElement;
+function setTheme(dark){root.dataset.theme=dark?'dark':'light';const b=$('#theme');if(b){b.setAttribute('aria-pressed',dark);b.setAttribute('aria-label',dark?'Switch to light theme':'Switch to dark theme')}document.dispatchEvent(new Event('themechange'))}
+/* The address can carry a look, for example #dark, #ocean-soft or #sand-serif-dark. A copied file can set the same thing on the html element. */
+const SKINS=['ocean','forest','sunset','rose','sand'],LOOKS=['soft','sharp','serif','compact'],PRE=root.dataset.theme==='dark';
+function look(){const h=location.hash,w=h.slice(1).toLowerCase().match(/[a-z]+/g)||[];
+ if(h){const s=w.find(x=>SKINS.includes(x)),l=w.find(x=>LOOKS.includes(x));s?root.dataset.skin=s:delete root.dataset.skin;l?root.dataset.look=l:delete root.dataset.look}
+ setTheme(h?/dark/.test(h):PRE)}
+look();addEventListener('hashchange',look);
+$('#theme')?.addEventListener('click',()=>setTheme(root.dataset.theme!=='dark'));
+{const m=$('#menu'),s=$('.side');if(m&&s){const set=o=>{s.classList.toggle('open',o);m.setAttribute('aria-expanded',o)};m.addEventListener('click',()=>set(!s.classList.contains('open')));addEventListener('keydown',e=>{if(e.key==='Escape')set(false)});document.addEventListener('click',e=>{if(s.classList.contains('open')&&!s.contains(e.target)&&!m.contains(e.target))set(false)})}}
+function toast(t){let n=$('#toast');if(!n){n=document.createElement('div');n.id='toast';n.setAttribute('role','status');n.style.cssText='position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 14px;border-radius:10px;font-size:13px;font-weight:600;z-index:60;transition:opacity .2s;max-width:calc(100vw - 32px)';document.body.append(n)}n.textContent=t;n.style.opacity=1;clearTimeout(toast.t);toast.t=setTimeout(()=>n.style.opacity=0,2000)}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+/* DATA. Times are minutes after midnight on the day of travel. The demo clock starts at 07:22 and then runs in real time. Photo is CC0, from the atlas photo library. */
+const REF='K7QM2X',BOARD=8*60+15,STEPS=[[6*60+40,'check','Taxi to the airport','Picked up from 3B Lark Rise · £24.60'],[7*60+10,'bag','Bag drop','Desk 41, Terminal 2 · 1 bag, 19 kg'],[7*60+45,'shield','Security','Usually 15 minutes at this hour'],[BOARD,'plane','Boarding at gate B14','Group 2 · gate closes 08:40'],[8*60+55,'send','Depart Manchester','Aurel Air AU 418 · 2 h 10 min'],[12*60+5,'pin','Arrive Innsbruck','Local time, one hour ahead'],[15*60,'bed','Check in, Hotel Seeblick','4 nights · breakfast included']];
+const ICO={check:`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.500 4.500 4.500L19 7.500"/></svg>`,bag:`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6Z"/><path d="M9 8V7a3 3 0 0 1 6 0v1"/></svg>`,shield:`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.500 19.500 6v6c0 4.200-2.800 7.200-7.500 8.800C7.300 19.200 4.500 16.200 4.500 12V6Z"/></svg>`,plane:`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 13 3-1 3 2 4-1.500L8 5l2.500-.8 7 6.300 2.500-.9a1.800 1.800 0 0 1 1.200 3.400L6 18.500Z"/></svg>`,send:`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4 3 11l7 3 3 7Z"/><path d="m10 14 4-4"/></svg>`,pin:`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21c-4-4.500-6.500-7.800-6.500-11a6.500 6.500 0 0 1 13 0c0 3.200-2.500 6.500-6.500 11Z"/><circle cx="12" cy="10" r="2.300"/></svg>`,bed:`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18V7M3 14h18v4M3 11h9a4 4 0 0 1 4 3"/><circle cx="7" cy="9" r="1.500"/></svg>`};
+let PACK=[['Documents','Passport',1],['Documents','Travel insurance letter',1],['Documents','Euros, about €150',0],['Clothes','Walking boots',1],['Clothes','Waterproof jacket',1],['Clothes','Warm layers, three',0],['Clothes','Swimming things',0],['Bits','Phone charger and adaptor',1],['Bits','Sunglasses',0],['Bits','Book for the flight',0]].map(([g,n,d])=>({g,n,d:!!d}));
+const TABS=[['Trip',`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.500 9 4l6 2.500L21 4v13.500L15 20l-6-2.500L3 20Z"/><path d="M9 4v13.500M15 6.500V20"/></svg>`],['Pass',`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h7l9 9-7 7-9-9Z"/><circle cx="8.5" cy="8.5" r="1.2"/></svg>`],['Packing',`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01"/></svg>`]],T0=Date.now();
+let tab=0,bright=false;
+const hm=m=>String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0'),clock=()=>7*60+22+(Date.now()-T0)/60000;
+const left=()=>{const s=Math.max(0,Math.round((BOARD-clock())*60));return s>=3600?Math.floor(s/3600)+' h '+Math.floor(s%3600/60)+' min':Math.floor(s/60)+' min '+String(s%60).padStart(2,'0')+' s'};
+$('#tb').innerHTML=TABS.map(([n,i],k)=>`<button role="tab" id="t${k}" aria-selected="${!k}" tabindex="${k?-1:0}">${i}${n}</button>`).join('');const tabs=$$('#tb button');
+function go(k,focus){tab=k;tabs.forEach((b,i)=>{b.setAttribute('aria-selected',i===k);b.tabIndex=i===k?0:-1});$('#scr').setAttribute('aria-labelledby','t'+k);draw();$('#scr').scrollTop=0;if(focus)tabs[k].focus()}
+tabs.forEach((b,i)=>b.onclick=()=>go(i));$('#tb').onkeydown=e=>{const d=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(d){e.preventDefault();go((tab+d+3)%3,true)}};
+/* The barcode: each character of the reference becomes a run of bars, so it is repeatable but not a real, scannable code. */
+function bars(){let x=0,h='';[...(REF+REF+'AU418')].forEach(ch=>{const c=ch.charCodeAt(0);[c%4+1,(c>>2)%3+1,(c>>4)%4+1,(c>>1)%3+1].forEach((w,i)=>{if(i%2===0)h+=`<rect x="${x}" width="${w}" height="64"/>`;x+=w})});return `<svg viewBox="0 0 ${x} 64" preserveAspectRatio="none" fill="currentColor" role="img" aria-label="Barcode for booking ${REF}">${h}</svg>`}
+function draw(){const s=$('#scr'),now=clock(),nx=STEPS.findIndex(x=>x[0]>now);$('#ph').classList.toggle('bright',bright&&tab===1);
+ if(tab===0)s.innerHTML=`<div class="hero"><img src="../../assets/photos/nature-mountain-lake-640.webp" alt="A mountain lake with autumn trees"><div><p>Friday 13 to Tuesday 17 November</p><h1>Innsbruck, four nights</h1></div></div>
+  <div class="card next"><span class="av" style="width:44px;height:44px"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.500"/><path d="M12 7v5l3.500 2"/></svg></span><div><small>Boarding at gate B14 in</small><b id="cd" role="timer">${left()}</b></div><button class="btn pri sp" id="topass">Pass</button></div>
+  <ol class="tl">${STEPS.map(([t,ic,n,d],i)=>`<li class="${i<nx?'past':i===nx?'now':''}"><time>${hm(t)}</time><span class="ico">${i<nx?ICO.check:ICO[ic]}</span><div><b>${n}${i===nx?'<span class="badge ac">Next</span>':''}${i<nx?'<span class="sr"> done</span>':''}</b><small>${d}</small></div></li>`).join('')}</ol>`;
+ else if(tab===1)s.innerHTML=`<div class="pd"><div class="tk"><div class="hd inv"><span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 13 3-1 3 2 4-1.500L8 5l2.500-.8 7 6.300 2.500-.9a1.800 1.800 0 0 1 1.200 3.400L6 18.500Z"/></svg>Aurel Air</span><span>AU 418</span></div>
+  <div class="rt"><div><b>MAN</b><small>Manchester T2</small></div><div class="fl"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 13 3-1 3 2 4-1.500L8 5l2.500-.8 7 6.300 2.500-.9a1.800 1.800 0 0 1 1.200 3.400L6 18.500Z"/></svg></div><div style="text-align:right"><b>INN</b><small>Innsbruck</small></div></div>
+  <div class="gd"><div class="w"><small>Passenger</small><b>Amara Khan</b></div><div><small>Date</small><b>13 Nov</b></div><div><small>Boarding</small><b>${hm(BOARD)}</b></div><div><small>Gate</small><b>B14</b></div><div><small>Seat</small><b>14A</b></div><div><small>Departs</small><b>08:55</b></div><div><small>Group</small><b>2</b></div><div><small>Class</small><b>Economy</b></div></div>
+  <div class="perf"></div><div class="bc">${bars()}<small>${REF}</small></div></div>
+  <div class="acts"><button class="btn pri" id="wal"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10.500h18"/></svg>Add to wallet</button><button class="btn" id="bri" aria-pressed="${bright}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v5M12 15v5M4 12h5M15 12h5M6.500 6.500l3 3M14.500 14.500l3 3M6.500 17.500l3-3M14.500 9.500l3-3"/></svg>${bright?'Normal screen':'Brighten screen'}</button></div><p class="mute" style="font-size:12.5px;text-align:center;margin-top:12px">Boarding closes 15 minutes before departure. Have your passport open at the photo page.</p></div>`;
+ else{const done=PACK.filter(x=>x.d).length;s.innerHTML=`<div class="pd"><h1 style="font-size:26px">Packing</h1><div class="prog" role="progressbar" aria-valuemin="0" aria-valuemax="${PACK.length}" aria-valuenow="${done}" aria-label="Packed"><i style="width:${done/PACK.length*100}%"></i></div><p class="mute" id="pc">${done} of ${PACK.length} packed${done===PACK.length?'. Ready to go.':''}</p>
+  ${[...new Set(PACK.map(x=>x.g))].map(g=>`<h2 class="grp">${g}</h2><ul class="pk">${PACK.map((x,i)=>x.g===g?`<li><label><input type="checkbox" data-i="${i}" ${x.d?'checked':''}><span>${esc(x.n)}</span></label></li>`:'').join('')}</ul>`).join('')}
+  <form class="addf" id="af"><label class="sr" for="ni">Add an item</label><input class="in" id="ni" placeholder="Add an item" autocomplete="off"><button class="btn">Add</button></form></div>`}}
+$('#scr').addEventListener('click',e=>{const id=e.target.closest('button')?.id;if(id==='topass')go(1,true);else if(id==='wal')toast('Pass added to your wallet');else if(id==='bri'){bright=!bright;draw();$('#bri').focus()}});
+$('#scr').addEventListener('change',e=>{const i=e.target.dataset.i;if(i==null)return;PACK[i].d=e.target.checked;const done=PACK.filter(x=>x.d).length;$('.prog i').style.width=done/PACK.length*100+'%';$('.prog').setAttribute('aria-valuenow',done);$('#pc').textContent=done+' of '+PACK.length+' packed'+(done===PACK.length?'. Ready to go.':'')});
+$('#scr').addEventListener('submit',e=>{e.preventDefault();const v=$('#ni').value.trim();if(!v)return;PACK.push({g:'Bits',n:v,d:false});draw();$('#ni').focus();toast('Added to Bits')});
+setInterval(()=>{const c=$('#cd');if(c)c.textContent=left()},1000);
+go(1);
+</script>
+</body>
+</html>

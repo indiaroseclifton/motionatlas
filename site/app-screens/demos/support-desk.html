@@ -1,0 +1,159 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Support inbox</title>
+<style>/* Tokens: change these to restyle the whole screen. --ac is the brand colour. */
+:root{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#141824;--mute:#5F677B;--line:#E3E6EE;--soft:#EEF0F6;--ac:#18181B;--ac-ink:#FFFFFF;--ac-soft:#F1F1F3;--ok:#12805C;--warn:#96560A;--bad:#C2362B;--ok-soft:#E3F5EC;--warn-soft:#FCF0D9;--bad-soft:#FBE6E3;--r:12px;--rb:9px;--sh:0 1px 2px rgba(16,24,40,.05),0 8px 24px -16px rgba(16,24,40,.22);--font:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:light}
+html[data-theme=dark]{--bg:#0E1117;--panel:#161A23;--ink:#ECEEF4;--mute:#9AA3B5;--line:#272D3A;--soft:#1D2230;--ac:#FAFAFA;--ac-ink:#0E1117;--ac-soft:#272A33;--ok:#4ADE9B;--warn:#F0B454;--bad:#FF8B80;--ok-soft:#12301F;--warn-soft:#33260C;--bad-soft:#3A1714;--sh:0 1px 2px rgba(0,0,0,.45);color-scheme:dark}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:14px/1.5 var(--font);-webkit-font-smoothing:antialiased}
+h1,h2,h3,p{margin:0}h1{font-size:20px;line-height:1.2;letter-spacing:-.01em}h2{font-size:15px}h3{font-size:13px}
+a{color:inherit}button,input,select,textarea{font:inherit;color:inherit}
+/* Safari on a Mac draws its own small control for a native select, so selects drop the native look and share one arrow */
+select:not([multiple]):not([size]){-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none' stroke='%23808797' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1.5 1.5 6 6l4.5-4.5'/%3E%3C/svg%3E")!important;background-repeat:no-repeat!important;background-position:right 11px center!important;background-size:12px 8px!important;padding-right:30px!important;text-overflow:ellipsis}button{cursor:pointer}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px;border-radius:6px}
+[hidden]{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.mute{color:var(--mute)}.num{font-variant-numeric:tabular-nums}
+.ic{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:36px;padding:0 13px;border-radius:var(--rb);border:1px solid var(--line);background:var(--panel);font-weight:600;font-size:13px;white-space:nowrap;text-decoration:none}
+.btn:hover{background:var(--soft)}.btn.pri{background:var(--ac);border-color:var(--ac);color:var(--ac-ink)}.btn.pri:hover{filter:brightness(1.08)}
+.btn.ghost{border-color:transparent;background:none}.btn.ghost:hover{background:var(--soft)}.btn.sq{width:36px;padding:0}.btn:disabled{opacity:.5;cursor:default}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh)}
+.pad{padding:16px}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:99px;font-size:12px;font-weight:600;background:var(--soft);color:var(--mute);white-space:nowrap}
+.badge.ok{background:var(--ok-soft);color:var(--ok)}.badge.warn{background:var(--warn-soft);color:var(--warn)}.badge.bad{background:var(--bad-soft);color:var(--bad)}.badge.ac{background:var(--ac-soft);color:var(--ac)}
+.badge i{width:6px;height:6px;border-radius:50%;background:currentColor}
+.av{display:grid;place-items:center;flex:none;width:30px;height:30px;border-radius:50%;background:var(--ac-soft);color:var(--ac);font-size:11.5px;font-weight:700}
+.in{min-height:36px;padding:0 11px;border:1px solid var(--line);border-radius:var(--rb);background:var(--panel);min-width:0}
+.in::placeholder{color:var(--mute)}
+.seg{display:inline-flex;padding:3px;border-radius:10px;background:var(--soft);gap:2px}
+.seg button{min-height:30px;padding:0 11px;border:0;border-radius:8px;background:none;font-size:13px;font-weight:600;color:var(--mute)}
+.seg button[aria-pressed=true],.seg button[aria-selected=true]{background:var(--panel);color:var(--ink);box-shadow:0 1px 2px rgba(16,24,40,.12)}
+.row{display:flex;align-items:center;gap:10px}.sp{margin-left:auto}
+table{border-collapse:collapse;width:100%}th{font-size:12px;font-weight:600;color:var(--mute);text-align:left}th,td{padding:10px 14px;border-bottom:1px solid var(--line);white-space:nowrap}tbody tr:last-child td{border-bottom:0}
+.scroll{overflow:auto;position:relative}
+/* Skins and looks: add data-skin="ocean" (or forest, sunset, rose, sand) and data-look="soft" (or sharp, serif, compact) to the html element. */
+html[data-skin=ocean]{--bg:#F4F8FB;--panel:#FFFFFF;--ink:#0F2230;--mute:#566A7A;--line:#DAE5EC;--soft:#EAF1F6;--ac:#0369A1;--ac-ink:#FFFFFF;--ac-soft:#E0F1FA}
+html[data-skin=ocean][data-theme=dark]{--bg:#0A141C;--panel:#101E29;--ink:#E6F0F7;--mute:#8FA6B8;--line:#213442;--soft:#172A38;--ac:#4FB3E8;--ac-ink:#06202F;--ac-soft:#12344A}
+html[data-skin=forest]{--bg:#F4F7F3;--panel:#FFFFFF;--ink:#15241B;--mute:#586B5E;--line:#DCE6DE;--soft:#EBF1EC;--ac:#166534;--ac-ink:#FFFFFF;--ac-soft:#E2F3E7}
+html[data-skin=forest][data-theme=dark]{--bg:#0B140E;--panel:#122019;--ink:#E5F1E8;--mute:#8FA898;--line:#223529;--soft:#192B20;--ac:#5FD08A;--ac-ink:#08210F;--ac-soft:#173824}
+html[data-skin=sunset]{--bg:#FBF6F1;--panel:#FFFFFF;--ink:#2A1B12;--mute:#7A6455;--line:#EBDDD1;--soft:#F5EBE2;--ac:#C2410C;--ac-ink:#FFFFFF;--ac-soft:#FDE9DC}
+html[data-skin=sunset][data-theme=dark]{--bg:#150E0A;--panel:#1F1510;--ink:#F6E9DF;--mute:#B39C8B;--line:#3A2A20;--soft:#2A1D15;--ac:#FB923C;--ac-ink:#2A1203;--ac-soft:#40240F}
+html[data-skin=rose]{--bg:#FCF5F6;--panel:#FFFFFF;--ink:#2B1419;--mute:#7C5F66;--line:#EFDADE;--soft:#F8E9EC;--ac:#BE123C;--ac-ink:#FFFFFF;--ac-soft:#FDE4EA}
+html[data-skin=rose][data-theme=dark]{--bg:#160B0E;--panel:#211217;--ink:#F8E6EA;--mute:#B89AA2;--line:#3A2229;--soft:#2B1920;--ac:#FB7185;--ac-ink:#2B0610;--ac-soft:#47131F}
+html[data-skin=sand]{--bg:#F6F2EA;--panel:#FFFDF8;--ink:#26221B;--mute:#6F6757;--line:#E4DCCB;--soft:#EFE8D9;--ac:#3F3A2E;--ac-ink:#FFFDF8;--ac-soft:#ECE5D3}
+html[data-skin=sand][data-theme=dark]{--bg:#14120E;--panel:#1D1A14;--ink:#EFE9DB;--mute:#A49B86;--line:#332E24;--soft:#26221A;--ac:#E8DDBF;--ac-ink:#1A1710;--ac-soft:#38321F}
+html[data-look=soft]{--r:20px;--rb:14px;--sh:0 2px 4px rgba(16,24,40,.04),0 18px 36px -20px rgba(16,24,40,.28)}
+html[data-look=sharp]{--r:3px;--rb:2px;--sh:none}html[data-look=sharp] .seg,html[data-look=sharp] .seg button,html[data-look=sharp] .badge,html[data-look=sharp] .logo span{border-radius:3px}
+html[data-look=serif] h1,html[data-look=serif] h2,html[data-look=serif] h3,html[data-look=serif] .big,html[data-look=serif] .bal{font-family:Georgia,"Iowan Old Style","Times New Roman",serif;font-weight:600;letter-spacing:-.01em}
+html[data-look=compact]{--r:9px;--rb:7px}html[data-look=compact] body{font-size:13px}html[data-look=compact] .pad{padding:12px}html[data-look=compact] .main{padding:14px}html[data-look=compact] th,html[data-look=compact] td{padding:7px 12px}html[data-look=compact] .btn,html[data-look=compact] .in{min-height:32px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+/* Inverted surface: dark on a light theme, a raised panel on a dark one. */
+.inv{background:var(--ink);color:var(--bg)}html[data-theme=dark] .inv{background:var(--soft);color:var(--ink)}.inv .mute{color:inherit;opacity:.72}
+/* Shell: a narrow icon rail and a slim header */
+.app.rl{grid-template-columns:56px minmax(0,1fr)}
+.rail{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 0;overflow:auto;border-right:1px solid transparent}
+html[data-theme=dark] .rail{border-right-color:var(--line)}
+.rail a,.rail button{position:relative;display:grid;place-items:center;flex:none;width:38px;height:38px;border-radius:var(--rb);border:0;background:none;color:inherit;opacity:.62}
+.rail a:hover,.rail button:hover,.rail a[aria-current=page]{opacity:1;background:rgba(127,127,127,.28)}
+.rail .lg{opacity:1;background:var(--bg);color:var(--ink);margin-bottom:8px}.rail .lg:hover{background:var(--bg)}
+html[data-theme=dark] .rail .lg,html[data-theme=dark] .rail .lg:hover{background:var(--ac);color:var(--ac-ink)}
+.rail a i{position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;background:var(--bad);box-shadow:0 0 0 2px var(--ink)}html[data-theme=dark] .rail a i{box-shadow:0 0 0 2px var(--soft)}
+.rail .av{margin-top:6px;background:rgba(127,127,127,.3);color:inherit}.rail :focus-visible{outline-color:currentColor}
+.rl .top{min-height:50px;padding:7px 16px}.rl .top .crumb{display:flex;align-items:center;gap:8px;font-weight:700;white-space:nowrap}.rl .top .crumb span{color:var(--mute);font-weight:500}
+.rl .top .find{max-width:300px;margin-left:8px}
+@media(max-width:860px){.app.rl{grid-template-columns:48px minmax(0,1fr)}.rail a,.rail button{width:36px;height:36px}.rl .top .crumb span{display:none}}
+body{font-size:13px}
+.desk{display:grid;grid-template-columns:56px 300px minmax(0,1fr) 284px;height:100%}.desk>*{min-height:0;min-width:0}
+.q{display:flex;flex-direction:column;border-right:1px solid var(--line);background:var(--panel)}
+.qh{padding:12px 12px 10px;display:grid;gap:9px;border-bottom:1px solid var(--line)}.qh h1{font-size:16px}.qh .seg{display:flex}.qh .seg button{flex:1;padding:0 6px;font-size:12.5px}.qh .seg b{font-weight:600;opacity:.6;margin-left:4px}
+.qh .in{width:100%;min-height:32px}
+.ql{flex:1;overflow:auto}.it{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:1px 9px;padding:10px 12px;border-bottom:1px solid var(--line);cursor:pointer;position:relative}
+.it:hover{background:var(--bg)}.it[aria-selected=true]{background:var(--ac-soft)}.it:focus-visible{outline-offset:-2px}
+.it .av{grid-row:1/3}.it b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.it time{font-size:11.5px;color:var(--mute)}
+.it .s{grid-column:2/4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.it .p{grid-column:2/4;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12.5px}
+.it .m{grid-column:2/4;display:flex;gap:6px;margin-top:5px;align-items:center}.it .badge{font-size:11px;padding:1px 7px}.it.un b::after{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--ac);margin-left:6px}
+.th{display:flex;flex-direction:column;background:var(--bg)}
+.thh{display:flex;align-items:center;gap:8px;padding:9px 16px;border-bottom:1px solid var(--line);background:var(--panel);flex-wrap:wrap}.thh h2{font-size:15px;flex:1;min-width:160px}.thh .in,.thh .btn{min-height:32px}
+.msgs{flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
+.mg{max-width:min(560px,82%);display:grid;gap:3px}.mg p{padding:9px 12px;border-radius:var(--r);background:var(--panel);border:1px solid var(--line);line-height:1.5}.mg small{color:var(--mute);font-size:11.5px;padding:0 4px}
+.mg.a{align-self:flex-end;justify-items:end}.mg.a p{background:var(--ac);border-color:var(--ac);color:var(--ac-ink)}
+.mg.n{align-self:stretch;max-width:none}.mg.n p{background:var(--warn-soft);border-color:transparent;border-left:3px solid var(--warn)}.mg.n small{color:var(--warn);font-weight:600}.mg.n small:last-child{color:var(--mute);font-weight:400}
+.att{display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border:1px solid var(--line);border-radius:var(--rb);background:var(--panel);font-size:12px;justify-self:start}.att .ic{width:14px;height:14px}
+.daysep{align-self:center;font-size:11.5px;color:var(--mute);padding:2px 10px;border-radius:99px;background:var(--soft)}
+.cmp{margin:0 16px 14px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);box-shadow:var(--sh)}.cmp.note{background:var(--warn-soft);border-color:var(--warn)}.cmp:focus-within{border-color:var(--ac)}
+.cmp textarea{display:block;width:100%;border:0;outline:0;background:none;resize:none;min-height:66px;padding:10px 12px;line-height:1.5}
+.cmp .row{padding:6px 8px;border-top:1px solid var(--line);gap:6px;position:relative}.cmp .seg button{min-height:26px;font-size:12px}.cmp .btn{min-height:30px;font-size:12.5px}
+.menu{position:absolute;bottom:42px;left:8px;width:270px;padding:5px;z-index:5}.menu button{display:grid;width:100%;text-align:left;border:0;background:none;border-radius:var(--rb);padding:7px 9px;gap:1px}.menu button:hover,.menu button:focus-visible{background:var(--soft)}.menu small{color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cu{border-left:1px solid var(--line);background:var(--panel);overflow:auto;padding:16px 14px;display:grid;gap:16px;align-content:start}
+.cu h3{font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--mute);margin-bottom:7px}.cu dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:5px 12px}.cu dt{color:var(--mute)}.cu dd{margin:0;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stat{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:var(--r);text-align:center}.stat div{padding:8px 2px}.stat div+div{border-left:1px solid var(--line)}.stat b{display:block;font-size:15px}.stat span{font-size:11.5px;color:var(--mute)}
+.ord{list-style:none;margin:0;padding:0}.ord li{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line)}.ord li:last-child{border:0}.ord small{display:block;color:var(--mute);font-size:11.5px}
+#back{display:none}
+@media(max-width:1200px){.desk{grid-template-columns:56px 280px minmax(0,1fr)}.cu{display:none}}
+@media(max-width:860px){.desk{grid-template-columns:48px minmax(0,1fr)}.desk:not(.open) .th,.desk.open .q{display:none}#back{display:inline-flex}}
+</style>
+<body>
+<div class="desk" id="desk">
+<nav class="rail inv" aria-label="Main"><a class="lg" href="#" aria-label="Relay home" title="Relay"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.500 14v-2a7.500 7.500 0 0 1 15 0v2"/><rect x="3.500" y="13" width="4" height="6" rx="1.500"/><rect x="16.500" y="13" width="4" height="6" rx="1.500"/></svg></a><a href="#" aria-current="page" aria-label="Inbox" title="Inbox"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13 6.500 5h11L20 13v6H4Z"/><path d="M4 13h5l1 2.500h4l1-2.500h5"/></svg><i></i></a><a href="#" aria-label="Customers" title="Customers"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c1-3.6 3.4-5.5 6.5-5.5s5.500 1.900 6.500 5.500M16 4.800a3.500 3.500 0 0 1 0 6.400M18 14.800c1.700.8 2.900 2.500 3.500 5.200"/></svg></a><a href="#" aria-label="Help centre" title="Help centre"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5c3-1 5.500-.7 8 1v13c-2.500-1.700-5-2-8-1ZM20 5c-3-1-5.500-.7-8 1v13c2.500-1.700 5-2 8-1Z"/></svg></a><a href="#" aria-label="Reports" title="Reports"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V4M4 20h16M8 16v-5M12 16V8M16 16v-3"/></svg></a><a href="#" aria-label="Settings" title="Settings"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.600 5.600l2.100 2.100M16.300 16.300l2.100 2.100M5.600 18.400l2.100-2.100M16.300 7.700l2.100-2.100"/></svg></a><span style="margin-top:auto"></span><button id="theme" aria-pressed="false" aria-label="Switch to dark theme"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.500A8 8 0 0 1 9.500 4a8 8 0 1 0 10.500 10.500Z"/></svg></button><span class="av" aria-label="Your account">AK</span></nav>
+<section class="q" aria-label="Queue"><div class="qh"><div class="row"><h1>Inbox</h1><span class="sp"></span><span class="badge ok"><i></i>Online</span></div><div class="seg" role="group" aria-label="Status" id="flt"></div><label class="sr" for="q">Search conversations</label><input class="in" id="q" type="search" placeholder="Search name or subject"></div><div class="ql" role="listbox" aria-label="Conversations" id="list" tabindex="-1"></div></section>
+<section class="th" aria-label="Conversation" id="th"></section>
+<aside class="cu" aria-label="Customer" id="cu"></aside></div>
+<script>/* Shared helpers: element lookup, theme switch (add #dark to the address to start dark), mobile menu. */
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const root=document.documentElement;
+function setTheme(dark){root.dataset.theme=dark?'dark':'light';const b=$('#theme');if(b){b.setAttribute('aria-pressed',dark);b.setAttribute('aria-label',dark?'Switch to light theme':'Switch to dark theme')}document.dispatchEvent(new Event('themechange'))}
+/* The address can carry a look, for example #dark, #ocean-soft or #sand-serif-dark. A copied file can set the same thing on the html element. */
+const SKINS=['ocean','forest','sunset','rose','sand'],LOOKS=['soft','sharp','serif','compact'],PRE=root.dataset.theme==='dark';
+function look(){const h=location.hash,w=h.slice(1).toLowerCase().match(/[a-z]+/g)||[];
+ if(h){const s=w.find(x=>SKINS.includes(x)),l=w.find(x=>LOOKS.includes(x));s?root.dataset.skin=s:delete root.dataset.skin;l?root.dataset.look=l:delete root.dataset.look}
+ setTheme(h?/dark/.test(h):PRE)}
+look();addEventListener('hashchange',look);
+$('#theme')?.addEventListener('click',()=>setTheme(root.dataset.theme!=='dark'));
+{const m=$('#menu'),s=$('.side');if(m&&s){const set=o=>{s.classList.toggle('open',o);m.setAttribute('aria-expanded',o)};m.addEventListener('click',()=>set(!s.classList.contains('open')));addEventListener('keydown',e=>{if(e.key==='Escape')set(false)});document.addEventListener('click',e=>{if(s.classList.contains('open')&&!s.contains(e.target)&&!m.contains(e.target))set(false)})}}
+function toast(t){let n=$('#toast');if(!n){n=document.createElement('div');n.id='toast';n.setAttribute('role','status');n.style.cssText='position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 14px;border-radius:10px;font-size:13px;font-weight:600;z-index:60;transition:opacity .2s;max-width:calc(100vw - 32px)';document.body.append(n)}n.textContent=t;n.style.opacity=1;clearTimeout(toast.t);toast.t=setTimeout(()=>n.style.opacity=0,2000)}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+/* DATA. due is minutes until a reply is owed (null when none is). Messages: who is c (customer), a (agent) or n (private note). */
+const C=[
+ {n:'Hannah Whitfield',s:'Order arrived with a cracked lid',ch:'Chat',st:'Open',due:12,t:'10:11',un:1,city:'Leeds',since:'March 2024',orders:6,spend:412,m:[['c','10:02','Hi, my order #4812 arrived this morning and the lid of the casserole dish is cracked. The box looked fine from the outside.'],['c','10:03','I have photos if that helps.','IMG_2231.jpg'],['a','10:06','Sorry about that, Hannah. That is not how it should arrive. Could you send the photos over? I will get a replacement lid out today.'],['c','10:11','Sent. Do I need to post the broken one back?'],['n','10:12','Warehouse has 14 lids in stock (CR-2210-L). No return needed for breakages under £20.','Tom Becker']],o:[['#4812','Casserole dish, moss','£64.00','Delivered'],['#4377','Linen throw, oat','£68.00','Delivered'],['#4102','Beeswax candle set','£24.00','Refunded']],prev:['Where is my parcel? · August','Gift wrapping question · May']},
+ {n:'Marta Kowalska',s:'Refund not showing yet',ch:'Email',st:'Open',due:35,t:'09:48',un:1,city:'Bristol',since:'June 2025',orders:2,spend:131,m:[['c','09:48','Hello, I returned the oak serving board on 2 November and the tracking says you received it on the 5th. The refund of £42 still has not reached my account. Can you check please?']],o:[['#4630','Oak serving board','£42.00','Refunded'],['#4588','Stoneware mug, moss × 4','£72.00','Delivered']],prev:['Returns label request · 1 November']},
+ {n:'Daniel Osei',s:'Change delivery address',ch:'Email',st:'Open',due:100,t:'09:20',un:0,city:'London',since:'November 2026',orders:1,spend:89,m:[['c','09:20','I ordered the Arc table lamp last night (#4819) but used my old address by mistake. Could it go to 14 Calder Row, London E8 instead? It has not shipped yet as far as I can see.'],['a','09:31','Morning Daniel. I have put a hold on the parcel while I change it. Can you confirm the postcode for Calder Row?']],o:[['#4819','Arc table lamp','£89.00','Processing']],prev:[]},
+ {n:'Chloe Bennett',s:'Discount code not working',ch:'Chat',st:'Open',due:140,t:'08:57',un:0,city:'Cardiff',since:'January 2025',orders:4,spend:203,m:[['c','08:55','The code AUTUMN15 says it has expired but the email I got yesterday says it runs until Sunday?'],['a','08:57','You are right, the email is correct and the code was switched off early by mistake. It is working again now. Sorry for the trouble.']],o:[['#4790','Wool cushion, rust × 2','£78.00','Delivered'],['#4511','Glass carafe','£29.00','Delivered']],prev:['Size of the large bowl · September']},
+ {n:'Yusuf Demir',s:'Do you ship to Ireland?',ch:'Chat',st:'Waiting',due:null,t:'Yesterday',un:0,city:'Dublin',since:'New customer',orders:0,spend:0,m:[['c','16:40','Hi, do you deliver to Dublin and roughly how much is it?'],['a','16:44','We do. Delivery to Ireland is a flat £9.50 and takes three to five working days. Duties are included at checkout, so there is nothing to pay on the doorstep.'],['a','16:45','Shall I send you a link to the basket you were building?']],o:[],prev:[]},
+ {n:'Rhys Morgan',s:'Wrong colour sent',ch:'Email',st:'Waiting',due:null,t:'Yesterday',un:0,city:'Swansea',since:'April 2023',orders:9,spend:655,m:[['c','14:10','I ordered the linen apron in ink and received it in oat. Order #4771.'],['a','14:32','Sorry about that, Rhys. I have sent a prepaid label to this address. The ink apron will go out as soon as the courier scans your return.']],o:[['#4771','Linen apron, ink','£36.00','Exchange'],['#4605','Brass candle holder','£27.00','Delivered'],['#4420','Cotton napkins, set of 4','£22.00','Delivered']],prev:['Trade discount enquiry · July','Late delivery · February']},
+ {n:'Ingrid Solberg',s:'Thank you for the quick fix',ch:'Email',st:'Closed',due:null,t:'Mon',un:0,city:'Edinburgh',since:'October 2024',orders:3,spend:176,m:[['c','11:05','The replacement carafe arrived today, in one piece this time. Thank you for sorting it so quickly.'],['a','11:20','That is great to hear, Ingrid. Enjoy it.']],o:[['#4701','Glass carafe','£29.00','Delivered'],['#4688','Glass carafe','£29.00','Replaced']],prev:['Carafe arrived chipped · last week']}];
+C.forEach((c,i)=>{c.id=i;c.me=i<4});C[0].un=0;
+const SAVED=[['Ask for photos','Could you send a photo of the item and the packaging? It helps us put it right with the courier.'],['Replacement on its way','I have arranged a replacement and it will leave our warehouse today. You do not need to send the damaged one back.'],['Refund timing','Refunds take three to five working days to show once we have processed them. I can see yours was sent on our side.'],['Anything else?','Is there anything else I can help with today?']];
+const ST=['Open','Waiting','Closed'],KIND={Delivered:'ok',Processing:'',Refunded:'warn',Exchange:'warn',Replaced:''};
+let flt='Open',sel=0,mode='Reply',draft='';
+const ini=n=>n.split(' ').map(w=>w[0]).join(''),dueTxt=d=>d<60?d+' min':Math.floor(d/60)+' h '+(d%60?d%60+' min':'');
+const shown=()=>{const q=$('#q').value.trim().toLowerCase();return C.filter(c=>c.st===flt&&(!q||(c.n+' '+c.s).toLowerCase().includes(q)))};
+function queue(focus){$('#flt').innerHTML=ST.map(s=>`<button aria-pressed="${s===flt}" data-s="${s}">${s}<b>${C.filter(c=>c.st===s).length}</b></button>`).join('');
+ const L=shown();$('#list').innerHTML=L.map(c=>`<div class="it ${c.un?'un':''}" role="option" tabindex="${c.id===sel?0:-1}" aria-selected="${c.id===sel}" data-id="${c.id}"><span class="av">${ini(c.n)}</span><b>${c.n}${c.un?'<span class="sr"> unread</span>':''}</b><time>${c.t}</time><span class="s">${c.s}</span><span class="p">${esc(c.m[c.m.length-1][2])}</span><span class="m"><span class="badge">${c.ch}</span>${c.due!=null?`<span class="badge ${c.due<=15?'bad':c.due<=45?'warn':''}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.500"/><path d="M12 7v5l3.500 2"/></svg>Reply due in ${dueTxt(c.due)}</span>`:c.st==='Waiting'?'<span class="badge">Waiting on customer</span>':'<span class="badge ok">Solved</span>'}</span></div>`).join('')||`<p class="mute" style="padding:28px 16px;text-align:center">No ${flt.toLowerCase()} conversations${$('#q').value?' match that search':''}.</p>`;
+ if(focus)$(`#list [data-id="${sel}"]`)?.focus()}
+function thread(){const c=C[sel];if(!c){$('#th').innerHTML='<p class="mute" style="margin:auto">Nothing selected.</p>';$('#cu').innerHTML='';return}
+ $('#th').innerHTML=`<header class="thh"><button class="btn sq" id="back" aria-label="Back to the queue"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.500 5.500 8 12l6.500 6.500"/></svg></button><h2>${c.s}</h2><label class="sr" for="st">Status</label><select class="in" id="st">${ST.map(s=>`<option ${s===c.st?'selected':''}>${s}</option>`).join('')}</select><button class="btn" id="asg" aria-pressed="${c.me}">${c.me?'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.500 4.500 4.500L19 7.500"/></svg>Assigned to you':'Assign to me'}</button></header>
+ <div class="msgs" id="msgs" role="log" aria-label="Messages"><span class="daysep">${c.t.includes(':')?'Today, Thursday 12 November':c.t==='Yesterday'?'Yesterday':'Monday 9 November'}</span>${c.m.map(([w,t,x,a])=>`<div class="mg ${w}">${w==='n'?`<small>Private note · ${a||'Amara Khan'}</small>`:''}<p>${esc(x)}</p>${w==='c'&&a?`<span class="att"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.500" cy="10" r="1.600"/><path d="m4 17 5-4.500 4 3.500 3-2.500 4 3.500"/></svg>${a}</span>`:''}<small>${w==='c'?c.n.split(' ')[0]:w==='a'?'You':''} ${w==='n'?'':'· '}${t}</small></div>`).join('')}</div>
+ <form class="cmp ${mode==='Note'?'note':''}" id="cmp"><label class="sr" for="tx">${mode==='Note'?'Private note':'Reply to '+c.n}</label><textarea id="tx" placeholder="${mode==='Note'?'Add a note only your team can see…':'Reply to '+c.n.split(' ')[0]+'…'}">${esc(draft)}</textarea><div class="row"><div class="seg" role="group" aria-label="Message type">${['Reply','Note'].map(m=>`<button type="button" data-m="${m}" aria-pressed="${m===mode}">${m}</button>`).join('')}</div><button class="btn ghost" type="button" id="sv" aria-haspopup="menu" aria-expanded="false"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 3 5 13.500h6L10 21l8-10.500h-6Z"/></svg>Saved replies</button><div class="card menu" id="menu" role="menu" hidden>${SAVED.map(([n,x],i)=>`<button type="button" role="menuitem" data-i="${i}"><b>${n}</b><small>${x}</small></button>`).join('')}</div><span class="sp"></span><button class="btn pri">${mode==='Note'?'Add note':'Send'}</button></div></form>`;
+ const m=$('#msgs');m.scrollTop=m.scrollHeight;
+ $('#cu').innerHTML=`<div style="text-align:center;display:grid;justify-items:center;gap:4px"><span class="av" style="width:52px;height:52px;font-size:17px">${ini(c.n)}</span><b style="font-size:15px">${c.n}</b><span class="mute">${c.city} · local time 10:${c.id*3+14}</span></div>
+ <div class="stat"><div><b class="num">${c.orders}</b><span>Orders</span></div><div><b class="num">£${c.spend}</b><span>Spent</span></div><div><b class="num">${c.prev.length+1}</b><span>Chats</span></div></div>
+ <section><h3>Details</h3><dl><dt>Email</dt><dd>${c.n.toLowerCase().replace(' ','.')}@example.com</dd><dt>Customer since</dt><dd>${c.since}</dd><dt>Channel</dt><dd>${c.ch}</dd><dt>Assignee</dt><dd>${c.me?'Amara Khan':'Unassigned'}</dd></dl></section>
+ <section><h3>Recent orders</h3>${c.o.length?`<ul class="ord">${c.o.map(o=>`<li><span><b class="num">${o[0]}</b> · ${o[2]}<small>${o[1]}</small></span><span class="sp badge ${KIND[o[3]]}">${o[3]}</span></li>`).join('')}</ul>`:'<p class="mute">No orders yet.</p>'}</section>
+ <section><h3>Earlier conversations</h3>${c.prev.length?c.prev.map(p=>`<p style="padding:3px 0">${p}</p>`).join(''):'<p class="mute">This is the first one.</p>'}</section>`}
+function open(id,focus){sel=id;C[id].un=0;draft='';mode='Reply';$('#desk').classList.add('open');queue(focus);thread()}
+$('#flt').onclick=e=>{const b=e.target.closest('button');if(!b)return;flt=b.dataset.s;const L=shown();sel=L[0]?L[0].id:-1;$('#desk').classList.remove('open');queue();thread();$(`#flt [data-s="${flt}"]`).focus()};
+$('#q').oninput=()=>queue();
+$('#list').onclick=e=>{const o=e.target.closest('.it');if(o)open(+o.dataset.id,true)};
+$('#list').onkeydown=e=>{const L=shown(),i=L.findIndex(c=>c.id===sel),d=e.key==='ArrowDown'?1:e.key==='ArrowUp'?-1:0;if(d&&L[i+d]){e.preventDefault();open(L[i+d].id,true)}};
+$('#th').addEventListener('click',e=>{const c=C[sel],b=e.target.closest('button');if(!b||!c)return;const menu=$('#menu');
+ if(b.id==='back'){$('#desk').classList.remove('open');queue(true)}
+ else if(b.id==='asg'){c.me=!c.me;draft=$('#tx').value;thread();$('#asg').focus();toast(c.me?'Assigned to you':'Unassigned')}
+ else if(b.dataset.m){mode=b.dataset.m;draft=$('#tx').value;thread();$('#tx').focus()}
+ else if(b.id==='sv'){menu.hidden=!menu.hidden;b.setAttribute('aria-expanded',!menu.hidden);if(!menu.hidden)menu.firstChild.focus()}
+ else if(b.dataset.i){const t=$('#tx');t.value=(t.value?t.value.trimEnd()+' ':'')+SAVED[b.dataset.i][1];menu.hidden=true;$('#sv').setAttribute('aria-expanded',false);t.focus()}});
+$('#th').addEventListener('change',e=>{if(e.target.id!=='st')return;const c=C[sel];c.st=e.target.value;c.due=c.st==='Open'?60:null;flt=c.st;queue();thread();toast('Moved to '+c.st)});
+$('#th').addEventListener('submit',e=>{e.preventDefault();const c=C[sel],t=$('#tx').value.trim();if(!t)return;c.m.push([mode==='Note'?'n':'a','10:14',t]);if(mode==='Reply'&&c.st==='Open'){c.due=null;c.st='Waiting';toast('Reply sent. Waiting on '+c.n.split(' ')[0])}else toast(mode==='Note'?'Note added':'Reply sent');draft='';const was=flt;if(c.st!==was&&mode==='Reply')flt=c.st;mode='Reply';queue();thread()});
+addEventListener('keydown',e=>{const m=$('#menu');if(e.key==='Escape'&&m&&!m.hidden){m.hidden=true;$('#sv').setAttribute('aria-expanded',false);$('#sv').focus()}});
+queue();thread();
+</script>
+</body>
+</html>

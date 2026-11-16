@@ -1,0 +1,153 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Document editor with comments</title>
+<style>/* Tokens: change these to restyle the whole screen. --ac is the brand colour. */
+:root{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#141824;--mute:#5F677B;--line:#E3E6EE;--soft:#EEF0F6;--ac:#18181B;--ac-ink:#FFFFFF;--ac-soft:#F1F1F3;--ok:#12805C;--warn:#96560A;--bad:#C2362B;--ok-soft:#E3F5EC;--warn-soft:#FCF0D9;--bad-soft:#FBE6E3;--r:12px;--rb:9px;--sh:0 1px 2px rgba(16,24,40,.05),0 8px 24px -16px rgba(16,24,40,.22);--font:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:light}
+html[data-theme=dark]{--bg:#0E1117;--panel:#161A23;--ink:#ECEEF4;--mute:#9AA3B5;--line:#272D3A;--soft:#1D2230;--ac:#FAFAFA;--ac-ink:#0E1117;--ac-soft:#272A33;--ok:#4ADE9B;--warn:#F0B454;--bad:#FF8B80;--ok-soft:#12301F;--warn-soft:#33260C;--bad-soft:#3A1714;--sh:0 1px 2px rgba(0,0,0,.45);color-scheme:dark}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:14px/1.5 var(--font);-webkit-font-smoothing:antialiased}
+h1,h2,h3,p{margin:0}h1{font-size:20px;line-height:1.2;letter-spacing:-.01em}h2{font-size:15px}h3{font-size:13px}
+a{color:inherit}button,input,select,textarea{font:inherit;color:inherit}
+/* Safari on a Mac draws its own small control for a native select, so selects drop the native look and share one arrow */
+select:not([multiple]):not([size]){-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none' stroke='%23808797' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1.5 1.5 6 6l4.5-4.5'/%3E%3C/svg%3E")!important;background-repeat:no-repeat!important;background-position:right 11px center!important;background-size:12px 8px!important;padding-right:30px!important;text-overflow:ellipsis}button{cursor:pointer}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px;border-radius:6px}
+[hidden]{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.mute{color:var(--mute)}.num{font-variant-numeric:tabular-nums}
+.ic{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:36px;padding:0 13px;border-radius:var(--rb);border:1px solid var(--line);background:var(--panel);font-weight:600;font-size:13px;white-space:nowrap;text-decoration:none}
+.btn:hover{background:var(--soft)}.btn.pri{background:var(--ac);border-color:var(--ac);color:var(--ac-ink)}.btn.pri:hover{filter:brightness(1.08)}
+.btn.ghost{border-color:transparent;background:none}.btn.ghost:hover{background:var(--soft)}.btn.sq{width:36px;padding:0}.btn:disabled{opacity:.5;cursor:default}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh)}
+.pad{padding:16px}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:99px;font-size:12px;font-weight:600;background:var(--soft);color:var(--mute);white-space:nowrap}
+.badge.ok{background:var(--ok-soft);color:var(--ok)}.badge.warn{background:var(--warn-soft);color:var(--warn)}.badge.bad{background:var(--bad-soft);color:var(--bad)}.badge.ac{background:var(--ac-soft);color:var(--ac)}
+.badge i{width:6px;height:6px;border-radius:50%;background:currentColor}
+.av{display:grid;place-items:center;flex:none;width:30px;height:30px;border-radius:50%;background:var(--ac-soft);color:var(--ac);font-size:11.5px;font-weight:700}
+.in{min-height:36px;padding:0 11px;border:1px solid var(--line);border-radius:var(--rb);background:var(--panel);min-width:0}
+.in::placeholder{color:var(--mute)}
+.seg{display:inline-flex;padding:3px;border-radius:10px;background:var(--soft);gap:2px}
+.seg button{min-height:30px;padding:0 11px;border:0;border-radius:8px;background:none;font-size:13px;font-weight:600;color:var(--mute)}
+.seg button[aria-pressed=true],.seg button[aria-selected=true]{background:var(--panel);color:var(--ink);box-shadow:0 1px 2px rgba(16,24,40,.12)}
+.row{display:flex;align-items:center;gap:10px}.sp{margin-left:auto}
+table{border-collapse:collapse;width:100%}th{font-size:12px;font-weight:600;color:var(--mute);text-align:left}th,td{padding:10px 14px;border-bottom:1px solid var(--line);white-space:nowrap}tbody tr:last-child td{border-bottom:0}
+.scroll{overflow:auto;position:relative}
+/* Skins and looks: add data-skin="ocean" (or forest, sunset, rose, sand) and data-look="soft" (or sharp, serif, compact) to the html element. */
+html[data-skin=ocean]{--bg:#F4F8FB;--panel:#FFFFFF;--ink:#0F2230;--mute:#566A7A;--line:#DAE5EC;--soft:#EAF1F6;--ac:#0369A1;--ac-ink:#FFFFFF;--ac-soft:#E0F1FA}
+html[data-skin=ocean][data-theme=dark]{--bg:#0A141C;--panel:#101E29;--ink:#E6F0F7;--mute:#8FA6B8;--line:#213442;--soft:#172A38;--ac:#4FB3E8;--ac-ink:#06202F;--ac-soft:#12344A}
+html[data-skin=forest]{--bg:#F4F7F3;--panel:#FFFFFF;--ink:#15241B;--mute:#586B5E;--line:#DCE6DE;--soft:#EBF1EC;--ac:#166534;--ac-ink:#FFFFFF;--ac-soft:#E2F3E7}
+html[data-skin=forest][data-theme=dark]{--bg:#0B140E;--panel:#122019;--ink:#E5F1E8;--mute:#8FA898;--line:#223529;--soft:#192B20;--ac:#5FD08A;--ac-ink:#08210F;--ac-soft:#173824}
+html[data-skin=sunset]{--bg:#FBF6F1;--panel:#FFFFFF;--ink:#2A1B12;--mute:#7A6455;--line:#EBDDD1;--soft:#F5EBE2;--ac:#C2410C;--ac-ink:#FFFFFF;--ac-soft:#FDE9DC}
+html[data-skin=sunset][data-theme=dark]{--bg:#150E0A;--panel:#1F1510;--ink:#F6E9DF;--mute:#B39C8B;--line:#3A2A20;--soft:#2A1D15;--ac:#FB923C;--ac-ink:#2A1203;--ac-soft:#40240F}
+html[data-skin=rose]{--bg:#FCF5F6;--panel:#FFFFFF;--ink:#2B1419;--mute:#7C5F66;--line:#EFDADE;--soft:#F8E9EC;--ac:#BE123C;--ac-ink:#FFFFFF;--ac-soft:#FDE4EA}
+html[data-skin=rose][data-theme=dark]{--bg:#160B0E;--panel:#211217;--ink:#F8E6EA;--mute:#B89AA2;--line:#3A2229;--soft:#2B1920;--ac:#FB7185;--ac-ink:#2B0610;--ac-soft:#47131F}
+html[data-skin=sand]{--bg:#F6F2EA;--panel:#FFFDF8;--ink:#26221B;--mute:#6F6757;--line:#E4DCCB;--soft:#EFE8D9;--ac:#3F3A2E;--ac-ink:#FFFDF8;--ac-soft:#ECE5D3}
+html[data-skin=sand][data-theme=dark]{--bg:#14120E;--panel:#1D1A14;--ink:#EFE9DB;--mute:#A49B86;--line:#332E24;--soft:#26221A;--ac:#E8DDBF;--ac-ink:#1A1710;--ac-soft:#38321F}
+html[data-look=soft]{--r:20px;--rb:14px;--sh:0 2px 4px rgba(16,24,40,.04),0 18px 36px -20px rgba(16,24,40,.28)}
+html[data-look=sharp]{--r:3px;--rb:2px;--sh:none}html[data-look=sharp] .seg,html[data-look=sharp] .seg button,html[data-look=sharp] .badge,html[data-look=sharp] .logo span{border-radius:3px}
+html[data-look=serif] h1,html[data-look=serif] h2,html[data-look=serif] h3,html[data-look=serif] .big,html[data-look=serif] .bal{font-family:Georgia,"Iowan Old Style","Times New Roman",serif;font-weight:600;letter-spacing:-.01em}
+html[data-look=compact]{--r:9px;--rb:7px}html[data-look=compact] body{font-size:13px}html[data-look=compact] .pad{padding:12px}html[data-look=compact] .main{padding:14px}html[data-look=compact] th,html[data-look=compact] td{padding:7px 12px}html[data-look=compact] .btn,html[data-look=compact] .in{min-height:32px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+body{display:flex;flex-direction:column}
+.bar{display:flex;align-items:center;gap:8px;padding:0 14px;min-height:54px;flex:none}
+.ttl{flex:0 1 340px;min-width:60px;border:1px solid transparent;border-radius:var(--rb);background:none;font-weight:600;font-size:15px;padding:6px 8px;text-overflow:ellipsis}.ttl:hover{border-color:var(--line)}.ttl:focus{border-color:var(--ac);outline:0;background:var(--panel)}
+.stack{display:flex}.stack .av{margin-left:-7px;box-shadow:0 0 0 2px var(--bg)}.stack .av:nth-child(2){background:var(--ok-soft);color:var(--ok)}.stack .av:nth-child(3){background:var(--warn-soft);color:var(--warn)}
+.tools{position:sticky;top:8px;z-index:4;display:flex;align-items:center;gap:2px;width:max-content;max-width:calc(100% - 24px);margin:0 auto 18px;padding:4px;border-radius:99px;background:var(--panel);border:1px solid var(--line);box-shadow:var(--sh);overflow-x:auto;scrollbar-width:none}
+.tools button{display:grid;place-items:center;min-width:34px;height:34px;padding:0 9px;border:0;border-radius:99px;background:none;font-weight:700;font-size:14px;flex:none}.tools button:hover:not(:disabled){background:var(--soft)}.tools button:disabled{opacity:.4;cursor:default}
+.tools select{border:0;background-color:transparent;height:34px;border-radius:99px;padding-left:12px;font-weight:600;font-size:13px;flex:none}.tools i{width:1px;height:20px;background:var(--line);margin:0 4px;flex:none}.tools .cm{display:inline-flex;gap:6px;font-size:13px;font-weight:600;background:var(--ac);color:var(--ac-ink)}.tools .cm:hover:not(:disabled){background:var(--ac);filter:brightness(1.1)}
+.lay{flex:1;min-height:0;overflow:auto;display:grid;grid-template-columns:220px minmax(0,1fr) 320px;gap:0 28px;padding:8px 24px 60px;align-items:start;scroll-behavior:smooth}
+.out{position:sticky;top:64px;display:grid;gap:2px;padding-top:6px;font-size:13px}.out h3{font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute);margin:0 0 6px 10px}
+.out a{display:block;padding:6px 10px;border-left:2px solid var(--line);color:var(--mute);text-decoration:none}.out a:hover{color:var(--ink);border-color:var(--mute)}.out a.h1{color:var(--ink);font-weight:600}
+.out p{margin:16px 0 0 10px;color:var(--mute);font-size:12.5px}
+.mid{grid-column:2;min-width:0}
+.page{max-width:720px;margin:0 auto;padding:64px 72px 80px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);font:17px/1.7 "Iowan Old Style","Palatino Linotype",Georgia,serif;outline:0;min-height:900px}
+.page h1{font:700 34px/1.15 var(--font);letter-spacing:-.02em;margin-bottom:14px}.page h2{font:700 20px/1.3 var(--font);letter-spacing:-.01em;margin:34px 0 8px}
+.page p{margin:0 0 14px}.page .lead{font-size:20px;line-height:1.55;color:var(--mute);margin-bottom:8px}
+.page blockquote{margin:22px 0;padding:2px 0 2px 20px;border-left:3px solid var(--ac);font-size:21px;line-height:1.45;font-style:italic}
+.page ul{margin:0 0 14px;padding-left:22px}.page li{margin-bottom:6px}
+.page mark{background:var(--warn-soft);color:inherit;border-bottom:2px solid var(--warn);border-radius:2px;cursor:pointer;padding:1px 0}.page mark.on{background:var(--warn);color:var(--panel)}
+html[data-look=serif] .page h1,html[data-look=serif] .page h2{font-family:Georgia,"Iowan Old Style",serif}
+.cms{position:sticky;top:64px;display:grid;gap:12px;padding-top:6px}.cms>h2{display:flex;align-items:center;gap:8px}
+.cc{padding:12px;display:grid;gap:8px;font-size:13px;transition:box-shadow .15s,border-color .15s}.cc.on{border-color:var(--warn);box-shadow:0 0 0 3px var(--warn-soft)}
+.cc q{display:block;quotes:none;color:var(--mute);border-left:2px solid var(--warn);padding-left:8px;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cc .who{display:flex;align-items:center;gap:8px}.cc .who small{color:var(--mute);margin-left:auto}.cc .av{width:24px;height:24px;font-size:10px}
+.cc .re{padding-left:12px;border-left:2px solid var(--line);display:grid;gap:6px}
+.cc form{display:flex;gap:6px}.cc .in{flex:1;min-height:32px;font-size:13px}.cc .btn{min-height:32px;font-size:12.5px;padding:0 10px}
+.none{padding:18px 12px;border:1px dashed var(--line);border-radius:var(--r);color:var(--mute);font-size:13px;text-align:center}
+#tgl[aria-pressed=true]{background:var(--soft)}
+body.nocm .lay{grid-template-columns:220px minmax(0,1fr)}body.nocm .cms{display:none}
+@media(max-width:1100px){.lay,body.nocm .lay{grid-template-columns:minmax(0,1fr) 300px;gap:0 20px;padding-inline:16px}.out{display:none}.mid{grid-column:1}body.nocm .lay{grid-template-columns:minmax(0,1fr)}.page{padding:44px 40px 60px}}
+@media(max-width:860px){.lay,body.nocm .lay{grid-template-columns:minmax(0,1fr);padding-inline:10px}.cms{position:fixed;inset:54px 0 0 auto;width:min(330px,92vw);padding:14px;background:var(--bg);border-left:1px solid var(--line);overflow:auto;z-index:6;align-content:start;box-shadow:-20px 0 40px -20px rgba(0,0,0,.35)}.page{padding:30px 22px 50px;font-size:16px}.page h1{font-size:27px}.sv,.stack{display:none}.bar .btn span{display:none}}
+</style>
+<body class="">
+<header class="bar"><button class="btn sq ghost" aria-label="Back to all documents"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.500 5.500 8 12l6.500 6.500"/></svg></button><label class="sr" for="ttl">Document title</label><input class="ttl" id="ttl" value="Writing for customers">
+ <span class="mute sv" style="font-size:12.5px;white-space:nowrap" id="sv" role="status">Saved</span><span class="sp"></span>
+ <div class="stack" aria-label="Also here: Priya Nair, Tom Becker"><span class="av">AK</span><span class="av">PN</span><span class="av">TB</span></div>
+ <button class="btn" id="tgl" aria-pressed="true"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4Z"/></svg><span>Comments</span><b class="num" id="cn"></b></button>
+ <button class="btn sq ghost" id="theme" aria-pressed="false" aria-label="Switch to dark theme"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.500A8 8 0 0 1 9.500 4a8 8 0 1 0 10.500 10.500Z"/></svg></button>
+ <button class="btn pri" id="share"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M8 7.500 12 3.500l4 4M6 11H5v9h14v-9h-1"/></svg><span>Share</span></button></header>
+<div class="lay" id="lay">
+ <nav class="out" aria-label="Outline"><h3>Outline</h3><div id="out"></div><p id="wc" role="status"></p></nav>
+ <div class="mid"><div class="tools" role="toolbar" aria-label="Formatting"><label class="sr" for="blk">Paragraph style</label><select id="blk"><option value="p">Text</option><option value="h1">Heading</option><option value="h2">Subheading</option></select><i></i>
+  <button data-c="bold" aria-label="Bold">B</button><button data-c="italic" aria-label="Italic" style="font-style:italic;font-family:Georgia,serif">I</button><button data-c="underline" aria-label="Underline" style="text-decoration:underline">U</button><i></i>
+  <button data-c="insertUnorderedList" aria-label="Bulleted list"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01"/></svg></button><button data-b="blockquote" aria-label="Quote">”</button><i></i>
+  <button class="cm" id="add" disabled><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4Z"/></svg>Comment</button></div>
+ <article class="page" id="page" contenteditable="true" spellcheck="false" aria-label="Document" role="textbox" aria-multiline="true">
+<h1>Writing for customers</h1>
+<p class="lead">Four habits that make our letters, emails and screens easier to read. Read it once, then keep it open while you write.</p>
+<h2>Start with what the reader needs</h2>
+<p>Most people open a message with one question in mind: what do I have to do? Answer that in the first two lines. The background can follow, <mark data-c="1">and often it can go</mark>.</p>
+<h2>Use the words they use</h2>
+<p>We say ‘bill’, not ‘statement of account’. We say ‘sorry’, not ‘we apologise for any inconvenience caused’. If <mark data-c="2">a twelve-year-old</mark> would stumble on a word, find another.</p>
+<blockquote>If you would not say it across a counter, do not write it in an email.</blockquote>
+<h2>Numbers, dates and money</h2>
+<ul><li>Write dates as 12 November 2026, with no ‘th’.</li><li>Use numerals for anything you can count: 3 days, 14 lids, £20.</li><li>Put the currency sign first and leave out ‘.00’ unless the pennies matter.</li></ul>
+<h2>Before you send</h2>
+<p>Read it aloud. Cut the first sentence if the second works without it. Then check the name, the date and the amount, because those are the three things people notice when they are wrong.</p>
+ </article></div>
+ <aside class="cms" aria-label="Comments" id="cms"></aside></div>
+<script>/* Shared helpers: element lookup, theme switch (add #dark to the address to start dark), mobile menu. */
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const root=document.documentElement;
+function setTheme(dark){root.dataset.theme=dark?'dark':'light';const b=$('#theme');if(b){b.setAttribute('aria-pressed',dark);b.setAttribute('aria-label',dark?'Switch to light theme':'Switch to dark theme')}document.dispatchEvent(new Event('themechange'))}
+/* The address can carry a look, for example #dark, #ocean-soft or #sand-serif-dark. A copied file can set the same thing on the html element. */
+const SKINS=['ocean','forest','sunset','rose','sand'],LOOKS=['soft','sharp','serif','compact'],PRE=root.dataset.theme==='dark';
+function look(){const h=location.hash,w=h.slice(1).toLowerCase().match(/[a-z]+/g)||[];
+ if(h){const s=w.find(x=>SKINS.includes(x)),l=w.find(x=>LOOKS.includes(x));s?root.dataset.skin=s:delete root.dataset.skin;l?root.dataset.look=l:delete root.dataset.look}
+ setTheme(h?/dark/.test(h):PRE)}
+look();addEventListener('hashchange',look);
+$('#theme')?.addEventListener('click',()=>setTheme(root.dataset.theme!=='dark'));
+{const m=$('#menu'),s=$('.side');if(m&&s){const set=o=>{s.classList.toggle('open',o);m.setAttribute('aria-expanded',o)};m.addEventListener('click',()=>set(!s.classList.contains('open')));addEventListener('keydown',e=>{if(e.key==='Escape')set(false)});document.addEventListener('click',e=>{if(s.classList.contains('open')&&!s.contains(e.target)&&!m.contains(e.target))set(false)})}}
+function toast(t){let n=$('#toast');if(!n){n=document.createElement('div');n.id='toast';n.setAttribute('role','status');n.style.cssText='position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 14px;border-radius:10px;font-size:13px;font-weight:600;z-index:60;transition:opacity .2s;max-width:calc(100vw - 32px)';document.body.append(n)}n.textContent=t;n.style.opacity=1;clearTimeout(toast.t);toast.t=setTimeout(()=>n.style.opacity=0,2000)}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+/* DATA: each comment belongs to the mark in the page with the same number. */
+let CM=[{id:1,who:'Priya Nair',ini:'PN',t:'Yesterday, 16:20',x:'Could we show a before and after here? People skim rules but remember examples.',re:[['Tom Becker','TB','I have a good one from the refunds email. Will add it tomorrow.']]},{id:2,who:'Tom Becker',ini:'TB',t:'09:05',x:'Legal asked whether this also covers contract summaries. I think it should.',re:[]}],next=3,resolved=2,range=null;
+const page=$('#page');
+function outline(){const hs=$$('h1,h2',page);hs.forEach((h,i)=>h.id='s'+i);$('#out').innerHTML=hs.map((h,i)=>`<a href="#s${i}" class="${h.tagName.toLowerCase()}">${esc(h.textContent)||'Untitled'}</a>`).join('');
+ const n=(page.innerText.trim().match(/\S+/g)||[]).length;$('#wc').textContent=n+' words · '+Math.max(1,Math.round(n/200))+' min read'}
+function cards(focus){$('#cn').textContent=CM.length;$('#cms').innerHTML=`<h2>Comments<span class="badge">${CM.length} open</span><span class="sp mute" style="font-size:12.5px;font-weight:500">${resolved} resolved</span></h2>`+(CM.map(c=>{const m=$(`mark[data-c="${c.id}"]`,page);return `<section class="card cc" data-c="${c.id}" tabindex="0" aria-label="Comment by ${c.who}"><div class="who"><span class="av">${c.ini}</span><b>${c.who}</b><small>${c.t}</small></div>${m?`<q>${esc(m.textContent)}</q>`:''}${c.x?`<p>${esc(c.x)}</p>`:''}${c.re.length?`<div class="re">${c.re.map(r=>`<p><b>${r[0]}</b> ${esc(r[2])}</p>`).join('')}</div>`:''}<form><label class="sr" for="r${c.id}">${c.x?'Reply':'Your comment'}</label><input class="in" id="r${c.id}" placeholder="${c.x?'Reply…':'Write a comment…'}" autocomplete="off"><button class="btn">${c.x?'Reply':'Post'}</button>${c.x?'<button class="btn ghost" type="button" data-res aria-label="Resolve"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.500 4.500 4.500L19 7.500"/></svg></button>':'<button class="btn ghost" type="button" data-res aria-label="Cancel"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>'}</form></section>`}).join('')||'<p class="none">No open comments. Select some words in the page and press Comment.</p>');
+ if(focus)$('#r'+focus)?.focus()}
+const lit=(id,on)=>{$$('.on').forEach(e=>e.classList.remove('on'));if(on){$(`mark[data-c="${id}"]`,page)?.classList.add('on');$(`.cc[data-c="${id}"]`)?.classList.add('on')}};
+['pointerover','focusin'].forEach(ev=>document.addEventListener(ev,e=>{const t=e.target.closest?.('[data-c]');if(t&&(t.matches('mark')||t.matches('.cc')))lit(t.dataset.c,true)}));
+$('#cms').addEventListener('pointerleave',()=>lit(0,false));page.addEventListener('pointerout',e=>{if(e.target.matches?.('mark'))lit(0,false)});
+page.addEventListener('click',e=>{const m=e.target.closest('mark');if(m){document.body.classList.remove('nocm');$('#tgl').setAttribute('aria-pressed',true);$(`.cc[data-c="${m.dataset.c}"]`)?.scrollIntoView({block:'nearest'});lit(m.dataset.c,true)}});
+$('#cms').addEventListener('submit',e=>{e.preventDefault();const id=+e.target.closest('.cc').dataset.c,c=CM.find(x=>x.id===id),v=e.target.querySelector('input').value.trim();if(!v)return;if(c.x)c.re.push(['Amara Khan','AK',v]);else c.x=v;cards();saved();toast(c.re.length?'Reply added':'Comment added')});
+$('#cms').addEventListener('click',e=>{const b=e.target.closest('[data-res]');if(!b)return;const id=+b.closest('.cc').dataset.c,c=CM.find(x=>x.id===id),m=$(`mark[data-c="${id}"]`,page);if(m)m.replaceWith(...m.childNodes);page.normalize();CM=CM.filter(x=>x.id!==id);if(c.x){resolved++;toast('Comment resolved')}cards();saved()});
+/* Formatting uses the browser's own editing commands, which is enough for a demo. */
+$('.tools').addEventListener('mousedown',e=>{if(e.target.closest('button'))e.preventDefault()});
+$('.tools').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.id==='add')return;page.focus();if(b.dataset.c)document.execCommand(b.dataset.c);else document.execCommand('formatBlock',false,b.dataset.b);changed()});
+$('#blk').onchange=e=>{page.focus();if(range){const s=getSelection();s.removeAllRanges();s.addRange(range)}document.execCommand('formatBlock',false,e.target.value);changed()};
+document.addEventListener('selectionchange',()=>{const s=getSelection();const ok=s.rangeCount&&!s.isCollapsed&&page.contains(s.anchorNode)&&page.contains(s.focusNode);if(s.rangeCount&&page.contains(s.anchorNode))range=s.getRangeAt(0).cloneRange();$('#add').disabled=!ok;
+ if(s.rangeCount&&page.contains(s.anchorNode)){let n=s.anchorNode;n=n.nodeType===1?n:n.parentElement;const b=n.closest('h1,h2,p,li,blockquote');$('#blk').value=b&&/H1|H2/.test(b.tagName)?b.tagName.toLowerCase():'p'}});
+$('#add').onclick=()=>{if(!range||range.collapsed)return;const m=document.createElement('mark');m.dataset.c=next;try{range.surroundContents(m)}catch(err){toast('Select words inside one paragraph to comment on them');return}
+ CM.push({id:next,who:'Amara Khan',ini:'AK',t:'Just now',x:'',re:[]});getSelection().removeAllRanges();document.body.classList.remove('nocm');$('#tgl').setAttribute('aria-pressed',true);cards(next);lit(next,true);next++;$('#add').disabled=true};
+let st;function saved(){$('#sv').textContent='Saving…';clearTimeout(st);st=setTimeout(()=>$('#sv').textContent='Saved just now',700)}
+function changed(){outline();saved()}
+page.addEventListener('input',changed);
+$('#out').onclick=e=>{const a=e.target.closest('a');if(a){e.preventDefault();$(a.getAttribute('href')).scrollIntoView({block:'start'})}};
+$('#tgl').onclick=e=>{const on=document.body.classList.toggle('nocm');e.currentTarget.setAttribute('aria-pressed',!on)};
+$('#share').onclick=()=>toast('Link copied. Anyone at Marlow & Finch can comment.');
+$('#ttl').onchange=e=>{document.title=e.target.value||'Untitled';saved()};
+if(innerWidth<=860){document.body.classList.add('nocm');$('#tgl').setAttribute('aria-pressed',false)}
+outline();cards();
+</script>
+</body>
+</html>

@@ -43,9 +43,8 @@ textarea{font-variant-ligatures:none;font-feature-settings:"calt" 0,"liga" 0;wid
 details.help summary{cursor:pointer;font-size:12.5px;color:var(--mute);list-style:none}
 details.help summary::before{content:'+ ';}details.help[open] summary::before{content:'– '}
 .main{display:grid;grid-template-rows:auto minmax(0,1fr);min-width:0;min-height:0}
-.styles{display:flex;gap:6px;overflow-x:auto;padding:12px 18px;border-bottom:1px solid var(--hair);background:var(--panel);scrollbar-width:thin;align-items:center}
-.styles .lbl{flex:none;font:600 10.5px Inter;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);padding:0 6px 0 2px}
-.styles .lbl:not(:first-child){margin-left:10px;padding-left:14px;border-left:1px solid var(--hair)}
+.styles{display:flex;gap:10px;align-items:center;padding:10px 18px;border-bottom:1px solid var(--hair);background:var(--panel)}
+.styles label{flex:none;font-size:13px;color:var(--mute)}.styles select{flex:0 1 280px;min-width:0;min-height:40px;border-radius:10px;padding:0 12px;font-size:14px}
 [hidden]{display:none!important}
 .startrow{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px;align-items:center;min-width:0}.startrow select{max-width:100%;min-width:0}
 .tplbtn{border:1px solid var(--accent);color:var(--accent);background:var(--panel);border-radius:9px;min-height:34px;padding:0 12px;font-size:12.5px;font-weight:600;cursor:pointer}
@@ -242,7 +241,7 @@ details.menu{position:relative}details.menu>summary{list-style:none}details.menu
   </div>
  </aside>
  <main class="main">
-  <div class="styles" id="styles" role="group" aria-label="Style"></div>
+  <div class="styles"><label for="styles">Style</label><select id="styles" aria-label="Style"></select></div>
   <div class="stage" id="stage" aria-label="Diagram preview. Drag to pan, use the zoom buttons or Ctrl and scroll to zoom.">
    <div class="paper" id="paper"></div>
    <div class="motion" role="group" aria-label="Animation"><button type="button" id="mvPlay" class="mv-play" aria-label="Play the build-up animation"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg><span>Play</span></button>
@@ -318,9 +317,11 @@ const doc=()=>S.docs[S.kind],D=()=>doc().data;
 /* kinds + styles */
 function drawKinds(){$('kinds').innerHTML=Diagrams.KINDS.map(k=>`<button class="type" data-kind="${k.id}" aria-pressed="${k.id===S.kind}" title="${esc(k.hint)}"><svg viewBox="0 0 34 28" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">${ICON[k.id]}</svg><b>${k.name}</b><span>${k.hint}</span></button>`).join('');$('why').textContent=KINDHELP[S.kind];}
 $('kinds').onclick=e=>{const b=e.target.closest('[data-kind]');if(!b)return;S.kind=b.dataset.kind;drawKinds();drawEditor();syncTitle();render(true);commit();};
-const chipHTML=st=>`<button class="chip" data-style="${st.id}" aria-pressed="${st.id===S.style}" title="${st.kicker}"><span class="sw" style="background:${st.t.bg.startsWith('#')?st.t.bg:'#0B0F1A'}"><i style="background:${st.t.accent}"></i></span>${st.name}</button>`;
-$('styles').innerHTML=`<span class="lbl">Your brand</span>${DVStyles.filter(s=>s.brand).map(chipHTML).join('')}<span class="lbl">From your board</span>${DVStyles.filter(s=>s.board).map(chipHTML).join('')}<span class="lbl">Researched</span>${DVStyles.filter(s=>!s.board&&!s.brand).map(chipHTML).join('')}`;
-$('styles').onclick=e=>{const b=e.target.closest('[data-style]');if(!b)return;S.style=b.dataset.style;$('styles').querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',String(c===b)));render(true);};
+/* one dropdown for the style, grouped: your brand, from your board, researched */
+const styleOpt=s=>`<option value="${s.id}">${s.name}</option>`,styleGrp=(l,a)=>a.length?`<optgroup label="${l} (${a.length})">${a.map(styleOpt).join('')}</optgroup>`:'';
+const styleOptions=()=>styleGrp('Your brand',DVStyles.filter(s=>s.brand))+styleGrp('From your board',DVStyles.filter(s=>s.board))+styleGrp('Researched',DVStyles.filter(s=>!s.board&&!s.brand));
+$('styles').innerHTML=styleOptions();$('styles').value=S.style;
+$('styles').onchange=()=>{S.style=$('styles').value;render(true);};
 $('guideLink')&&($('guideLink').href='chart-styles.html#s='+S.style);
 function syncTitle(){$('title').value=doc().title||'';$('subtitle').value=doc().subtitle||'';}
 $('title').oninput=()=>{doc().title=$('title').value;later();};$('subtitle').oninput=()=>{doc().subtitle=$('subtitle').value;later();};
@@ -508,7 +509,7 @@ $('draftsMenu').addEventListener('toggle',()=>{if($('draftsMenu').open)drawDraft
 $('drafts').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=drafts();
  if(b.hasAttribute('data-save')){const name=(doc().title||(Diagrams.KINDS.find(k=>k.id===S.kind)||{}).name||'Diagram').slice(0,60);const i=d.findIndex(x=>x.name===name&&x.kind===S.kind);const it={name,kind:S.kind,style:S.style,ts:Date.now(),doc:JSON.parse(JSON.stringify(doc()))};if(i>=0)d[i]=it;else d.unshift(it);
   try{localStorage.setItem('dgs:drafts',JSON.stringify(d.slice(0,40)));toast('Draft saved: '+name);}catch{toast('Could not save: browser storage is full or blocked');}}
- else if(b.dataset.load!=null){const x=d[+b.dataset.load];S.kind=x.kind;S.style=x.style||S.style;S.docs[x.kind]=JSON.parse(JSON.stringify(x.doc));$('draftsMenu').open=false;$('styles').querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',String(c.dataset.style===S.style)));drawKinds();syncTitle();drawEditor();render(true);commit();toast('Draft opened');return;}
+ else if(b.dataset.load!=null){const x=d[+b.dataset.load];S.kind=x.kind;S.style=x.style||S.style;S.docs[x.kind]=JSON.parse(JSON.stringify(x.doc));$('draftsMenu').open=false;$('styles').value=S.style;drawKinds();syncTitle();drawEditor();render(true);commit();toast('Draft opened');return;}
  else if(b.dataset.deld!=null){d.splice(+b.dataset.deld,1);try{localStorage.setItem('dgs:drafts',JSON.stringify(d));}catch{}}
  drawDrafts();});
 
@@ -524,11 +525,11 @@ $('mvGif').onclick=async()=>{stopPlay();busy(true);try{DVExport.download(slug()+
 
 /* start: #roadmap, #org, #journey or #matrix picks the kind */
 const h=location.hash.slice(1);if(Diagrams.KINDS.some(k=>k.id===h))S.kind=h;
-window.DiagramStudio={get state(){return S;},get last(){return S.last;},set(p){if(p.kind)S.kind=p.kind;if(p.style)S.style=p.style;if(p.data)S.docs[S.kind].data=p.data;$('styles').querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',String(c.dataset.style===S.style)));drawKinds();syncTitle();drawEditor();render(true);commit();return S.last;},selectRef,moveItem,io,pack,unpack};
-if(/^d=[zj]\./.test(h)){unpack(h.slice(2)).then(o=>{if(!o||!o.doc||!Diagrams.KINDS.some(k=>k.id===o.kind))throw new Error('bad link');S.kind=o.kind;if(DVStyles.some(s=>s.id===o.style))S.style=o.style;S.docs[o.kind]=o.doc;$('styles').querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',String(c.dataset.style===S.style)));drawKinds();syncTitle();drawEditor();render(true);hist.last=snap();toast('Opened the shared diagram');}).catch(err=>{console.warn(err);toast('That share link could not be read');});}
-if(!DVStyles.some(s=>s.id===S.style))S.style='workflow';$('styles').querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',String(c.dataset.style===S.style)));
+window.DiagramStudio={get state(){return S;},get last(){return S.last;},set(p){if(p.kind)S.kind=p.kind;if(p.style)S.style=p.style;if(p.data)S.docs[S.kind].data=p.data;$('styles').value=S.style;drawKinds();syncTitle();drawEditor();render(true);commit();return S.last;},selectRef,moveItem,io,pack,unpack};
+if(/^d=[zj]\./.test(h)){unpack(h.slice(2)).then(o=>{if(!o||!o.doc||!Diagrams.KINDS.some(k=>k.id===o.kind))throw new Error('bad link');S.kind=o.kind;if(DVStyles.some(s=>s.id===o.style))S.style=o.style;S.docs[o.kind]=o.doc;$('styles').value=S.style;drawKinds();syncTitle();drawEditor();render(true);hist.last=snap();toast('Opened the shared diagram');}).catch(err=>{console.warn(err);toast('That share link could not be read');});}
+if(!DVStyles.some(s=>s.id===S.style))S.style='workflow';$('styles').value=S.style;
 drawKinds();syncTitle();drawEditor();render(true);commit();document.fonts?.ready.then(()=>setTimeout(()=>render(false),60));
-$('styles').querySelector('[aria-pressed=true]')?.scrollIntoView({block:'nearest',inline:'center'});
+
 })();
 </script>
 <script src="studio-tabs.js"></script>

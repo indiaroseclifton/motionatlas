@@ -19,7 +19,8 @@ HEAD, S, MORE = ns['HEAD'], ns['S'], ns.get('MORE', [])
 
 # ---- styles and shared base, lifted from the demo head ----
 head_css = HEAD.split('<style>')[1].split('{css}')[0].replace('{{', '{').replace('}}', '}')
-STYLE_NAMES = {'noir': 'Kitchen noir', 'paper': 'Kitchen paper', 'studio': 'Studio', 'signal': 'Signal'}
+# the looks the site builder offers, light ones first; ids are kept so saved sites keep their look
+STYLE_NAMES = {'studio': 'Studio', 'clean': 'Clean', 'paper': 'Paper', 'editorial': 'Editorial', 'soft': 'Soft', 'garden': 'Garden', 'bold': 'Bold', 'noir': 'Evening', 'signal': 'Midnight'}
 STYLES = {}
 for sid in STYLE_NAMES:
     m = re.search(r'(?:^|\n)[^\n]*\[data-style=' + sid + r'\]\{([^}]*)\}', head_css)
@@ -29,6 +30,11 @@ FONTS = {
     'paper': 'family=Fraunces:opsz,wght@9..144,400;9..144,500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600',
     'studio': 'family=Cormorant+Garamond:ital,wght@1,500&family=Inter:wght@400;500;600',
     'signal': 'family=Space+Grotesk:wght@400;500;600&family=Inter:wght@400;500;600',
+    'clean': 'family=Inter:wght@400;500;600',
+    'editorial': 'family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Inter:wght@400;500;600',
+    'soft': 'family=Outfit:wght@400;500;600&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600',
+    'garden': 'family=Lora:wght@400;500;600&family=Inter:wght@400;500;600',
+    'bold': 'family=Archivo:wght@600;800&family=Inter:wght@400;500;600',
 }
 base_start = head_css.index('*{box-sizing')
 BASE = head_css[base_start:head_css.index('.styles{')]
@@ -116,7 +122,7 @@ NEW = [
 .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
 ''' + CTRL_CSS,
   '<section class="hero">' + VIDEO + CTRL_HTML + '<div class="c"><p class="k">{{kicker}}</p><h1 class="h">{{heading}}</h1><p class="l">{{intro}}</p><div class="row"><a class="btn p" href="#">{{b1}}</a><a class="btn" href="#">{{b2}}</a></div></div></section>',
-  NOHASH + PAUSE_JS, [('film', 'Film', 'film', 'smoke-plume'), ('kicker', 'Kicker', 'text', 'New every Sunday'), ('heading', 'Headline', 'text', 'Recipes filmed like still lifes.'), ('intro', 'Intro', 'long', 'One chef, one dish, ninety quiet seconds. Hands, steam and the final plate, every week.'), ('b1', 'Main button', 'text', 'Watch the latest'), ('b2', 'Second button', 'text', 'See all episodes')],
+  NOHASH + PAUSE_JS, [('film', 'Film', 'film', 'suminagashi'), ('kicker', 'Kicker', 'text', 'Marbled paper studio'), ('heading', 'Headline', 'text', 'Ink on water, printed once.'), ('intro', 'Intro', 'long', 'We float ink on still water and lift a single print from it. No two sheets are ever the same.'), ('b1', 'Main button', 'text', 'See the papers'), ('b2', 'Second button', 'text', 'Visit the studio')],
   'A full-height hero with a muted looping background video that fades into the page colour towards the bottom (a gradient built with color-mix from the background), a kicker, a very large headline, an intro line and two buttons, plus a pause/play button for the film.'),
  ('hero-split', 'Split hero', 'Top', 'Headline and buttons on the left, a framed portrait film on the right with a small caption chip.', '''
 .split{display:grid;grid-template-columns:1.1fr 1fr;gap:clamp(28px,5vw,64px);align-items:center;max-width:1280px;margin:0 auto;padding:clamp(48px,10vh,110px) max(16px,4vw)}
@@ -154,7 +160,7 @@ FIELDS = {
  'sec-contact': [('kicker', 'Kicker', 'text', 'Contact'), ('heading', 'Headline', 'text', 'Tell us what you’re cooking.'), ('intro', 'Intro', 'long', 'A short note is plenty. We reply within a working day, usually with questions about the dish.'), ('email', 'Email address', 'text', 'hello@example.kitchen'), ('address', 'Address', 'text', '14 Market Row, London E8')],
  'sec-footer': [('news', 'Newsletter heading', 'text', 'One recipe, every Sunday.')],
  'sec-logos': [('kicker', 'Kicker', 'text', 'Trusted by'), ('heading', 'Headline', 'text', 'Cooks, chefs and food brands in 31 countries.')],
- 'sec-cta': [('film', 'Film', 'film', 'pigment-bloom'), ('kicker', 'Kicker', 'text', 'Start this week'), ('heading', 'Headline', 'text', 'Your first episode is one recipe away.'), ('intro', 'Intro', 'long', 'Bring a dish you love. We’ll handle the chef, the shots and the colour.'), ('b1', 'Main button', 'text', 'Start free'), ('b2', 'Second button', 'text', 'Watch a sample')],
+ 'sec-cta': [('film', 'Film', 'film', 'pigment-bloom'), ('kicker', 'Kicker', 'text', 'Mixed to order'), ('heading', 'Headline', 'text', 'Your colour, mixed by hand this week.'), ('intro', 'Intro', 'long', 'Send a swatch, a photograph or a memory. We mix the pigment and post a tester within five days.'), ('b1', 'Main button', 'text', 'Order a tester'), ('b2', 'Second button', 'text', 'See the colour chart')],
 }
 GROUP = {'sec-pricing': 'Sell', 'sec-bento': 'Features', 'sec-testimonials': 'Proof', 'sec-faq': 'Content', 'sec-contact': 'Endings',
          'sec-footer': 'Endings', 'sec-logos': 'Proof', 'sec-cta': 'Endings'}
@@ -229,7 +235,8 @@ GLYPHS = {
  'code': 'm8 7-5 5 5 5M16 7l5 5-5 5M13.5 4l-3 16', 'search': 'M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM16 16l4.5 4.5', 'home': 'M4 11 12 4l8 7v9h-5v-6H9v6H4z',
  'calendar': 'M4 5.5h16v15H4zM4 10h16M8.5 3v4M15.5 3v4', 'film': 'M4 4h16v16H4zM8 4v16M16 4v16M4 8h4M4 12h4M4 16h4M16 8h4M16 12h4M16 16h4', 'music': 'M9 18V5l11-2v13M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM20 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0z',
 }
-IMAGES = ['shelf/' + f for f in sorted(os.listdir(os.path.join(SITE, 'assets', 'shelf'))) if f.endswith('.webp')] + ['films/' + f + '.jpg' for f in FILMS]
+# suggestions for image fields: the photographs only (the old generated artwork is no longer offered)
+IMAGES = ['photos/' + f for f in sorted(os.listdir(os.path.join(SITE, 'assets', 'photos'))) if f.endswith('.webp') and not f.endswith('-640.webp')]
 ICON_FILES = {}
 for fam in sorted(os.listdir(os.path.join(SITE, 'icons'))):
     d = os.path.join(SITE, 'icons', fam)

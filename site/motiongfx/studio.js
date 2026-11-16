@@ -50,8 +50,11 @@ function build(){const grid=$('#mgGrid');grid.innerHTML='';G.list.forEach(t=>{co
   const x=c.getContext('2d'),o=()=>{const w=S.words[t.id]||{},f=FONTS[S.font]||FONTS[0];return{t1:w.t1??t.f.t1??'',t2:w.t2??t.f.t2??'',t3:w.t3??t.f.t3??'',bg:S.bg,ink:S.ink,accent:S.accent,font:f[1],weight:f[2]}};
   const th={t,start:0,draw(p=t.loop?0:t.cat==='Transitions'?.42:.6){paint(x,p,480,270,t,o(),false)}};thumbs.set(t.id,th);th.draw();
   const on=()=>{hot=th;th.start=performance.now()},off=()=>{if(hot===th)hot=null;th.draw()};b.addEventListener('pointerenter',on);b.addEventListener('pointerleave',off);b.addEventListener('focus',on);b.addEventListener('blur',off);b.addEventListener('click',()=>pick(t.id,true))});
- const chips=$('#mgChips');chips.innerHTML=['All',...G.cats].map((c,i)=>`<button type="button" aria-pressed="${i===0}" data-c="${c}">${c}</button>`).join('');
- chips.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;chips.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));grid.querySelectorAll('li').forEach(li=>li.hidden=b.dataset.c!=='All'&&li.dataset.cat!==b.dataset.c)});
+ /* one dropdown, each kind with its count: the same filter as the interactions shelf */
+ const sel=$('#mgCat'),n=c=>G.list.filter(t=>t.cat===c).length,all=G.list.length;
+ sel.innerHTML=`<option value="All">All templates (${all})</option>`+G.cats.filter(n).map(c=>`<option value="${c}">${c} (${n(c)})</option>`).join('');
+ const show=()=>{const c=sel.value;let k=0;grid.querySelectorAll('li').forEach(li=>{li.hidden=c!=='All'&&li.dataset.cat!==c;if(!li.hidden)k++});$('#mgShown').textContent=k===all?all+' templates':k+' of '+all+' templates'};
+ sel.addEventListener('change',show);show();
  $('#mgCount').textContent=G.list.length+' motion graphics to edit and export'}
 function thumbTick(now){if(hot&&!matchMedia('(prefers-reduced-motion: reduce)').matches)hot.draw(((now-hot.start)/1000/hot.t.dur)%1)}
 function redrawThumbs(){thumbs.forEach(t=>t.draw())}

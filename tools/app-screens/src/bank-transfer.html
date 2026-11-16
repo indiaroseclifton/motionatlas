@@ -1,0 +1,87 @@
+<!--META {"o":11,"t":"Banking, with a transfer flow","cat":"Dashboards","tone":"light","added":"2026-11","d":"Online banking on the web: a dark band with the total and three accounts, a searchable list of transactions, and a three-step payment (details, review, done) that checks the amount and updates the balances.","how":"Accounts and transactions are plain arrays. The total is the sum of the accounts, so a payment that leaves the bank lowers it and a move between your own accounts does not. The transfer form validates as you go, shows a review step, then writes the new transaction and redraws everything.","use":"Banking and fintech dashboards, wallets, payroll and expense tools, any screen that moves money and needs a careful confirm step.","p":"Build an online banking overview with a transfer flow as one HTML file with no libraries for a bank called Harbour. Top bar: logo, pill-style navigation (Accounts, Payments, Cards, Savings, Help), a last sign-in note, a theme switch and an avatar. Below it a full-width dark inverted band: a greeting, the total balance in large type with a show or hide button, a 30-day balance sparkline, and three account cards (current account, bills pot, savings with its rate), one selected. Content in a centred column up to 1120px, two columns: on the left the selected account's transactions grouped by day, each with a category icon, payee, note and signed amount (money in is green), with an All / In / Out filter and a search field; on the right a Move money card that works in three steps with a progress line. Step 1: From account, To (saved payees or one of your other accounts), amount in pounds with quick amounts, and a reference; validate that the amount is above zero and within the balance and say so in words. Step 2: a review list of the details with Back and Confirm. Step 3: a tick, what was sent and the new balance, with Make another payment. Confirming adds the transaction to the list and updates the account cards and the total. Under the card list two scheduled payments. Under 900px stack the columns. Colours are CSS variables with a dark theme."}-->
+<style>/*CORE*/
+/*SHELLCSS inv*/
+body{display:block}
+.bar{display:flex;align-items:center;gap:10px;padding:0 24px;min-height:60px;background:var(--panel);border-bottom:1px solid var(--line);flex:none}
+.brand{display:flex;align-items:center;gap:9px;font-weight:800;font-size:17px;letter-spacing:-.02em;margin-right:18px}.brand span{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--ac);color:var(--ac-ink)}
+.nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}.nav a{padding:7px 13px;border-radius:99px;color:var(--mute);font-weight:600;font-size:13.5px;text-decoration:none;white-space:nowrap}.nav a:hover{color:var(--ink);background:var(--soft)}.nav a[aria-current=page]{background:var(--soft);color:var(--ink)}
+.hero{flex:none;padding:30px 24px 26px}.wrap{width:min(1120px,100%);margin:0 auto}
+.hero .top{display:flex;align-items:flex-end;gap:24px;flex-wrap:wrap}
+.big{font-size:46px;font-weight:700;letter-spacing:-.03em;line-height:1.05;font-variant-numeric:tabular-nums}
+.eye{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;border:0;background:rgba(127,127,127,.25);color:inherit;vertical-align:8px;margin-left:8px}.eye:hover{background:rgba(127,127,127,.4)}
+.hero svg.sk{flex:1 1 220px;max-width:420px;height:60px;margin-left:auto}
+.accs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:22px}
+.acc{display:grid;gap:3px;text-align:left;padding:14px 16px;border-radius:var(--r);border:1px solid rgba(127,127,127,.35);background:rgba(127,127,127,.14);color:inherit}.acc:hover{background:rgba(127,127,127,.24)}
+.acc[aria-pressed=true]{background:var(--bg);color:var(--ink);border-color:var(--bg)}html[data-theme=dark] .acc[aria-pressed=true]{background:var(--ac);color:var(--ac-ink);border-color:var(--ac)}
+.acc small{opacity:.75;font-size:12.5px}.acc b{font-size:21px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}.acc span{display:flex;justify-content:space-between;gap:8px;font-weight:600}
+.hero :focus-visible{outline-color:currentColor}
+.main{padding:22px 24px 40px}.cols{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:20px;align-items:start}
+.th{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 16px 10px}.th h2{margin-right:auto}.th .in{flex:0 1 190px}
+.day{padding:8px 16px 4px;font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);background:var(--bg);border-block:1px solid var(--line)}
+.tx{list-style:none;margin:0;padding:0}.tx li{display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid var(--line)}.tx li:last-child{border:0}
+.tx .ico{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--soft);color:var(--mute);flex:none}.tx small{display:block;color:var(--mute);font-size:12.5px}.tx b.a{margin-left:auto;font-variant-numeric:tabular-nums;white-space:nowrap}.tx b.pos{color:var(--ok)}
+.tx li.new{animation:nw 1.6s}@keyframes nw{from{background:var(--ok-soft)}}
+.mv{padding:18px;display:grid;gap:14px}.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.steps i{height:4px;border-radius:2px;background:var(--soft)}.steps i.on{background:var(--ac)}
+.f{display:grid;gap:5px}.f label,.f .lab{font-size:12.5px;font-weight:600}.f .in{width:100%;min-height:42px}.f .err{color:var(--bad);font-size:12.5px;min-height:1.1em}
+.amt{position:relative}.amt span{position:absolute;left:13px;top:8px;font-size:20px;font-weight:700;color:var(--mute)}.amt input{padding-left:30px;font-size:20px;font-weight:700;min-height:48px;font-variant-numeric:tabular-nums}.in[aria-invalid=true]{border-color:var(--bad)}
+.q{display:flex;gap:6px}.q button{flex:1;min-height:32px;border-radius:99px;border:1px solid var(--line);background:none;font-size:12.5px;font-weight:600}.q button:hover{background:var(--soft)}
+.rev{margin:0;display:grid;grid-template-columns:auto 1fr;gap:10px 16px;padding:14px;border-radius:var(--r);background:var(--bg);border:1px solid var(--line)}.rev dt{color:var(--mute)}.rev dd{margin:0;text-align:right;font-weight:600;overflow-wrap:anywhere}
+.ok{display:grid;justify-items:center;gap:8px;text-align:center;padding:10px 0}.ok .tk{display:grid;place-items:center;width:60px;height:60px;border-radius:50%;background:var(--ok-soft);color:var(--ok)}.ok .tk .ic{width:30px;height:30px;stroke-width:2.4}
+.sch{list-style:none;margin:0;padding:0 16px 8px}.sch li{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}.sch small{display:block;color:var(--mute);font-size:12.5px}.sch b{margin-left:auto;font-variant-numeric:tabular-nums}
+@media(max-width:900px){.cols{grid-template-columns:1fr}.cols>aside{order:-1}.bar{padding:0 14px}.bar .last{display:none}.hero,.main{padding-inline:14px}.big{font-size:36px}.accs{grid-template-columns:1fr}.hero svg.sk{display:none}}
+@media(max-width:640px){.bar{flex-wrap:wrap}.nav{order:9;flex:1 0 100%;padding-bottom:8px}.brand{margin-right:auto}}
+</style>
+<body>
+<header class="bar"><div class="brand"><span><!--IC shield--></span>Harbour</div><nav class="nav" aria-label="Main"><a href="#" aria-current="page">Accounts</a><a href="#">Payments</a><a href="#">Cards</a><a href="#">Savings</a><a href="#">Help</a></nav><span class="sp"></span><span class="mute last" style="font-size:12.5px;white-space:nowrap">Last sign-in today, 08:14</span>
+ <button class="btn sq ghost" id="theme" aria-pressed="false" aria-label="Switch to dark theme"><!--IC moon--></button><span class="av" aria-label="Your account">AK</span></header>
+<section class="hero inv" aria-label="Balances"><div class="wrap"><div class="top"><div><p class="mute">Good morning, Amara. Across your three accounts</p><div><span class="big" id="tot"></span><button class="eye" id="eye" aria-pressed="false" aria-label="Hide balances"><!--IC lock--></button></div></div>
+ <svg class="sk" id="sk" viewBox="0 0 420 60" preserveAspectRatio="none" role="img" aria-label="Total balance over the last 30 days, rising from £12,900 to £14,862"></svg></div>
+ <div class="accs" id="accs" role="group" aria-label="Choose an account"></div></div></section>
+<main class="main"><div class="wrap cols">
+ <section class="card" aria-label="Transactions"><div class="th"><h2 id="tname"></h2><div class="seg" role="group" aria-label="Show" id="dir"><button aria-pressed="true">All</button><button aria-pressed="false">In</button><button aria-pressed="false">Out</button></div><label class="sr" for="q">Search transactions</label><input class="in" id="q" type="search" placeholder="Search"></div><div id="txs"></div></section>
+ <aside style="display:grid;gap:20px"><section class="card mv" aria-label="Move money" id="mv"></section>
+ <section class="card"><div class="th" style="padding-bottom:8px"><h2>Scheduled</h2><span class="badge">2 this month</span></div><ul class="sch"><li><span class="av">LR</span><span>Lark Rise Lettings<small>Rent · 1 December</small></span><b>£950.00</b></li><li><span class="av">TY</span><span>The Yard<small>Gym · 20 November</small></span><b>£32.00</b></li></ul></section></aside>
+</div></main>
+<script>/*BASEJS*/
+/* DATA: amounts are in pounds; a minus is money out. */
+const ACC=[{n:'Current account',d:'20-41-07 · 31924471',b:3240.18},{n:'Bills pot',d:'Pays your direct debits',b:1122.22},{n:'Easy saver',d:'4.1% AER, instant access',b:10500}];
+const PAYEES=['Priya Nair','Tom Becker','Lark Rise Lettings','Octave Energy'];
+const TX=[[[0,'Today, 12 November','Kiln & Co.','Coffee','cup',-3.8],[0,'Today, 12 November','Marlow & Finch Ltd','Salary','bolt',2840],[0,'Wednesday 11 November','Northern Rail','Travel','globe',-18.4],[0,'Wednesday 11 November','Fernhill Market','Groceries','bag',-46.2],[0,'Wednesday 11 November','Easy saver','Transfer to savings','swap',-250],[0,'Tuesday 10 November','Maya Okafor','Dinner on Friday','user',35],[0,'Tuesday 10 November','Postbox Mail','Subscription','inbox',-6]],
+ [[1,'Wednesday 11 November','Octave Energy','Direct debit','bolt',-84],[1,'Monday 9 November','Leeds City Council','Council tax','home',-142],[1,'Monday 2 November','Current account','Monthly top-up','swap',600]],
+ [[2,'Wednesday 11 November','Current account','Transfer in','swap',250],[2,'Saturday 31 October','Harbour','Interest','chart',34.71]]].flat().map(([a,day,who,note,ic,amt])=>({a,day,who,note,ic,amt}));
+const ICO={cup:`<!--IC cup-->`,bolt:`<!--IC bolt-->`,globe:`<!--IC globe-->`,bag:`<!--IC bag-->`,swap:`<!--IC swap-->`,user:`<!--IC user-->`,inbox:`<!--IC inbox-->`,home:`<!--IC home-->`,chart:`<!--IC chart-->`,send:`<!--IC send-->`};
+const gbp=n=>(n<0?'−':'')+'£'+Math.abs(n).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});
+let cur=0,dir='All',hide=false,step=1,pay={from:0,to:'Priya Nair',amt:'',ref:''},err='',fresh=null;
+const mask=s=>hide?'£•••••':s;
+function head(){$('#tot').textContent=mask(gbp(ACC.reduce((a,x)=>a+x.b,0)));$('#eye').setAttribute('aria-pressed',hide);$('#eye').setAttribute('aria-label',hide?'Show balances':'Hide balances');
+ $('#accs').innerHTML=ACC.map((a,i)=>`<button class="acc" aria-pressed="${i===cur}" data-i="${i}"><span>${a.n}</span><b>${mask(gbp(a.b))}</b><small>${a.d}</small></button>`).join('')}
+function list(){const q=$('#q').value.trim().toLowerCase(),L=TX.filter(t=>t.a===cur&&(dir==='All'||(dir==='In')===(t.amt>0))&&(!q||(t.who+' '+t.note).toLowerCase().includes(q)));$('#tname').textContent=ACC[cur].n;let d='',h='';
+ L.forEach(t=>{if(t.day!==d){h+=(d?'</ul>':'')+`<div class="day">${d=t.day}</div><ul class="tx">`}h+=`<li class="${t===fresh?'new':''}"><span class="ico">${ICO[t.ic]}</span><span><b>${esc(t.who)}</b><small>${esc(t.note)}</small></span><b class="a ${t.amt>0?'pos':''}">${t.amt>0?'+':''}${gbp(t.amt)}</b></li>`});
+ $('#txs').innerHTML=L.length?h+'</ul>':'<p class="mute" style="padding:30px;text-align:center">No transactions match.</p>'}
+/* A drawn balance line: 30 daily totals ending on today's figure. */
+{const d=[12900,12870,12790,12760,12700,12650,12610,12540,12490,12460,12410,12380,12320,12290,12250,12200,12160,12130,12090,12470,12430,12390,12350,12310,12290,12260,12240,12076,12030,14862],mn=12000,mx=15000,p=d.map((v,i)=>(i?'L':'M')+(i*420/29).toFixed(1)+' '+(56-(v-mn)/(mx-mn)*52).toFixed(1)).join('');$('#sk').innerHTML=`<path d="${p}L420 60L0 60Z" fill="currentColor" opacity=".12"/><path d="${p}" fill="none" stroke="currentColor" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>`}
+const others=()=>ACC.map((a,i)=>i).filter(i=>i!==pay.from);
+function move(focus){const A=ACC[pay.from],amt=parseFloat(pay.amt)||0,own=typeof pay.to==='number',toName=own?ACC[pay.to].n:pay.to;let h=`<div class="row"><h2>Move money</h2><span class="sp mute" style="font-size:12.5px">Step ${step} of 3</span></div><div class="steps" aria-hidden="true">${[1,2,3].map(n=>`<i class="${n<=step?'on':''}"></i>`).join('')}</div>`;
+ if(step===1)h+=`<form id="pf" novalidate style="display:grid;gap:12px"><div class="f"><label for="from">From</label><select class="in" id="from">${ACC.map((a,i)=>`<option value="${i}" ${i===pay.from?'selected':''}>${a.n} · ${gbp(a.b)}</option>`).join('')}</select></div>
+  <div class="f"><label for="to">To</label><select class="in" id="to"><optgroup label="People and companies">${PAYEES.map(p=>`<option ${p===pay.to?'selected':''}>${p}</option>`).join('')}</optgroup><optgroup label="My accounts">${others().map(i=>`<option value="${i}" ${i===pay.to?'selected':''}>${ACC[i].n}</option>`).join('')}</optgroup></select></div>
+  <div class="f"><label for="amt">Amount</label><div class="amt"><span aria-hidden="true">£</span><input class="in" id="amt" inputmode="decimal" autocomplete="off" placeholder="0.00" value="${esc(pay.amt)}" aria-describedby="ae" ${err?'aria-invalid="true"':''}></div><div class="q" role="group" aria-label="Quick amounts">${[20,50,120,250].map(v=>`<button type="button" data-v="${v}">£${v}</button>`).join('')}</div><span class="err" id="ae" role="alert">${err}</span></div>
+  <div class="f"><label for="ref">Reference <span class="mute" style="font-weight:400">(optional, up to 18 characters)</span></label><input class="in" id="ref" maxlength="18" value="${esc(pay.ref)}" placeholder="What is it for?"></div><button class="btn pri" style="min-height:44px">Continue</button></form>`;
+ else if(step===2)h+=`<dl class="rev"><dt>From</dt><dd>${A.n}</dd><dt>To</dt><dd>${toName}</dd><dt>Amount</dt><dd style="font-size:20px">${gbp(amt)}</dd><dt>Reference</dt><dd>${esc(pay.ref)||'None'}</dd><dt>When</dt><dd>Now${own?'':', arrives within 2 hours'}</dd><dt>Balance after</dt><dd>${gbp(A.b-amt)}</dd></dl><div class="row"><button class="btn" id="back" style="min-height:44px">Back</button><button class="btn pri" id="go" style="flex:1;min-height:44px"><!--IC lock-->Confirm ${gbp(amt)}</button></div>`;
+ else h+=`<div class="ok"><span class="tk"><!--IC check--></span><h2 style="font-size:19px">${gbp(amt)} ${own?'moved':'sent'} to ${toName}</h2><p class="mute">${A.n} now holds ${gbp(A.b)}.</p></div><button class="btn" id="again" style="min-height:44px">Make another payment</button>`;
+ $('#mv').innerHTML=h;if(focus)$(focus)?.focus()}
+const read=()=>{if(step!==1)return;pay.from=+$('#from').value;const t=$('#to').value;pay.to=/^\d$/.test(t)?+t:t;pay.amt=$('#amt').value.trim();pay.ref=$('#ref').value.trim()};
+$('#mv').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.v){$('#amt').value=b.dataset.v+'.00';err='';read();move('#amt')}
+ else if(b.id==='back'){step=1;move('#amt')}else if(b.id==='again'){step=1;pay.amt='';pay.ref='';move('#to')}
+ else if(b.id==='go'){const amt=parseFloat(pay.amt),own=typeof pay.to==='number';ACC[pay.from].b=Math.round((ACC[pay.from].b-amt)*100)/100;fresh={a:pay.from,day:'Today, 12 November',who:own?ACC[pay.to].n:pay.to,note:pay.ref||(own?'Transfer':'Payment'),ic:own?'swap':'send',amt:-amt};TX.unshift(fresh);
+  if(own){ACC[pay.to].b=Math.round((ACC[pay.to].b+amt)*100)/100;TX.unshift({a:pay.to,day:'Today, 12 November',who:ACC[pay.from].n,note:pay.ref||'Transfer in',ic:'swap',amt})}
+  cur=pay.from;dir='All';$$('#dir button').forEach((x,i)=>x.setAttribute('aria-pressed',!i));step=3;head();list();move('#again');toast('Payment complete')}});
+$('#mv').addEventListener('change',e=>{if(e.target.id==='from'){read();if(pay.to===pay.from)pay.to=PAYEES[0];err='';move('#from')}});
+$('#mv').addEventListener('submit',e=>{e.preventDefault();read();const v=pay.amt.replace(/[£,\s]/g,''),amt=parseFloat(v);
+ err=!v?'Enter an amount.':!/^\d+(\.\d{1,2})?$/.test(v)?'Use numbers only, such as 120 or 120.50.':amt<=0?'The amount must be more than zero.':amt>ACC[pay.from].b?'That is more than the '+gbp(ACC[pay.from].b)+' in '+ACC[pay.from].n.toLowerCase()+'.':'';
+ if(err){move('#amt');return}pay.amt=amt.toFixed(2);step=2;move('#go')});
+$('#accs').onclick=e=>{const b=e.target.closest('.acc');if(b){cur=+b.dataset.i;fresh=null;head();list();$(`.acc[data-i="${cur}"]`).focus()}};
+$('#eye').onclick=()=>{hide=!hide;head()};$('#q').oninput=list;
+$$('#dir button').forEach(b=>b.onclick=()=>{dir=b.textContent;$$('#dir button').forEach(x=>x.setAttribute('aria-pressed',x===b));list()});
+head();list();move();
+</script>
+</body>

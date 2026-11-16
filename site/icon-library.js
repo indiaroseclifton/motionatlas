@@ -24,7 +24,7 @@ const IconLibrary={
   sel.innerHTML=this.familyOptions();
   sel.value='regular';
   for(const id of ['iconSearch','iconSize','iconFamilySelect'])$('#'+id).oninput=()=>this.render();
-  $('#iconLookBar').addEventListener('click',e=>{const b=e.target.closest('button[data-look]');if(!b)return;const [k,v]=b.dataset.look.split(':');this.setLook({[k]:v});});
+  $('#iconLookBar').addEventListener('change',e=>{const s=e.target.closest('select[data-look]');if(s)this.setLook({[s.dataset.look]:s.value});});
   document.addEventListener('click',e=>{
    const v=e.target.closest('[data-icon-variant]');if(v){const [look,fam]=v.dataset.iconVariant.split(':');this.variant[look]=fam;this.renderCards();return;}
    const pk=e.target.closest('[data-icon-pick]');if(pk){const [family,name]=pk.dataset.iconPick.split('/');window.ProjectAtlas?.pick({type:'iconPick',family,name,colour:this.look.colour});return;}
@@ -37,9 +37,15 @@ const IconLibrary={
  paint(){const L=this.look,wrap=$('#iconFamilyCards');if(!wrap)return;wrap.dataset.tile=L.tile;wrap.style.setProperty('--icon-size',this.sizes[L.size]+'px');wrap.style.color=L.colour;const sp=$('#iconFamilies .iconSpecimens');if(sp&&!this.locked($('#iconFamilySelect').value))sp.style.color=L.colour;},
  glyphs(family,n){return SpecimenAtlas.cardIcons(family,n).map(it=>SpecimenAtlas.glyph(it)).join('');},
  renderLookBar(){
-  const L=this.look,on=(k,v)=>`aria-pressed="${String(L[k]===v)}"`,custom=!this.presets.some(([,c])=>c===L.colour);
-  $('#iconLookBar').innerHTML=`<div class="iconLookGroup" role="group" aria-label="Colour"><span>Colour</span>${this.presets.map(([n,c])=>`<button type="button" class="iconSwatch" data-look="colour:${c}" ${on('colour',c)} aria-label="${n}" title="${n}"><i style="background:${c}"></i></button>`).join('')}<label class="iconSwatch iconSwatchCustom"${custom?' data-on="true"':''} title="Custom colour"><span class="visuallyHidden">Custom colour</span><input id="iconColour" type="color" value="${L.colour}"><i${custom?` style="background:${L.colour}"`:''}></i></label></div><div class="iconLookGroup" role="group" aria-label="Size"><span>Size</span>${[['s','S'],['m','M'],['l','L']].map(([v,t])=>`<button type="button" data-look="size:${v}" ${on('size',v)} aria-label="Size ${t}">${t}</button>`).join('')}</div><div class="iconLookGroup" role="group" aria-label="Tile"><span>Tile</span>${[['tint','Tint'],['plain','Plain'],['round','Round'],['circle','Circle']].map(([v,t])=>`<button type="button" data-look="tile:${v}" ${on('tile',v)}>${t}</button>`).join('')}</div>`;
-  const c=$('#iconColour');c.oninput=e=>{this.setLook({colour:e.target.value},true);c.nextElementSibling.style.background=e.target.value;};c.onchange=e=>this.setLook({colour:e.target.value});
+  /* three dropdowns beside the search (colour, size, tile) and one swatch for a colour of your own; built once, then kept in step */
+  const L=this.look,bar=$('#iconLookBar'),custom=!this.presets.some(([,c])=>c===L.colour),opts=(k,name,list)=>`<label><span class="tbHide">${name}</span><select data-look="${k}" aria-label="${name}">${list.map(([v,t])=>`<option value="${v}">${name}: ${t}</option>`).join('')}</select></label>`;
+  if(!bar.querySelector('select')){
+   bar.innerHTML=opts('colour','Colour',this.presets.map(([n,c])=>[c,n]))+opts('size','Size',[['s','Small'],['m','Medium'],['l','Large']])+opts('tile','Tile',[['tint','Tint'],['plain','Plain'],['round','Round'],['circle','Circle']])+`<label class="iconSwatch iconSwatchCustom" title="Custom colour"><span class="visuallyHidden">Custom colour</span><input id="iconColour" type="color" value="${L.colour}"><i></i></label>`;
+   const c=$('#iconColour');c.oninput=e=>{this.setLook({colour:e.target.value},true);c.nextElementSibling.style.background=e.target.value;};c.onchange=e=>this.setLook({colour:e.target.value});}
+  const col=bar.querySelector('[data-look=colour]');let own=col.querySelector('[data-own]');
+  if(custom){if(!own){own=document.createElement('option');own.dataset.own='1';col.append(own);}own.value=L.colour;own.textContent='Colour: Custom';}else if(own)own.remove();
+  col.value=L.colour;bar.querySelector('[data-look=size]').value=L.size;bar.querySelector('[data-look=tile]').value=L.tile;
+  const sw=bar.querySelector('.iconSwatchCustom');sw.toggleAttribute('data-on',custom);if(custom)sw.setAttribute('data-on','true');sw.querySelector('i').style.background=custom?L.colour:'';if(document.activeElement!==$('#iconColour'))$('#iconColour').value=L.colour;
  },
  renderCards(){
   const q=($('#iconSearch').value||'').trim().toLowerCase(),wrap=$('#iconFamilyCards');

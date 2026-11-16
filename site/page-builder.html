@@ -4,7 +4,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="builder/builder.css"><link rel="stylesheet" href="builder/ux.css"><link rel="stylesheet" href="builder/workbench.css"><link rel="stylesheet" href="builder/gallery.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400&family=Space+Grotesk:wght@500&family=Newsreader:wght@500&family=Outfit:wght@500&family=Lora:wght@500&family=Archivo:wght@800&text=Aa&display=swap">
+<link rel="stylesheet" href="builder/builder.css"><link rel="stylesheet" href="builder/ux.css"><link rel="stylesheet" href="builder/workbench.css"><link rel="stylesheet" href="builder/gallery.css"><link rel="stylesheet" href="builder/studio.css">
 <meta property="og:type" content="website"><meta property="og:site_name" content="Visual &amp; Motion Atlas"><meta property="og:title" content="Site builder · Visual & Motion Atlas"><meta property="og:description" content="Build a whole multi-page website from 61 sections, 70 UI components, the interactions shelf, live backgrounds, icon families and theme-kit assets. Start from any of 26 templates or 48 design-system styles, with 82 photographs, then export one HTML file or a ZIP."><meta property="og:url" content="https://motionatlas-ten.vercel.app/page-builder"><meta property="og:image" content="https://motionatlas-ten.vercel.app/assets/og-atlas.jpg"><meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://motionatlas-ten.vercel.app/page-builder">
 <style id="sbPre">html{--sb-h:calc(44px + env(safe-area-inset-top,0px))}body{padding-top:var(--sb-h)}html:not(.sbReady) body::before{content:"";position:fixed;top:0;left:0;right:0;height:var(--sb-h);background:#fff;border-bottom:1px solid #e8e8ea;z-index:2147483000}@media print{body{padding-top:0}}</style><script src="site-nav-data.js" defer></script><script src="site-bar.js" defer></script>
@@ -15,7 +16,9 @@
  <div class="tools">
   <span class="savedot" id="saveInd" role="status" aria-live="polite"><i aria-hidden="true"></i><span>Saved</span></span>
   <button class="btn wbIcon" id="undoBtn" type="button" aria-label="Undo" title="Undo" aria-keyshortcuts="Control+Z" disabled><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button><button class="btn wbIcon" id="redoBtn" type="button" aria-label="Redo" title="Redo" aria-keyshortcuts="Control+Shift+Z" disabled><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 14 5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg></button>
-  <details class="menu" id="moreMenu"><summary class="btn wbIcon" aria-label="More: checks, history, shortcuts" title="More"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg><b class="badge moreBadge" id="moreBadge" hidden></b></summary><div class="mlist" role="group" aria-label="More">
+  <button class="btn wbAddTop" id="railAdd" type="button" aria-haspopup="dialog"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Add section</span></button>
+  <details class="menu" id="moreMenu"><summary class="btn wbIcon" aria-label="More: library, checks, history, shortcuts" title="More"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg><b class="badge moreBadge" id="moreBadge" hidden></b></summary><div class="mlist" role="group" aria-label="More">
+   <button type="button" class="btn" data-k="lib"><span>Library</span><small>Components, interactions, photos and icons to add</small></button>
    <button type="button" class="btn" id="chkBtn" aria-label="Page checks"><span>Checks <b class="badge" id="chkBadge">–</b></span><small>Accessibility, SEO and link checks for this page</small></button>
    <button type="button" class="btn" id="histBtn" aria-haspopup="dialog"><span>History</span><small>Earlier versions of this site</small></button>
    <button type="button" class="btn" id="helpBtn" aria-keyshortcuts="?"><span>Keyboard shortcuts</span><small>Press ? any time</small></button>
@@ -39,14 +42,6 @@
   </div></details>
  </div></header>
 <nav class="panes" aria-label="Builder panes"><div class="seg" id="panes" role="group" aria-label="Show"><button type="button" data-p="lib" aria-pressed="false">Library</button><button type="button" data-p="page" aria-pressed="true">Page</button><button type="button" data-p="preview" aria-pressed="false">Preview</button></div></nav>
-<nav class="rail" id="rail" aria-label="Editor panels">
- <button type="button" class="railAdd" id="railAdd" aria-haspopup="dialog" aria-label="Add a section" title="Add a section"><i><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></i><span>Add</span></button>
- <button type="button" data-k="outline" aria-pressed="false"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>Outline</span></button>
- <button type="button" data-k="lib" aria-pressed="false"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></svg><span>Library</span></button>
- <button type="button" data-k="style" aria-pressed="false"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.5 0 2-1 1.5-2s.2-2.5 2-2.5H18a3 3 0 0 0 3-3A9 9 0 0 0 12 3z"/></svg><span>Design</span></button>
- <button type="button" data-k="site" aria-pressed="false"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg><span>Site</span></button>
- <button type="button" data-k="ai" aria-pressed="false"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4l1.8 4.7 4.7 1.8-4.7 1.8L12 17l-1.8-4.700L5.500 10.500l4.700-1.800z"/><path d="M19 15v4M17 17h4"/></svg><span>AI</span></button>
-</nav>
 <aside class="lib" aria-label="Library">
  <div class="phead"><div class="ptitle"><h2>Library</h2><button class="btn small wbClose" id="lClose" type="button" aria-label="Close the panel">Close</button></div><label class="vh" for="libSearch">Search the library</label><input class="search" id="libSearch" type="search" placeholder="Search the library" autocomplete="off">
   <div id="ltabs"></div></div>
@@ -56,7 +51,7 @@
  <div id="cvTb" class="cvtb" role="toolbar" aria-label="Section tools" hidden></div>
  <div class="frameWrap" id="wrap"><iframe id="pv" title="Live preview of your page"></iframe></div></main>
 <aside class="right" aria-label="Page settings">
- <div class="phead"><div class="ptitle"><h2 id="rTitle">Outline</h2><button class="btn small wbClose" id="rClose" type="button" aria-label="Close the panel">Close</button></div><div role="tablist" id="rtabs" aria-label="Page settings"></div></div>
+ <div class="phead"><div class="ptitle"><h2 id="rTitle">Page</h2><button class="btn small wbClose" id="rClose" type="button" aria-label="Close the panel">Close</button></div><div role="tablist" id="rtabs" aria-label="Page settings"></div></div>
  <div class="scroll">
   <section class="rpanel" id="rp-page" role="tabpanel" aria-labelledby="rt-page">
    <section class="selitem" id="selItem" aria-label="Selected item" hidden></section>
@@ -79,12 +74,15 @@
    <p class="hint" style="margin-top:10px">Click a section, here or on the page, to edit it. Drag rows to reorder, or press Alt + ↑ / ↓ on a name. The header and footer are shared by every page.</p>
   </section>
   <section class="rpanel" id="rp-style" role="tabpanel" aria-labelledby="rt-style" hidden>
+   <div class="sec"><h3 class="dh">Look</h3><p class="hint">A look sets the colours, fonts and corners of every page.</p><ul class="looks" id="lookGrid"></ul></div>
+   <div class="sec"><div class="f"><label for="pairSel">Fonts</label><select id="pairSel"></select></div></div>
    <div class="sec" id="tkBox"></div>
-   <div class="sec"><div class="styleNow" id="styleNow"></div>
-    <div class="f"><label for="pairSel">Type pairing</label><select id="pairSel"></select></div></div>
-   <div class="f"><label for="styleSearch">Find a style</label><input class="search" id="styleSearch" type="search" placeholder="Name, mood or font" autocomplete="off"></div>
-   <div class="gchips" id="skinds" role="group" aria-label="Style source" style="margin-top:8px"></div>
-   <p class="lcount" id="styleCount"></p><ul id="styleList"></ul>
+   <details class="morest" id="moreStyles"><summary>More styles <small id="moreStN"></small></summary><div class="morestb">
+    <p class="hint">Styles from the Atlas theme kits and design systems. They are bolder than the looks above.</p>
+    <div class="styleNow" id="styleNow"></div>
+    <div class="f"><label for="styleSearch">Find a style</label><input class="search" id="styleSearch" type="search" placeholder="Name, mood or font" autocomplete="off"></div>
+    <div class="f"><label for="skindSel">From</label><select id="skindSel"></select></div>
+    <p class="lcount" id="styleCount"></p><ul id="styleList"></ul></div></details>
   </section>
   <section class="rpanel" id="rp-check" role="tabpanel" aria-label="Checks for this page" hidden>
    <div class="sec chkhead"><h3>Checks for this page</h3><button class="btn small" id="chkBack" type="button">← Back to outline</button></div>

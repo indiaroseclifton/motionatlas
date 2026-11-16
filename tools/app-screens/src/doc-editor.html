@@ -1,0 +1,93 @@
+<!--META {"o":7,"t":"Document editor with comments","cat":"Work & projects","tone":"light","added":"2026-11","d":"A calm writing screen: a page you can type on, a small formatting bar, an outline built from the headings, and comments in the margin tied to highlighted text, with replies and resolve.","how":"The page is one editable element. The outline and the word count are rebuilt from it as you type. A comment wraps the selected words in a mark and adds a card beside the page; the two carry the same number, so pointing at either lights the other and resolving removes both.","use":"Writing and note tools, knowledge bases, contract and policy review, any long text that people discuss.","p":"Build a document editor with margin comments as one HTML file with no libraries for a writing product called Folio. Keep the chrome quiet and the page airy. Top bar: a back arrow, the document title as an input, a saved status, three overlapping collaborator avatars, a Comments toggle with a count, a theme switch and a Share button. Under it a centred pill toolbar: a paragraph style select (Text, Heading, Subheading), bold, italic, underline, bulleted list, quote and an Add comment button that is enabled only while text in the page is selected. Three columns: an outline (list of the page's headings, click to scroll, rebuilt as headings change) and a word count with reading time; a paper page up to 720px wide with generous padding and serif body text, editable in place; and a comments column where each card shows the author, time, the quoted words, the comment, replies, a reply field and a Resolve button. Commented words are highlighted in the page; hovering or focusing a card or its highlight emphasises both. Adding a comment wraps the selection, opens a new card and focuses its field. Under 1100px hide the outline; under 860px the comments become a slide-in panel opened by the toggle. Colours are CSS variables with a dark theme."}-->
+<style>/*CORE*/
+body{display:flex;flex-direction:column}
+.bar{display:flex;align-items:center;gap:8px;padding:0 14px;min-height:54px;flex:none}
+.ttl{flex:0 1 340px;min-width:60px;border:1px solid transparent;border-radius:var(--rb);background:none;font-weight:600;font-size:15px;padding:6px 8px;text-overflow:ellipsis}.ttl:hover{border-color:var(--line)}.ttl:focus{border-color:var(--ac);outline:0;background:var(--panel)}
+.stack{display:flex}.stack .av{margin-left:-7px;box-shadow:0 0 0 2px var(--bg)}.stack .av:nth-child(2){background:var(--ok-soft);color:var(--ok)}.stack .av:nth-child(3){background:var(--warn-soft);color:var(--warn)}
+.tools{position:sticky;top:8px;z-index:4;display:flex;align-items:center;gap:2px;width:max-content;max-width:calc(100% - 24px);margin:0 auto 18px;padding:4px;border-radius:99px;background:var(--panel);border:1px solid var(--line);box-shadow:var(--sh);overflow-x:auto;scrollbar-width:none}
+.tools button{display:grid;place-items:center;min-width:34px;height:34px;padding:0 9px;border:0;border-radius:99px;background:none;font-weight:700;font-size:14px;flex:none}.tools button:hover:not(:disabled){background:var(--soft)}.tools button:disabled{opacity:.4;cursor:default}
+.tools select{border:0;background-color:transparent;height:34px;border-radius:99px;padding-left:12px;font-weight:600;font-size:13px;flex:none}.tools i{width:1px;height:20px;background:var(--line);margin:0 4px;flex:none}.tools .cm{display:inline-flex;gap:6px;font-size:13px;font-weight:600;background:var(--ac);color:var(--ac-ink)}.tools .cm:hover:not(:disabled){background:var(--ac);filter:brightness(1.1)}
+.lay{flex:1;min-height:0;overflow:auto;display:grid;grid-template-columns:220px minmax(0,1fr) 320px;gap:0 28px;padding:8px 24px 60px;align-items:start;scroll-behavior:smooth}
+.out{position:sticky;top:64px;display:grid;gap:2px;padding-top:6px;font-size:13px}.out h3{font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute);margin:0 0 6px 10px}
+.out a{display:block;padding:6px 10px;border-left:2px solid var(--line);color:var(--mute);text-decoration:none}.out a:hover{color:var(--ink);border-color:var(--mute)}.out a.h1{color:var(--ink);font-weight:600}
+.out p{margin:16px 0 0 10px;color:var(--mute);font-size:12.5px}
+.mid{grid-column:2;min-width:0}
+.page{max-width:720px;margin:0 auto;padding:64px 72px 80px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);font:17px/1.7 "Iowan Old Style","Palatino Linotype",Georgia,serif;outline:0;min-height:900px}
+.page h1{font:700 34px/1.15 var(--font);letter-spacing:-.02em;margin-bottom:14px}.page h2{font:700 20px/1.3 var(--font);letter-spacing:-.01em;margin:34px 0 8px}
+.page p{margin:0 0 14px}.page .lead{font-size:20px;line-height:1.55;color:var(--mute);margin-bottom:8px}
+.page blockquote{margin:22px 0;padding:2px 0 2px 20px;border-left:3px solid var(--ac);font-size:21px;line-height:1.45;font-style:italic}
+.page ul{margin:0 0 14px;padding-left:22px}.page li{margin-bottom:6px}
+.page mark{background:var(--warn-soft);color:inherit;border-bottom:2px solid var(--warn);border-radius:2px;cursor:pointer;padding:1px 0}.page mark.on{background:var(--warn);color:var(--panel)}
+html[data-look=serif] .page h1,html[data-look=serif] .page h2{font-family:Georgia,"Iowan Old Style",serif}
+.cms{position:sticky;top:64px;display:grid;gap:12px;padding-top:6px}.cms>h2{display:flex;align-items:center;gap:8px}
+.cc{padding:12px;display:grid;gap:8px;font-size:13px;transition:box-shadow .15s,border-color .15s}.cc.on{border-color:var(--warn);box-shadow:0 0 0 3px var(--warn-soft)}
+.cc q{display:block;quotes:none;color:var(--mute);border-left:2px solid var(--warn);padding-left:8px;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cc .who{display:flex;align-items:center;gap:8px}.cc .who small{color:var(--mute);margin-left:auto}.cc .av{width:24px;height:24px;font-size:10px}
+.cc .re{padding-left:12px;border-left:2px solid var(--line);display:grid;gap:6px}
+.cc form{display:flex;gap:6px}.cc .in{flex:1;min-height:32px;font-size:13px}.cc .btn{min-height:32px;font-size:12.5px;padding:0 10px}
+.none{padding:18px 12px;border:1px dashed var(--line);border-radius:var(--r);color:var(--mute);font-size:13px;text-align:center}
+#tgl[aria-pressed=true]{background:var(--soft)}
+body.nocm .lay{grid-template-columns:220px minmax(0,1fr)}body.nocm .cms{display:none}
+@media(max-width:1100px){.lay,body.nocm .lay{grid-template-columns:minmax(0,1fr) 300px;gap:0 20px;padding-inline:16px}.out{display:none}.mid{grid-column:1}body.nocm .lay{grid-template-columns:minmax(0,1fr)}.page{padding:44px 40px 60px}}
+@media(max-width:860px){.lay,body.nocm .lay{grid-template-columns:minmax(0,1fr);padding-inline:10px}.cms{position:fixed;inset:54px 0 0 auto;width:min(330px,92vw);padding:14px;background:var(--bg);border-left:1px solid var(--line);overflow:auto;z-index:6;align-content:start;box-shadow:-20px 0 40px -20px rgba(0,0,0,.35)}.page{padding:30px 22px 50px;font-size:16px}.page h1{font-size:27px}.sv,.stack{display:none}.bar .btn span{display:none}}
+</style>
+<body class="">
+<header class="bar"><button class="btn sq ghost" aria-label="Back to all documents"><!--IC left--></button><label class="sr" for="ttl">Document title</label><input class="ttl" id="ttl" value="Writing for customers">
+ <span class="mute sv" style="font-size:12.5px;white-space:nowrap" id="sv" role="status">Saved</span><span class="sp"></span>
+ <div class="stack" aria-label="Also here: Priya Nair, Tom Becker"><span class="av">AK</span><span class="av">PN</span><span class="av">TB</span></div>
+ <button class="btn" id="tgl" aria-pressed="true"><!--IC chat--><span>Comments</span><b class="num" id="cn"></b></button>
+ <button class="btn sq ghost" id="theme" aria-pressed="false" aria-label="Switch to dark theme"><!--IC moon--></button>
+ <button class="btn pri" id="share"><!--IC share--><span>Share</span></button></header>
+<div class="lay" id="lay">
+ <nav class="out" aria-label="Outline"><h3>Outline</h3><div id="out"></div><p id="wc" role="status"></p></nav>
+ <div class="mid"><div class="tools" role="toolbar" aria-label="Formatting"><label class="sr" for="blk">Paragraph style</label><select id="blk"><option value="p">Text</option><option value="h1">Heading</option><option value="h2">Subheading</option></select><i></i>
+  <button data-c="bold" aria-label="Bold">B</button><button data-c="italic" aria-label="Italic" style="font-style:italic;font-family:Georgia,serif">I</button><button data-c="underline" aria-label="Underline" style="text-decoration:underline">U</button><i></i>
+  <button data-c="insertUnorderedList" aria-label="Bulleted list"><!--IC list--></button><button data-b="blockquote" aria-label="Quote">”</button><i></i>
+  <button class="cm" id="add" disabled><!--IC chat-->Comment</button></div>
+ <article class="page" id="page" contenteditable="true" spellcheck="false" aria-label="Document" role="textbox" aria-multiline="true">
+<h1>Writing for customers</h1>
+<p class="lead">Four habits that make our letters, emails and screens easier to read. Read it once, then keep it open while you write.</p>
+<h2>Start with what the reader needs</h2>
+<p>Most people open a message with one question in mind: what do I have to do? Answer that in the first two lines. The background can follow, <mark data-c="1">and often it can go</mark>.</p>
+<h2>Use the words they use</h2>
+<p>We say ‘bill’, not ‘statement of account’. We say ‘sorry’, not ‘we apologise for any inconvenience caused’. If <mark data-c="2">a twelve-year-old</mark> would stumble on a word, find another.</p>
+<blockquote>If you would not say it across a counter, do not write it in an email.</blockquote>
+<h2>Numbers, dates and money</h2>
+<ul><li>Write dates as 12 November 2026, with no ‘th’.</li><li>Use numerals for anything you can count: 3 days, 14 lids, £20.</li><li>Put the currency sign first and leave out ‘.00’ unless the pennies matter.</li></ul>
+<h2>Before you send</h2>
+<p>Read it aloud. Cut the first sentence if the second works without it. Then check the name, the date and the amount, because those are the three things people notice when they are wrong.</p>
+ </article></div>
+ <aside class="cms" aria-label="Comments" id="cms"></aside></div>
+<script>/*BASEJS*/
+/* DATA: each comment belongs to the mark in the page with the same number. */
+let CM=[{id:1,who:'Priya Nair',ini:'PN',t:'Yesterday, 16:20',x:'Could we show a before and after here? People skim rules but remember examples.',re:[['Tom Becker','TB','I have a good one from the refunds email. Will add it tomorrow.']]},{id:2,who:'Tom Becker',ini:'TB',t:'09:05',x:'Legal asked whether this also covers contract summaries. I think it should.',re:[]}],next=3,resolved=2,range=null;
+const page=$('#page');
+function outline(){const hs=$$('h1,h2',page);hs.forEach((h,i)=>h.id='s'+i);$('#out').innerHTML=hs.map((h,i)=>`<a href="#s${i}" class="${h.tagName.toLowerCase()}">${esc(h.textContent)||'Untitled'}</a>`).join('');
+ const n=(page.innerText.trim().match(/\S+/g)||[]).length;$('#wc').textContent=n+' words · '+Math.max(1,Math.round(n/200))+' min read'}
+function cards(focus){$('#cn').textContent=CM.length;$('#cms').innerHTML=`<h2>Comments<span class="badge">${CM.length} open</span><span class="sp mute" style="font-size:12.5px;font-weight:500">${resolved} resolved</span></h2>`+(CM.map(c=>{const m=$(`mark[data-c="${c.id}"]`,page);return `<section class="card cc" data-c="${c.id}" tabindex="0" aria-label="Comment by ${c.who}"><div class="who"><span class="av">${c.ini}</span><b>${c.who}</b><small>${c.t}</small></div>${m?`<q>${esc(m.textContent)}</q>`:''}${c.x?`<p>${esc(c.x)}</p>`:''}${c.re.length?`<div class="re">${c.re.map(r=>`<p><b>${r[0]}</b> ${esc(r[2])}</p>`).join('')}</div>`:''}<form><label class="sr" for="r${c.id}">${c.x?'Reply':'Your comment'}</label><input class="in" id="r${c.id}" placeholder="${c.x?'Reply…':'Write a comment…'}" autocomplete="off"><button class="btn">${c.x?'Reply':'Post'}</button>${c.x?'<button class="btn ghost" type="button" data-res aria-label="Resolve"><!--IC check--></button>':'<button class="btn ghost" type="button" data-res aria-label="Cancel"><!--IC x--></button>'}</form></section>`}).join('')||'<p class="none">No open comments. Select some words in the page and press Comment.</p>');
+ if(focus)$('#r'+focus)?.focus()}
+const lit=(id,on)=>{$$('.on').forEach(e=>e.classList.remove('on'));if(on){$(`mark[data-c="${id}"]`,page)?.classList.add('on');$(`.cc[data-c="${id}"]`)?.classList.add('on')}};
+['pointerover','focusin'].forEach(ev=>document.addEventListener(ev,e=>{const t=e.target.closest?.('[data-c]');if(t&&(t.matches('mark')||t.matches('.cc')))lit(t.dataset.c,true)}));
+$('#cms').addEventListener('pointerleave',()=>lit(0,false));page.addEventListener('pointerout',e=>{if(e.target.matches?.('mark'))lit(0,false)});
+page.addEventListener('click',e=>{const m=e.target.closest('mark');if(m){document.body.classList.remove('nocm');$('#tgl').setAttribute('aria-pressed',true);$(`.cc[data-c="${m.dataset.c}"]`)?.scrollIntoView({block:'nearest'});lit(m.dataset.c,true)}});
+$('#cms').addEventListener('submit',e=>{e.preventDefault();const id=+e.target.closest('.cc').dataset.c,c=CM.find(x=>x.id===id),v=e.target.querySelector('input').value.trim();if(!v)return;if(c.x)c.re.push(['Amara Khan','AK',v]);else c.x=v;cards();saved();toast(c.re.length?'Reply added':'Comment added')});
+$('#cms').addEventListener('click',e=>{const b=e.target.closest('[data-res]');if(!b)return;const id=+b.closest('.cc').dataset.c,c=CM.find(x=>x.id===id),m=$(`mark[data-c="${id}"]`,page);if(m)m.replaceWith(...m.childNodes);page.normalize();CM=CM.filter(x=>x.id!==id);if(c.x){resolved++;toast('Comment resolved')}cards();saved()});
+/* Formatting uses the browser's own editing commands, which is enough for a demo. */
+$('.tools').addEventListener('mousedown',e=>{if(e.target.closest('button'))e.preventDefault()});
+$('.tools').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.id==='add')return;page.focus();if(b.dataset.c)document.execCommand(b.dataset.c);else document.execCommand('formatBlock',false,b.dataset.b);changed()});
+$('#blk').onchange=e=>{page.focus();if(range){const s=getSelection();s.removeAllRanges();s.addRange(range)}document.execCommand('formatBlock',false,e.target.value);changed()};
+document.addEventListener('selectionchange',()=>{const s=getSelection();const ok=s.rangeCount&&!s.isCollapsed&&page.contains(s.anchorNode)&&page.contains(s.focusNode);if(s.rangeCount&&page.contains(s.anchorNode))range=s.getRangeAt(0).cloneRange();$('#add').disabled=!ok;
+ if(s.rangeCount&&page.contains(s.anchorNode)){let n=s.anchorNode;n=n.nodeType===1?n:n.parentElement;const b=n.closest('h1,h2,p,li,blockquote');$('#blk').value=b&&/H1|H2/.test(b.tagName)?b.tagName.toLowerCase():'p'}});
+$('#add').onclick=()=>{if(!range||range.collapsed)return;const m=document.createElement('mark');m.dataset.c=next;try{range.surroundContents(m)}catch(err){toast('Select words inside one paragraph to comment on them');return}
+ CM.push({id:next,who:'Amara Khan',ini:'AK',t:'Just now',x:'',re:[]});getSelection().removeAllRanges();document.body.classList.remove('nocm');$('#tgl').setAttribute('aria-pressed',true);cards(next);lit(next,true);next++;$('#add').disabled=true};
+let st;function saved(){$('#sv').textContent='Saving…';clearTimeout(st);st=setTimeout(()=>$('#sv').textContent='Saved just now',700)}
+function changed(){outline();saved()}
+page.addEventListener('input',changed);
+$('#out').onclick=e=>{const a=e.target.closest('a');if(a){e.preventDefault();$(a.getAttribute('href')).scrollIntoView({block:'start'})}};
+$('#tgl').onclick=e=>{const on=document.body.classList.toggle('nocm');e.currentTarget.setAttribute('aria-pressed',!on)};
+$('#share').onclick=()=>toast('Link copied. Anyone at Marlow & Finch can comment.');
+$('#ttl').onchange=e=>{document.title=e.target.value||'Untitled';saved()};
+if(innerWidth<=860){document.body.classList.add('nocm');$('#tgl').setAttribute('aria-pressed',false)}
+outline();cards();
+</script>
+</body>

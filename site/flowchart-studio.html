@@ -317,9 +317,8 @@ body.presenting .rail,body.presenting .dock,body.presenting .selbar,body.present
 .ptab>.grp>h2 small:not(.startrow){display:none}
 .ptab>.grp>h2{font:600 11px/1 Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
 .mainc{flex:1 1 0;min-width:0;min-height:0;display:flex;flex-direction:column}.mainc .stage{flex:1 1 0;min-height:0}
-.styles{display:flex;gap:6px;overflow-x:auto;padding:10px 16px;border-bottom:1px solid var(--hair);background:var(--panel);scrollbar-width:thin;align-items:center;flex:none}
-.styles .lbl{flex:none;font:600 10.5px Inter;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);padding:0 6px 0 2px}
-.styles .lbl:not(:first-child){margin-left:10px;padding-left:14px;border-left:1px solid var(--hair)}
+.styles{display:flex;gap:10px;align-items:center;padding:10px 16px;border-bottom:1px solid var(--hair);background:var(--panel);flex:none}
+.styles label{flex:none;font-size:13px;color:var(--mute)}.styles select{flex:0 1 280px;min-width:0;min-height:40px;border-radius:10px;padding:0 12px;font-size:14px}
 .chip{flex:none;display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:0 12px 0 6px;border-radius:999px;border:1px solid var(--hair);background:var(--panel);font-size:12.5px;font-weight:500;white-space:nowrap}
 .chip:hover{border-color:#CBD0DB}.chip[aria-pressed=true]{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}.chip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .sw{width:26px;height:26px;border-radius:50%;position:relative;border:1px solid rgba(0,0,0,.08);overflow:hidden;flex:none}.sw i{position:absolute;right:3px;bottom:3px;width:11px;height:11px;border-radius:3px}
@@ -426,7 +425,7 @@ body.presenting .rail,body.presenting .dock,body.presenting .selbar,body.present
     </section>
    </div>
   </aside>
-  <div class="mainc"><div class="styles" id="styles" role="group" aria-label="Style"></div>
+  <div class="mainc"><div class="styles"><label for="styles">Style</label><select id="styles" aria-label="Style"></select></div>
   <main class="stage" id="stage" aria-label="Chart canvas. Drag empty space to pan, scroll with Ctrl to zoom. Press the question mark for keyboard shortcuts.">
    <div class="paper" id="paper"></div>
    <div class="empty" id="empty" hidden><div><b>Canvas empty</b><p data-edit>Start from a template, or double-click anywhere to add your first element.</p><p data-view>Nothing here yet. Switch to Editing to add something, or load your workspace from the left.</p><div class="row" data-edit><button type="button" class="btn primary" id="emptyTpl">Start from a template</button><button type="button" class="btn" id="emptyAdd">Add an element</button></div></div></div>
@@ -523,9 +522,11 @@ function fromList(text){const lines=text.split('\n').filter(l=>l.trim());const i
 const isMermaid=t=>/^\s*(flowchart|graph)\b/i.test(t)||/-->|==>|-\.->|---/.test(t);
 
 /* style chips across the top */
-const chipHTML=st=>`<button class="chip" data-style="${st.id}" aria-pressed="${st.id===S.style}" title="${st.kicker}"><span class="sw" style="background:${st.t.bg.startsWith('#')?st.t.bg:'#0B0F1A'}"><i style="background:${st.t.accent}"></i></span>${st.name}</button>`;
-function drawPickers(){$('styles').innerHTML=`<span class="lbl">Your brand</span>${DVStyles.filter(s=>s.brand).map(chipHTML).join('')}<span class="lbl">From your board</span>${DVStyles.filter(s=>s.board).map(chipHTML).join('')}<span class="lbl">Researched</span>${DVStyles.filter(s=>!s.board&&!s.brand).map(chipHTML).join('')}`;const on=$('styles').querySelector('[aria-pressed=true]'),bar=$('styles');if(on)bar.scrollLeft=on.offsetLeft-bar.clientWidth/2+on.offsetWidth/2;}
-$('styles').onclick=e=>{const b=e.target.closest('[data-style]');if(!b)return;S.style=b.dataset.style;store.set('style',S.style);$('styles').querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',String(c===b)));render(true);};
+/* one dropdown for the style, grouped: your brand, from your board, researched */
+const styleOpt=s=>`<option value="${s.id}">${s.name}</option>`,styleGrp=(l,a)=>a.length?`<optgroup label="${l} (${a.length})">${a.map(styleOpt).join('')}</optgroup>`:'';
+const styleOptions=()=>styleGrp('Your brand',DVStyles.filter(s=>s.brand))+styleGrp('From your board',DVStyles.filter(s=>s.board))+styleGrp('Researched',DVStyles.filter(s=>!s.board&&!s.brand));
+function drawPickers(){$('styles').innerHTML=styleOptions();$('styles').value=S.style;}
+$('styles').onchange=()=>{S.style=$('styles').value;store.set('style',S.style);render(true);};
 drawPickers();
 for(const id of ['dir','lanes','spacing','decision','legend'])$(id).onclick=e=>{const b=e.target.closest('button');if(!b)return;S[id]=b.dataset.v;if(S.view==='canvas'&&['dir','spacing','decision'].includes(id)&&cv.frozen)cv.unfreeze();$(id).querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));render(true);};
 

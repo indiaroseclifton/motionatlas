@@ -242,7 +242,7 @@ for (const [vw, vh] of VIEWPORTS) {
     const nEdges = () => page.evaluate(() => FlowStudio.cv.last().g.edges.length);
     const nNodes = () => page.evaluate(() => FlowStudio.cv.last().g.nodes.size);
     const box = async i => (await page.$$('#paper .fc-n'))[i].boundingBox();
-    note(await page.evaluate(() => !!document.querySelector('#types [data-type=cycle]') && !!document.querySelector('#styles .chip') && !!document.querySelector('#tplSide') && !!document.querySelector('#mvPlay')), `${tag} full studio: type grid, style chips, templates and Play/Video/GIF are all there`);
+    note(await page.evaluate(() => !!document.querySelector('#types [data-type=cycle]') && !!document.querySelector('#styles option') && !!document.querySelector('#tplSide') && !!document.querySelector('#mvPlay')), `${tag} full studio: type grid, style dropdown, templates and Play/Video/GIF are all there`);
     /* click an element: details and its connections */
     await (await page.$$('#paper .fc-n'))[2].click(); await page.waitForTimeout(400);
     const det = await page.evaluate(() => { const i = document.getElementById('insp'); return { open: !i.hidden, text: i.innerText, conn: [...i.querySelectorAll('h3')].map(h => h.innerText).find(t => /^CONNECTIONS/i.test(t)) || '', rows: i.querySelectorAll('.ic').length }; });

@@ -1,5 +1,5 @@
 /* Explore by feel */
-.exploreBar{display:grid;gap:10px;margin:14px 0 6px}
+.exploreBar{display:contents}
 .exRow{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
 .exLabel{font:500 10.5px "JetBrains Mono",ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim,#4a5466);min-width:44px}
 .exChip{display:inline-flex;align-items:center;gap:7px;min-height:38px;padding:7px 14px;border-radius:999px;border:1px solid var(--hair,#d9dee6);background:var(--panel,#fff);color:var(--text,#0d1220);font:500 13px "Inter",system-ui,sans-serif;cursor:pointer;transition:background .2s,border-color .2s,color .2s}

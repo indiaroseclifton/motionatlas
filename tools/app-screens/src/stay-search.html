@@ -1,0 +1,86 @@
+<!--META {"o":5,"t":"Travel search with a map","cat":"Pages","tone":"light","added":"2026-11","d":"Search results for places to stay: photo cards on the left, a drawn map with price pins on the right, linked both ways, with filters, sorting, a price limit and saved favourites.","how":"Stays are one array. Filters and the sort order produce the visible list, and both the cards and the pins are drawn from it, so they can never disagree. The map is an SVG drawing with the pins as real buttons placed by percentage, which keeps them reachable by keyboard.","use":"Travel and property search, restaurant and venue finders, store locators, any results list that needs a map beside it.","p":"Build a travel search results page as one HTML file with no libraries for a booking product called Wayfarer. Top bar: logo, a search summary made of three joined fields (place, dates, guests) with a round search button, a theme switch and an avatar. Under it a filter row: pill toggles for Entire place, Free cancellation and Breakfast included, a maximum price slider with its value, a sort select (Recommended, Price low to high, Rating) and a result count. Main area in two panes: a scrolling list of result cards (photo on the left with a heart button to save, then title, area and type, a star rating with the number of reviews, feature badges, price per night and the total for the stay) and a map that fills the rest. Draw the map in SVG: land, a river, parks, main roads and district names, with no map library, and scale it with plus and minus buttons. Each stay has a pin: a pill button showing its nightly price, positioned by percentage. Hovering or focusing a card highlights its pin and the reverse; choosing a pin scrolls its card into view and opens a small summary card on the map. Filters, the slider and sorting update cards, pins and the count together, with an empty state. Under 900px show the list with a floating Map button that swaps to the map. Colours are CSS variables with a dark theme."}-->
+<style>/*CORE*/
+body{display:flex;flex-direction:column}
+.bar{display:flex;align-items:center;gap:10px;padding:0 20px;min-height:64px;background:var(--panel);border-bottom:1px solid var(--line);flex:none}
+.brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:17px;letter-spacing:-.02em}.brand .ic{width:22px;height:22px;color:var(--ac)}
+.srch{display:flex;align-items:center;margin:0 auto;border:1px solid var(--line);border-radius:99px;background:var(--panel);box-shadow:var(--sh);padding:4px 4px 4px 6px;min-width:0}
+.srch .f{padding:4px 16px;min-width:0}.srch .f+.f{border-left:1px solid var(--line)}
+.srch small{display:block;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--mute)}.srch b{white-space:nowrap;font-size:13.5px}
+.srch .go{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;border:0;background:var(--ac);color:var(--ac-ink);flex:none;margin-left:4px}.srch .go:hover{filter:brightness(1.1)}
+.flt{display:flex;align-items:center;gap:8px;padding:10px 20px;border-bottom:1px solid var(--line);background:var(--panel);flex:none;overflow-x:auto;scrollbar-width:none}
+.pill{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 14px;border-radius:99px;border:1px solid var(--line);background:var(--panel);font-weight:600;font-size:13px;white-space:nowrap;flex:none}.pill:hover{border-color:var(--mute)}.pill[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:var(--bg)}.pill .ic{width:15px;height:15px}
+.rng{display:flex;align-items:center;gap:8px;font-size:13px;white-space:nowrap;flex:none;padding:0 6px}.rng input{width:120px;accent-color:var(--ac)}
+.flt select{flex:none;min-height:36px;border-radius:99px}
+.lay{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,640px) minmax(0,1fr)}
+.list{overflow:auto;padding:16px 20px 28px;display:grid;gap:14px;align-content:start}.list>p{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.st{display:grid;grid-template-columns:220px minmax(0,1fr);gap:16px;padding:10px;border-radius:calc(var(--r) + 4px);background:var(--panel);border:1px solid var(--line);transition:box-shadow .15s,border-color .15s;outline-offset:2px}
+.st.on,.st:hover{border-color:var(--ink);box-shadow:var(--sh)}
+.ph{position:relative;border-radius:var(--r);overflow:hidden;aspect-ratio:4/3;background:var(--soft)}.ph img{width:100%;height:100%;object-fit:cover;display:block}
+.hrt{position:absolute;top:8px;right:8px;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;border:0;background:rgba(255,255,255,.92);color:#141824}.hrt:hover{transform:scale(1.08)}.hrt[aria-pressed=true]{color:var(--bad)}.hrt[aria-pressed=true] .ic{fill:currentColor}
+.inf{display:flex;flex-direction:column;gap:5px;padding:4px 6px 4px 0;min-width:0}.inf h2{font-size:16px;line-height:1.3}.inf .mute{font-size:13px}
+.rt{display:inline-flex;align-items:center;gap:4px;font-weight:700;font-size:13px}.rt .ic{width:14px;height:14px;fill:currentColor;stroke:none}.rt span{font-weight:500;color:var(--mute)}
+.tags{display:flex;gap:6px;flex-wrap:wrap}.pr{margin-top:auto;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}.pr b{font-size:19px;letter-spacing:-.01em}.pr .btn{margin-left:auto;align-self:center}
+.map{position:relative;overflow:hidden;background:var(--soft);border-left:1px solid var(--line);--z:1}.mv{position:absolute;inset:0;transform:scale(var(--z));transition:transform .3s cubic-bezier(.2,.8,.2,1)}.mv>svg{position:absolute;inset:0;width:100%;height:100%}
+.dn{position:absolute;transform:translate(-50%,9px) scale(calc(1/var(--z)));transform-origin:50% 0;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:var(--mute);text-transform:uppercase;white-space:nowrap;pointer-events:none}
+.pin{position:absolute;transform:translate(-50%,-100%) scale(calc(1/var(--z)));transform-origin:50% 100%;min-height:32px;padding:0 11px;border-radius:99px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-weight:700;font-size:13.5px;font-variant-numeric:tabular-nums;box-shadow:0 2px 8px rgba(16,24,40,.22);transition:transform .15s}
+.pin::after{content:"";position:absolute;left:50%;bottom:-5px;width:9px;height:9px;background:inherit;border:inherit;border-width:0 1px 1px 0;transform:translateX(-50%) rotate(45deg)}
+.pin:hover,.pin.on,.pin[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:var(--bg);z-index:2;transform:translate(-50%,-100%) scale(calc(1.1/var(--z)))}
+.zoom{position:absolute;right:14px;top:14px;display:grid;border-radius:var(--rb);overflow:hidden;border:1px solid var(--line);box-shadow:var(--sh)}.zoom button{display:grid;place-items:center;width:38px;height:38px;border:0;background:var(--panel)}.zoom button+button{border-top:1px solid var(--line)}.zoom button:hover{background:var(--soft)}
+.mini{position:absolute;left:14px;bottom:14px;width:min(330px,calc(100% - 28px));display:grid;grid-template-columns:96px minmax(0,1fr);gap:12px;padding:8px;z-index:3}.mini img{width:96px;height:76px;object-fit:cover;border-radius:var(--rb);display:block}.mini h3{font-size:13.5px;line-height:1.3}.mini .x{position:absolute;top:4px;right:4px;min-height:28px;width:28px}
+.none{padding:40px 20px;text-align:center;border:1px dashed var(--line);border-radius:var(--r);color:var(--mute);display:grid;gap:10px;justify-items:center}
+#swap{display:none}
+@media(max-width:1100px){.lay{grid-template-columns:minmax(0,1fr) minmax(0,.8fr)}.st{grid-template-columns:150px minmax(0,1fr)}}
+@media(max-width:900px){.bar{padding:0 12px}.brand b,.srch small,.bar .av{display:none}.srch .f{padding:4px 10px}.flt{padding:8px 12px}.lay{grid-template-columns:minmax(0,1fr)}.map{display:none;border:0}.lay.m .map{display:block}.lay.m .list{display:none}.list{padding:12px 12px 80px}
+ #swap{display:inline-flex;position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:8;border-radius:99px;min-height:44px;padding:0 20px;box-shadow:0 8px 24px rgba(0,0,0,.3)}}
+@media(max-width:560px){.st{grid-template-columns:1fr}.srch .f:nth-of-type(3){display:none}}
+</style>
+<body>
+<header class="bar"><div class="brand"><!--IC pin--><b>Wayfarer</b></div>
+ <div class="srch" role="search"><div class="f"><small>Where</small><b>Manchester</b></div><div class="f"><small>When</small><b>13 – 15 Nov</b></div><div class="f"><small>Who</small><b>2 guests</b></div><button class="go" aria-label="Search"><!--IC search--></button></div>
+ <button class="btn sq ghost" id="theme" aria-pressed="false" aria-label="Switch to dark theme"><!--IC moon--></button><span class="av" aria-label="Your account">AK</span></header>
+<div class="flt" role="group" aria-label="Filters"><button class="pill" data-f="entire" aria-pressed="false"><!--IC home-->Entire place</button><button class="pill" data-f="free" aria-pressed="false"><!--IC check-->Free cancellation</button><button class="pill" data-f="bfast" aria-pressed="false"><!--IC cup-->Breakfast included</button>
+ <label class="rng">Up to <input type="range" id="max" min="50" max="150" step="5" value="150" aria-describedby="mv"><b class="num" id="mv"></b></label><span class="sp"></span>
+ <label class="sr" for="sort">Sort by</label><select class="in" id="sort"><option value="rec">Recommended</option><option value="price">Price, low to high</option><option value="rate">Rating</option></select></div>
+<div class="lay" id="lay"><main class="list" id="list"></main>
+ <section class="map" aria-label="Map of results" id="map">
+ <div class="mv"><svg viewBox="0 0 800 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <path d="M-20 520C120 470 190 560 300 540S470 420 560 450 720 560 840 500" fill="none" stroke="var(--line)" stroke-width="34" stroke-linecap="round"/>
+  <path d="M-20 520C120 470 190 560 300 540S470 420 560 450 720 560 840 500" fill="none" stroke="var(--bg)" stroke-width="26" stroke-linecap="round"/>
+  <rect x="470" y="110" width="150" height="110" rx="16" fill="var(--ok-soft)"/><rect x="90" y="620" width="190" height="120" rx="16" fill="var(--ok-soft)"/><circle cx="660" cy="640" r="46" fill="var(--ok-soft)"/>
+  <g fill="none" stroke="var(--panel)" stroke-linecap="round"><path d="M-20 250 840 190M-20 400 840 330M150-20 230 840M420-20 380 840M640-20 700 840" stroke-width="12"/><path d="M-20 110 840 80M-20 680 840 720M40-20 80 840M300-20 290 840M540-20 550 840M760-20 780 840M-20 330 300 300M420 600 840 610" stroke-width="5"/></g></svg>
+ <div id="pins"></div></div><div class="zoom"><button data-z="1" aria-label="Zoom in"><!--IC plus--></button><button data-z="-1" aria-label="Zoom out"><!--IC minus--></button></div><div id="mini"></div></section></div>
+<button class="btn pri" id="swap"><!--IC map--><span>Map</span></button>
+<script>/*BASEJS*/
+/* DATA: x and y place the pin as a percentage of the map. Photos are CC0, from the atlas photo library. */
+const NIGHTS=2,PH='../../assets/photos/',STAYS=[
+ {t:'Canal-side loft with a blue sofa',a:'Ancoats',k:'Entire flat',r:4.9,n:212,p:128,free:1,bfast:0,img:'property-living-room',x:36,y:24,sleeps:'1 bed · sleeps 2'},
+ {t:'Window-seat studio above the square',a:'Northern Quarter',k:'Entire studio',r:4.8,n:96,p:94,free:1,bfast:0,img:'property-coffee-table-corner-in-a-londo',x:17,y:33,sleeps:'Studio · sleeps 2'},
+ {t:'Room in a Victorian terrace',a:'Chorlton',k:'Private room',r:4.7,n:58,p:52,free:0,bfast:1,img:'property-apartment-complex',x:70,y:74,sleeps:'1 double · shared bathroom'},
+ {t:'Tenth-floor flat with a balcony',a:'Deansgate',k:'Entire flat',r:4.6,n:143,p:141,free:0,bfast:0,img:'property-apartment-building-balconies',x:24,y:60,sleeps:'2 beds · sleeps 4'},
+ {t:'Garden room in the painted house',a:'Didsbury',k:'Private room',r:4.9,n:31,p:64,free:1,bfast:1,img:'property-colorful-apartment-building',x:46,y:90,sleeps:'1 double · own bathroom'},
+ {t:'Tower studio by the station',a:'Piccadilly',k:'Entire studio',r:4.4,n:187,p:79,free:1,bfast:0,img:'property-apartment-high-rise-building',x:60,y:41,sleeps:'Studio · sleeps 2'}];
+STAYS.forEach((s,i)=>{s.id=i;s.saved=i===1});
+const F={entire:false,free:false,bfast:false};let sel=-1;
+const shown=()=>{const mx=+$('#max').value,so=$('#sort').value;return STAYS.filter(s=>s.p<=mx&&(!F.entire||s.k.startsWith('Entire'))&&(!F.free||s.free)&&(!F.bfast||s.bfast)).sort((a,b)=>so==='price'?a.p-b.p:so==='rate'?b.r-a.r||b.n-a.n:a.id-b.id)};
+const STAR='<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3.500 2.600 5.400 5.900.8-4.300 4.100 1 5.800L12 16.900l-5.200 2.700 1-5.800L3.500 9.700l5.900-.8Z"/></svg>';
+function draw(){const L=shown(),mx=+$('#max').value;$('#mv').textContent='£'+mx+(mx===150?'+':'');if(!L.find(s=>s.id===sel))sel=-1;
+ $('#list').innerHTML=`<p><b role="status">${L.length} of ${STAYS.length} stays in Manchester</b><span class="mute" style="font-size:13px">13 to 15 November · ${NIGHTS} nights · 2 guests</span></p>`+(L.map(s=>`<article class="st ${s.id===sel?'on':''}" data-id="${s.id}" tabindex="0" aria-label="${s.t}, £${s.p} a night"><div class="ph"><img src="${PH+s.img}-640.webp" alt="" loading="lazy"><button class="hrt" aria-pressed="${s.saved}" aria-label="Save ${s.t}"><!--IC heart--></button></div>
+ <div class="inf"><span class="mute">${s.k} · ${s.a}</span><h2>${s.t}</h2><span class="mute">${s.sleeps}</span><span class="rt">${STAR}${s.r.toFixed(1)} <span>(${s.n} reviews)</span></span><div class="tags">${s.free?'<span class="badge ok">Free cancellation</span>':''}${s.bfast?'<span class="badge">Breakfast included</span>':''}</div>
+ <div class="pr"><b class="num">£${s.p}</b><span class="mute">a night · £${s.p*NIGHTS} total</span><button class="btn pri" data-book>Reserve</button></div></div></article>`).join('')||'<div class="none"><b>No stays match those filters</b><span>Raise the price limit or remove a filter.</span><button class="btn" id="reset">Clear filters</button></div>');
+ $('#pins').innerHTML=STAYS.map(s=>`<span class="dn" style="left:${s.x}%;top:${s.y}%" aria-hidden="true">${s.a}</span>`).join('')+L.map(s=>`<button class="pin" data-id="${s.id}" style="left:${s.x}%;top:${s.y}%" aria-pressed="${s.id===sel}" aria-label="${s.t}, £${s.p} a night">£${s.p}</button>`).join('');mini()}
+function mini(){const s=STAYS[sel];$('#mini').innerHTML=s?`<div class="card mini"><img src="${PH+s.img}-640.webp" alt=""><div><span class="mute" style="font-size:12px">${s.k} · ${s.a}</span><h3>${s.t}</h3><span class="rt">${STAR}${s.r.toFixed(1)}</span> <b class="num">· £${s.p}</b> <span class="mute">a night</span></div><button class="btn sq ghost x" aria-label="Close"><!--IC x--></button></div>`:''}
+const lit=(id,on)=>{$$('.pin').forEach(p=>p.classList.toggle('on',on&&+p.dataset.id===id));$$('.st').forEach(c=>c.classList.toggle('on',(on&&+c.dataset.id===id)||+c.dataset.id===sel))};
+['pointerover','focusin'].forEach(ev=>{$('#list').addEventListener(ev,e=>{const c=e.target.closest('.st');if(c)lit(+c.dataset.id,true)});$('#pins').addEventListener(ev,e=>{const p=e.target.closest('.pin');if(p)lit(+p.dataset.id,true)})});
+$('#list').addEventListener('pointerleave',()=>lit(-1,false));$('#pins').addEventListener('pointerout',()=>lit(-1,false));
+$('#pins').onclick=e=>{const p=e.target.closest('.pin');if(!p)return;sel=sel===+p.dataset.id?-1:+p.dataset.id;draw();$(`.st[data-id="${sel}"]`)?.scrollIntoView({block:'nearest',behavior:'smooth'});$(`.pin[data-id="${p.dataset.id}"]`).focus()};
+$('#mini').onclick=e=>{if(e.target.closest('.x')){const id=sel;sel=-1;draw();$(`.pin[data-id="${id}"]`)?.focus()}};
+$('#list').onclick=e=>{const c=e.target.closest('.st'),h=e.target.closest('.hrt');if(e.target.id==='reset'){Object.keys(F).forEach(k=>F[k]=false);$$('.pill').forEach(b=>b.setAttribute('aria-pressed',false));$('#max').value=150;draw();return}if(!c)return;const s=STAYS[c.dataset.id];
+ if(h){s.saved=!s.saved;h.setAttribute('aria-pressed',s.saved);toast(s.saved?'Saved to your list':'Removed from your list')}else if(e.target.closest('[data-book]'))toast('Held for 15 minutes: '+s.t+', £'+s.p*NIGHTS)};
+$$('.pill').forEach(b=>b.onclick=()=>{F[b.dataset.f]=!F[b.dataset.f];b.setAttribute('aria-pressed',F[b.dataset.f]);draw()});
+$('#max').oninput=draw;$('#sort').onchange=draw;
+$('#swap').onclick=e=>{const m=$('#lay').classList.toggle('m');e.currentTarget.lastChild.textContent=m?'List':'Map'};
+$('.go').onclick=()=>toast(shown().length+' stays found in Manchester');
+let zoom=1;$('.zoom').onclick=e=>{const b=e.target.closest('button');if(!b)return;zoom=Math.max(1,Math.min(1.9,zoom+b.dataset.z*.3));$('#map').style.setProperty('--z',zoom.toFixed(1))};
+draw();
+</script>
+</body>

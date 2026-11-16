@@ -17,9 +17,10 @@ header.top{position:sticky;top:0;z-index:5;background:rgba(255,255,255,.94);back
 .btn:hover{border-color:#CBD0DB;background:var(--soft)}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 6px 16px -8px var(--accent)}.btn.primary:hover{background:#4A1FF0}
 .btn:focus-visible,.chip:focus-visible,[data-tip]:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.styles{display:flex;gap:6px;overflow-x:auto;padding:8px max(18px,env(safe-area-inset-left)) 12px;scrollbar-width:thin;align-items:center}
-.styles .lbl{flex:none;font:600 11px Inter;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);padding:0 6px 0 2px}
-.styles .lbl:not(:first-child){margin-left:10px;padding-left:14px;border-left:1px solid var(--hair)}
+.styles{display:flex;gap:10px 14px;flex-wrap:wrap;align-items:center;padding:4px max(18px,env(safe-area-inset-right)) 12px max(18px,env(safe-area-inset-left))}
+.styles .pick{flex:0 0 280px;min-width:0}.styles select{width:100%;min-height:44px;padding:0 14px;border:1px solid var(--hair);border-radius:12px;background:var(--panel);font:inherit;font-size:14px;color:inherit}.styles select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.styles .count{margin:0;color:var(--mute);font-size:13px}
+@media (max-width:640px){.styles .pick{flex:1 1 100%}}
 .chip{flex:none;display:inline-flex;align-items:center;gap:8px;min-height:36px;padding:0 12px 0 6px;border-radius:999px;border:1px solid var(--hair);background:var(--panel);font-size:12.5px;font-weight:500;white-space:nowrap}
 .chip[aria-pressed=true]{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
 .sw{width:24px;height:24px;border-radius:50%;display:grid;grid-template-columns:1fr 1fr;overflow:hidden;border:1px solid rgba(0,0,0,.08);flex:none}
@@ -79,7 +80,7 @@ details.tbl th,details.tbl td{padding:6px 10px;border-bottom:1px solid #EEF0F4;t
    <button class="btn primary" id="exGuide" type="button">Download this guide</button>
   </div>
  </div>
- <div class="styles" id="styles" role="group" aria-label="Style"></div>
+ <div class="styles"><div class="pick"><select id="styles" aria-label="Style guide"></select></div><p class="count" id="stylesCount"></p></div>
 </header>
 <main id="guide" aria-live="polite"></main>
 <div class="tip" id="tip" aria-hidden="true"></div>
@@ -96,10 +97,10 @@ let style=(location.hash.match(/s=([a-z]+)/)||[])[1]||store.get('style')||'workf
 const rendered=new Map();
 
 /* style picker */
-const chip=s=>`<button class="chip" type="button" data-style="${s.id}" aria-pressed="${s.id===style}" title="${esc(s.kicker)}"><span class="sw">${s.t.cat.slice(0,4).map(c=>`<i style="background:${c}"></i>`).join('')}</span>${esc(s.name)}</button>`;
-$('styles').innerHTML=`<span class="lbl">Your brand</span>${DVStyles.filter(s=>s.brand).map(chip).join('')}<span class="lbl">From your board</span>${DVStyles.filter(s=>s.board).map(chip).join('')}<span class="lbl">Researched</span>${DVStyles.filter(s=>!s.board&&!s.brand).map(chip).join('')}`;
-$('styles').onclick=e=>{const b=e.target.closest('[data-style]');if(!b)return;style=b.dataset.style;store.set('style',style);history.replaceState(null,'','#s='+style);
- $('styles').querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',String(c===b)));build();scrollTo({top:0,behavior:'instant'});};
+/* one dropdown, grouped the way the row of chips was: your brand, from your board, researched */
+const opt=s=>`<option value="${s.id}">${esc(s.name)}</option>`,grp=(l,a)=>a.length?`<optgroup label="${l} (${a.length})">${a.map(opt).join('')}</optgroup>`:'';
+$('styles').innerHTML=grp('Your brand',DVStyles.filter(s=>s.brand))+grp('From your board',DVStyles.filter(s=>s.board))+grp('Researched',DVStyles.filter(s=>!s.board&&!s.brand));$('styles').value=style;$('stylesCount').textContent=DVStyles.length+' style guides';
+$('styles').onchange=()=>{style=$('styles').value;store.set('style',style);history.replaceState(null,'','#s='+style);build();scrollTo({top:0,behavior:'instant'});};
 
 /* page chrome per style: the stage behind the charts and the card frame */
 function frameVars(s){const t=s.t;const r=Math.min(t.radius,22);
@@ -151,8 +152,7 @@ function C_r(t){return t.id==='brutal'||t.id==='blueprint'||t.id==='editorial'||
 
 function build(){const s=DVStyle(style);DVFonts(s);rendered.clear();const fv=frameVars(s);
  $('guide').style.setProperty('--cr',fv.cr);$('guide').style.setProperty('--cs',fv.cs);$('guide').style.setProperty('--cb',fv.cb);
- $('guide').innerHTML=guideHTML(s);document.title=s.name+' · Chart style guides';$('toStudio').href='chart-studio.html?style='+s.id;
- $('styles').querySelector('[aria-pressed=true]')?.scrollIntoView({block:'nearest',inline:'center'});}
+ $('guide').innerHTML=guideHTML(s);document.title=s.name+' · Chart style guides';$('toStudio').href='chart-studio.html?style='+s.id;}
 
 /* tooltips and crosshair, shared */
 const tip=$('tip');let cur=null;
@@ -183,7 +183,7 @@ $('exGuide').onclick=async()=>{const s=DVStyle(style);toast('Preparing the guide
  page.querySelector('style').textContent+=fonts+'html{scroll-padding-top:20px}';const html='<!doctype html>\n'+page.outerHTML;download(`chart-style-guide-${s.id}.html`,html,'text/html');toast('Style guide downloaded');};
 
 build();
-addEventListener('hashchange',()=>{const m=location.hash.match(/s=([a-z]+)/);if(m&&m[1]!==style&&DVStyles.some(x=>x.id===m[1])){style=m[1];$('styles').querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',String(c.dataset.style===style)));build();}});
+addEventListener('hashchange',()=>{const m=location.hash.match(/s=([a-z]+)/);if(m&&m[1]!==style&&DVStyles.some(x=>x.id===m[1])){style=m[1];$('styles').value=style;build();}});
 })();
 </script>
 </body></html>

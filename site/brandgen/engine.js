@@ -4,7 +4,10 @@
    Colour is built in OKLCH, every text pair is pushed to WCAG 4.5:1 and every UI colour to 3:1 (each change is
    logged as a fix), and colour-blind separation is checked with the chart studio's validator (DVChartMaker.validate)
    when it is on the page. brand.kit is a theme-kit object, so ThemeKits.render / zipKit work on it unchanged.
-   Exports: css(b) json(b) tailwind(b) wordmark(b,mode,o) monogram(b,size,o) lockup(b,layout,mode,o) guideHTML(b). */
+   Exports: css(b) json(b) tailwind(b) wordmark(b,mode,o) monogram(b,size,o) lockup(b,layout,mode,o) cardBack(b,mode,o) guideHTML(b).
+   Two rules since the 2026-11 rebuild. Colour: the secondary and accent are close relatives of the primary or quiet
+   neutrals (see partners()), never a saturated opposite. Copy: no invented slogans; every line is the brand's own name,
+   the visitor's description, their feel words or their audience (see copyFor()). */
 (()=>{
 /* ---------------- colour ---------------- */
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
@@ -34,10 +37,14 @@ const labOfLin=([r,g,b])=>{const l=Math.cbrt(.4122214708*r+.5363325363*g+.051445
 const sim=(h,k)=>{const v=hexRgb(h).map(s2l);if(!k)return v;const M=MACH[k];return M.map(r=>clamp(r[0]*v[0]+r[1]*v[1]+r[2]*v[2],0,1))};
 const dE=(a,b,k)=>{const x=labOfLin(sim(a,k)),y=labOfLin(sim(b,k));return 100*Math.hypot(x[0]-y[0],x[1]-y[1],x[2]-y[2])};
 const cvdMin=(a,b)=>Math.min(dE(a,b,'protan'),dE(a,b,'deutan'));
-function cvdReport(pal,mode,surface){const V=window.DVChartMaker&&window.DVChartMaker.validate;
- if(V){const r=V(pal,{mode,surface,pairs:'all'});const pick=n=>r.checks.find(c=>c.name===n);return {source:'chart studio validator',cvd:r.cvd,normal:r.normal,checks:[pick('Colour-blind separation'),pick('Normal-vision separation')].filter(Boolean)}}
- let w=null,n=null;for(let i=0;i<pal.length;i++)for(let j=i+1;j<pal.length;j++){for(const k of ['protan','deutan']){const d=dE(pal[i],pal[j],k);if(!w||d<w[0])w=[d,k,pal[i],pal[j]]}const d=dE(pal[i],pal[j]);if(!n||d<n[0])n=[d,pal[i],pal[j]]}
- const cv=w?w[0]:99,nv=n?n[0]:99;return {source:'built-in port',cvd:cv,normal:nv,checks:[{name:'Colour-blind separation',state:cv>=8?'pass':cv>=6?'warn':'fail',detail:w?`worst pair ${w[2]} ↔ ${w[3]} ΔE ${cv.toFixed(1)} (${w[1]})`:''},{name:'Normal-vision separation',state:nv>=15?'pass':'fail',detail:n?`worst ${n[1]} ↔ ${n[2]} ΔE ${nv.toFixed(1)}`:''}]}}
+/* family=true is for the three brand colours. They are relatives on purpose and always carry a label, so the bar for
+   telling them apart in normal vision is ΔE 12 (warn from 8), not the 15 the chart studio asks of unlabelled data series. */
+function cvdReport(pal,mode,surface,family){const V=window.DVChartMaker&&window.DVChartMaker.validate;let out;
+ if(V){const r=V(pal,{mode,surface,pairs:'all'});const pick=n=>r.checks.find(c=>c.name===n);out={source:'chart studio validator',cvd:r.cvd,normal:r.normal,checks:[pick('Colour-blind separation'),pick('Normal-vision separation')].filter(Boolean).map(c=>Object.assign({},c))}}
+ else{let w=null,n=null;for(let i=0;i<pal.length;i++)for(let j=i+1;j<pal.length;j++){for(const k of ['protan','deutan']){const d=dE(pal[i],pal[j],k);if(!w||d<w[0])w=[d,k,pal[i],pal[j]]}const d=dE(pal[i],pal[j]);if(!n||d<n[0])n=[d,pal[i],pal[j]]}
+  const cv=w?w[0]:99,nv=n?n[0]:99;out={source:'built-in port',cvd:cv,normal:nv,checks:[{name:'Colour-blind separation',state:cv>=8?'pass':cv>=6?'warn':'fail',detail:w?`worst pair ${w[2]} ↔ ${w[3]} ΔE ${cv.toFixed(1)} (${w[1]})`:''},{name:'Normal-vision separation',state:nv>=15?'pass':'fail',detail:n?`worst ${n[1]} ↔ ${n[2]} ΔE ${nv.toFixed(1)}`:''}]}}
+ if(family){const c=out.checks.find(x=>x.name==='Normal-vision separation');if(c){c.state=out.normal>=12?'pass':out.normal>=8?'warn':'fail';c.detail=String(c.detail||'').split(' · ')[0]+(c.state==='pass'?'':' · close relatives: keep a label on each')}}
+ return out}
 
 /* ---------------- seeded randomness ---------------- */
 function hash(s){let h=2166136261>>>0;for(const ch of String(s)){h^=ch.codePointAt(0);h=Math.imul(h,16777619)>>>0}return h>>>0}
@@ -48,36 +55,36 @@ const pickW=(r,items)=>{const tot=items.reduce((a,x)=>a+x[1],0);let v=r()*tot;fo
    h: preferred hues (OKLCH degrees), c: chroma 0–.24, harm: harmony votes, n: neutral temperature,
    r: corner radius px, dark: pull towards a dark primary mode, e: energy (type scale, accent strength), bg: background */
 const FEELS={
- bold:{h:[25,265,350],c:.2,harm:['complementary','triadic'],n:'neutral',r:6,dark:.4,e:.9,bg:'brandmesh'},
- calm:{h:[200,175,230,150],c:.08,harm:['analogous'],n:'cool',r:14,dark:.1,e:.2,bg:'brandwave'},
- playful:{h:[340,40,190,290],c:.19,harm:['triadic','split'],n:'warm',r:18,dark:0,e:.85,bg:'brandmesh'},
- premium:{h:[85,300,30,230],c:.09,harm:['analogous','complementary'],n:'warm',r:4,dark:.7,e:.35,bg:'brandwave'},
- minimal:{h:[250,0,200],c:.07,harm:['analogous'],n:'neutral',r:8,dark:.2,e:.2,bg:'brandgrid'},
- warm:{h:[45,30,70],c:.14,harm:['analogous','split'],n:'warm',r:12,dark:.1,e:.5,bg:'brandmesh'},
- friendly:{h:[45,190,155,250],c:.14,harm:['split','analogous'],n:'warm',r:16,dark:0,e:.6,bg:'brandmesh'},
- techy:{h:[265,200,150],c:.16,harm:['complementary','analogous'],n:'cool',r:6,dark:.7,e:.6,bg:'brandgrid'},
- trustworthy:{h:[250,230,200],c:.12,harm:['analogous'],n:'cool',r:10,dark:.1,e:.35,bg:'brandwave'},
- natural:{h:[140,110,60],c:.1,harm:['analogous'],n:'warm',r:14,dark:.1,e:.35,bg:'brandwave'},
- elegant:{h:[330,20,85,280],c:.08,harm:['analogous'],n:'warm',r:4,dark:.5,e:.25,bg:'brandwave'},
- energetic:{h:[30,60,330,140],c:.21,harm:['triadic','complementary'],n:'neutral',r:10,dark:.2,e:1,bg:'brandmesh'},
- edgy:{h:[350,120,290],c:.2,harm:['complementary'],n:'cool',r:0,dark:.9,e:.85,bg:'brandgrid'},
- retro:{h:[40,70,190,15],c:.14,harm:['triadic','split'],n:'warm',r:10,dark:.2,e:.6,bg:'brandwave'},
- modern:{h:[265,190,10],c:.15,harm:['complementary','split'],n:'neutral',r:12,dark:.3,e:.55,bg:'brandmesh'},
- classic:{h:[250,20,90],c:.1,harm:['analogous','complementary'],n:'warm',r:4,dark:.2,e:.3,bg:'brandwave'},
- luxurious:{h:[85,300,350],c:.1,harm:['analogous'],n:'warm',r:2,dark:.9,e:.3,bg:'brandwave'},
- rugged:{h:[55,130,30],c:.1,harm:['analogous','complementary'],n:'warm',r:3,dark:.5,e:.6,bg:'brandgrid'},
- soft:{h:[340,290,200,60],c:.08,harm:['analogous'],n:'warm',r:20,dark:0,e:.2,bg:'brandmesh'},
- serious:{h:[250,220,10],c:.09,harm:['analogous'],n:'cool',r:6,dark:.3,e:.25,bg:'brandgrid'},
- creative:{h:[300,20,180,60],c:.19,harm:['triadic','split'],n:'neutral',r:12,dark:.4,e:.8,bg:'brandmesh'},
- futuristic:{h:[280,190,310],c:.18,harm:['complementary','analogous'],n:'cool',r:8,dark:.95,e:.75,bg:'brandgrid'},
- handmade:{h:[40,130,20],c:.11,harm:['analogous','split'],n:'warm',r:10,dark:0,e:.45,bg:'brandwave'},
- editorial:{h:[20,250,90],c:.12,harm:['complementary'],n:'neutral',r:2,dark:.3,e:.5,bg:'brandgrid'},
- youthful:{h:[330,60,200,280],c:.2,harm:['triadic'],n:'neutral',r:16,dark:.1,e:.9,bg:'brandmesh'},
- clinical:{h:[200,230,170],c:.09,harm:['analogous'],n:'cool',r:10,dark:0,e:.25,bg:'brandgrid'},
- cosy:{h:[40,25,80],c:.1,harm:['analogous'],n:'warm',r:16,dark:.2,e:.3,bg:'brandwave'},
- adventurous:{h:[60,150,30,220],c:.16,harm:['complementary','split'],n:'warm',r:8,dark:.3,e:.75,bg:'brandwave'},
- quirky:{h:[100,320,190,40],c:.19,harm:['triadic','split'],n:'neutral',r:14,dark:.2,e:.85,bg:'brandmesh'},
- fresh:{h:[160,190,120,90],c:.15,harm:['analogous','split'],n:'cool',r:14,dark:0,e:.6,bg:'brandmesh'}};
+ bold:{h:[25,265,350],c:.2,l:.5,harm:['analogous','neutral'],n:'neutral',r:6,dark:.4,e:.9,bg:'brandmesh'},
+ calm:{h:[200,175,230,150],c:.08,l:.52,harm:['tonal','earthy'],n:'cool',r:14,dark:.1,e:.2,bg:'brandwave'},
+ playful:{h:[340,40,190,290],c:.19,l:.58,harm:['analogous'],n:'warm',r:18,dark:0,e:.85,bg:'brandmesh'},
+ premium:{h:[155,255,335,25],c:.08,l:.34,harm:['neutral','earthy'],n:'warm',r:4,dark:.7,e:.35,bg:'brandwave'},
+ minimal:{h:[255,230,20],c:.05,l:.32,harm:['neutral','tonal'],n:'neutral',r:8,dark:.2,e:.2,bg:'brandgrid'},
+ warm:{h:[45,30,70],c:.14,l:.56,harm:['analogous','earthy'],n:'warm',r:12,dark:.1,e:.5,bg:'brandmesh'},
+ friendly:{h:[45,190,155,250],c:.14,l:.56,harm:['analogous','tonal'],n:'warm',r:16,dark:0,e:.6,bg:'brandmesh'},
+ techy:{h:[265,245,200],c:.16,l:.48,harm:['analogous','neutral'],n:'cool',r:6,dark:.7,e:.6,bg:'brandgrid'},
+ trustworthy:{h:[250,230,200],c:.12,l:.42,harm:['tonal','neutral'],n:'cool',r:10,dark:.1,e:.35,bg:'brandwave'},
+ natural:{h:[145,125,160],c:.1,l:.46,harm:['earthy','analogous'],n:'warm',r:14,dark:.1,e:.35,bg:'brandwave'},
+ elegant:{h:[340,20,300,160],c:.08,l:.38,harm:['neutral','tonal'],n:'warm',r:4,dark:.5,e:.25,bg:'brandwave'},
+ energetic:{h:[30,45,350,145],c:.21,l:.58,harm:['analogous'],n:'neutral',r:10,dark:.2,e:1,bg:'brandmesh'},
+ edgy:{h:[350,120,290],c:.2,l:.48,harm:['neutral','analogous'],n:'cool',r:0,dark:.9,e:.85,bg:'brandgrid'},
+ retro:{h:[40,70,190,15],c:.14,l:.54,harm:['earthy','analogous'],n:'warm',r:10,dark:.2,e:.6,bg:'brandwave'},
+ modern:{h:[265,190,10],c:.15,l:.48,harm:['tonal','neutral','analogous'],n:'neutral',r:12,dark:.3,e:.55,bg:'brandmesh'},
+ classic:{h:[255,20,150],c:.1,l:.36,harm:['neutral','tonal'],n:'warm',r:4,dark:.2,e:.3,bg:'brandwave'},
+ luxurious:{h:[160,335,270,60],c:.08,l:.3,harm:['earthy','neutral'],n:'warm',r:2,dark:.9,e:.3,bg:'brandwave'},
+ rugged:{h:[55,130,30],c:.1,l:.42,harm:['earthy','analogous'],n:'warm',r:3,dark:.5,e:.6,bg:'brandgrid'},
+ soft:{h:[340,290,200,60],c:.08,l:.6,harm:['tonal','analogous'],n:'warm',r:20,dark:0,e:.2,bg:'brandmesh'},
+ serious:{h:[250,220,10],c:.09,l:.36,harm:['neutral','tonal'],n:'cool',r:6,dark:.3,e:.25,bg:'brandgrid'},
+ creative:{h:[300,20,180,60],c:.19,l:.54,harm:['analogous'],n:'neutral',r:12,dark:.4,e:.8,bg:'brandmesh'},
+ futuristic:{h:[280,190,310],c:.18,l:.5,harm:['analogous','neutral'],n:'cool',r:8,dark:.95,e:.75,bg:'brandgrid'},
+ handmade:{h:[40,130,20],c:.11,l:.52,harm:['earthy','analogous'],n:'warm',r:10,dark:0,e:.45,bg:'brandwave'},
+ editorial:{h:[25,255,0],c:.12,l:.36,harm:['neutral'],n:'neutral',r:2,dark:.3,e:.5,bg:'brandgrid'},
+ youthful:{h:[330,60,200,280],c:.2,l:.6,harm:['analogous'],n:'neutral',r:16,dark:.1,e:.9,bg:'brandmesh'},
+ clinical:{h:[200,230,170],c:.09,l:.5,harm:['tonal','neutral'],n:'cool',r:10,dark:0,e:.25,bg:'brandgrid'},
+ cosy:{h:[40,28,65],c:.1,l:.48,harm:['earthy','tonal'],n:'warm',r:16,dark:.2,e:.3,bg:'brandwave'},
+ adventurous:{h:[60,150,30,220],c:.16,l:.48,harm:['earthy','analogous'],n:'warm',r:8,dark:.3,e:.75,bg:'brandwave'},
+ quirky:{h:[100,320,190,40],c:.19,l:.58,harm:['analogous'],n:'neutral',r:14,dark:.2,e:.85,bg:'brandmesh'},
+ fresh:{h:[160,190,120,90],c:.15,l:.56,harm:['analogous','tonal'],n:'cool',r:14,dark:0,e:.6,bg:'brandmesh'}};
 const FEEL_KEYS=Object.keys(FEELS);
 const SYN={fun:'playful',joyful:'playful',cheerful:'playful',whimsical:'quirky',weird:'quirky',odd:'quirky',quirk:'quirky',sleek:'minimal',clean:'minimal',simple:'minimal',understated:'minimal',luxury:'luxurious',lux:'luxurious',opulent:'luxurious',cozy:'cosy',homely:'cosy',earthy:'natural',organic:'natural',sustainable:'natural',eco:'natural',green:'natural',reliable:'trustworthy',honest:'trustworthy',safe:'trustworthy',secure:'trustworthy',dependable:'trustworthy',professional:'serious',formal:'serious',corporate:'serious',loud:'bold',strong:'bold',confident:'bold',daring:'bold',vibrant:'energetic',dynamic:'energetic',sporty:'energetic',lively:'energetic',quiet:'calm',peaceful:'calm',zen:'calm',serene:'calm',relaxed:'calm',gentle:'soft',tender:'soft',dreamy:'soft',vintage:'retro',nostalgic:'retro',seventies:'retro','70s':'retro','80s':'retro',tech:'techy',technical:'techy',digital:'techy',geeky:'techy',innovative:'futuristic',scifi:'futuristic','sci-fi':'futuristic',cyber:'futuristic',artisan:'handmade',crafted:'handmade',craft:'handmade',rustic:'handmade',kids:'youthful',young:'youthful',teen:'youthful',fresh:'fresh',airy:'fresh',crisp:'fresh',light:'fresh',sophisticated:'elegant',refined:'elegant',graceful:'elegant',chic:'elegant',approachable:'friendly',kind:'friendly',welcoming:'friendly',warmhearted:'friendly',human:'friendly',punk:'edgy',rebellious:'edgy',raw:'edgy',gritty:'rugged',tough:'rugged',outdoorsy:'adventurous',outdoor:'adventurous',wild:'adventurous',bold_:'bold',medical:'clinical',precise:'clinical',scientific:'clinical',timeless:'classic',traditional:'classic',heritage:'classic',magazine:'editorial',literary:'editorial',expressive:'creative',artistic:'creative',arty:'creative',contemporary:'modern',current:'modern',premium:'premium',highend:'premium','high-end':'premium',exclusive:'premium',hearty:'warm',sunny:'warm'};
 function resolveFeel(w){w=String(w||'').toLowerCase().trim().replace(/[^a-z0-9 -]/g,'');if(!w)return null;if(FEELS[w])return w;if(SYN[w])return SYN[w];const s=w.replace(/(ness|ly|y|ish)$/,'');if(FEELS[s])return s;if(SYN[s])return SYN[s];return null}
@@ -181,23 +188,43 @@ function profile(s){const w={};s.feels.forEach((f,i)=>{const k=resolveFeel(f);if
  const nt={};Object.entries(w).forEach(([k,v])=>nt[FEELS[k].n]=(nt[FEELS[k].n]||0)+v);
  const bgv={};Object.entries(w).forEach(([k,v])=>bgv[FEELS[k].bg]=(bgv[FEELS[k].bg]||0)+v);
  const top=Object.entries(w).sort((a,b)=>b[1]-a[1]).map(x=>x[0]);
- return {w,top,c:avg('c'),r:avg('r'),dark:avg('dark'),e:avg('e'),hues,harm:Object.entries(harm),neutral:Object.entries(nt).sort((a,b)=>b[1]-a[1])[0][0],bg:Object.entries(bgv).sort((a,b)=>b[1]-a[1])[0][0]}}
+ return {w,top,c:avg('c'),l:avg('l'),r:avg('r'),dark:avg('dark'),e:avg('e'),hues,harm:Object.entries(harm),neutral:Object.entries(nt).sort((a,b)=>b[1]-a[1])[0][0],bg:Object.entries(bgv).sort((a,b)=>b[1]-a[1])[0][0]}}
 
 /* ---------------- palette ---------------- */
 const RAMP_L=[.975,.935,.875,.8,.715,.63,.55,.47,.39,.31,.235],RAMP_C=[.16,.3,.52,.76,.94,1,.96,.88,.76,.62,.5],STEPS=[50,100,200,300,400,500,600,700,800,900,950];
 const ramp=(C,H)=>STEPS.map((s,i)=>[s,lch(RAMP_L[i],C*RAMP_C[i],H)]);
 const wrap=h=>((h%360)+360)%360;
-const HARM={analogous:[[32,-28],[48,-40]],complementary:[[180,30],[170,-35]],split:[[150,210],[160,200]],triadic:[[120,240],[125,235]]};
+/* The primary's partners are close relatives or quiet neutrals, never a saturated opposite:
+   tonal     the same hue, one deeper and one dustier
+   analogous neighbours within about 30 degrees either side
+   earthy    a deep relative plus a far hue kept at low chroma, so it reads as a tinted neutral
+   neutral   a deep relative plus a stone grey
+   The three are kept at least a tenth apart in lightness (deep, middle, light), so they stay distinct for everyone,
+   including people who see hue weakly. */
+function partners(name,L,C,H,r,nH){const sg=r()<.5?1:-1,j=()=>r()*.03,e=Math.min(L,.54);let sL,aL;
+ if(L<.4){sL=clamp(L+.14+j(),.45,.5);aL=.63+j()}         /* deep primary: a mid-tone and a light partner */
+ else if(e<=.5){sL=clamp(e-.2-j(),.25,.3);aL=.63+j()}    /* mid primary: one deep, one light */
+ else{sL=.25+j();aL=e-.14+j()}                           /* brighter primary: both partners sit below it */
+ let sec,acc;
+ if(name==='analogous'){sec=[sL,C*.8,H+sg*(20+r()*10)];acc=[aL,clamp(C*.9,.07,.15),H-sg*(16+r()*10)]}
+ else if(name==='earthy'){sec=[sL,C*.6,H+sg*(6+r()*8)];acc=[aL,.045+r()*.025,H+180+(r()-.5)*60]}
+ else if(name==='neutral'){sec=[sL,C*.55,H+sg*r()*8];acc=[aL,.012+r()*.014,nH]}
+ else{sec=[sL,C*.6,H+sg*(4+r()*6)];acc=[aL,Math.max(.04,C*.45),H-sg*(14+r()*10)]}
+ return {sec:[sec[0],sec[1],wrap(sec[2])],acc:[acc[0],acc[1],wrap(acc[2])]}}
 function palParams(s,P,seedBase){const r=rng(seedBase^Math.imul(s.seeds.pal+1,2654435761));let L,C,H,from='feel';
  const logo=s.logoColors.filter(h=>oklch(h)[1]>=.04);
  if(s.base){[L,C,H]=oklch(s.base);from='base'}else if(logo.length){[L,C,H]=oklch(logo[0]);from='logo'}
- else{const hint=hintHues(s.desc);const cand=hint.length?[...hint.map(h=>[h,2.2]),...P.hues]:P.hues;H=wrap(pickW(r,cand)+(r()-.5)*26);C=clamp(P.c*(.85+r()*.35),.05,.24);L=.5+r()*.16;
-  if(s.seeds.pal>0)H=wrap(H+(r()-.5)*30)}
- const harm=pickW(r,P.harm),off=HARM[harm][r()<.5?0:1];
- let sec,acc;
- if(!s.base&&logo.length>1){sec=oklch(logo[1])}else sec=[clamp(L+(r()-.5)*.16,.38,.72),C*(.7+r()*.25),wrap(H+off[0])];
- if(!s.base&&logo.length>2){acc=oklch(logo[2])}else acc=[clamp(.62+(r()-.5)*.16+P.e*.05,.45,.8),clamp(Math.max(C,.12)*(1+P.e*.25),.1,.24),wrap(H+off[1])];
- const nH=P.neutral==='warm'?wrap(H*.3+65*.7):P.neutral==='cool'?wrap(H*.3+250*.7):H,nC=P.neutral==='neutral'?.006:.014;
+ else{const hint=hintHues(s.desc);const cand=hint.length?[...hint.map(h=>[h,2.2]),...P.hues]:P.hues;H=wrap(pickW(r,cand)+(r()-.5)*22);C=clamp(P.c*(.9+r()*.25),.04,.22);L=clamp(P.l+(r()-.5)*.08,.28,.64);
+  if(s.seeds.pal>0)H=wrap(H+(r()-.5)*30);
+  /* two places a generated colour goes muddy on a light page, where a button needs 3:1 against the background: pure yellow
+     and the pea greens next to it (they turn olive), and dark oranges (they turn brown) */
+  if(H>78&&H<134)H=H<106?76:136;
+  if(H>50&&H<=96&&C>=.07&&L>.4)L=Math.max(L,.6)}
+ /* the neutrals lean 30% of the way from a warm or cool anchor towards the brand hue, the short way round the wheel
+    (a plain average of the two angles sent a purple brand's "warm" white to green) */
+ const lean=a=>wrap(a+(((H-a)%360+540)%360-180)*.3),nH=P.neutral==='warm'?lean(65):P.neutral==='cool'?lean(250):H,nC=P.neutral==='neutral'?.006:.014;
+ const harm=pickW(r,P.harm),pt=partners(harm,L,C,H,r,nH);
+ const sec=!s.base&&logo.length>1?oklch(logo[1]):pt.sec,acc=!s.base&&logo.length>2?oklch(logo[2]):pt.acc;
  return {L,C,H,sec,acc,nH,nC,harm,from,hex:lch(L,C,H),secHex:lch(...sec),accHex:lch(...acc)}}
 const SEM={success:[152,.15],warning:[75,.16],danger:[27,.19],info:[240,.13]};
 function semVariants(){const out=[];for(const sl of [0,.06,.12])for(const sh of [152,168,182,140])for(const dl of [0,-.06])for(const dh of [27,18,36])out.push({sh,sl,dh,dl});return out}
@@ -209,13 +236,21 @@ function buildMode(mode,pp,P,fixes){const dk=mode==='dark',N=(L,c)=>lch(L,c==nul
  let mute=dk?N(.72):N(.5);t.mute=fix(mute,[t.bg,t.surface,t.raised],4.5);log('mute',mute,t.mute,'4.5:1 for secondary text');
  t.line=dk?N(.3):N(.905);let border=dk?N(.5):N(.64);t.border=fix(border,[t.bg,t.surface],3);log('border',border,t.border,'3:1 so inputs and controls are visible');
  const bgs=[t.bg,t.surface];
- const core=(name,hex)=>{let ui=fix(hex,bgs,3);log(name,hex,ui,'3:1 against the background for buttons, focus rings and icons');let on=best(ui);if(ratio(on,ui)<4.5){const u2=fix(ui,[on],4.5);log(name,ui,u2,'4.5:1 for the label on a filled button');ui=u2}
-  const cands=[on,t.ink,t.bg,'#FFFFFF','#111111'].sort((a,b)=>ratio(b,ui)-ratio(a,ui));on=cands.find(c=>ratio(c,ui)>=4.5)||best(ui);
+ /* a filled colour and its label. In light mode a brand colour that is within a small step of carrying a white label is
+    deepened to carry one (white on a mid blue or rust reads better than black). Yellows and oranges keep their colour
+    and take a dark label, because deepening them only makes brown. */
+ const core=(name,hex,white)=>{let ui=fix(hex,bgs,3);log(name,hex,ui,'3:1 against the background for buttons, focus rings and icons');let on='';
+  if(!dk){const w=fix(ui,['#FFFFFF'],4.5),[uL,,uH]=oklch(ui),step=!white?.02:uH>50&&uH<118?.03:.1;if(uL-oklch(w)[0]<=step){log(name,ui,w,'4.5:1 for a white label on a filled button');ui=w;on='#FFFFFF'}}
+  if(!on)on=[dk?t.bg:t.ink,'#111111','#FFFFFF'].find(c=>ratio(c,ui)>=4.5)||'';
+  if(!on){on=best(ui);const u2=fix(ui,[on],4.5);log(name,ui,u2,'4.5:1 for the label on a filled button');ui=u2}
   const txt=fix(hex,[t.bg,t.surface,t.raised],4.5);log(name+'-text',hex,txt,'4.5:1 for links and text in the brand colour');return [ui,on,txt]};
- const brandLight=pp.hex,brandDark=(()=>{const [L,C,H]=oklch(pp.hex);return L<.62?lch(Math.max(L,.7),C,H):pp.hex})();
- [t.primary,t.onPrimary,t.primaryText]=core('primary',dk?brandDark:brandLight);
- const sec=dk?lch(Math.max(pp.sec[0],.68),pp.sec[1],pp.sec[2]):pp.secHex,acc=dk?lch(Math.max(pp.acc[0],.7),pp.acc[1],pp.acc[2]):pp.accHex;
- [t.secondary,t.onSecondary,t.secondaryText]=core('secondary',sec);[t.accent,t.onAccent,t.accentText]=core('accent',acc);
+ /* dark mode: the primary sits at a clear mid-light step; one partner becomes a paler tint and the other the
+    dimmer step (the deepest in light mode is the palest here), so the three stay well apart in lightness */
+ const pL0=oklch(pp.hex)[0],lo=[['s',pp.sec[0]],['a',pp.acc[0]]].sort((x,y)=>x[1]-y[1]),dL={p:.73},below=lo.filter(x=>x[1]<pL0).length;
+ if(below===0){dL[lo[0][0]]=.61;dL[lo[1][0]]=.87}else{dL[lo[0][0]]=.87;dL[lo[1][0]]=.61}
+ [t.primary,t.onPrimary,t.primaryText]=core('primary',dk?lch(dL.p,pp.C,pp.H):pp.hex,true);
+ const sec=dk?lch(dL.s,pp.sec[1],pp.sec[2]):pp.secHex,acc=dk?lch(dL.a,pp.acc[1],pp.acc[2]):pp.accHex;
+ [t.secondary,t.onSecondary,t.secondaryText]=core('secondary',sec,true);[t.accent,t.onAccent,t.accentText]=core('accent',acc,false);
  t.focus=t.primary;
  /* status colours: pick the variant that separates success/danger/warning best for protan and deutan vision */
  const semOf=v=>{const o={};for(const [k,[h0,c]] of Object.entries(SEM)){const h=k==='success'?v.sh:k==='danger'?v.dh:h0,dl=k==='success'?v.sl:k==='danger'?v.dl:0;const base=lch((dk?.72:.58)+dl*(dk?-1:1),c,h);
@@ -238,22 +273,22 @@ function rankPairs(s,P,seedBase){const r=rng(seedBase^0x9E3779B9),t=String(s.des
 function typeScale(ratioR){const TS=[['xs',-2],['sm',-1],['base',0],['lg',1],['xl',2],['2xl',3],['3xl',4],['4xl',5],['5xl',6]];return TS.map(([n,e])=>({name:n,px:Math.round(16*ratioR**e),lh:e<=0?1.6:e<=2?1.35:e<=4?1.15:1.05,face:e<=0?'body':'head'}))}
 
 /* ---------------- copy ---------------- */
-const VOICE={playful:[['Hello, {name}.','Small joys, made on purpose.','Go on, have a poke around.'],['Good things, on repeat.','Made to make you grin.','Pull up a chair.']],
- calm:[['Take a breath.','Quietly does it.','Everything in its place.'],['Room to think.','Slow is a feature.','Settle in.']],
- bold:[['Make some noise.','No half measures.','Built to be noticed.'],['Go further.','Loud by design.','Say it once, say it big.']],
- premium:[['Considered, down to the detail.','Less, but better.','For people who notice.'],['Quietly exceptional.','Made with patience.','The good stuff.']],
- techy:[['Ship it.','Fast, exact, yours.','Everything is an API.'],['Built for builders.','Fewer clicks, more done.','Measured, then made.']],
- natural:[['Grown with care.','Close to the source.','Nothing you don’t need.'],['Rooted, rising.','Good from the ground up.','Season by season.']],
- trustworthy:[['You’re in good hands.','Clear answers, no small print.','We’ll take it from here.'],['Steady, every time.','Plain words, real help.','Here when it counts.']],
- friendly:[['Come on in.','Made for people, by people.','We saved you a seat.'],['Nice to meet you.','Good things take care.','Ask us anything.']]};
+/* No invented slogans. Every line a brand shows is its own name, the visitor's own description, their feel words or
+   their audience. GROUP only chooses which piece of usage guidance goes in the "avoid" list. */
 const GROUP={playful:'playful',youthful:'playful',quirky:'playful',soft:'calm',calm:'calm',clinical:'trustworthy',bold:'bold',energetic:'bold',edgy:'bold',adventurous:'bold',rugged:'bold',premium:'premium',elegant:'premium',luxurious:'premium',classic:'premium',editorial:'premium',minimal:'premium',techy:'techy',futuristic:'techy',modern:'techy',natural:'natural',handmade:'natural',fresh:'natural',trustworthy:'trustworthy',serious:'trustworthy',friendly:'friendly',warm:'friendly',cosy:'friendly',retro:'playful',creative:'playful'};
 const AVOID={playful:'Stiff, corporate phrasing or walls of grey text.',calm:'Urgent red banners, countdowns and exclamation marks.',bold:'Timid half-tints of the primary; commit or leave it out.',premium:'Discount-style shouting, bursts and more than one accent per view.',techy:'Stock photos of people pointing at screens; show the product.',natural:'Glossy gradients and neon; keep colours earthy and matte.',trustworthy:'Jargon, small print and dark patterns.',friendly:'Cold, passive voice; say “we” and “you”.'};
 function sentence(d){d=String(d||'').trim().replace(/\s+/g,' ');if(!d)return '';const m=d.match(/^(.{8,110}?[.!?])(\s|$)/);let s=m?m[1]:d;if(s.length>110)s=s.slice(0,107).replace(/\s+\S*$/,'')+'…';return s.charAt(0).toUpperCase()+s.slice(1)}
-function copyFor(s,P,pal,type,r){const g=GROUP[P.top[0]]||'friendly',sets=VOICE[g],v=sets[(s.seeds.type+s.seeds.pal)%sets.length].map(x=>x.replace('{name}',s.name||'there'));
- const feelTxt=s.feels.slice(0,3).join(', ');const tagline=sentence(s.desc)||(`${s.name||'A new brand'}: ${feelTxt||'clear, modern and friendly'}.`);
+const wordList=a=>a.length>1?a.slice(0,-1).join(', ')+' and '+a[a.length-1]:a[0]||'';
+/* an address built from the name: "Saffron & Salt" -> saffronandsalt.com */
+function domainOf(name){const d=String(name||'').toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g,'').replace(/&/g,'and').replace(/[^a-z0-9]+/g,'');return (d||'brand').slice(0,40)+'.com'}
+function copyFor(s,P,pal,type){const g=GROUP[P.top[0]]||'friendly',name=s.name||'Untitled',line=sentence(s.desc),feels=wordList(s.feels.slice(0,3));
+ const feelLine=feels?feels.charAt(0).toUpperCase()+feels.slice(1)+'.':'',aud=String(s.audience||'').trim(),audLine=aud?'For '+aud.replace(/[.\s]+$/,'')+'.':'';
+ const tagline=line||(feels?`${/^[aeiou]/.test(feels)?'An':'A'} ${feels} brand.`:name);
+ /* three plain lines for the shared kit pages: a title, a supporting line and a sentence to set as a sample */
+ const voice=[name,audLine||(line?feelLine:'')||name,line||feelLine||name];
  const dos=[`Lead with ${pal.primaryName} for the one action that matters on each screen.`,`Set headlines in ${type.head}${type.case==='upper'?' capitals':''} and everything you read in ${type.body}.`,`Give the logo clear space of half its height, and use the monogram below 32px.`];
  const donts=[`Body text in the brand colour; use the primary text token for links.`,`Stretching, recolouring, outlining or rotating the logo.`,AVOID[g]];
- const c={tagline,voice:v,dos,donts,headline:v[0],group:g};
+ const c={tagline,voice,dos,donts,headline:name,line,feelLine,audLine,domain:domainOf(name),group:g};
  if(s.ai){const a=s.ai;if(a.tagline)c.tagline=a.tagline;if(Array.isArray(a.voice)&&a.voice.length===3)c.voice=a.voice;if(Array.isArray(a.dos)&&a.dos.length)c.dos=a.dos.slice(0,4);if(Array.isArray(a.donts)&&a.donts.length)c.donts=a.donts.slice(0,4);c.ai=true}
  return c}
 
@@ -262,8 +297,13 @@ const SHAPES=['circle','rounded','squircle','hexagon','shield','arch','plain'];
 const DECOR=['plain','dot','bar','slash'];
 function logoParams(s,P,seedBase){const r=rng(seedBase^Math.imul(s.seeds.logo+7,40503));const sharp=P.r<5,round=P.r>14;
  const shape=pickW(r,SHAPES.map(x=>[x,x==='circle'?(round?3:1.2):x==='rounded'?1.6:x==='squircle'?(round?2:1):x==='hexagon'?(sharp?1.6:.7):x==='shield'?(P.w.trustworthy||P.w.classic?1.6:.5):x==='arch'?(P.w.elegant||P.w.premium?1.6:.6):.7]));
- return {shape,decor:pickW(r,DECOR.map(x=>[x,x==='plain'?1.4:1])),track:Math.round(((r()-.4)*.08+(P.w.luxurious||P.w.elegant?.06:0))*100)/100,lower:!!(P.w.friendly||P.w.minimal||P.w.soft)&&r()<.35,two:r()<.55}}
-function initials(name,two){const w=String(name||'?').trim().split(/[\s\-_.]+/).filter(Boolean);if(!w.length)return '?';const a=[...w[0]][0]||'?';if(!two)return a.toUpperCase();const b=w[1]?[...w[1]][0]:([...w[0]][1]||'');return (a+(b||'')).toUpperCase().slice(0,2)}
+ /* the slash after the name reads as a typo on a soft or classic brand, so only technical and edgy ones can draw it */
+ const slash=P.w.techy||P.w.futuristic||P.w.edgy?1:0;
+ return {shape,decor:pickW(r,DECOR.map(x=>[x,x==='plain'?1.4:x==='slash'?slash:1])),track:Math.round(((r()-.4)*.08+(P.w.luxurious||P.w.elegant?.06:0))*100)/100,lower:!!(P.w.friendly||P.w.minimal||P.w.soft)&&r()<.35,two:r()<.55}}
+/* initials come from the words that carry the name: "Saffron & Salt" is SS, not S&; a one-word name gets one letter
+   (the first two letters of a word are not initials: Northwind would read NO) */
+function initials(name,two){const alnum=/[\p{L}\p{N}]/u,all=String(name||'?').trim().split(/[\s\-_.\/+&]+/).filter(x=>alnum.test(x)),main=all.filter(x=>!/^(and|the|of|et|und|y|de|la|le)$/i.test(x)),w=main.length?main:all;
+ if(!w.length)return '?';const L=x=>[...x].filter(ch=>alnum.test(ch)),a=L(w[0])[0]||'?';if(!two)return a.toUpperCase();const b=w[1]?L(w[1])[0]:'';return (a+(b||'')).toUpperCase().slice(0,2)}
 
 /* ---------------- generate ---------------- */
 let MEASURE=null;/* (text, weight, family, sizePx) -> width; set by the page once fonts are loaded */
@@ -271,11 +311,11 @@ function textW(text,type,size){if(MEASURE){const w=MEASURE(text,type.hw,type.hea
 function generate(input){const s=norm(input),P=profile(s);const seedBase=hash([s.name.toLowerCase(),s.desc.toLowerCase(),s.feels.join(','),s.audience.toLowerCase()].join('|'));
  const pp=s.frozen.pal&&s.frozen.pal.hex?s.frozen.pal:palParams(s,P,seedBase);
  const fixes=[];const modes={light:buildMode('light',pp,P,fixes),dark:buildMode('dark',pp,P,fixes)};
- const primaryMode=s.mode!=='auto'?s.mode:(P.dark>=.5?'dark':'light');
+ const primaryMode=s.mode!=='auto'?s.mode:(P.dark>=.72?'dark':'light');
  const ramps={primary:ramp(Math.max(pp.C,.06),pp.H),secondary:ramp(Math.max(pp.sec[1],.05),pp.sec[2]),accent:ramp(Math.max(pp.acc[1],.06),pp.acc[2]),neutral:STEPS.map((st,i)=>[st,lch(RAMP_L[i],pp.nC*(i<2||i>8?.8:1.2),pp.nH)])};
  for(const [k,[h,c]] of Object.entries(SEM))ramps[k]=ramp(c,k==='success'?oklch(modes.light.success)[2]:k==='danger'?oklch(modes.light.danger)[2]:h);
  const checks={light:checksFor(modes.light),dark:checksFor(modes.dark)};
- const cvd={brand:{light:cvdReport([modes.light.primary,modes.light.secondary,modes.light.accent],'light',modes.light.bg),dark:cvdReport([modes.dark.primary,modes.dark.secondary,modes.dark.accent],'dark',modes.dark.bg)},
+ const cvd={brand:{light:cvdReport([modes.light.primary,modes.light.secondary,modes.light.accent],'light',modes.light.bg,true),dark:cvdReport([modes.dark.primary,modes.dark.secondary,modes.dark.accent],'dark',modes.dark.bg,true)},
   status:{light:cvdReport([modes.light.success,modes.light.warning,modes.light.danger],'light',modes.light.bg),dark:cvdReport([modes.dark.success,modes.dark.warning,modes.dark.danger],'dark',modes.dark.bg)}};
  const ranked=rankPairs(s,P,seedBase),frozenT=s.frozen.type&&PAIRS.find(p=>p.id===s.frozen.type),aiT=s.ai&&s.ai.type&&PAIRS.find(p=>p.id===s.ai.type);
  const pair=frozenT||(aiT&&s.seeds.type===0?aiT:null)||ranked[s.seeds.type%Math.min(8,ranked.length)];
@@ -288,6 +328,7 @@ function generate(input){const s=norm(input),P=profile(s);const seedBase=hash([s
  b.kit=kitOf(b);return b}
 
 /* ---------------- theme kit object (kits/themes.js shape) ---------------- */
+const GEN={};
 function kitOf(b){const TK=window.ThemeKits;const M=b.modes[b.mode],A=b.modes[b.mode==='dark'?'light':'dark'],P=b.profile;
  const tk=t=>({bg:t.bg,surface:t.surface,ink:t.ink,mute:t.mute,line:t.border,accent:t.primary,onAccent:t.onPrimary,accentText:t.primaryText,accent2:t.secondary,accent3:t.accent,radius:b.radius+'px',shadow:t.shadow,glow:t.glow});
  const id=('gen-'+(b.name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,18)||'brand')+'-'+hash(JSON.stringify([b.state,b.mode,M.primary,b.type.id,b.logo,b.type.mine||0])).toString(36)).slice(0,40);
@@ -296,7 +337,9 @@ function kitOf(b){const TK=window.ThemeKits;const M=b.modes[b.mode],A=b.modes[b.
   fonts:{head:b.type.headStack,body:b.type.bodyStack,css:b.type.css},t:tk(M),alt:tk(A),bg:P.bg,stroke:{w:roundy?1.75:1.5,cap:sq?'square':'round',join:sq?'miter':'round'},case:b.type.case==='upper'?'upper':'',
   voice:b.copy.voice,dos:b.copy.dos,donts:b.copy.donts,feel:(P.w.playful||P.w.youthful||P.w.quirky||P.w.friendly)?'playful':'serious',hw:b.type.hw,scale:b.type.ratio,wf:b.type.wf,role:'Founder',
   bgDesc:{brandmesh:'soft colour fields in the brand colours drifting slowly behind the content',brandgrid:'a quiet dot grid with a wave of brand colour passing through it',brandwave:'layered flowing lines in the brand colours'}[P.bg],tone:b.mode,generated:true};
- if(TK){TK.MARK[id]=()=>markInner(b,64);TK.PAT[id]=()=>patternSVG(b)}
+ if(TK){TK.MARK[id]=()=>markInner(b,64);TK.PAT[id]=()=>patternSVG(b);GEN[id]=b;
+  /* the shared kit draws a sample person on the back of the business card; a generated brand shows its own name and address instead */
+  if(!TK.cardBack.__gen){const f=TK.cardBack;TK.cardBack=(kit,o)=>kit&&GEN[kit.id]?cardBack(GEN[kit.id],GEN[kit.id].mode,o):f(kit,o);TK.cardBack.__gen=1}}
  return k}
 
 /* ---------------- SVG builders ---------------- */
@@ -326,6 +369,12 @@ function lockup(b,layout,mode,o={}){const t=b.modes[mode||b.mode],size=56;let W,
  if(layout==='stacked'){const p=wordmarkParts(b,t,0,0,size);W=Math.ceil(Math.max(p.w,120)+64);H=size*3.4|0;const mx=(W-112)/2;body=`<g transform="translate(${mx} 24) scale(${112/64})">${markInner(b,64,{t})}</g>`+wordmarkParts(b,t,((W-p.w)/2).toFixed(1),(24+112+size*1.05).toFixed(1),size).svg;H=Math.ceil(24+112+size*1.45)}
  else{const p=wordmarkParts(b,t,24+88+20,24+44+size*.36,size);W=Math.ceil(24+88+20+p.w+28);H=24+88+24;body=`<g transform="translate(24 24) scale(${88/64})">${markInner(b,64,{t})}</g>${p.svg}`}
  return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${o.fonts?`<defs>${fontImport(b)}</defs>`:''}${o.bg!==false?`<rect width="${W}" height="${H}" fill="${t.bg}"/>`:''}${body}</svg>`}
+/* the back of a business card: the name, a hello@ address and a web address built from the name; no invented person or phone number */
+function cardBack(b,mode,o={}){const t=b.modes[mode||b.mode],W=1050,H=600,txt=wordText(b),w=textW(txt,b.type,54),size=w>760?Math.max(26,Math.floor(54*760/w)):54,fam=esc(b.type.bodyStack.replace(/"/g,"'"));
+ return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${o.fonts?`<defs>${fontImport(b)}</defs>`:''}<rect width="${W}" height="${H}" fill="${t.surface}"/><rect width="18" height="${H}" fill="${t.primary}"/>
+${svgText(b,'head',{x:90,y:170,weight:b.type.hw,size,fill:t.ink,track:(b.logo.track*size).toFixed(2),txt})}<rect x="90" y="222" width="80" height="4" fill="${t.accent}"/>
+<g fill="${t.ink}" font-family="${fam}" font-size="26"><text x="90" y="300">hello@${esc(b.copy.domain)}</text><text x="90" y="344" fill="${t.mute}">${esc(b.copy.domain)}</text></g>
+<g transform="translate(870 420) scale(1.5)">${markInner(b,64,{t})}</g></svg>`}
 function patternSVG(b){const t=b.modes[b.mode],L=b.logo;const sh=L.shape==='plain'?'rounded':L.shape;return `<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96"><rect width="96" height="96" fill="${t.bg}"/><g fill="${t.primary}" opacity=".22" transform="translate(8 8) scale(.5)">${shapePath(sh,64)}</g><g fill="${t.secondary}" opacity=".22" transform="translate(56 56) scale(.5)">${shapePath(sh,64)}</g><circle cx="72" cy="24" r="4" fill="${t.accent}"/><circle cx="24" cy="72" r="2.5" fill="${t.accent}"/></svg>`}
 
 /* ---------------- token exports ---------------- */
@@ -435,6 +484,7 @@ h1{font-size:56px;line-height:1.02}h2{font-size:15px;font-family:var(--body);fon
 ul{margin:0;padding-left:18px}li{margin:4px 0}
 table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:6px 4px;border-bottom:1px solid var(--line)}td.n{text-align:right;font-variant-numeric:tabular-nums}
 .voice q{display:block;font-family:var(--head);font-size:22px;margin:4px 0;quotes:"“" "”"}
+.about p{margin:0 0 8px}.about .lead{font-size:18px;line-height:1.45;margin-bottom:14px}
 .btn{display:inline-block;background:var(--primary);color:var(--on-primary);padding:10px 16px;border-radius:${b.radius}px;font-weight:600;text-decoration:none}
 footer{font-size:12px;color:var(--mute);border-top:1px solid var(--line);padding-top:12px}
 @media (max-width:720px){.top,.grid{grid-template-columns:1fr}.sws{grid-template-columns:repeat(2,minmax(0,1fr))}h1{font-size:40px}}
@@ -446,13 +496,13 @@ footer{font-size:12px;color:var(--mute);border-top:1px solid var(--line);padding
 <div><h2>Colour</h2><div class="sws">${sw(b.pal.primaryName,b.pal.brand)}${sw(b.pal.secondaryName,b.pal.secondary)}${sw(b.pal.accentName,b.pal.accent)}${sw('Ink',P.ink)}${sw('Background',P.bg)}${sw('Muted',P.mute)}</div>
 ${['primary','secondary','accent','neutral'].map(n=>`<div class="ramp" role="img" aria-label="${n} scale from 50 to 950">${b.ramps[n].map(([,h])=>`<i style="background:${h}"></i>`).join('')}</div>`).join('')}
 <table style="margin-top:12px"><caption style="text-align:left;font-size:13px;color:var(--mute);padding-bottom:4px">Contrast (${b.mode} mode, WCAG 2.2)</caption><tbody>${ck.map(c=>`<tr><th scope="row">${esc(c.label)}</th><td class="n">${c.ratio.toFixed(2)}:1 · ${c.pass?'pass':'fail'}</td></tr>`).join('')}</tbody></table></div></section>
-<section class="grid"><div class="card spec"><h2>Type</h2><p class="big">${esc(b.copy.voice[0])}</p><p>${esc(ty.head)} ${ty.hw} for headlines, ${esc(ty.body)} for everything you read. ${esc(ty.why)}</p><div class="ts">${ty.scale.slice().reverse().filter((s,i)=>i%2===0).map(s=>`<span>${s.name} · ${s.px}px / ${s.lh}</span>`).join('')}</div></div>
-<div class="card voice"><h2>Voice</h2>${b.copy.voice.map(v=>`<q>${esc(v)}</q>`).join('')}<p style="margin-top:14px"><a class="btn" href="#">Primary action</a></p></div></section>
+<section class="grid"><div class="card spec"><h2>Type</h2><p class="big">${esc(b.name)}</p><p>${esc(ty.head)} ${ty.hw} for headlines, ${esc(ty.body)} for everything you read. ${esc(ty.why)}</p><div class="ts">${ty.scale.slice().reverse().filter((s,i)=>i%2===0).map(s=>`<span>${s.name} · ${s.px}px / ${s.lh}</span>`).join('')}</div></div>
+${b.copy.ai?`<div class="card voice"><h2>Voice</h2>${b.copy.voice.map(v=>`<q>${esc(v)}</q>`).join('')}</div>`:`<div class="card about"><h2>About</h2><p class="lead">${esc(b.state.desc||b.copy.tagline)}</p>${b.state.feels.length?`<p><b>Feel</b> · ${esc(b.state.feels.join(', '))}</p>`:''}${b.state.audience?`<p><b>For</b> · ${esc(b.state.audience)}</p>`:''}<p style="margin-top:14px"><span class="btn">hello@${esc(b.copy.domain)}</span></p></div>`}</section>
 <section class="grid"><div><h2>Do</h2><ul>${b.copy.dos.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div><div><h2>Avoid</h2><ul>${b.copy.donts.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div></section>
 <footer>${esc(b.name)} brand guide · generated with the Brand kit generator, Visual &amp; Motion Atlas · ${mineFams(b).length?`${esc(mineFams(b).join(' and '))}: the creator's own licensed font${mineFams(b).length>1?'s':''}${fontsURL(ty)?'; the rest from Google Fonts (SIL Open Font Licence)':''}`:'fonts from Google Fonts (SIL Open Font Licence)'}</footer>
 </main></body></html>`}
 
-window.BrandGen={FEELS,FEEL_KEYS,PAIRS,SYN,resolveFeel,hintHues,generate,norm,DEFAULT,css,json,tailwind,guideHTML,wordmark,monogram,lockup,markInner,patternSVG,fontsURL,colourName,
+window.BrandGen={FEELS,FEEL_KEYS,PAIRS,SYN,resolveFeel,hintHues,generate,norm,DEFAULT,css,json,tailwind,guideHTML,wordmark,monogram,lockup,markInner,patternSVG,cardBack,sentence,domainOf,wordText,fontsURL,colourName,
  oklch,lch,ratio,fix,best,normHex,isHex,dE,cvdMin,hash,esc,setMeasure:f=>{MEASURE=f},setMineMode:m=>{MINE_MODE=m},mineFams,mineHead,MODE_TOKENS,initials};
 })();
 

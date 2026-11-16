@@ -18,18 +18,14 @@ a{color:inherit}button,input,select{font:inherit;color:inherit}
 .intro h1{margin:0;font:italic 500 clamp(44px,7vw,88px)/.92 'Cormorant Garamond',Georgia,serif;letter-spacing:-.02em}
 .intro p{margin:0;color:var(--pmute);max-width:62ch}
 .intro p b{color:var(--pink);font-weight:600}
-.bar{max-width:1320px;margin:0 auto;padding:6px max(16px,4vw) 12px;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
-.search{display:flex;align-items:center;gap:8px;flex:1 1 240px;max-width:360px}
-.search label{font-size:13px;color:var(--pmute);white-space:nowrap}
-.search input{flex:1;min-width:0;min-height:40px;padding:0 12px;border:1px solid var(--phair);border-radius:10px;background:var(--ppanel)}
-.search input:focus-visible,.seg button:focus-visible,.pick:focus-visible,.pbtn:focus-visible,.cmpbar select:focus-visible{outline:3px solid var(--paccent);outline-offset:2px}
-.seg{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap}
-.seg>span{font-size:13px;color:var(--pmute)}
-.seg div{display:inline-flex;border:1px solid var(--phair);border-radius:10px;overflow:hidden;background:var(--ppanel)}
-.seg button{border:0;background:none;padding:0 12px;min-height:38px;font-size:13.5px;cursor:pointer;color:var(--pmute)}
-.seg button+button{border-left:1px solid var(--phair)}
-.seg button[aria-pressed=true]{background:var(--pink);color:#fff}
-.count{font:500 12px/1 'JetBrains Mono',monospace;color:var(--pmute);letter-spacing:.06em;margin-left:auto}
+.bar{max-width:1320px;margin:0 auto;padding:6px max(16px,4vw) 12px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.search{flex:1 1 240px;min-width:0}
+.search input{width:100%;min-height:44px;padding:0 16px;border:1px solid var(--phair);border-radius:12px;background:var(--ppanel);font-size:15px}
+.fsel{flex:0 0 200px;min-width:0}
+.fsel select{width:100%;min-height:44px;padding:0 14px;border:1px solid var(--phair);border-radius:12px;background:var(--ppanel);font-size:14px}
+.search input:focus-visible,.fsel select:focus-visible,.pick:focus-visible,.pbtn:focus-visible,.cmpbar select:focus-visible{outline:3px solid var(--paccent);outline-offset:2px}
+.bar .pbtn{min-height:44px;border-radius:12px;font-weight:500}
+.count{max-width:1320px;margin:0 auto;padding:0 max(16px,4vw) 12px;color:var(--pmute);font-size:13px}
 .pbtn{min-height:40px;padding:0 16px;border-radius:10px;border:1px solid var(--pink);background:var(--pink);color:#fff;font-weight:600;font-size:14px;cursor:pointer}
 .pbtn.ghost{background:var(--ppanel);color:var(--pink);border-color:var(--phair)}
 .picker{max-width:1320px;margin:0 auto;padding:6px max(16px,4vw) 28px;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:10px}
@@ -52,8 +48,9 @@ a{color:inherit}button,input,select{font:inherit;color:inherit}
 .toast.on{opacity:1}
 .khand{display:flex;gap:8px;flex-wrap:wrap;align-items:center;max-width:1240px;margin:0 auto;padding:12px 24px}.khand span{font-size:13px;color:var(--pmute,#5b5a62);margin-right:4px}.khand a.pbtn{display:inline-flex;align-items:center;text-decoration:none}
 @media (max-width:1100px){.picker{grid-template-columns:repeat(6,minmax(0,1fr))}}
-@media (max-width:900px){.intro{grid-template-columns:1fr}.cmpgrid{grid-template-columns:1fr}.picker{grid-template-columns:repeat(4,minmax(0,1fr))}.count{margin-left:0}}
-@media (max-width:560px){.picker{grid-auto-flow:column;grid-template-columns:none;grid-template-rows:repeat(2,auto);grid-auto-columns:42%;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:16px}.pick{scroll-snap-align:start}.search{max-width:none}.cmpbar select{min-width:0;width:100%}.cmpbar label{flex:1 1 100%}}
+@media (max-width:900px){.intro{grid-template-columns:1fr}.cmpgrid{grid-template-columns:1fr}.picker{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (max-width:560px){.picker{grid-auto-flow:column;grid-template-columns:none;grid-template-rows:repeat(2,auto);grid-auto-columns:42%;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:16px}.pick{scroll-snap-align:start}.cmpbar select{min-width:0;width:100%}.cmpbar label{flex:1 1 100%}}
+@media (max-width:640px){.search{flex:1 1 100%}.fsel{flex:1 1 calc(50% - 5px)}.bar .pbtn{flex:1 1 100%}}
 @media (prefers-reduced-motion:reduce){.toast{transition:none}}
 </style><meta property="og:type" content="website"><meta property="og:site_name" content="Visual &amp; Motion Atlas"><meta property="og:title" content="Theme kits · Visual & Motion Atlas"><meta property="og:description" content="Forty-eight complete brand and theme kits, from Matrix (01) to Chambers (48): colour scales with contrast labels, light and dark tokens, type scale, components, a live animated background, logo, social card, slide, email header, business cards, favicon and guidelines, each downloadable as a zip with CSS, SCSS, JSON and Tailwind tokens."><meta property="og:url" content="https://motionatlas-ten.vercel.app/theme-kits"><meta property="og:image" content="https://motionatlas-ten.vercel.app/assets/og-atlas.jpg"><meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://motionatlas-ten.vercel.app/theme-kits">
@@ -63,12 +60,12 @@ a{color:inherit}button,input,select{font:inherit;color:inherit}
 <header class="top"><a class="back" href="atlas.html#systems">← Atlas / Design systems</a><nav aria-label="Related"><a href="brand-generator.html">Brand kit generator</a><a href="page-builder.html">Site builder</a><a href="interactions.html">Interactions shelf</a><a href="atlas.html#backgrounds">Backgrounds</a></nav></header>
 <section class="intro" aria-labelledby="ttl"><h1 id="ttl">Theme kits.</h1><p><span id="introCount">Forty-eight</span> complete brand kits, from <b>Matrix (01)</b> to <b>Chambers (48)</b>, across fintech, health, civic, food, travel, fashion, science, music, games, retro eras and print traditions. Each has colour scales with contrast labels, light and dark tokens, a type scale, a component sheet, a live animated background, a logo and mark, social card, title slide, email header, business cards, favicon and short guidelines. Download any kit as a zip with CSS, SCSS, JSON and Tailwind tokens.</p></section>
 <div class="bar" role="search" aria-label="Filter kits">
- <div class="search"><label for="q">Search</label><input id="q" type="search" placeholder="Name, mood, industry, font…" autocomplete="off"></div>
- <div class="seg" role="group" aria-label="Tone"><span aria-hidden="true">Tone</span><div><button type="button" data-tone="" aria-pressed="true">All</button><button type="button" data-tone="dark" aria-pressed="false">Dark</button><button type="button" data-tone="light" aria-pressed="false">Light</button></div></div>
- <div class="seg" role="group" aria-label="Feel"><span aria-hidden="true">Feel</span><div><button type="button" data-feel="" aria-pressed="true">All</button><button type="button" data-feel="playful" aria-pressed="false">Playful</button><button type="button" data-feel="serious" aria-pressed="false">Serious</button></div></div>
- <p class="count" id="count" role="status" aria-live="polite"></p>
+ <label class="search"><span class="vh">Search the kits</span><input id="q" type="search" placeholder="Search: name, mood, industry, font…" autocomplete="off"></label>
+ <div class="fsel"><select id="toneSel" aria-label="Tone"></select></div>
+ <div class="fsel"><select id="feelSel" aria-label="Feel"></select></div>
  <button class="pbtn ghost" type="button" id="cmpOpen" aria-expanded="false" aria-controls="compare">Compare two kits</button>
 </div>
+<p class="count" id="count" role="status" aria-live="polite"></p>
 <div class="picker" id="picker" role="group" aria-label="Choose a theme kit"></div>
 <p class="empty" id="empty" hidden>No kits match. Try another word, or clear the filters.</p>
 <section id="compare" hidden aria-labelledby="cmpH"><div class="in"><h2 id="cmpH">Compare two kits</h2>
@@ -95,9 +92,11 @@ L.forEach(k=>{const b=document.createElement('button');b.type='button';b.classNa
 /* filters */
 const F={q:'',tone:'',feel:''};
 const hay=k=>[k.name,k.no,k.id,k.tagline,k.mood,k.tone,k.feel,TK.famName(k.fonts.head),TK.famName(k.fonts.body),k.bgDesc].join(' ').toLowerCase();
-function filter(){let n=0;document.querySelectorAll('.pick').forEach(b=>{const k=L.find(x=>x.id===b.dataset.id);const ok=(!F.tone||k.tone===F.tone)&&(!F.feel||k.feel===F.feel)&&F.q.split(/\s+/).filter(Boolean).every(w=>hay(k).includes(w));b.hidden=!ok;if(ok)n++});$('#count').textContent=`Showing ${n} of ${L.length} kits`;$('#empty').hidden=n>0}
+function filter(){let n=0;document.querySelectorAll('.pick').forEach(b=>{const k=L.find(x=>x.id===b.dataset.id);const ok=(!F.tone||k.tone===F.tone)&&(!F.feel||k.feel===F.feel)&&F.q.split(/\s+/).filter(Boolean).every(w=>hay(k).includes(w));b.hidden=!ok;if(ok)n++});$('#count').textContent=n===L.length?`${L.length} kits`:`${n} of ${L.length} kits`;$('#empty').hidden=n>0}
 $('#q').addEventListener('input',e=>{F.q=e.target.value.trim().toLowerCase();filter()});
-document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{const key=b.dataset.tone!=null?'tone':'feel';F[key]=b.dataset[key];b.parentNode.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));filter()});
+/* one dropdown per axis, each option with its count: the same toolbar as the interactions shelf */
+const cap=v=>v[0].toUpperCase()+v.slice(1);
+[['tone','#toneSel','Any tone',['dark','light']],['feel','#feelSel','Any feel',['playful','serious']]].forEach(([key,id,any,order])=>{const el=$(id),vals=[...order,...new Set(L.map(k=>k[key]).filter(v=>v&&!order.includes(v)))].filter(v=>L.some(k=>k[key]===v));el.innerHTML=`<option value="">${any}</option>`+vals.map(v=>`<option value="${v}">${cap(v)} (${L.filter(k=>k[key]===v).length})</option>`).join('');el.onchange=()=>{F[key]=el.value;filter()}});
 filter();
 /* compare */
 const opts=L.map(k=>`<option value="${k.id}">${k.no} · ${esc(k.name)}</option>`).join('');$('#cmpA').innerHTML=opts;$('#cmpB').innerHTML=opts;

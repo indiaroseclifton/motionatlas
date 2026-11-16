@@ -12,10 +12,17 @@ header.top nav{margin-left:auto;display:flex;gap:18px;flex-wrap:wrap;font-size:1
 header.top nav a{color:var(--dim)}header.top nav a:hover{color:var(--ink)}
 main{max-width:1240px;margin:0 auto;padding:32px 24px 64px}
 .lede{max-width:62ch;color:var(--dim);font-size:18px;margin:0 0 24px}
-.chips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 28px}
-.chips button{font:500 14px/1 Inter,sans-serif;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:10px 16px;cursor:pointer}
-.chips button[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.chips button:focus-visible,.card a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+/* one search box and one dropdown, the same toolbar as the interactions shelf */
+.searchrow{display:flex;gap:10px;align-items:center}
+.searchrow .search{flex:1 1 240px;min-width:0}.searchrow .pick{flex:0 0 230px;min-width:0}
+.searchrow input,.searchrow select{width:100%;min-height:44px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:inherit;font:inherit}
+.searchrow input{padding:0 16px;font-size:15px}.searchrow select{padding:0 14px;font-size:14px}
+.searchrow input:focus-visible,.searchrow select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.vh{position:absolute;left:-9999px}
+.count{margin:14px 0 0;color:var(--dim);font-size:13px}
+.card[hidden]{display:none}
+.card a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media(max-width:640px){.searchrow{flex-wrap:wrap}.searchrow .pick{flex:1 1 100%}}
 h2.grp{font:500 26px/1.2 "Cormorant Garamond",serif;margin:36px 0 4px}
 p.grpnote{margin:0 0 16px;color:var(--dim);font-size:15px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;list-style:none;padding:0;margin:0}

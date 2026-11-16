@@ -187,7 +187,7 @@ dialog .in{padding:18px;display:grid;gap:10px}dialog h2{margin:0;font-size:16px}
    <div class="sec"><h2>Colour slots <small><button class="btn sm" id="bestOrder" type="button">Most distinct order</button></small></h2><div class="slots" id="slots"></div>
     <label class="f">Emphasis <small>one series in colour, the rest grey</small><select id="emph"></select></label></div>
    <div class="sec"><h2>Palette check <small id="palState"></small></h2><ul class="checks" id="palChecks"></ul><p class="hint">Computed in the mode shown, against the chart surface (OKLab ΔE, Machado colour-blind simulation). Scatter, bubble and radar check every pair, the rest check neighbours.</p></div>
-   <div class="sec"><h2>Style</h2><div class="chips" id="styles" role="group" aria-label="Style"></div><p class="hint" id="styleBlurb"></p></div>
+   <div class="sec"><h2>Style</h2><select id="styles" aria-label="Style"></select><p class="hint" id="styleBlurb"></p></div>
   </section>
   <section class="panel" role="tabpanel" id="p-notes" aria-labelledby="t-notes" hidden>
    <div class="sec"><h2>Annotations</h2><p class="hint">A callout points at one value; a reference line or band marks a target or a range on the value axis. Keep it to one or two.</p>
@@ -323,9 +323,11 @@ function drawChartTab(){drawRecs();drawTypes();drawMapping();drawOpts();}
 function syncFields(){['title','subtitle','source','desc'].forEach(k=>{if(document.activeElement!==$('o-'+k))$('o-'+k).value=S.opt[k]||'';});['style','decimals','prefix','suffix'].forEach(k=>$('f-'+k).value=S.opt.fmt[k]||'');$('o-width').value=S.opt.width||'auto';$('o-height').value=S.opt.height||'';}
 
 /* ---------- style tab ---------- */
-const chip=s=>`<button class="chip" type="button" data-style="${s.id}" aria-pressed="${s.id===S.style}" title="${esc(s.kicker)}"><span class="sw">${s.t.cat.slice(0,4).map(c=>`<i style="background:${c}"></i>`).join('')}</span>${esc(s.name)}</button>`;
-$('styles').innerHTML=`<span class="lbl">Your brand</span>${DVStyles.filter(s=>s.brand).map(chip).join('')}<span class="lbl">From your board</span>${DVStyles.filter(s=>s.board).map(chip).join('')}<span class="lbl">Researched</span>${DVStyles.filter(s=>!s.board&&!s.brand).map(chip).join('')}`;
-$('styles').onclick=e=>{const b=e.target.closest('[data-style]');if(!b)return;S.style=b.dataset.style;render();commit();};
+/* one dropdown for the style, grouped: your brand, from your board, researched */
+const styleOpt=s=>`<option value="${s.id}">${s.name}</option>`,styleGrp=(l,a)=>a.length?`<optgroup label="${l} (${a.length})">${a.map(styleOpt).join('')}</optgroup>`:'';
+const styleOptions=()=>styleGrp('Your brand',DVStyles.filter(s=>s.brand))+styleGrp('From your board',DVStyles.filter(s=>s.board))+styleGrp('Researched',DVStyles.filter(s=>!s.board&&!s.brand));
+$('styles').innerHTML=styleOptions();$('styles').value=S.style;
+$('styles').onchange=()=>{S.style=$('styles').value;render();commit();};
 $('mode').onclick=e=>{const b=e.target.closest('[data-mode]');if(!b)return;S.mode=b.dataset.mode;render();commit();};
 $('slots').addEventListener('change',e=>{const i=+e.target.dataset.slot;S.opt.slots=S.opt.slots||[];S.opt.slots[i]=e.target.value;render();commit();});
 $('emph').onchange=()=>{S.opt.emph=$('emph').value;render();commit();};
@@ -333,7 +335,7 @@ $('bestOrder').onclick=()=>{const r=last;if(!r)return;const n=Math.max(1,Math.mi
 function seriesNames(){const m=last?last.map:curMap();if(['pie','donut'].includes(S.kind)){const n=Math.min(5,S.table.rows.length);return S.table.rows.slice(0,n).map(r=>String(r[m.x]??''));}
  if(['scatter','bubble'].includes(S.kind)&&m.group>=0)return [...new Set(S.table.rows.map(r=>String(r[m.group])))].slice(0,3);
  if(['heatmap','multiples','histogram','funnel','kpi','gauge','bullet','dumbbell','treemap','sankey','waterfall','boxplot'].includes(S.kind))return [];return (m.y||[]).map(i=>S.table.columns[i]);}
-function drawStyleTab(r){const st=r.style,cat=st.t.cat;$('styles').querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',String(c.dataset.style===S.style)));
+function drawStyleTab(r){const st=r.style,cat=st.t.cat;$('styles').value=S.style;
  $('mode').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===S.mode)));
  const base=DVStyle(S.style);$('modeHint').textContent=st.derived?`${base.name} is ${base.t.dark?'dark':'light'} by design. The ${st.t.dark?'dark':'light'} version is computed: surfaces swapped, every hue snapped into the ${st.t.dark?'dark':'light'} lightness band, then checked below.`:S.mode!=='auto'&&st.id!==base.id?`${base.name}'s ${st.t.dark?'dark':'light'} twin is ${st.name}.`:`${base.name} is a ${base.t.dark?'dark':'light'} style.`;
  $('styleBlurb').textContent=base.blurb;

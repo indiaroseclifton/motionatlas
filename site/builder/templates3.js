@@ -22,25 +22,22 @@ const photo=(B,img,alt)=>{B[0].vals.img=img;B[0].vals.alt=alt};
 const work=(B,after,vals,to)=>{const n=rowsOf(vals.items).length,links={};for(let k=0;k<=n;k++)links[k]=to;B.splice(after,0,{id:'work-grid',vals,links})};
 const P='photos/';
 const R={
- portfolio(B){hero(B,'hero-big',{note:'Lisbon · Independent',img:P+'workspace-laptop-and-books.webp',alt:'A laptop and a stack of books on a desk'});
-  work(B,2,{kicker:'Selected work',heading:'Recent projects.',button:'All work',items:'shelf/amber.webp | Larder & Co | Identity and packaging\nshelf/sumi.webp | Tinta | Website\nshelf/lighthouse.webp | Farol | Brand refresh\nshelf/bloom.webp | Flor | Illustration system'},'page:work')},
+ portfolio(B){hero(B,'hero-big',{note:'Lisbon · Independent',img:P+'workspace-laptop-and-books.webp',alt:'A laptop on a wooden desk beside a stack of books'});
+  work(B,2,{kicker:'Selected work',heading:'Recent projects.',button:'All work',items:P+'bakery-fresh-bread-and-butter.webp | Larder & Co | Identity and packaging\n'+P+'tech-lines-of-code.webp | Tinta | Website\n'+P+'cafe-cafe-with-light-bulbs-hanging.webp | Farol | Brand refresh\n'+P+'workspace-feel-better.webp | Flor | Illustration system'},'page:work')},
  agency(B){typeHero(B);
   work(B,2,{kicker:'Selected work',heading:'Products in the wild.',button:'All work',items:P+'workspace-laptop-on-a-desk.webp | Kettle & Co | Ordering app\n'+P+'tech-statistics-on-a-laptop.webp | Ember | Analytics dashboard\n'+P+'office-on-the-shelf.webp | Olive Row | Brand and website\n'+P+'workspace-desktop-after-work.webp | Brine Bros | Design system'},'page:work');
   cardsToList(B)},
  saas(B){typeHero(B)},
- restaurant(B){hero(B,'hero-big',{note:'Hackney · Wednesday to Sunday',img:P+'food-bread-on-the-table.webp',alt:'Bread and plates on a shared table'})},
- photographer(B){hero(B,'hero-big',{note:'Documentary and portrait',img:P+'nature-mountain-lake-in-the-summer.webp',alt:'A mountain lake in summer light'})},
- event(B){const i=at(B,'x-film');if(i>=0)B[i]={id:'image-full',vals:{img:P+'event-your-stage.webp',alt:'A lit stage seen from the crowd',caption:'Last year in the old mill.'}}},
- nonprofit(B){photo(B,P+'food-bread-on-the-table.webp','Bread and plates on a shared table');cardsToList(B)},
- course(B){hero(B,'hero-image',{img:P+'hands-pottery-wheel.webp',alt:'Hands shaping clay on a pottery wheel'})},
+ restaurant(B){hero(B,'hero-big',{note:'Hackney · East London',img:P+'cafe-istanbul-turkey.webp',alt:'Round wooden tables and leather banquettes in a dimly lit dining room'})},
+ photographer(B){hero(B,'hero-big',{note:'Documentary and portrait',img:P+'nature-colorful-landscape-with-a-snow.webp',alt:'A snow-capped mountain above red meadows and dark pines'})},
+ nonprofit(B){photo(B,P+'food-bread-on-the-table.webp','A loaf of bread in a wire basket on a red cloth');cardsToList(B)},
  app(B){photo(B,P+'tech-statistics-on-a-laptop.webp','Spending charts on a laptop screen')},
  'lp-app'(B){photo(B,P+'tech-statistics-on-a-laptop.webp','Spending charts on a laptop screen')},
  coffee(B){cardsToList(B)},
- fitness(B){const to=(B[0].links||{})[0];hero(B,'hero-big',{note:'Bristol · Classes of eight',img:P+'fitness-starting-line.webp',alt:'Runners set at a starting line'});cardsToSplit(B,B[0].vals.b1||'Book a free class',to)},
+ fitness(B){const to=(B[0].links||{})[0];hero(B,'hero-big',{note:'Bristol · Classes of eight',img:P+'fitness-starting-line.webp',alt:'Lane numbers painted on a red running track at the start line'});cardsToSplit(B,B[0].vals.b1||'Book a free class',to)},
  law(B){cardsToList(B)},
- podcast(B){hero(B,'hero-image',{img:P+'podcast-microphone.webp',alt:'A studio microphone'})},
  conference(B){typeHero(B)},
- 'lp-launch'(B){const i=at(B,'hero-film');if(i>=0){const h=B[i],v=h.vals;B[i]={id:'hero-type',vals:clean({kicker:v.kicker,heading:v.heading,intro:v.intro,b1:v.b1,b2:v.b2,facts:'3 | new themes in this release\n38 min | saved on each call write-up\n4.8 / 5 | average rating'}),links:h.links}}}
+ 'lp-launch'(B){const i=at(B,'hero-image');if(i>=0){const h=B[i],v=h.vals;B[i]={id:'hero-type',vals:clean({kicker:v.kicker,heading:v.heading,intro:v.intro,b1:v.b1,b2:v.b2,facts:'3 | new themes in this release\n38 min | saved on each call write-up\n4.8 / 5 | average rating'}),links:h.links}}}
 };
 /* ---- inner pages ('template/page'): the same idea, one page at a time ---- */
 const stepsToList=B=>{const i=at(B,'steps');if(i>=0&&B[i].vals.steps){const v=B[i].vals;B[i]={id:'list-rows',vals:clean({kicker:v.kicker,heading:v.heading,items:v.steps})}}};
@@ -50,8 +47,8 @@ const I={
  'portfolio/work'(B){galleryToWork(B,'Start a project','page:contact')},
  'portfolio/about'(B){picture(B,'workspace-laptop-on-a-desk.webp','A laptop on a plain desk')},
  'agency/services'(B){stepsToList(B)},
- 'restaurant/story'(B){picture(B,'food-handmade-pasta-noodles.webp','Handmade pasta on a floured board')},
- 'photographer/about'(B){picture(B,'nature-alpine-landscape.webp','An alpine valley under cloud')},
+ 'restaurant/story'(B){picture(B,'bakery-fresh-bread-and-butter.webp','A crusty loaf on a linen cloth beside a dish of butter')},
+ 'photographer/about'(B){picture(B,'nature-alpine-landscape.webp','Snow-dusted alpine peaks under a clear blue sky')},
  'blog/about'(B){picture(B,'drink-coffee-flowers-and-books.webp','Coffee, flowers and books on a table')},
  'nonprofit/involved'(B){stepsToList(B)},
  'course/curriculum'(B){cardsToList(B)},
@@ -64,6 +61,11 @@ const I={
  'realestate/selling'(B){cardsToList(B)},
  'podcast/about'(B){picture(B,'podcast-elegant-steel-microphone.webp','A steel studio microphone')}
 };
+/* ---- every template wears one of the nine looks (Design panel), chosen to suit its subject; the theme-kit styles stay under "More styles" ---- */
+const LOOK={portfolio:'studio','lp-webinar':'studio',nonprofit:'clean',app:'clean','lp-app':'clean',docs:'clean',restaurant:'paper',studio:'paper','lp-soon':'paper',
+ blog:'editorial',law:'editorial',realestate:'editorial',shop:'soft',course:'soft','lp-bio':'soft',coffee:'garden',wedding:'garden',
+ agency:'bold',event:'bold',fitness:'bold',conference:'bold',photographer:'noir',podcast:'noir','lp-launch':'noir',saas:'signal','lp-waitlist':'signal'};
+PB.templates.forEach(t=>{const look=LOOK[t.id];if(!look)return;t.style=look;const make=t.make;t.make=()=>{const s=make();s.style=look;return s}});
 PB.templates.forEach(t=>{const fn=R[t.id],inner=Object.keys(I).some(k=>k.indexOf(t.id+'/')===0);if(!fn&&!inner)return;const make=t.make;
  t.make=()=>{const s=make();
   if(fn){const p=s.pages.find(x=>x.id===s.home)||s.pages[0];try{fn(p.blocks,s)}catch(e){console.warn('template remix failed for',t.id,e)}}

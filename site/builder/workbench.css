@@ -1,6 +1,6 @@
 /* Site builder workbench (loaded after builder.css and ux.css).
-   One top bar. On a wide screen: a rail, one panel at a time beside it, the page, and an edit panel that appears for the
-   selected section. On a phone the page fills the screen and the same panels are sheets (see ux.css).
+   One top bar. On a wide screen: the page, and one panel on its right (Page, Design, Site or AI; the selected section's
+   settings take its place while you edit it). On a phone the page fills the screen and the same panels are sheets (see ux.css).
    body[data-pane] = lib | page | preview picks the panel; body[data-insp] is set while a section is being edited. */
 
 /* ---------- top bar ---------- */
@@ -33,44 +33,38 @@ header.wbTop{display:flex;align-items:center;gap:8px 12px;flex-wrap:nowrap;paddi
 .wbAdd svg{width:16px;height:16px}
 
 /* ---------- the edit panel ---------- */
-.rail,.insp{display:none}
+.insp{display:none}
 .insp .ihead{padding:12px}
 .insp .scroll{padding:12px}
 .insp .bb{padding:0}
 
-/* ---------- wide screens ---------- */
+/* ---------- wide screens: the page, and one panel on its right ---------- */
 @media (min-width:981px){
- .app{grid-template-columns:68px auto minmax(0,1fr) auto;grid-template-rows:auto minmax(0,1fr)}
+ .app{grid-template-columns:minmax(0,1fr) 348px;grid-template-rows:auto minmax(0,1fr)}
  header.wbTop{grid-column:1/-1}
- .rail{grid-column:1;grid-row:2;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 0;background:var(--panel);border-right:1px solid var(--hair);overflow-y:auto;scrollbar-width:none}
- .rail button{width:56px;min-height:54px;display:grid;justify-items:center;align-content:center;gap:4px;padding:6px 0;border:0;border-radius:12px;background:none;color:var(--mute);font:500 11px/1 Inter,system-ui,sans-serif;cursor:pointer}
- .rail button:hover{background:var(--soft);color:var(--ink)}
- .rail button[aria-pressed=true]{background:var(--sel);color:var(--ink);font-weight:600}
- .rail button:focus-visible{outline:2px solid var(--ink);outline-offset:-2px}
- .rail .railAdd{margin-bottom:6px;color:var(--ink)}
- .rail .railAdd i{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--accent);color:var(--accent-ink)}
- .rail .railAdd:hover{background:none}
- .rail .railAdd:hover i{transform:scale(1.05)}
- .lib,.right{grid-column:2;grid-row:2;width:328px;display:none;border:0;border-right:1px solid var(--hair)}
- body[data-pane=lib] .lib,body[data-pane=page] .right{display:flex}
- .stage{grid-column:3;grid-row:2}
- .insp{grid-column:4;grid-row:2;width:340px;display:flex;flex-direction:column;min-height:0;background:var(--panel);border-left:1px solid var(--hair)}
+ .stage{grid-column:1;grid-row:2}
+ .lib,.right,.insp{grid-column:2;grid-row:2;width:auto;min-width:0;border:0;border-left:1px solid var(--hair)}
+ .lib{display:none}
+ .right{display:flex}
+ body[data-pane=lib] .right{display:none}
+ body[data-pane=lib] .lib{display:flex}
+ .insp{display:flex;flex-direction:column;min-height:0;background:var(--panel)}
  .insp[hidden]{display:none}
- /* the rail replaces the tab row */
- #rtabs{display:none}
- .right .phead,.lib .phead{padding:12px 12px 10px}
+ /* editing a section takes the panel's place; Done gives it back */
+ body[data-insp] .lib,body[data-insp] .right{display:none!important}
+ /* Preview: nothing but the page */
+ body[data-mode=view] .app{grid-template-columns:minmax(0,1fr)}
+ body[data-mode=view] .lib,body[data-mode=view] .right,body[data-mode=view] .insp{display:none!important}
+ body[data-mode=view] #railAdd{display:none}
+ .right .ptitle{display:none}
+ .right .phead{padding:0 12px;border-bottom:1px solid var(--hair)}
+ .lib .phead{padding:12px 12px 10px}
  /* the page sits on a plain surface */
  .frameWrap{background:#ECEDF1;padding:20px}
  .frameWrap iframe{border-radius:10px;box-shadow:0 1px 2px rgba(16,24,40,.06),0 14px 34px -14px rgba(16,24,40,.22)}
  /* the line under the page says where you are */
  .stage .bar{order:3;border-top:1px solid var(--hair);border-bottom:0;background:var(--panel);padding:4px 14px;min-height:28px}
  .stage .bar .status{margin:0;text-align:left;flex:1 1 auto;font-size:12px}
-}
-/* under 1600 wide there is room for one panel beside the page: editing a section drills into the same place as the outline,
-   and Done goes back. From 1600 the edit panel has its own column on the right. */
-@media (min-width:981px) and (max-width:1599px){
- body[data-insp] .lib,body[data-insp] .right{display:none!important}
- .insp{grid-column:2;width:328px;border-left:0;border-right:1px solid var(--hair)}
 }
 /* the scaled page always fits its frame, so the frame itself never scrolls */
 .frameWrap.zoomed{overflow:hidden;overflow:clip}
@@ -110,4 +104,4 @@ header.wbTop{display:flex;align-items:center;gap:8px 12px;flex-wrap:nowrap;paddi
  .insp{position:fixed;left:0;right:0;bottom:calc(56px + env(safe-area-inset-bottom));height:min(74dvh,640px);z-index:72;flex-direction:column;min-height:0;background:var(--panel);border-radius:18px 18px 0 0;box-shadow:0 -18px 50px -18px rgba(20,22,34,.45)}
  body[data-inspsheet] .insp:not([hidden]){display:flex}
 }
-@media (prefers-reduced-motion:reduce){.rail .railAdd:hover i{transform:none}#ol .blk .ib{transition:none}}
+@media (prefers-reduced-motion:reduce){#ol .blk .ib{transition:none}}

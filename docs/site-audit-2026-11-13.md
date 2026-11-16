@@ -12,6 +12,38 @@ states, the serverless API, and the project's own Playwright gate.
 heading order, missing alt text, sideways scroll, text under 11 px, fonts, corner radii and page background. Console
 errors were attributed per page. Suspicious readings were checked by eye before being reported.
 
+## Thirteenth pass: everything measured against Interactions (15 November)
+
+The owner's verdict on the earlier passes: "app templates have little diversity", "the menu/filter selection on all pages [is] cluttered and not clear", the site builder "should be started from scratch" ("the flame motion has nothing to do with recipes, the left menu is too busy, the styles make no sense"), "same with brand kit generator", and "the only section I really like is the interactions", which "feel clean, modern, easier, with better graphics that aren't random ones I generated ages ago".
+
+So `interactions.html` became the reference for every page: a serif-italic title with one sentence, one search box and one dropdown, plain cards, one settings panel beside the thing being edited, and no old generated artwork as demo content.
+
+| Area | Before | After |
+|---|---|---|
+| Filters, every gallery | Rows of pills, segmented controls, a wall of 27 family cards, a left rail of 11 collections | One row: search and dropdowns with counts, one count line. Changed on App templates, Theme kits, Motion graphics, Icons, Chart styles, the chart, diagram and flowchart studios, Tools, and three Atlas sections (catalogue, backgrounds, icons) |
+| App templates | 22 screens, nearly all one product in one sidebar shell; 2 phone screens | 35 screens: 13 new products with their own shells (calendar, support desk, document editor, video call, issue tracker, report, banking, travel search with a map, till, four phone apps) and 7 existing screens given new shells. 7 phone or tablet screens |
+| Site builder start | A modal over the whole site in its own type style; ways-to-start tiles; pill filters | A page under the Atlas bar in the Interactions pattern: title, one search box, one dropdown, the same cards. Other ways to start are one sentence of links |
+| Site builder editor | A left rail of six buttons plus a panel beside it; zoom buttons | No left menu. The page, and one panel on its right with three plain tabs (Page, Design, Site) and AI. A section's settings take the panel's place while it is edited. Library, checks, history and shortcuts are in one menu |
+| Styles | One flat list of 144 styles from four sources ("Kitchen noir", "Matrix", "Synthwave") | Nine named looks drawn as tiles: Studio, Clean, Paper, Editorial, Soft, Garden, Bold, Evening, Midnight (five are new). The other 140 styles are folded under "More styles" with one source dropdown |
+| Template styles | 18 of 26 templates wore theme-kit styles (a pottery course in a code font) | All 26 use one of the nine looks |
+| Pictures | About 95 uses of old generated artwork and films in section defaults and templates; a smoke film under "Recipes filmed like still lifes" | Photographs only, chosen to match the words (207 references, none missing). No template uses a film. Film sections stay in the library, listed last, with words that describe their film. Two blog posts were rewritten to match their photographs |
+| Brand kit generator | A form with 13 feel-word pills, 5 tabs with more tabs inside, 248 buttons; palettes with clashing accents; invented slogans and filler in the mock-ups | One column: name, description, one Feel dropdown, Shuffle; then logo, colours, fonts, in use and download. 31 buttons visible before anything is opened. Accents are relatives of the primary (192 generated kits surveyed: 144 had a saturated clashing pair before, none after). No slogans: previews use the brand's own name and description |
+
+Checked by script in Chrome: smoke test all clear on 38 pages at 1280 and 390; all 94 template pages for script errors, sideways scroll and broken images at both widths; the builder's main flows (first visit, pick a template, add a section, change the look, more styles, your sites, brand kit and describe views, blank site) at 1440 and 390; each changed filter driven from a script with the item count checked against the option's count; the brand kit's 36-step walkthrough. All 94 template thumbnails regenerated.
+
+Parts of this pass were built by helper agents (filters, app screens, the picture swap, the brand kit page) and reviewed by eye afterwards from fresh screenshots.
+
+Still open or lost:
+- Not looked at in Safari, Firefox or on a real phone. Native dropdown lists were not seen opened (headless Chrome does not draw them).
+- The manual zoom buttons are gone from the builder's bar; the page fits its frame by itself.
+- With native dropdowns the colour dots on app-template colour choices and the sample icon on each icon family are gone.
+- The app home and app landing templates lost their App Store and Google Play badges, because only the film section had them.
+- The shop template now sells candles and tableware and the creative studio template is a ceramics studio, because no photograph of prints or paper sculpture exists.
+- `tools/brand-generator-test.mjs`, `tools/site-builder-test.mjs` and `tools/dataviz-test.mjs` describe the old pages and were not run (Playwright is not installed).
+- The zip's guidelines page still has a "Voice" heading (`kits/brand.js` is shared and was left alone).
+- Seven app screens still use the original sidebar shell. The issue tracker opens with its command palette showing, so its thumbnail is dimmed.
+- The style catalogue itself still shows the Atlas's generated style pictures; that is the catalogue's subject and was not touched.
+
 ## Twelfth pass: the templates' inner pages (15 November)
 
 The 68 inner pages (services, pricing, contact, about and so on) were listed and eight were rendered top to bottom. 65 of the 68 open with the page heading section and 40 close with the call-to-action band, so those two and the sections between them were redesigned once, in `tools/sections_src.py`; every page that uses them changes with them.

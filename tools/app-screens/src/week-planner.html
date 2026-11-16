@@ -1,0 +1,91 @@
+<!--META {"o":9,"t":"Calendar, week view","cat":"Work & projects","tone":"light","added":"2026-11","d":"A week calendar with a time grid: events sized by their length, overlaps side by side, a line at the current time, calendars you can hide, a mini month and a quick form to add an event.","how":"Every event is a start and an end in hours. Its top and height are those numbers times the height of an hour, and events that overlap are put in columns so they share the day. The mini month and the header are computed from one date, so the arrows move both.","use":"Scheduling tools, booking and rota screens, meeting planners, timetable views inside any product.","p":"Build a week calendar as one HTML file with no libraries for a product called Tempo. Shell: a single top bar with the logo, a Today button, previous and next arrows, the date range as the title, a Day / Week switch, a theme switch and a New event button; no sidebar navigation. Left column (220px): a mini month with the visible week tinted and today circled, and a My calendars list of four checkboxes with coloured dots that show or hide their events. Main: a header row of seven days (today's number in a filled circle), an all-day row, then a time grid from 08:00 to 20:00 with hour lines and a 56px time gutter. Events are absolutely positioned buttons (top and height from start and end times), tinted by calendar with a 3px left rule; overlapping events sit side by side. Draw a line with a dot at the current time on today's column. Clicking an event opens a small details card with a Delete button; clicking an empty slot or New event opens a short form (title, day, start, length, calendar) that adds the event. Day view shows one column. Under 900px hide the left column; under 700px let the grid scroll sideways inside its own frame. Colours are CSS variables with a dark theme."}-->
+<style>/*CORE*/
+body{display:flex;flex-direction:column}
+.bar{display:flex;align-items:center;gap:8px;padding:0 18px;min-height:58px;border-bottom:1px solid var(--line);background:var(--panel);flex:none}
+.brand{display:flex;align-items:center;gap:9px;font-weight:700;font-size:15px;margin-right:14px}.brand span{display:grid;place-items:center;width:28px;height:28px;border-radius:var(--rb);background:var(--ac);color:var(--ac-ink)}
+.bar h1{font-size:17px;margin-left:8px;white-space:nowrap}
+.lay{flex:1;min-height:0;display:grid;grid-template-columns:232px minmax(0,1fr)}
+.aside{padding:16px 14px;border-right:1px solid var(--line);overflow:auto;display:grid;gap:22px;align-content:start}
+.mini{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;font-size:12px;row-gap:2px}.mini b{color:var(--mute);font-weight:600;padding-bottom:4px}
+.mini span{height:26px;display:grid;place-items:center;font-variant-numeric:tabular-nums}.mini .o{color:var(--mute);opacity:.55}.mini .w{background:var(--soft)}.mini .w.s{border-radius:99px 0 0 99px}.mini .w.e{border-radius:0 99px 99px 0}
+.mini .t i{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--ac);color:var(--ac-ink);font-style:normal;font-weight:700}
+.cals{display:grid;gap:2px}.cals label{display:flex;align-items:center;gap:9px;min-height:32px;padding:0 6px;border-radius:var(--rb);cursor:pointer}.cals label:hover{background:var(--soft)}
+.cals input{appearance:none;-webkit-appearance:none;width:16px;height:16px;margin:0;border-radius:5px;border:2px solid var(--c);display:grid;place-items:center}.cals input:checked{background:var(--c)}.cals input:checked::after{content:"";width:8px;height:4px;border:solid var(--panel);border-width:0 0 2px 2px;transform:rotate(-45deg) translateY(-1px)}
+.cals small{margin-left:auto;color:var(--mute)}
+.next{padding:12px;border-radius:var(--r);background:var(--soft);display:grid;gap:2px;font-size:13px}.next small{color:var(--mute)}
+.grid{min-width:0;min-height:0;overflow:auto;background:var(--panel);--h:max(46px,calc((100vh - 166px)/12))}
+.wk{display:grid;grid-template-columns:56px repeat(var(--n),minmax(0,1fr));min-width:calc(56px + var(--n)*96px)}
+.dh{position:sticky;top:0;z-index:3;background:var(--panel);padding:10px 0 8px;text-align:center;border-bottom:1px solid var(--line);border-left:1px solid var(--line);font-size:12px;color:var(--mute);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.dh b{display:grid;place-items:center;width:34px;height:34px;margin:3px auto 0;border-radius:50%;font-size:19px;letter-spacing:0;color:var(--ink);font-variant-numeric:tabular-nums}.dh.t b{background:var(--ac);color:var(--ac-ink)}
+.dh.g{border-left:0}.ad{min-height:30px;padding:3px;border-left:1px solid var(--line);border-bottom:1px solid var(--line);display:grid;gap:3px;align-content:start}.ad.g{border-left:0;font-size:11px;color:var(--mute);place-items:center end;padding-right:8px}
+.gut{position:relative;height:calc(var(--h)*12)}.gut span{position:absolute;right:8px;transform:translateY(-50%);font-size:11px;color:var(--mute);font-variant-numeric:tabular-nums}
+.col{position:relative;height:calc(var(--h)*12);border-left:1px solid var(--line);background:repeating-linear-gradient(var(--line) 0 1px,transparent 1px var(--h));cursor:cell}.col.t{background-color:var(--bg)}
+.ev{position:absolute;display:flex;flex-direction:column;justify-content:flex-start;align-items:stretch;text-align:left;border:0;border-left:3px solid var(--c);border-radius:var(--rb);background:var(--cs);color:var(--ink);padding:3px 6px;font-size:12px;line-height:1.3;overflow:hidden;box-shadow:0 0 0 1px var(--panel)}
+.ev b{display:block;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ev small{color:var(--mute);font-variant-numeric:tabular-nums}.ev:hover,.ev[aria-expanded=true]{filter:brightness(.96);z-index:2}html[data-theme=dark] .ev:hover{filter:brightness(1.25)}
+.ad .ev{position:static;min-height:22px;width:100%}.ev.sm{padding-block:1px;flex-direction:row;gap:6px;align-items:center}
+.c0{--c:var(--ac);--cs:var(--ac-soft)}.c1{--c:var(--ok);--cs:var(--ok-soft)}.c2{--c:var(--warn);--cs:var(--warn-soft)}.c3{--c:var(--bad);--cs:var(--bad-soft)}
+.now{position:absolute;left:0;right:0;height:2px;background:var(--bad);z-index:2;pointer-events:none}.now::before{content:"";position:absolute;left:-5px;top:-4px;width:10px;height:10px;border-radius:50%;background:var(--bad)}
+.pop{position:fixed;z-index:20;width:280px;max-width:calc(100vw - 24px);padding:14px;display:grid;gap:10px}.pop h2{font-size:16px}.pop dl{margin:0;display:grid;grid-template-columns:20px 1fr;gap:6px 8px;font-size:13px;color:var(--mute);align-items:center}.pop dd{margin:0;color:var(--ink)}.pop dt .ic{width:16px;height:16px}
+.pop label{display:grid;gap:4px;font-size:12.5px;font-weight:600}.pop .in{width:100%}.f2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:900px){.lay{grid-template-columns:1fr}.aside{display:none}.bar h1{font-size:15px}}
+@media(max-width:700px){.bar{flex-wrap:wrap;padding:8px 12px;gap:6px}.brand b,.bar .new span,.bar #theme{display:none}.brand{margin-right:2px}.bar h1{order:9;flex:1 0 100%;margin:0}}
+</style>
+<body>
+<header class="bar"><div class="brand"><span><!--IC cal--></span><b>Tempo</b></div>
+ <button class="btn" id="today">Today</button><button class="btn sq ghost" id="prev" aria-label="Previous week"><!--IC left--></button><button class="btn sq ghost" id="nxt" aria-label="Next week"><!--IC right--></button>
+ <h1 id="title" aria-live="polite"></h1><span class="sp"></span>
+ <div class="seg" role="group" aria-label="View"><button data-v="1" aria-pressed="false">Day</button><button data-v="7" aria-pressed="true">Week</button></div>
+ <button class="btn sq ghost" id="theme" aria-pressed="false" aria-label="Switch to dark theme"><!--IC moon--></button>
+ <button class="btn pri new" id="new"><!--IC plus--><span>New event</span></button></header>
+<div class="lay"><aside class="aside" aria-label="Calendars">
+ <section><div class="row" style="margin-bottom:8px"><h2 id="mm"></h2></div><div class="mini" id="mini" aria-hidden="true"></div></section>
+ <section><h3 class="mute" style="margin:0 6px 6px;text-transform:uppercase;letter-spacing:.07em;font-size:11.5px">My calendars</h3><div class="cals" id="cals"></div></section>
+ <section class="next"><small>Up next</small><b>Pricing sync</b><span class="mute">11:00 to 12:00 · Room Fen</span></section></aside>
+<main class="grid" id="grid" aria-label="Week"></main></div>
+<div class="card pop" id="pop" hidden></div>
+<script>/*BASEJS*/
+/* DATA: day 0 is Monday. Start and end are hours, so 9.5 is 09:30. cal is an index into CALS. */
+const CALS=['Work','Team','Personal','Travel'],H0=8,HOURS=12,TODAY=new Date(2026,10,12),NOW=10.67;
+let EVENTS=[[0,10,11.5,'Roadmap review',0,'Room Fen'],[0,14,15,'Design critique',1,'Studio'],[1,11,12,'Interview: product designer',0,'Video call'],[1,13,14,'Lunch with Priya',2,'Canal Street Kitchen'],[1,16,17,'Dentist',2,'Park Road Dental'],[2,10,12.5,'Workshop: onboarding flow',0,'Room Tarn'],[2,15,15.5,'1:1 with Tomás',0,'Video call'],[3,11,12,'Pricing sync',0,'Room Fen'],[3,12.5,13.5,'Gym',2,'The Yard'],[3,14,16,'Focus time',0,'No meetings'],[3,16.5,17.25,'Launch checklist',1,'Room Fen'],[4,8.25,10.5,'Train to Manchester',3,'Platform 4, coach C'],[4,11,15,'Client day, Halden Freight',0,'Halden Freight, Deansgate'],[4,17.5,19.75,'Train home',3,'Manchester Piccadilly'],[5,10,11,'Parkrun',2,'Roundhay Park'],[6,13,15,'Sunday roast at Mum’s',2,'Ilkley']].map(([d,s,e,t,c,p])=>({d,s,e,t,c,p,w:0}));
+const ALLDAY=[[0,'Sprint 42 starts',1],[4,'Invoice run',0]];
+let off=0,view=innerWidth<700?1:7,day=3,hidden=new Set(),uid=0;EVENTS.forEach(e=>e.id=uid++);
+const DN=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const monday=()=>new Date(2026,10,9+off*7),dateOf=i=>{const m=monday();return new Date(m.getFullYear(),m.getMonth(),m.getDate()+i)};
+const hm=h=>String(Math.floor(h)).padStart(2,'0')+':'+String(Math.round(h%1*60)).padStart(2,'0'),same=(a,b)=>a.toDateString()===b.toDateString();
+/* The daily stand-up repeats on weekdays in every week; the rest belong to the week of 9 November. */
+const eventsFor=i=>[...(i<5?[{id:'s'+i,d:i,s:9.5,e:10,t:'Stand-up',c:1,p:'Video call',rep:1}]:[]),...EVENTS.filter(e=>e.d===i&&e.w===off)].filter(e=>!hidden.has(e.c)).sort((a,b)=>a.s-b.s||b.e-a.e);
+/* Overlaps: walk the day in order, give each event the first free column, and size a cluster by its widest point. */
+function place(list){let cols=[],group=[],end=0;const flush=()=>{group.forEach(e=>e.n=cols.length);cols=[];group=[]};
+ list.forEach(e=>{if(group.length&&e.s>=end)flush();let k=cols.findIndex(t=>t<=e.s);if(k<0)k=cols.length;cols[k]=e.e;e.k=k;group.push(e);end=Math.max(end,e.e)});flush();return list}
+function draw(){const days=view===7?[0,1,2,3,4,5,6]:[day],a=dateOf(days[0]),b=dateOf(days[days.length-1]);
+ $('#title').textContent=view===1?DN[day]+' '+a.getDate()+' '+MN[a.getMonth()]+' '+a.getFullYear():a.getDate()+(a.getMonth()!==b.getMonth()?' '+MN[a.getMonth()]:'')+' – '+b.getDate()+' '+MN[b.getMonth()]+' '+b.getFullYear();
+ $('#prev').setAttribute('aria-label','Previous '+(view===7?'week':'day'));$('#nxt').setAttribute('aria-label','Next '+(view===7?'week':'day'));
+ const g=$('#grid');g.style.setProperty('--n',days.length);
+ let h='<div class="dh g"></div>'+days.map(i=>{const d=dateOf(i);return `<div class="dh ${same(d,TODAY)?'t':''}">${DN[i]}<b>${d.getDate()}</b></div>`}).join('');
+ h+='<div class="ad g">All day</div>'+days.map(i=>`<div class="ad">${off?'':ALLDAY.filter(x=>x[0]===i&&!hidden.has(x[2])).map(x=>`<span class="ev c${x[2]}"><b>${x[1]}</b></span>`).join('')}</div>`).join('');
+ h+='<div class="gut" aria-hidden="true">'+Array.from({length:HOURS-1},(_,k)=>`<span style="top:calc(var(--h)*${k+1})">${hm(H0+k+1)}</span>`).join('')+'</div>';
+ h+=days.map(i=>{const d=dateOf(i),t=same(d,TODAY);return `<div class="col ${t?'t':''}" data-d="${i}" role="group" aria-label="${DN[i]} ${d.getDate()} ${MN[d.getMonth()]}">${place(eventsFor(i)).map(e=>`<button class="ev c${e.c}${e.e-e.s<.75?' sm':''}" data-id="${e.id}" aria-expanded="false" style="top:calc(var(--h)*${e.s-H0} + 1px);height:calc(var(--h)*${e.e-e.s} - 2px);left:calc(${e.k/e.n*100}% + 2px);width:calc(${100/e.n}% - 5px)"><b>${esc(e.t)}</b>${e.e-e.s>=.75?`<small>${hm(e.s)} – ${hm(e.e)}</small>`:''}</button>`).join('')}${t?`<div class="now" style="top:calc(var(--h)*${NOW-H0})" role="img" aria-label="Now, ${hm(NOW)}"></div>`:''}</div>`}).join('');
+ g.innerHTML='<div class="wk">'+h+'</div>';mini()}
+function mini(){const m=monday(),y=m.getFullYear(),mo=m.getMonth(),first=new Date(y,mo,1),lead=(first.getDay()+6)%7;$('#mm').textContent=MN[mo]+' '+y;
+ let h=DN.map(d=>`<b>${d[0]}</b>`).join('');for(let k=0;k<42;k++){const d=new Date(y,mo,1-lead+k),inW=d>=m&&d<=dateOf(6),wd=(d.getDay()+6)%7;if(k>=35&&d.getMonth()!==mo&&wd===0)break;
+  h+=`<span class="${d.getMonth()!==mo?'o ':''}${inW?'w '+(wd===0?'s ':wd===6?'e ':''):''}${same(d,TODAY)?'t':''}">${same(d,TODAY)?'<i>'+d.getDate()+'</i>':d.getDate()}</span>`}$('#mini').innerHTML=h}
+$('#cals').innerHTML=CALS.map((c,i)=>`<label class="c${i}"><input type="checkbox" checked data-c="${i}">${c}<small class="num">${EVENTS.filter(e=>e.c===i).length+(i===1?5:0)}</small></label>`).join('');
+$('#cals').onchange=e=>{const c=+e.target.dataset.c;e.target.checked?hidden.delete(c):hidden.add(c);draw()};
+$('#prev').onclick=()=>{if(view===7)off--;else if(--day<0){day=6;off--}draw()};$('#nxt').onclick=()=>{if(view===7)off++;else if(++day>6){day=0;off++}draw()};
+$('#today').onclick=()=>{off=0;day=3;draw();toast('Back to this week')};
+$$('.seg button').forEach(b=>b.onclick=()=>{view=+b.dataset.v;$$('.seg button').forEach(x=>x.setAttribute('aria-pressed',x===b));draw()});
+/* Popover: event details, or the form for a new event */
+const pop=$('#pop');let opener=null;
+function show(html,x,y,from){pop.innerHTML=html;pop.hidden=false;opener=from;const w=pop.offsetWidth,h=pop.offsetHeight;pop.style.left=Math.max(12,Math.min(innerWidth-w-12,x))+'px';pop.style.top=Math.max(12,Math.min(innerHeight-h-12,y))+'px';(pop.querySelector('input,button')||pop).focus()}
+function hide(){if(pop.hidden)return;pop.hidden=true;$$('.ev[aria-expanded=true]').forEach(b=>b.setAttribute('aria-expanded',false));opener&&document.contains(opener)&&opener.focus();opener=null}
+function form(d,s,x,y,from){show(`<form id="nf" style="display:grid;gap:10px"><h2>New event</h2><label>Title<input class="in" name="t" placeholder="Add a title" required></label><div class="f2"><label>Day<select class="in" name="d">${DN.map((n,i)=>`<option value="${i}" ${i===d?'selected':''}>${n} ${dateOf(i).getDate()}</option>`).join('')}</select></label><label>Starts<select class="in" name="s">${Array.from({length:23},(_,k)=>H0+k/2).map(v=>`<option value="${v}" ${v===s?'selected':''}>${hm(v)}</option>`).join('')}</select></label></div><div class="f2"><label>Length<select class="in" name="l"><option value=".5">30 minutes</option><option value="1" selected>1 hour</option><option value="1.5">1 hour 30</option><option value="2">2 hours</option></select></label><label>Calendar<select class="in" name="c">${CALS.map((c,i)=>`<option value="${i}">${c}</option>`).join('')}</select></label></div><div class="row"><span class="sp"></span><button class="btn" type="button" data-x>Cancel</button><button class="btn pri">Add event</button></div></form>`,x,y,from)}
+$('#grid').onclick=e=>{const b=e.target.closest('button.ev'),c=e.target.closest('.col');if(b){const id=b.dataset.id,ev=EVENTS.find(v=>v.id==id)||eventsFor(+c.dataset.d).find(v=>v.id==id),r=b.getBoundingClientRect(),d=dateOf(ev.d);hide();b.setAttribute('aria-expanded',true);
+  show(`<div class="row"><span class="badge c${ev.c}" style="background:var(--cs);color:var(--c)"><i></i>${CALS[ev.c]}</span><span class="sp"></span><button class="btn sq ghost" data-x aria-label="Close"><!--IC x--></button></div><h2>${esc(ev.t)}</h2><dl><dt><!--IC clock--></dt><dd>${DN[ev.d]} ${d.getDate()} ${MN[d.getMonth()]}, ${hm(ev.s)} to ${hm(ev.e)}</dd><dt><!--IC pin--></dt><dd>${esc(ev.p)}</dd>${ev.rep?'<dt><!--IC swap--></dt><dd>Repeats every weekday</dd>':''}</dl>${ev.rep?'':`<div class="row"><span class="sp"></span><button class="btn" data-del="${ev.id}"><!--IC trash-->Delete</button></div>`}`,r.right+8,r.top,b)}
+ else if(c){const r=c.getBoundingClientRect(),s=Math.min(H0+HOURS-1,H0+Math.floor((e.clientY-r.top)/r.height*HOURS*2)/2);hide();form(+c.dataset.d,s,e.clientX+8,e.clientY-40,null)}};
+$('#new').onclick=e=>{const r=e.currentTarget.getBoundingClientRect();hide();form(view===1?day:3,15,r.right-280,r.bottom+8,e.currentTarget)};
+pop.onclick=e=>{const d=e.target.closest('[data-del]');if(d){EVENTS=EVENTS.filter(v=>v.id!=d.dataset.del);hide();draw();toast('Event deleted')}else if(e.target.closest('[data-x]'))hide()};
+pop.onsubmit=e=>{e.preventDefault();const f=new FormData(e.target),s=+f.get('s'),t=f.get('t').trim();if(!t)return;EVENTS.push({id:uid++,d:+f.get('d'),s,e:Math.min(H0+HOURS,s+ +f.get('l')),t,c:+f.get('c'),p:'No place set',w:off});hidden.delete(+f.get('c'));$$('#cals input').forEach(i=>i.checked=!hidden.has(+i.dataset.c));if(view===1)day=+f.get('d');hide();draw();toast('“'+t+'” added to '+DN[+f.get('d')])};
+addEventListener('keydown',e=>{if(e.key==='Escape')hide()});document.addEventListener('pointerdown',e=>{if(!pop.hidden&&!pop.contains(e.target)&&!e.target.closest('.ev,#new'))hide()});
+$$('.seg button').forEach(x=>x.setAttribute('aria-pressed',+x.dataset.v===view));draw();
+</script>
+</body>

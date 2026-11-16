@@ -71,8 +71,28 @@
 /* catalogue (2026-11): one way to pick a collection, extra filters behind "More filters" */
 #browse .archivehead{display:block}
 #browse .archivehead .archivenote{max-width:60ch;margin-top:10px}
-@media (min-width:761px){#browse .filters label:has(#group){display:none}}
-#browse .collectionbody:not(:has(#advancedToggle[aria-expanded=true])) #exploreBar{display:none}
+#browse .archiveworkspace{display:block}
+/* inspiration: the two dropdowns name themselves ("All boards", "All categories"), so no label row */
+#inspiration .inspoBar>label:nth-child(2),#inspiration .inspoBar>label:nth-child(3){flex:0 0 180px}
+@media(max-width:900px){#inspiration .inspoBar{flex-wrap:wrap}#inspiration .inspoBar>label:first-child{flex:1 1 100%}#inspiration .inspoBar>label:nth-child(2),#inspiration .inspoBar>label:nth-child(3){flex:1 1 0;min-width:0}}
+/* icons: search, then colour, size and tile as dropdowns in the same row, then one swatch for a custom colour */
+#icons .iconBar{flex-wrap:nowrap}
+#icons .iconBar .iconLookBar>label:not(.iconSwatch){flex:0 0 170px;display:block;margin:0;min-width:0}
+#icons .iconBar select{height:44px;min-height:44px;box-sizing:border-box;font:400 14px/1.2 Inter,system-ui,sans-serif;border-radius:10px}
+#icons .iconBar .iconSwatch{flex:none;display:flex;align-items:center;justify-content:center;gap:0;width:44px;height:44px;margin:0;border-radius:10px}#icons .iconBar .iconSwatch>span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(max-width:1000px){#icons .iconBar{flex-wrap:wrap}#icons .iconBar>label:first-child{flex:1 1 100%}#icons .iconBar .iconLookBar>label:not(.iconSwatch){flex:1 1 0}}
+@media(max-width:640px){#icons .iconBar .iconLookBar>label:not(.iconSwatch){flex:1 1 calc(50% - 6px)}}
+#browse .filters.listBar{flex-wrap:nowrap;align-items:center}
+#browse .filters.listBar>label:nth-child(3){flex:0 0 170px}
+#browse .filters.listBar #savedOnly{height:44px;min-height:44px;padding:0 16px;border-radius:10px;font:500 14px/1 Inter,system-ui,sans-serif}
+:is(body:not(.cinemaMode),body) main #browse .filters.listBar #search{padding-left:42px}
+#browse .collectionbody>.railnote{max-width:60ch}
+@media(max-width:900px){#browse .filters.listBar{flex-wrap:wrap}#browse .filters.listBar>label:first-child{flex:1 1 100%}#browse .filters.listBar>label:nth-child(2){flex:1.45 1 150px;min-width:0}#browse .filters.listBar>label:nth-child(3){flex:1 1 110px;min-width:0}}
+#browse #advanced.listBar{flex-wrap:wrap;margin:0 0 10px}
+#browse #advanced.listBar label{flex:1 1 150px;max-width:230px;min-width:0}
+#browse #advanced.listBar select{height:44px;min-height:44px;box-sizing:border-box;font:400 14px/1.2 Inter,system-ui,sans-serif;border-radius:10px}
+#browse #advanced.listBar .exTours{margin-left:auto}
+@media(max-width:640px){#browse #advanced.listBar label{flex:1 1 calc(50% - 6px);max-width:none}#browse #advanced.listBar .exTours{margin-left:0}}
 #browse .archivehead h1{max-width:none;font-size:clamp(44px,5.4vw,76px);line-height:1}
 
 /* entry view: one main action, one Save, everything else under More */
@@ -89,7 +109,7 @@
 
 /* one list toolbar across the sections: search grows, one filter beside it, 44px controls, 14px text, no label row */
 .tbHide{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-:is(body:not(.cinemaMode),body) main :is(#search,#artSearch,#iconSearch,#guideSearch,#componentSearch,#inspoSearch,#mood,#artCategory,#guideCollection,#inspoFilterBoard,#inspoFilterKind,#iconFamilySelect,#componentStyle){height:44px;min-height:44px;box-sizing:border-box;font-size:14px;font-family:Inter,system-ui,sans-serif;border-radius:10px}
+:is(body:not(.cinemaMode),body) main :is(#search,#artSearch,#iconSearch,#guideSearch,#componentSearch,#inspoSearch,#group,#mood,#artCategory,#guideCollection,#inspoFilterBoard,#inspoFilterKind,#iconFamilySelect,#componentStyle){height:44px;min-height:44px;box-sizing:border-box;font-size:14px;font-family:Inter,system-ui,sans-serif;border-radius:10px}
 :is(body:not(.cinemaMode),body) main .listBar{display:flex;gap:12px;align-items:center;margin:20px 0}
 :is(body:not(.cinemaMode),body) main .listBar>label{display:block;margin:0;gap:0}
 :is(body:not(.cinemaMode),body) main .listBar>label:first-child{flex:1 1 auto;min-width:0}

@@ -17,7 +17,8 @@
 </header>
 <main id="main">
  <p class="lede">Everything you can make with the atlas. Each tool starts from the styles, kits and assets in the library, and hands its work to the next one: a brand into a site, a chart into a share image, a board into a theme kit.</p>
- <div class="chips" id="chips" role="group" aria-label="Show tools"></div>
+ <div class="searchrow" role="search" aria-label="Find a tool"><label class="search"><span class="vh">Search the tools</span><input id="q" type="search" placeholder="Search: site, brand, chart, icons, fonts…" autocomplete="off"></label><div class="pick"><select id="grpSel" aria-label="Kind of tool"></select></div></div>
+ <p class="count" id="count" role="status"></p>
  <div id="groups"></div>
  <noscript><p class="noscript">The tools list needs JavaScript. Open the tools directly from the <a href="atlas.html">Atlas menu</a>.</p></noscript>
  <section class="flows" aria-labelledby="flowH"><h2 class="grp" id="flowH">How the tools connect</h2>
@@ -39,10 +40,13 @@
  const NOTE={Make:'Start something new and export it.',Library:'Browse, compare and take what you need.','Your studio':'Keep your work together.'};
  const LABEL={Make:'Make',Library:'Library tools','Your studio':'Your studio'};
  T.counts().then(c=>{
-  const groups=document.getElementById('groups'),chips=document.getElementById('chips');
+  const groups=document.getElementById('groups'),sel=document.getElementById('grpSel'),q=document.getElementById('q'),total=T.list.length;
   groups.innerHTML=T.groups.map(g=>`<section data-g="${esc(g)}" aria-labelledby="h-${esc(g.replace(/\W/g,''))}"><h2 class="grp" id="h-${esc(g.replace(/\W/g,''))}">${esc(LABEL[g])}</h2><p class="grpnote">${esc(NOTE[g])}</p><ul class="grid">${T.list.filter(t=>t.group===g).map(t=>`<li class="card"><a href="${esc(t.href)}"><span class="th"><img src="${esc(T.thumb(t))}" alt="" width="640" height="400" loading="lazy" decoding="async"></span><span class="tx"><b>${esc(t.name)}</b><span class="bl">${esc(T.fill(t.blurb,c))}</span><span class="go">Open ${esc(t.name)} &rarr;</span></span></a></li>`).join('')}</ul></section>`).join('');
-  chips.innerHTML=['All',...T.groups].map((g,i)=>`<button type="button" data-g="${esc(g)}" aria-pressed="${i===0}">${esc(g==='All'?'All tools':LABEL[g])}</button>`).join('');
-  chips.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;chips.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));groups.querySelectorAll('section').forEach(s=>s.hidden=b.dataset.g!=='All'&&s.dataset.g!==b.dataset.g)});
+  sel.innerHTML=`<option value="All">All tools (${total})</option>`+T.groups.map(g=>`<option value="${esc(g)}">${esc(LABEL[g])} (${T.list.filter(t=>t.group===g).length})</option>`).join('');
+  const show=()=>{const g=sel.value,terms=q.value.trim().toLowerCase().split(/\s+/).filter(Boolean);let k=0;
+   groups.querySelectorAll('section').forEach(s=>{const on=g==='All'||s.dataset.g===g;let m=0;s.querySelectorAll('.card').forEach(li=>{li.hidden=!terms.every(t=>li.textContent.toLowerCase().includes(t));if(!li.hidden)m++});s.hidden=!on||!m;if(on)k+=m});
+   document.getElementById('count').textContent=k===total?total+' tools':k?k+' of '+total+' tools':'Nothing matches that yet. Try another word, or clear the search.'};
+  sel.addEventListener('change',show);q.addEventListener('input',show);show();
  });
 })();
 </script>

@@ -2,7 +2,8 @@
 /* Explore the catalogue by feel.
    Every entry gets "feels" (Liquid & metal, Pen & line, Generative, Print & paper, Light & glow,
    Handmade, Glass & soft, Digital & retro) from keyword rules plus a few hand-picked overrides.
-   The catalogue gains feel chips with live counts, "Has film" and "Live study" toggles, a search that
+   The catalogue's "More filters" row gains a Feel dropdown and a Show dropdown (has film, live study), each
+   option with a live count, a search that
    understands feel words ("liquid", "pen", "print"…), shareable links (#browse?feel=liquid&film=1)
    and feel tags in each entry's detail view. */
 (()=>{
@@ -42,25 +43,28 @@
  function patch(){if(typeof window.renderGrid!=='function'||window.renderGrid.__explore)return false;const orig=window.renderGrid;
   const w=function(){const inp=document.getElementById('search');const q=(inp?.value||'').trim().toLowerCase();const tokens=q.split(/\s+/).filter(Boolean);
    const full=catalogue;let list=filtered(full);if(tokens.length)list=list.filter(e=>matches(e,tokens));
-   const keep=inp?inp.value:'';if(inp)inp.value='';catalogue=list;try{return orig.apply(this,arguments);}finally{catalogue=full;if(inp)inp.value=keep;syncBar();}};
+   const keep=inp?inp.value:'';if(inp)inp.value='';window.__atlasFull=full;catalogue=list;try{return orig.apply(this,arguments);}finally{catalogue=full;window.__atlasFull=null;if(inp)inp.value=keep;if(typeof groupCounts==='function')groupCounts();syncBar();}};
   w.__explore=true;w.__ns=orig.__ns;window.renderGrid=w;return true;}
 
  /* ---------- bar ---------- */
  let bar;
  function buildBar(){const page=document.getElementById('browse');const first=page?.querySelector('.filters');if(!first||document.getElementById('exploreBar'))return;
+  /* two dropdowns at the start of the "More filters" row; "Reset filters" clears them with the rest */
+  const row=document.getElementById('advanced')||first;
   bar=document.createElement('div');bar.id='exploreBar';bar.className='exploreBar';
-  bar.innerHTML=`<div class="exRow" role="group" aria-label="Explore by feel"><span class="exLabel">Feel</span>${FEELS.map(f=>`<button type="button" class="exChip" data-feel="${f.k}" aria-pressed="false">${esc(f.name)} <span class="exCount"></span></button>`).join('')}</div>
-  <div class="exRow" role="group" aria-label="Show only"><span class="exLabel">Show</span><button type="button" class="exChip exToggle" data-film aria-pressed="false"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 1l7 4-7 4z" fill="currentColor"/></svg>Has film <span class="exCount"></span></button><button type="button" class="exChip exToggle" data-live aria-pressed="false"><i class="exDot" aria-hidden="true"></i>Live study <span class="exCount"></span></button><button type="button" class="exClear" hidden>Clear</button><a class="exTours" href="#tours">Guided tours →</a></div>`;
-  first.insertAdjacentElement('afterend',bar);
-  bar.addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;
-   if(b.dataset.feel!==undefined)S.feel=S.feel===b.dataset.feel?'':b.dataset.feel;else if(b.hasAttribute('data-film'))S.film=!S.film;else if(b.hasAttribute('data-live'))S.live=!S.live;else if(b.classList.contains('exClear')){S.feel='';S.film=false;S.live=false;}
-   apply(true);});}
+  bar.innerHTML=`<label><span class="tbHide">Feel</span><select id="exFeel" aria-label="Feel"><option value="">Any feel</option>${FEELS.map(f=>`<option value="${f.k}">${esc(f.name)}</option>`).join('')}</select></label>
+  <label><span class="tbHide">Show</span><select id="exShow" aria-label="Show only"><option value="">Show all</option><option value="film">Has film</option><option value="live">Live study</option><option value="film live">Film and live study</option></select></label>`;
+  row.prepend(bar);
+  if(!row.querySelector('.exTours'))row.insertAdjacentHTML('beforeend','<a class="exTours" href="#tours">Guided tours →</a>');
+  bar.addEventListener('change',()=>{S.feel=bar.querySelector('#exFeel').value;const v=bar.querySelector('#exShow').value;S.film=v.includes('film');S.live=v.includes('live');apply(true);});
+  const reset=document.getElementById('clearFilters');if(reset&&!reset.dataset.ex){reset.dataset.ex='1';reset.addEventListener('click',()=>{if(S.feel||S.film||S.live){S.feel='';S.film=false;S.live=false;apply(true);}});}}
  function count(fn){return all().filter(fn).length;}
- function syncBar(){if(!bar)return;const base=all();
-  bar.querySelectorAll('[data-feel]').forEach(b=>{const k=b.dataset.feel;b.setAttribute('aria-pressed',String(S.feel===k));b.querySelector('.exCount').textContent=base.filter(e=>feelsOf(e).has(k)&&(!S.film||e.film)&&(!S.live||isLive(e))).length;});
-  const film=bar.querySelector('[data-film]'),live=bar.querySelector('[data-live]');film.setAttribute('aria-pressed',String(S.film));live.setAttribute('aria-pressed',String(S.live));
-  film.querySelector('.exCount').textContent=base.filter(e=>e.film&&(!S.feel||feelsOf(e).has(S.feel))).length;live.querySelector('.exCount').textContent=base.filter(e=>isLive(e)&&(!S.feel||feelsOf(e).has(S.feel))).length;
-  bar.querySelector('.exClear').hidden=!(S.feel||S.film||S.live);}
+ function syncBar(){if(!bar)return;const base=all().filter(e=>!e.extractedAsset);
+  const label=(o,t)=>{if(o.textContent!==t)o.textContent=t;},feel=bar.querySelector('#exFeel'),show=bar.querySelector('#exShow'),inFeel=e=>!S.feel||feelsOf(e).has(S.feel);
+  [...feel.options].forEach(o=>{if(!o.value)return;const f=FEELS.find(x=>x.k===o.value);label(o,`${f.name} (${base.filter(e=>feelsOf(e).has(f.k)&&(!S.film||e.film)&&(!S.live||isLive(e))).length})`);});
+  const NAME={film:'Has film',live:'Live study','film live':'Film and live study'},hit={film:e=>e.film,live:isLive,'film live':e=>e.film&&isLive(e)};
+  [...show.options].forEach(o=>{if(o.value)label(o,`${NAME[o.value]} (${base.filter(e=>hit[o.value](e)&&inFeel(e)).length})`);});
+  feel.value=S.feel;show.value=[S.film&&'film',S.live&&'live'].filter(Boolean).join(' ');}
  function apply(push){if(typeof limit!=='undefined')limit=20;if(typeof renderGrid==='function')renderGrid();
   if(push&&location.hash.split('?')[0]==='#browse'){const p=[S.feel&&'feel='+S.feel,S.film&&'film=1',S.live&&'live=1'].filter(Boolean).join('&');history.replaceState(null,'','#browse'+(p?'?'+p:''));}}
  function readHash(){const h=location.hash;if(h.split('?')[0]!=='#browse')return false;const q=new URLSearchParams(h.split('?')[1]||'');if(q.has('entry'))return false;
@@ -76,8 +80,10 @@
    else if(window.UIMotion)window.UIMotion.show(e.id);else location.hash='motion';});}
 
  const ready=setInterval(()=>{if(!all().length||!document.getElementById('browse'))return;if(!patch())return;clearInterval(ready);
-  buildBar();readHash();apply(false);
-  addEventListener('hashchange',()=>{if(readHash())apply(false);});
+  /* a link that arrives with a feel or a show filter opens the row, so the filter in force is on screen */
+  const reveal=()=>{const t=document.getElementById('advancedToggle'),a=document.getElementById('advanced');if((S.feel||S.film||S.live)&&t&&a&&a.hidden){a.hidden=false;t.setAttribute('aria-expanded','true');t.textContent='Fewer filters −';}};
+  buildBar();readHash();apply(false);reveal();
+  addEventListener('hashchange',()=>{if(readHash()){apply(false);reveal();}});
   const body=document.getElementById('detailBody');if(body)new MutationObserver(detailTags).observe(body,{childList:true});
   new MutationObserver(()=>{if(!document.getElementById('exploreBar'))buildBar();}).observe(document.getElementById('browse'),{childList:true});},150);
  window.AtlasExplore={FEELS,feelsOf,isLive,set(o){Object.assign(S,o);apply(true);}};

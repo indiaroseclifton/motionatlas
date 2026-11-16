@@ -1,0 +1,136 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Quarterly report</title>
+<style>/* Tokens: change these to restyle the whole screen. --ac is the brand colour. */
+:root{--bg:#FAFAFA;--panel:#FFFFFF;--ink:#141824;--mute:#5F677B;--line:#E3E6EE;--soft:#EEF0F6;--ac:#18181B;--ac-ink:#FFFFFF;--ac-soft:#F1F1F3;--ok:#12805C;--warn:#96560A;--bad:#C2362B;--ok-soft:#E3F5EC;--warn-soft:#FCF0D9;--bad-soft:#FBE6E3;--r:12px;--rb:9px;--sh:0 1px 2px rgba(16,24,40,.05),0 8px 24px -16px rgba(16,24,40,.22);--font:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:light}
+html[data-theme=dark]{--bg:#0E1117;--panel:#161A23;--ink:#ECEEF4;--mute:#9AA3B5;--line:#272D3A;--soft:#1D2230;--ac:#FAFAFA;--ac-ink:#0E1117;--ac-soft:#272A33;--ok:#4ADE9B;--warn:#F0B454;--bad:#FF8B80;--ok-soft:#12301F;--warn-soft:#33260C;--bad-soft:#3A1714;--sh:0 1px 2px rgba(0,0,0,.45);color-scheme:dark}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:14px/1.5 var(--font);-webkit-font-smoothing:antialiased}
+h1,h2,h3,p{margin:0}h1{font-size:20px;line-height:1.2;letter-spacing:-.01em}h2{font-size:15px}h3{font-size:13px}
+a{color:inherit}button,input,select,textarea{font:inherit;color:inherit}
+/* Safari on a Mac draws its own small control for a native select, so selects drop the native look and share one arrow */
+select:not([multiple]):not([size]){-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none' stroke='%23808797' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1.5 1.5 6 6l4.5-4.5'/%3E%3C/svg%3E")!important;background-repeat:no-repeat!important;background-position:right 11px center!important;background-size:12px 8px!important;padding-right:30px!important;text-overflow:ellipsis}button{cursor:pointer}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px;border-radius:6px}
+[hidden]{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.mute{color:var(--mute)}.num{font-variant-numeric:tabular-nums}
+.ic{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:36px;padding:0 13px;border-radius:var(--rb);border:1px solid var(--line);background:var(--panel);font-weight:600;font-size:13px;white-space:nowrap;text-decoration:none}
+.btn:hover{background:var(--soft)}.btn.pri{background:var(--ac);border-color:var(--ac);color:var(--ac-ink)}.btn.pri:hover{filter:brightness(1.08)}
+.btn.ghost{border-color:transparent;background:none}.btn.ghost:hover{background:var(--soft)}.btn.sq{width:36px;padding:0}.btn:disabled{opacity:.5;cursor:default}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh)}
+.pad{padding:16px}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:99px;font-size:12px;font-weight:600;background:var(--soft);color:var(--mute);white-space:nowrap}
+.badge.ok{background:var(--ok-soft);color:var(--ok)}.badge.warn{background:var(--warn-soft);color:var(--warn)}.badge.bad{background:var(--bad-soft);color:var(--bad)}.badge.ac{background:var(--ac-soft);color:var(--ac)}
+.badge i{width:6px;height:6px;border-radius:50%;background:currentColor}
+.av{display:grid;place-items:center;flex:none;width:30px;height:30px;border-radius:50%;background:var(--ac-soft);color:var(--ac);font-size:11.5px;font-weight:700}
+.in{min-height:36px;padding:0 11px;border:1px solid var(--line);border-radius:var(--rb);background:var(--panel);min-width:0}
+.in::placeholder{color:var(--mute)}
+.seg{display:inline-flex;padding:3px;border-radius:10px;background:var(--soft);gap:2px}
+.seg button{min-height:30px;padding:0 11px;border:0;border-radius:8px;background:none;font-size:13px;font-weight:600;color:var(--mute)}
+.seg button[aria-pressed=true],.seg button[aria-selected=true]{background:var(--panel);color:var(--ink);box-shadow:0 1px 2px rgba(16,24,40,.12)}
+.row{display:flex;align-items:center;gap:10px}.sp{margin-left:auto}
+table{border-collapse:collapse;width:100%}th{font-size:12px;font-weight:600;color:var(--mute);text-align:left}th,td{padding:10px 14px;border-bottom:1px solid var(--line);white-space:nowrap}tbody tr:last-child td{border-bottom:0}
+.scroll{overflow:auto;position:relative}
+/* Skins and looks: add data-skin="ocean" (or forest, sunset, rose, sand) and data-look="soft" (or sharp, serif, compact) to the html element. */
+html[data-skin=ocean]{--bg:#F4F8FB;--panel:#FFFFFF;--ink:#0F2230;--mute:#566A7A;--line:#DAE5EC;--soft:#EAF1F6;--ac:#0369A1;--ac-ink:#FFFFFF;--ac-soft:#E0F1FA}
+html[data-skin=ocean][data-theme=dark]{--bg:#0A141C;--panel:#101E29;--ink:#E6F0F7;--mute:#8FA6B8;--line:#213442;--soft:#172A38;--ac:#4FB3E8;--ac-ink:#06202F;--ac-soft:#12344A}
+html[data-skin=forest]{--bg:#F4F7F3;--panel:#FFFFFF;--ink:#15241B;--mute:#586B5E;--line:#DCE6DE;--soft:#EBF1EC;--ac:#166534;--ac-ink:#FFFFFF;--ac-soft:#E2F3E7}
+html[data-skin=forest][data-theme=dark]{--bg:#0B140E;--panel:#122019;--ink:#E5F1E8;--mute:#8FA898;--line:#223529;--soft:#192B20;--ac:#5FD08A;--ac-ink:#08210F;--ac-soft:#173824}
+html[data-skin=sunset]{--bg:#FBF6F1;--panel:#FFFFFF;--ink:#2A1B12;--mute:#7A6455;--line:#EBDDD1;--soft:#F5EBE2;--ac:#C2410C;--ac-ink:#FFFFFF;--ac-soft:#FDE9DC}
+html[data-skin=sunset][data-theme=dark]{--bg:#150E0A;--panel:#1F1510;--ink:#F6E9DF;--mute:#B39C8B;--line:#3A2A20;--soft:#2A1D15;--ac:#FB923C;--ac-ink:#2A1203;--ac-soft:#40240F}
+html[data-skin=rose]{--bg:#FCF5F6;--panel:#FFFFFF;--ink:#2B1419;--mute:#7C5F66;--line:#EFDADE;--soft:#F8E9EC;--ac:#BE123C;--ac-ink:#FFFFFF;--ac-soft:#FDE4EA}
+html[data-skin=rose][data-theme=dark]{--bg:#160B0E;--panel:#211217;--ink:#F8E6EA;--mute:#B89AA2;--line:#3A2229;--soft:#2B1920;--ac:#FB7185;--ac-ink:#2B0610;--ac-soft:#47131F}
+html[data-skin=sand]{--bg:#F6F2EA;--panel:#FFFDF8;--ink:#26221B;--mute:#6F6757;--line:#E4DCCB;--soft:#EFE8D9;--ac:#3F3A2E;--ac-ink:#FFFDF8;--ac-soft:#ECE5D3}
+html[data-skin=sand][data-theme=dark]{--bg:#14120E;--panel:#1D1A14;--ink:#EFE9DB;--mute:#A49B86;--line:#332E24;--soft:#26221A;--ac:#E8DDBF;--ac-ink:#1A1710;--ac-soft:#38321F}
+html[data-look=soft]{--r:20px;--rb:14px;--sh:0 2px 4px rgba(16,24,40,.04),0 18px 36px -20px rgba(16,24,40,.28)}
+html[data-look=sharp]{--r:3px;--rb:2px;--sh:none}html[data-look=sharp] .seg,html[data-look=sharp] .seg button,html[data-look=sharp] .badge,html[data-look=sharp] .logo span{border-radius:3px}
+html[data-look=serif] h1,html[data-look=serif] h2,html[data-look=serif] h3,html[data-look=serif] .big,html[data-look=serif] .bal{font-family:Georgia,"Iowan Old Style","Times New Roman",serif;font-weight:600;letter-spacing:-.01em}
+html[data-look=compact]{--r:9px;--rb:7px}html[data-look=compact] body{font-size:13px}html[data-look=compact] .pad{padding:12px}html[data-look=compact] .main{padding:14px}html[data-look=compact] th,html[data-look=compact] td{padding:7px 12px}html[data-look=compact] .btn,html[data-look=compact] .in{min-height:32px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+body{display:flex;flex-direction:column;background:var(--soft)}
+.bar{display:flex;align-items:center;gap:8px;padding:0 16px;min-height:52px;background:var(--panel);border-bottom:1px solid var(--line);flex:none}
+.mk{display:grid;place-items:center;width:26px;height:26px;border-radius:var(--rb);background:var(--ac);color:var(--ac-ink)}.mk .ic{width:16px;height:16px}
+.cr{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cr span{color:var(--mute);font-weight:500}
+.desk{flex:1;min-height:0;overflow:auto;padding:28px 16px 48px}
+.sheet{position:relative;width:min(880px,100%);margin:0 auto 26px;padding:64px 76px 84px;background:var(--panel);border:1px solid var(--line);box-shadow:var(--sh);border-radius:2px}
+.eye{font-size:11.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);display:flex;gap:10px;align-items:center}.eye::before{content:"";width:28px;height:2px;background:var(--ac)}
+.sheet h1{font:600 42px/1.08 Georgia,"Iowan Old Style","Times New Roman",serif;letter-spacing:-.02em;margin:18px 0 16px;max-width:17em;text-wrap:balance}
+.stand{font:19px/1.55 Georgia,"Iowan Old Style",serif;color:var(--mute);max-width:36em}
+.figs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:36px 0 34px;border-top:2px solid var(--ink);border-bottom:1px solid var(--line)}
+.figs div{padding:16px 16px 18px 0}.figs div+div{padding-left:16px;border-left:1px solid var(--line)}.figs span{display:block;font-size:12.5px;color:var(--mute)}
+.big{display:block;font-size:34px;font-weight:700;letter-spacing:-.03em;line-height:1.15;margin:4px 0 2px;font-variant-numeric:tabular-nums}
+.figs small{font-size:12.5px;font-weight:600}.up{color:var(--ok)}.dn{color:var(--bad)}
+figure{margin:0}figcaption{font-size:12.5px;color:var(--mute);margin-top:10px;max-width:60em}figcaption b{color:var(--ink)}
+.sheet h2{font-size:13px;text-transform:uppercase;letter-spacing:.1em;padding-bottom:8px;border-bottom:1px solid var(--ink);margin-bottom:12px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:38px}.cols ul{margin:0;padding-left:18px;display:grid;gap:9px;line-height:1.55}
+.split{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:40px;align-items:start;margin-bottom:44px}
+.bars{display:grid;gap:14px;margin-top:6px}.bars .r{display:grid;grid-template-columns:34px minmax(0,1fr) 52px;gap:10px;align-items:center;font-size:13px}.bars .r b{text-align:right;font-variant-numeric:tabular-nums}
+.stk{display:flex;height:34px;gap:2px}.stk i{display:grid;place-items:center;min-width:0;font-style:normal;font-size:11.5px;font-weight:700;font-variant-numeric:tabular-nums;overflow:hidden}
+.k0{background:var(--ac);color:var(--ac-ink)}.k1{background:var(--mute);color:var(--panel)}.k2{background:var(--line);color:var(--ink)}
+.leg{display:flex;gap:16px;font-size:12.5px;color:var(--mute);margin-top:14px;flex-wrap:wrap}.leg i{display:inline-block;width:10px;height:10px;margin-right:6px;vertical-align:-1px}
+.sheet table{font-size:13px;font-variant-numeric:tabular-nums}.sheet th,.sheet td{padding:8px 0 8px 12px;text-align:right}.sheet th:first-child,.sheet td:first-child{text-align:left;padding-left:0}
+.sheet thead th{border-bottom:1px solid var(--ink);color:var(--ink)}.sheet tfoot td{border-top:1px solid var(--ink);border-bottom:0;font-weight:700}
+.heat td{padding:0 0 3px 3px;border:0}.heat td span{position:relative;z-index:0;display:block;padding:9px 0;text-align:center;font-weight:600}.heat td span::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--ac);opacity:var(--o)}.heat td span.hi{color:var(--ac-ink)}.heat td.e{background:none}.heat th{border:0;padding:6px 0 6px 3px;text-align:center}.heat td:first-child{padding:0 10px 3px 0;white-space:nowrap}
+.notes{margin:40px 0 0;padding:14px 0 0 18px;border-top:1px solid var(--line);font-size:12.5px;color:var(--mute);display:grid;gap:5px;line-height:1.5}
+.foot{position:absolute;left:76px;right:76px;bottom:30px;display:flex;justify-content:space-between;font-size:11.5px;color:var(--mute);letter-spacing:.04em}
+@media(max-width:760px){.desk{padding:12px 8px 30px}.sheet{padding:34px 22px 70px}.sheet h1{font-size:30px}.stand{font-size:17px}.figs{grid-template-columns:1fr 1fr}.figs div:nth-child(3){padding-left:0;border-left:0}.figs div:nth-child(n+3){border-top:1px solid var(--line)}.big{font-size:27px}.cols,.split{grid-template-columns:1fr;gap:26px}.foot{left:22px;right:22px}.cr span,.bar .btn span{display:none}.heat td span{font-size:11.5px}}
+@media print{body{background:none;display:block}.bar{display:none}.desk{overflow:visible;padding:0}.sheet{box-shadow:none;border:0;width:auto;margin:0;break-after:page;padding:14mm 12mm 22mm}}
+</style>
+<body>
+<header class="bar"><span class="mk"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V4M4 20h16M8 16v-5M12 16V8M16 16v-3"/></svg></span><div class="cr">Meridian <span>/ Reports / Customers</span></div><span class="sp"></span>
+ <label class="sr" for="per">Quarter</label><select class="in" id="per"><option value="q3">Q3 2026, July to September</option><option value="q2">Q2 2026, April to June</option></select>
+ <button class="btn sq ghost" id="theme" aria-pressed="false" aria-label="Switch to dark theme"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.500A8 8 0 0 1 9.500 4a8 8 0 1 0 10.500 10.500Z"/></svg></button>
+ <button class="btn" id="print"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 9V4h10v5M7 17H4v-7h16v7h-3"/><rect x="7" y="14" width="10" height="6"/></svg><span>Print</span></button><button class="btn pri" id="pdf"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7.500 11 12 15.500 16.500 11M5 20h14"/></svg><span>Download PDF</span></button></header>
+<main class="desk" id="desk" aria-live="polite"></main>
+<script>/* Shared helpers: element lookup, theme switch (add #dark to the address to start dark), mobile menu. */
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const root=document.documentElement;
+function setTheme(dark){root.dataset.theme=dark?'dark':'light';const b=$('#theme');if(b){b.setAttribute('aria-pressed',dark);b.setAttribute('aria-label',dark?'Switch to light theme':'Switch to dark theme')}document.dispatchEvent(new Event('themechange'))}
+/* The address can carry a look, for example #dark, #ocean-soft or #sand-serif-dark. A copied file can set the same thing on the html element. */
+const SKINS=['ocean','forest','sunset','rose','sand'],LOOKS=['soft','sharp','serif','compact'],PRE=root.dataset.theme==='dark';
+function look(){const h=location.hash,w=h.slice(1).toLowerCase().match(/[a-z]+/g)||[];
+ if(h){const s=w.find(x=>SKINS.includes(x)),l=w.find(x=>LOOKS.includes(x));s?root.dataset.skin=s:delete root.dataset.skin;l?root.dataset.look=l:delete root.dataset.look}
+ setTheme(h?/dark/.test(h):PRE)}
+look();addEventListener('hashchange',look);
+$('#theme')?.addEventListener('click',()=>setTheme(root.dataset.theme!=='dark'));
+{const m=$('#menu'),s=$('.side');if(m&&s){const set=o=>{s.classList.toggle('open',o);m.setAttribute('aria-expanded',o)};m.addEventListener('click',()=>set(!s.classList.contains('open')));addEventListener('keydown',e=>{if(e.key==='Escape')set(false)});document.addEventListener('click',e=>{if(s.classList.contains('open')&&!s.contains(e.target)&&!m.contains(e.target))set(false)})}}
+function toast(t){let n=$('#toast');if(!n){n=document.createElement('div');n.id='toast';n.setAttribute('role','status');n.style.cssText='position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 14px;border-radius:10px;font-size:13px;font-weight:600;z-index:60;transition:opacity .2s;max-width:calc(100vw - 32px)';document.body.append(n)}n.textContent=t;n.style.opacity=1;clearTimeout(toast.t);toast.t=setTimeout(()=>n.style.opacity=0,2000)}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+/* DATA: one object per quarter. Revenue is in thousands of pounds, by plan (Starter, Team, Business) for each month. */
+const SERIES=[3790,3830,3880,3910,3980,4020,4105,4190,4260,4340,4430,4535,4610,4702,4812],SM=['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep'];
+const Q={
+ q3:{name:'Q3 2026',span:'July to September 2026',end:14,head:'Retention held while new sign-ups slowed',stand:'We finished September with 4,812 paying customers, 277 more than in June. Fewer people joined than in the spring, but far fewer left, and those who stayed moved to larger plans.',
+  start:4535,joined:742,lost:465,prev:{active:4535,joined:819,lost:544,rev:1155},months:['Jul','Aug','Sep'],rev:[[62,214,136],[63,223,142],[64,231,149]],
+  cohorts:[['April',86,79,74,71,69],['May',87,80,76,73],['June',88,82,78],['July',89,84],['August',90]],
+  changed:['The summer price change cut sign-ups to the Starter plan by about a tenth, as expected.','Losses fell to 465 from 544. The new onboarding checklist went live on 6 July and first-month retention has risen each month since.','Business plan revenue grew 12% as 31 Team accounts upgraded for single sign-on.'],
+  next:['Bring back a 14-day Starter trial in October and measure sign-ups against this quarter.','Extend the onboarding checklist to invited team members, who still drop off fastest.','Publish annual pricing for Business so upgrades are not held up by a quote.']},
+ q2:{name:'Q2 2026',span:'April to June 2026',end:11,head:'Sign-ups rose and the Team plan carried revenue',stand:'We finished June with 4,535 paying customers, 275 more than in March. A strong April for sign-ups was offset by the highest losses of the year, most of them accounts that never invited a second person.',
+  start:4260,joined:819,lost:544,prev:{active:4260,joined:780,lost:526,rev:1062},months:['Apr','May','Jun'],rev:[[58,192,122],[59,199,127],[61,206,131]],
+  cohorts:[['January',83,75,70,67,65],['February',84,76,71,68],['March',84,77,72],['April',86,79],['May',87]],
+  changed:['The spring campaign brought 819 sign-ups, 39 more than last quarter, at a lower cost per customer.','We lost 544 customers. Two thirds were single-seat accounts in their first sixty days.','Team plan revenue grew 9% and now makes up just over half of the total.'],
+  next:['Ship an onboarding checklist in July aimed at getting a second person invited in week one.','Review Starter pricing: it brings volume but little revenue and most of the losses.','Start reporting retention by first-month cohort, as in Figure 3.']}};
+const nf=n=>n.toLocaleString('en-GB'),pc=(a,b)=>{const d=(a-b)/b*100;return [Math.abs(d).toFixed(1)+'%',d>=0]},sum=a=>a.reduce((x,y)=>x+y,0),PLANS=['Starter','Team','Business'];
+function line(q){const d=SERIES.slice(q.end-11,q.end+1),lab=SM.slice(q.end-11,q.end+1),W=728,H=250,L=8,R=64,T=22,B=30,mn=3600,mx=5000,x=i=>L+i*(W-L-R)/11,y=v=>T+(1-(v-mn)/(mx-mn))*(H-T-B);
+ const p=d.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join('');let g=`<rect x="${x(8.5)}" y="${T}" width="${x(11)-x(8.5)+10}" height="${H-T-B}" fill="var(--soft)"/><text x="${x(8.5)+8}" y="${T+16}" font-size="11" font-weight="700" fill="var(--mute)" letter-spacing=".08em">${q.name.toUpperCase()}</text>`;
+ [4000,4500,5000].forEach(v=>g+=`<line x1="${L}" x2="${W-R+10}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${W}" y="${y(v)+4}" text-anchor="end" font-size="11" fill="var(--mute)">${nf(v)}</text>`);
+ lab.forEach((m,i)=>g+=`<text x="${x(i)}" y="${H-8}" text-anchor="${i?'middle':'start'}" font-size="11" fill="var(--mute)">${m}</text>`);
+ g+=`<line x1="${L}" x2="${W-R+10}" y1="${H-B}" y2="${H-B}" stroke="var(--ink)"/><path d="${p}" fill="none" stroke="var(--ac)" stroke-width="2.400" stroke-linejoin="round" stroke-linecap="round"/>`;
+ [0,8,11].forEach(i=>g+=`<circle cx="${x(i)}" cy="${y(d[i])}" r="4" fill="var(--panel)" stroke="var(--ac)" stroke-width="2.400"/><text x="${x(i)+(i===11?-2:0)}" y="${y(d[i])-11}" text-anchor="${i?'end':'start'}" font-size="12.500" font-weight="700" fill="var(--ink)">${nf(d[i])}</text>`);
+ return `<svg viewBox="0 0 ${W} ${H}" style="display:block;width:100%;height:auto" role="img" aria-label="Active customers by month, from ${nf(d[0])} in ${lab[0]} to ${nf(d[11])} in ${lab[11]}">${g}</svg>`}
+function draw(){const q=Q[$('#per').value],end=q.start+q.joined-q.lost,tot=q.rev.map(sum),rev=sum(tot),byPlan=PLANS.map((_,k)=>sum(q.rev.map(m=>m[k]))),mx=Math.max(...tot);
+ const F=[['Active customers',nf(end),pc(end,q.prev.active),1],['New sign-ups',nf(q.joined),pc(q.joined,q.prev.joined),1],['Customers lost',nf(q.lost),pc(q.lost,q.prev.lost),0],['Revenue','£'+nf(rev)+'k',pc(rev,q.prev.rev),1]];
+ const foot=n=>`<div class="foot"><span>Meridian · Customer report · ${q.name}</span><span>Page ${n} of 2</span></div>`;
+ $('#desk').innerHTML=`<article class="sheet"><p class="eye">Quarterly report · ${q.span}</p><h1>${q.head}</h1><p class="stand">${q.stand}</p>
+ <div class="figs">${F.map(([n,v,[d,up],good])=>`<div><span>${n}</span><b class="big">${v}</b><small class="${up===!!good?'up':'dn'}">${up?'Up':'Down'} ${d}</small><span>on last quarter</span></div>`).join('')}</div>
+ <figure>${line(q)}<figcaption><b>Figure 1.</b> Paying customers at the end of each month. ${nf(q.start)} at the start of the quarter, plus ${nf(q.joined)} who joined, less ${nf(q.lost)} who left, gives ${nf(end)}.</figcaption></figure>
+ <div class="cols"><section><h2>What changed</h2><ul>${q.changed.map(t=>`<li>${t}</li>`).join('')}</ul></section><section><h2>What we will do next</h2><ul>${q.next.map(t=>`<li>${t}</li>`).join('')}</ul></section></div>${foot(1)}</article>
+ <article class="sheet"><div class="split"><figure><h2>Revenue by plan</h2><div class="bars" role="img" aria-label="Revenue by plan for each month, also given in the table">${q.rev.map((m,i)=>`<div class="r"><span>${q.months[i]}</span><div class="stk" style="width:${tot[i]/mx*100}%">${m.map((v,k)=>`<i class="k${k}" style="flex:${v}">${v}</i>`).join('')}</div><b>£${tot[i]}k</b></div>`).join('')}</div><div class="leg">${PLANS.map((p,k)=>`<span><i class="k${k}"></i>${p}</span>`).join('')}</div><figcaption><b>Figure 2.</b> Monthly revenue in thousands of pounds, split by plan.</figcaption></figure>
+ <table><thead><tr><th>£ thousand</th>${q.months.map(m=>`<th>${m}</th>`).join('')}<th>Quarter</th></tr></thead><tbody>${PLANS.map((p,k)=>`<tr><td>${p}</td>${q.rev.map(m=>`<td>${m[k]}</td>`).join('')}<td><b>${byPlan[k]}</b></td></tr>`).join('')}</tbody><tfoot><tr><td>Total</td>${tot.map(t=>`<td>${t}</td>`).join('')}<td>${nf(rev)}</td></tr></tfoot></table></div>
+ <figure><h2>Customers still paying, by the month they joined</h2><table class="heat"><thead><tr><th></th>${[1,2,3,4,5,6].map(n=>`<th>Month ${n}</th>`).join('')}</tr></thead><tbody>${q.cohorts.map(([m,...v])=>`<tr><td>${m}</td>${[100,...v].map(p=>`<td><span class="${p>=82?'hi':''}" style="--o:${(.08+(p-62)/38*.92).toFixed(2)}">${p}%</span></td>`).join('')}${Array.from({length:5-v.length},()=>'<td class="e"></td>').join('')}</tr>`).join('')}</tbody></table><figcaption><b>Figure 3.</b> Share of each month’s new customers who were still paying one to five months later. A stronger tint is better.</figcaption></figure>
+ <ol class="notes"><li>A paying customer is an account with a successful charge in the month. Trials and paused accounts are left out.</li><li>Revenue is recognised in the month it is charged and excludes VAT and refunds.</li><li>Changes compare this quarter with the one before it, not with the same quarter last year.</li></ol>${foot(2)}</article>`;
+ document.title='Customer report, '+q.name}
+$('#per').onchange=()=>{draw();$('#desk').scrollTop=0;toast('Showing '+Q[$('#per').value].name)};
+$('#print').onclick=()=>window.print();$('#pdf').onclick=()=>toast('Preparing customer-report-'+$('#per').value+'-2026.pdf');
+draw();
+</script>
+</body>
+</html>

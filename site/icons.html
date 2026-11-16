@@ -29,29 +29,21 @@ a{color:inherit}button,input,select{font:inherit;color:inherit}
 h1{margin:0;font:300 clamp(46px,6.4vw,96px)/.92 var(--f-display);letter-spacing:-.02em;text-wrap:balance}
 .lede{margin:0;color:var(--dim);max-width:60ch;font-size:16px}
 .lede b{color:var(--text);font-weight:600}
-/* family cards */
-.fams{display:grid;grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:8px;margin:6px 0 18px;padding:0;list-style:none}
-.fam{width:100%;display:grid;grid-template-columns:auto 1fr;align-items:center;gap:2px 10px;text-align:left;padding:10px 12px;border:1px solid var(--hair);border-radius:12px;background:var(--panel);cursor:pointer;min-height:58px}
-.fam:hover{border-color:var(--hair-hi)}
-.fam[aria-pressed=true]{border-color:var(--text);box-shadow:inset 0 0 0 1px var(--text)}
-.fam .fi{grid-row:span 2;width:28px;height:28px;display:grid;place-items:center}
-.fam .fi svg,.fam .fi img{width:26px;height:26px}
-.fam b{font-weight:600;font-size:13.5px;line-height:1.2}
-.fam small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font:500 11px/1.2 var(--f-mono);letter-spacing:.08em;color:var(--dim);text-transform:uppercase}
 /* toolbar */
 .tools{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--wall) 92%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--hair);margin:0 calc(-1 * var(--gutter));padding:10px var(--gutter)}
-.toolrow{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px}
+.toolrow{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px}
 .field{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--dim)}
-.field input[type=search],.field select{min-height:42px;border:1px solid var(--hair-hi);border-radius:10px;background:var(--panel);padding:0 12px;color:var(--text)}
-.search{flex:1 1 260px;max-width:440px}.search input{flex:1;min-width:0}
-.famsel{display:none}
+.field input[type=search],.field select{width:100%;min-height:44px;border:1px solid var(--hair);border-radius:12px;background:var(--panel);color:var(--text)}
+.field input[type=search]{padding:0 16px;font-size:15px}.field select{padding:0 14px;font-size:14px}
+.search{flex:1 1 260px;min-width:0}
+.famsel{flex:0 0 270px;min-width:0}
 .field input[type=range]{width:120px;accent-color:var(--text)}
 .field output{font:500 12px var(--f-mono);min-width:38px;color:var(--text)}
 .field input[type=color]{width:42px;height:34px;padding:2px;border:1px solid var(--hair-hi);border-radius:8px;background:var(--panel);cursor:pointer}
 .check{display:flex;align-items:center;gap:8px;min-height:44px;font-size:13px;color:var(--dim);cursor:pointer}
 .check input{width:20px;height:20px;flex:none;margin:0;accent-color:var(--text)}
 .field[aria-disabled=true],.check[aria-disabled=true]{opacity:.45}
-.count{margin-left:auto;font:500 11.5px/1 var(--f-mono);letter-spacing:.08em;color:var(--dim);text-transform:uppercase}
+.count{margin:12px 0 0;color:var(--dim);font-size:13px}
 /* family strip */
 .strip{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;padding:18px 0 14px}
 .strip h2{margin:0;font:400 clamp(28px,3vw,40px)/1 var(--f-display)}
@@ -102,8 +94,8 @@ h1{margin:0;font:300 clamp(46px,6.4vw,96px)/.92 var(--f-display);letter-spacing:
  .browser.has-detail{grid-template-columns:minmax(0,1fr)}
  .detail{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:40;border-radius:18px 18px 0 0;max-height:min(78vh,620px);overflow:auto;box-shadow:0 -12px 40px rgba(13,18,32,.22);padding:16px 16px calc(16px + env(safe-area-inset-bottom))}
  .stage{min-height:120px}}
-@media (max-width:700px){.tools{position:static}.fams{display:none}.famsel{display:flex;flex:1 1 100%}.famsel select{flex:1;min-width:0}
- .search{flex-basis:100%;max-width:none}.count{margin-left:0;flex-basis:100%}.band nav{margin-left:0}
+@media (max-width:1000px){.search{flex-basis:100%}.famsel{flex:1 1 220px}}
+@media (max-width:700px){.tools{position:static}.famsel{flex:1 1 100%}.field input[type=range]{width:110px}.band nav{margin-left:0}
  .grid{grid-template-columns:repeat(auto-fill,minmax(calc(var(--is,32px) + 46px),1fr));gap:6px}
  .ic{padding:12px 4px 8px}}
 @media (prefers-reduced-motion:reduce){.toast{transition:none}}
@@ -118,17 +110,16 @@ h1{margin:0;font:300 clamp(46px,6.4vw,96px)/.92 var(--f-display);letter-spacing:
   <div><h1 id="ttl">Every icon, searchable.</h1></div>
   <p class="lede"><b id="total">13,709</b> open-source icons in <b>27 families</b>. Search by name or meaning, set the size and colour, then copy or download. Each family also downloads as one ZIP with its licence.</p>
  </section>
- <ul class="fams" id="fams" aria-label="Icon families"></ul>
  <div class="tools" role="search" aria-label="Find icons">
   <div class="toolrow">
-   <label class="field famsel">Family <select id="famSel"></select></label>
-   <label class="field search"><span class="vh">Search icons</span><input id="q" type="search" placeholder="Search names and meanings: arrow, mail, upload…  ( / )" autocomplete="off" spellcheck="false"></label>
+   <label class="field search"><span class="vh">Search icons</span><input id="q" type="search" placeholder="Search: arrow, mail, upload, heart…" autocomplete="off" spellcheck="false"></label>
+   <div class="field famsel"><select id="famSel" aria-label="Icon family"></select></div>
    <label class="field">Size <input id="size" type="range" min="16" max="64" step="4" value="32"><output id="sizeOut" for="size">32 px</output></label>
    <label class="field" id="colourField">Colour <input id="colour" type="color" value="#0d1220"></label>
    <label class="check" id="bakeField"><input id="bake" type="checkbox"> Use this colour in copies</label>
-   <p class="count" id="count" role="status" aria-live="polite"></p>
   </div>
  </div>
+ <p class="count" id="count" role="status" aria-live="polite"></p>
  <div class="strip" id="strip"></div>
  <div class="browser">
   <ul class="grid" id="grid" aria-label="Icons" aria-describedby="gridHelp"></ul>
