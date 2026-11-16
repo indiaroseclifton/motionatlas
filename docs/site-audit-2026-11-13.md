@@ -12,6 +12,41 @@ states, the serverless API, and the project's own Playwright gate.
 heading order, missing alt text, sideways scroll, text under 11 px, fonts, corner radii and page background. Console
 errors were attributed per page. Suspicious readings were checked by eye before being reported.
 
+## Fourteenth pass: one style for the whole site, from the best product sites (15 November)
+
+Asked for, in the owner's words: of a brand-kit logo, "the text is all messed up, look at the best UX UI websites and update everything", then "I don't mean just update the text, I mean our whole site"; of the ink film in the site builder, "very low res and not impressive, replace it all"; of Landing effects, "all also look terrible, either get rid of it or replace all the motions/images".
+
+**What the best sites do, measured** (computed styles on linear.app, stripe.com, vercel.com, apple.com, notion.com, figma.com): one sans typeface for everything; headlines at weight 300 to 600, never heavier, 34 to 56px on a laptop, line-height 1.0 to 1.17, letter-spacing -0.02em to -0.06em; body 14 to 20px at 1.4 to 1.6; navigation and buttons 13 to 18px at weight 400 to 500.
+
+**What we had, measured**: titles in three cuts of Cormorant Garamond from 24 to 132px, Georgia on one page, JetBrains Mono for ordinary labels, four page backgrounds, buttons 27 to 50px tall with corners from square to round, text down to 11px.
+
+The style is written down in `docs/site-style.md`; `site/index.html` is the reference page.
+
+| Area | Before | After |
+|---|---|---|
+| Type, every page | Serif and italic titles, mono capital labels | Inter throughout; titles weight 600 at -0.035em; labels in sentence case at 12 to 13px |
+| Colour and shape | Grey pages, shadowed cards, controls of many sizes | White pages, hairline cards with no shadow at rest, 40px controls with 10px corners (44px on phones) |
+| Pages restyled | | Home, Tools, Interactions, App templates, Theme kits, Icons, Chart styles, My fonts, shared project, the Atlas page with all 21 routes, account, public project page, the eight studios, the site builder, the brand kit generator |
+| Brand kit logo | Heavy wonky serif without its display cut, two letters colliding in the mark, a coloured dot after the name | Heading weights capped (serif 500, sans 600), optical sizes requested, mark letters spaced, no dot or underline, handwriting and novelty faces no longer chosen automatically, name spacing set by typeface |
+| Films in the site builder | Five sections, the film band and the film background played 720p clips | Four motions (ink, silk, mesh, aurora) drawn in a WebGL canvas in the page's colours, sharp at any size, paused off screen and under reduced motion, with a gradient when WebGL is missing. No video is loaded |
+| Landing effects | Flat colour studies, old generated pictures, 720p films; stored preview pictures | Photographs and code-drawn motion in all 41 techniques; four video techniques renamed to what they now show (Scroll-scrubbed animation, Knockout type, Moving background done right, Hover-to-play previews); card previews run live |
+| Atlas hero | Opened on a film | Opens on the live particle study where the device can draw it; the films stay as other scenes |
+
+Bugs fixed on the way: the sticky filter row slid under the breadcrumb bar on Interactions and App templates; `hidden` buttons still showed on those pages and in two Landing effects demos; the chart studio's data grid header hid its first row; settings tabs stuck under the Atlas bar in two studios; several Landing effects demos (stat numbers, overlapping tiles, a jumping loop); chart, diagram and flowchart exports now wait for the font stylesheet before measuring.
+
+Checked by script in Chrome: smoke test on 38 pages at 1280 and 390; an audit script per page group counting non-Inter text, text under 12px, italic or serif titles and off-size controls in page chrome (all zero or explained); every Landing effects technique opened at 1440 and 390 and with reduced motion; exports from each studio compared byte for byte with the previous version; the site builder's main flows at 1440 and 390; a built page with all five motion sections and a motion background (no video elements, pause works). The four restyle and media jobs were done by helper agents and reviewed from fresh screenshots.
+
+Still open or lost:
+- Not looked at in Safari, Firefox or on a real phone. The WebGL motion and the live Landing effects previews were only run in headless Chrome with software rendering.
+- `site/expansion.json` still holds the old names and preview pictures for Landing effects, so site search and the catalogue show the old ones for those 41 entries.
+- Share images drawn by the Atlas (share card, tour card, moodboard PNG) are still dark with serif titles; that is canvas drawing code and was not changed.
+- The catalogue's specimens, films and style pictures are the Atlas's content and keep their own look, including the generated style pictures.
+- The old film clips remain in `assets/films/` and are still used by the Atlas's film library and tours.
+- Theme kits' picker is about 190px taller. The mockup studio's side panel is wider (432px), so its on-screen preview is slightly smaller.
+- A saved site that used a film now shows the nearest motion preset instead.
+- `tools/build-atlas-theme.py` no longer matches `atlas-theme.css`; do not run it.
+- iCloud had evicted about 2,500 files from the project folder, which made git hang; the clone now has `core.checkStat=minimal` and `core.trustctime=false`.
+
 ## Thirteenth pass: everything measured against Interactions (15 November)
 
 The owner's verdict on the earlier passes: "app templates have little diversity", "the menu/filter selection on all pages [is] cluttered and not clear", the site builder "should be started from scratch" ("the flame motion has nothing to do with recipes, the left menu is too busy, the styles make no sense"), "same with brand kit generator", and "the only section I really like is the interactions", which "feel clean, modern, easier, with better graphics that aren't random ones I generated ages ago".

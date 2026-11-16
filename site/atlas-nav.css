@@ -2,57 +2,57 @@
 body.anNav>header nav[aria-label=Main],body.anNav>header .librarynav,body.anNav .mobileNavHint,body.anNav>header .finderBtn{display:none!important}
 body.anNav>header{flex-wrap:nowrap;row-gap:0;padding-bottom:12px}
 .anBar{order:1;display:flex;align-items:center;gap:6px;flex:1;min-width:0;margin-left:clamp(8px,2vw,28px)}
-.anLibBtn{display:inline-flex;align-items:center;gap:9px;min-height:40px;padding:0 16px 0 13px;border-radius:999px;border:1px solid rgba(0,0,0,.6);background:rgba(0,0,0,.06);color:#111113;font:600 13.5px/1 "Inter",system-ui,sans-serif;letter-spacing:.01em;cursor:pointer;transition:background .2s,border-color .2s}
+.anLibBtn{display:inline-flex;align-items:center;gap:9px;min-height:40px;padding:0 16px 0 13px;border-radius:999px;border:1px solid rgba(0,0,0,.6);background:rgba(0,0,0,.06);color:#0F1115;font:600 13.5px/1 "Inter",system-ui,sans-serif;letter-spacing:0;cursor:pointer;transition:background .2s,border-color .2s}
 .anLibBtn:hover{background:rgba(0,0,0,.06);border-color:rgba(0,0,0,.6)}
 .anLibBtn svg{width:16px;height:16px}
-.anLibBtn:focus-visible,.anMenu summary:focus-visible,.anDrawer a:focus-visible,.anDrawer button:focus-visible,.anTrailGroup:focus-visible,.anFilterBtn:focus-visible{outline:2px solid #111113;outline-offset:3px}
+.anLibBtn:focus-visible,.anMenu summary:focus-visible,.anDrawer a:focus-visible,.anDrawer button:focus-visible,.anTrailGroup:focus-visible,.anFilterBtn:focus-visible{outline:2px solid #0F1115;outline-offset:3px}
 .anMenu{position:relative}
 .anMenu summary{list-style:none;display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 12px;border-radius:999px;color:#3f4249;font:500 14px/1 "Inter",system-ui,sans-serif;cursor:pointer;white-space:nowrap}
 .anMenu summary::-webkit-details-marker{display:none}
 .anMenu summary:hover,.anMenu[open] summary{color:#000;background:rgba(0,0,0,.05)}
-.anMenu.anHere summary{color:#000;box-shadow:inset 0 -2px 0 #111113}
+.anMenu.anHere summary{color:#000;box-shadow:inset 0 -2px 0 #0F1115}
 .anMenu summary svg{width:10px;height:10px;transition:transform .2s}
 .anMenu[open] summary svg{transform:rotate(180deg)}
-.anToolsLink{display:inline-flex;align-items:center;min-height:40px;padding:0 12px;border-radius:999px;color:#3f4249;font:500 14px/1 "Inter",system-ui,sans-serif;text-decoration:none;white-space:nowrap}.anToolsLink:hover{color:#000;background:rgba(0,0,0,.05)}.anToolsLink:focus-visible{outline:2px solid #111113;outline-offset:3px}
+.anToolsLink{display:inline-flex;align-items:center;min-height:40px;padding:0 12px;border-radius:999px;color:#3f4249;font:500 14px/1 "Inter",system-ui,sans-serif;text-decoration:none;white-space:nowrap}.anToolsLink:hover{color:#000;background:rgba(0,0,0,.05)}.anToolsLink:focus-visible{outline:2px solid #0F1115;outline-offset:3px}
 .anMenu>div{max-height:calc(100vh - 90px);overflow:auto;position:absolute;top:calc(100% + 8px);left:0;z-index:60;display:grid;gap:2px;width:min(330px,80vw);padding:8px;border-radius:16px;background:#ffffff;border:1px solid rgba(0,0,0,.12);box-shadow:0 24px 60px -20px rgba(0,0,0,.22)}
-.anMenu>div a{display:grid;gap:2px;padding:10px 12px;border-radius:10px;text-decoration:none;color:#111113}
+.anMenu>div a{display:grid;gap:2px;padding:10px 12px;border-radius:10px;text-decoration:none;color:#0F1115}
 .anMenu>div a:hover,.anMenu>div a.active{background:rgba(0,0,0,.05)}
 .anMenu>div a b{font:600 14px/1.25 "Inter",system-ui,sans-serif}
-.anMenu>div a span{font-size:12.5px;line-height:1.4;color:#6b6f76}
+.anMenu>div a span{font-size:12.5px;line-height:1.4;color:#5F6573}
 body.anNav>header .aeSearchBtn{margin-left:auto}
 
 /* Library drawer */
-.anDrawer{position:fixed;inset:0 auto 0 0;margin:0;width:min(900px,100vw);max-width:100vw;height:100%;max-height:100%;padding:0;border:0;background:#0b0e16;color:#111113;display:none;grid-template-columns:minmax(0,440px) minmax(0,1fr);box-shadow:30px 0 80px -30px rgba(0,0,0,.22)}
-.anDrawer[open]{display:grid;animation:anIn .32s cubic-bezier(.2,.8,.2,1)}
-.anDrawer::backdrop{background:rgba(20,20,24,.3);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.anDrawer{position:fixed;inset:0 auto 0 0;margin:0;width:min(900px,100vw);max-width:100vw;height:100%;max-height:100%;padding:0;border:0;background:#0b0e16;color:#0F1115;display:none;grid-template-columns:minmax(0,440px) minmax(0,1fr);box-shadow:30px 0 80px -30px rgba(0,0,0,.22)}
+.anDrawer[open]{display:grid;animation:anIn .26s cubic-bezier(.2,.8,.2,1)}
+.anDrawer::backdrop{background:rgba(15,17,21,.4)}
 @keyframes anIn{from{transform:translateX(-40px);opacity:0}to{transform:none;opacity:1}}
 body.anOpen{overflow:hidden}
 .anPanel{display:flex;flex-direction:column;min-height:0;overflow:auto;padding:max(18px,env(safe-area-inset-top)) 20px 28px max(20px,env(safe-area-inset-left));border-right:1px solid rgba(0,0,0,.12)}
 .anHead{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.anTitle{margin:0;font:italic 500 30px/1 "Cormorant Garamond",Georgia,serif;letter-spacing:-.01em}
-.anClose{width:40px;height:40px;border-radius:50%;border:1px solid rgba(0,0,0,.12);background:transparent;color:inherit;display:grid;place-items:center;cursor:pointer}
+.anTitle{margin:0;font:600 17px/1.3 Inter,system-ui,sans-serif;letter-spacing:-.01em}
+.anClose{width:40px;height:40px;border-radius:10px;border:1px solid #D5D8DF;background:#fff;color:inherit;display:grid;place-items:center;cursor:pointer}
 .anClose svg{width:16px;height:16px}
 .anQuick{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
-.anQ{display:flex;align-items:center;gap:9px;min-height:44px;padding:0 12px;border-radius:12px;border:1px solid rgba(0,0,0,.12);background:rgba(0,0,0,.05);color:#111113;font:500 13.5px/1.2 "Inter",system-ui,sans-serif;text-align:left;cursor:pointer}
-.anQ:hover{background:rgba(0,0,0,.05)}
+.anQ{display:flex;align-items:center;gap:9px;min-height:40px;padding:0 14px;border-radius:10px;border:1px solid #D5D8DF;background:#fff;color:#0F1115;font:500 14px/1.2 Inter,system-ui,sans-serif;text-align:left;cursor:pointer}
+.anQ:hover{background:#F6F7F9}
 .anQ svg{width:16px;height:16px;flex:0 0 16px}
-.anQ kbd{margin-left:auto;font:500 11px/1 "JetBrains Mono",monospace;padding:3px 6px;border:1px solid rgba(0,0,0,.12);border-radius:5px;color:#6b6f76}
-.anFind{border-color:rgba(0,0,0,.6);color:#111113}
+.anQ kbd{margin-left:auto;font:500 12px/1 "JetBrains Mono",monospace;padding:3px 6px;border:1px solid rgba(0,0,0,.12);border-radius:5px;color:#5F6573}
+.anFind{border-color:#D5D8DF;color:#0F1115}
 .anGroup{padding-top:14px}
-.anGroup h2{margin:0 0 6px;padding:0 4px;font:500 11px/1 "JetBrains Mono",monospace;letter-spacing:.16em;text-transform:uppercase;color:#6b6f76}
+.anGroup h2{margin:0 0 6px;padding:0 4px;font:500 13px/1 Inter,system-ui,sans-serif;letter-spacing:0;text-transform:none;color:#5F6573}
 .anGroup ul{list-style:none;margin:0;padding:0;display:grid;gap:2px}
 .anGroup a{display:grid;grid-template-columns:40px minmax(0,1fr);gap:12px;align-items:center;padding:7px 8px;border-radius:12px;text-decoration:none;color:inherit}
 .anGroup a:hover,.anGroup a:focus-visible{background:rgba(0,0,0,.05)}
-.anGroup a[aria-current=page]{background:rgba(0,0,0,.06);box-shadow:inset 3px 0 0 #111113}
+.anGroup a[aria-current=page]{background:rgba(0,0,0,.06);box-shadow:inset 3px 0 0 #0F1115}
 .anGroup img{width:40px;height:40px;border-radius:9px;object-fit:cover;background:#1a2030}
 .anGroup b{display:block;font:600 14.5px/1.25 "Inter",system-ui,sans-serif}
-.anGroup small{display:block;font-size:12.5px;line-height:1.4;color:#6b6f76}
+.anGroup small{display:block;font-size:12.5px;line-height:1.4;color:#5F6573}
 .anPreview{display:flex;flex-direction:column;gap:8px;padding:24px 24px 28px;min-width:0;min-height:0}
 .anFilm{position:relative;flex:1;min-height:0;border-radius:18px;overflow:hidden;background:#151a26;margin-bottom:10px}
 .anFilm img,.anFilm video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .anPreview p{margin:0;max-width:38ch}
-.anPGroup{align-self:flex-start;font:500 11px/1 "JetBrains Mono",monospace;letter-spacing:.16em;text-transform:uppercase;color:#111113;}
-.anPName{font:500 clamp(34px,4vw,52px)/1 "Cormorant Garamond",Georgia,serif;letter-spacing:-.01em}
+.anPGroup{align-self:flex-start;font:500 13px/1 Inter,system-ui,sans-serif;letter-spacing:0;text-transform:none;color:#0F1115;}
+.anPName{font:600 clamp(24px,2.6vw,32px)/1.15 Inter,system-ui,sans-serif;letter-spacing:-.01em}
 .anPNote{color:#3f4249;font-size:15px;line-height:1.5}
 
 /* Page trail: the group opens the drawer */
@@ -65,12 +65,12 @@ body.anOpen{overflow:hidden}
  .anFilterBtn{display:inline-flex;align-items:center;gap:9px;min-height:44px;padding:0 16px;margin:0 0 14px;border-radius:999px;font-weight:600}
  .anFilterBtn svg{width:16px;height:16px}
  .anFilterBtn b{font-weight:700}
- .anFilterBtn em{font-style:normal;margin-left:6px;padding:2px 8px;border-radius:999px;background:#1C1F2A;color:#fff;font-size:12px}
+ .anFilterBtn em{font-style:normal;margin-left:6px;padding:2px 8px;border-radius:999px;background:#0F1115;color:#fff;font-size:12px}
  #browse .collectionrail{position:fixed;inset:0 auto 0 0;z-index:90;width:min(340px,88vw);max-height:none;height:100%;margin:0;border-radius:0 18px 18px 0;overflow:auto;transform:translateX(-104%);transition:transform .3s cubic-bezier(.2,.8,.2,1);display:block;padding:max(16px,env(safe-area-inset-top)) 16px 24px max(16px,env(safe-area-inset-left));box-shadow:20px 0 60px -20px rgba(0,0,0,.4);visibility:hidden}
  #browse .collectionrail.anRailOpen{transform:none;visibility:visible}
  #browse .collectionrail button[data-collection]{display:flex;width:100%;justify-content:space-between;min-height:44px}
  .anRailHead{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
- .anRailHead p{margin:0;font:500 11px/1 "JetBrains Mono",monospace;letter-spacing:.16em;text-transform:uppercase}
+ .anRailHead p{margin:0;font:500 12px/1 Inter,system-ui,sans-serif;letter-spacing:0;text-transform:none}
  .anRailHead .anClose{color:inherit;border-color:rgba(0,0,0,.15)}
  .anShade{position:fixed;inset:0;z-index:89;background:rgba(20,20,24,.25)}
  #browse .collectionrail .railtitle{display:none}
@@ -96,56 +96,56 @@ body.anOpen{overflow:hidden}
 .anMenu summary::after,.anMenu summary::before{content:none!important;display:none!important}
 body.anNav>header .brand{order:0}
 body.anNav>header .aeSearchBtn{order:3}
-.anDrawer .anGroups a,.anDrawer .anGroups a.active{color:#111113}
+.anDrawer .anGroups a,.anDrawer .anGroups a.active{color:#0F1115}
 .anDrawer .anGroups a::after,.anDrawer .anGroups a::before,.anMenu>div a::after,.anMenu>div a::before{content:none!important;display:none!important}
-.anMenu>div a,.anMenu>div a.active{color:#111113}
+.anMenu>div a,.anMenu>div a.active{color:#0F1115}
 body.anNav>header .anMenu>summary,body.anNav>header .anMenu:has(a.active)>summary{color:#3f4249;border:0;outline:0;background:none}
-body.anNav>header .anMenu.anHere>summary,body.anNav>header .anMenu>summary:hover,body.anNav>header .anMenu[open]>summary{color:#000;background:rgba(0,0,0,.05);box-shadow:inset 0 -2px 0 #111113}
+body.anNav>header .anMenu.anHere>summary,body.anNav>header .anMenu>summary:hover,body.anNav>header .anMenu[open]>summary{color:#000;background:rgba(0,0,0,.05);box-shadow:inset 0 -2px 0 #0F1115}
 body.anNav>header .anMenu>summary:not(:hover):not(:focus-visible){box-shadow:none}
-body.anNav>header .anMenu.anHere>summary:not(:hover){box-shadow:inset 0 -2px 0 #111113}
-body.anNav>header .anMenu>summary:focus-visible{outline:2px solid #111113;outline-offset:3px}
+body.anNav>header .anMenu.anHere>summary:not(:hover){box-shadow:inset 0 -2px 0 #0F1115}
+body.anNav>header .anMenu>summary:focus-visible{outline:2px solid #0F1115;outline-offset:3px}
 /* The header film caption used to sit in the second menu row; tuck it under the bar instead */
 body.anNav>header{position:relative}
 body.anNav>header .sfHeaderCap{position:static;order:2;margin-left:auto;max-width:34ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 body.anNav>header .sfHeaderCap:not([hidden])~.aeSearchBtn,body.anNav>header .sfHeaderCap:not([hidden])+.aeSearchBtn{margin-left:10px}
 @media (max-width:1200px){body.anNav>header .sfHeaderCap{display:none}}
-body.anNav>header .anMenu.anHere>summary,body.anNav>header .anMenu.anHere>summary:not(:hover){box-shadow:none;text-decoration:underline;text-decoration-color:#111113;text-decoration-thickness:2px;text-underline-offset:7px}
+body.anNav>header .anMenu.anHere>summary,body.anNav>header .anMenu.anHere>summary:not(:hover){box-shadow:none;text-decoration:underline;text-decoration-color:#0F1115;text-decoration-thickness:2px;text-underline-offset:7px}
 /* Old header menus paint a white panel; the new menus are dark */
 body.anNav>header .anMenu>div{background:#ffffff!important;border:1px solid rgba(0,0,0,.12);box-shadow:0 24px 60px -20px rgba(0,0,0,.22);right:auto;left:0;width:min(340px,82vw);padding:8px}
-body.anNav>header .anMenu>div a{color:#111113!important;padding:11px 12px;margin:0}
+body.anNav>header .anMenu>div a{color:#0F1115!important;padding:11px 12px;margin:0}
 body.anNav>header .anMenu>div a:hover,body.anNav>header .anMenu>div a:focus-visible{background:rgba(0,0,0,.05)!important}
-body.anNav>header .anMenu>div a b{color:#111113;font-size:14.5px}
+body.anNav>header .anMenu>div a b{color:#0F1115;font-size:14.5px}
 body.anNav>header .anMenu>div a span{color:#AEB9CB;font-size:13px}
 body.anNav>header .anMenu>div a.active{background:rgba(0,0,0,.06)!important}
 
 /* Drawer items use line icons; the preview keeps the film's own shape */
 .anGroup a .anIcoBox{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;background:rgba(0,0,0,.05);border:1px solid rgba(0,0,0,.12);color:#dbe3ef}
-.anGroup a[aria-current=page] .anIcoBox{color:#111113;border-color:rgba(0,0,0,.6)}
+.anGroup a[aria-current=page] .anIcoBox{color:#0F1115;border-color:rgba(0,0,0,.6)}
 .anGroup a:hover .anIcoBox,.anGroup a:focus-visible .anIcoBox{color:#000;border-color:rgba(0,0,0,.12)}
 .anIco{width:20px;height:20px}
 .anPreview{justify-content:center}
 .anFilm{flex:none;width:100%;aspect-ratio:16/10;max-height:58vh}
 
 /* Library drawer, clean version: names only on the left; the description appears on the right as type, no pictures */
-.anDrawer{background:#fff;color:#111113;width:min(860px,100vw);grid-template-columns:minmax(0,300px) minmax(0,1fr)}
-.anPanel{padding-right:14px;border-right:1px solid #ECECEE}
-.anTitle{font-size:26px}
-.anDrawer .anGroup{padding-top:16px}.anGroup h2{margin-bottom:4px;padding:0 10px;letter-spacing:.14em;color:#8A8D94}
+.anDrawer{background:#fff;color:#0F1115;font-family:Inter,system-ui,sans-serif;width:min(860px,100vw);grid-template-columns:minmax(0,300px) minmax(0,1fr)}
+.anPanel{padding-right:14px;border-right:1px solid #E6E8EC}
+.anTitle{font-size:17px}
+.anDrawer .anGroup{padding-top:16px}.anGroup h2{margin-bottom:4px;padding:0 10px;letter-spacing:0;color:#5F6573}
 .anDrawer .anGroup ul{gap:0}
-.anDrawer .anGroup a{display:flex;align-items:center;gap:10px;min-height:36px;padding:0 10px;border-radius:9px;transition:background .15s,padding .2s}
-.anGroup a .anIcoBox{width:18px;height:18px;flex:none;border:0;background:none;border-radius:0;color:#8A8D94}.anGroup a .anIcoBox svg{width:18px;height:18px}
-.anGroup a b{font:500 14.5px/1.2 "Inter",system-ui,sans-serif}
+.anDrawer .anGroup a{display:flex;align-items:center;gap:10px;min-height:40px;padding:0 10px;border-radius:10px;transition:background .15s,padding .2s}
+.anGroup a .anIcoBox{width:18px;height:18px;flex:none;border:0;background:none;border-radius:0;color:#5F6573}.anGroup a .anIcoBox svg{width:18px;height:18px}
+.anGroup a b{font:500 14px/1.2 Inter,system-ui,sans-serif}
 .anGroup a small{display:none}
-.anDrawer .anGroup a:hover,.anDrawer .anGroup a:focus-visible,.anDrawer .anGroup a.anOn{background:#F4F4F5;padding-left:14px}
-.anGroup a.anOn .anIcoBox,.anGroup a:hover .anIcoBox{color:#111113}
-.anDrawer .anGroup a[aria-current=page]{background:none;box-shadow:none}.anDrawer .anGroup a[aria-current=page] b{font-weight:700}.anDrawer .anGroup a[aria-current=page]::after{content:""!important;display:block!important;width:6px;height:6px;border-radius:50%;background:#111113;margin-left:auto}
-.anPreview{position:relative;overflow:hidden;justify-content:flex-end;padding:40px 44px 48px;background:#FAFAFA}
+.anDrawer .anGroup a:hover,.anDrawer .anGroup a:focus-visible,.anDrawer .anGroup a.anOn{background:#F6F7F9;padding-left:14px}
+.anGroup a.anOn .anIcoBox,.anGroup a:hover .anIcoBox{color:#0F1115}
+.anDrawer .anGroup a[aria-current=page]{background:none;box-shadow:none}.anDrawer .anGroup a[aria-current=page] b{font-weight:600}.anDrawer .anGroup a[aria-current=page]::after{content:""!important;display:block!important;position:static;flex:none;width:6px;height:6px;border-radius:50%;background:#0F1115;margin-left:auto}
+.anPreview{position:relative;overflow:hidden;justify-content:flex-end;padding:40px 44px 48px;background:#F6F7F9}
 .anSpot{display:grid;gap:12px;align-content:end}
-.anBig{position:absolute;right:-40px;top:-30px;width:380px;height:380px;color:#111113;opacity:.06;pointer-events:none}.anBig svg{width:100%;height:100%;stroke-width:.6}
-.anPGroup{font:500 11px/1 "JetBrains Mono",monospace;letter-spacing:.16em;text-transform:uppercase;color:#8A8D94}
-.anPName{font:italic 500 clamp(44px,5.4vw,76px)/.95 "Cormorant Garamond",Georgia,serif;letter-spacing:-.02em;max-width:9ch}
-.anPreview p.anPNote{font-size:17px;line-height:1.5;color:#3f4249;max-width:30ch}
-.anGo{display:inline-flex;align-items:center;gap:8px;margin-top:8px!important;font:600 13px/1 "Inter",system-ui,sans-serif;color:#111113}.anGo i{font-style:normal;display:inline-block}
+.anBig{position:absolute;right:-40px;top:-30px;width:380px;height:380px;color:#0F1115;opacity:.05;pointer-events:none}.anBig svg{width:100%;height:100%;stroke-width:.6}
+.anPGroup{font:500 13px/1 Inter,system-ui,sans-serif;letter-spacing:0;text-transform:none;color:#5F6573}
+.anPName{font:600 clamp(24px,2.6vw,32px)/1.15 Inter,system-ui,sans-serif;letter-spacing:-.02em;max-width:9ch}
+.anPreview p.anPNote{font-size:17px;line-height:1.55;color:#5F6573;max-width:34ch}
+.anGo{display:inline-flex;align-items:center;gap:8px;margin-top:8px!important;font:500 14px/1 Inter,system-ui,sans-serif;color:#0F1115}.anGo i{font-style:normal;display:inline-block}
 .anSwap .anPGroup{animation:anUp .35s cubic-bezier(.2,.8,.2,1) both}.anSwap .anPName{animation:anUp .45s .03s cubic-bezier(.2,.8,.2,1) both}.anSwap .anPNote{animation:anUp .45s .08s cubic-bezier(.2,.8,.2,1) both}.anSwap .anGo{animation:anUp .45s .13s cubic-bezier(.2,.8,.2,1) both}.anSwap .anGo i{animation:anNudge 1.6s .5s ease-in-out infinite}.anSwap .anBig{animation:anBig .7s cubic-bezier(.2,.8,.2,1) both}
 @keyframes anUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @keyframes anBig{from{opacity:0;transform:scale(.9) rotate(-6deg)}to{opacity:.06;transform:none}}
@@ -155,14 +155,14 @@ body.anNav>header .anMenu>div a.active{background:rgba(0,0,0,.06)!important}
 
 /* library drawer on phones: folded groups; the open one shows descriptions */
 @media (max-width:760px){
-.anDrawer .anGroup{padding-top:0;border-top:1px solid #ECECEE}
-.anDrawer .anGroup>h2{display:flex;align-items:center;justify-content:space-between;min-height:48px;margin:0;padding:0 10px;font-size:12px;color:#111113;cursor:pointer}
-.anDrawer .anGroup>h2::after{content:"+";font:400 18px/1 "JetBrains Mono",monospace;color:#8A8D94}
+.anDrawer .anGroup{padding-top:0;border-top:1px solid #E6E8EC}
+.anDrawer .anGroup>h2{display:flex;align-items:center;justify-content:space-between;min-height:48px;margin:0;padding:0 10px;font-size:14px;color:#0F1115;cursor:pointer}
+.anDrawer .anGroup>h2::after{content:"+";font:400 18px/1 "JetBrains Mono",monospace;color:#5F6573}
 .anDrawer .anGroup.anOpenG>h2::after{content:"\2212"}
 .anDrawer .anGroup:not(.anOpenG)>ul{display:none}
 .anDrawer .anGroup.anOpenG>ul{padding-bottom:10px}
 .anDrawer .anGroup a{flex-wrap:wrap;row-gap:2px;min-height:44px;padding:8px 10px}
-.anDrawer .anGroup a small{display:block;flex-basis:100%;padding-left:28px;font:400 12.5px/1.4 Inter,system-ui,sans-serif;color:#6B6F76}
+.anDrawer .anGroup a small{display:block;flex-basis:100%;padding-left:28px;font:400 13px/1.4 Inter,system-ui,sans-serif;color:#5F6573}
 }
 /* quick actions: one row each, so the labels never wrap in the narrow list column */
 @media (min-width:761px){.anQuick{grid-template-columns:1fr;gap:6px}.anQ{min-height:40px;white-space:nowrap}}

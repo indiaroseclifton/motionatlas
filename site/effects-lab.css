@@ -9,10 +9,11 @@
 .fxl-card{all:unset;box-sizing:border-box;cursor:pointer;display:grid;align-content:start;gap:12px;border-radius:16px;padding:8px 8px 16px;background:#fff;border:1px solid var(--hair,#d9dee6);transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease}
 .fxl-card:hover{transform:translateY(-4px);box-shadow:0 18px 36px -24px rgba(13,18,32,.35);border-color:#c9ced8}
 .fxl-card:focus-visible{outline:2px solid #111113;outline-offset:3px}
+/* the preview is the technique itself, drawn at 1280 by 800 and scaled to the card (effects-lab.js keeps --k in step) */
 .fxl-thumb{position:relative;display:block;aspect-ratio:16/10;border-radius:10px;overflow:hidden;background:#f4f4f5}
-.fxl-thumb img{width:100%;height:100%;object-fit:cover;display:block}
-.fxl-live{position:absolute;left:0;top:0;width:1280px;height:800px;border:0;transform:scale(var(--k,.2));transform-origin:0 0;pointer-events:none;opacity:0;transition:opacity .25s ease;background:#fafafa}
+.fxl-live{position:absolute;left:0;top:0;width:1280px;height:800px;border:0;transform:scale(var(--k,.2));transform-origin:0 0;pointer-events:none;opacity:0;transition:opacity .3s ease;background:#fafafa}
 .fxl-live.on{opacity:1}
+.fxl-thumb[data-note]::after{content:attr(data-note);position:absolute;inset:0;display:grid;place-items:center;font:500 13px/1.3 Inter,system-ui,sans-serif;color:var(--text-dim,#4a5466)}
 .fxl-meta{display:grid;gap:5px;padding:0 8px}
 .fxl-meta b{font:600 17px/1.25 Inter,system-ui,sans-serif;letter-spacing:-.01em;color:var(--text,#0d1220)}
 .fxl-what{font:400 13.5px/1.45 Inter,system-ui,sans-serif;color:var(--text-dim,#4a5466);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}

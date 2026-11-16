@@ -2,134 +2,146 @@
 <title>Chart studio · Visual & Motion Atlas</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <meta name="description" content="Make a chart from your own data: paste from a spreadsheet, upload CSV or JSON, or edit the grid. Twenty-six chart forms in nineteen validated styles, with SVG, PNG, embed, video and GIF export.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-:root{--bg:#F4F5F8;--panel:#FFFFFF;--ink:#1C1F2A;--mute:#5F6577;--hair:#E4E7EE;--soft:#F7F8FB;--accent:#111113;--ok:#17633A;--okbg:#EAF7EF;--warn:#8A5300;--warnbg:#FFF4E2;--bad:#A3221B;--badbg:#FDECEA;--shadow:0 1px 2px rgba(20,24,40,.04),0 8px 24px -12px rgba(20,24,40,.12);color-scheme:light}
+/* Chart studio. The site style (November 2026): one typeface, white chrome, hairlines, 40px controls with 10px corners; the chart sits on the alternate surface. */
+:root{--bg:#FFFFFF;--panel:#FFFFFF;--ink:#0F1115;--mute:#5F6573;--hair:#E6E8EC;--hair2:#D5D8DF;--soft:#F6F7F9;--accent:#0F1115;--ok:#17633A;--okbg:#EAF7EF;--warn:#8A5300;--warnbg:#FFF4E2;--bad:#A3221B;--badbg:#FDECEA;--shadow:0 12px 28px -18px rgba(15,17,21,.25);color-scheme:light}
 *{box-sizing:border-box}html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font:14px/1.5 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 a{color:inherit}button,select,input,textarea{font:inherit;color:inherit}button{cursor:pointer}
 [hidden]{display:none!important}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-header.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px max(16px,env(safe-area-inset-right)) 10px max(16px,env(safe-area-inset-left));background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border-bottom:1px solid var(--hair)}
+/* the bar: name, the family of studios, actions on the right */
+header.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:8px 16px;flex-wrap:wrap;min-height:57px;padding:8px max(20px,env(safe-area-inset-right)) 8px max(20px,env(safe-area-inset-left));background:var(--panel);border-bottom:1px solid var(--hair)}
 .brand{display:flex;align-items:baseline;gap:12px;min-width:0}
-.brand a{font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);text-decoration:none;white-space:nowrap;padding-block:7px}
-.brand h1{margin:0;font:500 26px/1 'Cormorant Garamond',Georgia,serif;font-style:italic;white-space:nowrap}
-.links{display:flex;gap:4px;flex-wrap:wrap}.links a{font-size:12.5px;color:var(--mute);text-decoration:none;padding:6px 8px;border-radius:8px}.links a:hover{background:var(--soft);color:var(--ink)}
-.acts{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;align-items:center}
-.btn{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 12px;border-radius:10px;border:1px solid var(--hair);background:var(--panel);font-weight:500;font-size:13px;text-decoration:none;white-space:nowrap}
-.btn:hover{border-color:#CBD0DB;background:var(--soft)}.btn:disabled{opacity:.5;cursor:default}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}.btn.primary:hover{background:#4A1FF0}
-.btn.sm{min-height:30px;padding:0 9px;font-size:12px;border-radius:8px}
+.brand a{font:500 13px/1 Inter,system-ui,sans-serif;color:var(--mute);text-decoration:none;white-space:nowrap;padding-block:8px}.brand a:hover{color:var(--ink)}
+.brand h1{margin:0;font:600 16px/1.25 Inter,system-ui,sans-serif;letter-spacing:-.01em;white-space:nowrap}
+.links{display:flex;gap:2px;flex-wrap:wrap}.links a{font-size:14px;color:var(--mute);text-decoration:none;padding:8px 10px;border-radius:10px;transition:background .15s,color .15s}.links a:hover{background:var(--soft);color:var(--ink)}
+.acts{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;align-items:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:0 14px;border-radius:10px;border:1px solid var(--hair2);background:var(--panel);font-weight:500;font-size:14px;text-decoration:none;white-space:nowrap;transition:background .15s,border-color .15s}
+.btn:hover{background:var(--soft)}.btn:disabled{opacity:.5;cursor:default}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}.btn.primary:hover{background:#000}
+.btn.sm{padding:0 12px}
+.btn[aria-pressed=true]{background:var(--soft);border-color:var(--ink)}
+#undo,#redo{width:40px;padding:0;font-size:17px;line-height:1}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 details.menu{position:relative}details.menu>summary{list-style:none}details.menu>summary::-webkit-details-marker{display:none}
-details.menu>summary::after{content:'▾';font-size:10px;margin-left:2px;color:var(--mute)}
-.pop{position:absolute;right:0;top:calc(100% + 6px);z-index:30;min-width:220px;max-width:min(320px,calc(100vw - 24px));background:var(--panel);border:1px solid var(--hair);border-radius:12px;box-shadow:0 18px 40px -16px rgba(20,24,40,.35);padding:6px;display:grid;gap:2px}
-.pop button{display:flex;justify-content:space-between;gap:12px;align-items:center;text-align:left;border:0;background:none;border-radius:8px;padding:8px 10px;font-size:13px;min-height:36px}.pop button:hover{background:var(--soft)}
-.pop small{color:var(--mute);font-size:11.5px}.pop hr{border:0;border-top:1px solid var(--hair);margin:4px 2px}
-.pop .drow{display:grid;grid-template-columns:1fr auto;gap:2px}.pop .drow button:last-child{color:var(--bad);padding:8px}
-.app{display:grid;grid-template-columns:minmax(330px,390px) minmax(0,1fr);min-height:calc(100vh - 57px - var(--sb-h,0px))}
+details.menu>summary::after{content:'';width:6px;height:6px;margin:-3px 2px 0 4px;border:solid currentColor;border-width:0 1.5px 1.5px 0;transform:rotate(45deg);opacity:.75}
+.pop{position:absolute;right:0;top:calc(100% + 6px);z-index:30;min-width:260px;max-width:min(340px,calc(100vw - 24px));background:var(--panel);border:1px solid var(--hair);border-radius:14px;box-shadow:0 16px 40px -16px rgba(15,17,21,.28);padding:4px;display:grid;gap:2px}
+.pop button{display:flex;justify-content:space-between;gap:12px;align-items:center;text-align:left;border:0;background:none;border-radius:10px;padding:8px 12px;font-size:14px;min-height:40px}.pop button:hover{background:var(--soft)}
+.pop small{color:var(--mute);font-size:13px}.pop hr{border:0;border-top:1px solid var(--hair);margin:4px 2px}
+.pop .drow{display:grid;grid-template-columns:1fr auto;gap:2px}.pop .drow button:last-child{color:var(--bad);padding:8px 12px}
+/* the side panel */
+.app{display:grid;grid-template-columns:minmax(330px,390px) minmax(0,1fr);min-height:calc(100vh - var(--st-head,57px) - var(--sb-h,0px));background:var(--soft)}
 .side{background:var(--panel);border-right:1px solid var(--hair);display:flex;flex-direction:column;min-width:0}
-.tabs{display:flex;border-bottom:1px solid var(--hair);position:sticky;top:57px;background:var(--panel);z-index:5}
-.tablist{display:flex;flex:1;min-width:0}.tabs button{flex:1;min-width:0;padding:0 2px;border:0;background:none;min-height:44px;font-size:12.5px;font-weight:600;color:var(--mute);border-bottom:2px solid transparent}
-.tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--accent)}
+.tabs{display:flex;min-height:49px;padding:4px 10px 0;border-bottom:1px solid var(--hair);position:sticky;top:calc(var(--st-head,57px) + var(--sb-h,0px));background:var(--panel);z-index:5}
+.tablist{display:flex;gap:4px;flex:1;min-width:0;overflow-x:auto;scrollbar-width:none}.tablist::-webkit-scrollbar{display:none}
+.tabs button{flex:none;padding:0 10px;border:0;background:none;min-height:44px;font:500 14px/1 Inter,system-ui,sans-serif;color:var(--mute);border-bottom:2px solid transparent;transition:color .15s}
+.tabs button:hover{color:var(--ink)}
+.tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--ink)}
+.tabs button:focus-visible{outline-offset:-2px}
 .sheetx{display:none}
-.panel{padding:4px 0 24px}
-.sec{padding:14px 18px;border-bottom:1px solid var(--hair);display:grid;gap:10px}
-.sec h2{margin:0;font:600 11px/1.2 Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);display:flex;justify-content:space-between;align-items:center;gap:8px}
-.sec h2 small{font:500 11.5px Inter;letter-spacing:0;text-transform:none}
-.hint{margin:0;font-size:12px;color:var(--mute);line-height:1.45}
-label.f{display:grid;gap:4px;font-size:12px;color:var(--mute)}
-input[type=text],input[type=number],select,textarea{min-height:34px;border:1px solid var(--hair);border-radius:9px;padding:0 9px;background:var(--panel);color:var(--ink);min-width:0;width:100%}
-textarea{padding:8px 10px;min-height:90px;resize:vertical;font:12px/1.55 'JetBrains Mono',ui-monospace,monospace;white-space:pre;overflow:auto}
-textarea.prose{font:13px/1.5 Inter,sans-serif;white-space:pre-wrap}
-.row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.seg{display:inline-flex;padding:3px;border-radius:10px;background:var(--soft);border:1px solid var(--hair)}
-.seg button{border:0;background:none;min-height:30px;padding:0 11px;border-radius:7px;font-size:12.5px;font-weight:500;color:var(--mute)}
-.seg button[aria-pressed=true]{background:var(--panel);color:var(--ink);box-shadow:0 1px 3px rgba(20,24,40,.12)}
-/* data grid */
-.gridwrap{overflow:auto;max-height:46vh;border:1px solid var(--hair);border-radius:10px}
-table.grid{border-collapse:separate;border-spacing:0;font-size:12px;min-width:100%}
+.panel{padding:0 0 24px}
+.sec{padding:16px 20px;border-bottom:1px solid var(--hair);display:grid;gap:12px}
+.sec h2{margin:0;font:600 13px/1.3 Inter,system-ui,sans-serif;color:var(--ink);display:flex;justify-content:space-between;align-items:center;gap:8px}
+.sec h2 small{font:400 13px/1.3 Inter,system-ui,sans-serif;color:var(--mute);text-align:right}
+.hint{margin:0;font-size:13px;color:var(--mute);line-height:1.5}
+label.f,fieldset.f{display:grid;gap:6px;font-size:13px;font-weight:500;color:var(--mute)}
+label.f small{font-size:13px;font-weight:400}
+input[type=text],input[type=number],select,textarea{min-height:40px;border:1px solid var(--hair2);border-radius:10px;padding:0 12px;background-color:var(--panel);color:var(--ink);font-size:14px;font-weight:400;min-width:0;width:100%}
+textarea{padding:9px 12px;min-height:90px;resize:vertical;font:13px/1.55 'JetBrains Mono',ui-monospace,monospace;white-space:pre;overflow:auto}
+textarea.prose{font:14px/1.5 Inter,system-ui,sans-serif;white-space:pre-wrap}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:end}.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.seg{display:inline-flex;gap:2px;padding:3px;border-radius:10px;background:var(--soft);border:1px solid var(--hair)}
+.seg button{border:0;background:none;min-height:32px;padding:0 12px;border-radius:7px;font-size:14px;font-weight:500;color:var(--mute)}
+.seg button[aria-pressed=true]{background:var(--panel);color:var(--ink);box-shadow:0 0 0 1px var(--hair2)}
+/* data grid: a small spreadsheet, so its cells keep the tight rhythm of a table */
+.gridwrap{overflow:auto;max-height:46vh;border:1px solid var(--hair2);border-radius:10px}
+table.grid{border-collapse:separate;border-spacing:0;font-size:13px;min-width:100%;font-variant-numeric:tabular-nums}
 table.grid th,table.grid td{border-bottom:1px solid var(--hair);border-right:1px solid var(--hair);padding:0;background:var(--panel)}
-table.grid thead th{position:sticky;top:0;background:var(--soft);z-index:1}
-table.grid input{border:0;border-radius:0;min-height:30px;width:100%;min-width:84px;padding:0 7px;background:transparent;font-size:12px}
+table.grid thead th{position:sticky;top:-.01px;background:var(--soft);z-index:1}/* not exactly 0: the Atlas bar script moves every sticky element whose top is 0 below the bar, which pushed this header over the first row */
+table.grid input{border:0;border-radius:0;min-height:36px;width:100%;min-width:92px;padding:0 10px;background-color:transparent;font-size:13px}
 table.grid thead input{font-weight:600}
-table.grid input:focus{outline:2px solid var(--accent);outline-offset:-2px;background:var(--panel)}
-table.grid .rn{width:30px;min-width:30px;text-align:center;color:var(--mute);font:10.5px 'JetBrains Mono',monospace;position:sticky;left:0;background:var(--soft)}
-table.grid .ty{display:flex;align-items:center;gap:2px;padding:2px 3px 0 6px;font:600 9.5px 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
-table.grid .x{border:0;background:none;width:32px;height:32px;border-radius:6px;color:var(--mute);font-size:14px;line-height:1;margin-left:auto}
+table.grid input:focus{outline:2px solid var(--accent);outline-offset:-2px;background-color:var(--panel)}
+table.grid .rn{width:34px;min-width:34px;text-align:center;color:var(--mute);font:400 12px/1 Inter,system-ui,sans-serif;position:sticky;left:0;background:var(--soft)}
+table.grid .ty{display:flex;align-items:center;gap:2px;padding:2px 3px 0 10px;font:500 12px/1 Inter,system-ui,sans-serif;color:var(--mute)}
+table.grid .x{border:0;background:none;width:32px;height:32px;border-radius:8px;color:var(--mute);font-size:15px;line-height:1;margin-left:auto}
 table.grid .x:hover{color:var(--bad);background:var(--badbg)}
 /* chart types */
-.types{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:6px}
-.types h3{grid-column:1/-1;margin:6px 0 0;font:600 10.5px Inter;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
-.type{display:grid;gap:2px;justify-items:start;text-align:left;padding:7px 8px;border-radius:9px;border:1px solid var(--hair);background:var(--panel);min-height:44px;font-size:12px;font-weight:600}
+.types{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px}
+.types h3{grid-column:1/-1;margin:8px 0 0;font:500 13px/1.3 Inter,system-ui,sans-serif;color:var(--mute)}
+.type{display:grid;gap:4px;justify-items:start;text-align:left;padding:8px 10px;border-radius:10px;border:1px solid var(--hair);background:var(--panel);min-height:52px;font-size:13px;font-weight:500;line-height:1.3;transition:border-color .15s}
 .type svg{width:28px;height:18px;color:var(--mute)}
-.type:hover{border-color:#CBD0DB}.type[aria-pressed=true]{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}.type[aria-pressed=true] svg{color:var(--accent)}
-.recs{display:grid;gap:6px}
-.rec{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;text-align:left;border:1px solid var(--hair);background:var(--soft);border-radius:10px;padding:8px 10px}
-.rec b{font-size:13px}.rec span{grid-column:1/-1;font-size:12px;color:var(--mute);line-height:1.4}.rec i{font-style:normal;justify-self:end;font:600 10.5px 'JetBrains Mono',monospace;color:var(--accent)}
-.rec[aria-pressed=true]{border-color:var(--accent);background:#F4F0FF}
-.checks{display:grid;gap:6px;margin:0;padding:0;list-style:none}
-.checks li{display:grid;grid-template-columns:auto 1fr;gap:2px 8px;font-size:12px;line-height:1.4;align-items:start}
-.checks li b{font-size:12.5px}.checks li span:not(.badge){grid-column:2;color:var(--mute);overflow-wrap:anywhere}
-.badge{font:700 10px/1 Inter;letter-spacing:.06em;padding:4px 6px;border-radius:6px;background:var(--okbg);color:var(--ok)}.badge.warn{background:var(--warnbg);color:var(--warn)}.badge.fail{background:var(--badbg);color:var(--bad)}
-.warns{display:grid;gap:6px;margin:0;padding:0;list-style:none}.warns li{font-size:12.5px;padding:8px 10px;border-radius:9px;background:var(--warnbg);color:#5C3A00;line-height:1.4}
-.chips{display:flex;flex-wrap:wrap;gap:6px}.chips .lbl{width:100%;font:600 10.5px Inter;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin-top:4px}
-.chip input[type=checkbox],.chip input[type=radio]{width:18px;height:18px;flex:none;margin:0 0 0 4px;accent-color:#111113}
-.chip{display:inline-flex;align-items:center;gap:7px;min-height:36px;padding:0 10px 0 4px;border-radius:999px;border:1px solid var(--hair);background:var(--panel);font-size:12px;font-weight:500;white-space:nowrap}
+.type:hover{border-color:var(--hair2)}.type[aria-pressed=true]{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}.type[aria-pressed=true] svg{color:var(--ink)}
+.recs{display:grid;gap:8px}
+.rec{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;text-align:left;border:1px solid var(--hair);background:var(--panel);border-radius:10px;padding:10px 12px;transition:border-color .15s}
+.rec:hover{border-color:var(--hair2)}
+.rec b{font-size:14px;font-weight:600}.rec span{grid-column:1/-1;font-size:13px;color:var(--mute);line-height:1.45}.rec i{font-style:normal;justify-self:end;font:500 12px/1.6 Inter,system-ui,sans-serif;font-variant-numeric:tabular-nums;color:var(--mute)}
+.rec[aria-pressed=true]{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+.checks{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.checks li{display:grid;grid-template-columns:auto 1fr;gap:2px 8px;font-size:13px;line-height:1.45;align-items:start}
+.checks li b{font-size:14px;font-weight:500}.checks li span:not(.badge){grid-column:2;color:var(--mute);overflow-wrap:anywhere}
+.badge{font:600 12px/1 Inter,system-ui,sans-serif;padding:4px 7px;border-radius:6px;background:var(--okbg);color:var(--ok)}.badge.warn{background:var(--warnbg);color:var(--warn)}.badge.fail{background:var(--badbg);color:var(--bad)}
+.warns{display:grid;gap:6px;margin:0;padding:0;list-style:none}.warns li{font-size:13px;padding:10px 12px;border-radius:10px;background:var(--warnbg);color:#5C3A00;line-height:1.45}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chips .lbl{width:100%;font:500 13px/1.3 Inter,system-ui,sans-serif;color:var(--mute);margin-top:4px}
+.chip input[type=checkbox],.chip input[type=radio]{width:20px;height:20px;flex:none;margin:0;accent-color:var(--accent)}
+.chip{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 12px;border-radius:10px;border:1px solid var(--hair2);background:var(--panel);font-size:14px;font-weight:400;color:var(--ink);white-space:nowrap}
 .chip[aria-pressed=true]{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
 .sw{width:24px;height:24px;border-radius:50%;display:grid;grid-template-columns:1fr 1fr;overflow:hidden;border:1px solid rgba(0,0,0,.08);flex:none}
-.slots{display:grid;gap:6px}.slot{display:grid;grid-template-columns:18px minmax(0,1fr) 120px;gap:8px;align-items:center;font-size:12.5px}
+.slots{display:grid;gap:8px}.slot{display:grid;grid-template-columns:18px minmax(0,1fr) 132px;gap:10px;align-items:center;font-size:14px}
 .slot i{width:18px;height:18px;border-radius:5px;border:1px solid rgba(0,0,0,.1)}.slot span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.notes{display:grid;gap:8px;list-style:none;margin:0;padding:0}.note{display:grid;gap:6px;padding:9px;border:1px solid var(--hair);border-radius:10px;background:var(--soft)}
-.note .hd{display:flex;justify-content:space-between;align-items:center;font:600 11px Inter;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
-.note .x{border:0;background:none;width:32px;height:32px;border-radius:7px;color:var(--mute);font-size:15px}.note .x:hover{color:var(--bad);background:var(--badbg)}
-/* stage */
-.main{min-width:0;display:grid;align-content:start;gap:14px;padding:22px clamp(14px,2.4vw,32px) 48px}
-@media (min-width:861px){.app>.main{position:sticky;top:calc(var(--sb-h,0px) + 57px);align-self:start;max-height:calc(100vh - var(--sb-h,0px) - 57px);overflow:auto}}/* the chart stays in view while a long settings panel scrolls */
+.notes{display:grid;gap:8px;list-style:none;margin:0;padding:0}.note{display:grid;gap:8px;padding:12px;border:1px solid var(--hair);border-radius:14px;background:var(--soft)}
+.note .hd{display:flex;justify-content:space-between;align-items:center;font:600 13px/1.3 Inter,system-ui,sans-serif;color:var(--ink)}
+.note .x{border:1px solid var(--hair2);background:var(--panel);width:40px;height:40px;border-radius:10px;color:var(--mute);font-size:16px;line-height:1}.note .x:hover{color:var(--bad);border-color:var(--bad)}
+/* stage: the chart on the alternate surface */
+.main{min-width:0;display:grid;align-content:start;gap:14px;padding:20px clamp(16px,2.4vw,32px) 48px}
+@media (min-width:861px){.app>.main{position:sticky;top:calc(var(--sb-h,0px) + var(--st-head,57px));align-self:start;max-height:calc(100vh - var(--sb-h,0px) - var(--st-head,57px));overflow:auto}}
+@media (min-width:861px) and (max-width:1180px){:root{--st-head:102px}}/* the bar is two rows there: name and actions, then the studio tabs *//* the chart stays in view while a long settings panel scrolls */
 .bar2{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
-.bar2 .row{gap:6px}
-.fig{position:relative;border-radius:16px;overflow:hidden;line-height:0;box-shadow:var(--shadow);border:1px solid var(--hair);background:#fff;max-width:100%}
+.bar2 .row{gap:8px}
+.fig{position:relative;border-radius:14px;overflow:hidden;line-height:0;border:1px solid var(--hair);background:#fff;max-width:100%}
 .fig svg{width:100%;height:auto;display:block}
-.fig:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.fig:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .ring{position:absolute;pointer-events:none;border:2px solid var(--accent);border-radius:6px;box-shadow:0 0 0 3px rgba(255,255,255,.85);display:none}
-.kbd{font-size:12px;color:var(--mute)}.kbd kbd{font:11px 'JetBrains Mono',monospace;border:1px solid var(--hair);border-bottom-width:2px;border-radius:5px;padding:1px 5px;background:var(--panel)}
-.dtable{overflow:auto;border:1px solid var(--hair);border-radius:12px;background:var(--panel);max-height:420px}
-.dtable table{border-collapse:collapse;width:100%;font-size:12.5px;font-variant-numeric:tabular-nums}
-.dtable caption{text-align:left;padding:10px 12px;font-weight:600;font-size:13px}
-.dtable th,.dtable td{padding:6px 12px;border-top:1px solid #EEF0F4;text-align:left;white-space:nowrap}.dtable th{color:var(--mute);font-weight:600;font-size:11.5px;position:sticky;top:0;background:var(--panel)}
+.kbd{margin:0;font-size:13px;color:var(--mute)}.kbd kbd{font:12px 'JetBrains Mono',monospace;border:1px solid var(--hair2);border-bottom-width:2px;border-radius:5px;padding:1px 5px;background:var(--panel)}
+.dtable{overflow:auto;border:1px solid var(--hair);border-radius:14px;background:var(--panel);max-height:420px}
+.dtable table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+.dtable caption{text-align:left;padding:12px 14px;font-weight:600;font-size:14px}
+.dtable th,.dtable td{padding:8px 14px;border-top:1px solid var(--hair);text-align:left;white-space:nowrap}.dtable th{color:var(--mute);font-weight:500;font-size:13px;position:sticky;top:-.01px;background:var(--panel)}
 .dtable td.n{text-align:right}
-.descbox{font-size:13px;line-height:1.55;color:#33384A;background:var(--panel);border:1px solid var(--hair);border-radius:12px;padding:12px 14px;margin:0}
-.descbox b{display:block;font:600 11px Inter;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin-bottom:4px}
-.prog{font:500 11.5px 'JetBrains Mono',monospace;color:var(--mute)}
-.tip{position:fixed;z-index:40;pointer-events:none;min-width:150px;max-width:280px;padding:10px 12px;border-radius:10px;background:#16181F;color:#F4F5F8;font-size:12.5px;line-height:1.45;box-shadow:0 12px 30px -10px rgba(0,0,0,.4);opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s}
-.tip.on{opacity:1;transform:none}.tip .t{color:#B4BACA;font-size:11.5px;margin-bottom:4px}.tip .r{display:flex;align-items:center;gap:8px}.tip .r i{width:12px;height:3px;border-radius:2px;flex:none}.tip .r b{font-weight:600}.tip .r span{color:#B4BACA}
-.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);opacity:0;padding:10px 16px;border-radius:10px;background:var(--ink);color:#fff;font-size:13px;transition:opacity .2s,transform .2s;pointer-events:none;z-index:60;max-width:calc(100vw - 32px)}
+.descbox{font-size:14px;line-height:1.55;color:var(--ink);background:var(--panel);border:1px solid var(--hair);border-radius:14px;padding:14px 16px;margin:0}
+.descbox b{display:block;font:600 13px/1.3 Inter,system-ui,sans-serif;color:var(--ink);margin-bottom:4px}
+.prog{font:500 13px/1 Inter,system-ui,sans-serif;font-variant-numeric:tabular-nums;color:var(--mute)}
+.tip{position:fixed;z-index:40;pointer-events:none;min-width:150px;max-width:280px;padding:10px 12px;border-radius:10px;background:#0F1115;color:#F6F7F9;font-size:13px;line-height:1.45;box-shadow:0 12px 30px -10px rgba(0,0,0,.4);opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s}
+.tip.on{opacity:1;transform:none}.tip .t{color:#B4BACA;font-size:12px;margin-bottom:4px}.tip .r{display:flex;align-items:center;gap:8px}.tip .r i{width:12px;height:3px;border-radius:2px;flex:none}.tip .r b{font-weight:600}.tip .r span{color:#B4BACA}
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);opacity:0;padding:10px 16px;border-radius:10px;background:var(--ink);color:#fff;font-size:14px;transition:opacity .2s,transform .2s cubic-bezier(.2,.8,.2,1);pointer-events:none;z-index:60;max-width:calc(100vw - 32px)}
 .toast.on{opacity:1;transform:translate(-50%,0)}
-dialog{border:0;border-radius:16px;padding:0;width:min(640px,calc(100vw - 24px));box-shadow:0 30px 80px -20px rgba(20,24,40,.45)}dialog::backdrop{background:rgba(20,24,40,.45)}
-dialog .in{padding:18px;display:grid;gap:10px}dialog h2{margin:0;font-size:16px}dialog textarea{min-height:220px}
+dialog{border:0;border-radius:16px;padding:0;width:min(640px,calc(100vw - 24px));box-shadow:0 24px 60px -24px rgba(15,17,21,.35);color:var(--ink)}dialog::backdrop{background:rgba(15,17,21,.4)}
+dialog .in{padding:20px;display:grid;gap:12px}dialog h2{margin:0;font:600 16px/1.3 Inter,system-ui,sans-serif;letter-spacing:-.01em}dialog textarea{min-height:220px}
 @media (max-width:860px){
- header.top{position:relative}.brand h1{font-size:22px}.links{display:none}.acts{margin-left:0;width:100%;justify-content:flex-start}
+ header.top{position:relative;--fam-gut:16px;padding-inline:max(16px,env(safe-area-inset-left)) max(16px,env(safe-area-inset-right))}.links{display:none}
  .app{display:block}
- .main{padding:14px 12px 96px}
- .side{position:fixed;left:0;right:0;bottom:0;z-index:25;border-right:0;border-top:1px solid var(--hair);border-radius:16px 16px 0 0;box-shadow:0 -12px 40px -16px rgba(20,24,40,.35);max-height:66vh;transform:translateY(calc(100% - 50px));transition:transform .22s ease}
+ .main{padding:16px 16px 96px}
+ .side{position:fixed;left:0;right:0;bottom:0;z-index:25;border-right:0;border-top:1px solid var(--hair);border-radius:16px 16px 0 0;box-shadow:0 -16px 40px -20px rgba(15,17,21,.3);max-height:66vh;transform:translateY(calc(100% - 50px));transition:transform .24s cubic-bezier(.2,.8,.2,1)}
  .side.open{transform:none}
- .tabs{position:static;border-radius:16px 16px 0 0}.tabs button{min-height:50px;font-size:12px}
- .tabs .sheetx{flex:none;display:block;border:0;background:none;width:44px;min-height:50px;font-size:18px;color:var(--mute)}
+ .tabs{position:static;border-radius:16px 16px 0 0;min-height:50px;padding-top:0}.tabs button{min-height:49px}
+ .tabs .sheetx{flex:none;display:block;border:0;background:none;width:44px;min-height:49px;font-size:20px;line-height:1;color:var(--mute)}
  .side:not(.open) .sheetx{display:none}
  .panels{overflow:auto;max-height:calc(66vh - 50px);overscroll-behavior:contain}
  .gridwrap{max-height:38vh}
 }
+@media (max-width:640px){header.top{gap:8px 6px}.acts{display:contents}.brand{margin-right:auto}.brand .hs{display:none}#undo,#redo{order:1}#exportMenu{order:2}#draftsMenu,#share{order:3}#draftsMenu .pop{left:0;right:auto}.pop button{min-height:44px}/* name, undo, redo and Export share the first row; the rest wrap under them */.btn,input[type=text],input[type=number],select,.chip{min-height:44px}#undo,#redo{width:44px}.seg button{min-height:36px}.note .x{width:44px;height:44px}table.grid input{min-height:40px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style><meta property="og:type" content="website"><meta property="og:site_name" content="Visual &amp; Motion Atlas"><meta property="og:title" content="Chart studio · Visual & Motion Atlas"><meta property="og:description" content="Make a chart from your own data: paste from a spreadsheet, upload CSV or JSON, or edit the grid. Twenty-six chart forms in nineteen validated styles, with SVG, PNG, embed, video and GIF export."><meta property="og:url" content="https://motionatlas-ten.vercel.app/chart-studio"><meta property="og:image" content="https://motionatlas-ten.vercel.app/assets/og-atlas.jpg"><meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://motionatlas-ten.vercel.app/chart-studio">
 <style id="sbPre">html{--sb-h:calc(44px + env(safe-area-inset-top,0px))}body{padding-top:var(--sb-h)}html:not(.sbReady) body::before{content:"";position:fixed;top:0;left:0;right:0;height:var(--sb-h);background:#fff;border-bottom:1px solid #e8e8ea;z-index:2147483000}@media print{body{padding-top:0}}</style><script src="site-nav-data.js" defer></script><script src="site-bar.js" defer></script>
 </head><body><noscript><nav id="sbNo" aria-label="Atlas" style="position:fixed;top:0;left:0;right:0;height:44px;box-sizing:border-box;z-index:2147483000;background:#fff;border-bottom:1px solid #e8e8ea;padding:12px 16px;font:500 14px/20px system-ui,sans-serif;white-space:nowrap;overflow:auto"><a style="color:#111;font-weight:700;margin-right:16px" href="atlas.html">Atlas</a><a style="color:#111;margin-right:16px" href="tools.html">Tools</a><a style="color:#111;margin-right:16px" href="atlas.html#browse">Catalogue</a><a style="color:#111" href="atlas.html#projects">My projects</a></nav></noscript>
 <header class="top">
- <div class="brand"><a href="atlas.html#systems" aria-label="Back to the Visual & Motion Atlas">← Atlas</a><h1>Chart studio</h1></div>
+ <div class="brand"><a href="atlas.html#systems" aria-label="Back to the Visual & Motion Atlas">← <span class="hs">Atlas</span></a><h1>Chart studio</h1></div>
  <nav class="links" aria-label="Other studios"><a href="chart-styles.html" id="guideLink">Style guides</a><a href="diagram-studio.html">Diagram studio</a><a href="flowchart-studio.html">Flowchart studio</a></nav>
  <div class="acts">
-  <button class="btn" id="undo" type="button" title="Undo (Ctrl+Z)" aria-label="Undo">↶</button><button class="btn" id="redo" type="button" title="Redo (Ctrl+Shift+Z)" aria-label="Redo">↷</button>
+  <button class="btn" id="undo" type="button" title="Undo (Ctrl+Z)" aria-label="Undo"><svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 4 4 7.5 7.5 11"/><path d="M4 7.5h7.5a4.5 4.5 0 0 1 0 9H8"/></svg></button><button class="btn" id="redo" type="button" title="Redo (Ctrl+Shift+Z)" aria-label="Redo"><svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.5 4 16 7.5 12.5 11"/><path d="M16 7.5H8.5a4.5 4.5 0 0 0 0 9H12"/></svg></button>
   <details class="menu" id="draftsMenu"><summary class="btn">Drafts</summary><div class="pop" id="drafts"></div></details>
   <button class="btn" id="share" type="button">Copy link</button>
   <details class="menu" id="exportMenu"><summary class="btn primary">Export</summary><div class="pop">
@@ -296,7 +308,7 @@ function drawMapping(){const k=M.KIND[S.kind],m=curMap(),cols=S.table.columns,ty
  const sel=(role,val,allowNone,onlyNum)=>`<label class="f">${lab(role)}<select data-role="${role}">${allowNone?`<option value="-1"${val<0?' selected':''}>None</option>`:''}${cols.map((c,i)=>onlyNum&&ty[i]!=='num'?'':`<option value="${i}"${+val===i?' selected':''}>${esc(c)}</option>`).join('')}</select></label>`;let h='';
  k.roles.forEach(r=>{if(r==='x')h+=sel('x',m.x,true);else if(r==='xg')h+=sel('xg',m.x,true);else if(r==='xn')h+=sel('xn',m.x,false,true);else if(r==='y1')h+=sel('y1',m.y[0]??-1,false,true);
   else if(r==='y2')h+=`<label class="f">${S.kind==='bullet'||S.kind==='gauge'?'Actual':'First value'}<select data-role="y2a">${cols.map((c,i)=>ty[i]==='num'?`<option value="${i}"${m.y[0]===i?' selected':''}>${esc(c)}</option>`:'').join('')}</select></label><label class="f">${S.kind==='bullet'||S.kind==='gauge'?'Target':'Second value'}<select data-role="y2b"><option value="-1">None</option>${cols.map((c,i)=>ty[i]==='num'?`<option value="${i}"${m.y[1]===i?' selected':''}>${esc(c)}</option>`:'').join('')}</select></label>`;
-  else if(r==='y')h+=`<fieldset class="f" style="grid-column:1/-1;border:0;padding:0;margin:0"><legend style="font-size:12px;color:var(--mute);margin-bottom:4px">${lab('y')}${k.max?` · up to ${k.max}`:''}</legend><div class="row">${cols.map((c,i)=>ty[i]==='num'&&i!==m.x?`<label class="chip" style="padding:0 10px"><input type="checkbox" data-y="${i}"${m.y.includes(i)?' checked':''}> ${esc(c)}</label>`:'').join('')||'<span class="hint">No numeric columns yet.</span>'}</div></fieldset>`;
+  else if(r==='y')h+=`<fieldset class="f" style="grid-column:1/-1;border:0;padding:0;margin:0"><legend style="padding:0;margin-bottom:6px">${lab('y')}${k.max?` · up to ${k.max}`:''}</legend><div class="row">${cols.map((c,i)=>ty[i]==='num'&&i!==m.x?`<label class="chip"><input type="checkbox" data-y="${i}"${m.y.includes(i)?' checked':''}> ${esc(c)}</label>`:'').join('')||'<span class="hint">No numeric columns yet.</span>'}</div></fieldset>`;
   else h+=sel(r,m[r==='size'?'size':r==='group'?'group':'label'],true);});
  $('mapping').innerHTML=h;}
 $('mapping').addEventListener('change',e=>{const el=e.target,m=clone(curMap());const v=+el.value;
@@ -343,8 +355,8 @@ function drawStyleTab(r){const st=r.style,cat=st.t.cat;$('styles').value=S.style
  $('bestOrder').disabled=names.length<2;
  $('emph').innerHTML=`<option value="">None</option>`+names.map((n,i)=>`<option value="${i}"${String(S.opt.emph)===String(i)?' selected':''}>${esc(n)}</option>`).join('');$('emph').disabled=!names.length||['pie','donut','scatter','bubble'].includes(S.kind);
  const pal=r.palette.filter(c=>/^#[0-9a-f]{6}$/i.test(c));const v=M.validate(pal,{mode:st.t.dark?'dark':'light',surface:r.surface,pairs:r.pairs});last.check=v;
- $('palState').innerHTML=pal.length?`<span class="badge ${v.ok?(v.checks.some(c=>c.state==='warn')?'warn':''):'fail'}">${v.ok?(v.checks.some(c=>c.state==='warn')?'PASS · WITH LABELS':'PASS'):'FAIL'}</span>`:'';
- $('palChecks').innerHTML=pal.length?v.checks.map(c=>`<li><span class="badge ${c.state==='pass'?'':c.state}">${c.state==='pass'?'PASS':c.state==='warn'?'WARN':'FAIL'}</span><b>${esc(c.name)}</b><span>${esc(c.detail)}</span></li>`).join('')+`<li><span class="badge">INFO</span><b>Colours in use</b><span>${pal.map(c=>`<i style="display:inline-block;width:11px;height:11px;border-radius:3px;background:${c};vertical-align:-1px;margin-right:3px"></i>${c}`).join('  ')}</span></li>`:'<li><span class="badge">INFO</span><b>No categorical colours</b><span>This chart uses one accent, a one-hue ramp or the diverging poles.</span></li>';}
+ $('palState').innerHTML=pal.length?`<span class="badge ${v.ok?(v.checks.some(c=>c.state==='warn')?'warn':''):'fail'}">${v.ok?(v.checks.some(c=>c.state==='warn')?'Pass, with labels':'Pass'):'Fail'}</span>`:'';
+ $('palChecks').innerHTML=pal.length?v.checks.map(c=>`<li><span class="badge ${c.state==='pass'?'':c.state}">${c.state==='pass'?'Pass':c.state==='warn'?'Warn':'Fail'}</span><b>${esc(c.name)}</b><span>${esc(c.detail)}</span></li>`).join('')+`<li><span class="badge">Info</span><b>Colours in use</b><span>${pal.map(c=>`<i style="display:inline-block;width:11px;height:11px;border-radius:3px;background:${c};vertical-align:-1px;margin-right:3px"></i>${c}`).join('  ')}</span></li>`:'<li><span class="badge">Info</span><b>No categorical colours</b><span>This chart uses one accent, a one-hue ramp or the diverging poles.</span></li>';}
 
 /* ---------- annotations ---------- */
 function drawNotes(){const labels=(last?S.table.rows.map((r,i)=>String(r[(last.map||{}).x]??`Row ${i+1}`)):[]);const ser=seriesNames();
@@ -366,7 +378,7 @@ const loadedFonts=new Set();
 function chartWidth(){if(S.opt.width&&S.opt.width!=='auto')return +S.opt.width;const w=$('fig').parentElement.clientWidth;return Math.max(320,Math.min(1100,Math.round(w-2)));}
 function render(){stopPlay();const st=DVStyle(S.style);
  const r=M.render(S.kind,S.table,st,{...S.opt,mode:S.mode,map:S.map||undefined,width:chartWidth(),height:+S.opt.height||undefined,notes:S.notes,fmt:S.opt.fmt});last=r;
- const ms=r.style;if(!loadedFonts.has(ms.id)&&document.fonts){loadedFonts.add(ms.id);DVFonts(ms);const fam=ms.t.font.split(',')[0],hd=ms.t.head.split(',')[0];Promise.all([document.fonts.load(`600 14px ${fam}`),document.fonts.load(`400 12px ${fam}`),document.fonts.load(`600 20px ${hd}`)]).then(()=>render()).catch(()=>{});}
+ const ms=r.style;if(!loadedFonts.has(ms.id)&&document.fonts){loadedFonts.add(ms.id);DVFonts(ms);const fam=ms.t.font.split(',')[0],hd=ms.t.head.split(',')[0];const go=()=>Promise.all([document.fonts.load(`600 14px ${fam}`),document.fonts.load(`400 12px ${fam}`),document.fonts.load(`600 20px ${hd}`)]).then(()=>render()).catch(()=>{});go();/* the style's font stylesheet is added a moment ago and may not have arrived: measure again once it has, so the layout never depends on what else the page was loading */const lk=document.querySelector(`link[data-dv-font="${ms.id}"]`);if(lk&&!lk.sheet)lk.addEventListener('load',go,{once:true});}
  $('chart').innerHTML=r.svg;$('fig').style.background=ms.t.bg.startsWith('#')?ms.t.bg:'#0B0F1A';$('fig').style.maxWidth=S.opt.width&&S.opt.width!=='auto'?r.width+'px':'';
  $('desc').textContent=r.desc;drawStyleTab(r);drawTable();drawWarns(r);$('guideLink').href='chart-styles.html#s='+S.style;
  document.title=(S.opt.title||M.KIND[S.kind].name)+' · Chart studio';cursor=-1;$('ring').style.display='none';}
@@ -377,7 +389,7 @@ function drawWarns(r){const w=[...r.warnings];const v=last.check;const items=[];
  items.push(['pass','Accessible name and description','The SVG has role="img", a <title> and a generated <desc>; the data table is one click away.']);
  if(v&&r.palette.length)items.push([v.ok?(v.checks.some(c=>c.state==='warn')?'warn':'pass'):'fail','Colour-blind safety',v.ok?`Worst colour-blind ΔE ${v.cvd.toFixed(1)}${v.cvd<8?' is in the 6–8 floor band: keep labels or the table':''}.`:'A palette check fails; see the Style tab, or use “Most distinct order”.']);
  const n=last.palette.length;if(n>=2&&S.opt.legend==='off'&&S.opt.direct==='off')items.push(['warn','Identity','Neither a legend nor direct labels: colour alone carries identity. Turn one on.']);
- $('warns').innerHTML=w.map(x=>`<li>${esc(x)}</li>`).join('');$('preflight').innerHTML=items.map(([s,b,d])=>`<li><span class="badge ${s==='pass'?'':s}">${s==='pass'?'OK':s==='warn'?'CHECK':'FIX'}</span><b>${esc(b)}</b><span>${esc(d)}</span></li>`).join('');}
+ $('warns').innerHTML=w.map(x=>`<li>${esc(x)}</li>`).join('');$('preflight').innerHTML=items.map(([s,b,d])=>`<li><span class="badge ${s==='pass'?'':s}">${s==='pass'?'OK':s==='warn'?'Check':'Fix'}</span><b>${esc(b)}</b><span>${esc(d)}</span></li>`).join('');}
 
 /* data table twin of the chart */
 let tableOn=store.get('table')==='1';

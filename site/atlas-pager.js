@@ -9,11 +9,12 @@
  const st=document.createElement('style');st.textContent=`.pgOff{display:none!important}
 .pgMore{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 12px;margin:24px 0 8px}
 .pgMore[hidden]{display:none}
-.pgMore span{flex-basis:100%;text-align:center;font:400 13px/1.4 Inter,system-ui,sans-serif;color:var(--text-dim,#4a5466)}
-.pgMore button{min-height:44px;padding:0 20px;border-radius:999px;border:1px solid var(--hair,#d9dee6);background:#fff;font:600 14px/1 Inter,system-ui,sans-serif;color:var(--text,#0d1220);cursor:pointer}
-.pgMore button:hover{border-color:currentColor}
+.pgMore span{flex-basis:100%;text-align:center;font:500 13px/1.4 Inter,system-ui,sans-serif;color:var(--text-dim,#5F6573);font-variant-numeric:tabular-nums}
+.pgMore button{min-height:40px;padding:0 16px;border-radius:10px;border:1px solid var(--hair-hi,#D5D8DF);background:#fff;font:500 14px/1 Inter,system-ui,sans-serif;color:var(--text,#0F1115);cursor:pointer;transition:background-color .15s}
+.pgMore button:hover{background:#F6F7F9}
+@media (max-width:640px){.pgMore button{min-height:44px}}
 .pgMore button:focus-visible{outline:2px solid var(--text,#0d1220);outline-offset:2px}
-.pgMore .pgAll{border-color:transparent;background:none;font-weight:500;text-decoration:underline;text-underline-offset:3px}`;
+.pgMore .pgAll{border-color:transparent;background:none}.pgMore .pgAll:hover{background:#F6F7F9}`;
  document.head.append(st);
  function attach(grid,size,pick){
   if(grid.pg)return;const s=grid.pg={limit:size,n:-1},bar=document.createElement('div');bar.className='pgMore';bar.hidden=true;pick?grid.append(bar):grid.after(bar);

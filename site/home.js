@@ -45,10 +45,10 @@ window.HomeAtlas={
    <button class="vmaCtl" type="button" id="vmaPlayBtn" aria-label="Pause the film"><svg viewBox="0 0 10 10" aria-hidden="true" id="vmaPlayIcon"><rect x="1" y="1" width="3" height="8" fill="currentColor"/><rect x="6" y="1" width="3" height="8" fill="currentColor"/></svg><span id="vmaPlayLabel">Pause</span></button>
   </div>
   <ol class="vmaPlates" id="vmaPlateList">
-   <li><button class="vmaPlateBtn" type="button" data-t="0" aria-current="true"><span class="vmaBar"></span><span class="vmaNo">PLATE I &middot; 0:00</span><span class="vmaName">Harmonics</span><span class="vmaDesc">Epicycles trace a planet from frequency.</span></button></li>
-   <li><button class="vmaPlateBtn" type="button" data-t="10"><span class="vmaBar"></span><span class="vmaNo">PLATE II &middot; 0:10</span><span class="vmaName">Specimens</span><span class="vmaDesc">Oak, rose, willow, stag and bird drawn in light.</span></button></li>
-   <li><button class="vmaPlateBtn" type="button" data-t="20"><span class="vmaBar"></span><span class="vmaNo">PLATE III &middot; 0:20</span><span class="vmaName">Dimension</span><span class="vmaDesc">Flat blueprints rise into a wireframe garden.</span></button></li>
-   <li><button class="vmaPlateBtn" type="button" data-t="30"><span class="vmaBar"></span><span class="vmaNo">PLATE IV &middot; 0:30</span><span class="vmaName">Biosphere</span><span class="vmaDesc">Flocks orbit a living world, then return to the void.</span></button></li>
+   <li><button class="vmaPlateBtn" type="button" data-t="0" aria-current="true"><span class="vmaBar"></span><span class="vmaNo">Plate I &middot; 0:00</span><span class="vmaName">Harmonics</span><span class="vmaDesc">Epicycles trace a planet from frequency.</span></button></li>
+   <li><button class="vmaPlateBtn" type="button" data-t="10"><span class="vmaBar"></span><span class="vmaNo">Plate II &middot; 0:10</span><span class="vmaName">Specimens</span><span class="vmaDesc">Oak, rose, willow, stag and bird drawn in light.</span></button></li>
+   <li><button class="vmaPlateBtn" type="button" data-t="20"><span class="vmaBar"></span><span class="vmaNo">Plate III &middot; 0:20</span><span class="vmaName">Dimension</span><span class="vmaDesc">Flat blueprints rise into a wireframe garden.</span></button></li>
+   <li><button class="vmaPlateBtn" type="button" data-t="30"><span class="vmaBar"></span><span class="vmaNo">Plate IV &middot; 0:30</span><span class="vmaName">Biosphere</span><span class="vmaDesc">Flocks orbit a living world, then return to the void.</span></button></li>
   </ol>
  </footer>
 </section>

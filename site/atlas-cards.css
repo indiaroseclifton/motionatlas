@@ -1,14 +1,14 @@
 /* One card for the atlas sections (2026-11). Loaded last in atlas.html.
    Anatomy, taken from the landing-effects card (.fxl-card) and the interactions shelf:
-   a white shell with a hairline border and 16px corners, a preview inset 8px with 10px corners,
-   an 11px mono kicker, a 22px display title, muted 14px text. Cards that open something lift 4px on hover.
+   a white shell with a hairline border and 14px corners, a preview inset 8px with 10px corners,
+   a 13px label, a 17px title at weight 600, muted 14px text. Cards that open something lift 2px on hover (site style, November 2026).
    Shell cards: .cataloguecard .artcard .assetCard .iconChoice .bgCard (with a preview)
                 .refcard .fontpair .fontspecimen .paircard (text only). */
 :is(body:not(.cinemaMode),body) main :is(.cataloguecard,.artcard,.assetCard,.iconChoice,.refcard,.fontpair,.fontspecimen,.paircard){
  box-sizing:border-box;position:relative;min-width:0;
- background:var(--panel,#fff);border:1px solid var(--hair,#d9dee6);border-radius:16px;
+ background:var(--panel,#fff);border:1px solid var(--hair,#E6E8EC);border-radius:14px;
  padding:16px 16px 18px;
- transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s,border-color .3s}
+ transition:transform .2s cubic-bezier(.2,.8,.2,1),box-shadow .2s,border-color .2s}
 :is(body:not(.cinemaMode),body) main :is(.refcard,.fontpair,.fontspecimen,.paircard){padding:20px}
 
 /* the preview: inset 8px from the shell, smaller radius */
@@ -17,29 +17,29 @@
  border-radius:10px!important;overflow:hidden}
 :is(body:not(.cinemaMode),body) main .iconChoice>.iconChoiceart{display:grid}
 :is(body:not(.cinemaMode),body) main .iconFamilyCards[data-tile=round] .iconChoiceart{border-radius:10px}
-:is(body:not(.cinemaMode),body) main :is(.cataloguecard,.artcard) .cardmedia>*{transition:transform .9s cubic-bezier(.2,.8,.2,1)}
+:is(body:not(.cinemaMode),body) main :is(.cataloguecard,.artcard) .cardmedia>*{transition:transform .28s cubic-bezier(.2,.8,.2,1)}
 :is(body:not(.cinemaMode),body) main .cataloguecard>.savebutton{top:16px;right:16px}
 
 /* type */
-:is(body:not(.cinemaMode),body) main :is(.cataloguecard,.artcard,.assetCard,.refcard) h3,:is(body:not(.cinemaMode),body) main .iconChoice h2{font-size:22px!important;line-height:1.15;margin:4px 0 8px}
-:is(body:not(.cinemaMode),body) main .paircard h2{font-size:28px!important;line-height:1.1;margin:0 0 12px}
+:is(body:not(.cinemaMode),body) main :is(.cataloguecard,.artcard,.assetCard,.refcard) h3,:is(body:not(.cinemaMode),body) main .iconChoice h2{font-size:17px!important;line-height:1.3;letter-spacing:-.01em;margin:4px 0 6px}
+:is(body:not(.cinemaMode),body) main .paircard h2{font-size:17px!important;line-height:1.3;letter-spacing:-.01em;margin:0 0 10px}
 :is(body:not(.cinemaMode),body) main :is(.cataloguecard,.artcard,.assetCard,.iconChoice,.refcard,.paircard) p{font-size:14px;line-height:1.55}
 :is(body:not(.cinemaMode),body) main :is(.cataloguecard,.artcard,.assetCard,.fontpair,.fontspecimen)>.cardcode{margin-top:0}
 
 /* background presets: a compact version of the same shell */
-:is(body:not(.cinemaMode),body) main .bgCard{box-sizing:border-box;background:var(--panel,#fff);border:1px solid var(--hair,#d9dee6);border-radius:16px;padding:8px 8px 12px;
- transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s,border-color .3s}
+:is(body:not(.cinemaMode),body) main .bgCard{box-sizing:border-box;background:var(--panel,#fff);border:1px solid var(--hair,#E6E8EC);border-radius:14px;padding:8px 8px 12px;
+ transition:transform .2s cubic-bezier(.2,.8,.2,1),box-shadow .2s,border-color .2s}
 :is(body:not(.cinemaMode),body) main .bgCard>.bgThumb{border-radius:10px;overflow:hidden}
 :is(body:not(.cinemaMode),body) main .bgCard>b,:is(body:not(.cinemaMode),body) main .bgCard>small{padding-inline:6px}
-:is(body:not(.cinemaMode),body) main .bgCard[aria-pressed=true]{border-color:var(--ink,#0d1220);box-shadow:inset 0 0 0 1px var(--ink,#0d1220)}
+:is(body:not(.cinemaMode),body) main .bgCard[aria-pressed=true]{border-color:var(--text,#0F1115);box-shadow:inset 0 0 0 1px var(--text,#0F1115)}
 
 /* the cards that were already shells share the radius */
-:is(body:not(.cinemaMode),body) main :is(.tourCard,.vmaBuildCard,.umCard,.ttCard){border-radius:16px}
+:is(body:not(.cinemaMode),body) main :is(.tourCard,.vmaBuildCard,.umCard,.ttCard){border-radius:14px}
 
 /* one hover, only where there is a pointer */
 @media (hover:hover){
- :is(body:not(.cinemaMode),body) main :is(.cataloguecard,.artcard,.assetCard,.iconChoice,.bgCard):hover{transform:translateY(-4px);box-shadow:0 18px 36px -22px rgba(13,18,32,.45);border-color:#c3cad6}
- :is(body:not(.cinemaMode),body) main :is(.cataloguecard,.artcard):hover .cardmedia>*{transform:scale(1.025)}
+ :is(body:not(.cinemaMode),body) main :is(.cataloguecard,.artcard,.assetCard,.iconChoice,.bgCard):hover{transform:translateY(-2px);box-shadow:0 12px 28px -18px rgba(15,17,21,.25);border-color:var(--hair-hi,#D5D8DF)}
+ :is(body:not(.cinemaMode),body) main :is(.cataloguecard,.artcard):hover .cardmedia>*{transform:none}
 }
 @media (prefers-reduced-motion:reduce){
  :is(body:not(.cinemaMode),body) main :is(.cataloguecard,.artcard,.assetCard,.iconChoice,.bgCard,.refcard,.fontpair,.fontspecimen,.paircard),:is(body:not(.cinemaMode),body) main .cardmedia>*{transition:none!important}
@@ -49,28 +49,28 @@
 @media (max-width:760px){
  :is(body:not(.cinemaMode),body) main :is(.cataloguecard,.artcard,.assetCard,.iconChoice,.refcard,.fontpair,.fontspecimen,.paircard){padding:12px 12px 14px}
  :is(body:not(.cinemaMode),body) main :is(.cataloguecard,.artcard)>.cardmedia,:is(body:not(.cinemaMode),body) main .assetCard>.assetPreview,:is(body:not(.cinemaMode),body) main .iconChoice>.iconChoiceart{width:calc(100% + 12px);margin:-6px -6px 12px}
- :is(body:not(.cinemaMode),body) main :is(.cataloguecard,.artcard,.assetCard,.refcard) h3,:is(body:not(.cinemaMode),body) main .iconChoice h2{font-size:19px!important}
- :is(body:not(.cinemaMode),body) main .paircard h2{font-size:23px!important}
+ :is(body:not(.cinemaMode),body) main :is(.cataloguecard,.artcard,.assetCard,.refcard) h3,:is(body:not(.cinemaMode),body) main .iconChoice h2{font-size:16px!important}
+ :is(body:not(.cinemaMode),body) main .paircard h2{font-size:16px!important}
 }
 /* title buttons sit flush with the text below them */
 :is(body:not(.cinemaMode),body) main :is(.cataloguecard,.artcard,.assetCard) h3>button,:is(body:not(.cinemaMode),body) main .iconChoice h2>button{padding:0;text-align:left}
 
 /* entry view (2026-11): same type as the pages, one main action, shared advice folded away */
-#detail .detailhead h2{font:400 44px/1.05 var(--f-display,"Cormorant Garamond",Georgia,serif);letter-spacing:-.01em;margin:0 0 8px}
-#detail #detailDescription{font:400 16px/1.5 Inter,system-ui,sans-serif;color:var(--text-dim,#4a5466);max-width:60ch}
-#detail .detailnotes h3{font:600 12px/1.2 Inter,system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim,#4a5466);margin:22px 0 6px}
-#detail .detailnotes p{font:400 15px/1.55 Inter,system-ui,sans-serif;color:var(--text,#0d1220);max-width:56ch;margin:0}
+#detail .detailhead h2{font:600 clamp(24px,2.6vw,32px)/1.15 Inter,system-ui,sans-serif;letter-spacing:-.025em;margin:0 0 8px}
+#detail #detailDescription{font:400 16px/1.5 Inter,system-ui,sans-serif;color:var(--text-dim,#5F6573);max-width:60ch}
+#detail .detailnotes h3{font:500 13px/1.3 Inter,system-ui,sans-serif;letter-spacing:0;text-transform:none;color:var(--text-dim,#5F6573);margin:22px 0 6px}
+#detail .detailnotes p{font:400 15px/1.55 Inter,system-ui,sans-serif;color:var(--text,#0F1115);max-width:56ch;margin:0}
 #detail .detailActs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}
 #detail .detailnotes>button.secondary,#detail .detailnotes>a.secondary{margin:8px 8px 0 0}
-#detail .detailShared{margin-top:24px;border-top:1px solid var(--hair,#d9dee6);padding-top:4px}
-#detail .detailShared>summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font:500 13px/1.2 Inter,system-ui,sans-serif;color:var(--text-dim,#4a5466)}
+#detail .detailShared{margin-top:24px;border-top:1px solid var(--hair,#E6E8EC);padding-top:4px}
+#detail .detailShared>summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font:500 13px/1.2 Inter,system-ui,sans-serif;color:var(--text-dim,#5F6573)}
 #detail .detailShared h3:first-of-type{margin-top:8px}
 #detail .detailnavigation button{font:500 13px/1 Inter,system-ui,sans-serif}
-@media (max-width:760px){#detail .detailhead h2{font-size:32px}}
+@media (max-width:760px){#detail .detailhead h2{font-size:24px}}
 
 /* catalogue (2026-11): one way to pick a collection, extra filters behind "More filters" */
 #browse .archivehead{display:block}
-#browse .archivehead .archivenote{max-width:60ch;margin-top:10px}
+#browse .archivehead .archivenote{max-width:60ch;margin-top:16px}
 #browse .archiveworkspace{display:block}
 /* inspiration: the two dropdowns name themselves ("All boards", "All categories"), so no label row */
 #inspiration .inspoBar>label:nth-child(2),#inspiration .inspoBar>label:nth-child(3){flex:0 0 180px}
@@ -78,22 +78,22 @@
 /* icons: search, then colour, size and tile as dropdowns in the same row, then one swatch for a custom colour */
 #icons .iconBar{flex-wrap:nowrap}
 #icons .iconBar .iconLookBar>label:not(.iconSwatch){flex:0 0 170px;display:block;margin:0;min-width:0}
-#icons .iconBar select{height:44px;min-height:44px;box-sizing:border-box;font:400 14px/1.2 Inter,system-ui,sans-serif;border-radius:10px}
-#icons .iconBar .iconSwatch{flex:none;display:flex;align-items:center;justify-content:center;gap:0;width:44px;height:44px;margin:0;border-radius:10px}#icons .iconBar .iconSwatch>span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+#icons .iconBar select{height:40px;min-height:40px;box-sizing:border-box;font:500 14px/1.2 Inter,system-ui,sans-serif;border-radius:10px}
+#icons .iconBar .iconSwatch{flex:none;display:flex;align-items:center;justify-content:center;gap:0;width:40px;height:40px;margin:0;border-radius:10px}#icons .iconBar .iconSwatch>span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 @media(max-width:1000px){#icons .iconBar{flex-wrap:wrap}#icons .iconBar>label:first-child{flex:1 1 100%}#icons .iconBar .iconLookBar>label:not(.iconSwatch){flex:1 1 0}}
 @media(max-width:640px){#icons .iconBar .iconLookBar>label:not(.iconSwatch){flex:1 1 calc(50% - 6px)}}
 #browse .filters.listBar{flex-wrap:nowrap;align-items:center}
 #browse .filters.listBar>label:nth-child(3){flex:0 0 170px}
-#browse .filters.listBar #savedOnly{height:44px;min-height:44px;padding:0 16px;border-radius:10px;font:500 14px/1 Inter,system-ui,sans-serif}
+#browse .filters.listBar #savedOnly{height:40px;min-height:40px;padding:0 16px;border-radius:10px;font:500 14px/1 Inter,system-ui,sans-serif}
 :is(body:not(.cinemaMode),body) main #browse .filters.listBar #search{padding-left:42px}
 #browse .collectionbody>.railnote{max-width:60ch}
 @media(max-width:900px){#browse .filters.listBar{flex-wrap:wrap}#browse .filters.listBar>label:first-child{flex:1 1 100%}#browse .filters.listBar>label:nth-child(2){flex:1.45 1 150px;min-width:0}#browse .filters.listBar>label:nth-child(3){flex:1 1 110px;min-width:0}}
 #browse #advanced.listBar{flex-wrap:wrap;margin:0 0 10px}
 #browse #advanced.listBar label{flex:1 1 150px;max-width:230px;min-width:0}
-#browse #advanced.listBar select{height:44px;min-height:44px;box-sizing:border-box;font:400 14px/1.2 Inter,system-ui,sans-serif;border-radius:10px}
+#browse #advanced.listBar select{height:40px;min-height:40px;box-sizing:border-box;font:500 14px/1.2 Inter,system-ui,sans-serif;border-radius:10px}
 #browse #advanced.listBar .exTours{margin-left:auto}
 @media(max-width:640px){#browse #advanced.listBar label{flex:1 1 calc(50% - 6px);max-width:none}#browse #advanced.listBar .exTours{margin-left:0}}
-#browse .archivehead h1{max-width:none;font-size:clamp(44px,5.4vw,76px);line-height:1}
+#browse .archivehead h1{max-width:none}
 
 /* entry view: one main action, one Save, everything else under More */
 #detail .detailActs{align-items:center}
@@ -102,35 +102,35 @@
 #detail .detailMore>summary::-webkit-details-marker{display:none}
 #detail .detailMore>summary::after{content:"";width:6px;height:6px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:translateY(-2px) rotate(45deg)}
 #detail .detailMore[open]>summary::after{transform:translateY(1px) rotate(225deg)}
-#detail .detailMoreList{position:absolute;left:0;top:calc(100% + 6px);z-index:5;min-width:220px;display:grid;padding:6px;background:#fff;border:1px solid var(--hair,#d9dee6);border-radius:12px;box-shadow:0 18px 40px -18px rgba(13,18,32,.35)}
-#detail .detailMoreList button{display:flex;align-items:center;gap:10px;min-height:44px;padding:0 12px;border:0;border-radius:8px;background:none;font:500 14px/1.2 Inter,system-ui,sans-serif;color:var(--text,#0d1220);text-align:left;cursor:pointer;margin:0;box-shadow:none;width:100%}
-#detail .detailMoreList button:hover,#detail .detailMoreList button:focus-visible{background:#f2f4f7}
+#detail .detailMoreList{position:absolute;left:0;top:calc(100% + 6px);z-index:5;min-width:220px;display:grid;padding:6px;background:#fff;border:1px solid var(--hair,#E6E8EC);border-radius:14px;box-shadow:0 18px 40px -18px rgba(15,17,21,.3)}
+#detail .detailMoreList button{display:flex;align-items:center;gap:10px;min-height:40px;padding:0 12px;border:0;border-radius:10px;background:none;font:500 14px/1.2 Inter,system-ui,sans-serif;color:var(--text,#0F1115);text-align:left;cursor:pointer;margin:0;box-shadow:none;width:100%}
+#detail .detailMoreList button:hover,#detail .detailMoreList button:focus-visible{background:#F6F7F9}
 #detail .detailMoreList button svg{width:14px;height:14px;margin:0!important;flex:none}
 
-/* one list toolbar across the sections: search grows, one filter beside it, 44px controls, 14px text, no label row */
+/* one list toolbar across the sections: search grows, one filter beside it, 40px controls (44px on phones), 14px text, no label row */
 .tbHide{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-:is(body:not(.cinemaMode),body) main :is(#search,#artSearch,#iconSearch,#guideSearch,#componentSearch,#inspoSearch,#group,#mood,#artCategory,#guideCollection,#inspoFilterBoard,#inspoFilterKind,#iconFamilySelect,#componentStyle){height:44px;min-height:44px;box-sizing:border-box;font-size:14px;font-family:Inter,system-ui,sans-serif;border-radius:10px}
-:is(body:not(.cinemaMode),body) main .listBar{display:flex;gap:12px;align-items:center;margin:20px 0}
+:is(body:not(.cinemaMode),body) main :is(#search,#artSearch,#iconSearch,#guideSearch,#componentSearch,#inspoSearch,#group,#mood,#artCategory,#guideCollection,#inspoFilterBoard,#inspoFilterKind,#iconFamilySelect,#componentStyle){height:40px;min-height:40px;box-sizing:border-box;font-size:14px;font-family:Inter,system-ui,sans-serif;border-radius:10px}
+:is(body:not(.cinemaMode),body) main .listBar{display:flex;flex-direction:row;gap:12px;align-items:center;margin:20px 0}
 :is(body:not(.cinemaMode),body) main .listBar>label{display:block;margin:0;gap:0}
 :is(body:not(.cinemaMode),body) main .listBar>label:first-child{flex:1 1 auto;min-width:0}
 :is(body:not(.cinemaMode),body) main .listBar>label:nth-child(2){flex:0 0 230px}
 :is(body:not(.cinemaMode),body) main .listBar>:nth-child(n+3){flex:none}
 :is(body:not(.cinemaMode),body) main .listBar :is(input,select){width:100%;padding:0 14px}
-@media(max-width:640px){:is(body:not(.cinemaMode),body) main .listBar{flex-wrap:wrap}:is(body:not(.cinemaMode),body) main .listBar>label:nth-child(2){flex:1 1 100%}}
+@media(max-width:640px){:is(body:not(.cinemaMode),body) main :is(#search,#artSearch,#iconSearch,#guideSearch,#componentSearch,#inspoSearch,#group,#mood,#artCategory,#guideCollection,#inspoFilterBoard,#inspoFilterKind,#iconFamilySelect,#componentStyle),#icons .iconBar select,#browse #advanced.listBar select,#browse .filters.listBar #savedOnly{height:44px;min-height:44px}#icons .iconBar .iconSwatch{width:44px;height:44px}:is(body:not(.cinemaMode),body) main .listBar{flex-wrap:wrap}:is(body:not(.cinemaMode),body) main .listBar>label:first-child{flex:1 1 100%}:is(body:not(.cinemaMode),body) main .listBar>label:nth-child(2){flex:1 1 100%}}
 /* a tool that sits above a list stays folded until it is wanted */
-main .foldTool{border:1px solid var(--hair,#d9dee6);border-radius:16px;background:#fff;margin:0 0 20px}
-main .foldTool>summary{list-style:none;display:flex;align-items:center;flex-wrap:wrap;gap:4px 12px;min-height:56px;padding:8px 18px;box-sizing:border-box;cursor:pointer;font:600 15px/1.3 Inter,system-ui,sans-serif;color:var(--text,#0d1220)}
+main .foldTool{border:1px solid var(--hair,#E6E8EC);border-radius:14px;background:#fff;margin:0 0 20px}
+main .foldTool>summary{list-style:none;display:flex;align-items:center;flex-wrap:wrap;gap:4px 12px;min-height:56px;padding:8px 18px;box-sizing:border-box;cursor:pointer;font:600 16px/1.3 Inter,system-ui,sans-serif;letter-spacing:-.01em;color:var(--text,#0F1115)}
 main .foldTool>summary::-webkit-details-marker{display:none}
-main .foldTool>summary small{font:400 13px/1.4 Inter,system-ui,sans-serif;color:var(--text-dim,#4a5466)}
+main .foldTool>summary small{font:400 13px/1.4 Inter,system-ui,sans-serif;color:var(--text-dim,#5F6573)}
 main .foldTool>summary::after{content:"";margin-left:auto;width:8px;height:8px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:translateY(-2px) rotate(45deg);flex:none}
 main .foldTool[open]>summary::after{transform:translateY(2px) rotate(225deg)}
-main .foldTool[open]>summary{border-bottom:1px solid var(--hair,#d9dee6)}
-main .foldTool>summary:focus-visible{outline:2px solid var(--text,#0d1220);outline-offset:2px;border-radius:14px}
+main .foldTool[open]>summary{border-bottom:1px solid var(--hair,#E6E8EC)}
+main .foldTool>summary:focus-visible{outline:2px solid var(--text,#0F1115);outline-offset:2px;border-radius:12px}
 main .foldTool>.artLayout{padding:20px 18px;margin:0}
 /* every section title starts at the same height: no label line above it */
-#tours .tKicker,#backgrounds .bgHead>.cardcode{display:none}
+#tours .tKicker,#backgrounds .bgHead>.cardcode,#showcase .scHead>.cardcode{display:none}
 main .foldTool{scroll-margin-top:calc(var(--sb-h,44px) + 16px)}
-#backgrounds.page,#tours.page{padding-top:28px!important}#backgrounds .bgHead,#tours .tourIndex{padding-top:0!important}
+#backgrounds.page,#tours.page,#showcase.page{padding-top:clamp(12px,2vw,28px)!important}#backgrounds .bgHead,#tours .tourIndex{padding-top:0!important}
 
 /* UI components: the lab is folded into one row; its own title block is the row's label now */
 main .foldTool>.clab{margin:0;padding:20px 18px}

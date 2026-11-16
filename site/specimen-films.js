@@ -121,7 +121,7 @@
    <p class="sfReelDesc"></p>
    <div class="vmaActions"><button type="button" class="vmaBtn vmaBtnPrimary sfReelOpen">Open the specimen <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5"/></svg></button><a class="vmaBtn vmaBtnGhost" href="#motion">All films in the studio</a><button type="button" class="vmaCtl sfReelPlay"></button></div>
   </div>
-  <ol class="vmaInner sfReelIndex" aria-label="Specimen films">${list.map((e,i)=>`<li><button type="button" data-i="${i}"><span class="sfReelBar"><i></i></span><span class="sfReelPlate">PLATE ${ROMAN[i]} &middot; ${e.id}</span><span class="sfReelTitle">${esc(e.title.split(' / ')[0])}</span></button></li>`).join('')}</ol>`;
+  <ol class="vmaInner sfReelIndex" aria-label="Specimen films">${list.map((e,i)=>`<li><button type="button" data-i="${i}"><span class="sfReelBar"><i></i></span><span class="sfReelPlate">Plate ${ROMAN[i]} &middot; ${e.id}</span><span class="sfReelTitle">${esc(e.title.split(' / ')[0])}</span></button></li>`).join('')}</ol>`;
   after.insertAdjacentElement('afterend',sec);
   const layers=[...sec.querySelectorAll('.sfReelLayer')],btns=[...sec.querySelectorAll('.sfReelIndex button')],playBtn=sec.querySelector('.sfReelPlay');
   const SHOW=7000;let cur=-1,front=0,t0=0,held=0,paused=still(),inView=false,raf=0,loaded=false;

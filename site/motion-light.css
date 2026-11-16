@@ -1,50 +1,70 @@
-/* Animation studio on the light page. The live studies and simulations are drawn for a dark ground, so each one
-   keeps a dark frame, like a film still; everything around them (titles, text, controls) is the page's own ink
-   on white. Loaded last, so it only overrides studio-river.css and ui-motion.css. */
-#motion .studyRiver,#motion .umBand{background:none;color:var(--text,#0d1220);padding-block:8px 0;margin-block:28px 40px}
-#motion .umBand{--um:#fff;--um-ink:#111113;--um-mute:#5e6476;--um-line:#e1e4ec;--um-gold:#111113}
-#motion .studyRiver .riverHead h2,#motion .umBand .umHead h2{font:600 clamp(26px,3vw,38px)/1.1 Inter,system-ui,sans-serif;font-style:normal;letter-spacing:-.025em;color:var(--text,#0d1220)}
-#motion .studyRiver .riverKicker,#motion .umBand .umKicker{font:600 13px/1.4 Inter,system-ui,sans-serif;letter-spacing:0;text-transform:none;color:var(--text-dim,#4a5466)}
-#motion .studyRiver .riverText h3{font:600 clamp(22px,2.2vw,30px)/1.15 Inter,system-ui,sans-serif;letter-spacing:-.02em;color:var(--text,#0d1220)}
-#motion .studyRiver .riverText p:not(.riverKicker),#motion .studyRiver .riverMake,#motion .studyRiver .riverLite,#motion .umBand .umLede{color:var(--text-dim,#4a5466)}
-#motion .studyRiver .riverOpen,#motion .studyRiver .kitPreview,#motion .studyRiver .riverMake a,#motion .studyRiver .riverLiteOn{color:var(--text,#0d1220);border-color:rgba(13,18,32,.35);text-decoration-color:rgba(13,18,32,.35)}
+/* Animation studio on the light page (site style, November 2026). The live studies and simulations are drawn for a
+   dark ground, so each one keeps a dark frame, like a film still; everything around them (titles, text, controls)
+   is the page's own ink on white, on the page gutter, with 40px controls. Loaded last, so it only overrides
+   studio-river.css and ui-motion.css. */
+#motion .studyRiver,#motion .umBand{background:none;color:var(--text,#0F1115);width:auto;margin:clamp(40px,7vh,72px) 0 0;padding-block:0}
+/* no full-width band any more: every part starts on the page gutter */
+#motion .studyRiver>*,#motion .umBand>*{max-width:none;padding-left:0;padding-right:0}
+#motion .umBand{--um:#fff;--um-ink:#0F1115;--um-mute:#5F6573;--um-line:#E6E8EC;--um-gold:#0F1115}
+#motion .studyRiver .riverHead h2,#motion .umBand .umHead h2{font:600 clamp(24px,2.6vw,32px)/1.15 Inter,system-ui,sans-serif;font-style:normal;letter-spacing:-.025em;color:var(--text,#0F1115)}
+#motion .studyRiver .riverKicker,#motion .umBand .umKicker{font:500 13px/1.4 Inter,system-ui,sans-serif;letter-spacing:0;text-transform:none;color:var(--text-dim,#5F6573)}
+#motion .studyRiver .riverText h3{font:600 clamp(20px,2vw,24px)/1.2 Inter,system-ui,sans-serif;letter-spacing:-.02em;color:var(--text,#0F1115)}
+#motion .studyRiver .riverText p:not(.riverKicker),#motion .studyRiver .riverMake,#motion .studyRiver .riverLite,#motion .umBand .umLede{color:var(--text-dim,#5F6573)}
+#motion .studyRiver .riverOpen,#motion .studyRiver .kitPreview,#motion .studyRiver .riverMake a,#motion .studyRiver .riverLiteOn{color:var(--text,#0F1115);border-color:rgba(15,17,21,.35);text-decoration-color:rgba(15,17,21,.35)}
 #motion .studyRiver .riverOpen:hover,#motion .studyRiver .kitPreview:hover{color:#000;border-color:#000}
-#motion .studyRiver .riverHold{font:600 13px/1 Inter,system-ui,sans-serif;letter-spacing:0;text-transform:none;color:var(--text,#0d1220);text-decoration-color:rgba(13,18,32,.35)}
-#motion .studyRiver .riverHold:hover{color:#000}
-#motion .studyRiver :focus-visible,#motion .umBand button:focus-visible{outline-color:#111113}
+#motion .studyRiver .riverHold{box-sizing:border-box;min-height:40px;padding:0 16px;border:1px solid var(--hair-hi,#D5D8DF);border-radius:10px;background:#fff;font:500 14px/1 Inter,system-ui,sans-serif;letter-spacing:0;text-transform:none;text-decoration:none;color:var(--text,#0F1115);transition:background-color .15s}
+#motion .studyRiver .riverHold:hover{background:#F6F7F9;color:var(--text,#0F1115)}
+#motion .studyRiver :focus-visible,#motion .umBand button:focus-visible{outline:2px solid #0F1115;outline-offset:2px}
 /* each study in a dark frame with the card radius */
-#motion .riverMedia{-webkit-mask-image:none;mask-image:none;background:#04050a;border-radius:16px;overflow:hidden}
+#motion .riverMedia{-webkit-mask-image:none;mask-image:none;background:#04050a;border-radius:14px;overflow:hidden}
 #motion .riverRow.isWide .riverMedia{-webkit-mask-image:none;mask-image:none}
-#motion .riverRow.isWide{max-width:1600px;margin-inline:auto;display:grid;grid-template-columns:minmax(0,1fr);gap:16px;padding-inline:max(24px,env(safe-area-inset-left,0px))}
+#motion .riverRow.isWide{max-width:none;margin-inline:0;display:grid;grid-template-columns:minmax(0,1fr);gap:16px;padding-inline:0}
+#motion .riverRow.isWide .riverText{padding-inline:0}
+#motion .riverHead,#motion .riverRow{max-width:none}
 #motion .riverRow.isWide .riverText{position:static;padding:0;pointer-events:auto;order:2}
 /* "Use it on your site" */
-#motion .studyRiver .riverKit{border-top-color:var(--hair,#d9dee6)}
-#motion .studyRiver .riverKit summary{font:600 13px/1 Inter,system-ui,sans-serif;letter-spacing:0;text-transform:none;color:var(--text,#0d1220)}
-#motion .studyRiver .riverKit summary::before{color:var(--text-dim,#4a5466)}
+#motion .studyRiver .riverKit{border-top-color:var(--hair,#E6E8EC)}
+#motion .studyRiver .riverKit summary{font:500 14px/1 Inter,system-ui,sans-serif;letter-spacing:0;text-transform:none;color:var(--text,#0F1115)}
+#motion .studyRiver .riverKit summary::before{color:var(--text-dim,#5F6573)}
 #motion .studyRiver .kitBody,#motion .studyRiver .riverRow.isWide .riverKit[open] .kitBody{background:none;backdrop-filter:none;padding:6px 0 14px}
-#motion .studyRiver .kitField,#motion .studyRiver .kitChecks{color:var(--text,#0d1220)}
-#motion .studyRiver .kitField output{color:var(--text-dim,#4a5466)}
-#motion .studyRiver .kitField input[type=range],#motion .studyRiver .kitChecks input{accent-color:#111113}
-#motion .studyRiver .kitField select{background-color:#fff!important;color:var(--text,#0d1220)!important;border-color:var(--hair,#d9dee6);color-scheme:light}
-#motion .studyRiver .kitCopy{border-color:var(--hair,#d9dee6);background:#fff;color:var(--text,#0d1220)}
-#motion .studyRiver .kitCopy:hover{background:#fff;border-color:#111113}
-#motion .studyRiver .kitStatus,#motion .studyRiver .kitPrompt{color:var(--text-dim,#4a5466)}
+#motion .studyRiver .kitField,#motion .studyRiver .kitChecks{color:var(--text,#0F1115)}
+#motion .studyRiver .kitField output{color:var(--text-dim,#5F6573)}
+#motion .studyRiver .kitField input[type=range],#motion .studyRiver .kitChecks input{accent-color:#0F1115}
+#motion .studyRiver .kitField select{background-color:#fff!important;color:var(--text,#0F1115)!important;border:1px solid var(--hair-hi,#D5D8DF);border-radius:10px;min-height:40px;padding-left:14px;font:500 14px/1.2 Inter,system-ui,sans-serif;color-scheme:light}
+#motion .studyRiver .kitCopy{box-sizing:border-box;min-height:40px;padding:0 16px;border:1px solid var(--hair-hi,#D5D8DF);border-radius:10px;background:#fff;color:var(--text,#0F1115);font:500 14px/1 Inter,system-ui,sans-serif}
+#motion .studyRiver .kitCopy:hover{background:#F6F7F9;border-color:var(--hair-hi,#D5D8DF)}
+#motion .studyRiver .kitStatus,#motion .studyRiver .kitPrompt{color:var(--text-dim,#5F6573)}
 /* simulations and the UI motion grid: light controls and text, dark stages */
-#motion .umBand .umSimRail button[aria-selected=true]{background:#111113;color:#fff}
-#motion .umBand .umTool{font:600 13px/1 Inter,system-ui,sans-serif;background:#fff}
-#motion .umBand .umTool:hover{background:#fff;border-color:#111113}
-#motion .umBand .umTool[aria-pressed=true]{background:#111113;color:#fff;border-color:#111113}
-#motion .umBand .umSimRail button{font:600 13px/1 Inter,system-ui,sans-serif}
+#motion .umBand .umSimRail button[aria-selected=true]{background:#0F1115;border-color:#0F1115;color:#fff}
+#motion .umBand .umTool{box-sizing:border-box;min-height:40px;padding:0 16px;border:1px solid var(--hair-hi,#D5D8DF);border-radius:10px;font:500 14px/1 Inter,system-ui,sans-serif;background:#fff}
+#motion .umBand .umTool:hover{background:#F6F7F9;border-color:var(--hair-hi,#D5D8DF)}
+#motion .umBand .umTool[aria-pressed=true]{background:#0F1115;color:#fff;border-color:#0F1115}
+#motion .umBand .umSimRail button{box-sizing:border-box;min-height:32px;padding:0 14px;border:1px solid var(--hair-hi,#D5D8DF);border-radius:999px;font:500 13px/1 Inter,system-ui,sans-serif}
+#motion .umBand .umSimRail button:hover{background:#F6F7F9}
+#motion .umBand .umSimRail button[aria-selected=true]:hover{background:#0F1115}
+#motion .umBand .umSimPanel button{box-sizing:border-box;min-height:40px;padding:0 16px;border:1px solid var(--hair-hi,#D5D8DF);border-radius:10px;font:500 14px/1 Inter,system-ui,sans-serif;background:#fff}
+#motion .umBand .umSimPanel button:hover{background:#F6F7F9}
+#motion .umBand .umSimPanel{border-radius:14px}
+#motion .umBand .umSimPanel select{border:1px solid var(--hair-hi,#D5D8DF)}
+#motion .umUI{margin-top:clamp(56px,10vh,96px)}
+#motion .umBand .umLede{font-size:17px;line-height:1.55;max-width:60ch}
+#motion .umCard{border-radius:14px}
 #motion .umBand .umSimPanel{background:#fff}
-#motion .umBand .umSimPanel select{background:#fff;color:var(--um-ink)}
-#motion .umSimSlot .motionstage,#motion .umStage{border-radius:16px}
+#motion .umBand .umSimPanel select{background-color:#fff;color:var(--um-ink)}
+#motion .umSimSlot .motionstage,#motion .umStage{border-radius:14px}
 #motion .umStage{box-shadow:none}
-#motion .umBand .umNum{font:600 12px/1 Inter,system-ui,sans-serif;letter-spacing:0;color:var(--text-dim,#4a5466)}
-#motion .umBand .umText h3{font:600 clamp(18px,1.7vw,22px)/1.2 Inter,system-ui,sans-serif;letter-spacing:-.01em;color:var(--text,#0d1220)}
-#motion .umBand .umText p:not(.umNum){color:var(--text-dim,#4a5466)}
-#motion .umBand .umActs button{font:600 13px/1 Inter,system-ui,sans-serif;letter-spacing:0;text-transform:none;color:var(--text,#0d1220);min-height:44px;text-decoration-color:rgba(13,18,32,.35)}
-#motion .umBand .umActs button:hover{color:#000}
+#motion .umBand .umNum{font:500 13px/1 Inter,system-ui,sans-serif;letter-spacing:0;color:var(--text-dim,#5F6573);font-variant-numeric:tabular-nums}
+#motion .umBand .umText h3{font:600 17px/1.3 Inter,system-ui,sans-serif;letter-spacing:-.01em;color:var(--text,#0F1115)}
+#motion .umBand .umText p:not(.umNum){color:var(--text-dim,#5F6573)}
+#motion .umActs{gap:8px}
+#motion .umBand .umActs button{box-sizing:border-box;min-height:40px;padding:0 14px;border:1px solid var(--hair-hi,#D5D8DF);border-radius:10px;background:#fff;font:500 14px/1 Inter,system-ui,sans-serif;letter-spacing:0;text-transform:none;text-decoration:none;color:var(--text,#0F1115)}
+#motion .umBand .umActs button:hover{background:#F6F7F9;color:var(--text,#0F1115)}
 #motion .riverRow.isWide .riverText{margin:0;max-width:none;left:auto;right:auto}
 #motion .studyRiver>.pgMore{padding-top:8px}
 #motion .umGrid>.pgMore{grid-column:1/-1;margin:0}
 #motion .studyRiver .kitChecks label{min-height:44px}#motion .studyRiver .kitChecks input{width:20px;height:20px;flex:none;margin:0}
+@media(max-width:640px){#motion .studyRiver .riverHold,#motion .studyRiver .kitCopy,#motion .umBand .umTool,#motion .umBand .umActs button,#motion .umBand .umSimPanel button{min-height:44px}#motion .umBand>*{padding-left:0;padding-right:0}}
+#motion .studyRiver .kitPrompt{font-style:normal}
+#motion .studyRiver .riverOpen,#motion .studyRiver .kitPreview{font-weight:500;border-bottom:0;text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px}
+#motion .umBand .pgMore button{box-sizing:border-box;min-height:40px;padding:0 16px;border:1px solid var(--hair-hi,#D5D8DF);border-radius:10px;background:#fff;font:500 14px/1 Inter,system-ui,sans-serif;color:var(--text,#0F1115)}
+#motion .umBand .pgMore button:hover{background:#F6F7F9}#motion .umBand .pgMore .pgAll{border-color:transparent;background:none}

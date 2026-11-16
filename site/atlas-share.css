@@ -1,32 +1,34 @@
 /* Share card dialog and home sign-up */
 .shareDirBtn{display:inline-flex;align-items:center;gap:8px}
 .shareDirBtn svg{width:14px;height:14px}
-.shareCard{width:min(760px,calc(100vw - 24px));max-height:calc(100vh - 32px);margin:auto;padding:0;border:0;border-radius:20px;background:#fff;color:#0d1220;box-shadow:0 40px 90px -30px rgba(2,4,11,.6);font-family:"Inter",system-ui,sans-serif;overflow:auto}
-.shareCard::backdrop{background:rgba(2,4,11,.6);backdrop-filter:blur(4px)}
+.shareCard{width:min(760px,calc(100vw - 24px));max-height:calc(100vh - 32px);margin:auto;padding:0;border:1px solid #E6E8EC;border-radius:16px;background:#fff;color:#0F1115;box-shadow:0 30px 80px -30px rgba(15,17,21,.4);font-family:Inter,system-ui,sans-serif;overflow:auto}
+.shareCard::backdrop{background:rgba(15,17,21,.4)}
 .shareIn{display:grid;gap:14px;padding:22px}
 .shareTop{display:flex;justify-content:space-between;align-items:center}
-.shareKicker{margin:0;font:500 10.5px "JetBrains Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:#4a5466}
-.shareX{width:36px;height:36px;border-radius:50%;border:1px solid #d9dee6;background:#fff;font-size:20px;cursor:pointer}
-.shareCard h2{margin:0;font:300 clamp(28px,3.4vw,40px)/1.05 "Cormorant Garamond",Georgia,serif}
+.shareKicker{margin:0;font:500 13px Inter,system-ui,sans-serif;letter-spacing:0;text-transform:none;color:#5F6573}
+.shareX{width:40px;height:40px;border-radius:10px;border:1px solid #D5D8DF;background:#fff;font-size:20px;line-height:1;cursor:pointer;color:#0F1115}.shareX:hover{background:#F6F7F9}
+.shareCard h2{margin:0;font:600 clamp(24px,2.6vw,32px)/1.15 Inter,system-ui,sans-serif;letter-spacing:-.025em}
 .shareCard canvas{width:100%;height:auto;border-radius:12px;display:block;background:#02040b}
 .shareActions{display:flex;flex-wrap:wrap;gap:8px}
-.shareActions button{border:1px solid #d9dee6;background:#fff;border-radius:999px;padding:10px 18px;font:600 14px "Inter",sans-serif;cursor:pointer;color:#0d1220;min-height:44px}
-.shareActions button.primary{background:#0d1220;color:#fff;border-color:#0d1220}
+.shareActions button{border:1px solid #D5D8DF;background:#fff;border-radius:10px;padding:0 16px;font:500 14px/1.2 Inter,system-ui,sans-serif;cursor:pointer;color:#0F1115;min-height:40px;transition:background-color .15s}
+.shareActions button:hover{background:#F6F7F9}
+.shareActions button.primary{background:#0F1115;color:#fff;border-color:#0F1115}.shareActions button.primary:hover{background:#000}
+@media(max-width:640px){.shareActions button{min-height:44px}}
 .shareActions button[hidden]{display:none}
-.shareLink{display:grid;gap:4px;font-size:12px;color:#4a5466}
-.shareLink input{font:500 13px "JetBrains Mono",monospace;padding:10px 12px;border:1px solid #d9dee6;border-radius:10px;color:#0d1220;min-width:0}
-.shareStatus{margin:0;min-height:1.4em;font-size:14px;color:#047857}
-.shareCard :focus-visible{outline:2px solid #0369a1;outline-offset:3px}
+.shareLink{display:grid;gap:6px;font-size:13px;font-weight:500;color:#5F6573}
+.shareLink input{font:500 14px Inter,system-ui,sans-serif;height:40px;padding:0 14px;border:1px solid #D5D8DF;border-radius:10px;color:#0F1115;min-width:0}
+.shareStatus{margin:0;min-height:1.4em;font-size:14px;color:#1E6B45}
+.shareCard :focus-visible{outline:2px solid #0F1115;outline-offset:2px}
 
-.atlasSignup{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:24px clamp(24px,5vw,72px);align-items:end;border-top:1px solid var(--rule,rgba(238,242,248,.1))}
+.atlasSignup{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:24px clamp(24px,5vw,72px);align-items:end;border-top:1px solid var(--rule,#E6E8EC)}
 .atlasSignup h2{margin:10px 0 0}
 .signupForm{display:grid;gap:10px}
-.signupForm label{font:500 11px var(--f-mono,"JetBrains Mono",monospace);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-dim,#a8b3c7)}
+.signupForm label{font:500 13px Inter,system-ui,sans-serif;letter-spacing:0;text-transform:none;color:var(--ink-dim,#5F6573)}
 .signupRow{display:flex;gap:10px;flex-wrap:wrap}
-.signupRow input{flex:1 1 220px;min-width:0;min-height:48px;padding:0 18px;border-radius:999px;border:1px solid rgba(238,242,248,.3);background:rgba(238,242,248,.06);color:var(--ink,#eef2f8);font:400 16px var(--f-body,"Inter",sans-serif)}
-.signupRow input::placeholder{color:rgba(238,242,248,.5)}
-.signupRow input:focus-visible{outline:2px solid var(--gold,#fde68a);outline-offset:2px}
-.signupRow input[aria-invalid="true"]{border-color:#fda4af}
-.signupNote{margin:0;font-size:13px;color:var(--ink-dim,#a8b3c7)}
-.signupStatus{margin:0;min-height:1.4em;font-size:14px;color:var(--gold,#fde68a)}
+.signupRow input{flex:1 1 220px;min-width:0;min-height:44px;padding:0 14px;border-radius:10px;border:1px solid #D5D8DF;background:#fff;color:var(--ink,#0F1115);font:500 15px Inter,system-ui,sans-serif}
+.signupRow input::placeholder{color:#5F6573;font-weight:400}
+.signupRow input:focus-visible{outline:2px solid #0F1115;outline-offset:2px}
+.signupRow input[aria-invalid="true"]{border-color:#B42318}
+.signupNote{margin:0;font-size:13px;color:var(--ink-dim,#5F6573)}
+.signupStatus{margin:0;min-height:1.4em;font-size:14px;color:var(--ink,#0F1115)}
 @media(max-width:900px){.atlasSignup{grid-template-columns:1fr}}

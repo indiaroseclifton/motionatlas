@@ -10,7 +10,7 @@ header .studioGroup>div{right:auto;left:-12px;top:calc(100% + 12px);width:200px;
 header .studioGroup>div a{display:block;padding:10px 12px;border-radius:8px;color:#c9d3e3!important;font:500 13.5px "Inter",system-ui,sans-serif;text-decoration:none;white-space:nowrap}
 header .studioGroup>div a:hover,header .studioGroup>div a.active{background:rgba(190,210,240,.08);color:#fff!important}
 header .studioGroup>div a::after{display:none!important}
-body.cinemaMode>header .studioGroup>summary{color:var(--ink-dim);font:500 13.5px var(--f-body);letter-spacing:.02em}
+body.cinemaMode>header .studioGroup>summary{color:var(--ink-dim);font:500 13.5px var(--f-body);letter-spacing:0}
 body.cinemaMode>header .studioGroup>summary:hover{color:var(--ink)}
 body:not(.cinemaMode)>header .studioGroup>summary{color:var(--hd-dim,#a8b3c7);font:500 13.5px var(--f-body,"Inter",sans-serif)}
 body:not(.cinemaMode)>header .studioGroup>summary:hover{color:var(--hd-ink,#eef2f8)}
@@ -47,5 +47,5 @@ body.cinemaMode>header nav[aria-label=Main] a[href="#browse"]:hover{color:var(--
 
 /* calm section headers (2026-11): no plate label or drawing, a plain title and one line of text */
 .aeCalm>.aeBand{display:none}
-.aeCalm>.aeRelated .aeRelLabel{letter-spacing:.12em}
+.aeCalm>.aeRelated .aeRelLabel{letter-spacing:0}
 main input[type=range]{min-height:24px}

@@ -1,6 +1,6 @@
 'use strict';
-/* Home hero scenes. The hero can show the jellyfish film (the default), the lion-to-phoenix film, the live particle
-   studies in their hero mode, and the original Genesis film with its four plates. A quiet row of marks in
+/* Home hero scenes. The hero can show the live particle studies in their hero mode (the whale is the default),
+   the jellyfish film, the lion-to-phoenix film, and the original Genesis film with its four plates. A quiet row of marks in
    the hero's foot switches between them. A new scene loads behind the current one and only crossfades in once it
    is actually drawing, so the change reads as one picture dissolving into the next. */
 /* How much motion this device should get. Live WebGL studies are skipped (stills or films instead) when the
@@ -24,11 +24,12 @@ window.AtlasMotion=window.AtlasMotion||(()=>{
 (()=>{
  const H=window.HomeAtlas;if(!H||!H.hero)return;
  const M=window.AtlasMotion;
+/* The live particle studies lead: they are drawn in code and stay sharp on any screen. The films follow. */
  const SCENES_ALL=[
-  {id:'jelly',name:'Jellyfish',label:'Jellyfish, film',kind:'video',src:'assets/films/jellyfish.mp4',small:'assets/films/jellyfish-720.mp4',smallWebm:'assets/films/jellyfish-720.webm',webm:'assets/films/jellyfish.webm',poster:'assets/films/jellyfish.jpg',tint:['#f3eaff','#c7b6ff','#ffb98a','#e9d8ff'],eye:'#d6c4ff'},
-  {id:'lionfilm',name:'Lion to phoenix',label:'Lion to phoenix, film',kind:'video',src:'assets/films/lion-phoenix.mp4',small:'assets/films/lion-phoenix-720.mp4',smallWebm:'assets/films/lion-phoenix-720.webm',webm:'assets/films/lion-phoenix.webm',poster:'assets/films/lion-phoenix.jpg'},
   {id:'whale',name:'Whale',label:'Whale gliding, live particles',kind:'live',src:'studies/whale-glide.html?hero',tint:['#e3f0ff','#6fb0ff','#2f6dff','#a9d4ff'],eye:'#8fc2ff'},
   {id:'butterfly',name:'Butterfly',label:'Glitter butterfly, live particles',kind:'live',src:'studies/butterfly.html?hero',tint:['#fffaf0','#f3e2c0','#d9b98a','#fff1d8'],eye:'#f0dcb4'},
+  {id:'jelly',name:'Jellyfish',label:'Jellyfish, film',kind:'video',src:'assets/films/jellyfish.mp4',small:'assets/films/jellyfish-720.mp4',smallWebm:'assets/films/jellyfish-720.webm',webm:'assets/films/jellyfish.webm',poster:'assets/films/jellyfish.jpg',tint:['#f3eaff','#c7b6ff','#ffb98a','#e9d8ff'],eye:'#d6c4ff'},
+  {id:'lionfilm',name:'Lion to phoenix',label:'Lion to phoenix, film',kind:'video',src:'assets/films/lion-phoenix.mp4',small:'assets/films/lion-phoenix-720.mp4',smallWebm:'assets/films/lion-phoenix-720.webm',webm:'assets/films/lion-phoenix.webm',poster:'assets/films/lion-phoenix.jpg'},
   {id:'genesis',name:'Genesis',label:'Genesis, the atlas film in four plates',kind:'genesis'}];
  // on a low-power device the hero keeps to its films and Genesis
  const SCENES=SCENES_ALL.filter(s=>!M.lite||s.kind!=='live');

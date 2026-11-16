@@ -5,24 +5,24 @@
    StudioTabs(host, [{label, els}], {key, start}) puts a tab row at the top of `host` and shows one pane at a time. */
 (()=>{
  const st=document.createElement('style');st.textContent=`
-.stTabs{display:flex;flex:none;min-height:49px;box-sizing:border-box;gap:2px;padding:4px 12px 0;border-bottom:1px solid var(--hair,#E1E4EC);position:sticky;top:-1px;z-index:3;background:var(--panel,#fff);overflow-x:auto;scrollbar-width:none}
+.stTabs{display:flex;flex:none;min-height:49px;box-sizing:border-box;gap:4px;padding:4px 10px 0;border-bottom:1px solid var(--hair,#E6E8EC);position:sticky;top:-1px;z-index:3;background:var(--panel,#fff);overflow-x:auto;scrollbar-width:none}
 .stTabs::-webkit-scrollbar{display:none}
-.stTabs button{flex:none;min-height:44px;padding:0 12px;border:0;border-bottom:2px solid transparent;background:none;font:600 13px/1 Inter,system-ui,sans-serif;color:var(--mute,#5E6476);cursor:pointer}
-.stTabs button[aria-selected=true]{color:var(--ink,#1C1F2A);border-bottom-color:var(--ink,#1C1F2A)}
-.stTabs button:focus-visible{outline:2px solid var(--ink,#1C1F2A);outline-offset:-2px}
+.stTabs button{flex:none;min-height:44px;padding:0 10px;border:0;border-bottom:2px solid transparent;border-radius:0;background:none;font:500 14px/1 Inter,system-ui,sans-serif;color:var(--mute,#5F6573);cursor:pointer;transition:color .15s}
+.stTabs button:hover{color:var(--ink,#0F1115)}
+.stTabs button[aria-selected=true]{color:var(--ink,#0F1115);border-bottom-color:var(--ink,#0F1115)}
+.stTabs button:focus-visible{outline:2px solid var(--ink,#0F1115);outline-offset:-2px}
 .stOff{display:none!important}
-/* one family, several modes: the studios for charts, diagrams and flowcharts share a switch where the title was */
-.famSwitch{display:inline-flex;gap:2px;padding:3px;border:1px solid var(--hair,#E1E4EC);border-radius:999px;background:var(--panel,#fff);flex:0 1 auto;min-width:0;max-width:100%;overflow-x:auto;scrollbar-width:none}
+/* one family, several modes: the studios for infographics, charts, diagrams and flowcharts share a row of text tabs, beside the studio name on wide screens and on their own row under it below 1180px */
+.famSwitch{display:flex;gap:4px;align-self:stretch;margin-block:-8px;flex:0 1 auto;min-width:0;max-width:100%;overflow-x:auto;scrollbar-width:none}
 .famSwitch::-webkit-scrollbar{display:none}
-.famSwitch a{display:inline-flex;align-items:center;min-height:32px;padding:0 13px;border-radius:999px;font:600 13px/1 Inter,system-ui,sans-serif;color:var(--mute,#5E6476);text-decoration:none;white-space:nowrap;text-transform:none;letter-spacing:0}
-.famSwitch a:hover{color:var(--ink,#1C1F2A)}
-.famSwitch a[aria-current=page]{background:var(--ink,#1C1F2A);color:#fff}
-.famSwitch a:focus-visible{outline:2px solid var(--ink,#1C1F2A);outline-offset:2px}
-.famH1{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-@media(max-width:700px){.famSwitch a{min-height:36px;padding:0 12px}}
+.famSwitch a{display:inline-flex;align-items:center;min-height:56px;padding:0 10px;border-bottom:2px solid transparent;font:500 14px/1 Inter,system-ui,sans-serif;color:var(--mute,#5F6573);text-decoration:none;white-space:nowrap;text-transform:none;letter-spacing:0;transition:color .15s}
+.famSwitch a:hover{color:var(--ink,#0F1115)}
+.famSwitch a[aria-current=page]{color:var(--ink,#0F1115);border-bottom-color:var(--ink,#0F1115)}
+.famSwitch a:focus-visible{outline:2px solid var(--ink,#0F1115);outline-offset:-2px}
+@media(max-width:1180px){.famSwitch{order:5;flex:0 0 calc(100% + 2 * var(--fam-gut,20px));max-width:none;margin:0 calc(-1 * var(--fam-gut,20px)) -8px;padding-inline:calc(var(--fam-gut,20px) - 10px);border-top:1px solid var(--hair,#E6E8EC)}.famSwitch a{min-height:44px}}
 /* motion graphics: the template gallery lives in the side panel */
 @media(min-width:861px){.side.stScroll{height:calc(100vh - var(--st-head,57px) - var(--sb-h,0px));min-height:0;overflow:auto;align-self:start}}
-.side>.gal{padding:14px 16px 20px}.side>.gal #mgGrid{grid-template-columns:1fr 1fr;gap:10px}.side>.gal h2{margin-top:0}`;
+.side>.gal{padding:16px 20px 20px}.side>.gal #mgGrid{grid-template-columns:1fr 1fr;gap:10px}.side>.gal h2{margin-top:0}`;
  document.head.append(st);
  function StudioTabs(host,panes,{key,start=0,before=null,scroller=null}={}){
   panes=panes.filter(p=>p.els.length);if(!host||panes.length<2)return null;
@@ -46,7 +46,7 @@
   const h1=document.querySelector('header h1');if(!h1||document.querySelector('.famSwitch'))return;
   const nav=document.createElement('nav');nav.className='famSwitch';nav.setAttribute('aria-label','Charts and diagrams');
   nav.innerHTML=FAMILY.map(([f,n])=>`<a href="${f}.html"${f===me?' aria-current="page"':''}>${n}</a>`).join('');
-  h1.classList.add('famH1');h1.after(nav);/* let the header shrink to the screen so the switch scrolls inside it instead of widening the page */const hd=nav.closest('header');if(hd)hd.style.minWidth='0';nav.querySelector('[aria-current]')?.scrollIntoView({block:'nearest',inline:'center'});
+  (h1.closest('.brand')||h1).after(nav);/* let the header shrink to the screen so the switch scrolls inside it instead of widening the page */const hd=nav.closest('header');if(hd)hd.style.minWidth='0';nav.querySelector('[aria-current]')?.scrollIntoView({block:'nearest',inline:'center'});
  }
  function start(){
   const page=location.pathname.split('/').pop().replace(/\.html$/,'');

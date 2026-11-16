@@ -8,7 +8,7 @@
 .systemKitBar .skPair{display:flex;align-items:center;gap:10px;min-width:0}
 .systemKitBar .skPair svg{flex:none;border:1px solid var(--line)}
 .systemKitBar li>b{font-variant-numeric:tabular-nums;font-weight:600}
-.systemKitBar li em{font-style:normal;font-size:11px;font-weight:700;letter-spacing:.04em;text-align:center;padding:2px 6px;border-radius:20px;background:#e3f4e8;color:#14532d}
+.systemKitBar li em{font-style:normal;font-size:12px;font-weight:700;letter-spacing:0;text-align:center;padding:2px 6px;border-radius:20px;background:#e3f4e8;color:#14532d}
 .systemKitBar li.sk-aa em{background:#e6f0ff;color:#0b3d91}
 .systemKitBar li.sk-aalarge em{background:#fff4d6;color:#6b4600}
 .systemKitBar li.sk-fails em{background:#fde4e2;color:#8a1c12}
@@ -18,7 +18,8 @@
 /* View toggle on the catalogue */
 .systemViewToggle{display:flex;align-items:center;gap:4px;align-self:end}
 .systemViewToggle>span{font-size:13px;color:var(--muted);margin-right:6px}
-.systemViewToggle button{min-height:44px;padding:0 16px;border:1px solid var(--line);background:#fff;color:var(--ink);font:inherit;font-size:13px;cursor:pointer}
+.systemViewToggle button{box-sizing:border-box;min-height:40px;padding:0 14px;border:1px solid var(--hair-hi,#D5D8DF);border-radius:10px;background:#fff;color:var(--ink);font:inherit;font-size:14px;font-weight:500;cursor:pointer}
+@media(max-width:640px){.systemViewToggle button{min-height:44px}}
 .systemViewToggle button[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
 
 /* Kits view: one tile per system */
