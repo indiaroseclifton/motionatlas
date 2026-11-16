@@ -2,56 +2,67 @@
 <title>Theme kits · Visual & Motion Atlas</title>
 <meta name="description" content="Forty-eight complete brand and theme kits, from Matrix (01) to Chambers (48): colour scales with contrast labels, light and dark tokens, type scale, components, a live animated background, logo, social card, slide, email header, business cards, favicon and guidelines, each downloadable as a zip with CSS, SCSS, JSON and Tailwind tokens.">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="kits/kits.css">
 <style>
-:root{--pbg:#F4F5F8;--ppanel:#FFFFFF;--pink:#1C1F2A;--pmute:#5A6072;--phair:#DCE0E8;--paccent:#111113;color-scheme:light}
+/* Page chrome in the site style (November 2026), same values as index.html. The kit itself (.tk, kits/kits.css) is the exhibit and keeps its own look. */
+:root{--pbg:#FFFFFF;--ppanel:#FFFFFF;--pink:#0F1115;--pmute:#5F6573;--phair:#E6E8EC;--phair2:#D5D8DF;--psoft:#F6F7F9;--paccent:#0F1115;--gut:clamp(20px,4vw,48px);--side:max(var(--gut),calc(50vw - 660px + var(--gut)));color-scheme:light}
 *{box-sizing:border-box}html,body{margin:0}
-body{background:var(--pbg);color:var(--pink);font:15px/1.55 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body{background:var(--pbg);color:var(--pink);font:16px/1.55 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
 a{color:inherit}button,input,select{font:inherit;color:inherit}
 .skip{position:absolute;left:-999px}.skip:focus{left:12px;top:12px;z-index:50;background:#fff;padding:8px 12px;border-radius:8px}
 .vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.top{display:flex;align-items:center;gap:8px 16px;flex-wrap:wrap;padding:12px max(16px,4vw);background:var(--ppanel);border-bottom:1px solid var(--phair)}
-.top a.back{font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--pmute);text-decoration:none;padding:8px 0}
-.top nav{margin-left:auto;display:flex;gap:14px;font-size:13px;flex-wrap:wrap}.top nav a{color:var(--pmute);text-decoration:none;padding:6px 0}.top nav a:hover{color:var(--pink)}
-.intro{max-width:1320px;margin:0 auto;padding:clamp(28px,6vh,56px) max(16px,4vw) 16px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:28px;align-items:end}
-.intro h1{margin:0;font:italic 500 clamp(44px,7vw,88px)/.92 'Cormorant Garamond',Georgia,serif;letter-spacing:-.02em}
-.intro p{margin:0;color:var(--pmute);max-width:62ch}
+.top{display:flex;align-items:center;gap:8px 16px;flex-wrap:wrap;padding:6px var(--side);background:var(--ppanel);border-bottom:1px solid var(--phair)}
+.top a.back{font:500 13px/1 Inter,system-ui,sans-serif;letter-spacing:0;color:var(--pmute);text-decoration:none;padding:10px 0;transition:color .15s}.top a.back:hover{color:var(--pink)}
+.top nav{margin-left:auto;display:flex;gap:16px;font-size:14px;flex-wrap:wrap}.top nav a{color:var(--pmute);text-decoration:none;padding:6px 0}.top nav a:hover{color:var(--pink)}
+.intro{max-width:1320px;margin:0 auto;padding:clamp(40px,8vh,88px) var(--gut) 28px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:32px;align-items:end}
+.intro h1{margin:0;font-weight:600;font-size:clamp(36px,5vw,64px);line-height:1.05;letter-spacing:-.035em;text-wrap:balance}
+.intro p{margin:0;color:var(--pmute);font-size:17px;line-height:1.55;max-width:60ch}
 .intro p b{color:var(--pink);font-weight:600}
-.bar{max-width:1320px;margin:0 auto;padding:6px max(16px,4vw) 12px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.bar{max-width:1320px;margin:0 auto;padding:0 var(--gut) 12px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .search{flex:1 1 240px;min-width:0}
-.search input{width:100%;min-height:44px;padding:0 16px;border:1px solid var(--phair);border-radius:12px;background:var(--ppanel);font-size:15px}
+.search input{width:100%;min-height:40px;padding:0 14px;border:1px solid var(--phair2);border-radius:10px;background:var(--ppanel);font:500 14px/1.2 Inter,system-ui,sans-serif}
+.search input::placeholder{color:var(--pmute);font-weight:400;opacity:1}.search input{text-overflow:ellipsis}
 .fsel{flex:0 0 200px;min-width:0}
-.fsel select{width:100%;min-height:44px;padding:0 14px;border:1px solid var(--phair);border-radius:12px;background:var(--ppanel);font-size:14px}
-.search input:focus-visible,.fsel select:focus-visible,.pick:focus-visible,.pbtn:focus-visible,.cmpbar select:focus-visible{outline:3px solid var(--paccent);outline-offset:2px}
-.bar .pbtn{min-height:44px;border-radius:12px;font-weight:500}
-.count{max-width:1320px;margin:0 auto;padding:0 max(16px,4vw) 12px;color:var(--pmute);font-size:13px}
-.pbtn{min-height:40px;padding:0 16px;border-radius:10px;border:1px solid var(--pink);background:var(--pink);color:#fff;font-weight:600;font-size:14px;cursor:pointer}
-.pbtn.ghost{background:var(--ppanel);color:var(--pink);border-color:var(--phair)}
-.picker{max-width:1320px;margin:0 auto;padding:6px max(16px,4vw) 28px;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:10px}
-.pick{position:relative;aspect-ratio:4/3;border-radius:14px;overflow:hidden;border:1px solid var(--phair);padding:0;cursor:pointer;background:#111;text-align:left}
-.pick canvas{position:absolute;inset:0;width:100%;height:100%}
-.pick span{position:absolute;left:0;right:0;bottom:0;padding:22px 9px 8px;display:grid;gap:2px;background:linear-gradient(transparent,rgba(0,0,0,.86) 45%);color:#fff}
-.pick b{font-size:15px;line-height:1.05;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pick small{font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.1em;opacity:.95}
-.pick[aria-pressed=true]{border-color:var(--paccent);box-shadow:0 0 0 2px var(--paccent)}
-.empty{max-width:1320px;margin:0 auto;padding:0 max(16px,4vw) 24px;color:var(--pmute)}
+.fsel select,.cmpbar select{width:100%;min-height:40px;padding:0 14px;border:1px solid var(--phair2);border-radius:10px;background-color:var(--ppanel);color:var(--pink);font:500 14px/1.2 Inter,system-ui,sans-serif}
+:focus-visible{outline:2px solid var(--paccent);outline-offset:2px}
+.count{max-width:1320px;margin:0 auto;padding:0 var(--gut) 14px;color:var(--pmute);font-size:13px;font-weight:500;font-variant-numeric:tabular-nums}
+.pbtn{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:0 16px;border-radius:10px;border:1px solid var(--pink);background:var(--pink);color:#fff;font:500 14px/1 Inter,system-ui,sans-serif;cursor:pointer;text-decoration:none;transition:background .15s,border-color .15s}
+.pbtn:hover{background:#000}
+.pbtn.ghost{background:var(--ppanel);color:var(--pink);border-color:var(--phair2)}.pbtn.ghost:hover{background:var(--psoft)}
+/* kit picker: a card per kit, the kit's own still above, its name (in its own heading face) below */
+.picker{max-width:1320px;margin:0 auto;padding:2px var(--gut) 40px;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:12px}
+.pick{display:flex;flex-direction:column;min-width:0;border-radius:14px;overflow:hidden;border:1px solid var(--phair);padding:0;cursor:pointer;background:var(--ppanel);color:var(--pink);text-align:left;transition:border-color .2s,transform .2s cubic-bezier(.2,.8,.2,1),box-shadow .2s}
+.pick[hidden]{display:none}
+.pick:hover{border-color:var(--phair2);transform:translateY(-2px);box-shadow:0 12px 28px -18px rgba(15,17,21,.25)}
+.pick canvas{display:block;width:100%;height:auto;aspect-ratio:16/10;background:var(--psoft)}
+.pick span{display:grid;gap:3px;padding:9px 10px 10px;border-top:1px solid var(--phair);min-width:0}
+.pick b{order:1;font-size:15px;line-height:1.2;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pick small{order:2;font:500 13px/1.2 Inter,system-ui,sans-serif;letter-spacing:0;color:var(--pmute);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pick[aria-pressed=true],.pick[aria-pressed=true]:hover{border-color:var(--paccent);box-shadow:0 0 0 1px var(--paccent)}
+.empty{max-width:1320px;margin:0 auto;padding:0 var(--gut) 24px;color:var(--pmute)}
 #compare{border-top:1px solid var(--phair);background:var(--ppanel)}
-#compare .in{max-width:1320px;margin:0 auto;padding:28px max(16px,4vw) 36px;display:grid;gap:18px}
-#compare h2{margin:0;font:italic 500 clamp(32px,4vw,48px)/1 'Cormorant Garamond',Georgia,serif}
+#compare .in{max-width:1320px;margin:0 auto;padding:clamp(32px,5vh,48px) var(--gut) 48px;display:grid;gap:20px}
+#compare h2{margin:0;font-weight:600;font-size:clamp(24px,2.6vw,32px);line-height:1.15;letter-spacing:-.025em}
 .cmpbar{display:flex;flex-wrap:wrap;gap:12px;align-items:end}
-.cmpbar label{display:grid;gap:4px;font-size:13px;color:var(--pmute)}
-.cmpbar select{min-height:40px;min-width:200px;padding:0 10px;border:1px solid var(--phair);border-radius:10px;background:var(--pbg);color:var(--pink)}
+.cmpbar label{display:grid;gap:6px;font-size:13px;font-weight:500;color:var(--pmute)}
+.cmpbar select{min-width:220px}
 .cmpgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 #kit:focus{outline:none}
-.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1C1F2A;color:#fff;padding:10px 16px;border-radius:999px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:100;max-width:calc(100vw - 32px)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--pink);color:#fff;padding:11px 16px;border-radius:10px;font-size:14px;font-weight:500;opacity:0;transition:opacity .2s;pointer-events:none;z-index:100;max-width:calc(100vw - 32px)}
 .toast.on{opacity:1}
-.khand{display:flex;gap:8px;flex-wrap:wrap;align-items:center;max-width:1240px;margin:0 auto;padding:12px 24px}.khand span{font-size:13px;color:var(--pmute,#5b5a62);margin-right:4px}.khand a.pbtn{display:inline-flex;align-items:center;text-decoration:none}
+.khand{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:16px var(--side) 12px;border-top:1px solid var(--phair)}.khand span{font-size:14px;font-weight:500;color:var(--pmute);margin-right:6px}
+/* the tabs over the kit (kits/tabs.js writes its own rules for the brand kit generator; these are the Theme kits page's) */
+body .ktBar{max-width:none;gap:4px;padding:8px var(--side);background:var(--pbg);border-bottom:1px solid var(--phair)}
+body .ktBar button{min-height:40px;padding:0 14px;border:1px solid transparent;border-radius:10px;background:none;color:var(--pmute);font:500 14px/1 Inter,system-ui,sans-serif;transition:background .15s,color .15s}
+body .ktBar button:hover{background:var(--psoft);color:var(--pink)}
+body .ktBar button[aria-selected=true]{background:var(--pink);border-color:var(--pink);color:#fff}
+body .ktBar button:focus-visible{outline:2px solid var(--paccent);outline-offset:2px}
 @media (max-width:1100px){.picker{grid-template-columns:repeat(6,minmax(0,1fr))}}
-@media (max-width:900px){.intro{grid-template-columns:1fr}.cmpgrid{grid-template-columns:1fr}.picker{grid-template-columns:repeat(4,minmax(0,1fr))}}
-@media (max-width:560px){.picker{grid-auto-flow:column;grid-template-columns:none;grid-template-rows:repeat(2,auto);grid-auto-columns:42%;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:16px}.pick{scroll-snap-align:start}.cmpbar select{min-width:0;width:100%}.cmpbar label{flex:1 1 100%}}
-@media (max-width:640px){.search{flex:1 1 100%}.fsel{flex:1 1 calc(50% - 5px)}.bar .pbtn{flex:1 1 100%}}
-@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+@media (max-width:900px){.search{flex:1 1 100%}.fsel{flex:1 1 180px}.intro{grid-template-columns:1fr;gap:16px}.cmpgrid{grid-template-columns:1fr}.picker{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (max-width:640px){.search{flex:1 1 100%}.fsel{flex:1 1 calc(50% - 5px)}.bar .pbtn{flex:1 1 100%}.search input,.fsel select,.cmpbar select,.pbtn,body .ktBar button{min-height:44px}}
+@media (max-width:560px){.picker{grid-auto-flow:column;grid-template-columns:none;grid-template-rows:repeat(2,auto);grid-auto-columns:42%;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:20px;scroll-padding-left:var(--gut)}.pick{scroll-snap-align:start}.pick:hover{transform:none;box-shadow:none}.cmpbar select{min-width:0;width:100%}.cmpbar label{flex:1 1 100%}}
+@media (prefers-reduced-motion:reduce){.toast,.pick,.pbtn,body .ktBar button{transition:none}.pick:hover{transform:none}}
 </style><meta property="og:type" content="website"><meta property="og:site_name" content="Visual &amp; Motion Atlas"><meta property="og:title" content="Theme kits · Visual & Motion Atlas"><meta property="og:description" content="Forty-eight complete brand and theme kits, from Matrix (01) to Chambers (48): colour scales with contrast labels, light and dark tokens, type scale, components, a live animated background, logo, social card, slide, email header, business cards, favicon and guidelines, each downloadable as a zip with CSS, SCSS, JSON and Tailwind tokens."><meta property="og:url" content="https://motionatlas-ten.vercel.app/theme-kits"><meta property="og:image" content="https://motionatlas-ten.vercel.app/assets/og-atlas.jpg"><meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://motionatlas-ten.vercel.app/theme-kits">
 <style id="sbPre">html{--sb-h:calc(44px + env(safe-area-inset-top,0px))}body{padding-top:var(--sb-h)}html:not(.sbReady) body::before{content:"";position:fixed;top:0;left:0;right:0;height:var(--sb-h);background:#fff;border-bottom:1px solid #e8e8ea;z-index:2147483000}@media print{body{padding-top:0}}</style><script src="site-nav-data.js" defer></script><script src="site-bar.js" defer></script>
@@ -88,7 +99,7 @@ function say(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearT
 (()=>{const fams=[...new Set(L.map(k=>TK.famName(k.fonts.head)))],txt=[...new Set(L.map(k=>k.name+k.name.toUpperCase()).join(''))].join('');const l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?'+fams.map(f=>'family='+f.replace(/ /g,'+')).join('&')+'&text='+encodeURIComponent(txt)+'&display=swap';document.head.append(l)})();
 /* picker */
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){io.unobserve(e.target);const k=L.find(x=>x.id===e.target.dataset.kit);requestAnimationFrame(()=>TK.mountStill(k,e.target))}}),{rootMargin:'200px'});
-L.forEach(k=>{const b=document.createElement('button');b.type='button';b.className='pick';b.dataset.id=k.id;b.setAttribute('aria-pressed','false');b.innerHTML=`<canvas aria-hidden="true" data-kit="${k.id}"></canvas><span><small>${k.no} · ${k.tone.toUpperCase()}</small><b style="font-family:${esc(k.fonts.head)};font-weight:${k.hw||400}">${esc(k.name)}</b></span>`;b.onclick=()=>{location.hash=k.id};$('#picker').append(b);io.observe(b.querySelector('canvas'))});
+L.forEach(k=>{const b=document.createElement('button');b.type='button';b.className='pick';b.dataset.id=k.id;b.setAttribute('aria-pressed','false');b.innerHTML=`<canvas aria-hidden="true" data-kit="${k.id}"></canvas><span><small>${k.no} · ${k.tone[0].toUpperCase()+k.tone.slice(1)}</small><b style="font-family:${esc(k.fonts.head)};font-weight:${k.hw||400}">${esc(k.name)}</b></span>`;b.onclick=()=>{location.hash=k.id};$('#picker').append(b);io.observe(b.querySelector('canvas'))});
 /* filters */
 const F={q:'',tone:'',feel:''};
 const hay=k=>[k.name,k.no,k.id,k.tagline,k.mood,k.tone,k.feel,TK.famName(k.fonts.head),TK.famName(k.fonts.body),k.bgDesc].join(' ').toLowerCase();

@@ -1,14 +1,42 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>My fonts · Visual & Motion Atlas</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<title>My fonts · Visual & Motion Atlas</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
 <meta name="description" content="Use a font you own in the atlas tools. Pick the files from your device; they stay in this browser and are never uploaded.">
 <style>
-:root{--bg:#F4F5F8;--ink:#1C1F2A;--mute:#4F5568;--line:#CBD0DC;color-scheme:light}
+/* Page chrome in the site style (November 2026), same values as index.html. The font previews are the exhibit. */
+:root{--bg:#FFFFFF;--ink:#0F1115;--mute:#5F6573;--line:#E6E8EC;--line2:#D5D8DF;--soft:#F6F7F9;--gut:clamp(20px,4vw,48px);color-scheme:light}
 *{box-sizing:border-box}html,body{margin:0}
-body{background:var(--bg);color:var(--ink);font:15px/1.55 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;overflow-x:hidden}
-.wrap{max-width:860px;margin:0 auto;padding:0 max(16px,4vw) 64px}
-h1{margin:clamp(24px,5vh,44px) 0 8px;font:600 clamp(30px,5vw,48px)/1.05 Georgia,serif;letter-spacing:-.01em}
-.lede{color:var(--mute);margin:0 0 20px;max-width:65ch}
-.fine{margin-top:28px;border-top:1px solid var(--line);padding-top:16px;color:var(--mute);font-size:13.5px}.fine h2{font-size:15px;color:var(--ink);margin:0 0 6px}.fine p{margin:0 0 8px;max-width:70ch}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.wrap{max-width:calc(820px + 2*var(--gut));margin:0 auto;padding:0 max(var(--gut),env(safe-area-inset-right)) 96px max(var(--gut),env(safe-area-inset-left))}
+h1{margin:clamp(40px,8vh,88px) 0 18px;font-weight:600;font-size:clamp(36px,5vw,64px);line-height:1.05;letter-spacing:-.035em;text-wrap:balance}
+.lede{color:var(--mute);margin:0 0 32px;max-width:60ch;font-size:17px;line-height:1.55}
+.fine{margin-top:clamp(40px,7vh,64px);border-top:1px solid var(--line);padding-top:24px;color:var(--mute);font-size:14px}.fine h2{font-size:16px;font-weight:600;line-height:1.3;letter-spacing:-.01em;color:var(--ink);margin:0 0 8px}.fine p{margin:0 0 10px;max-width:70ch}
+/* the font manager (fontlib.css) is shared with the studios' dialogs; on this page it takes the page's values */
+#mf{--mf-ink:#0F1115;--mf-mute:#5F6573;--mf-line:#E6E8EC;--mf-acc:#0F1115;gap:16px;font:15px/1.55 Inter,system-ui,sans-serif}
+#mf .mfNote{border:1px solid var(--line);border-radius:14px;padding:14px 16px;font-size:14px;background:var(--soft);color:var(--mute)}#mf .mfNote strong{color:var(--ink);font-weight:600}
+#mf .mfNote.seen{background:transparent}
+#mf .mfPriv{border-radius:10px;padding:12px 16px;font-size:14px}
+#mf .mfDrop{border:1px dashed var(--line2);border-radius:14px;padding:28px 18px;background:#fff}
+#mf .mfDrop.on{border-color:var(--ink);background:var(--soft)}
+#mf .mfDrop p{margin:0 0 14px}#mf .mfDrop strong{font-weight:600}#mf .mfDrop span{font-size:14px}
+#mf .mfBtn{min-height:40px;padding:0 16px;border-radius:10px;border:1px solid var(--ink);background:var(--ink);color:#fff;font:500 14px/1 Inter,system-ui,sans-serif;transition:background .15s,border-color .15s}
+#mf .mfBtn:hover{background:#000}
+#mf .mfBtn.ghost{background:#fff;color:var(--ink);border-color:var(--line2)}#mf .mfBtn.ghost:hover{background:var(--soft)}
+#mf .mfBtn.sm{min-height:40px;padding:0 14px}#mf .mfBtn.danger{color:var(--mf-bad);border-color:var(--line2)}
+#mf .mfBtn:focus-visible,#mf input:focus-visible,#mf a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+#mf .mfVh:focus-visible~label,#mf label:has(+ .mfVh:focus-visible){outline:2px solid var(--ink);outline-offset:2px}
+#mf .mfMsg p,#mf .mfErr{font-size:14px}
+#mf .mfSample label{font-size:14px;font-weight:500;color:var(--mute)}
+#mf .mfSample input{min-height:40px;padding:0 14px;border:1px solid var(--line2);border-radius:10px;font:500 14px/1.2 Inter,system-ui,sans-serif}
+#mf .mfFam,#mf .mfEmpty{border:1px solid var(--line);border-radius:14px;padding:18px}
+#mf .mfEmpty{font-size:14px}
+#mf .mfName{font:600 17px/1.3 Inter,system-ui,sans-serif;letter-spacing:-.01em}#mf .mfSub{font-size:13px}
+#mf .mfRen{min-height:40px;padding:0 12px;border:1px solid var(--ink);border-radius:10px;font:500 14px Inter,system-ui,sans-serif}
+#mf .mfChip{padding:4px 10px;background:var(--soft);font-size:13px;font-weight:500;color:var(--mute)}
+#mf .mfTest{font-size:14px}#mf .mfTest a{color:var(--ink);font-weight:500;text-decoration-color:var(--line2);text-underline-offset:3px;padding-block:4px}
+@media (max-width:640px){.wrap{padding-bottom:56px}#mf .mfBtn,#mf .mfBtn.sm,#mf .mfSample input,#mf .mfRen{min-height:44px}}
+@media (prefers-reduced-motion:reduce){#mf .mfBtn{transition:none}}
 </style><meta property="og:type" content="website"><meta property="og:site_name" content="Visual &amp; Motion Atlas"><meta property="og:title" content="My fonts · Visual & Motion Atlas"><meta property="og:description" content="Use a font you own in the atlas tools. Pick the files from your device; they stay in this browser and are never uploaded."><meta property="og:url" content="https://motionatlas-ten.vercel.app/my-fonts"><meta property="og:image" content="https://motionatlas-ten.vercel.app/assets/og-atlas.jpg"><meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://motionatlas-ten.vercel.app/my-fonts">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
