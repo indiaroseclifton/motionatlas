@@ -2,26 +2,27 @@
 <title>Brand kit generator · Visual & Motion Atlas</title>
 <meta name="description" content="Name, a sentence and a few feel words in; a complete brand out: an OKLCH palette checked for WCAG contrast and colour blindness, a Google Fonts pairing with rationale, logo lockups, CSS, JSON and Tailwind tokens, applied previews and a downloadable theme kit.">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="kits/kits.css">
 <style>
 /* Brand kit: one column in the same language as the Interactions shelf (same variables, fonts, 44px fields, 12px field
    corners, 16px card corners, the same quiet shadow). The brand's own colours only appear inside the kit itself. */
-:root{--bg:#F4F5F8;--panel:#FFFFFF;--ink:#1C1F2A;--mute:#5E6476;--hair:#E1E4EC;--soft:#F7F8FB;--accent:#111113;--accent-ink:#FFFFFF;--shadow:0 1px 2px rgba(20,24,40,.04),0 10px 30px -14px rgba(20,24,40,.18);--ok:#17633A;--okbg:#EAF7EF;--bad:#A3221B;--badbg:#FDECEA;--warn:#8A5300;--warnbg:#FFF4E2;color-scheme:light}
+/* the site style (November 2026): one typeface, white page, hairlines, 10px controls, no shadows on cards */
+:root{--bg:#FFFFFF;--panel:#FFFFFF;--ink:#0F1115;--mute:#5F6573;--hair:#E6E8EC;--soft:#F6F7F9;--accent:#0F1115;--accent-ink:#FFFFFF;--shadow:none;--ok:#17633A;--okbg:#EAF7EF;--bad:#A3221B;--badbg:#FDECEA;--warn:#8A5300;--warnbg:#FFF4E2;color-scheme:light}
 *{box-sizing:border-box}html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font:15px/1.55 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 a{color:inherit}button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}[hidden]{display:none!important}
 .skip{position:absolute;left:-999px}.skip:focus{left:12px;top:12px;z-index:50;background:var(--panel);padding:8px 12px;border-radius:8px}
 .vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.k{font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.k{font:500 13px/1.2 Inter,system-ui,sans-serif;letter-spacing:0;color:var(--mute)}
 header.top{display:flex;align-items:center;gap:16px;padding:12px max(18px,env(safe-area-inset-right)) 12px max(18px,env(safe-area-inset-left));background:var(--panel);border-bottom:1px solid var(--hair)}
-header.top a.back{font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);text-decoration:none;white-space:nowrap;padding-block:7px}
+header.top a.back{font:500 13px/1 Inter,system-ui,sans-serif;letter-spacing:0;color:var(--mute);text-decoration:none;white-space:nowrap;padding-block:7px}
 header.top a.back:hover{color:var(--ink)}
 header.top nav{margin-left:auto;display:flex;gap:14px;font-size:13px}
 header.top nav a{color:var(--mute);text-decoration:none}header.top nav a:hover{color:var(--ink)}
 main{padding:0 max(18px,4vw) 96px;max-width:1240px;margin:0 auto}
 .hero{padding:clamp(36px,7vh,72px) 0 24px;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:32px;align-items:end}
-.hero h1{margin:0;font:500 clamp(44px,7vw,92px)/.92 'Cormorant Garamond',Georgia,serif;font-style:italic;letter-spacing:-.02em}
+.hero h1{margin:0;font:600 clamp(36px,5vw,64px)/1.05 Inter,system-ui,sans-serif;letter-spacing:-.035em;text-wrap:balance}
 .hero p{margin:0;color:var(--mute);max-width:52ch}
 
 /* the one input row */
@@ -29,14 +30,14 @@ main{padding:0 max(18px,4vw) 96px;max-width:1240px;margin:0 auto}
 .row{display:flex;gap:10px;align-items:flex-end}
 .fld{display:grid;gap:7px;min-width:0}
 .fld.name{flex:1 1 220px}.fld.desc{flex:2.2 1 320px}.fld.feel{flex:0 0 220px}
-.fld input,.fld select,.in{width:100%;min-height:44px;padding:0 16px;border:1px solid var(--hair);border-radius:12px;background:var(--panel);font-size:15px}
+.fld input,.fld select,.in{width:100%;min-height:40px;padding:0 14px;border:1px solid #D5D8DF;border-radius:10px;background:var(--panel);font-size:15px}
 .fld select{padding:0 14px;font-size:14px}
 input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 button:focus-visible,a:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:0 14px;border-radius:10px;border:1px solid var(--hair);background:var(--panel);font-weight:500;font-size:13px;text-decoration:none;white-space:nowrap}
 .btn:hover{background:var(--soft)}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}.btn.primary:hover{background:#2A2D38}
-.btn.tall{min-height:44px;border-radius:12px;padding:0 20px;font-size:14px}
+.btn.tall{min-height:40px;border-radius:10px;padding:0 18px;font-size:14px}
 .btn:disabled{opacity:.45;cursor:default}.btn:disabled:hover{background:var(--panel)}
 .btn[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
 .note{margin:0;color:var(--mute);font-size:13.5px}.note b{color:var(--ink);font-weight:600}
@@ -74,22 +75,22 @@ input[type=file]::file-selector-button:hover{background:var(--soft)}
 /* the sheet */
 .sec{padding-top:clamp(40px,7vh,72px)}
 .sech{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;min-height:40px}
-.sech h2{margin:0;font:600 21px/1.2 Inter,system-ui,sans-serif;letter-spacing:-.01em}
+.sech h2{margin:0;font:600 clamp(22px,2.2vw,28px)/1.15 Inter,system-ui,sans-serif;letter-spacing:-.025em}
 .acts{display:flex;gap:8px;align-items:center}
-.card{background:var(--panel);border:1px solid var(--hair);border-radius:16px;box-shadow:var(--shadow)}
+.card{background:var(--panel);border:1px solid var(--hair);border-radius:14px;box-shadow:var(--shadow)}
 .sec>.note,.sec>details.more{margin-top:14px}
 
 /* logo */
 .lg2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 .lg3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:16px}
-.tile{position:relative;margin:0;border:1px solid var(--hair);border-radius:16px;overflow:hidden;display:grid;place-items:center;box-shadow:var(--shadow);min-width:0}
+.tile{position:relative;margin:0;border:1px solid var(--hair);border-radius:14px;overflow:hidden;display:grid;place-items:center;box-shadow:var(--shadow);min-width:0}
 .tile.big{min-height:clamp(190px,25vw,320px);padding:36px 28px}
 .tile.sm{min-height:clamp(120px,15vw,170px);padding:30px 16px 34px}
 .tile svg,.tile img{display:block;max-width:100%;height:auto}
 .tile.big svg{max-height:132px;width:auto;max-width:min(100%,460px)}
 .tile.sm svg{max-height:72px;width:auto;max-width:86%}
 .tile figcaption{position:absolute;left:14px;bottom:12px}
-.svgb{position:absolute;right:10px;top:10px;min-height:32px;padding:0 10px;border-radius:8px;border:1px solid var(--hair);background:var(--panel);color:var(--ink);font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.1em;opacity:0;transition:opacity .15s}
+.svgb{position:absolute;right:10px;top:10px;min-height:32px;padding:0 10px;border-radius:8px;border:1px solid var(--hair);background:var(--panel);color:var(--ink);font:500 12px/1 Inter,system-ui,sans-serif;letter-spacing:0;opacity:0;transition:opacity .15s}
 .tile:hover .svgb,.tile:focus-within .svgb,.svgb:focus-visible{opacity:1}
 @media (hover:none){.svgb{opacity:1}}
 .files{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr));gap:8px}
@@ -137,7 +138,7 @@ details.in2>summary{cursor:pointer;font-size:14px;min-height:36px;display:flex;a
 
 /* in use: the only place the brand's own colours and fonts lead */
 .use{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-.frame{border:1px solid var(--hair);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);background:var(--b-bg);color:var(--b-ink);font-family:var(--b-fb);min-width:0}
+.frame{border:1px solid var(--hair);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);background:var(--b-bg);color:var(--b-ink);font-family:var(--b-fb);min-width:0}
 .hd{font-family:var(--b-fh);font-weight:var(--b-hw);text-transform:var(--b-cs)}
 .web{grid-column:1/-1}
 .wnav{display:flex;flex-wrap:wrap;align-items:center;gap:10px 24px;padding:16px clamp(18px,3.4vw,40px);border-bottom:1px solid var(--b-ln)}
@@ -176,10 +177,10 @@ pre.code{margin:0;background:var(--soft);border:1px solid var(--hair);border-rad
 
 /* every component, in place */
 .kvbar{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;padding:28px 0 18px}
-.kvbar h2{margin:0;font:600 21px/1.2 Inter,system-ui,sans-serif;letter-spacing:-.01em}
+.kvbar h2{margin:0;font:600 clamp(22px,2.2vw,28px)/1.15 Inter,system-ui,sans-serif;letter-spacing:-.025em}
 #kitView .ktBar{position:static;max-width:none;padding:0 0 12px;background:none}
 main.kv .tools{position:static}
-#kitBox{border:1px solid var(--hair);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+#kitBox{border:1px solid var(--hair);border-radius:14px;overflow:hidden;box-shadow:var(--shadow)}
 
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:999px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:100;max-width:calc(100vw - 32px)}
 .toast.on{opacity:1}
@@ -189,7 +190,7 @@ main.kv .tools{position:static}
 @media (max-width:640px){details.opts>summary small{display:none}.row{gap:12px 10px}.fld.feel{flex:1 1 100%}.row>.btn{flex:1 1 0}.optgrid,.two,.modes,.spec,.use,.lg2{grid-template-columns:minmax(0,1fr)}.spec>div+div{border-left:0;border-top:1px solid var(--hair)}.lg3{gap:10px}.tile.sm{padding:22px 10px 30px}.tile figcaption{left:10px;bottom:9px;font-size:10px;letter-spacing:.1em}
  .sws{grid-template-columns:repeat(2,minmax(0,1fr))}.sw{border-right:0;border-bottom:1px solid var(--hair)}.sw:nth-child(odd){border-right:1px solid var(--hair)}.sw:nth-last-child(-n+2){border-bottom:0}.sw>span{padding:12px}
  .whero{grid-template-columns:minmax(0,1fr)}.wart{aspect-ratio:16/9}.wart svg{width:22%}.wlinks{margin-left:0}.dlrow .btn{flex:1 1 150px}.dlrow .btn.tall{flex-basis:100%;margin-right:0}.coderow select{flex:1 1 100%}.coderow .btn{flex:1 1 0}}
-@media (pointer:coarse){.btn,.seg button,.chip{min-height:44px}.seg button{min-height:38px}.svgb{min-height:36px}}
+@media (pointer:coarse),(max-width:640px){.btn,.fld input,.fld select,.in,.seg button,.chip{min-height:44px}.seg button{min-height:38px}.svgb{min-height:36px}}
 @media (prefers-reduced-motion:reduce){.toast,.svgb{transition:none}}
 </style><meta property="og:type" content="website"><meta property="og:site_name" content="Visual &amp; Motion Atlas"><meta property="og:title" content="Brand kit generator · Visual & Motion Atlas"><meta property="og:description" content="Name, a sentence and a few feel words in; a complete brand out: an OKLCH palette checked for WCAG contrast and colour blindness, a Google Fonts pairing with rationale, logo lockups, CSS, JSON and Tailwind tokens, applied previews and a downloadable theme kit."><meta property="og:url" content="https://motionatlas-ten.vercel.app/brand-generator"><meta property="og:image" content="https://motionatlas-ten.vercel.app/assets/og-atlas.jpg"><meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://motionatlas-ten.vercel.app/brand-generator">

@@ -84,10 +84,63 @@ def scope(css, cls):
     return '\n'.join(out)
 
 
-FILMS = ['bioluminescent-trails', 'jellyfish', 'golden-dove', 'golden-figure', 'lion-phoenix', 'light-threads',
-         'particle-tree', 'pigment-bloom', 'smoke-plume', 'suminagashi', 'soap-film', 'ferrofluid', 'sand-drawing',
-         'embroidery', 'hydraulic-erosion', 'swan-construction', 'sketchbook-horse', 'paper-bird', 'light-mesh',
-         'petal-swirl', 'pixel-sorting', 'game-of-life']
+# Background motion is drawn live in code (WebGL), so it is sharp at any size and takes the page's own colours.
+# These four presets replace the old 720p film clips; a saved site that still names a film gets the nearest preset.
+FILMS = ['ink', 'silk', 'mesh', 'aurora']
+FILM_NEW = {'suminagashi': 'ink', 'smoke-plume': 'ink', 'pigment-bloom': 'ink', 'ferrofluid': 'ink', 'paper-bird': 'silk',
+            'light-threads': 'silk', 'light-mesh': 'mesh', 'jellyfish': 'aurora'}
+FLOW_GLSL = (
+ 'precision highp float;uniform vec2 r;uniform float t;uniform int m;uniform vec3 a,b,c;'
+ 'float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}'
+ 'float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1.,0.)),f.x),mix(h(i+vec2(0.,1.)),h(i+vec2(1.,1.)),f.x),f.y);}'
+ 'float f(vec2 p){float v=0.,k=.5;for(int i=0;i<5;i++){v+=k*n(p);p=p*2.02+vec2(13.1,7.7);k*=.5;}return v;}'
+ 'void main(){vec2 g=gl_FragCoord.xy/r;vec2 u=vec2(g.x*r.x/r.y,g.y);vec3 col;'
+ # ink: marbled paper, folded noise with fine rings
+ 'if(m==0){vec2 p=u*1.5;vec2 q=vec2(f(p+vec2(0.,t*.03)),f(p+vec2(5.2,1.3)-t*.025));'
+ 'vec2 s=vec2(f(p+3.2*q+vec2(1.7,9.2)+t*.02),f(p+3.2*q+vec2(8.3,2.8)-t*.018));float v=f(p+3.2*s);'
+ 'float ring=abs(fract(v*15.+length(q)*3.)-.5)*2.;float line=1.-smoothstep(0.,.11,ring);'
+ 'col=mix(a,b,smoothstep(.15,.85,v));col=mix(col,c,smoothstep(.5,.95,length(s))*.6);col=mix(col,mix(c,a,.1),line*.62*smoothstep(.2,.65,v));}'
+ # silk: slow folds of cloth
+ 'else if(m==1){vec2 p=u*vec2(1.,1.8);float w=f(p*.55+vec2(t*.025,0.));float y=p.y*3.2+w*4.+sin(p.x*1.1+t*.1)*.6;float k=y*2.3+1.7+f(p*1.1-vec2(0.,t*.03))*3.;'
+ 'float v=.5+.25*sin(y)+.25*sin(k);float hl=pow(max(0.,cos(y-.9)),26.)+.6*pow(max(0.,cos(k-.9)),40.);'
+ 'col=mix(a,b,smoothstep(.1,.9,v));col=mix(col,c,smoothstep(.55,1.,v)*.55);col=mix(col,a*.55,pow(1.-v,4.)*.35);col+=(mix(vec3(1.),c,.35)-col)*hl*.4;}'
+ # mesh: three soft lights drifting
+ 'else if(m==2){vec2 p1=vec2(.28+.18*sin(t*.11),.42+.2*cos(t*.13)),p2=vec2(.76+.14*cos(t*.09),.62+.22*sin(t*.07)),p3=vec2(.52+.28*sin(t*.05+2.),.16+.1*cos(t*.1));'
+ 'vec2 w=g+(vec2(f(u*1.2+t*.02),f(u*1.2+7.-t*.02))-.5)*.25;'
+ 'col=a;col=mix(col,b,smoothstep(.75,0.,distance(w,p1)));col=mix(col,c,smoothstep(.55,0.,distance(w,p2))*.7);col=mix(col,mix(b,c,.5),smoothstep(.5,0.,distance(w,p3))*.6);}'
+ # aurora: curtains of light rising
+ 'else{float x=u.x*1.6+f(vec2(u.x*1.2,t*.04))*1.4;float band=f(vec2(x*1.5,g.y*.5-t*.035));'
+ 'float cur=smoothstep(.36,.78,band)*smoothstep(-.1,.7,g.y)*(.55+.45*n(vec2(x*26.,t*.15)));col=mix(a,b,cur);col=mix(col,c,pow(cur,2.2)*.75);col+=(mix(vec3(1.),c,.5)-col)*pow(cur,6.)*.25;}'
+ 'col+=(h(gl_FragCoord.xy+fract(t))-.5)*.018;gl_FragColor=vec4(col,1.);}'
+)
+FLOW_JS = (
+ "window.__pbFlow=window.__pbFlow||function(cv){if(!cv)return null;if(cv.__flow)return cv.__flow;"
+ "var KIND={ink:0,silk:1,mesh:2,aurora:3},OLD={'light-mesh':2,'soap-film':2,'golden-figure':2,'game-of-life':2,'hydraulic-erosion':2,'light-threads':1,embroidery:1,'petal-swirl':1,'golden-dove':1,'paper-bird':1,'swan-construction':1,'sketchbook-horse':1,'sand-drawing':1,jellyfish:3,'bioluminescent-trails':3,'particle-tree':3,'pixel-sorting':3,'lion-phoenix':3};"
+ "var name=cv.getAttribute('data-flow')||'ink',mode=KIND.hasOwnProperty(name)?KIND[name]:OLD.hasOwnProperty(name)?OLD[name]:0;"
+ "var ctl={paused:true,play:function(){start();return Promise.resolve()},pause:function(){stop()},removeAttribute:function(){}};cv.__flow=ctl;"
+ "var gl=null;try{gl=cv.getContext('webgl',{antialias:false,alpha:false,powerPreference:'low-power'})}catch(e){}"
+ "function start(){}function stop(){}if(!gl)return ctl;"
+ "function sh(k,src){var o=gl.createShader(k);gl.shaderSource(o,src);gl.compileShader(o);return o}"
+ "var pr=gl.createProgram();gl.attachShader(pr,sh(gl.VERTEX_SHADER,'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}'));gl.attachShader(pr,sh(gl.FRAGMENT_SHADER," + repr(FLOW_GLSL) + "));gl.linkProgram(pr);"
+ "if(!gl.getProgramParameter(pr,gl.LINK_STATUS))return ctl;gl.useProgram(pr);"
+ "gl.bindBuffer(gl.ARRAY_BUFFER,gl.createBuffer());gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);"
+ "var loc=gl.getAttribLocation(pr,'p');gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);"
+ "var U={};['r','t','m','a','b','c'].forEach(function(k){U[k]=gl.getUniformLocation(pr,k)});"
+ # the page's own colours: background, accent, and a blend of the two
+ "function col(v){var e=document.createElement('i');e.style.cssText='display:none;color:'+v;cv.parentNode.appendChild(e);var str=getComputedStyle(e).color,m=str.match(/[\\d.]+/g)||[0,0,0];cv.parentNode.removeChild(e);var k=/^color\\(/.test(str)?1:255;return [m[0]/k,m[1]/k,m[2]/k]}"
+ "var A=col('var(--bg,#111)'),C=col('var(--accent,#888)'),B=[0,1,2].map(function(i){return A[i]+(C[i]-A[i])*.45});"
+ "var raf=0,t0=performance.now(),off=0,seen=true;"
+ "function size(){var d=Math.min(window.devicePixelRatio||1,2),w=cv.clientWidth,hh=cv.clientHeight;if(!w||!hh)return false;var k=Math.min(1,Math.sqrt(2600000/(w*hh*d*d))),W=Math.round(w*d*k),H=Math.round(hh*d*k);if(cv.width!==W||cv.height!==H){cv.width=W;cv.height=H}gl.viewport(0,0,W,H);return true}"
+ "function draw(){var t=(off+(ctl.paused?0:performance.now()-t0))/1000;if(!size())return;gl.uniform2f(U.r,cv.width,cv.height);gl.uniform1f(U.t,t+40);gl.uniform1i(U.m,mode);gl.uniform3fv(U.a,A);gl.uniform3fv(U.b,B);gl.uniform3fv(U.c,C);gl.drawArrays(gl.TRIANGLES,0,3)}"
+ "function loop(){draw();raf=seen&&!ctl.paused?requestAnimationFrame(loop):0}"
+ "start=function(){if(!ctl.paused)return;ctl.paused=false;t0=performance.now();if(!raf)raf=requestAnimationFrame(loop)};"
+ "stop=function(){if(ctl.paused)return;off+=performance.now()-t0;ctl.paused=true;cancelAnimationFrame(raf);raf=0;draw()};"
+ "draw();"
+ "if('IntersectionObserver' in window)new IntersectionObserver(function(es){seen=es[0].isIntersecting;if(seen&&!ctl.paused&&!raf)raf=requestAnimationFrame(loop)}).observe(cv);"
+ "if('ResizeObserver' in window)new ResizeObserver(function(){if(ctl.paused||!raf)draw()}).observe(cv);"
+ "if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!cv.hasAttribute('data-still'))start();"
+ "return ctl};"
+)
 
 PAUSE_JS = '''const v=root.querySelector('video'),pv=root.querySelector('.ctrl');const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const play='<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>',pause=pv.innerHTML;
@@ -136,7 +189,7 @@ NEW = [
 @media (max-width:820px){.split{grid-template-columns:1fr}.frame{aspect-ratio:1}}
 ''' + CTRL_CSS,
   '<section class="split"><div><p class="k">{{kicker}}</p><h1 class="h">{{heading}}</h1><p class="l">{{intro}}</p><div class="row"><a class="btn p" href="#">{{b1}}</a><a class="btn" href="#">{{b2}}</a></div></div><div class="frame">' + VIDEO + CTRL_HTML + '<p class="note"><i aria-hidden="true"></i>{{note}}</p></div></section>',
-  NOHASH + PAUSE_JS, [('film', 'Film', 'film', 'paper-bird'), ('kicker', 'Kicker', 'text', 'Paper, light and patience'), ('heading', 'Headline', 'text', 'Objects made slowly, filmed carefully.'), ('intro', 'Intro', 'long', 'A small studio making paper sculpture for shop windows, book covers and film.'), ('b1', 'Main button', 'text', 'See the work'), ('b2', 'Second button', 'text', 'Commission a piece'), ('note', 'Caption chip', 'text', 'Now showing: a bird cut from one sheet')],
+  NOHASH + PAUSE_JS, [('film', 'Film', 'film', 'paper-bird'), ('kicker', 'Kicker', 'text', 'Silk and linen, dyed by hand'), ('heading', 'Headline', 'text', 'Cloth with a little weather in it.'), ('intro', 'Intro', 'long', 'A small studio dyeing silk and linen for interiors, fashion houses and film.'), ('b1', 'Main button', 'text', 'See the cloth'), ('b2', 'Second button', 'text', 'Commission a length'), ('note', 'Caption chip', 'text', 'On the line today: indigo, twelve metres')],
   'A two-column hero: on the left a kicker, large headline, muted intro and two buttons; on the right a rounded 4:5 frame holding a looping film, with a pause button and a small translucent caption chip with an accent dot. Stacks on phones.'),
  ('statement', 'Statement', 'Story', 'A large paragraph whose words brighten as you read down the page.', '''
 .st{max-width:1280px;margin:0 auto;padding:clamp(80px,16vh,180px) max(16px,4vw)}
@@ -210,6 +263,27 @@ for sid, (title, css, body, js) in S.items():
                    'js': jsx, 'fields': flds, 'prompt': PROMPTS[sid]})
 
 for b in blocks:
+    if '<video' not in b['html']:
+        continue
+    def canvas(m):
+        k = re.search(r'films/(\{\{\w+\}\}|[\w-]+)\.jpg', m.group(0))
+        return '<canvas class="flow" data-flow="' + (k.group(1) if k else 'ink') + '" aria-hidden="true"></canvas>'
+    b['html'] = re.sub(r'<video\b.*?</video>', canvas, b['html'], flags=re.S).replace('background film', 'background motion').replace('Pause film', 'Pause motion')
+    b['css'] = re.sub(r'(?<=[\s,}])video\{', '.flow{', ' ' + b['css']).strip().replace('object-fit:cover;', '').replace('object-fit:cover', '')
+    b['css'] += '\n.b-' + b['id'] + ' .flow{display:block;background:linear-gradient(135deg,var(--bg),color-mix(in srgb,var(--accent) 30%,var(--bg)))}'
+    js = b['js']
+    for q in ("root.querySelector('video')", "b.parentNode.querySelector('video')", "document.getElementById('v')", "root.querySelector('#v')"):
+        js = js.replace(q, "window.__pbFlow(" + q.replace("'video'", "'canvas.flow'").replace("document.getElementById('v')", "root.querySelector('canvas.flow')").replace("'#v'", "'canvas.flow'") + ")")
+    assert 'video' not in js and '__pbFlow' in js, (b['id'], js[:300])
+    b['js'] = FLOW_JS + js.replace('background film', 'background motion').replace("'Pause film'", "'Pause motion'").replace("'Play film'", "'Play motion'")
+    b['desc'] = b['desc'].replace('looping film', 'slow moving backdrop').replace('portrait film', 'panel of slow motion').replace('film frame', 'frame of slow motion').replace(' film ', ' motion ')
+    for fld in b['fields']:
+        if fld['type'] == 'film':
+            fld['label'] = fld['label'].replace('Film on the screen', 'Motion on the screen').replace('Film', 'Motion')
+            fld['def'] = FILM_NEW.get(fld['def'], 'ink')
+    b['prompt'] = b.get('prompt', '').replace('muted looping background video', 'slow code-drawn background (a WebGL canvas in the page colours)').replace('for the film', 'for the motion')
+
+for b in blocks:
     missing = [f['k'] for f in b['fields'] if '{{' + f['k'] + '}}' not in b['html'] and '{{each:' + f['k'] + '}}' not in b['html'] and '{{rich:' + f['k'] + '}}' not in b['html']]
     assert not missing, (b['id'], missing)
 
@@ -250,7 +324,7 @@ PAIRS = [['Editorial contrast', 'Playfair Display', 'Inter'], ['Quiet literary',
          ['Fraunces and DM Sans', 'Fraunces', 'DM Sans'], ['Bold display', 'Archivo Black', 'Archivo'], ['Mono terminal', 'JetBrains Mono', 'IBM Plex Sans']]
 
 lib = {'styles': {k: {'name': STYLE_NAMES[k], 'vars': STYLES[k], 'fonts': FONTS[k]} for k in STYLE_NAMES},
-       'base': BASE, 'films': FILMS, 'blocks': blocks, 'glyphs': GLYPHS, 'images': IMAGES, 'iconFiles': ICON_FILES, 'pairs': PAIRS}
+       'base': BASE, 'films': FILMS, 'flow': FLOW_JS, 'blocks': blocks, 'glyphs': GLYPHS, 'images': IMAGES, 'iconFiles': ICON_FILES, 'pairs': PAIRS}
 os.makedirs(os.path.join(SITE, 'builder'), exist_ok=True)
 with open(os.path.join(SITE, 'builder', 'blocks.js'), 'w') as fh:
     fh.write('/* Generated by tools/blocks.py from tools/sections_src.py. Edit those, then run: python3 tools/blocks.py */\n')

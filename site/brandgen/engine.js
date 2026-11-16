@@ -98,6 +98,7 @@ function audienceFeels(a){const t=String(a||'').toLowerCase(),o={};for(const [k,
 const STACK={serif:"Georgia,'Times New Roman',serif",sans:'system-ui,-apple-system,sans-serif',mono:'ui-monospace,Menlo,monospace',hand:'cursive',display:'system-ui,sans-serif'};
 const BODYCSS={Inter:'Inter:wght@400;500;600','Source Sans 3':'Source+Sans+3:wght@400;600','DM Sans':'DM+Sans:wght@400;500;700','IBM Plex Sans':'IBM+Plex+Sans:wght@400;600',Archivo:'Archivo:wght@400;600',Nunito:'Nunito:wght@400;700','Nunito Sans':'Nunito+Sans:wght@400;700','Work Sans':'Work+Sans:wght@400;600','Open Sans':'Open+Sans:wght@400;600',Barlow:'Barlow:wght@400;600',Lato:'Lato:wght@400;700',Roboto:'Roboto:wght@400;500',Raleway:'Raleway:wght@400;600',Karla:'Karla:wght@400;600',Figtree:'Figtree:wght@400;600','Proza Libre':'Proza+Libre:wght@400;600',Poppins:'Poppins:wght@400;600','Red Hat Text':'Red+Hat+Text:wght@400;500','Instrument Sans':'Instrument+Sans:wght@400;600','Exo 2':'Exo+2:wght@400;600','Alegreya Sans':'Alegreya+Sans:wght@400;700','Atkinson Hyperlegible':'Atkinson+Hyperlegible:wght@400;700',Chivo:'Chivo:wght@400;700',Hind:'Hind:wght@400;600','Hanken Grotesk':'Hanken+Grotesk:wght@400;700','Libre Franklin':'Libre+Franklin:wght@400;700'};
 /* [id, head, weight, class, body, tags, rationale, width factor, case] */
+const OPSZ={'Fraunces':'9..144','Bricolage Grotesque':'12..96'},NOMID=new Set(['Libre Baskerville','Merriweather']);
 const PAIRS=[
  ['fraunces-inter','Fraunces',600,'serif','Inter','warm friendly editorial cosy premium','A soft, slightly wonky old-style serif with real warmth over a neutral workhorse sans: friendly without turning childish.',.55],
  ['playfair-source','Playfair Display',700,'serif','Source Sans 3','elegant classic luxurious editorial premium','High-contrast transitional display serif for headlines that feel like a magazine cover, with a calm humanist sans doing the reading.',.55],
@@ -147,7 +148,11 @@ const PAIRS=[
  ['lexend-atkinson','Lexend',600,'sans','Atkinson Hyperlegible','clinical trustworthy friendly calm','Both faces were designed for readability: Lexend reduces visual stress, Atkinson Hyperlegible distinguishes every letter.',.6],
  ['bigshoulders-chivo','Big Shoulders Display',800,'display','Chivo','rugged bold adventurous retro','Chicago-industrial condensed capitals with Chivo’s grotesque body: workshop, brewery, outdoors.',.42,'upper'],
  ['alegreya','Alegreya',700,'serif','Alegreya Sans','natural classic calm handmade','A calligraphic book serif and its humanist sans sibling: literary, organic and calm.',.5]
-].map(([id,head,hw,cls,body,tags,why,wf,cs])=>{const hf=head.replace(/ /g,'+'),same=head===body;const css=same?`family=${hf}:wght@400;${hw}`:`family=${hf}${hw!==400||cls!=='display'?`:wght@${hw===400?'400':'400;'+hw}`:''}&family=${BODYCSS[body]||body.replace(/ /g,'+')+':wght@400;600'}`;
+].map(([id,head,hw,cls,body,tags,why,wf,cs])=>{
+ /* display type on the best product sites sits at 400 to 600, never heavier: serifs are capped at 500, sans at 600.
+    Faces with an optical-size axis ask for it, so a large logo gets the fine display cut instead of the chunky text cut. */
+ hw=NOMID.has(head)?400:cls==='hand'?hw:cls==='serif'?Math.min(hw,500):Math.min(hw,600);
+ const hf=head.replace(/ /g,'+'),same=head===body,oz=OPSZ[head];const css=oz?`family=${hf}:opsz,wght@${oz},400;${oz},${hw}&family=${BODYCSS[body]||body.replace(/ /g,'+')+':wght@400;600'}`:same?`family=${hf}:wght@400;${hw}`:`family=${hf}${hw!==400||cls!=='display'?`:wght@${hw===400?'400':'400;'+hw}`:''}&family=${BODYCSS[body]||body.replace(/ /g,'+')+':wght@400;600'}`;
  return {id,head,hw,cls,body,tags:tags.split(' '),why,wf,case:cs||'',css,headStack:`'${head}',${STACK[cls]}`,bodyStack:`'${body}',${STACK.sans}`}});
 /* single-weight display faces must not ask for weights Google Fonts doesn't have */
 const SINGLE=new Set(['DM Serif Display','Archivo Black','Bebas Neue','Anton','Abril Fatface','Righteous','Shrikhand','Gloock','Instrument Serif','Young Serif']);
@@ -269,7 +274,9 @@ function checksFor(t){const T=(l,fg,bg)=>({label:l,fg,bg,min:4.5,kind:'text',rat
 /* ---------------- type ---------------- */
 function rankPairs(s,P,seedBase){const r=rng(seedBase^0x9E3779B9),t=String(s.desc+' '+s.audience).toLowerCase();
  const boost=p=>(/code|developer|api|software|data/.test(t)&&p.tags.includes('techy')?.8:0)+(/law|bank|financ|insur|clinic|medical/.test(t)&&(p.tags.includes('trustworthy')||p.tags.includes('serious'))?.8:0)+(/kid|child|toy|play/.test(t)&&p.tags.includes('youthful')?.8:0)+(/bakery|cafe|coffee|craft|handmade|garden/.test(t)&&(p.tags.includes('warm')||p.tags.includes('handmade'))?.6:0)+(/fashion|jewel|luxury|hotel|wine/.test(t)&&(p.tags.includes('luxurious')||p.tags.includes('elegant'))?.7:0);
- return PAIRS.map(p=>[p,p.tags.reduce((a,g)=>a+(P.w[g]||0),0)+boost(p)+r()*.35]).sort((a,b)=>b[1]-a[1]).map(x=>x[0])}
+ /* Fraunces draws a deliberately odd ampersand and wonky letters at logo size, so it has to earn its place */
+ const quiet=p=>p.cls==='hand'?-1.6:p.cls==='display'?-.9:p.cls==='mono'?-.3:p.head==='Fraunces'?-.9:0;
+ return PAIRS.map(p=>[p,p.tags.reduce((a,g)=>a+(P.w[g]||0),0)+boost(p)+quiet(p)+r()*.35]).sort((a,b)=>b[1]-a[1]).map(x=>x[0])}
 function typeScale(ratioR){const TS=[['xs',-2],['sm',-1],['base',0],['lg',1],['xl',2],['2xl',3],['3xl',4],['4xl',5],['5xl',6]];return TS.map(([n,e])=>({name:n,px:Math.round(16*ratioR**e),lh:e<=0?1.6:e<=2?1.35:e<=4?1.15:1.05,face:e<=0?'body':'head'}))}
 
 /* ---------------- copy ---------------- */
@@ -299,7 +306,7 @@ function logoParams(s,P,seedBase){const r=rng(seedBase^Math.imul(s.seeds.logo+7,
  const shape=pickW(r,SHAPES.map(x=>[x,x==='circle'?(round?3:1.2):x==='rounded'?1.6:x==='squircle'?(round?2:1):x==='hexagon'?(sharp?1.6:.7):x==='shield'?(P.w.trustworthy||P.w.classic?1.6:.5):x==='arch'?(P.w.elegant||P.w.premium?1.6:.6):.7]));
  /* the slash after the name reads as a typo on a soft or classic brand, so only technical and edgy ones can draw it */
  const slash=P.w.techy||P.w.futuristic||P.w.edgy?1:0;
- return {shape,decor:pickW(r,DECOR.map(x=>[x,x==='plain'?1.4:x==='slash'?slash:1])),track:Math.round(((r()-.4)*.08+(P.w.luxurious||P.w.elegant?.06:0))*100)/100,lower:!!(P.w.friendly||P.w.minimal||P.w.soft)&&r()<.35,two:r()<.55}}
+ return {shape,decor:pickW(r,DECOR.map(x=>[x,x==='plain'?1:x==='slash'?slash*.25:0])),track:Math.round(((r()-.4)*.08+(P.w.luxurious||P.w.elegant?.06:0))*100)/100,lower:!!(P.w.friendly||P.w.minimal||P.w.soft)&&r()<.35,two:r()<.55}}
 /* initials come from the words that carry the name: "Saffron & Salt" is SS, not S&; a one-word name gets one letter
    (the first two letters of a word are not initials: Northwind would read NO) */
 function initials(name,two){const alnum=/[\p{L}\p{N}]/u,all=String(name||'?').trim().split(/[\s\-_.\/+&]+/).filter(x=>alnum.test(x)),main=all.filter(x=>!/^(and|the|of|et|und|y|de|la|le)$/i.test(x)),w=main.length?main:all;
@@ -322,6 +329,9 @@ function generate(input){const s=norm(input),P=profile(s);const seedBase=hash([s
  const ratioR=P.e>.75?1.333:P.e>.5?1.28:P.e>.3?1.25:1.2;
  const type=applyMine({...pair,ratio:ratioR,scale:typeScale(ratioR),alternatives:ranked.slice(0,8).map(p=>p.id)},s.mine);
  const logo=s.frozen.logo&&s.frozen.logo.shape?s.frozen.logo:logoParams(s,P,seedBase);
+ /* letter-spacing of the name follows the typeface, as on well-set product sites: capitals open up, serifs sit at
+    normal spacing, sans names are set slightly tight */
+ if(!(s.frozen.logo&&s.frozen.logo.shape)){const tr=logo.track;logo.track=Math.round((type.case==='upper'?Math.max(.04,Math.min(.1,Math.abs(tr)+.04)):type.cls==='serif'?Math.max(-.012,Math.min(.01,tr*.3)):Math.max(-.035,Math.min(-.01,tr-.02)))*1000)/1000}
  const pal={brand:pp.hex,secondary:pp.secHex,accent:pp.accHex,primaryName:colourName(pp.hex),secondaryName:colourName(pp.secHex),accentName:colourName(pp.accHex),harmony:pp.harm,from:pp.from,params:pp};
  const copy=copyFor(s,P,pal,type);
  const b={state:s,name:s.name||'Untitled',profile:P,seedBase,mode:primaryMode,pal,ramps,modes,checks,fixes,cvd,type,logo,copy,initials:initials(s.name,logo.two),radius:Math.round(P.r)};
@@ -355,9 +365,9 @@ function shapePath(shape,s){const h=s/2;switch(shape){case 'circle':return `<cir
  case 'hexagon':return `<path d="M${h} 0 ${s*.933} ${s*.25}V${s*.75}L${h} ${s} ${s*.067} ${s*.75}V${s*.25}z"/>`;case 'shield':return `<path d="M${s*.08} ${s*.06}H${s*.92}V${s*.5}C${s*.92} ${s*.78} ${s*.7} ${s*.92} ${h} ${s}C${s*.3} ${s*.92} ${s*.08} ${s*.78} ${s*.08} ${s*.5}z"/>`;case 'arch':return `<path d="M0 ${s}V${h}A${h} ${h} 0 0 1 ${s} ${h}V${s}z"/>`;default:return `<rect width="${s}" height="${s}" rx="${s*.08}"/>`}}
 /* the mark: the uploaded logo if there is one, otherwise the monogram (64-unit coordinates, no outer svg) */
 function markInner(b,s=64,o={}){const t=o.t||b.modes[b.mode];if(o.logo!==false&&b.logoURL)return `<image href="${esc(b.logoURL)}" x="0" y="0" width="${s}" height="${s}" preserveAspectRatio="xMidYMid meet"/>`;
- const L=b.logo,txt=b.initials,two=txt.length>1,fs=s*(two?.42:.56)*(b.type.case==='upper'||b.type.wf<.47?1.05:1)*(b.type.wf>.68?.82:1),plain=L.shape==='plain';
+ const L=b.logo,txt=b.initials,two=txt.length>1,fs=s*(two?.39:.54)*(b.type.case==='upper'||b.type.wf<.47?1.05:1)*(b.type.wf>.68?.82:1),plain=L.shape==='plain';
  const fill=plain?'none':t.primary,ink=plain?t.primaryText:t.onPrimary;
- return `<g fill="${fill}">${plain?'':shapePath(L.shape,s)}</g>${plain?`<rect x="${s*.12}" y="${s*.8}" width="${s*.76}" height="${s*.07}" fill="${t.accent}"/>`:''}${svgText(b,'head',{x:s/2,y:s*(L.shape==='arch'?.66:L.shape==='shield'?.6:.555),anchor:'middle',middle:true,weight:b.type.hw,size:+fs.toFixed(1),fill:ink,track:two?-.5:0,txt})}`}
+ return `<g fill="${fill}">${plain?'':shapePath(L.shape,s)}</g>${plain?`<rect x="${s*.12}" y="${s*.8}" width="${s*.76}" height="${s*.07}" fill="${t.accent}"/>`:''}${svgText(b,'head',{x:s/2,y:s*(L.shape==='arch'?.66:L.shape==='shield'?.6:.555),anchor:'middle',middle:true,weight:b.type.hw,size:+fs.toFixed(1),fill:ink,track:two?.6:0,txt})}`}
 function monogram(b,size=256,o={}){const t=o.t||b.modes[o.mode||b.mode];return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 64 64">${o.fonts?`<defs>${fontImport(b)}</defs>`:''}${o.bg?`<rect width="64" height="64" fill="${t.bg}"/>`:''}${markInner(b,64,{t,logo:false})}</svg>`}
 function wordText(b){const n=b.logo.lower?b.name.toLowerCase():b.name;return b.type.case==='upper'?n.toUpperCase():n}
 function wordmarkParts(b,t,x,y,size){x=+x;y=+y;const L=b.logo,txt=wordText(b),w=textW(txt,b.type,size)+Math.max(0,[...txt].length-1)*L.track*size;

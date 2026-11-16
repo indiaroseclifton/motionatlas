@@ -10,7 +10,7 @@ const BG=window.BrandGen,TK=window.ThemeKits,$=s=>document.querySelector(s),$$=s
 const PRESETS=[['Warm and handmade',['warm','handmade','cosy']],['Clean and modern',['minimal','modern','trustworthy']],['Bold and loud',['bold','energetic','edgy']],['Calm and natural',['calm','natural','soft']],
  ['Quiet luxury',['premium','elegant','luxurious']],['Playful and bright',['playful','youthful','friendly']],['Technical and precise',['techy','clinical','modern']],['Classic editorial',['classic','editorial','serious']]];
 const CHIPS=['bold','calm','playful','premium','minimal','warm','friendly','techy','trustworthy','natural','elegant','energetic','edgy','retro','modern','classic','soft','creative','futuristic','handmade','editorial','youthful','cosy','fresh','luxurious','serious','clinical'];
-const START={name:'Saffron & Salt',desc:'A neighbourhood bakery and coffee bar with slow-fermented bread.',feels:PRESETS[0][1].slice(),seeds:{pal:2,type:2,logo:9}};
+const START={name:'Saffron & Salt',desc:'A neighbourhood bakery and coffee bar with slow-fermented bread.',feels:PRESETS[0][1].slice(),seeds:{pal:2,type:0,logo:9}};
 let S=BG.norm(START);
 let mineMode='outline',inclFonts=false;window.__mineOpts={get mode(){return mineMode},get incl(){return inclFonts}};
 let B=null,logoURL='',logoName='',hist=[],view=null,kitTimer=0,pm='light',pmSet=false,files=[];

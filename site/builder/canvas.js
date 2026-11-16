@@ -183,12 +183,12 @@ PB.images=IMG;
 
 /* ---------- 4. per-section settings ---------- */
 const SPACING=[['default','Default'],['compact','Compact'],['roomy','Roomy'],['spacious','Spacious']],WIDTH=[['default','Default'],['narrow','Narrow'],['wide','Wide'],['full','Full width']],ALIGN=[['','As designed'],['left','Left'],['center','Centre'],['right','Right']],
- BG=[['','As designed'],['none','Transparent (blends into the page)'],['page','Page colour'],['surface','Soft panel'],['accent','Accent colour'],['ink','Inverted'],['custom','Custom colour'],['gradient','Gradient'],['image','Image or photo'],['film','Film']],BORDER=[['','None'],['thin','Thin line'],['strong','Strong line'],['accent','Accent line']],SHADOW=[['','None'],['soft','Soft'],['lifted','Lifted']],ANIM=[['','None'],['rise','Fade up on scroll']];
+ BG=[['','As designed'],['none','Transparent (blends into the page)'],['page','Page colour'],['surface','Soft panel'],['accent','Accent colour'],['ink','Inverted'],['custom','Custom colour'],['gradient','Gradient'],['image','Image or photo'],['film','Motion']],BORDER=[['','None'],['thin','Thin line'],['strong','Strong line'],['accent','Accent line']],SHADOW=[['','None'],['soft','Soft'],['lifted','Lifted']],ANIM=[['','None'],['rise','Fade up on scroll']];
 const FLIP={accent:'--bg:var(--q-acc);--ink:var(--q-on);--mute:color-mix(in srgb,var(--q-on) 78%,var(--q-acc));--line:color-mix(in srgb,var(--q-on) 28%,transparent);--surface:color-mix(in srgb,var(--q-on) 12%,var(--q-acc));--accent:var(--q-on);--on-accent:var(--q-acc);--accent-ink:var(--q-on);color:var(--q-on)',
  ink:'--bg:var(--q-ink);--ink:var(--q-bg);--mute:color-mix(in srgb,var(--q-bg) 70%,var(--q-ink));--line:color-mix(in srgb,var(--q-bg) 24%,transparent);--surface:color-mix(in srgb,var(--q-bg) 10%,var(--q-ink));color:var(--q-bg)',
  surface:'--bg:var(--q-surface);--surface:var(--q-bg)'};
 /* returns {cls, css, inner (html at the start of the section), wrap (inner wrapper style or ''), rt} */
-function secBuild(blk,o){const s=blk.set;if(!s||!Object.keys(s).length)return {cls:'',css:'',inner:'',flip:'',rt:''};
+function secBuild(blk,o){let flow=false;const s=blk.set;if(!s||!Object.keys(s).length)return {cls:'',css:'',inner:'',flip:'',rt:''};
  const u='#'+blk.uid,r=[],cls=[];let inner='',flip='';
  const rules=(q,x)=>{const o=[];const sp=x.pad;if(sp==='compact')o.push(`${u} .wrap{padding-top:clamp(24px,5vh,56px)!important;padding-bottom:clamp(24px,5vh,56px)!important}`);else if(sp==='roomy')o.push(`${u}{padding-block:clamp(32px,6vw,80px)}`);else if(sp==='spacious')o.push(`${u}{padding-block:clamp(64px,10vw,160px)}`);else if(sp==='default'&&q)o.push(`${u}{padding-block:0}${u} .wrap{padding-top:clamp(56px,10vh,110px)!important;padding-bottom:clamp(56px,10vh,110px)!important}`);
   const w=x.width;if(w==='narrow')o.push(`${u} .wrap{max-width:820px!important}`);else if(w==='wide')o.push(`${u} .wrap{max-width:1560px!important}`);else if(w==='full')o.push(`${u} .wrap{max-width:none!important}`);
@@ -211,16 +211,16 @@ function secBuild(blk,o){const s=blk.set;if(!s||!Object.keys(s).length)return {c
   if(FLIP[bg]){flip=FLIP[bg];r.push(`${u}{background:${bg==='accent'?'var(--accent)':bg==='ink'?'var(--ink)':'var(--surface)'}}`)}
   else if(bg==='gradient')r.push(`${u}{background:linear-gradient(180deg,var(--bg),color-mix(in srgb,var(--accent) 18%,var(--bg)))}`);
   else if(bg==='image'&&s.bgv){inner+=`<div class="pb-bgm" aria-hidden="true" style="background-image:url(${o.asset(s.bgv)})"></div>`}
-  else if(bg==='film'&&s.bgv){const f=String(s.bgv).replace(/[^\w-]/g,'');inner+=`<video class="pb-bgm" aria-hidden="true" tabindex="-1" ${o.mode==='preview'?'':'autoplay '}muted loop playsinline poster="${o.A}films/${f}.jpg"><source src="${o.A}films/${f}-720.mp4" type="video/mp4"></video>`}
+  else if(bg==='film'&&s.bgv){const f=String(s.bgv).replace(/[^\w-]/g,'');inner+=`<canvas class="pb-bgm flow" aria-hidden="true" data-flow="${f}"${o.mode==='preview'?' data-still':''}></canvas>`;flow=true}
   if((bg==='image'||bg==='film')&&s.bgv){const ov=Math.max(0,Math.min(90,+s.ov>=0?+s.ov:55));inner+=`<div class="pb-bgo" aria-hidden="true" style="background:color-mix(in srgb,var(--bg) ${ov}%,transparent)"></div>`;
    r.push(`${u} .pb-bgm{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background-size:cover;background-position:center;z-index:-2}${u} .pb-bgo{position:absolute;inset:0;z-index:-1}`)}}
  if(s.matched)r.push(`${u} .wrap{padding-top:clamp(8px,2vw,28px)!important}`);
  const hide=s.hide||{};if(hide.d)cls.push('pbh-d');if(hide.t)cls.push('pbh-t');if(hide.p)cls.push('pbh-p');
- let rt='';if(s.anim==='rise'&&o.mode!=='preview'){cls.push('pb-rise');rt='pbrise'}
+ let rt='';if(s.anim==='rise'&&o.mode!=='preview'){cls.push('pb-rise');rt='pbrise'}if(flow)rt=(rt?rt+' ':'')+'pbflow';
  return {cls:cls.join(' '),css:r.join('\n'),inner,flip,rt}}
 PB.sec={build:secBuild,SPACING,WIDTH,ALIGN,BG,BORDER,SHADOW,ANIM,
  base:`pb-t{display:inline}@media (min-width:1025px){.pbh-d{display:none!important}}@media (min-width:641px) and (max-width:1024px){.pbh-t{display:none!important}}@media (max-width:640px){.pbh-p{display:none!important}}.pb-sticky{position:sticky;top:0;z-index:40}.pb-rise{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)}.pb-rise.in{opacity:1;transform:none}@media (prefers-reduced-motion:reduce){.pb-rise{opacity:1;transform:none;transition:none}}`,
- runtime:{pbrise:`(function(){var els=document.querySelectorAll('.pb-rise');if(!('IntersectionObserver' in window)){els.forEach(function(x){x.classList.add('in')});return}var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.1});els.forEach(function(x){io.observe(x)})})();`}};
+ runtime:{get pbflow(){return (window.PB_LIB&&window.PB_LIB.flow||'')+'document.querySelectorAll("canvas.pb-bgm.flow").forEach(function(c){window.__pbFlow(c)});'},pbrise:`(function(){var els=document.querySelectorAll('.pb-rise');if(!('IntersectionObserver' in window)){els.forEach(function(x){x.classList.add('in')});return}var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.1});els.forEach(function(x){io.observe(x)})})();`}};
 
 PB.canvas={mark,agent,esc};
 })();
