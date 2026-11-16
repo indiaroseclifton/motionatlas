@@ -2,37 +2,42 @@
 <title>Visual & Motion Atlas</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <meta name="description" content="Interactions, app screens, components, design systems and tools for people building websites and apps. Pick what you need, tune it, copy it.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@1,500&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
 <style>
-:root{--bg:#FFFFFF;--panel:#FFFFFF;--ink:#111113;--mute:#6B6F76;--hair:#E8E8EA;--soft:#F5F5F6;--accent:#111111;color-scheme:light}
+/* Home. The site style (November 2026): one typeface, medium-weight headlines set tight, white pages, hairlines, 10px controls. */
+:root{--bg:#FFFFFF;--panel:#FFFFFF;--ink:#0F1115;--mute:#5F6573;--hair:#E6E8EC;--hair2:#D5D8DF;--soft:#F6F7F9;--accent:#0F1115;color-scheme:light}
 *{box-sizing:border-box}html,body{margin:0}
-body{background:var(--bg);color:var(--ink);font:15px/1.55 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
-a{color:inherit;text-decoration:none}:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
-main{max-width:1120px;margin:0 auto;padding:0 max(20px,env(safe-area-inset-right)) 80px max(20px,env(safe-area-inset-left))}
-.hero{padding:clamp(40px,9vh,96px) 0 clamp(24px,5vh,48px);display:grid;gap:14px;max-width:760px}
-.hero h1{margin:0;font:500 clamp(44px,8vw,88px)/.95 'Cormorant Garamond',Georgia,serif;font-style:italic;letter-spacing:-.02em}
-.hero p{margin:0;font-size:clamp(16px,2vw,19px);color:var(--mute);max-width:56ch}
-.hero .kick{font:600 12px/1 Inter,system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+a{color:inherit;text-decoration:none}:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+main{max-width:1248px;margin:0 auto;padding:0 max(clamp(20px,4vw,48px),env(safe-area-inset-right)) 96px max(clamp(20px,4vw,48px),env(safe-area-inset-left))}
+.hero{padding:clamp(56px,11vh,120px) 0 clamp(36px,6vh,64px);display:grid;gap:20px;max-width:820px}
+.hero h1{margin:0;font-weight:600;font-size:clamp(40px,6vw,76px);line-height:1.03;letter-spacing:-.038em;text-wrap:balance}
+.hero p{margin:0;font-size:clamp(17px,1.5vw,19px);line-height:1.55;color:var(--mute);max-width:58ch}
+.hero .kick{font-size:13px;font-weight:500;line-height:1;color:var(--mute);letter-spacing:0}
 .heroActs{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
-.hb{display:inline-flex;align-items:center;min-height:46px;padding:0 20px;border-radius:999px;border:1px solid var(--hair);background:var(--panel);font-weight:600;font-size:15px}
-.hb:hover{border-color:var(--ink)}
-.hb.pri{background:var(--ink);border-color:var(--ink);color:#fff}
-.feat{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:10px}
-.view{position:relative;aspect-ratio:16/10;border-radius:16px;overflow:hidden;border:1px solid var(--hair);background:var(--soft);display:block}
+.hb{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 18px;border-radius:10px;border:1px solid var(--hair2);background:var(--panel);font-weight:500;font-size:15px;transition:background .15s,border-color .15s}
+.hb:hover{background:var(--soft)}
+.hb.pri{background:var(--ink);border-color:var(--ink);color:#fff}.hb.pri:hover{background:#000}
+/* three live pieces: one large, two beside it */
+.feat{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);grid-template-rows:repeat(2,minmax(0,1fr));gap:16px}
+.view{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--hair);background:var(--soft);display:block;min-height:0;transition:border-color .2s,transform .2s cubic-bezier(.2,.8,.2,1),box-shadow .2s}
+.view:first-child{grid-row:1/span 2;aspect-ratio:16/10}
 .view iframe{position:absolute;left:0;top:0;width:1200px;height:750px;border:0;transform:scale(var(--k,.27));transform-origin:0 0;pointer-events:none}
-.view span{position:absolute;left:12px;bottom:10px;padding:5px 10px;border-radius:99px;background:var(--panel);border:1px solid var(--hair);font-size:12.5px;font-weight:600}
-.view:hover{border-color:var(--ink)}
-section{margin-top:clamp(34px,6vh,60px)}
-section h2{margin:0 0 4px;font-size:22px;letter-spacing:-.01em}section>p{margin:0 0 16px;color:var(--mute)}
-.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
-.t{display:grid;gap:4px;padding:18px 18px 16px;border:1px solid var(--hair);border-radius:16px;background:var(--panel);transition:border-color .15s,transform .15s;min-height:104px;align-content:start}
-.t:hover{border-color:var(--ink);transform:translateY(-2px)}
-.t b{display:flex;justify-content:space-between;gap:10px;font-size:16.5px;font-weight:600}.t b i{font-style:normal;color:var(--mute);transition:transform .15s}.t:hover b i{transform:translateX(3px);color:var(--ink)}
-.t span{color:var(--mute);font-size:13.5px;line-height:1.45}
-.t.big{background:var(--ink);color:#fff;border-color:var(--ink)}.t.big span,.t.big b i{color:rgba(255,255,255,.72)}
-footer{margin-top:60px;padding-top:18px;border-top:1px solid var(--hair);display:flex;gap:18px;flex-wrap:wrap;color:var(--mute);font-size:13.5px}footer a:hover{color:var(--ink)}
-@media(max-width:760px){.feat{grid-template-columns:1fr}.feat .view:nth-child(n+2){display:none}}
-@media(prefers-reduced-motion:reduce){.t,.t b i{transition:none}}
+.view:not(:first-child) iframe{top:50%;margin-top:calc(-375px * var(--k,.27))}
+.view span{position:absolute;left:12px;bottom:12px;padding:6px 10px;border-radius:8px;background:var(--panel);border:1px solid var(--hair);font-size:13px;font-weight:500;line-height:1}
+.view:hover{border-color:var(--hair2);transform:translateY(-2px);box-shadow:0 12px 28px -18px rgba(15,17,21,.25)}
+section{margin-top:clamp(56px,10vh,96px)}
+section h2{margin:0 0 6px;font-weight:600;font-size:clamp(24px,2.6vw,32px);line-height:1.15;letter-spacing:-.025em}
+section>p{margin:0 0 24px;color:var(--mute);font-size:17px;max-width:60ch}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.t{display:grid;gap:6px;padding:20px;border:1px solid var(--hair);border-radius:14px;background:var(--panel);transition:border-color .2s,transform .2s cubic-bezier(.2,.8,.2,1),box-shadow .2s;min-height:112px;align-content:start}
+.t:hover{border-color:var(--hair2);transform:translateY(-2px);box-shadow:0 12px 28px -18px rgba(15,17,21,.25)}
+.t b{display:flex;justify-content:space-between;gap:10px;font-size:16px;font-weight:600;letter-spacing:-.01em}.t b i{font-style:normal;color:var(--mute);transition:transform .15s}.t:hover b i{transform:translateX(3px);color:var(--ink)}
+.t span{color:var(--mute);font-size:14px;line-height:1.5}
+.t.big{background:var(--ink);color:#fff;border-color:var(--ink)}.t.big span,.t.big b i{color:rgba(255,255,255,.74)}
+footer{margin-top:96px;padding-top:20px;border-top:1px solid var(--hair);display:flex;gap:20px;flex-wrap:wrap;color:var(--mute);font-size:14px}footer a:hover{color:var(--ink)}
+@media(max-width:760px){.feat{grid-template-columns:1fr;grid-template-rows:none}.view:first-child{grid-row:auto}.feat .view:nth-child(n+2){display:none}.hb{min-height:46px}}
+@media(prefers-reduced-motion:reduce){.t,.t b i,.view,.hb{transition:none}.t:hover,.view:hover{transform:none}}
 /* tap targets */main footer a{padding-block:4px}</style>
 <meta property="og:type" content="website"><meta property="og:site_name" content="Visual &amp; Motion Atlas"><meta property="og:title" content="Visual & Motion Atlas"><meta property="og:description" content="Interactions, app screens, components, design systems and tools for people building websites and apps. Pick what you need, tune it, copy it."><meta property="og:url" content="https://motionatlas-ten.vercel.app/index"><meta property="og:image" content="https://motionatlas-ten.vercel.app/assets/og-atlas.jpg"><meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://motionatlas-ten.vercel.app/index">
